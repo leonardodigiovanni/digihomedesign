@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm ls:*)",
+      "Bash(find /c/Users/User/Desktop/SITO/sito-cursor -name .env* -o -name *.env*)",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "Bash(node scripts/migrate-passwords.mjs)",
+      "Bash(start \"\" \"http://localhost:3000\")",
+      "Bash(npx next:*)",
+      "Bash(tasklist)",
+      "Bash(cat C:/Users/User/Desktop/SITO/sito-cursor/.next/diagnostics/*)",
+      "Bash(/dev/null find:*)",
+      "Bash(xargs cat:*)",
+      "Bash(powershell -Command \"Stop-Process -Id 12800 -Force\")",
+      "Bash(powershell -Command \"Stop-Process -Id 5508 -Force\")",
+      "Bash(powershell -Command \"Stop-Process -Id 3328 -Force\")",
+      "Bash(mysql:*)",
+      "Bash(find /c/Users/User/Desktop/SITO/sito-cursor -maxdepth 2 -name .env* -o -name next.config.ts)",
+      "Bash(find /c/Users/User/Desktop/SITO/sito-cursor -type f \\\\\\(-name *.ts -o -name *.js \\\\\\) -path */db/* -o -path */database/*)",
+      "Bash(find /c/Users/User/Desktop/SITO/sito-cursor -type f -name *.ts -o -name *.js)",
+      "Bash(/dev/null:*)",
+      "Bash(/c/Users/User/Desktop/SITO/sito-cursor/.env.local:*)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(npx tsc:*)"
+    ]
+  }
+}

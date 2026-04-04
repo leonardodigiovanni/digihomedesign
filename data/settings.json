@@ -1,0 +1,67 @@
+{
+  "inactivityMinutes": 20,
+  "countdownSeconds": 10,
+  "headerBg": {
+    "r": 241,
+    "g": 115,
+    "b": 51,
+    "a": 100
+  },
+  "headerBgMode": "rgb",
+  "footerBg": {
+    "r": 158,
+    "g": 103,
+    "b": 96,
+    "a": 100
+  },
+  "footerBgMode": "rgb_c",
+  "pageBg": {
+    "r": 244,
+    "g": 138,
+    "b": 138,
+    "a": 81
+  },
+  "pageBgMode": "gold_c",
+  "disabledPages": [],
+  "registrazioniDisabilitate": false,
+  "loginClientiDisabilitato": false,
+  "loginDipendentiDisabilitato": false,
+  "rolePermissions": {
+    "cliente": [
+      30,
+      31
+    ],
+    "dipendente": [
+      16
+    ],
+    "ragioniere": [
+      17,
+      21
+    ],
+    "commercialista": [
+      18,
+      22
+    ],
+    "venditore": [
+      23,
+      24,
+      25,
+      26
+    ],
+    "operaio": [
+      27
+    ],
+    "magazzino": [
+      16
+    ],
+    "direttore": [
+      28
+    ],
+    "marketing": [
+      29
+    ],
+    "email": [
+      32
+    ]
+  }
+}
