@@ -96,15 +96,15 @@ export default function Header({
         ...(isRgbEffect ? { position: 'relative' } : {}),
       }}
     >
-      {shimmerClass && <div className={shimmerClass} />}
       {radialBg && (
         <div style={{ position: 'absolute', inset: 0, background: radialBg, pointerEvents: 'none', zIndex: 0 }} />
       )}
+      {shimmerClass && <div className={shimmerClass} />}
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '100%', position: 'relative', zIndex: 1 }}>
         <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 6, textDecoration: 'none', color: 'inherit', height: '100%' }}>
-          <Image src="/images/digi_tr.png" alt="Home Design" width={95} height={95} unoptimized style={{ objectFit: 'contain', display: 'block', margin: 'auto 0' }} />
-          <Image src="/images/nome_tr.png" alt="Home Design" width={180} height={60} unoptimized style={{ objectFit: 'contain', display: 'block', alignSelf: 'flex-end', marginBottom: 10 }} />
+          <Image src="/images/digi_tr.png" alt="Home Design" width={95} height={95} unoptimized style={{ objectFit: 'contain', display: 'block', alignSelf: 'center' }} />
+          <Image src="/images/nome_tr.png" alt="Home Design" width={216} height={72} unoptimized style={{ objectFit: 'contain', display: 'block', alignSelf: 'center', marginTop: 9 }} />
         </a>
         <HeaderAuth username={username} />
       </div>

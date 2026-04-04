@@ -182,11 +182,8 @@ export default function EmailClient({
                       <div style={{ marginTop: 16 }}>
                         <button
                           onClick={e => { e.stopPropagation(); handleAttiva(m.username_ref!) }}
-                          style={{
-                            padding: '7px 18px', fontSize: 13, border: 'none', borderRadius: 6,
-                            background: '#2e7d32', color: '#fff', cursor: 'pointer',
-                            fontFamily: 'inherit', fontWeight: 600,
-                          }}
+                          className="btn-green"
+                          style={{ padding: '7px 18px', fontSize: 13, fontFamily: 'inherit' }}
                         >
                           Abilita subito
                         </button>

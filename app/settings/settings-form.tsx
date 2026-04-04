@@ -4,8 +4,9 @@ import { useActionState, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { saveSettings, saveHeaderBg, saveFooterBg, savePageBg, saveDisabledPages, saveAccessControls, saveRolePermissions, type SaveResult, type SaveBgResult, type SaveAccessResult } from './actions'
 import { clientPages, internalPages } from '@/lib/nav-config'
+import FlashSuccess from '@/components/flash-success'
 import type { Rgba, BgMode } from '@/lib/settings'
-import { rgbGradient, rgbGradientInv, rgbLuminance } from '@/lib/bg-utils'
+import { rgbGradient, rgbGradientInv, rgbBrushedBackground, rgbBrushedBackgroundInv, rgbLuminance } from '@/lib/bg-utils'
 
 const ALL_ROLES = [
   'cliente',
@@ -210,14 +211,19 @@ function BgColorPanel({
         ) : (
           <div style={{ flex: 1 }}>
             {mode.startsWith('rgb_') ? (
-              <div
-                style={{
-                  height: 64,
-                  borderRadius: 8,
-                  overflow: 'hidden',
-                  background: mode.endsWith('_inv') ? rgbGradientInv(color.r, color.g, color.b) : rgbGradient(color.r, color.g, color.b),
-                }}
-              />
+              <div style={{ height: 64, borderRadius: 8, overflow: 'hidden', position: 'relative',
+                background: mode === 'rgb_c' ? rgbBrushedBackground(color.r, color.g, color.b)
+                  : mode === 'rgb_c_inv' ? rgbBrushedBackgroundInv(color.r, color.g, color.b)
+                  : mode.endsWith('_inv') ? rgbGradientInv(color.r, color.g, color.b)
+                  : rgbGradient(color.r, color.g, color.b),
+              }}>
+                {(mode === 'rgb_c' || mode === 'rgb_c_inv') && (
+                  <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,255,255,0.35) 0%, transparent 70%)', pointerEvents: 'none' }} />
+                )}
+                {(mode === 'rgb_b' || mode === 'rgb_b_inv' || mode === 'rgb_c' || mode === 'rgb_c_inv') && (
+                  <div className="gold-shimmer-wrap" />
+                )}
+              </div>
             ) : (
               <div
                 className={MODE_OPTIONS.find(o => o.value === mode)?.cls ?? ''}
@@ -240,11 +246,7 @@ function BgColorPanel({
             {result.error}
           </div>
         )}
-        {result?.ok && !dirty && (
-          <div style={{ background: '#f0faf0', border: '1px solid #b2dfb2', borderRadius: 5, padding: '8px 12px', fontSize: 13, color: '#2a7a2a' }}>
-            Salvato.
-          </div>
-        )}
+        <FlashSuccess result={result} message="Salvato." />
 
         <div style={{ display: 'flex', gap: 8, marginTop: 'auto' }}>
           <button
@@ -361,11 +363,7 @@ export default function SettingsForm({ inactivityMinutes, countdownSeconds, head
               {sessionResult.error}
             </div>
           )}
-          {sessionResult?.ok && !sessionDirty && (
-            <div style={{ background: '#f0faf0', border: '1px solid #b2dfb2', borderRadius: 5, padding: '8px 12px', fontSize: 13, color: '#2a7a2a' }}>
-              Impostazioni salvate.
-            </div>
-          )}
+          <FlashSuccess result={sessionResult} message="Impostazioni salvate." />
 
           <div style={{ display: 'flex', gap: 8, marginTop: 'auto' }}>
             <button
@@ -464,9 +462,7 @@ function PagesPanel({ disabledPages }: { disabledPages: number[] }) {
         {result && !result.ok && (
           <div style={{ background: '#fff3f3', border: '1px solid #f5c2c2', borderRadius: 5, padding: '8px 12px', fontSize: 13, color: '#c00' }}>{result.error}</div>
         )}
-        {result?.ok && !dirty && (
-          <div style={{ background: '#f0faf0', border: '1px solid #b2dfb2', borderRadius: 5, padding: '8px 12px', fontSize: 13, color: '#2a7a2a' }}>Pagine salvate.</div>
-        )}
+        <FlashSuccess result={result} message="Pagine salvate." />
 
         <div style={{ display: 'flex', gap: 8, marginTop: 'auto' }}>
           <button
@@ -537,9 +533,7 @@ function RegistrazioniLoginPanel({
         {result && !result.ok && (
           <div style={{ background: '#fff3f3', border: '1px solid #f5c2c2', borderRadius: 5, padding: '8px 12px', fontSize: 13, color: '#c00' }}>{result.error}</div>
         )}
-        {result?.ok && !dirty && (
-          <div style={{ background: '#f0faf0', border: '1px solid #b2dfb2', borderRadius: 5, padding: '8px 12px', fontSize: 13, color: '#2a7a2a' }}>Impostazioni salvate.</div>
-        )}
+        <FlashSuccess result={result} message="Impostazioni salvate." />
 
         <div style={{ display: 'flex', gap: 8, marginTop: 'auto' }}>
           <button
@@ -686,9 +680,7 @@ function RolePermissionsPanel({ rolePermissions }: { rolePermissions: Record<str
         {result && !result.ok && (
           <div style={{ background: '#fff3f3', border: '1px solid #f5c2c2', borderRadius: 5, padding: '8px 12px', fontSize: 13, color: '#c00' }}>{result.error}</div>
         )}
-        {result?.ok && !dirty && (
-          <div style={{ background: '#f0faf0', border: '1px solid #b2dfb2', borderRadius: 5, padding: '8px 12px', fontSize: 13, color: '#2a7a2a' }}>Permessi salvati.</div>
-        )}
+        <FlashSuccess result={result} message="Permessi salvati." />
 
         <div style={{ display: 'flex', gap: 8 }}>
           <button

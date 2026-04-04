@@ -49,12 +49,13 @@ body {
    Più alto = più lento (es. 6s lento, 2s veloce)
    ───────────────────────────────────────── */
 :root {
-  --gold-shimmer-speed: 25s;
+  --gold-shimmer-speed: 5s;
 }
 
 @keyframes gold-shimmer {
-  0%   { transform: skewX(-45deg) translateX(-150%); }
-  100% { transform: skewX(-45deg) translateX(500%); }
+  0%   { transform: skewX(-45deg) translateX(-10800%); }
+  8%   { transform: skewX(-45deg) translateX(24000%); }
+  100% { transform: skewX(-45deg) translateX(24000%); }
 }
 
 /* A — Gradiente statico */
@@ -91,10 +92,10 @@ body {
   position: absolute;
   top: -20%;
   left: 0;
-  width: 25%;
+  width: 1%;
   height: 140%;
   background: linear-gradient(90deg, transparent 0%, rgba(255,255,220,0.55) 50%, transparent 100%);
-  animation: gold-shimmer var(--gold-shimmer-speed) ease-in-out infinite;
+  animation: gold-shimmer var(--gold-shimmer-speed) linear infinite;
 }
 
 /* Variante per elementi strutturali (footer, header) dove overflow:hidden
@@ -123,10 +124,10 @@ body {
   position: absolute;
   top: -20%;
   left: 0;
-  width: 25%;
+  width: 1%;
   height: 140%;
   background: linear-gradient(90deg, transparent 0%, rgba(255,255,220,0.55) 50%, transparent 100%);
-  animation: gold-shimmer var(--gold-shimmer-speed) ease-in-out infinite;
+  animation: gold-shimmer var(--gold-shimmer-speed) linear infinite;
 }
 
 /* C — Oro spazzolato + riflesso radiale + shimmer */
@@ -163,10 +164,10 @@ body {
   position: absolute;
   top: -20%;
   left: 0;
-  width: 20%;
+  width: 1%;
   height: 140%;
   background: linear-gradient(90deg, transparent 0%, rgba(255,255,230,0.6) 50%, transparent 100%);
-  animation: gold-shimmer var(--gold-shimmer-speed) ease-in-out infinite;
+  animation: gold-shimmer var(--gold-shimmer-speed) linear infinite;
   animation-delay: calc(var(--gold-shimmer-speed) / -2);
 }
 
@@ -209,12 +210,13 @@ body {
    Più alto = più lento (es. 6s lento, 2s veloce)
    ───────────────────────────────────────── */
 :root {
-  --silver-shimmer-speed: 25s;
+  --silver-shimmer-speed: 5s;
 }
 
 @keyframes silver-shimmer {
-  0%   { transform: skewX(-45deg) translateX(-150%); }
-  100% { transform: skewX(-45deg) translateX(500%); }
+  0%   { transform: skewX(-45deg) translateX(-10800%); }
+  8%   { transform: skewX(-45deg) translateX(24000%); }
+  100% { transform: skewX(-45deg) translateX(24000%); }
 }
 
 /* A — Gradiente argento statico */
@@ -251,10 +253,10 @@ body {
   position: absolute;
   top: -20%;
   left: 0;
-  width: 25%;
+  width: 1%;
   height: 140%;
   background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.55) 50%, transparent 100%);
-  animation: silver-shimmer var(--silver-shimmer-speed) ease-in-out infinite;
+  animation: silver-shimmer var(--silver-shimmer-speed) linear infinite;
 }
 
 /* Variante safe per elementi strutturali */
@@ -282,10 +284,10 @@ body {
   position: absolute;
   top: -20%;
   left: 0;
-  width: 25%;
+  width: 1%;
   height: 140%;
   background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.55) 50%, transparent 100%);
-  animation: silver-shimmer var(--silver-shimmer-speed) ease-in-out infinite;
+  animation: silver-shimmer var(--silver-shimmer-speed) linear infinite;
 }
 
 /* C — Argento spazzolato + riflesso radiale + shimmer */
@@ -322,10 +324,10 @@ body {
   position: absolute;
   top: -20%;
   left: 0;
-  width: 20%;
+  width: 1%;
   height: 140%;
   background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.65) 50%, transparent 100%);
-  animation: silver-shimmer var(--silver-shimmer-speed) ease-in-out infinite;
+  animation: silver-shimmer var(--silver-shimmer-speed) linear infinite;
   animation-delay: calc(var(--silver-shimmer-speed) / -2);
 }
 
@@ -369,10 +371,10 @@ body {
   position: absolute;
   top: -20%;
   left: 0;
-  width: 25%;
+  width: 1%;
   height: 140%;
   background: linear-gradient(90deg, transparent 0%, rgba(255,255,220,0.55) 50%, transparent 100%);
-  animation: gold-shimmer var(--gold-shimmer-speed) ease-in-out infinite;
+  animation: gold-shimmer var(--gold-shimmer-speed) linear infinite;
 }
 
 .class_gold_B_inv_safe {
@@ -422,10 +424,10 @@ body {
   position: absolute;
   top: -20%;
   left: 0;
-  width: 20%;
+  width: 1%;
   height: 140%;
   background: linear-gradient(90deg, transparent 0%, rgba(255,255,230,0.6) 50%, transparent 100%);
-  animation: gold-shimmer var(--gold-shimmer-speed) ease-in-out infinite;
+  animation: gold-shimmer var(--gold-shimmer-speed) linear infinite;
   animation-delay: calc(var(--gold-shimmer-speed) / -2);
 }
 
@@ -481,10 +483,10 @@ body {
   position: absolute;
   top: -20%;
   left: 0;
-  width: 25%;
+  width: 1%;
   height: 140%;
   background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.55) 50%, transparent 100%);
-  animation: silver-shimmer var(--silver-shimmer-speed) ease-in-out infinite;
+  animation: silver-shimmer var(--silver-shimmer-speed) linear infinite;
 }
 
 .class_silver_B_inv_safe {
@@ -534,10 +536,10 @@ body {
   position: absolute;
   top: -20%;
   left: 0;
-  width: 20%;
+  width: 1%;
   height: 140%;
   background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.65) 50%, transparent 100%);
-  animation: silver-shimmer var(--silver-shimmer-speed) ease-in-out infinite;
+  animation: silver-shimmer var(--silver-shimmer-speed) linear infinite;
   animation-delay: calc(var(--silver-shimmer-speed) / -2);
 }
 

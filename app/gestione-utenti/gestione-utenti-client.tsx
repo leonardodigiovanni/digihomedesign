@@ -131,33 +131,37 @@ function RoleRow({ user, isSelf }: { user: User; isSelf: boolean }) {
         </form>
       </td>
       <td style={{ padding: '10px 12px' }}>
-        <form action={roleAction} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <input type="hidden" name="username" value={user.username} />
-          <select
-            name="role"
-            value={selectedRole}
-            onChange={e => setSelectedRole(e.target.value)}
-            style={{
-              padding: '5px 8px', fontSize: 13, border: '1px solid #ccc',
-              borderRadius: 5, fontFamily: 'inherit', background: '#fff', cursor: 'pointer',
-            }}
-          >
-            {ALL_ASSIGNABLE_ROLES.map(r => (
-              <option key={r} value={r}>{ROLE_LABELS[r] ?? r}</option>
-            ))}
-          </select>
-          <button
-            type="submit"
-            disabled={!dirty || rolePending}
-            className={!dirty || rolePending ? 'btn-gray' : 'btn-green'}
-            style={{ padding: '5px 12px', fontSize: 12, borderRadius: 5, fontFamily: 'inherit' }}
-          >
-            {rolePending ? '...' : 'Salva'}
-          </button>
-          {roleResult && !roleResult.ok && (
-            <span style={{ fontSize: 12, color: '#c00' }}>{roleResult.error}</span>
-          )}
-        </form>
+        {isSelf ? (
+          <span style={{ fontSize: 12, color: '#aaa', fontStyle: 'italic' }}>Non modificabile</span>
+        ) : (
+          <form action={roleAction} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <input type="hidden" name="username" value={user.username} />
+            <select
+              name="role"
+              value={selectedRole}
+              onChange={e => setSelectedRole(e.target.value)}
+              style={{
+                padding: '5px 8px', fontSize: 13, border: '1px solid #ccc',
+                borderRadius: 5, fontFamily: 'inherit', background: '#fff', cursor: 'pointer',
+              }}
+            >
+              {ALL_ASSIGNABLE_ROLES.map(r => (
+                <option key={r} value={r}>{ROLE_LABELS[r] ?? r}</option>
+              ))}
+            </select>
+            <button
+              type="submit"
+              disabled={!dirty || rolePending}
+              className={!dirty || rolePending ? 'btn-gray' : 'btn-green'}
+              style={{ padding: '5px 12px', fontSize: 12, borderRadius: 5, fontFamily: 'inherit' }}
+            >
+              {rolePending ? '...' : 'Salva'}
+            </button>
+            {roleResult && !roleResult.ok && (
+              <span style={{ fontSize: 12, color: '#c00' }}>{roleResult.error}</span>
+            )}
+          </form>
+        )}
       </td>
     </tr>
   )

@@ -25,6 +25,11 @@ export async function changeUserRole(
   const newRole  = (formData.get('role') as string)?.trim()
 
   if (!username || !newRole) return { ok: false, error: 'Dati mancanti.' }
+
+  const currentUser = cookieStore.get('session_user')?.value
+  if (username === currentUser) {
+    return { ok: false, error: 'Non puoi modificare il tuo stesso ruolo.' }
+  }
   if (!ALL_ROLES.includes(newRole)) {
     return { ok: false, error: 'Ruolo non valido.' }
   }

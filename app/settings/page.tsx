@@ -22,15 +22,13 @@ export default async function Page() {
 
       {/* Pannello pagine di test */}
       <div style={{
-        background: '#1a1a2e',
-        border: '1px solid #333',
+        background: '#fff',
+        border: '1px solid #e0e0e0',
         borderRadius: 10,
-        padding: '16px 20px',
+        padding: '24px 28px 28px',
         marginBottom: 32,
       }}>
-        <p style={{ fontSize: 12, fontWeight: 700, color: '#888', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 12 }}>
-          Pagine di test (solo admin)
-        </p>
+        <h3 style={{ fontSize: 15, fontWeight: 600, margin: '0 0 12px' }}>Pagine di Test</h3>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
           {testPages.map(({ label, href }) => (
             <Link key={href} href={href} style={{

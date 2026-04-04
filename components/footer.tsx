@@ -166,51 +166,46 @@ export default function Footer({
         ...(isFixedEffect || isRgbEffect ? {} : { background: `rgba(${footerBg.r},${footerBg.g},${footerBg.b},${footerBg.a / 100})` }),
         borderTop: `1px solid ${borderColor}`,
         padding: '28px 24px 16px',
-        ...(isRgbEffect ? { position: 'relative' } : {}),
+        position: 'relative',
       }}
     >
-      {shimmerClass && <div className={shimmerClass} />}
       {radialBg && (
         <div style={{ position: 'absolute', inset: 0, background: radialBg, pointerEvents: 'none', zIndex: 0 }} />
       )}
+      {shimmerClass && <div className={shimmerClass} />}
 
       <div style={{ position: 'relative', zIndex: 1 }}>
-        {/* Sezione a due colonne */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px 48px', marginBottom: 24 }}>
-
-          {/* Colonna sinistra: dati aziendali */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            {infoRows.map(({ label, value }) => (
-              <div key={label} style={{ fontSize: 13, color: tc.value, lineHeight: 1.5 }}>
-                <span style={{ fontWeight: 600, color: tc.label }}>{label}:</span> {value}
-              </div>
-            ))}
-          </div>
-
-          {/* Colonna destra: icone social */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'flex-end' }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: tc.title }}>Seguici</span>
-            <div style={{ display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap', background: '#fff', borderRadius: 10, padding: '8px 14px' }}>
-              {socials.map(({ label, href, icon }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={label}
-                  title={label}
-                  className="footer-social-icon"
-                  style={{ display: 'flex', alignItems: 'center' }}
-                >
-                  {icon}
-                </a>
-              ))}
+        {/* Dati aziendali */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 24 }}>
+          {infoRows.map(({ label, value }) => (
+            <div key={label} style={{ fontSize: 13, color: tc.value, lineHeight: 1.5 }}>
+              <span style={{ fontWeight: 600, color: tc.label }}>{label}:</span> {value}
             </div>
-          </div>
+          ))}
         </div>
 
         {/* Separatore */}
-        <div style={{ borderTop: `1px solid ${tc.sep}`, marginBottom: 0 }} />
+        <div style={{ borderTop: `1px solid ${tc.sep}` }} />
+
+        {/* Icone social — in basso a destra */}
+        <div style={{ position: 'absolute', bottom: 0, right: 0, paddingBottom: 2 }}>
+          <div style={{ display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap', background: 'rgba(255,255,255,0.20)', backdropFilter: 'blur(6px)', borderRadius: 10, padding: '8px 14px' }}>
+            {socials.map(({ label, href, icon }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={label}
+                title={label}
+                className="footer-social-icon"
+                style={{ display: 'flex', alignItems: 'center' }}
+              >
+                {icon}
+              </a>
+            ))}
+          </div>
+        </div>
       </div>
     </footer>
 
@@ -224,12 +219,12 @@ export default function Footer({
       gap: 8,
     }}>
       <p style={{ textAlign: 'center', fontSize: 13, color: '#aaa', margin: 0 }}>
-        © 2026
+        © 2026  -  DIGI Home Design S.R.L.
       </p>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/images/dgt.png" alt="logo" style={{ height: 46, width: 'auto', display: 'inline-block', verticalAlign: 'middle' }} />
       <p style={{ textAlign: 'center', fontSize: 13, color: '#aaa', margin: 0 }}>
-        DIGI Home Design SRL — tutti i diritti riservati
+        Tutti i diritti sono riservati all&apos;autore
       </p>
     </div>
     </>
