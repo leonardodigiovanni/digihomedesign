@@ -93,7 +93,7 @@ export async function duplicaAnno(_: unknown, formData: FormData) {
 
   await db.execute(
     'INSERT INTO adempimenti (descrizione, ente, periodo, data_scadenza, incaricato, stato, anno, ricorrente, note) VALUES (?,?,?,?,?,?,?,?,?)',
-    [r.descrizione, r.ente, r.periodo, r.data_scadenza, r.incaricato, 'da_fare', nuovoAnno, r.ricorrente, r.note]
+    [r.descrizione, r.ente, r.periodo, r.data_scadenza, r.incaricato, 'da_fare', nuovoAnno, r.ricorrente, r.note] as unknown[]
   )
   await db.end()
   revalidatePath('/adempimenti')
