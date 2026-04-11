@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { changeUserRole, toggleUserActive, toggleCantieriCliente, toggleOrdiniCliente, type ChangeRoleResult, type ToggleActiveResult, type ToggleCantieriResult, type ToggleOrdiniResult } from './actions'
+import { changeUserRole, toggleUserActive, toggleCantieriCliente, toggleOrdiniCliente, changePassword, type ChangeRoleResult, type ToggleActiveResult, type ToggleCantieriResult, type ToggleOrdiniResult, type ChangePasswordResult } from './actions'
 
 type User = {
   username: string
@@ -14,6 +14,7 @@ type User = {
   is_active: number
   cantieri_visibili: number
   miei_ordini_visibili: number
+  password: string
 }
 
 const ALL_ASSIGNABLE_ROLES = [
@@ -56,6 +57,49 @@ const ROLE_COLORS: Record<string, string> = {
   direttore:      '#a07b5a',
   marketing:      '#8a6b8f',
   email:          '#6b7ba0',
+}
+
+function PasswordCell({ user }: { user: User }) {
+  const router = useRouter()
+  const [editing, setEditing] = useState(false)
+  const [val, setVal]         = useState(user.password)
+  const [result, action, pending] = useActionState<ChangePasswordResult | null, FormData>(changePassword, null)
+
+  useEffect(() => {
+    if (result?.ok) { router.refresh(); setEditing(false) }
+  }, [result])
+
+  if (!editing) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <span style={{ fontFamily: 'monospace', fontSize: 13, color: '#444', background: '#f5f5f5', padding: '2px 8px', borderRadius: 4 }}>
+          {user.password}
+        </span>
+        <button onClick={() => setEditing(true)}
+          style={{ background: 'none', border: '1px solid #ccc', borderRadius: 4, padding: '2px 7px', fontSize: 12, cursor: 'pointer', color: '#666' }}>
+          ✎
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <form action={action} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+      <input type="hidden" name="username" value={user.username} />
+      <input name="password" type="text" value={val} onChange={e => setVal(e.target.value)}
+        autoFocus required minLength={4}
+        style={{ width: 130, padding: '4px 8px', fontSize: 13, border: '1px solid #4a8fa8', borderRadius: 4, fontFamily: 'monospace' }} />
+      <button type="submit" disabled={pending} className={pending ? 'btn-gray' : 'btn-green'}
+        style={{ padding: '3px 10px', fontSize: 12, borderRadius: 4, fontFamily: 'inherit' }}>
+        {pending ? '…' : '✓'}
+      </button>
+      <button type="button" onClick={() => { setEditing(false); setVal(user.password) }}
+        style={{ background: 'none', border: '1px solid #ccc', borderRadius: 4, padding: '3px 7px', fontSize: 12, cursor: 'pointer', color: '#888' }}>
+        ✕
+      </button>
+      {result && !result.ok && <span style={{ fontSize: 11, color: '#c00' }}>{result.error}</span>}
+    </form>
+  )
 }
 
 type SortCol = 'username' | 'nome' | 'email' | 'role' | 'is_active'
@@ -186,6 +230,9 @@ function RoleRow({ user, isSelf, hasClienti }: { user: User; isSelf: boolean; ha
           )}
         </td>
       )}
+      <td style={{ padding: '10px 12px' }}>
+        <PasswordCell user={user} />
+      </td>
       <td style={{ padding: '10px 12px' }}>
         {isSelf ? (
           <span style={{ fontSize: 12, color: '#aaa', fontStyle: 'italic' }}>Non modificabile</span>
@@ -348,13 +395,14 @@ export default function GestioneUtentiClient({ users, currentUser }: { users: Us
                 {hasClienti && (
                   <th style={{ ...thStyle, cursor: 'default' }}>I Miei Ordini</th>
                 )}
+                <th style={{ ...thStyle, cursor: 'default' }}>Password</th>
                 <th style={{ ...thStyle, cursor: 'default' }}>Modifica ruolo</th>
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={hasClienti ? 9 : 7} style={{ padding: '24px', textAlign: 'center', color: '#aaa', fontSize: 14 }}>
+                  <td colSpan={hasClienti ? 10 : 8} style={{ padding: '24px', textAlign: 'center', color: '#aaa', fontSize: 14 }}>
                     Nessun utente trovato.
                   </td>
                 </tr>

@@ -48,6 +48,36 @@ export async function changeUserRole(
   return { ok: true }
 }
 
+export type ChangePasswordResult =
+  | { ok: true }
+  | { ok: false; error: string }
+
+export async function changePassword(
+  _prev: ChangePasswordResult | null,
+  formData: FormData
+): Promise<ChangePasswordResult> {
+  const cookieStore = await cookies()
+  if (cookieStore.get('session_role')?.value !== 'admin') redirect('/')
+
+  const username = (formData.get('username') as string)?.trim()
+  const password = (formData.get('password') as string) ?? ''
+
+  if (!username) return { ok: false, error: 'Username mancante.' }
+  if (password.length < 4) return { ok: false, error: 'Password troppo corta (min 4 caratteri).' }
+
+  const conn = await getConnection()
+  try {
+    const [res] = await conn.execute(
+      'UPDATE users SET password = ? WHERE username = ?',
+      [password, username]
+    ) as [{ affectedRows: number }, unknown]
+    if (res.affectedRows === 0) return { ok: false, error: 'Utente non trovato.' }
+    return { ok: true }
+  } finally {
+    await conn.end()
+  }
+}
+
 export type ToggleCantieriResult =
   | { ok: true; newValue: number }
   | { ok: false; error: string }
