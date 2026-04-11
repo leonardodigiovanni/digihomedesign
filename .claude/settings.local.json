@@ -22,7 +22,12 @@
       "Bash(/dev/null:*)",
       "Bash(/c/Users/User/Desktop/SITO/sito-cursor/.env.local:*)",
       "Bash(echo \"exit: $?\")",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(grep -h \"CREATE TABLE\\\\|INSERT INTO\\\\|FROM\\\\|UPDATE\" \"C:\\\\Users\\\\User\\\\Desktop\\\\SITO\\\\sito-cursor\"/app/*/actions.ts)",
+      "Bash(python3 -c ':*)",
+      "Bash(python -c ':*)"
     ]
   }
 }

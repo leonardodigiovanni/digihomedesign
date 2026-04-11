@@ -22,10 +22,55 @@ async function getOrdini(): Promise<OrdineFornitore[]> {
         updated_at     DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       )
     `)
+    await conn.execute(`ALTER TABLE ordini_fornitori ADD COLUMN qta DECIMAL(10,3) NOT NULL DEFAULT 1`).catch(() => {})
+    await conn.execute(`ALTER TABLE ordini_fornitori ADD COLUMN prezzo_unitario DECIMAL(10,2) NOT NULL DEFAULT 0`).catch(() => {})
+    await conn.execute(`ALTER TABLE ordini_fornitori ADD COLUMN aliq_sconto DECIMAL(5,2) NOT NULL DEFAULT 0`).catch(() => {})
+    await conn.execute(`ALTER TABLE ordini_fornitori ADD COLUMN aliq_iva DECIMAL(5,2) NOT NULL DEFAULT 22`).catch(() => {})
+    await conn.execute(`ALTER TABLE ordini_fornitori ADD COLUMN fatturato TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await conn.execute(`ALTER TABLE ordini_fornitori ADD COLUMN pagato TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await conn.execute(`ALTER TABLE ordini_fornitori ADD COLUMN stato_consegna VARCHAR(30) NOT NULL DEFAULT 'non_consegnato'`).catch(() => {})
+    await conn.execute(`ALTER TABLE ordini_fornitori ADD COLUMN data_consegna_stimata DATE NULL`).catch(() => {})
+    await conn.execute(`ALTER TABLE ordini_fornitori ADD COLUMN data_consegna DATE NULL`).catch(() => {})
+    await conn.execute(`ALTER TABLE ordini_fornitori ADD COLUMN ultimo_sollecito DATETIME NULL`).catch(() => {})
+    await conn.execute(`ALTER TABLE ordini_fornitori ADD COLUMN note TEXT NULL`).catch(() => {})
+    await conn.execute(`ALTER TABLE ordini_fornitori ADD COLUMN email_fornitore VARCHAR(255) NOT NULL DEFAULT ''`).catch(() => {})
+
     const [rows] = await conn.execute(
-      'SELECT id,numero_ordine,fornitore,descrizione,stato,totale,data_ordine,created_by,created_at FROM ordini_fornitori ORDER BY data_ordine DESC'
-    ) as [OrdineFornitore[], unknown]
-    return rows
+      `SELECT o.id, o.numero_ordine, o.fornitore, o.descrizione, o.data_ordine, o.created_by,
+              o.qta, o.prezzo_unitario, o.aliq_sconto, o.aliq_iva, o.totale,
+              o.fatturato, o.pagato, o.stato_consegna,
+              o.data_consegna_stimata, o.data_consegna, o.ultimo_sollecito,
+              o.note, o.email_fornitore,
+              COALESCE(f.email, '') AS email_anagrafica,
+              COALESCE(f.pec, '')   AS pec_anagrafica
+       FROM ordini_fornitori o
+       LEFT JOIN fornitori f ON f.ragione_sociale = o.fornitore
+       ORDER BY o.data_ordine DESC, o.id DESC`
+    ) as [Record<string, unknown>[], unknown]
+
+    return rows.map(r => ({
+      id:                    Number(r.id),
+      numero_ordine:         String(r.numero_ordine ?? ''),
+      fornitore:             String(r.fornitore ?? ''),
+      descrizione:           String(r.descrizione ?? ''),
+      data_ordine:           r.data_ordine instanceof Date ? r.data_ordine.toISOString().slice(0,10) : String(r.data_ordine ?? ''),
+      created_by:            String(r.created_by ?? ''),
+      qta:                   parseFloat(String(r.qta ?? 1)),
+      prezzo_unitario:       parseFloat(String(r.prezzo_unitario ?? 0)),
+      aliq_sconto:           parseFloat(String(r.aliq_sconto ?? 0)),
+      aliq_iva:              parseFloat(String(r.aliq_iva ?? 22)),
+      totale:                parseFloat(String(r.totale ?? 0)),
+      fatturato:             Number(r.fatturato ?? 0),
+      pagato:                Number(r.pagato ?? 0),
+      stato_consegna:        String(r.stato_consegna ?? 'non_consegnato'),
+      data_consegna_stimata: r.data_consegna_stimata instanceof Date ? r.data_consegna_stimata.toISOString().slice(0,10) : (r.data_consegna_stimata ? String(r.data_consegna_stimata) : null),
+      data_consegna:         r.data_consegna instanceof Date ? r.data_consegna.toISOString().slice(0,10) : (r.data_consegna ? String(r.data_consegna) : null),
+      ultimo_sollecito:      r.ultimo_sollecito instanceof Date ? r.ultimo_sollecito.toISOString() : (r.ultimo_sollecito ? String(r.ultimo_sollecito) : null),
+      note:                  r.note ? String(r.note) : null,
+      email_fornitore:       String(r.email_fornitore ?? ''),
+      email_anagrafica:      String(r.email_anagrafica ?? ''),
+      pec_anagrafica:        String(r.pec_anagrafica ?? ''),
+    })) as OrdineFornitore[]
   } finally { await conn.end() }
 }
 

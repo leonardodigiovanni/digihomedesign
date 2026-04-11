@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { changeUserRole, toggleUserActive, type ChangeRoleResult, type ToggleActiveResult } from './actions'
+import { changeUserRole, toggleUserActive, toggleCantieriCliente, toggleOrdiniCliente, type ChangeRoleResult, type ToggleActiveResult, type ToggleCantieriResult, type ToggleOrdiniResult } from './actions'
 
 type User = {
   username: string
@@ -12,6 +12,8 @@ type User = {
   cellulare: string
   role: string
   is_active: number
+  cantieri_visibili: number
+  miei_ordini_visibili: number
 }
 
 const ALL_ASSIGNABLE_ROLES = [
@@ -58,16 +60,18 @@ const ROLE_COLORS: Record<string, string> = {
 
 type SortCol = 'username' | 'nome' | 'email' | 'role' | 'is_active'
 
-function RoleRow({ user, isSelf }: { user: User; isSelf: boolean }) {
+function RoleRow({ user, isSelf, hasClienti }: { user: User; isSelf: boolean; hasClienti: boolean }) {
   const router = useRouter()
   const [selectedRole, setSelectedRole] = useState(user.role)
   const dirty = selectedRole !== user.role
   const [roleResult, roleAction, rolePending] = useActionState<ChangeRoleResult | null, FormData>(changeUserRole, null)
   const [toggleResult, toggleAction, togglePending] = useActionState<ToggleActiveResult | null, FormData>(toggleUserActive, null)
+  const [cantieriResult, cantieriAction, cantieriPending] = useActionState<ToggleCantieriResult | null, FormData>(toggleCantieriCliente, null)
+  const [ordiniResult, ordiniAction, ordiniPending]       = useActionState<ToggleOrdiniResult | null, FormData>(toggleOrdiniCliente, null)
 
   useEffect(() => {
-    if (roleResult?.ok || toggleResult?.ok) router.refresh()
-  }, [roleResult, toggleResult])
+    if (roleResult?.ok || toggleResult?.ok || cantieriResult?.ok || ordiniResult?.ok) router.refresh()
+  }, [roleResult, toggleResult, cantieriResult, ordiniResult])
 
   const badgeStyle: React.CSSProperties = {
     display: 'inline-block',
@@ -130,6 +134,58 @@ function RoleRow({ user, isSelf }: { user: User; isSelf: boolean }) {
           )}
         </form>
       </td>
+      {hasClienti && (
+        <td style={{ padding: '10px 12px' }}>
+          {user.role === 'cliente' ? (
+            <form action={cantieriAction} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <input type="hidden" name="username" value={user.username} />
+              <span style={{
+                display: 'inline-block', padding: '2px 8px', borderRadius: 10,
+                fontSize: 11, fontWeight: 600, color: '#fff',
+                background: user.cantieri_visibili ? '#4a8f6b' : '#888',
+              }}>
+                {user.cantieri_visibili ? 'Visibile' : 'Nascosto'}
+              </span>
+              <button
+                type="submit"
+                disabled={cantieriPending}
+                className={cantieriPending ? 'btn-gray' : user.cantieri_visibili ? 'btn-red' : 'btn-green'}
+                style={{ padding: '4px 10px', fontSize: 12, borderRadius: 5, fontFamily: 'inherit' }}
+              >
+                {cantieriPending ? '...' : user.cantieri_visibili ? 'Nascondi' : 'Abilita'}
+              </button>
+            </form>
+          ) : (
+            <span style={{ fontSize: 12, color: '#ccc' }}>—</span>
+          )}
+        </td>
+      )}
+      {hasClienti && (
+        <td style={{ padding: '10px 12px' }}>
+          {user.role === 'cliente' ? (
+            <form action={ordiniAction} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <input type="hidden" name="username" value={user.username} />
+              <span style={{
+                display: 'inline-block', padding: '2px 8px', borderRadius: 10,
+                fontSize: 11, fontWeight: 600, color: '#fff',
+                background: user.miei_ordini_visibili ? '#4a8f6b' : '#888',
+              }}>
+                {user.miei_ordini_visibili ? 'Visibile' : 'Nascosto'}
+              </span>
+              <button
+                type="submit"
+                disabled={ordiniPending}
+                className={ordiniPending ? 'btn-gray' : user.miei_ordini_visibili ? 'btn-red' : 'btn-green'}
+                style={{ padding: '4px 10px', fontSize: 12, borderRadius: 5, fontFamily: 'inherit' }}
+              >
+                {ordiniPending ? '...' : user.miei_ordini_visibili ? 'Nascondi' : 'Abilita'}
+              </button>
+            </form>
+          ) : (
+            <span style={{ fontSize: 12, color: '#ccc' }}>—</span>
+          )}
+        </td>
+      )}
       <td style={{ padding: '10px 12px' }}>
         {isSelf ? (
           <span style={{ fontSize: 12, color: '#aaa', fontStyle: 'italic' }}>Non modificabile</span>
@@ -183,6 +239,8 @@ export default function GestioneUtentiClient({ users, currentUser }: { users: Us
   const [roleFilter, setRoleFilter] = useState('')
   const [sortCol, setSortCol] = useState<SortCol>('username')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
+
+  const hasClienti = users.some(u => u.role === 'cliente')
 
   function handleSort(col: SortCol) {
     if (col === sortCol) {
@@ -284,18 +342,24 @@ export default function GestioneUtentiClient({ users, currentUser }: { users: Us
                 <th style={thStyle} onClick={() => handleSort('is_active')}>
                   Stato <SortIcon col="is_active" sortCol={sortCol} sortDir={sortDir} />
                 </th>
+                {hasClienti && (
+                  <th style={{ ...thStyle, cursor: 'default' }}>I Miei Cantieri</th>
+                )}
+                {hasClienti && (
+                  <th style={{ ...thStyle, cursor: 'default' }}>I Miei Ordini</th>
+                )}
                 <th style={{ ...thStyle, cursor: 'default' }}>Modifica ruolo</th>
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={7} style={{ padding: '24px', textAlign: 'center', color: '#aaa', fontSize: 14 }}>
+                  <td colSpan={hasClienti ? 9 : 7} style={{ padding: '24px', textAlign: 'center', color: '#aaa', fontSize: 14 }}>
                     Nessun utente trovato.
                   </td>
                 </tr>
               ) : (
-                filtered.map(u => <RoleRow key={u.username} user={u} isSelf={u.username === currentUser} />)
+                filtered.map(u => <RoleRow key={u.username} user={u} isSelf={u.username === currentUser} hasClienti={hasClienti} />)
               )}
             </tbody>
           </table>

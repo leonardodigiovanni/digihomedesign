@@ -645,6 +645,41 @@ body {
   pointer-events: none;
 }
 
+/* Arancione — sollecito / avviso */
+.btn-orange {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px,
+      transparent 1px, transparent 4px
+    ),
+    linear-gradient(135deg,
+      #7a3300 0%, #b34d00 20%, #e07020 45%, #b34d00 80%, #7a3300 100%
+    ) !important;
+  color: #ffe8cc !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(140,60,0,0.45), inset 0 1px 0 rgba(255,200,120,0.2);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+.btn-orange:hover:not(:disabled) {
+  filter: brightness(1.14);
+}
+.btn-orange::after {
+  content: '';
+  position: absolute;
+  top: -30%;
+  left: 0;
+  width: 35%;
+  height: 160%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,210,140,0.45) 50%, transparent 100%);
+  animation: btn-shimmer var(--btn-shimmer-speed) ease-in-out infinite;
+  animation-delay: calc(var(--btn-shimmer-speed) / -3);
+  pointer-events: none;
+}
+
 /* Grigio — disabilitato */
 .btn-gray {
   background:

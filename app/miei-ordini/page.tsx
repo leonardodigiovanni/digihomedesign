@@ -8,25 +8,28 @@ import MieiOrdiniClient, { type OrdineCliente } from './client'
 async function getMieiOrdini(username: string): Promise<OrdineCliente[]> {
   const conn = await getConnection()
   try {
-    await conn.execute(`
-      CREATE TABLE IF NOT EXISTS ordini_ricevuti (
-        id             INT AUTO_INCREMENT PRIMARY KEY,
-        numero_ordine  VARCHAR(50)   NOT NULL DEFAULT '',
-        cliente        VARCHAR(100)  NOT NULL,
-        descrizione    TEXT          NOT NULL,
-        stato          VARCHAR(20)   NOT NULL DEFAULT 'nuovo',
-        totale         DECIMAL(10,2) NOT NULL DEFAULT 0,
-        data_ordine    DATE          NOT NULL,
-        created_at     DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        updated_at     DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-      )
-    `)
-    const [rows] = await conn.execute(
-      'SELECT id,numero_ordine,cliente,descrizione,stato,totale,data_ordine,created_at FROM ordini_ricevuti WHERE cliente=? ORDER BY data_ordine DESC',
-      [username]
-    ) as [OrdineCliente[], unknown]
+    // Migrations
+    try { await conn.execute('ALTER TABLE ordini_ricevuti ADD COLUMN visibile_cliente TINYINT(1) NOT NULL DEFAULT 1') } catch { /* esiste già */ }
+    try { await conn.execute('ALTER TABLE ordini_ricevuti ADD COLUMN cliente_id INT NULL') } catch { /* esiste già */ }
+
+    // Cerca email dell'utente loggato
+    const [userRows] = await conn.execute(
+      'SELECT email FROM users WHERE username = ? LIMIT 1', [username]
+    ) as [{ email: string }[], unknown]
+    const email = userRows[0]?.email ?? ''
+    if (!email) return []
+
+    // JOIN su clienti.email per trovare gli ordini del cliente
+    const [rows] = await conn.execute(`
+      SELECT o.id, o.numero_ordine, o.cliente, o.descrizione, o.stato, o.totale, o.data_ordine, o.created_at
+      FROM ordini_ricevuti o
+      INNER JOIN clienti c ON c.id = o.cliente_id AND c.email = ?
+      WHERE o.visibile_cliente = 1
+      ORDER BY o.data_ordine DESC
+    `, [email]) as [OrdineCliente[], unknown]
     return rows
-  } finally { await conn.end() }
+  } catch { return [] }
+  finally { await conn.end() }
 }
 
 export default async function Page() {

@@ -8,6 +8,7 @@ const testPages = [
   { label: 'Test Sfondo Gold (A/B/C)',   href: '/test-gold'   },
   { label: 'Test Sfondo Silver (A/B/C)', href: '/test-silver' },
   { label: 'Test Sfondo RGB (A/B/C)',    href: '/test-rgb'    },
+  { label: 'Volantino',                  href: '/volantino'   },
 ]
 
 export default async function Page() {

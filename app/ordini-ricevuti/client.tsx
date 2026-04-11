@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { addOrdineRicevuto, updateStatoRicevuto, deleteOrdineRicevuto, addNota, deleteNota, type MutResult } from './actions'
+import { addOrdineRicevuto, updateStatoRicevuto, deleteOrdineRicevuto, addNota, deleteNota, toggleVisibileOrdine, type MutResult } from './actions'
 
 export type Nota = {
   id: number
@@ -11,15 +11,21 @@ export type Nota = {
   created_at: string
 }
 
+export type Cliente = {
+  id: number; nome: string; cognome: string; ragione_sociale: string; email: string
+}
+
 export type OrdineRicevuto = {
   id: number
   numero_ordine: string
   cliente: string
+  cliente_id: number | null
   descrizione: string
   stato: string
   totale: number
   data_ordine: string
   created_at: string
+  visibile_cliente: number
   note: Nota[]
 }
 
@@ -82,6 +88,27 @@ function StatoRow({ ordine }: { ordine: OrdineRicevuto }) {
           {pending ? '…' : '✓'}
         </button>
       )}
+    </form>
+  )
+}
+
+function ToggleVisibileBtn({ ordine }: { ordine: OrdineRicevuto }) {
+  const router = useRouter()
+  const [result, action, pending] = useActionState<MutResult | null, FormData>(toggleVisibileOrdine, null)
+  useEffect(() => { if (result?.ok) router.refresh() }, [result])
+  return (
+    <form action={action}>
+      <input type="hidden" name="id" value={ordine.id} />
+      <button type="submit" disabled={pending}
+        title={ordine.visibile_cliente ? 'Visibile al cliente — clicca per nascondere' : 'Nascosto al cliente — clicca per rendere visibile'}
+        style={{
+          padding: '3px 8px', fontSize: 12, fontFamily: 'inherit', cursor: 'pointer',
+          border: 'none', borderRadius: 4, fontWeight: 600,
+          background: ordine.visibile_cliente ? '#e8f5e9' : '#f5f5f5',
+          color: ordine.visibile_cliente ? '#2e7d32' : '#999',
+        }}>
+        {pending ? '…' : ordine.visibile_cliente ? '👁 Vis.' : '🔒 Nasco.'}
+      </button>
     </form>
   )
 }
@@ -180,6 +207,9 @@ function OrdineRow({ ordine, role, colCount }: { ordine: OrdineRicevuto; role: s
         <td style={{ padding: '8px 14px', textAlign: 'center' }} onClick={e => e.stopPropagation()}>
           <StatoRow ordine={ordine} />
         </td>
+        <td style={{ padding: '8px 14px', textAlign: 'center' }} onClick={e => e.stopPropagation()}>
+          <ToggleVisibileBtn ordine={ordine} />
+        </td>
         {role === 'admin' && (
           <td style={{ padding: '10px 14px', textAlign: 'center' }} onClick={e => e.stopPropagation()}>
             <DeleteOrdineBtn id={ordine.id} role={role} />
@@ -197,11 +227,17 @@ function OrdineRow({ ordine, role, colCount }: { ordine: OrdineRicevuto; role: s
   )
 }
 
-function AddModal({ onClose }: { onClose: () => void }) {
+function AddModal({ onClose, clienti }: { onClose: () => void; clienti: Cliente[] }) {
   const router = useRouter()
   const [result, formAction, pending] = useActionState<MutResult | null, FormData>(addOrdineRicevuto, null)
   useEffect(() => { if (result?.ok) { router.refresh(); onClose() } }, [result])
   const today = new Date().toISOString().slice(0, 10)
+
+  const inp: React.CSSProperties = {
+    padding: '8px 10px', fontSize: 14, border: '1px solid #ccc',
+    borderRadius: 6, fontFamily: 'inherit', width: '100%', boxSizing: 'border-box',
+  }
+
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
       onClick={e => { if (e.target === e.currentTarget) onClose() }}>
@@ -213,7 +249,17 @@ function AddModal({ onClose }: { onClose: () => void }) {
         <form action={formAction} style={{ display: 'flex', flexDirection: 'column', gap: 13 }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <F label="N° ordine" name="numero_ordine" type="text" placeholder="ORD-2026-001" />
-            <F label="Cliente (username) *" name="cliente" type="text" placeholder="es. mario.rossi" required />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+              <label style={{ fontSize: 13, fontWeight: 500, color: '#444' }}>Cliente *</label>
+              <select name="cliente_id" required style={inp}>
+                <option value="">— Seleziona cliente —</option>
+                {clienti.map(c => (
+                  <option key={c.id} value={c.id}>
+                    {c.ragione_sociale || `${c.cognome} ${c.nome}`.trim()}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
           <F label="Descrizione" name="descrizione" type="text" placeholder="Descrizione ordine…" />
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
@@ -251,7 +297,7 @@ function F({ label, name, type, placeholder, step, min, required, defaultValue }
 
 type SortCol = 'numero_ordine'|'cliente'|'stato'|'totale'|'data_ordine'
 
-export default function OrdiniRicevutiClient({ ordini, role }: { ordini: OrdineRicevuto[]; role: string }) {
+export default function OrdiniRicevutiClient({ ordini, clienti, role }: { ordini: OrdineRicevuto[]; clienti: Cliente[]; role: string }) {
   const [showModal, setShowModal] = useState(false)
   const [search, setSearch]       = useState('')
   const [statoFilter, setStatoFilter] = useState('')
@@ -285,11 +331,11 @@ export default function OrdiniRicevutiClient({ ordini, role }: { ordini: OrdineR
     { key: 'data_ordine',   label: 'Data' },
   ]
 
-  const colCount = cols.length + 2 + (role === 'admin' ? 1 : 0) // +desc +cambia_stato +elimina
+  const colCount = cols.length + 3 + (role === 'admin' ? 1 : 0) // +desc +cambia_stato +visibile +elimina
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      {showModal && <AddModal onClose={() => setShowModal(false)} />}
+      {showModal && <AddModal onClose={() => setShowModal(false)} clienti={clienti} />}
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
         <input type="text" placeholder="Cerca cliente, numero, descrizione…" value={search} onChange={e => setSearch(e.target.value)}
           style={{ flex: 1, minWidth: 200, padding: '8px 12px', fontSize: 14, border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit' }} />
@@ -321,6 +367,7 @@ export default function OrdiniRicevutiClient({ ordini, role }: { ordini: OrdineR
                 ))}
                 <th style={{ ...thStyle, cursor: 'default' }}>Descrizione</th>
                 <th style={{ ...thStyle, cursor: 'default' }}>Cambia stato</th>
+                <th style={{ ...thStyle, cursor: 'default' }}>Cliente</th>
                 {role === 'admin' && <th style={{ ...thStyle, cursor: 'default' }}>Azioni</th>}
               </tr>
             </thead>

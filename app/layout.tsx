@@ -5,6 +5,7 @@ import Footer from '@/components/footer'
 import InactivityGuard from '@/components/inactivity-guard'
 import { readSettings, type BgMode } from '@/lib/settings'
 import { rgbGradient, rgbGradientInv, rgbBrushedBackground, rgbBrushedBackgroundInv, rgbBoxShadow } from '@/lib/bg-utils'
+import { getConnection } from '@/lib/db'
 import './globals.css'
 
 const PAGE_EFFECT_CLASS: Record<string, string> = {
@@ -50,6 +51,25 @@ export default async function RootLayout({
   const role     = cookieStore.get('session_role')?.value ?? null
 
   const settings = readSettings()
+  let rolePermissions = settings.rolePermissions
+
+  // Per i clienti: verifica i flag per-utente per nascondere voci di menu
+  if (role === 'cliente' && username) {
+    try {
+      const db = await getConnection()
+      const [rows] = await db.query(
+        'SELECT cantieri_visibili, miei_ordini_visibili FROM users WHERE username = ? LIMIT 1', [username]
+      ) as [Record<string, unknown>[], unknown]
+      await db.end()
+      const cantieriVisibili = (rows[0]?.cantieri_visibili as number) ?? 1
+      const ordiniVisibili   = (rows[0]?.miei_ordini_visibili as number) ?? 1
+      let pagesCliente = rolePermissions.cliente ?? []
+      if (!cantieriVisibili) pagesCliente = pagesCliente.filter((id: number) => id !== 31)
+      if (!ordiniVisibili)   pagesCliente = pagesCliente.filter((id: number) => id !== 30)
+      rolePermissions = { ...rolePermissions, cliente: pagesCliente }
+    } catch { /* ignora — colonne potrebbero non esistere ancora */ }
+  }
+
   const { pageBgMode, pageBg } = settings
   const isPageEffect    = pageBgMode !== 'rgb'
   const isPageRgbEffect = pageBgMode.startsWith('rgb_')
@@ -84,8 +104,8 @@ export default async function RootLayout({
         )}
 
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100 }}>
-          <Header username={username} headerBg={settings.headerBg} headerBgMode={settings.headerBgMode} />
-          <Navbar role={role} disabledPages={settings.disabledPages} rolePermissions={settings.rolePermissions} />
+          <Header username={username} headerBg={settings.headerBg} headerBgMode={settings.headerBgMode} registrazioniDisabilitate={settings.registrazioniDisabilitate} />
+          <Navbar role={role} disabledPages={settings.disabledPages} rolePermissions={rolePermissions} />
         </div>
 
         <main style={{ flex: 1, padding: '32px 24px', paddingTop: 'calc(90px + 42px + 32px)' }}>

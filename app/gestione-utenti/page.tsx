@@ -8,10 +8,14 @@ export default async function Page() {
   if (cookieStore.get('session_role')?.value !== 'admin') redirect('/')
 
   const conn = await getConnection()
-  let users: { username: string; nome: string; cognome: string; email: string; cellulare: string; role: string; is_active: number }[] = []
+  // Migrazione: aggiunge colonne se non esistono
+  try { await conn.execute('ALTER TABLE users ADD COLUMN cantieri_visibili TINYINT(1) NOT NULL DEFAULT 1') } catch { /* esiste già */ }
+  try { await conn.execute('ALTER TABLE users ADD COLUMN miei_ordini_visibili TINYINT(1) NOT NULL DEFAULT 1') } catch { /* esiste già */ }
+
+  let users: { username: string; nome: string; cognome: string; email: string; cellulare: string; role: string; is_active: number; cantieri_visibili: number; miei_ordini_visibili: number }[] = []
   try {
     const [rows] = await conn.execute(
-      'SELECT username, nome, cognome, email, cellulare, role, is_active FROM users ORDER BY role, username'
+      'SELECT username, nome, cognome, email, cellulare, role, is_active, cantieri_visibili, miei_ordini_visibili FROM users ORDER BY role, username'
     )
     users = rows as typeof users
   } finally {

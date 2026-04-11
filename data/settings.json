@@ -1,66 +1,91 @@
 {
-  "inactivityMinutes": 20,
+  "inactivityMinutes": 120,
   "countdownSeconds": 10,
   "headerBg": {
-    "r": 241,
-    "g": 115,
-    "b": 51,
+    "r": 145,
+    "g": 85,
+    "b": 85,
     "a": 100
   },
-  "headerBgMode": "rgb",
+  "headerBgMode": "rgb_c",
   "footerBg": {
-    "r": 158,
-    "g": 103,
-    "b": 96,
+    "r": 0,
+    "g": 0,
+    "b": 0,
     "a": 100
   },
-  "footerBgMode": "rgb_c",
+  "footerBgMode": "gold_c",
   "pageBg": {
-    "r": 244,
-    "g": 138,
-    "b": 138,
+    "r": 0,
+    "g": 0,
+    "b": 0,
     "a": 81
   },
-  "pageBgMode": "gold_c",
-  "disabledPages": [],
-  "registrazioniDisabilitate": false,
+  "pageBgMode": "silver_c",
+  "disabledPages": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "registrazioniDisabilitate": true,
   "loginClientiDisabilitato": false,
   "loginDipendentiDisabilitato": false,
   "rolePermissions": {
     "cliente": [
+      27,
       30,
       31
     ],
     "dipendente": [
-      16
+      27,
+      28
     ],
     "ragioniere": [
       17,
-      21
+      21,
+      27
     ],
     "commercialista": [
       18,
-      22
+      22,
+      27
     ],
     "venditore": [
       23,
       24,
       25,
-      26
+      26,
+      27
     ],
     "operaio": [
       27
     ],
     "magazzino": [
-      16
+      16,
+      17,
+      27
     ],
     "direttore": [
+      27,
       28
     ],
     "marketing": [
+      27,
       29
     ],
     "email": [
+      27,
       32
     ]
   }

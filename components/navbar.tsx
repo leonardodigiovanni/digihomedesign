@@ -34,9 +34,8 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {} 
     return () => document.removeEventListener('mousedown', handleOutside)
   }, [])
 
-  const adminItems    = visibleAdminPages(role)
-  const internalItems = visibleInternalPages(role, rolePermissions)
-  const showClient    = true     // pagine 2-15 visibili a tutti (sito vetrina)
+  const adminItems         = visibleAdminPages(role)
+  const internalItems      = visibleInternalPages(role, rolePermissions).filter(p => !disabledPages.includes(p.id))
   const visibleClientPages = clientPages.filter(p => !disabledPages.includes(p.id))
 
   const isActive = (href: string) => {
@@ -83,7 +82,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {} 
       <div className="nav-bar">
         <Link href="/" style={linkStyle('/')}>Home</Link>
 
-        {showClient && (
+        {visibleClientPages.length > 0 && (
           <div ref={dropRef} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
             <button
               onClick={() => setSectionOpen(o => !o)}
@@ -165,7 +164,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {} 
         }}>
           <MobileLink href="/" label="Home" active={isActive('/')} />
 
-          {showClient && (
+          {visibleClientPages.length > 0 && (
             <>
               <div style={{ padding: '8px 16px 4px', fontSize: 11, fontWeight: 600, color: '#999', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                 Sezioni

@@ -42,9 +42,9 @@ const RADIAL_BG: Record<string, string> = {
 type TC = { label: string; value: string; title: string; sep: string }
 
 const STATIC_TEXT: Record<string, TC> = {
-  gold_a:   { label: '#fff', value: '#ddd', title: '#fff', sep: 'rgba(255,255,255,0.2)' },
-  gold_b:   { label: '#fff', value: '#ddd', title: '#fff', sep: 'rgba(255,255,255,0.2)' },
-  gold_c:   { label: '#fff', value: '#ddd', title: '#fff', sep: 'rgba(255,255,255,0.2)' },
+  gold_a:   { label: '#3a2000', value: '#5a3800', title: '#3a2000', sep: 'rgba(0,0,0,0.15)' },
+  gold_b:   { label: '#3a2000', value: '#5a3800', title: '#3a2000', sep: 'rgba(0,0,0,0.15)' },
+  gold_c:   { label: '#3a2000', value: '#5a3800', title: '#3a2000', sep: 'rgba(0,0,0,0.15)' },
   silver_a: { label: '#222', value: '#444', title: '#111', sep: 'rgba(0,0,0,0.15)' },
   silver_b: { label: '#222', value: '#444', title: '#111', sep: 'rgba(0,0,0,0.15)' },
   silver_c: { label: '#222', value: '#444', title: '#111', sep: 'rgba(0,0,0,0.15)' },
@@ -129,20 +129,20 @@ function IconLinkedIn() {
 }
 
 const socials = [
-  { label: 'WhatsApp',  href: '#', icon: <IconWhatsApp /> },
-  { label: 'Telegram',  href: '#', icon: <IconTelegram /> },
-  { label: 'Instagram', href: '#', icon: <IconInstagram /> },
-  { label: 'Facebook',  href: '#', icon: <IconFacebook /> },
-  { label: 'LinkedIn',  href: '#', icon: <IconLinkedIn /> },
+  { label: 'WhatsApp',  href: '', icon: <IconWhatsApp /> },
+  { label: 'Telegram',  href: '', icon: <IconTelegram /> },
+  { label: 'Instagram', href: '', icon: <IconInstagram /> },
+  { label: 'Facebook',  href: '', icon: <IconFacebook /> },
+  { label: 'LinkedIn',  href: '', icon: <IconLinkedIn /> },
 ]
 
 const infoRows = [
   { label: 'Azienda',      value: 'DIGI Home Design SRL' },
-  { label: 'Sede legale',  value: 'Via Esempio 1, 00100 Roma (RM)' },
-  { label: 'P.IVA',        value: '12345678901' },
-  { label: 'Email',        value: 'info@digihomedesign.it' },
-  { label: 'PEC',          value: 'digihomedesign@pec.it' },
-  { label: 'Telefono',     value: '+39 06 1234567' },
+  { label: 'Sede legale',  value: 'Via Roberto Antiochia 3, 90121 Palermo (PA)' },
+  { label: 'P.IVA',        value: '07407080824' },
+  { label: 'Email',        value: 'digi-home-design@libero.it' },
+  { label: 'PEC',          value: 'digi_home_design_srl@namirialpec.it' },
+  { label: 'Telefono',     value: '+39 3518716731' },
 ]
 
 export default function Footer({
@@ -190,7 +190,7 @@ export default function Footer({
         {/* Icone social — in basso a destra */}
         <div style={{ position: 'absolute', bottom: 0, right: 0, paddingBottom: 2 }}>
           <div style={{ display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap', background: 'rgba(255,255,255,0.20)', backdropFilter: 'blur(6px)', borderRadius: 10, padding: '8px 14px' }}>
-            {socials.map(({ label, href, icon }) => (
+            {socials.map(({ label, href, icon }) => href ? (
               <a
                 key={label}
                 href={href}
@@ -203,6 +203,16 @@ export default function Footer({
               >
                 {icon}
               </a>
+            ) : (
+              <span
+                key={label}
+                aria-label={label}
+                title={label}
+                className="footer-social-icon"
+                style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+              >
+                {icon}
+              </span>
             ))}
           </div>
         </div>

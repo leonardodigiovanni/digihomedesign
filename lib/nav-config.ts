@@ -43,17 +43,17 @@ export const internalPages: NavPage[] = [
   { id: 17, label: 'Fatture',                 href: '/fatture'     },
   { id: 18, label: 'Bilancio',                href: '/bilancio'    },
   { id: 21, label: 'Anagrafica Clienti',      href: '/anagrafica-clienti' },
-  { id: 22, label: 'Adempimenti',             href: '/interno/22'  },
-  { id: 23, label: 'Cataloghi',               href: '/interno/23'  },
+  { id: 22, label: 'Adempimenti',             href: '/adempimenti' },
+  { id: 23, label: 'Cataloghi',               href: '/cataloghi'   },
   { id: 24, label: 'Anagrafica Fornitori',    href: '/anagrafica-fornitori' },
-  { id: 25, label: 'Listini',                 href: '/interno/25'  },
+  { id: 25, label: 'Listini',                 href: '/listini'     },
   { id: 26, label: 'Ordini a Fornitori',      href: '/ordini-fornitori' },
-  { id: 27, label: 'Worklist',                href: '/interno/27'  },
-  { id: 28, label: 'Cantieri (staff)',         href: '/interno/28'  },
-  { id: 29, label: 'Marketing',               href: '/interno/29'  },
+  { id: 27, label: 'Worklist',                href: '/worklist'    },
+  { id: 28, label: 'Cantieri',                 href: '/cantieri'    },
+  { id: 29, label: 'Marketing',               href: '/marketing'   },
   { id: 30, label: 'I Miei Ordini',           href: '/miei-ordini' },
   { id: 35, label: 'Ordini Ricevuti',         href: '/ordini-ricevuti' },
-  { id: 31, label: 'I Miei Cantieri',         href: '/interno/31'  },
+  { id: 31, label: 'I Miei Cantieri',         href: '/cantieri'    },
   { id: 32, label: 'Email',                   href: '/email'       },
   { id: 33, label: 'Archivio',               href: '/archivio'    },
   { id: 34, label: 'Facsimili',              href: '/facsimili'   },
@@ -69,7 +69,8 @@ export function visibleInternalPages(
   rolePermissions: Record<string, number[]>
 ): NavPage[] {
   if (!role) return []
-  if (role === 'admin') return internalPages
+  // Admin vede tutto tranne le voci "personali" del cliente (id 31 = I Miei Cantieri, id 30 = I Miei Ordini)
+  if (role === 'admin') return internalPages.filter(p => p.id !== 31 && p.id !== 30)
   const allowed = rolePermissions[role] ?? []
   return internalPages.filter(p => allowed.includes(p.id))
 }

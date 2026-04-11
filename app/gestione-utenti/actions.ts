@@ -48,6 +48,69 @@ export async function changeUserRole(
   return { ok: true }
 }
 
+export type ToggleCantieriResult =
+  | { ok: true; newValue: number }
+  | { ok: false; error: string }
+
+export async function toggleCantieriCliente(
+  _prev: ToggleCantieriResult | null,
+  formData: FormData
+): Promise<ToggleCantieriResult> {
+  const cookieStore = await cookies()
+  if (cookieStore.get('session_role')?.value !== 'admin') redirect('/')
+
+  const username = (formData.get('username') as string)?.trim()
+  if (!username) return { ok: false, error: 'Dati mancanti.' }
+
+  const conn = await getConnection()
+  try {
+    // Migrazione: aggiunge colonna se non esiste
+    try {
+      await conn.execute('ALTER TABLE users ADD COLUMN cantieri_visibili TINYINT(1) NOT NULL DEFAULT 1')
+    } catch { /* esiste già */ }
+
+    const [rows] = await conn.execute(
+      'SELECT cantieri_visibili FROM users WHERE username = ?', [username]
+    ) as [{ cantieri_visibili: number }[], unknown]
+    if (rows.length === 0) return { ok: false, error: 'Utente non trovato.' }
+
+    const newValue = rows[0].cantieri_visibili === 1 ? 0 : 1
+    await conn.execute('UPDATE users SET cantieri_visibili = ? WHERE username = ?', [newValue, username])
+    return { ok: true, newValue }
+  } finally {
+    await conn.end()
+  }
+}
+
+export type ToggleOrdiniResult =
+  | { ok: true; newValue: number }
+  | { ok: false; error: string }
+
+export async function toggleOrdiniCliente(
+  _prev: ToggleOrdiniResult | null,
+  formData: FormData
+): Promise<ToggleOrdiniResult> {
+  const cookieStore = await cookies()
+  if (cookieStore.get('session_role')?.value !== 'admin') redirect('/')
+
+  const username = (formData.get('username') as string)?.trim()
+  if (!username) return { ok: false, error: 'Dati mancanti.' }
+
+  const conn = await getConnection()
+  try {
+    try { await conn.execute('ALTER TABLE users ADD COLUMN miei_ordini_visibili TINYINT(1) NOT NULL DEFAULT 1') } catch { /* esiste già */ }
+    const [rows] = await conn.execute(
+      'SELECT miei_ordini_visibili FROM users WHERE username = ?', [username]
+    ) as [{ miei_ordini_visibili: number }[], unknown]
+    if (rows.length === 0) return { ok: false, error: 'Utente non trovato.' }
+    const newValue = rows[0].miei_ordini_visibili === 1 ? 0 : 1
+    await conn.execute('UPDATE users SET miei_ordini_visibili = ? WHERE username = ?', [newValue, username])
+    return { ok: true, newValue }
+  } finally {
+    await conn.end()
+  }
+}
+
 export type ToggleActiveResult =
   | { ok: true; newActive: number }
   | { ok: false; error: string }

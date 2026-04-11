@@ -12,16 +12,16 @@ function createTransport() {
   })
 }
 
-export async function sendEmail(to: string, subject: string, html: string) {
+export async function sendEmail(to: string, subject: string, html: string, cc?: string) {
   if (!process.env.SMTP_HOST) {
-    // Sviluppo: stampa in console
-    console.log(`\n📧 EMAIL a ${to}\nOggetto: ${subject}\n${html}\n`)
+    console.log(`\n📧 EMAIL a ${to}${cc ? ` (CC: ${cc})` : ''}\nOggetto: ${subject}\n${html}\n`)
     return
   }
   const transporter = createTransport()
   await transporter.sendMail({
     from: process.env.SMTP_FROM ?? process.env.SMTP_USER,
     to,
+    cc: cc || undefined,
     subject,
     html,
   })

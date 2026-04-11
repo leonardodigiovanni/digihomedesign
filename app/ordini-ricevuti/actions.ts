@@ -15,25 +15,47 @@ async function checkStaff() {
 
 export type MutResult = { ok: true } | { ok: false; error: string }
 
+export async function toggleVisibileOrdine(_p: MutResult | null, fd: FormData): Promise<MutResult> {
+  try { await checkStaff() } catch { redirect('/') }
+  const id = parseInt(fd.get('id') as string)
+  if (isNaN(id)) return { ok: false, error: 'ID non valido.' }
+  const conn = await getConnection()
+  try {
+    // Migration: aggiunge colonna se non esiste
+    try { await conn.execute('ALTER TABLE ordini_ricevuti ADD COLUMN visibile_cliente TINYINT(1) NOT NULL DEFAULT 1') } catch { /* esiste già */ }
+    await conn.execute('UPDATE ordini_ricevuti SET visibile_cliente = 1 - visibile_cliente WHERE id = ?', [id])
+    return { ok: true }
+  } catch { return { ok: false, error: 'Errore aggiornamento.' } }
+  finally { await conn.end() }
+}
+
 export async function addOrdineRicevuto(_p: MutResult | null, fd: FormData): Promise<MutResult> {
   try { await checkStaff() } catch { redirect('/') }
 
-  const numero     = (fd.get('numero_ordine') as string)?.trim() ?? ''
-  const cliente    = (fd.get('cliente') as string)?.trim()
+  const numero      = (fd.get('numero_ordine') as string)?.trim() ?? ''
+  const clienteId   = parseInt(fd.get('cliente_id') as string)
   const descrizione = (fd.get('descrizione') as string)?.trim() ?? ''
-  const totaleStr  = (fd.get('totale') as string)?.trim()
-  const dataOrdine = (fd.get('data_ordine') as string)?.trim()
+  const totaleStr   = (fd.get('totale') as string)?.trim()
+  const dataOrdine  = (fd.get('data_ordine') as string)?.trim()
 
-  if (!cliente || !dataOrdine) return { ok: false, error: 'Cliente e data sono obbligatori.' }
+  if (!clienteId || !dataOrdine) return { ok: false, error: 'Cliente e data sono obbligatori.' }
   const totale = parseFloat(totaleStr || '0')
   if (isNaN(totale)) return { ok: false, error: 'Totale non valido.' }
 
   const conn = await getConnection()
   try {
+    // Ricava display name del cliente
+    const [cRows] = await conn.execute(
+      'SELECT nome, cognome, ragione_sociale FROM clienti WHERE id = ? LIMIT 1', [clienteId]
+    ) as [{ nome: string; cognome: string; ragione_sociale: string }[], unknown]
+    if (cRows.length === 0) return { ok: false, error: 'Cliente non trovato.' }
+    const c = cRows[0]
+    const clienteNome = c.ragione_sociale || `${c.cognome} ${c.nome}`.trim()
+
     await conn.execute(
-      `INSERT INTO ordini_ricevuti (numero_ordine,cliente,descrizione,totale,data_ordine)
-       VALUES (?,?,?,?,?)`,
-      [numero, cliente, descrizione, totale, dataOrdine]
+      `INSERT INTO ordini_ricevuti (numero_ordine, cliente, cliente_id, descrizione, totale, data_ordine)
+       VALUES (?,?,?,?,?,?)`,
+      [numero, clienteNome, clienteId, descrizione, totale, dataOrdine]
     )
     return { ok: true }
   } catch { return { ok: false, error: 'Errore durante il salvataggio.' } }
