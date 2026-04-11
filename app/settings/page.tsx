@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { readSettings } from '@/lib/settings'
 import SettingsForm from './settings-form'
+import ManutenzioneToggle from './manutenzione-toggle'
 
 const testPages = [
   { label: 'Test Sfondo Gold (A/B/C)',   href: '/test-gold'   },
@@ -51,6 +52,7 @@ export default async function Page() {
           ))}
         </div>
       </div>
+      <ManutenzioneToggle manutenzione={settings.manutenzione} />
       <SettingsForm
         inactivityMinutes={settings.inactivityMinutes}
         countdownSeconds={settings.countdownSeconds}

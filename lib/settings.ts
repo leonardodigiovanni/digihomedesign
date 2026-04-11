@@ -26,6 +26,7 @@ export type AppSettings = {
   loginClientiDisabilitato: boolean
   loginDipendentiDisabilitato: boolean
   rolePermissions: Record<string, number[]>
+  manutenzione: boolean
 }
 
 const SETTINGS_PATH = path.join(process.cwd(), 'data', 'settings.json')
@@ -43,6 +44,7 @@ const DEFAULTS: AppSettings = {
   registrazioniDisabilitate: false,
   loginClientiDisabilitato: false,
   loginDipendentiDisabilitato: false,
+  manutenzione: false,
   rolePermissions: {
     dipendente:      [16, 17, 18],
     ragioniere:      [17, 21],

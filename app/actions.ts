@@ -31,7 +31,10 @@ export async function login(
   }
 
   if (role !== 'admin') {
-    const { loginClientiDisabilitato, loginDipendentiDisabilitato } = readSettings()
+    const { loginClientiDisabilitato, loginDipendentiDisabilitato, manutenzione } = readSettings()
+    if (manutenzione) {
+      return 'Sito in manutenzione — accesso riservato agli amministratori.'
+    }
     if (role === 'cliente' && loginClientiDisabilitato) {
       return 'Il login per i clienti è temporaneamente disabilitato.'
     }

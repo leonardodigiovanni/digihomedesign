@@ -86,6 +86,8 @@ export default async function RootLayout({
       }
     : {}
 
+  const inManutenzione = settings.manutenzione && role !== 'admin'
+
   return (
     <html lang="it">
       <body style={isPageEffect ? {} : { background: `rgba(${pageBg.r}, ${pageBg.g}, ${pageBg.b}, ${pageBg.a / 100})` }}>
@@ -105,16 +107,24 @@ export default async function RootLayout({
 
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100 }}>
           <Header username={username} headerBg={settings.headerBg} headerBgMode={settings.headerBgMode} registrazioniDisabilitate={settings.registrazioniDisabilitate} />
-          <Navbar role={role} disabledPages={settings.disabledPages} rolePermissions={rolePermissions} />
+          {!inManutenzione && <Navbar role={role} disabledPages={settings.disabledPages} rolePermissions={rolePermissions} />}
         </div>
 
-        <main style={{ flex: 1, padding: '32px 24px', paddingTop: 'calc(90px + 42px + 32px)' }}>
-          {children}
+        <main style={{ flex: 1, padding: '32px 24px', paddingTop: inManutenzione ? 'calc(90px + 32px)' : 'calc(90px + 42px + 32px)' }}>
+          {inManutenzione ? (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '50vh', gap: 20, textAlign: 'center' }}>
+              <img src="/images/manutenzione.png" alt="Manutenzione" style={{ width: 360, height: 360, objectFit: 'contain' }} />
+              <p style={{ fontSize: 28, fontWeight: 600, color: '#444', maxWidth: 600, lineHeight: 1.6, margin: 0, textAlign: 'center' }}>
+                Stiamo lavorando per migliorare il sito.<br />
+                Torneremo online al più presto. Ci scusiamo per il disagio.
+              </p>
+            </div>
+          ) : children}
         </main>
 
         <Footer footerBg={settings.footerBg} footerBgMode={settings.footerBgMode} />
 
-        {username && (
+        {username && !inManutenzione && (
           <InactivityGuard
             inactivityMs={settings.inactivityMinutes * 60 * 1000}
             countdownSec={settings.countdownSeconds}

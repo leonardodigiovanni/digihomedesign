@@ -123,6 +123,17 @@ export async function saveAccessControls(
   return { ok: true }
 }
 
+export async function toggleManutenzione(
+  _prev: SaveAccessResult | null,
+  formData: FormData
+): Promise<SaveAccessResult> {
+  const cookieStore = await cookies()
+  if (cookieStore.get('session_role')?.value !== 'admin') redirect('/')
+  const current = readSettings()
+  writeSettings({ ...current, manutenzione: !current.manutenzione })
+  return { ok: true }
+}
+
 export async function saveRolePermissions(
   _prev: SaveAccessResult | null,
   formData: FormData

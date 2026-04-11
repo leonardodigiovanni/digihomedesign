@@ -26,6 +26,7 @@
   "registrazioniDisabilitate": true,
   "loginClientiDisabilitato": false,
   "loginDipendentiDisabilitato": false,
+  "manutenzione": true,
   "rolePermissions": {
     "cliente": [
       27,
