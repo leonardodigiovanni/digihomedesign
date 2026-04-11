@@ -15,8 +15,8 @@ export default function InactivityGuard({ inactivityMs, countdownSec }: Props) {
   const inactivityMsRef = useRef(inactivityMs)
   const countdownSecRef = useRef(countdownSec)
   const isWarning       = useRef(false)
-  const inactivityTimer = useRef<ReturnType<typeof setTimeout>>()
-  const countdownInterval = useRef<ReturnType<typeof setInterval>>()
+  const inactivityTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const countdownInterval = useRef<ReturnType<typeof setInterval> | undefined>(undefined)
 
   // Aggiorna i refs quando cambiano le props e riavvia il timer
   useEffect(() => {
