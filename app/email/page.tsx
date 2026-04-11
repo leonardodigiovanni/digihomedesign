@@ -49,9 +49,7 @@ export default async function Page() {
       username_ref:   m.username_ref   ?? null,
       utente_nome:    m.utente_nome    ?? null,
       utente_cognome: m.utente_cognome ?? null,
-      created_at: m.created_at instanceof Date
-        ? m.created_at.toISOString()
-        : String(m.created_at),
+      created_at: String(m.created_at),
     }))
   } finally {
     await conn.end()
