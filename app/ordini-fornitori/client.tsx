@@ -72,16 +72,16 @@ function BoolBadge({ val, label }: { val: number; label?: string }) {
 }
 
 // ─── field helper ─────────────────────────────────────────────────────────────
-function F({ label, name, type, placeholder, step, min, required, defaultValue, children }: {
+function F({ label, name, type, placeholder, step, min, max, required, defaultValue, children }: {
   label: string; name: string; type: string; placeholder?: string
-  step?: string; min?: string; required?: boolean; defaultValue?: string
+  step?: string; min?: string; max?: string; required?: boolean; defaultValue?: string
   children?: React.ReactNode
 }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       <label style={{ fontSize: 12, fontWeight: 500, color: '#555' }}>{label}</label>
       {children ?? (
-        <input name={name} type={type} placeholder={placeholder} step={step} min={min}
+        <input name={name} type={type} placeholder={placeholder} step={step} min={min} max={max}
           required={required} defaultValue={defaultValue} style={inputSt} />
       )}
     </div>
