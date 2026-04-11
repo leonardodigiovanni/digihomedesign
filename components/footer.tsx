@@ -232,7 +232,7 @@ export default function Footer({
         © 2026  -  DIGI Home Design S.R.L.
       </p>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/images/dgt.png" alt="logo" style={{ height: 46, width: 'auto', display: 'inline-block', verticalAlign: 'middle' }} />
+      <img src="/images/dg-t.png" alt="logo" style={{ height: 46, width: 'auto', display: 'inline-block', verticalAlign: 'middle' }} />
       <p style={{ textAlign: 'center', fontSize: 13, color: '#aaa', margin: 0 }}>
         Tutti i diritti sono riservati all&apos;autore
       </p>
