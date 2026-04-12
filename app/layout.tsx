@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { cookies } from 'next/headers'
 import Header from '@/components/header'
 import Navbar from '@/components/navbar'
@@ -9,6 +9,11 @@ import { rgbGradient, rgbGradientInv, rgbBrushedBackground, rgbBrushedBackground
 import { getConnection } from '@/lib/db'
 import Image from 'next/image'
 import './globals.css'
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+}
 
 export const metadata: Metadata = {
   title: {

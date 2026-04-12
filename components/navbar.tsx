@@ -14,8 +14,8 @@ interface NavbarProps {
 export default function Navbar({ role, disabledPages = [], rolePermissions = {} }: NavbarProps) {
   const [menuOpen, setMenuOpen]       = useState(false)
   const [sectionOpen, setSectionOpen] = useState(false)
-  const pathname  = usePathname()
-  const dropRef   = useRef<HTMLDivElement>(null)
+  const pathname    = usePathname()
+  const dropRef     = useRef<HTMLDivElement>(null)
 
   // Chiudi tutto al cambio pagina
   useEffect(() => {
@@ -65,18 +65,6 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {} 
 
   return (
     <nav style={{ background: '#f8f8f8', borderBottom: '1px solid #e8e8e8', flexShrink: 0 }}>
-      <style>{`
-        .nav-bar   { display: flex; height: 42px; flex-shrink: 0; align-items: center; padding: 0 8px 0 13px; gap: 2px; }
-        .nav-hamburger { display: none; }
-        .nav-mobile-menu { display: none; }
-        @media (max-width: 768px) {
-          .nav-bar        { display: none; }
-          .nav-hamburger  { display: flex; align-items: center; padding: 0 16px; height: 42px; gap: 8px;
-                            font-size: 14px; font-weight: 500; background: none; border: none;
-                            cursor: pointer; width: 100%; color: #333; }
-          .nav-mobile-menu { display: block; }
-        }
-      `}</style>
 
       {/* ── Desktop ── */}
       <div className="nav-bar">
@@ -147,9 +135,11 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {} 
 
       {/* ── Mobile hamburger ── */}
       <button
+        type="button"
         className="nav-hamburger"
         onClick={() => setMenuOpen(o => !o)}
         aria-expanded={menuOpen}
+        aria-label={menuOpen ? 'Chiudi menu' : 'Apri menu'}
       >
         <span style={{ fontSize: 18 }}>{menuOpen ? '✕' : '☰'}</span>
         Menu
@@ -157,11 +147,15 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {} 
 
       {/* ── Mobile menu ── */}
       {menuOpen && (
-        <div className="nav-mobile-menu" style={{
-          borderTop: '1px solid #e8e8e8',
+      <div
+        style={{
           background: '#fff',
+          borderTop: '1px solid #e8e8e8',
           padding: '8px 0 16px',
-        }}>
+          overflowY: 'auto',
+          maxHeight: 'calc(100dvh - 132px)',
+        }}
+      >
           <MobileLink href="/" label="Home" active={isActive('/')} />
 
           {visibleClientPages.length > 0 && (
@@ -196,7 +190,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {} 
               ))}
             </>
           )}
-        </div>
+      </div>
       )}
     </nav>
   )

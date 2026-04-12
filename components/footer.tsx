@@ -141,7 +141,7 @@ const infoRows = [
   { label: 'Azienda',      value: 'DIGI Home Design SRL' },
   { label: 'Sede legale',  value: 'Via Roberto Antiochia 3, 90121 Palermo (PA)' },
   { label: 'P.IVA',        value: '07407080824' },
-  { label: 'Email',        value: 'digi-home-design@libero.it' },
+  { label: 'Email',        value: 'info@digi-home-design.com' },
   { label: 'PEC',          value: 'digi_home_design_srl@namirialpec.it' },
   { label: 'Telefono',     value: '+39 3518716731' },
 ]

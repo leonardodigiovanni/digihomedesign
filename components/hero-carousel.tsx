@@ -95,6 +95,16 @@ const STYLES = `
     background: rgba(0, 0, 0, 0.60);
   }
 
+  .hero-dots {
+    position: absolute;
+    bottom: 18px;
+    left: 29%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 3;
+  }
+
   @media (max-width: 640px) {
     .hero-grid {
       height: clamp(420px, 80vw, 560px);
@@ -109,6 +119,9 @@ const STYLES = `
     }
     .hero-text-panel {
       padding: 24px 20px;
+    }
+    .hero-dots {
+      left: 50%;
     }
   }
 `
@@ -183,24 +196,21 @@ export default function HeroCarousel() {
           style={{ objectFit: 'cover', objectPosition: 'center', zIndex: 0, animation: `${entranceAnim[effect]} ${DUR} ease forwards` }}
         />
 
-        {/* Dots — centrati sulla porzione immagine visibile (58% sinistra) */}
-        <div style={{
-          position: 'absolute', bottom: 18, left: '29%',
-          transform: 'translateX(-50%)',
-          display: 'flex', gap: 10, zIndex: 3,
-        }}>
+        {/* Dots — centrati sulla porzione immagine (desktop: 58% sx; mobile: 100%) */}
+        <div className="hero-dots">
           {slides.map((_, i) => (
             <button
               key={i}
               onClick={() => handleDot(i)}
               aria-label={`Slide ${i + 1}`}
               style={{
-                width: i === current ? 28 : 10,
-                height: 10, borderRadius: 5,
+                width: i === current ? 32 : 14,
+                height: 14, borderRadius: 7,
                 border: 'none', cursor: 'pointer',
-                padding: i === current ? '17px 8px' : '17px',
-                backgroundColor: i === current ? '#fff' : 'rgba(255,255,255,0.5)',
+                padding: '15px',
+                backgroundColor: i === current ? '#fff' : 'rgba(255,255,255,0.55)',
                 backgroundClip: 'content-box',
+                boxSizing: 'content-box',
                 transition: 'width 0.3s, background-color 0.3s',
               }}
             />

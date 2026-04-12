@@ -22,6 +22,8 @@ export default async function Page() {
     <div>
       <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 24 }}>Settings</h2>
 
+      <ManutenzioneToggle manutenzione={settings.manutenzione} />
+
       {/* Pannello pagine di test */}
       <div style={{
         background: '#fff',
@@ -52,7 +54,6 @@ export default async function Page() {
           ))}
         </div>
       </div>
-      <ManutenzioneToggle manutenzione={settings.manutenzione} />
       <SettingsForm
         inactivityMinutes={settings.inactivityMinutes}
         countdownSeconds={settings.countdownSeconds}
