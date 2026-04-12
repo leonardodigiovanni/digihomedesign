@@ -1,5 +1,5 @@
 {
-  "manutenzione": true,
+  "manutenzione": false,
   "inactivityMinutes": 20,
   "countdownSeconds": 10,
   "headerBg": {
@@ -8,21 +8,21 @@
     "b": 85,
     "a": 100
   },
-  "headerBgMode": "rgb_c",
+  "headerBgMode": "rgb_d",
   "footerBg": {
     "r": 0,
     "g": 0,
     "b": 0,
     "a": 100
   },
-  "footerBgMode": "gold_c",
+  "footerBgMode": "gold_d",
   "pageBg": {
     "r": 0,
     "g": 0,
     "b": 0,
     "a": 81
   },
-  "pageBgMode": "silver_c",
+  "pageBgMode": "silver_d",
   "disabledPages": [],
   "registrazioniDisabilitate": true,
   "loginClientiDisabilitato": false,

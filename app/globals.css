@@ -590,6 +590,106 @@ body {
 }
 
 /* ─────────────────────────────────────────
+   TIPO D — Spazzolato + riflesso radiale, SENZA shimmer animato
+   ───────────────────────────────────────── */
+
+/* ORO D */
+.class_gold_D {
+  background:
+    repeating-linear-gradient(60deg, rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px, transparent 1px, transparent 6px),
+    linear-gradient(135deg, #b89030 0%, #c8960c 18%, #f5d060 38%, #fffacd 50%, #f5d060 62%, #c8960c 82%, #b89030 100%);
+  box-shadow: 0 4px 32px rgba(200,150,12,0.45), inset 0 1px 0 rgba(255,250,200,0.7);
+  position: relative;
+  overflow: hidden;
+}
+.class_gold_D::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,250,200,0.35) 0%, transparent 70%);
+  pointer-events: none;
+}
+.class_gold_D_safe {
+  background:
+    repeating-linear-gradient(60deg, rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px, transparent 1px, transparent 6px),
+    linear-gradient(135deg, #b89030 0%, #c8960c 18%, #f5d060 38%, #fffacd 50%, #f5d060 62%, #c8960c 82%, #b89030 100%);
+  box-shadow: 0 4px 32px rgba(200,150,12,0.45), inset 0 1px 0 rgba(255,250,200,0.7);
+  position: relative;
+}
+
+/* ORO D inv */
+.class_gold_D_inv {
+  background:
+    repeating-linear-gradient(60deg, rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px, transparent 1px, transparent 6px),
+    linear-gradient(135deg, #fffacd 0%, #f5d060 18%, #c8960c 38%, #b89030 50%, #c8960c 62%, #f5d060 82%, #fffacd 100%);
+  box-shadow: 0 4px 32px rgba(200,150,12,0.45), inset 0 1px 0 rgba(255,250,200,0.7);
+  position: relative;
+  overflow: hidden;
+}
+.class_gold_D_inv::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,250,200,0.35) 0%, transparent 70%);
+  pointer-events: none;
+}
+.class_gold_D_inv_safe {
+  background:
+    repeating-linear-gradient(60deg, rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px, transparent 1px, transparent 6px),
+    linear-gradient(135deg, #fffacd 0%, #f5d060 18%, #c8960c 38%, #b89030 50%, #c8960c 62%, #f5d060 82%, #fffacd 100%);
+  box-shadow: 0 4px 32px rgba(200,150,12,0.45), inset 0 1px 0 rgba(255,250,200,0.7);
+  position: relative;
+}
+
+/* ARGENTO D */
+.class_silver_D {
+  background:
+    repeating-linear-gradient(60deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 1px, transparent 6px),
+    linear-gradient(135deg, #787878 0%, #8a8a8a 18%, #cccccc 38%, #f2f2f2 50%, #cccccc 62%, #8a8a8a 82%, #787878 100%);
+  box-shadow: 0 4px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.8);
+  position: relative;
+  overflow: hidden;
+}
+.class_silver_D::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,255,255,0.3) 0%, transparent 70%);
+  pointer-events: none;
+}
+.class_silver_D_safe {
+  background:
+    repeating-linear-gradient(60deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 1px, transparent 6px),
+    linear-gradient(135deg, #787878 0%, #8a8a8a 18%, #cccccc 38%, #f2f2f2 50%, #cccccc 62%, #8a8a8a 82%, #787878 100%);
+  box-shadow: 0 4px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.8);
+  position: relative;
+}
+
+/* ARGENTO D inv */
+.class_silver_D_inv {
+  background:
+    repeating-linear-gradient(60deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 1px, transparent 6px),
+    linear-gradient(135deg, #f2f2f2 0%, #cccccc 18%, #8a8a8a 38%, #787878 50%, #8a8a8a 62%, #cccccc 82%, #f2f2f2 100%);
+  box-shadow: 0 4px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.8);
+  position: relative;
+  overflow: hidden;
+}
+.class_silver_D_inv::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,255,255,0.3) 0%, transparent 70%);
+  pointer-events: none;
+}
+.class_silver_D_inv_safe {
+  background:
+    repeating-linear-gradient(60deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 1px, transparent 6px),
+    linear-gradient(135deg, #f2f2f2 0%, #cccccc 18%, #8a8a8a 38%, #787878 50%, #8a8a8a 62%, #cccccc 82%, #f2f2f2 100%);
+  box-shadow: 0 4px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.8);
+  position: relative;
+}
+
+/* ─────────────────────────────────────────
    BOTTONI AZIONE — metallo spazzolato + shimmer
    .btn-green  → conferma / salva / login
    .btn-red    → annulla / logout / elimina

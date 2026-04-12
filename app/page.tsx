@@ -26,13 +26,13 @@ export default async function Page() {
         justifyContent: 'center',
       }}>
         {visiblePages.map((page, i) => (
-          <Link key={page.id} href={page.href} className="page-card" style={{ flex: '1 1 260px', maxWidth: 400 }}>
+          <Link key={page.id} href={page.href} className="page-card" style={{ flex: '1 1 260px' }}>
             <div style={{ position: 'relative', height: 220, width: '100%' }}>
               <Image
                 fill
                 src={`/images/casa-ristrutturata-${(i % 8) + 1}.jpg`}
                 alt={page.label}
-                sizes="(max-width: 640px) calc(100vw - 40px), 400px"
+                sizes="(max-width: 640px) calc(100vw - 40px), (max-width: 1200px) calc(50vw - 30px), calc(33vw - 30px)"
                 style={{ objectFit: 'cover' }}
               />
             </div>

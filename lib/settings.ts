@@ -5,12 +5,12 @@ export type Rgba = { r: number; g: number; b: number; a: number }
 
 export type BgMode =
   | 'rgb'
-  | 'rgb_a' | 'rgb_b' | 'rgb_c'
-  | 'rgb_a_inv' | 'rgb_b_inv' | 'rgb_c_inv'
-  | 'gold_a' | 'gold_b' | 'gold_c'
-  | 'gold_a_inv' | 'gold_b_inv' | 'gold_c_inv'
-  | 'silver_a' | 'silver_b' | 'silver_c'
-  | 'silver_a_inv' | 'silver_b_inv' | 'silver_c_inv'
+  | 'rgb_a' | 'rgb_b' | 'rgb_c' | 'rgb_d'
+  | 'rgb_a_inv' | 'rgb_b_inv' | 'rgb_c_inv' | 'rgb_d_inv'
+  | 'gold_a' | 'gold_b' | 'gold_c' | 'gold_d'
+  | 'gold_a_inv' | 'gold_b_inv' | 'gold_c_inv' | 'gold_d_inv'
+  | 'silver_a' | 'silver_b' | 'silver_c' | 'silver_d'
+  | 'silver_a_inv' | 'silver_b_inv' | 'silver_c_inv' | 'silver_d_inv'
 
 export type AppSettings = {
   inactivityMinutes: number
@@ -71,5 +71,7 @@ export function readSettings(): AppSettings {
 export function writeSettings(settings: AppSettings): void {
   const dir = path.dirname(SETTINGS_PATH)
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
-  fs.writeFileSync(SETTINGS_PATH, JSON.stringify(settings, null, 2), 'utf-8')
+  const { manutenzione, ...rest } = settings
+  const ordered = { manutenzione, ...rest }
+  fs.writeFileSync(SETTINGS_PATH, JSON.stringify(ordered, null, 2), 'utf-8')
 }

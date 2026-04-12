@@ -17,8 +17,8 @@ export function rgbGradient(r: number, g: number, b: number): string {
   const dark   = darken(r, g, b, 0.40)
   const mid    = darken(r, g, b, 0.68)
   const base   = `#${hex2(r)}${hex2(g)}${hex2(b)}`
-  const light  = lighten(r, g, b, 0.50)
-  const vLight = lighten(r, g, b, 0.85)
+  const light  = lighten(r, g, b, 0.45)
+  const vLight = lighten(r, g, b, 0.62)
   return `linear-gradient(135deg, ${dark} 0%, ${mid} 18%, ${base} 35%, ${light} 45%, ${vLight} 50%, ${light} 55%, ${base} 65%, ${mid} 82%, ${dark} 100%)`
 }
 
@@ -27,8 +27,8 @@ export function rgbGradientInv(r: number, g: number, b: number): string {
   const dark   = darken(r, g, b, 0.40)
   const mid    = darken(r, g, b, 0.68)
   const base   = `#${hex2(r)}${hex2(g)}${hex2(b)}`
-  const light  = lighten(r, g, b, 0.50)
-  const vLight = lighten(r, g, b, 0.85)
+  const light  = lighten(r, g, b, 0.45)
+  const vLight = lighten(r, g, b, 0.62)
   return `linear-gradient(135deg, ${vLight} 0%, ${light} 18%, ${base} 35%, ${mid} 45%, ${dark} 50%, ${mid} 55%, ${base} 65%, ${light} 82%, ${vLight} 100%)`
 }
 

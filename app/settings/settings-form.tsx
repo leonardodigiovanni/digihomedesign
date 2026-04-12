@@ -41,16 +41,20 @@ const MODE_OPTIONS: { value: BgMode; label: string; cls?: string }[] = [
   { value: 'rgb',          label: 'RGB' },
   { value: 'gold_a',       label: 'Oro A',      cls: 'class_gold_A'       },
   { value: 'gold_b',       label: 'Oro B',      cls: 'class_gold_B'       },
-  { value: 'gold_c',       label: 'Oro C',      cls: 'class_gold_C'       },
-  { value: 'gold_a_inv',   label: 'Oro A inv',  cls: 'class_gold_A_inv'   },
-  { value: 'gold_b_inv',   label: 'Oro B inv',  cls: 'class_gold_B_inv'   },
-  { value: 'gold_c_inv',   label: 'Oro C inv',  cls: 'class_gold_C_inv'   },
-  { value: 'silver_a',     label: 'Arg. A',     cls: 'class_silver_A'     },
-  { value: 'silver_b',     label: 'Arg. B',     cls: 'class_silver_B'     },
-  { value: 'silver_c',     label: 'Arg. C',     cls: 'class_silver_C'     },
-  { value: 'silver_a_inv', label: 'Arg. A inv', cls: 'class_silver_A_inv' },
-  { value: 'silver_b_inv', label: 'Arg. B inv', cls: 'class_silver_B_inv' },
-  { value: 'silver_c_inv', label: 'Arg. C inv', cls: 'class_silver_C_inv' },
+  { value: 'gold_c',         label: 'Oro C',          cls: 'class_gold_C'         },
+  { value: 'gold_d',         label: 'Oro D',          cls: 'class_gold_D'         },
+  { value: 'gold_a_inv',     label: 'Oro A inv',      cls: 'class_gold_A_inv'     },
+  { value: 'gold_b_inv',     label: 'Oro B inv',      cls: 'class_gold_B_inv'     },
+  { value: 'gold_c_inv',     label: 'Oro C inv',      cls: 'class_gold_C_inv'     },
+  { value: 'gold_d_inv',     label: 'Oro D inv',      cls: 'class_gold_D_inv'     },
+  { value: 'silver_a',       label: 'Arg. A',         cls: 'class_silver_A'       },
+  { value: 'silver_b',       label: 'Arg. B',         cls: 'class_silver_B'       },
+  { value: 'silver_c',       label: 'Arg. C',         cls: 'class_silver_C'       },
+  { value: 'silver_d',       label: 'Arg. D',         cls: 'class_silver_D'       },
+  { value: 'silver_a_inv',   label: 'Arg. A inv',     cls: 'class_silver_A_inv'   },
+  { value: 'silver_b_inv',   label: 'Arg. B inv',     cls: 'class_silver_B_inv'   },
+  { value: 'silver_c_inv',   label: 'Arg. C inv',     cls: 'class_silver_C_inv'   },
+  { value: 'silver_d_inv',   label: 'Arg. D inv',     cls: 'class_silver_D_inv'   },
 ]
 
 function RgbaChannel({
@@ -144,23 +148,25 @@ function BgColorPanel({
           )
         })()}
 
-        {/* 2. RGB A / B / C */}
-        {(['rgb_a', 'rgb_b', 'rgb_c'] as BgMode[]).map(v => {
+        {/* 2. RGB A / B / C / D */}
+        {(['rgb_a', 'rgb_b', 'rgb_c', 'rgb_d'] as BgMode[]).map(v => {
           const lum = rgbLuminance(color.r, color.g, color.b)
+          const bg = (v === 'rgb_c' || v === 'rgb_d') ? rgbBrushedBackground(color.r, color.g, color.b) : rgbGradient(color.r, color.g, color.b)
           return (
             <button key={v} type="button" onClick={() => setMode(v)}
-              style={{ width: 62, padding: '5px 0', fontSize: 10, fontWeight: 700, borderRadius: 6, cursor: 'pointer', fontFamily: 'inherit', background: rgbGradient(color.r, color.g, color.b), color: lum > 0.55 ? '#111' : '#fff', border: mode === v ? '2.5px solid #1a1a1a' : '2.5px solid transparent', outline: 'none' }}
-            >{v === 'rgb_a' ? 'RGB A' : v === 'rgb_b' ? 'RGB B' : 'RGB C'}</button>
+              style={{ width: 62, padding: '5px 0', fontSize: 10, fontWeight: 700, borderRadius: 6, cursor: 'pointer', fontFamily: 'inherit', background: bg, color: lum > 0.55 ? '#111' : '#fff', border: mode === v ? '2.5px solid #1a1a1a' : '2.5px solid transparent', outline: 'none' }}
+            >{v === 'rgb_a' ? 'RGB A' : v === 'rgb_b' ? 'RGB B' : v === 'rgb_c' ? 'RGB C' : 'RGB D'}</button>
           )
         })}
 
-        {/* 2b. RGB A / B / C inv */}
-        {(['rgb_a_inv', 'rgb_b_inv', 'rgb_c_inv'] as BgMode[]).map(v => {
+        {/* 2b. RGB A / B / C / D inv */}
+        {(['rgb_a_inv', 'rgb_b_inv', 'rgb_c_inv', 'rgb_d_inv'] as BgMode[]).map(v => {
           const lum = rgbLuminance(color.r, color.g, color.b)
+          const bg = (v === 'rgb_c_inv' || v === 'rgb_d_inv') ? rgbBrushedBackgroundInv(color.r, color.g, color.b) : rgbGradientInv(color.r, color.g, color.b)
           return (
             <button key={v} type="button" onClick={() => setMode(v)}
-              style={{ width: 62, padding: '5px 0', fontSize: 10, fontWeight: 700, borderRadius: 6, cursor: 'pointer', fontFamily: 'inherit', background: rgbGradientInv(color.r, color.g, color.b), color: lum > 0.55 ? '#111' : '#fff', border: mode === v ? '2.5px solid #1a1a1a' : '2.5px solid transparent', outline: 'none' }}
-            >{v === 'rgb_a_inv' ? 'RGB A inv' : v === 'rgb_b_inv' ? 'RGB B inv' : 'RGB C inv'}</button>
+              style={{ width: 62, padding: '5px 0', fontSize: 10, fontWeight: 700, borderRadius: 6, cursor: 'pointer', fontFamily: 'inherit', background: bg, color: lum > 0.55 ? '#111' : '#fff', border: mode === v ? '2.5px solid #1a1a1a' : '2.5px solid transparent', outline: 'none' }}
+            >{v === 'rgb_a_inv' ? 'RGB A inv' : v === 'rgb_b_inv' ? 'RGB B inv' : v === 'rgb_c_inv' ? 'RGB C inv' : 'RGB D inv'}</button>
           )
         })}
 
@@ -212,12 +218,12 @@ function BgColorPanel({
           <div style={{ flex: 1 }}>
             {mode.startsWith('rgb_') ? (
               <div style={{ height: 64, borderRadius: 8, overflow: 'hidden', position: 'relative',
-                background: mode === 'rgb_c' ? rgbBrushedBackground(color.r, color.g, color.b)
-                  : mode === 'rgb_c_inv' ? rgbBrushedBackgroundInv(color.r, color.g, color.b)
+                background: (mode === 'rgb_c' || mode === 'rgb_d') ? rgbBrushedBackground(color.r, color.g, color.b)
+                  : (mode === 'rgb_c_inv' || mode === 'rgb_d_inv') ? rgbBrushedBackgroundInv(color.r, color.g, color.b)
                   : mode.endsWith('_inv') ? rgbGradientInv(color.r, color.g, color.b)
                   : rgbGradient(color.r, color.g, color.b),
               }}>
-                {(mode === 'rgb_c' || mode === 'rgb_c_inv') && (
+                {(mode === 'rgb_c' || mode === 'rgb_c_inv' || mode === 'rgb_d' || mode === 'rgb_d_inv') && (
                   <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,255,255,0.35) 0%, transparent 70%)', pointerEvents: 'none' }} />
                 )}
                 {(mode === 'rgb_b' || mode === 'rgb_b_inv' || mode === 'rgb_c' || mode === 'rgb_c_inv') && (
@@ -233,8 +239,8 @@ function BgColorPanel({
             <p style={{ fontSize: 12, color: '#888', marginTop: 8 }}>
               Effetto attivo: <strong>
                 {MODE_OPTIONS.find(o => o.value === mode)?.label
-                  ?? (mode === 'rgb_a' ? 'RGB A' : mode === 'rgb_b' ? 'RGB B' : mode === 'rgb_c' ? 'RGB C'
-                  : mode === 'rgb_a_inv' ? 'RGB A inv' : mode === 'rgb_b_inv' ? 'RGB B inv' : mode === 'rgb_c_inv' ? 'RGB C inv'
+                  ?? (mode === 'rgb_a' ? 'RGB A' : mode === 'rgb_b' ? 'RGB B' : mode === 'rgb_c' ? 'RGB C' : mode === 'rgb_d' ? 'RGB D'
+                  : mode === 'rgb_a_inv' ? 'RGB A inv' : mode === 'rgb_b_inv' ? 'RGB B inv' : mode === 'rgb_c_inv' ? 'RGB C inv' : mode === 'rgb_d_inv' ? 'RGB D inv'
                   : mode)}
               </strong>
             </p>

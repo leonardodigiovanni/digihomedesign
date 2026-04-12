@@ -11,15 +11,19 @@ const EFFECT_CLASS: Record<string, string> = {
   gold_a:       'class_gold_A',
   gold_b:       'class_gold_B_safe',
   gold_c:       'class_gold_C_safe',
+  gold_d:       'class_gold_D_safe',
   gold_a_inv:   'class_gold_A_inv',
   gold_b_inv:   'class_gold_B_inv_safe',
   gold_c_inv:   'class_gold_C_inv_safe',
+  gold_d_inv:   'class_gold_D_inv_safe',
   silver_a:     'class_silver_A',
   silver_b:     'class_silver_B_safe',
   silver_c:     'class_silver_C_safe',
+  silver_d:     'class_silver_D_safe',
   silver_a_inv: 'class_silver_A_inv',
   silver_b_inv: 'class_silver_B_inv_safe',
   silver_c_inv: 'class_silver_C_inv_safe',
+  silver_d_inv: 'class_silver_D_inv_safe',
 }
 
 const SHIMMER_WRAP: Record<string, string> = {
@@ -31,13 +35,17 @@ const SHIMMER_WRAP: Record<string, string> = {
   rgb_b_inv: 'gold-shimmer-wrap', rgb_c_inv: 'gold-shimmer-wrap',
 }
 
+const RADIAL_GOLD   = 'radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,250,200,0.35) 0%, transparent 70%)'
+const RADIAL_SILVER = 'radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,255,255,0.3) 0%, transparent 70%)'
+const RADIAL_RGB    = 'radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,255,255,0.16) 0%, transparent 70%)'
+
 const RADIAL_BG: Record<string, string> = {
-  gold_c:       'radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,250,200,0.35) 0%, transparent 70%)',
-  gold_c_inv:   'radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,250,200,0.35) 0%, transparent 70%)',
-  silver_c:     'radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,255,255,0.3) 0%, transparent 70%)',
-  silver_c_inv: 'radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,255,255,0.3) 0%, transparent 70%)',
-  rgb_c:        'radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,255,255,0.35) 0%, transparent 70%)',
-  rgb_c_inv:    'radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,255,255,0.35) 0%, transparent 70%)',
+  gold_c:       RADIAL_GOLD,   gold_c_inv:   RADIAL_GOLD,
+  gold_d:       RADIAL_GOLD,   gold_d_inv:   RADIAL_GOLD,
+  silver_c:     RADIAL_SILVER, silver_c_inv: RADIAL_SILVER,
+  silver_d:     RADIAL_SILVER, silver_d_inv: RADIAL_SILVER,
+  rgb_c:        RADIAL_RGB,    rgb_c_inv:    RADIAL_RGB,
+  rgb_d:        RADIAL_RGB,    rgb_d_inv:    RADIAL_RGB,
 }
 
 type TC = { label: string; value: string; title: string; sep: string }
@@ -46,15 +54,19 @@ const STATIC_TEXT: Record<string, TC> = {
   gold_a:   { label: '#3a2000', value: '#5a3800', title: '#3a2000', sep: 'rgba(0,0,0,0.15)' },
   gold_b:   { label: '#3a2000', value: '#5a3800', title: '#3a2000', sep: 'rgba(0,0,0,0.15)' },
   gold_c:   { label: '#3a2000', value: '#5a3800', title: '#3a2000', sep: 'rgba(0,0,0,0.15)' },
+  gold_d:   { label: '#3a2000', value: '#5a3800', title: '#3a2000', sep: 'rgba(0,0,0,0.15)' },
   silver_a: { label: '#222', value: '#444', title: '#111', sep: 'rgba(0,0,0,0.15)' },
   silver_b: { label: '#222', value: '#444', title: '#111', sep: 'rgba(0,0,0,0.15)' },
   silver_c: { label: '#222', value: '#444', title: '#111', sep: 'rgba(0,0,0,0.15)' },
+  silver_d: { label: '#222', value: '#444', title: '#111', sep: 'rgba(0,0,0,0.15)' },
   gold_a_inv:   { label: '#4a2800', value: '#5a3800', title: '#4a2800', sep: 'rgba(0,0,0,0.15)' },
   gold_b_inv:   { label: '#4a2800', value: '#5a3800', title: '#4a2800', sep: 'rgba(0,0,0,0.15)' },
   gold_c_inv:   { label: '#4a2800', value: '#5a3800', title: '#4a2800', sep: 'rgba(0,0,0,0.15)' },
+  gold_d_inv:   { label: '#4a2800', value: '#5a3800', title: '#4a2800', sep: 'rgba(0,0,0,0.15)' },
   silver_a_inv: { label: '#222', value: '#444', title: '#111', sep: 'rgba(0,0,0,0.15)' },
   silver_b_inv: { label: '#222', value: '#444', title: '#111', sep: 'rgba(0,0,0,0.15)' },
   silver_c_inv: { label: '#222', value: '#444', title: '#111', sep: 'rgba(0,0,0,0.15)' },
+  silver_d_inv: { label: '#222', value: '#444', title: '#111', sep: 'rgba(0,0,0,0.15)' },
   rgb:      { label: '#fff', value: '#ccc', title: '#fff', sep: 'rgba(255,255,255,0.2)' },
 }
 
@@ -67,8 +79,8 @@ function getFooterBgStyle(mode: BgMode, bg: Rgba): React.CSSProperties {
   if (mode === 'rgb') return { background: `rgba(${bg.r},${bg.g},${bg.b},${bg.a / 100})` }
   if (mode === 'rgb_a' || mode === 'rgb_b')         return { background: rgbGradient(bg.r, bg.g, bg.b),            boxShadow: rgbBoxShadow(bg.r, bg.g, bg.b) }
   if (mode === 'rgb_a_inv' || mode === 'rgb_b_inv') return { background: rgbGradientInv(bg.r, bg.g, bg.b),         boxShadow: rgbBoxShadow(bg.r, bg.g, bg.b) }
-  if (mode === 'rgb_c')                             return { background: rgbBrushedBackground(bg.r, bg.g, bg.b),   boxShadow: rgbBoxShadow(bg.r, bg.g, bg.b) }
-  if (mode === 'rgb_c_inv')                         return { background: rgbBrushedBackgroundInv(bg.r, bg.g, bg.b), boxShadow: rgbBoxShadow(bg.r, bg.g, bg.b) }
+  if (mode === 'rgb_c' || mode === 'rgb_d')         return { background: rgbBrushedBackground(bg.r, bg.g, bg.b),    boxShadow: rgbBoxShadow(bg.r, bg.g, bg.b) }
+  if (mode === 'rgb_c_inv' || mode === 'rgb_d_inv') return { background: rgbBrushedBackgroundInv(bg.r, bg.g, bg.b), boxShadow: rgbBoxShadow(bg.r, bg.g, bg.b) }
   return {}
 }
 

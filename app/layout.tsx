@@ -24,18 +24,22 @@ export const metadata: Metadata = {
 }
 
 const PAGE_EFFECT_CLASS: Record<string, string> = {
-  gold_a:       'class_gold_A',
-  gold_b:       'class_gold_B_safe',
-  gold_c:       'class_gold_C_safe',
-  gold_a_inv:   'class_gold_A_inv',
-  gold_b_inv:   'class_gold_B_inv_safe',
-  gold_c_inv:   'class_gold_C_inv_safe',
-  silver_a:     'class_silver_A',
-  silver_b:     'class_silver_B_safe',
-  silver_c:     'class_silver_C_safe',
-  silver_a_inv: 'class_silver_A_inv',
-  silver_b_inv: 'class_silver_B_inv_safe',
-  silver_c_inv: 'class_silver_C_inv_safe',
+  gold_a:         'class_gold_A',
+  gold_b:         'class_gold_B_safe',
+  gold_c:         'class_gold_C_safe',
+  gold_d:         'class_gold_D_safe',
+  gold_a_inv:     'class_gold_A_inv',
+  gold_b_inv:     'class_gold_B_inv_safe',
+  gold_c_inv:     'class_gold_C_inv_safe',
+  gold_d_inv:     'class_gold_D_inv_safe',
+  silver_a:       'class_silver_A',
+  silver_b:       'class_silver_B_safe',
+  silver_c:       'class_silver_C_safe',
+  silver_d:       'class_silver_D_safe',
+  silver_a_inv:   'class_silver_A_inv',
+  silver_b_inv:   'class_silver_B_inv_safe',
+  silver_c_inv:   'class_silver_C_inv_safe',
+  silver_d_inv:   'class_silver_D_inv_safe',
 }
 
 const PAGE_SHIMMER: Record<string, string> = {
@@ -47,13 +51,18 @@ const PAGE_SHIMMER: Record<string, string> = {
   silver_c:     'silver-shimmer-wrap',
   silver_b_inv: 'silver-shimmer-wrap',
   silver_c_inv: 'silver-shimmer-wrap',
+  // D non ha shimmer
 }
 
+const RADIAL_GOLD   = 'radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,250,200,0.35) 0%, transparent 70%)'
+const RADIAL_SILVER = 'radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,255,255,0.3) 0%, transparent 70%)'
+const RADIAL_RGB    = 'radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,255,255,0.16) 0%, transparent 70%)'
+
 const PAGE_RADIAL: Record<string, string> = {
-  gold_c:       'radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,250,200,0.35) 0%, transparent 70%)',
-  gold_c_inv:   'radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,250,200,0.35) 0%, transparent 70%)',
-  silver_c:     'radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,255,255,0.3) 0%, transparent 70%)',
-  silver_c_inv: 'radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,255,255,0.3) 0%, transparent 70%)',
+  gold_c:       RADIAL_GOLD,   gold_c_inv:   RADIAL_GOLD,
+  gold_d:       RADIAL_GOLD,   gold_d_inv:   RADIAL_GOLD,
+  silver_c:     RADIAL_SILVER, silver_c_inv: RADIAL_SILVER,
+  silver_d:     RADIAL_SILVER, silver_d_inv: RADIAL_SILVER,
 }
 
 export default async function RootLayout({
@@ -89,14 +98,15 @@ export default async function RootLayout({
   const isPageEffect    = pageBgMode !== 'rgb'
   const isPageRgbEffect = pageBgMode.startsWith('rgb_')
   const pageShimmer     = ({ ...PAGE_SHIMMER, rgb_b: 'gold-shimmer-wrap', rgb_c: 'gold-shimmer-wrap', rgb_b_inv: 'gold-shimmer-wrap', rgb_c_inv: 'gold-shimmer-wrap' } as Record<string, string>)[pageBgMode] ?? null
-  const pageRadial      = ({ ...PAGE_RADIAL, rgb_c: 'radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,255,255,0.35) 0%, transparent 70%)', rgb_c_inv: 'radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,255,255,0.35) 0%, transparent 70%)' } as Record<string, string>)[pageBgMode] ?? null
+  const pageRadial      = ({ ...PAGE_RADIAL, rgb_c: RADIAL_RGB, rgb_c_inv: RADIAL_RGB, rgb_d: RADIAL_RGB, rgb_d_inv: RADIAL_RGB } as Record<string, string>)[pageBgMode] ?? null
 
+  const isBrushed = (m: string) => m === 'rgb_c' || m === 'rgb_c_inv' || m === 'rgb_d' || m === 'rgb_d_inv'
+  const isInv     = (m: string) => m.endsWith('_inv')
   const pageRgbStyle: React.CSSProperties = isPageRgbEffect
     ? {
-        background: pageBgMode === 'rgb_c'     ? rgbBrushedBackground(pageBg.r, pageBg.g, pageBg.b)
-          : pageBgMode === 'rgb_c_inv'          ? rgbBrushedBackgroundInv(pageBg.r, pageBg.g, pageBg.b)
-          : pageBgMode === 'rgb_a_inv' || pageBgMode === 'rgb_b_inv' ? rgbGradientInv(pageBg.r, pageBg.g, pageBg.b)
-          : rgbGradient(pageBg.r, pageBg.g, pageBg.b),
+        background: isBrushed(pageBgMode)
+          ? (isInv(pageBgMode) ? rgbBrushedBackgroundInv(pageBg.r, pageBg.g, pageBg.b) : rgbBrushedBackground(pageBg.r, pageBg.g, pageBg.b))
+          : (isInv(pageBgMode) ? rgbGradientInv(pageBg.r, pageBg.g, pageBg.b) : rgbGradient(pageBg.r, pageBg.g, pageBg.b)),
         boxShadow: rgbBoxShadow(pageBg.r, pageBg.g, pageBg.b),
       }
     : {}
