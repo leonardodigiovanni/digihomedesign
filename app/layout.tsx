@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import Header from '@/components/header'
 import Navbar from '@/components/navbar'
@@ -7,6 +8,14 @@ import { readSettings, type BgMode } from '@/lib/settings'
 import { rgbGradient, rgbGradientInv, rgbBrushedBackground, rgbBrushedBackgroundInv, rgbBoxShadow } from '@/lib/bg-utils'
 import { getConnection } from '@/lib/db'
 import './globals.css'
+
+export const metadata: Metadata = {
+  title: {
+    default: 'DIGI Home Design',
+    template: '%s | DIGI Home Design',
+  },
+  description: 'DIGI Home Design S.R.L. — Progettazione e ristrutturazione di interni',
+}
 
 const PAGE_EFFECT_CLASS: Record<string, string> = {
   gold_a:       'class_gold_A',

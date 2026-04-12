@@ -105,8 +105,8 @@ export default function Header({
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '100%', position: 'relative', zIndex: 1 }}>
         <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 6, textDecoration: 'none', color: 'inherit', height: '100%' }}>
-          <Image src="/images/digi_tr.png" alt="Home Design" width={95} height={95} unoptimized style={{ objectFit: 'contain', display: 'block', alignSelf: 'center' }} />
-          <Image src="/images/nome_tr.png" alt="Home Design" width={216} height={72} unoptimized loading="eager" style={{ objectFit: 'contain', display: 'block', alignSelf: 'center', marginTop: 9 }} />
+          <Image src="/images/digi_tr.png" alt="Home Design" width={95} height={95} sizes="95px" style={{ objectFit: 'contain', display: 'block', alignSelf: 'center' }} />
+          <Image src="/images/nome_tr.png" alt="Home Design" width={216} height={72} sizes="216px" loading="eager" style={{ objectFit: 'contain', display: 'block', alignSelf: 'center', marginTop: 9 }} />
         </a>
         <HeaderAuth username={username} registrazioniDisabilitate={registrazioniDisabilitate} />
       </div>

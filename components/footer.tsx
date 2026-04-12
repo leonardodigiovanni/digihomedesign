@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import type { Rgba, BgMode } from '@/lib/settings'
 import { rgbGradient, rgbGradientInv, rgbBrushedBackground, rgbBrushedBackgroundInv, rgbBoxShadow, rgbBorderColor, rgbTextColors } from '@/lib/bg-utils'
 
@@ -206,6 +207,7 @@ export default function Footer({
             ) : (
               <span
                 key={label}
+                role="img"
                 aria-label={label}
                 title={label}
                 className="footer-social-icon"
@@ -231,8 +233,7 @@ export default function Footer({
       <p style={{ textAlign: 'center', fontSize: 13, color: '#aaa', margin: 0 }}>
         © 2026  -  DIGI Home Design S.R.L.
       </p>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/images/dg-t.png" alt="logo" style={{ height: 46, width: 'auto', display: 'inline-block', verticalAlign: 'middle' }} />
+      <Image src="/images/dg-t.png" alt="logo" width={69} height={46} style={{ display: 'inline-block', verticalAlign: 'middle' }} />
       <p style={{ textAlign: 'center', fontSize: 13, color: '#aaa', margin: 0 }}>
         Tutti i diritti sono riservati all&apos;autore
       </p>

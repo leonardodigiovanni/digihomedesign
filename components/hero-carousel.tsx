@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import Image from 'next/image'
 
 const slides = [
   {
@@ -150,12 +151,6 @@ export default function HeroCarousel() {
     startTimer()
   }
 
-  const imgBase: React.CSSProperties = {
-    position: 'absolute', inset: 0,
-    width: '100%', height: '100%',
-    objectFit: 'cover', objectPosition: 'center',
-  }
-
   return (
     <div
       className="hero-grid"
@@ -169,18 +164,23 @@ export default function HeroCarousel() {
       {/* ── Immagine di sfondo (occupa tutto il container) ── */}
       <div className="hero-img-col">
         {previous !== null && (
-          <img
+          <Image
             key={`prev-${transitionId}`}
+            fill
             src={slides[previous].img}
             alt=""
-            style={{ ...imgBase, zIndex: 1, animation: `heroFadeOut ${DUR} ease forwards` }}
+            sizes="(max-width: 640px) 100vw, 1000px"
+            style={{ objectFit: 'cover', objectPosition: 'center', zIndex: 1, animation: `heroFadeOut ${DUR} ease forwards` }}
           />
         )}
-        <img
+        <Image
           key={`curr-${transitionId}`}
+          fill
           src={slides[current].img}
           alt={slides[current].title}
-          style={{ ...imgBase, zIndex: 0, animation: `${entranceAnim[effect]} ${DUR} ease forwards` }}
+          sizes="(max-width: 640px) 100vw, 1000px"
+          priority
+          style={{ objectFit: 'cover', objectPosition: 'center', zIndex: 0, animation: `${entranceAnim[effect]} ${DUR} ease forwards` }}
         />
 
         {/* Dots — centrati sulla porzione immagine visibile (58% sinistra) */}
@@ -197,9 +197,11 @@ export default function HeroCarousel() {
               style={{
                 width: i === current ? 28 : 10,
                 height: 10, borderRadius: 5,
-                border: 'none', cursor: 'pointer', padding: 0,
-                background: i === current ? '#fff' : 'rgba(255,255,255,0.5)',
-                transition: 'width 0.3s, background 0.3s',
+                border: 'none', cursor: 'pointer',
+                padding: i === current ? '17px 8px' : '17px',
+                backgroundColor: i === current ? '#fff' : 'rgba(255,255,255,0.5)',
+                backgroundClip: 'content-box',
+                transition: 'width 0.3s, background-color 0.3s',
               }}
             />
           ))}

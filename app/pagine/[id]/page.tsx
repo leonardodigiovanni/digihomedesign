@@ -1,6 +1,17 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { clientPages } from '@/lib/nav-config'
 import { readSettings } from '@/lib/settings'
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}): Promise<Metadata> {
+  const { id } = await params
+  const page = clientPages.find(p => p.id === Number(id))
+  return { title: page?.label ?? 'Pagina' }
+}
 
 export default async function PaginaCliente({
   params,
