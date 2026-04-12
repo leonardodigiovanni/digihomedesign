@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { preload } from 'react-dom'
 import { cookies } from 'next/headers'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -12,9 +11,6 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  // Preload dell'immagine LCP (prima slide del carousel) dal server component
-  preload('/images/casa-ristrutturata-1.jpg', { as: 'image', fetchPriority: 'high' })
-
   const cookieStore = await cookies()
   const username = cookieStore.get('session_user')?.value
   const { disabledPages } = readSettings()

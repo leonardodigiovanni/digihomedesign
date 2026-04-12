@@ -7,6 +7,7 @@ import InactivityGuard from '@/components/inactivity-guard'
 import { readSettings, type BgMode } from '@/lib/settings'
 import { rgbGradient, rgbGradientInv, rgbBrushedBackground, rgbBrushedBackgroundInv, rgbBoxShadow } from '@/lib/bg-utils'
 import { getConnection } from '@/lib/db'
+import Image from 'next/image'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -122,7 +123,7 @@ export default async function RootLayout({
         <main style={{ flex: 1, padding: '32px 24px', paddingTop: inManutenzione ? 'calc(90px + 32px)' : 'calc(90px + 42px + 32px)' }}>
           {inManutenzione ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '50vh', gap: 20, textAlign: 'center' }}>
-              <img src="/images/manutenzione.png" alt="Manutenzione" style={{ width: 360, height: 360, objectFit: 'contain' }} />
+              <Image src="/images/manutenzione.png" alt="Manutenzione" width={360} height={360} priority style={{ objectFit: 'contain' }} />
               <p style={{ fontSize: 28, fontWeight: 600, color: '#444', maxWidth: 600, lineHeight: 1.6, margin: 0, textAlign: 'center' }}>
                 Stiamo lavorando per migliorare il sito.<br />
                 Torneremo online al più presto. Ci scusiamo per il disagio.
