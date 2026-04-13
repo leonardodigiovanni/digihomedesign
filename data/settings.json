@@ -1,5 +1,5 @@
 {
-  "manutenzione": true,
+  "manutenzione": false,
   "inactivityMinutes": 20,
   "countdownSeconds": 10,
   "headerBg": {
@@ -24,11 +24,11 @@
   },
   "pageBgMode": "silver_d",
   "disabledPages": [],
-  "registrazioniDisabilitate": true,
+  "registrazioniDisabilitate": false,
   "loginClientiDisabilitato": false,
   "loginDipendentiDisabilitato": false,
   "bannerAbilitato": false,
-  "bannerTesto": "Promozione: per ogni infisso in alluminio o pvc ordinato ricevi im omaggio un quadro d'autore disponibile nella sezione quadri. Fino ad esaurimento scorte. Affrettati!!!",
+  "bannerTesto": "Promozione: per ogni infisso in alluminio ordinato ricevi in omaggio un quadro d'autore disponibile nella sezione quadri. Fino ad esaurimento scorte. Affrettati!!",
   "rolePermissions": {
     "cliente": [
       27,

@@ -1,7 +1,7 @@
 # Banner scorrevole nel subheader
 
 **Data:** 2026-04-12  
-**Stato:** in attesa di conferma
+**Stato:** completato
 
 ## Obiettivo
 

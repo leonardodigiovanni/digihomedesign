@@ -13,14 +13,7 @@ import {
 
 // ─── Stili comuni ─────────────────────────────────────────────────────────────
 
-const card: React.CSSProperties = {
-  maxWidth: 480,
-  margin: '0 auto',
-  background: '#fff',
-  border: '1px solid #e0e0e0',
-  borderRadius: 10,
-  padding: '36px 40px',
-}
+const card = 'reg-card'
 const fieldset: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
@@ -119,7 +112,7 @@ function Step1({ onSuccess }: { onSuccess: (id: number) => void }) {
           <span style={{ fontWeight: 400, color: '#888' }}>(lettere, numeri, _ . -)</span>
           <input name="username" required minLength={3} style={input} autoComplete="username" />
         </label>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+        <div className="reg-grid-2">
           <label style={label}>
             Nome *
             <input name="nome" required style={input} />
@@ -129,7 +122,7 @@ function Step1({ onSuccess }: { onSuccess: (id: number) => void }) {
             <input name="cognome" required style={input} />
           </label>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+        <div className="reg-grid-2">
           <label style={label}>
             Data di nascita *
             <input name="data_nascita" type="date" required style={input} />
@@ -301,7 +294,7 @@ export default function RegistrationFlow() {
 
   if (step === 3) {
     return (
-      <div style={card}>
+      <div className={card}>
         <div style={{ textAlign: 'center', padding: '16px 0' }}>
           <div style={{ fontSize: 40, marginBottom: 16 }}>✓</div>
           <h2 style={{ fontSize: 20, marginBottom: 12 }}>Registrazione completata!</h2>
@@ -325,15 +318,8 @@ export default function RegistrationFlow() {
   }
 
   return (
-    <div style={card}>
+    <div className={card}>
       <h2 style={{ marginBottom: 4, fontSize: 20 }}>Crea un account</h2>
-      <p style={{ fontSize: 13, color: '#888', marginBottom: 24 }}>
-        Hai già un account?{' '}
-        <a href="/" style={{ color: '#1a1a1a' }}>
-          Accedi dall&apos;header
-        </a>
-      </p>
-
       <StepBar current={step} />
 
       {step === 0 && (
