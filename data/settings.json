@@ -1,5 +1,5 @@
 {
-  "manutenzione": false,
+  "manutenzione": true,
   "inactivityMinutes": 20,
   "countdownSeconds": 10,
   "headerBg": {
