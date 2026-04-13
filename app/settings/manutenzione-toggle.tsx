@@ -11,43 +11,31 @@ export default function ManutenzioneToggle({ manutenzione }: { manutenzione: boo
 
   return (
     <div style={{
-      background: manutenzione ? '#fff8f0' : '#fff',
-      border: `2px solid ${manutenzione ? '#e07020' : '#e0e0e0'}`,
+      background: '#fff',
+      border: '1px solid #e0e0e0',
       borderRadius: 10,
-      padding: '20px 28px',
-      marginBottom: 24,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      gap: 20,
+      padding: '24px 28px 28px',
+      marginBottom: 32,
     }}>
-      <div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <img src="/images/manutenzione.png" alt="Manutenzione" style={{ width: 24, height: 24, objectFit: 'contain' }} />
-          <h3 style={{ fontSize: 15, fontWeight: 700, margin: 0 }}>
-            Modalità manutenzione
-          </h3>
-          <span style={{
-            fontSize: 11, fontWeight: 700, padding: '2px 10px', borderRadius: 10,
-            background: manutenzione ? '#e07020' : '#e0e0e0',
-            color: manutenzione ? '#fff' : '#888',
-          }}>
-            {manutenzione ? 'ATTIVA' : 'DISATTIVA'}
-          </span>
-        </div>
-        <p style={{ margin: '6px 0 0 32px', fontSize: 13, color: '#666', lineHeight: 1.5 }}>
-          {manutenzione
-            ? 'Il sito mostra solo la pagina di manutenzione. Solo l\'admin può accedere.'
-            : 'Il sito è operativo normalmente per tutti gli utenti.'}
-        </p>
+      <h3 style={{ fontSize: 15, fontWeight: 600, margin: '0 0 12px' }}>
+        Modalità manutenzione
+      </h3>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+        <span style={{
+          fontSize: 11, fontWeight: 700, padding: '2px 10px', borderRadius: 10,
+          background: manutenzione ? '#c04444' : '#e0e0e0',
+          color: manutenzione ? '#fff' : '#888',
+        }}>
+          {manutenzione ? 'ATTIVA' : 'DISATTIVA'}
+        </span>
+        <form action={action}>
+          <button type="submit" disabled={pending}
+            className={pending ? 'btn-gray' : manutenzione ? 'btn-green' : 'btn-red'}
+            style={{ padding: '8px 20px', fontSize: 13, borderRadius: 7, fontFamily: 'inherit', whiteSpace: 'nowrap' }}>
+            {pending ? '…' : manutenzione ? '✓ Ripristina sito' : <><span style={{ verticalAlign: 'middle', lineHeight: 1, position: 'relative', top: '-3px' }}>⊘</span>{' Attiva manutenzione'}</>}
+          </button>
+        </form>
       </div>
-      <form action={action}>
-        <button type="submit" disabled={pending}
-          className={pending ? 'btn-gray' : manutenzione ? 'btn-green' : 'btn-orange'}
-          style={{ padding: '10px 22px', fontSize: 14, borderRadius: 7, fontFamily: 'inherit', whiteSpace: 'nowrap' }}>
-          {pending ? '…' : manutenzione ? '✓ Ripristina sito' : 'Attiva manutenzione'}
-        </button>
-      </form>
     </div>
   )
 }

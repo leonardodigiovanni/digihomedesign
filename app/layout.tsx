@@ -8,6 +8,7 @@ import { readSettings, type BgMode } from '@/lib/settings'
 import { rgbGradient, rgbGradientInv, rgbBrushedBackground, rgbBrushedBackgroundInv, rgbBoxShadow } from '@/lib/bg-utils'
 import { getConnection } from '@/lib/db'
 import Image from 'next/image'
+import EmergencyLogin from '@/components/emergency-login'
 import './globals.css'
 
 export const viewport: Viewport = {
@@ -131,11 +132,38 @@ export default async function RootLayout({
         )}
 
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100 }}>
-          <Header username={username} headerBg={settings.headerBg} headerBgMode={settings.headerBgMode} registrazioniDisabilitate={settings.registrazioniDisabilitate} />
-          {!inManutenzione && <Navbar role={role} disabledPages={settings.disabledPages} rolePermissions={rolePermissions} />}
+          <Header headerBg={settings.headerBg} headerBgMode={settings.headerBgMode} />
+          {settings.bannerAbilitato && (
+            <>
+              <style>{`
+                @keyframes banner-scroll {
+                  from { transform: translateX(100vw); }
+                  to   { transform: translateX(-100%); }
+                }
+              `}</style>
+              <div
+                className="class_silver_D_safe"
+                style={{ height: 48, overflow: 'hidden', display: 'flex', alignItems: 'center', borderBottom: '1px solid #aaa' }}
+              >
+                <span style={{
+                  display: 'inline-block',
+                  whiteSpace: 'nowrap',
+                  fontSize: 17,
+                  fontWeight: 600,
+                  color: '#333',
+                  animation: `banner-scroll ${Math.max(8, Math.round(settings.bannerTesto.length * 0.08))}s linear infinite`,
+                }}>
+                  {settings.bannerTesto}
+                </span>
+              </div>
+            </>
+          )}
+          {!inManutenzione && <Navbar role={role} disabledPages={settings.disabledPages} rolePermissions={rolePermissions} username={username} registrazioniDisabilitate={settings.registrazioniDisabilitate} />}
         </div>
 
-        <main style={{ flex: 1, padding: '32px 24px', paddingTop: inManutenzione ? 'calc(90px + 32px)' : 'calc(90px + 42px + 32px)' }}>
+        <main style={{ flex: 1, padding: '32px 24px', paddingTop: inManutenzione
+          ? `calc(90px + ${settings.bannerAbilitato ? '48px + ' : ''}32px)`
+          : `calc(90px + ${settings.bannerAbilitato ? '48px + ' : ''}42px + 32px)` }}>
           {inManutenzione ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '50vh', gap: 20, textAlign: 'center' }}>
               <Image src="/images/manutenzione.png" alt="Manutenzione" width={360} height={360} priority style={{ objectFit: 'contain' }} />
@@ -148,6 +176,8 @@ export default async function RootLayout({
         </main>
 
         <Footer footerBg={settings.footerBg} footerBgMode={settings.footerBgMode} />
+
+        <EmergencyLogin inManutenzione={inManutenzione} />
 
         {username && !inManutenzione && (
           <InactivityGuard

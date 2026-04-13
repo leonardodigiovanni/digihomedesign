@@ -11,7 +11,7 @@
   "headerBgMode": "rgb_d",
   "footerBg": {
     "r": 0,
-    "g": 0,
+    "g": 197,
     "b": 0,
     "a": 100
   },
@@ -27,6 +27,8 @@
   "registrazioniDisabilitate": true,
   "loginClientiDisabilitato": false,
   "loginDipendentiDisabilitato": false,
+  "bannerAbilitato": false,
+  "bannerTesto": "Promozione: per ogni infisso in alluminio o pvc ordinato ricevi im omaggio un quadro d'autore disponibile nella sezione quadri. Fino ad esaurimento scorte. Affrettati!!!",
   "rolePermissions": {
     "cliente": [
       27,

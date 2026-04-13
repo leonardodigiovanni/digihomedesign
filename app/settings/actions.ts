@@ -123,6 +123,29 @@ export async function saveAccessControls(
   return { ok: true }
 }
 
+export async function toggleBanner(
+  _prev: SaveAccessResult | null,
+  _formData: FormData
+): Promise<SaveAccessResult> {
+  const cookieStore = await cookies()
+  if (cookieStore.get('session_role')?.value !== 'admin') redirect('/')
+  const current = readSettings()
+  writeSettings({ ...current, bannerAbilitato: !current.bannerAbilitato })
+  return { ok: true }
+}
+
+export async function saveBannerTesto(
+  _prev: SaveAccessResult | null,
+  formData: FormData
+): Promise<SaveAccessResult> {
+  const cookieStore = await cookies()
+  if (cookieStore.get('session_role')?.value !== 'admin') redirect('/')
+  const bannerTesto = (formData.get('bannerTesto') as string) ?? ''
+  const current = readSettings()
+  writeSettings({ ...current, bannerTesto })
+  return { ok: true }
+}
+
 export async function toggleManutenzione(
   _prev: SaveAccessResult | null,
   formData: FormData

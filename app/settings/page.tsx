@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { readSettings } from '@/lib/settings'
 import SettingsForm from './settings-form'
 import ManutenzioneToggle from './manutenzione-toggle'
+import BannerPanel from './banner-panel'
 
 const testPages = [
   { label: 'Test Sfondo Gold (A/B/C)',   href: '/test-gold'   },
@@ -23,6 +24,7 @@ export default async function Page() {
       <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 24 }}>Settings</h2>
 
       <ManutenzioneToggle manutenzione={settings.manutenzione} />
+      <BannerPanel abilitato={settings.bannerAbilitato} testo={settings.bannerTesto} />
 
       {/* Pannello pagine di test */}
       <div style={{

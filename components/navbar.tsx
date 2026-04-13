@@ -4,14 +4,17 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { clientPages, visibleAdminPages, visibleInternalPages, type NavPage } from '@/lib/nav-config'
+import HeaderAuth from '@/components/header-auth'
 
 interface NavbarProps {
   role: string | null
   disabledPages?: number[]
   rolePermissions?: Record<string, number[]>
+  username?: string | null
+  registrazioniDisabilitate?: boolean
 }
 
-export default function Navbar({ role, disabledPages = [], rolePermissions = {} }: NavbarProps) {
+export default function Navbar({ role, disabledPages = [], rolePermissions = {}, username, registrazioniDisabilitate }: NavbarProps) {
   const [menuOpen, setMenuOpen]       = useState(false)
   const [sectionOpen, setSectionOpen] = useState(false)
   const pathname    = usePathname()
@@ -64,7 +67,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {} 
   })
 
   return (
-    <nav style={{ background: '#f8f8f8', borderBottom: '1px solid #e8e8e8', flexShrink: 0 }}>
+    <nav className="class_gold_D_safe" style={{ borderBottom: '1px solid #c8960c', flexShrink: 0 }}>
 
       {/* ── Desktop ── */}
       <div className="nav-bar">
@@ -131,19 +134,28 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {} 
             ))}
           </>
         )}
+
+        <div style={{ marginLeft: 'auto', paddingRight: 4 }}>
+          <HeaderAuth username={username} registrazioniDisabilitate={registrazioniDisabilitate} forceDropdown />
+        </div>
       </div>
 
-      {/* ── Mobile hamburger ── */}
-      <button
-        type="button"
-        className="nav-hamburger"
-        onClick={() => setMenuOpen(o => !o)}
-        aria-expanded={menuOpen}
-        aria-label={menuOpen ? 'Chiudi menu' : 'Apri menu'}
-      >
-        <span style={{ fontSize: 18 }}>{menuOpen ? '✕' : '☰'}</span>
-        Menu
-      </button>
+      {/* ── Mobile bar: hamburger + auth ── */}
+      <div className="nav-mobile-bar">
+        <button
+          type="button"
+          className="nav-hamburger"
+          onClick={() => setMenuOpen(o => !o)}
+          aria-expanded={menuOpen}
+          aria-label={menuOpen ? 'Chiudi menu' : 'Apri menu'}
+        >
+          <span style={{ fontSize: 18 }}>{menuOpen ? '✕' : '☰'}</span>
+          Menu
+        </button>
+        <div style={{ marginLeft: 'auto', paddingRight: 12 }}>
+          <HeaderAuth username={username} registrazioniDisabilitate={registrazioniDisabilitate} forceDropdown />
+        </div>
+      </div>
 
       {/* ── Mobile menu ── */}
       {menuOpen && (
@@ -216,9 +228,11 @@ function InternalDropdown({
     return () => document.removeEventListener('mousedown', handle)
   }, [])
 
+  const anyActive = items.some(p => isActive(p.href))
+
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} style={{ ...linkStyle('/interno'), gap: 4 }}>
+      <button onClick={() => setOpen(o => !o)} style={{ ...linkStyle('/interno'), gap: 4, color: anyActive ? '#1a1a1a' : '#555', boxShadow: anyActive ? 'inset 0 -2px 0 #1a1a1a' : 'none' }}>
         Area Lavoro {open ? '▴' : '▾'}
       </button>
       {open && (

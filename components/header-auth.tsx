@@ -7,6 +7,7 @@ import { login, logout } from '@/app/actions'
 interface HeaderAuthProps {
   username?: string | null
   registrazioniDisabilitate?: boolean
+  forceDropdown?: boolean
 }
 
 function useLoginFlash(error: string | null, isPending: boolean) {
@@ -96,7 +97,7 @@ function DropdownLoginForm({ registrazioniDisabilitate }: { registrazioniDisabil
         className={isPending ? 'btn-gray' : 'btn-green'}
         style={{ padding: '6px 12px', fontSize: 13, borderRadius: 4 }}
       >
-        {isPending ? '...' : 'Entra'}
+        {isPending ? '...' : 'Accedi'}
       </button>
       {showError && (
         <div style={{
@@ -121,7 +122,7 @@ function DropdownLoginForm({ registrazioniDisabilitate }: { registrazioniDisabil
   )
 }
 
-export default function HeaderAuth({ username, registrazioniDisabilitate }: HeaderAuthProps) {
+export default function HeaderAuth({ username, registrazioniDisabilitate, forceDropdown }: HeaderAuthProps) {
   const [isNarrow, setIsNarrow] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const wrapperRef = useRef<HTMLDivElement>(null)
@@ -145,18 +146,23 @@ export default function HeaderAuth({ username, registrazioniDisabilitate }: Head
     return () => document.removeEventListener('mousedown', handle)
   }, [isOpen])
 
-  // utente loggato: logout sempre inline, compatto
+  // utente loggato: logout stesso ingombro di "Accedi ▾"
   if (username) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
-        <span style={{ fontSize: 11, color: '#ffffff', whiteSpace: 'nowrap' }}>
+      <div style={{ position: 'relative' }}>
+        <span style={{
+          position: 'absolute', top: -9, right: 0,
+          fontSize: 9, color: '#000', fontWeight: 700,
+          whiteSpace: 'nowrap', lineHeight: 1,
+          pointerEvents: 'none',
+        }}>
           Benvenuto, <strong>{username}</strong>
         </span>
         <form action={logout}>
           <button
             type="submit"
             className="btn-red"
-            style={{ padding: '4px 12px', fontSize: 13, borderRadius: 4 }}
+            style={{ padding: '5px 14px', fontSize: 13, borderRadius: 4, width: 92, fontFamily: 'inherit', lineHeight: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
           >
             Logout
           </button>
@@ -165,14 +171,14 @@ export default function HeaderAuth({ username, registrazioniDisabilitate }: Head
     )
   }
 
-  // schermo stretto: toggle dropdown verticale
-  if (isNarrow) {
+  // schermo stretto o forceDropdown: toggle dropdown verticale
+  if (isNarrow || forceDropdown) {
     return (
       <div ref={wrapperRef} style={{ position: 'relative' }}>
         <button
           onClick={() => setIsOpen(v => !v)}
-          className="btn-green"
-          style={{ padding: '5px 14px', fontSize: 13, borderRadius: 4, whiteSpace: 'nowrap' }}
+          className={isOpen ? 'btn-rgb-c' : 'btn-green'}
+          style={{ padding: '5px 14px', fontSize: 13, borderRadius: 4, whiteSpace: 'nowrap', width: 92, fontFamily: 'inherit', lineHeight: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
         >
           {isOpen ? '✕ Chiudi' : 'Accedi ▾'}
         </button>

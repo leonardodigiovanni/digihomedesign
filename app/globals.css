@@ -8,9 +8,15 @@
   gap: 2px;
 }
 .nav-hamburger { display: none; }
+.nav-mobile-bar { display: none; }
 
 @media (max-width: 768px) {
   .nav-bar { display: none; }
+  .nav-mobile-bar {
+    display: flex;
+    align-items: center;
+    height: 42px;
+  }
   .nav-hamburger {
     display: flex;
     align-items: center;
@@ -22,7 +28,6 @@
     background: none;
     border: none;
     cursor: pointer;
-    width: 100%;
     color: #333;
     touch-action: manipulation;
   }
@@ -810,6 +815,41 @@ body {
   pointer-events: none;
 }
 
+/* RGB-C rame — stesso stile btn-green/red ma con colore header rgb (r=145,g=85,b=85) */
+.btn-rgb-c {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px,
+      transparent 1px, transparent 4px
+    ),
+    linear-gradient(135deg,
+      #3a2222 0%, #623a3a 20%, #915555 45%, #623a3a 80%, #3a2222 100%
+    ) !important;
+  color: #ffd8d8 !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(145,85,85,0.45), inset 0 1px 0 rgba(200,160,160,0.2);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+.btn-rgb-c:hover:not(:disabled) {
+  filter: brightness(1.14);
+}
+.btn-rgb-c::after {
+  content: '';
+  position: absolute;
+  top: -30%;
+  left: 0;
+  width: 35%;
+  height: 160%;
+  background: linear-gradient(90deg, transparent 0%, rgba(210,170,170,0.45) 50%, transparent 100%);
+  animation: btn-shimmer var(--btn-shimmer-speed) ease-in-out infinite;
+  animation-delay: calc(var(--btn-shimmer-speed) / -4);
+  pointer-events: none;
+}
+
 /* Grigio — disabilitato */
 .btn-gray {
   background:
@@ -824,8 +864,25 @@ body {
   color: #d8d8d8 !important;
   border: none !important;
   box-shadow: none;
-  cursor: default !important;
-  opacity: 0.55;
+  cursor: pointer;
   position: relative;
   overflow: hidden;
+}
+.btn-gray:disabled {
+  cursor: default !important;
+  opacity: 0.55;
+}
+
+.subfooter-bar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+@media (max-width: 540px) {
+  .subfooter-bar {
+    flex-direction: column;
+    gap: 4px;
+  }
 }

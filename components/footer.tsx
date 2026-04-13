@@ -188,20 +188,18 @@ export default function Footer({
       {shimmerClass && <div className={shimmerClass} />}
 
       <div style={{ position: 'relative', zIndex: 1 }}>
-        {/* Dati aziendali */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 24 }}>
-          {infoRows.map(({ label, value }) => (
-            <div key={label} style={{ fontSize: 13, color: tc.value, lineHeight: 1.5 }}>
-              <span style={{ fontWeight: 600, color: tc.label }}>{label}:</span> {value}
-            </div>
-          ))}
-        </div>
+        {/* Info + Social side by side, si incolonnano su schermi stretti */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 20, flexWrap: 'wrap', marginBottom: 16 }}>
+          {/* Dati aziendali */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {infoRows.map(({ label, value }) => (
+              <div key={label} style={{ fontSize: 13, color: tc.value, lineHeight: 1.5 }}>
+                <span style={{ fontWeight: 600, color: tc.label }}>{label}:</span> {value}
+              </div>
+            ))}
+          </div>
 
-        {/* Separatore */}
-        <div style={{ borderTop: `1px solid ${tc.sep}` }} />
-
-        {/* Icone social — in basso a destra */}
-        <div style={{ position: 'absolute', bottom: 0, right: 0, paddingBottom: 2 }}>
+          {/* Icone social */}
           <div style={{ display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap', background: 'rgba(255,255,255,0.20)', backdropFilter: 'blur(6px)', borderRadius: 10, padding: '8px 14px' }}>
             {socials.map(({ label, href, icon }) => href ? (
               <a
@@ -230,22 +228,18 @@ export default function Footer({
             ))}
           </div>
         </div>
+
+        {/* Separatore */}
+        <div style={{ borderTop: `1px solid ${tc.sep}` }} />
       </div>
     </footer>
 
     {/* Ultima riga nera */}
-    <div style={{
-      background: '#000',
-      padding: '10px 24px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: 8,
-    }}>
+    <div className="subfooter-bar" style={{ background: '#000', padding: '10px 24px' }}>
       <p style={{ textAlign: 'center', fontSize: 13, color: '#aaa', margin: 0 }}>
         © 2026  -  DIGI Home Design S.R.L.
       </p>
-      <Image src="/images/dg-t.png" alt="logo" width={69} height={46} style={{ display: 'inline-block', verticalAlign: 'middle' }} />
+      <Image src="/images/dg-t.png" alt="logo" width={69} height={46} id="subfooter-logo" style={{ display: 'block' }} />
       <p style={{ textAlign: 'center', fontSize: 13, color: '#aaa', margin: 0 }}>
         Tutti i diritti sono riservati all&apos;autore
       </p>

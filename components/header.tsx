@@ -1,13 +1,10 @@
 import Image from 'next/image'
-import HeaderAuth from '@/components/header-auth'
 import type { Rgba, BgMode } from '@/lib/settings'
 import { rgbGradient, rgbGradientInv, rgbBrushedBackground, rgbBrushedBackgroundInv, rgbBoxShadow, rgbBorderColor } from '@/lib/bg-utils'
 
 interface HeaderProps {
-  username?: string | null
   headerBg?: Rgba
   headerBgMode?: BgMode
-  registrazioniDisabilitate?: boolean
 }
 
 const EFFECT_CLASS: Record<string, string> = {
@@ -79,10 +76,8 @@ function buildBorderColor(mode: BgMode, bg: Rgba): string {
 }
 
 export default function Header({
-  username,
   headerBg = { r: 255, g: 255, b: 255, a: 100 },
   headerBgMode = 'rgb',
-  registrazioniDisabilitate,
 }: HeaderProps) {
   const isFixedEffect = headerBgMode in EFFECT_CLASS
   const isRgbEffect   = headerBgMode.startsWith('rgb_')
@@ -108,12 +103,11 @@ export default function Header({
       )}
       {shimmerClass && <div className={shimmerClass} />}
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '100%', position: 'relative', zIndex: 1 }}>
+      <div style={{ display: 'flex', alignItems: 'center', height: '100%', position: 'relative', zIndex: 1 }}>
         <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 6, textDecoration: 'none', color: 'inherit', height: '100%' }}>
           <Image src="/images/digi_tr.png" alt="Home Design" width={95} height={95} sizes="95px" style={{ objectFit: 'contain', display: 'block', alignSelf: 'center' }} />
-          <Image src="/images/nome_tr.png" alt="Home Design" width={216} height={72} sizes="216px" loading="eager" style={{ objectFit: 'contain', display: 'block', alignSelf: 'center', marginTop: 9 }} />
+          <Image src="/images/nome_tr.png" alt="Home Design" width={143} height={48} sizes="143px" loading="eager" style={{ objectFit: 'contain', display: 'block', alignSelf: 'center', position: 'relative', top: 12 }} />
         </a>
-        <HeaderAuth username={username} registrazioniDisabilitate={registrazioniDisabilitate} />
       </div>
     </header>
   )
