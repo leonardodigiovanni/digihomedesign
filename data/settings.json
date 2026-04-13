@@ -23,11 +23,23 @@
     "a": 81
   },
   "pageBgMode": "silver_d",
-  "disabledPages": [],
-  "registrazioniDisabilitate": false,
+  "disabledPages": [
+    3,
+    5,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "registrazioniDisabilitate": true,
   "loginClientiDisabilitato": false,
   "loginDipendentiDisabilitato": false,
-  "bannerAbilitato": false,
+  "bannerAbilitato": true,
   "bannerTesto": "Promozione: per ogni infisso in alluminio ordinato ricevi in omaggio un quadro d'autore disponibile nella sezione quadri. Fino ad esaurimento scorte. Affrettati!!",
   "rolePermissions": {
     "cliente": [
