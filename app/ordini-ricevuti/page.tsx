@@ -4,6 +4,11 @@ import { readSettings } from '@/lib/settings'
 import { hasPageAccess } from '@/lib/permissions'
 import { getConnection } from '@/lib/db'
 import OrdiniRicevutiClient, { type OrdineRicevuto, type Nota, type Cliente } from './client'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Ordini Ricevuti',
+}
 
 async function initTables(conn: Awaited<ReturnType<typeof import('@/lib/db').getConnection>>) {
   await conn.execute(`

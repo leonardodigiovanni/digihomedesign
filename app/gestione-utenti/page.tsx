@@ -2,6 +2,11 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import GestioneUtentiClient from './gestione-utenti-client'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Gestione Utenti',
+}
 
 export default async function Page() {
   const cookieStore = await cookies()

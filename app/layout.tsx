@@ -19,8 +19,8 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: 'DIGI Home Design',
-    template: '%s | DIGI Home Design',
+    default: 'Home Design',
+    template: 'Home Design - %s',
   },
   description: 'DIGI Home Design S.R.L. — Progettazione e ristrutturazione di interni',
 }
@@ -115,6 +115,9 @@ export default async function RootLayout({
 
   const inManutenzione = settings.manutenzione && role !== 'admin'
 
+  const bannerDur      = Math.max(21, Math.round(settings.bannerTesto.length * 0.18))
+  const bannerPausePct = Math.round((1 - 1 / bannerDur) * 100)
+
   return (
     <html lang="it">
       <body style={isPageEffect ? {} : { background: `rgba(${pageBg.r}, ${pageBg.g}, ${pageBg.b}, ${pageBg.a / 100})` }}>
@@ -138,8 +141,9 @@ export default async function RootLayout({
             <>
               <style>{`
                 @keyframes banner-scroll {
-                  from { transform: translateX(100vw); }
-                  to   { transform: translateX(-100%); }
+                  0%           { transform: translateX(calc(100vw + 32px)); }
+                  ${bannerPausePct}% { transform: translateX(-100%); }
+                  100%         { transform: translateX(-100%); }
                 }
               `}</style>
               <div
@@ -152,9 +156,9 @@ export default async function RootLayout({
                   fontSize: 17,
                   fontWeight: 600,
                   color: '#333',
-                  animation: `banner-scroll ${Math.max(8, Math.round(settings.bannerTesto.length * 0.08))}s linear infinite`,
+                  animation: `banner-scroll ${bannerDur}s linear infinite`,
                 }}>
-                  {settings.bannerTesto}
+                  {'\u00A0\u00A0'}{settings.bannerTesto}
                 </span>
               </div>
             </>

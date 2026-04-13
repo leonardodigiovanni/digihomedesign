@@ -2,6 +2,11 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import EmailClient from './email-client'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Email',
+}
 
 type Messaggio = {
   id: number

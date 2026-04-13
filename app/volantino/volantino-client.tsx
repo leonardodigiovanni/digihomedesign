@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import type { Rgba, BgMode } from '@/lib/settings'
 import {
   rgbGradient, rgbGradientInv,
@@ -175,9 +175,32 @@ export default function VolantinoClient({
   pageBg:   Rgba; pageBgMode:   BgMode
   footerBg: Rgba; footerBgMode: BgMode
 }) {
-  const volRef = useRef<HTMLDivElement>(null)
-  const [sharing, setSharing] = useState(false)
+  const volRef       = useRef<HTMLDivElement>(null)
+  const wrapRef      = useRef<HTMLDivElement>(null)
+  const [sharing, setSharing]               = useState(false)
   const [shareUnsupported, setShareUnsupported] = useState(false)
+  const [containerW, setContainerW]         = useState(PREVIEW_W)
+  const [isMobile, setIsMobile]             = useState(false)
+
+  // Rileva mobile (schermo stretto) per lo scaling adattivo
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
+  // ResizeObserver: aggiorna la scala solo su mobile
+  useEffect(() => {
+    if (!isMobile) return
+    const el = wrapRef.current
+    if (!el) return
+    const ro = new ResizeObserver(entries => {
+      setContainerW(entries[0].contentRect.width)
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [isMobile])
 
   async function handleExport() {
     if (!volRef.current) return
@@ -248,7 +271,7 @@ export default function VolantinoClient({
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20, minWidth: 0 }}>
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,400;0,700;0,900;1,400;1,700&display=swap" rel="stylesheet" />
@@ -258,14 +281,14 @@ export default function VolantinoClient({
           <button
             onClick={handleExport}
             className="btn-green"
-            style={{ padding: '9px 28px', fontSize: 14, fontFamily: 'inherit', fontWeight: 600 }}
+            style={{ padding: '8px 0', fontSize: 14, fontFamily: 'inherit', fontWeight: 600, borderRadius: 6, width: 150 }}
           >
             Esporta JPG A4
           </button>
           <button
             onClick={handleExportPDF}
             className="btn-green"
-            style={{ padding: '9px 28px', fontSize: 14, fontFamily: 'inherit', fontWeight: 600 }}
+            style={{ padding: '8px 0', fontSize: 14, fontFamily: 'inherit', fontWeight: 600, borderRadius: 6, width: 150 }}
           >
             Esporta PDF A4
           </button>
@@ -273,9 +296,20 @@ export default function VolantinoClient({
             onClick={handleShareWhatsApp}
             disabled={sharing}
             className={sharing ? 'btn-gray' : 'btn-green'}
-            style={{ padding: '9px 28px', fontSize: 14, fontFamily: 'inherit', fontWeight: 600 }}
+            style={{ padding: '8px 0', fontSize: 14, fontFamily: 'inherit', fontWeight: 600, borderRadius: 6, width: 150, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
           >
-            {sharing ? 'Generazione...' : '📤 Condividi'}
+            {sharing ? 'Generazione...' : (
+              <>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                  <circle cx="18" cy="5"  r="3" fill="currentColor" stroke="none"/>
+                  <circle cx="18" cy="19" r="3" fill="currentColor" stroke="none"/>
+                  <circle cx="6"  cy="12" r="3" fill="currentColor" stroke="none"/>
+                  <line x1="6" y1="12" x2="18" y2="5"/>
+                  <line x1="6" y1="12" x2="18" y2="19"/>
+                </svg>
+                Condividi
+              </>
+            )}
           </button>
           <span style={{ fontSize: 13, color: '#888' }}>
             2480 × 3508 px — 300 DPI
@@ -288,15 +322,21 @@ export default function VolantinoClient({
         )}
       </div>
 
-      {/* Contenitore preview scalato */}
-      <div style={{
-        width:      PREVIEW_W,
-        height:     Math.round(A4_H * SCALE),
-        position:   'relative',
-        overflow:   'hidden',
-        boxShadow:  '0 4px 24px rgba(0,0,0,0.18)',
-        flexShrink: 0,
-      }}>
+      {/* Contenitore preview scalato — si adatta alla larghezza disponibile */}
+      <div
+        ref={wrapRef}
+        style={{
+          // Mobile: si adatta alla larghezza disponibile
+          // Desktop: larghezza fissa, la pagina scrolla orizzontalmente se necessario
+          width:      isMobile ? '100%' : PREVIEW_W,
+          maxWidth:   isMobile ? PREVIEW_W : undefined,
+          height:     Math.round(A4_H * (isMobile ? containerW / A4_W : SCALE)),
+          position:   'relative',
+          overflow:   'hidden',
+          boxShadow:  '0 4px 24px rgba(0,0,0,0.18)',
+          flexShrink: 0,
+        }}
+      >
         <div
           ref={volRef}
           style={{
@@ -306,7 +346,7 @@ export default function VolantinoClient({
             fontFamily:      '"Times New Roman", Times, serif',
             top:             0,
             left:            0,
-            transform:       `scale(${SCALE})`,
+            transform:       `scale(${isMobile ? containerW / A4_W : SCALE})`,
             transformOrigin: 'top left',
           }}
         >
@@ -479,7 +519,7 @@ export default function VolantinoClient({
               Contattaci subito
             </div>
             <div style={{ display: 'flex', gap: 40, alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap' }}>
-              {['www.digihomedesign.com', '(+39) 3518716731', 'digi-home-design@libero.it'].map(c => (
+              {['www.digihomedesign.com', '(+39) 3518716731', 'info@digi-home-design.com'].map(c => (
                 <span key={c} style={{ fontSize: 17, fontWeight: 500, color: '#FFFFFF', letterSpacing: '0.03em' }}>{c}</span>
               ))}
             </div>

@@ -4,6 +4,11 @@ import { readSettings } from '@/lib/settings'
 import { hasPageAccess } from '@/lib/permissions'
 import { getConnection } from '@/lib/db'
 import MieiOrdiniClient, { type OrdineCliente } from './client'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'I Miei Ordini',
+}
 
 async function getMieiOrdini(username: string): Promise<OrdineCliente[]> {
   const conn = await getConnection()

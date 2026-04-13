@@ -4,6 +4,11 @@ import { readSettings } from '@/lib/settings'
 import { hasPageAccess } from '@/lib/permissions'
 import { getConnection } from '@/lib/db'
 import ArchivioClient, { type Documento } from './archivio-client'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Archivio',
+}
 
 async function getDocumenti(): Promise<Documento[]> {
   const conn = await getConnection()

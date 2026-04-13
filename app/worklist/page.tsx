@@ -4,6 +4,11 @@ import { readSettings } from '@/lib/settings'
 import { hasPageAccess } from '@/lib/permissions'
 import { getConnection } from '@/lib/db'
 import WorklistClient, { type Compito, type Utente } from './worklist-client'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Worklist',
+}
 
 const GESTORI = ['admin', 'direttore']
 

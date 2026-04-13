@@ -1,14 +1,9 @@
-import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import Link from 'next/link'
 import Image from 'next/image'
 import { clientPages } from '@/lib/nav-config'
 import { readSettings } from '@/lib/settings'
 import HeroCarousel from '@/components/hero-carousel'
-
-export const metadata: Metadata = {
-  title: 'Home',
-}
 
 export default async function Page() {
   const cookieStore = await cookies()

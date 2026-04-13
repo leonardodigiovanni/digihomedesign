@@ -4,6 +4,11 @@ import { readSettings } from '@/lib/settings'
 import { hasPageAccess } from '@/lib/permissions'
 import { getConnection } from '@/lib/db'
 import AnagraficaClientiClient, { type Cliente } from './client'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Anagrafica Clienti',
+}
 
 async function getClienti(): Promise<Cliente[]> {
   const conn = await getConnection()

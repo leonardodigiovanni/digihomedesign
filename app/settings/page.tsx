@@ -5,6 +5,11 @@ import { readSettings } from '@/lib/settings'
 import SettingsForm from './settings-form'
 import ManutenzioneToggle from './manutenzione-toggle'
 import BannerPanel from './banner-panel'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Impostazioni',
+}
 
 const testPages = [
   { label: 'Test Sfondo Gold (A/B/C)',   href: '/test-gold'   },

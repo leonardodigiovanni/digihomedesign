@@ -4,6 +4,11 @@ import { readSettings } from '@/lib/settings'
 import { hasPageAccess } from '@/lib/permissions'
 import { getConnection } from '@/lib/db'
 import FacsimiliClient, { type Documento } from './facsimili-client'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Facsimili',
+}
 
 async function getFacsimili(): Promise<Documento[]> {
   const conn = await getConnection()

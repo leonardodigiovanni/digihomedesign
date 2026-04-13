@@ -4,6 +4,11 @@ import { readSettings } from '@/lib/settings'
 import { hasPageAccess } from '@/lib/permissions'
 import { getConnection } from '@/lib/db'
 import CataloghiClient, { type Categoria } from './cataloghi-client'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Cataloghi',
+}
 
 const STAFF_ROLES = ['admin', 'dipendente', 'direttore']
 

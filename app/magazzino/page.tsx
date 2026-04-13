@@ -5,6 +5,12 @@ import { hasPageAccess } from '@/lib/permissions'
 import { getConnection } from '@/lib/db'
 import MagazzinoClient, { type Materiale } from './magazzino-client'
 
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Magazzino',
+}
+
 async function getMateriali(): Promise<Materiale[]> {
   const conn = await getConnection()
   try {

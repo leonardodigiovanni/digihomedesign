@@ -4,6 +4,11 @@ import { readSettings } from '@/lib/settings'
 import { hasPageAccess } from '@/lib/permissions'
 import { getConnection } from '@/lib/db'
 import BilancioClient, { type Movimento } from './bilancio-client'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Bilancio',
+}
 
 async function ensureTable() {
   const conn = await getConnection()

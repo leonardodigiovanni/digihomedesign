@@ -4,6 +4,11 @@ import { readSettings } from '@/lib/settings'
 import { hasPageAccess } from '@/lib/permissions'
 import { getConnection } from '@/lib/db'
 import ListiniClient, { type Articolo } from './listini-client'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Listini',
+}
 
 async function getData(): Promise<Articolo[]> {
   const db = await getConnection()

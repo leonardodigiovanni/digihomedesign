@@ -2,6 +2,11 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import CantieriClient, { type Cantiere, type Lavoro, type Media, type Cliente } from './cantieri-client'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Cantieri',
+}
 
 function dateToStr(d: unknown): string | null {
   if (!d) return null

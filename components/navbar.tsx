@@ -99,8 +99,8 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
                 position: 'absolute',
                 top: '100%',
                 left: 0,
-                background: '#fff',
-                border: '1px solid #e0e0e0',
+                background: '#fdfcf8',
+                border: '1px solid #c8960c',
                 borderRadius: 6,
                 boxShadow: '0 8px 24px rgba(0,0,0,0.1)',
                 padding: 12,
@@ -114,17 +114,10 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
                   <Link
                     key={p.id}
                     href={p.href}
-                    style={{
-                      padding: '7px 10px',
-                      fontSize: 13,
-                      color: isActive(p.href) ? '#1a1a1a' : '#444',
-                      fontWeight: isActive(p.href) ? 600 : 400,
-                      textDecoration: 'none',
-                      borderRadius: 4,
-                      background: isActive(p.href) ? '#f0f0f0' : 'transparent',
-                    }}
+                    className={isActive(p.href) ? 'nav-dropdown-link nav-dropdown-link-active' : 'nav-dropdown-link'}
+                    style={{ padding: '7px 10px' }}
                   >
-                    {p.label}
+                    <span>{p.label}</span>
                   </Link>
                 ))}
               </div>
@@ -173,30 +166,23 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
         </div>
       </div>
 
-      {/* ── Mobile menu ── */}
+      {/* ── Mobile menu ── incollato sotto la nav-mobile-bar, dentro il contenitore sticky */}
       {menuOpen && (
       <div
         style={{
-          position: 'fixed',
-          top: 90 + (bannerAbilitato ? 42 : 0) + 42 + 1,
-          left: 0,
-          right: 0,
-          background: '#fff',
-          borderTop: '1px solid #e8e8e8',
-          padding: '8px 0 16px',
+          background: '#fdfcf8',
+          borderTop: '1px solid #c8960c',
+          padding: '6px 0 16px',
           overflowY: 'auto',
           maxHeight: `calc(100dvh - ${90 + (bannerAbilitato ? 42 : 0) + 42}px)`,
-          zIndex: 99,
-          boxShadow: '0 8px 24px rgba(0,0,0,0.1)',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
         }}
       >
-          <MobileLink href="/" label="Home" active={isActive('/')} />
+          <MobileLink href="/" label="Home" active={isActive('/')} indent />
 
           {visibleClientPages.length > 0 && (
             <>
-              <div style={{ padding: '8px 16px 4px', fontSize: 11, fontWeight: 600, color: '#999', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                Sezioni
-              </div>
+              <div className="nav-mobile-section">Sezioni</div>
               {visibleClientPages.map(p => (
                 <MobileLink key={p.id} href={p.href} label={p.label} active={isActive(p.href)} indent />
               ))}
@@ -205,9 +191,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
 
           {internalItems.length > 0 && (
             <>
-              <div style={{ padding: '12px 16px 4px', fontSize: 11, fontWeight: 600, color: '#999', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                Area Lavoro
-              </div>
+              <div className="nav-mobile-section">Area Lavoro</div>
               {internalItems.map(p => (
                 <MobileLink key={p.id} href={p.href} label={p.label} active={isActive(p.href)} indent />
               ))}
@@ -216,9 +200,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
 
           {adminItems.length > 0 && (
             <>
-              <div style={{ padding: '12px 16px 4px', fontSize: 11, fontWeight: 600, color: '#999', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                Amministrazione
-              </div>
+              <div className="nav-mobile-section">Amministrazione</div>
               {adminItems.map(p => (
                 <MobileLink key={p.id} href={p.href} label={p.label} active={isActive(p.href)} indent />
               ))}
@@ -264,7 +246,7 @@ function InternalDropdown({
       {open && (
         <div style={{
           position: 'absolute', top: '100%', left: 0,
-          background: '#fff', border: '1px solid #e0e0e0', borderRadius: 6,
+          background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
           boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 12,
           display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2,
           zIndex: 200, minWidth: 320,
@@ -274,15 +256,10 @@ function InternalDropdown({
               key={p.id}
               href={p.href}
               onClick={() => setOpen(false)}
-              style={{
-                padding: '7px 10px', fontSize: 13,
-                color: isActive(p.href) ? '#1a1a1a' : '#444',
-                fontWeight: isActive(p.href) ? 600 : 400,
-                textDecoration: 'none', borderRadius: 4,
-                background: isActive(p.href) ? '#f0f0f0' : 'transparent',
-              }}
+              className={isActive(p.href) ? 'nav-dropdown-link nav-dropdown-link-active' : 'nav-dropdown-link'}
+              style={{ padding: '7px 10px' }}
             >
-              {p.label}
+              <span>{p.label}</span>
             </Link>
           ))}
         </div>
@@ -295,17 +272,10 @@ function MobileLink({ href, label, active, indent }: { href: string; label: stri
   return (
     <Link
       href={href}
-      style={{
-        display: 'block',
-        padding: `9px ${indent ? 28 : 16}px`,
-        fontSize: 14,
-        color: active ? '#1a1a1a' : '#444',
-        fontWeight: active ? 600 : 400,
-        textDecoration: 'none',
-        background: active ? '#f5f5f5' : 'transparent',
-      }}
+      className={active ? 'nav-mobile-link nav-mobile-link-active' : 'nav-mobile-link'}
+      style={{ padding: `10px ${indent ? 28 : 16}px` }}
     >
-      {label}
+      <span>{label}</span>
     </Link>
   )
 }
