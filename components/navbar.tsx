@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { clientPages, visibleAdminPages, visibleInternalPages, type NavPage } from '@/lib/nav-config'
@@ -12,9 +12,10 @@ interface NavbarProps {
   rolePermissions?: Record<string, number[]>
   username?: string | null
   registrazioniDisabilitate?: boolean
+  bannerAbilitato?: boolean
 }
 
-export default function Navbar({ role, disabledPages = [], rolePermissions = {}, username, registrazioniDisabilitate }: NavbarProps) {
+export default function Navbar({ role, disabledPages = [], rolePermissions = {}, username, registrazioniDisabilitate, bannerAbilitato = false }: NavbarProps) {
   const [menuOpen, setMenuOpen]       = useState(false)
   const [sectionOpen, setSectionOpen] = useState(false)
   const pathname    = usePathname()
@@ -25,6 +26,15 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
     setMenuOpen(false)
     setSectionOpen(false)
   }, [pathname])
+
+  // Chiudi menu mobile se il browser diventa largo
+  useEffect(() => {
+    function handleResize() {
+      if (window.innerWidth > 768) setMenuOpen(false)
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   // Chiudi dropdown desktop cliccando fuori
   useEffect(() => {
@@ -53,10 +63,10 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
     alignItems: 'center',
     fontSize: 13,
     fontWeight: 500,
-    color: isActive(href) ? '#1a1a1a' : '#555',
-    textDecoration: 'none',
-    // box-shadow invece di border-bottom evita che l'elemento cambi altezza
-    boxShadow: isActive(href) ? 'inset 0 -2px 0 #1a1a1a' : 'none',
+    color: isActive(href) ? '#000' : '#111',
+    textDecoration: isActive(href) ? 'underline' : 'none',
+    textDecorationThickness: isActive(href) ? '3px' : undefined,
+    textUnderlineOffset: isActive(href) ? '4px' : undefined,
     whiteSpace: 'nowrap',
     transition: 'color 0.15s',
     lineHeight: 1,
@@ -71,12 +81,14 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
 
       {/* ── Desktop ── */}
       <div className="nav-bar">
-        <Link href="/" style={linkStyle('/')}>Home</Link>
+        <Link href="/" className="nav-link" style={linkStyle('/')}>Home</Link>
 
         {visibleClientPages.length > 0 && (
+          <><NavSep />
           <div ref={dropRef} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
             <button
               onClick={() => setSectionOpen(o => !o)}
+              className="nav-link"
               style={{ ...linkStyle('/pagine'), gap: 4 }}
             >
               Sezioni {sectionOpen ? '▴' : '▾'}
@@ -118,19 +130,23 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
               </div>
             )}
           </div>
+          </>
         )}
 
         {internalItems.length > 0 && (
-          <InternalDropdown items={internalItems} isActive={isActive} linkStyle={linkStyle} />
+          <><NavSep /><InternalDropdown items={internalItems} isActive={isActive} linkStyle={linkStyle} /></>
         )}
 
         {adminItems.length > 0 && (
           <>
-            <div style={{ width: 1, background: '#e0e0e0', margin: '10px 0' }} />
-            {adminItems.map(p => (
-              <Link key={p.id} href={p.href} style={linkStyle(p.href)}>
-                {p.label}
-              </Link>
+            <NavSep />
+            {adminItems.map((p, i) => (
+              <React.Fragment key={p.id}>
+                {i > 0 && <NavSep />}
+                <Link href={p.href} className="nav-link" style={linkStyle(p.href)}>
+                  {p.label}
+                </Link>
+              </React.Fragment>
             ))}
           </>
         )}
@@ -149,7 +165,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
           aria-expanded={menuOpen}
           aria-label={menuOpen ? 'Chiudi menu' : 'Apri menu'}
         >
-          <span style={{ fontSize: 18 }}>{menuOpen ? '✕' : '☰'}</span>
+          <span style={{ fontSize: 18, width: 20, display: 'inline-block', textAlign: 'center' }}>{menuOpen ? '✕' : '☰'}</span>
           Menu
         </button>
         <div style={{ marginLeft: 'auto', paddingRight: 12 }}>
@@ -161,11 +177,17 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
       {menuOpen && (
       <div
         style={{
+          position: 'fixed',
+          top: 90 + (bannerAbilitato ? 42 : 0) + 42 + 1,
+          left: 0,
+          right: 0,
           background: '#fff',
           borderTop: '1px solid #e8e8e8',
           padding: '8px 0 16px',
           overflowY: 'auto',
-          maxHeight: 'calc(100dvh - 132px)',
+          maxHeight: `calc(100dvh - ${90 + (bannerAbilitato ? 42 : 0) + 42}px)`,
+          zIndex: 99,
+          boxShadow: '0 8px 24px rgba(0,0,0,0.1)',
         }}
       >
           <MobileLink href="/" label="Home" active={isActive('/')} />
@@ -208,6 +230,10 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
   )
 }
 
+function NavSep() {
+  return <div style={{ width: 1, height: 18, background: 'rgba(0,0,0,0.22)', flexShrink: 0, alignSelf: 'center', margin: '0 2px' }} />
+}
+
 function InternalDropdown({
   items,
   isActive,
@@ -232,7 +258,7 @@ function InternalDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} style={{ ...linkStyle('/interno'), gap: 4, color: anyActive ? '#1a1a1a' : '#555', boxShadow: anyActive ? 'inset 0 -2px 0 #1a1a1a' : 'none' }}>
+      <button onClick={() => setOpen(o => !o)} className="nav-link" style={{ ...linkStyle('/interno'), gap: 4, color: anyActive ? '#000' : '#111', textDecoration: anyActive ? 'underline' : 'none', textDecorationThickness: anyActive ? '3px' : undefined, textUnderlineOffset: anyActive ? '4px' : undefined }}>
         Area Lavoro {open ? '▴' : '▾'}
       </button>
       {open && (

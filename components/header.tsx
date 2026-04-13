@@ -1,10 +1,12 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import type { Rgba, BgMode } from '@/lib/settings'
 import { rgbGradient, rgbGradientInv, rgbBrushedBackground, rgbBrushedBackgroundInv, rgbBoxShadow, rgbBorderColor } from '@/lib/bg-utils'
 
 interface HeaderProps {
   headerBg?: Rgba
   headerBgMode?: BgMode
+  username?: string | null
 }
 
 const EFFECT_CLASS: Record<string, string> = {
@@ -78,6 +80,7 @@ function buildBorderColor(mode: BgMode, bg: Rgba): string {
 export default function Header({
   headerBg = { r: 255, g: 255, b: 255, a: 100 },
   headerBgMode = 'rgb',
+  username,
 }: HeaderProps) {
   const isFixedEffect = headerBgMode in EFFECT_CLASS
   const isRgbEffect   = headerBgMode.startsWith('rgb_')
@@ -104,11 +107,21 @@ export default function Header({
       {shimmerClass && <div className={shimmerClass} />}
 
       <div style={{ display: 'flex', alignItems: 'center', height: '100%', position: 'relative', zIndex: 1 }}>
-        <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 6, textDecoration: 'none', color: 'inherit', height: '100%' }}>
-          <Image src="/images/digi_tr.png" alt="Home Design" width={95} height={95} sizes="95px" style={{ objectFit: 'contain', display: 'block', alignSelf: 'center' }} />
-          <Image src="/images/nome_tr.png" alt="Home Design" width={143} height={48} sizes="143px" loading="eager" style={{ objectFit: 'contain', display: 'block', alignSelf: 'center', position: 'relative', top: 12 }} />
-        </a>
+        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 6, textDecoration: 'none', color: 'inherit', height: '100%', outline: 'none', cursor: 'pointer' }}>
+          <Image src="/images/digi_tr.png" alt="Home Design" width={95} height={95} sizes="95px" style={{ objectFit: 'contain', display: 'block', alignSelf: 'center', flexShrink: 0 }} />
+          <Image src="/images/nome_tr.png" alt="Home Design" width={143} height={48} sizes="143px" loading="eager" style={{ objectFit: 'contain', display: 'block', alignSelf: 'center', position: 'relative', top: 12, flexShrink: 0 }} />
+        </Link>
       </div>
+      {username && (
+        <span style={{
+          position: 'absolute', top: 8, right: 8,
+          fontSize: 12, fontWeight: 500, color: '#fff',
+          whiteSpace: 'nowrap', zIndex: 2,
+          textShadow: '0 1px 3px rgba(0,0,0,0.4)',
+        }}>
+          {username}
+        </span>
+      )}
     </header>
   )
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import type { Rgba, BgMode } from '@/lib/settings'
 import {
   rgbGradient, rgbGradientInv,
@@ -24,18 +24,22 @@ const SCALE     = PREVIEW_W / A4_W
 // ─── Classi CSS per effetti gold/silver (stesse dell'header/footer del sito) ─
 
 const EFFECT_CLASS: Record<string, string> = {
-  gold_a:       'class_gold_A',
-  gold_b:       'class_gold_B_safe',
-  gold_c:       'class_gold_C_safe',
-  gold_a_inv:   'class_gold_A_inv',
-  gold_b_inv:   'class_gold_B_inv_safe',
-  gold_c_inv:   'class_gold_C_inv_safe',
-  silver_a:     'class_silver_A',
-  silver_b:     'class_silver_B_safe',
-  silver_c:     'class_silver_C_safe',
-  silver_a_inv: 'class_silver_A_inv',
-  silver_b_inv: 'class_silver_B_inv_safe',
-  silver_c_inv: 'class_silver_C_inv_safe',
+  gold_a:         'class_gold_A',
+  gold_b:         'class_gold_B_safe',
+  gold_c:         'class_gold_C_safe',
+  gold_d:         'class_gold_D_safe',
+  gold_a_inv:     'class_gold_A_inv',
+  gold_b_inv:     'class_gold_B_inv_safe',
+  gold_c_inv:     'class_gold_C_inv_safe',
+  gold_d_inv:     'class_gold_D_inv_safe',
+  silver_a:       'class_silver_A',
+  silver_b:       'class_silver_B_safe',
+  silver_c:       'class_silver_C_safe',
+  silver_d:       'class_silver_D_safe',
+  silver_a_inv:   'class_silver_A_inv',
+  silver_b_inv:   'class_silver_B_inv_safe',
+  silver_c_inv:   'class_silver_C_inv_safe',
+  silver_d_inv:   'class_silver_D_inv_safe',
 }
 
 // ─── Effetto bordeaux spazzolato per zona 2 volantino ─────────────────────────
@@ -172,6 +176,8 @@ export default function VolantinoClient({
   footerBg: Rgba; footerBgMode: BgMode
 }) {
   const volRef = useRef<HTMLDivElement>(null)
+  const [sharing, setSharing] = useState(false)
+  const [shareUnsupported, setShareUnsupported] = useState(false)
 
   async function handleExport() {
     if (!volRef.current) return
@@ -190,23 +196,96 @@ export default function VolantinoClient({
     a.click()
   }
 
+  async function handleExportPDF() {
+    if (!volRef.current) return
+    await document.fonts.ready
+    const html2canvas = (await import('html2canvas')).default
+    const { jsPDF }   = await import('jspdf')
+    const canvas = await html2canvas(volRef.current, {
+      scale: 300 / 96,
+      useCORS: true,
+      backgroundColor: null,
+      logging: false,
+    })
+    const imgData = canvas.toDataURL('image/jpeg', 0.95)
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
+    pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297)
+    pdf.save('volantino_A4.pdf')
+  }
+
+  async function handleShareWhatsApp() {
+    if (!volRef.current) return
+    setShareUnsupported(false)
+
+    if (!navigator.share) {
+      setShareUnsupported(true)
+      return
+    }
+
+    setSharing(true)
+    try {
+      await document.fonts.ready
+      const html2canvas = (await import('html2canvas')).default
+      // Scala ridotta per la condivisione: 2× è più che sufficiente per WhatsApp
+      const canvas = await html2canvas(volRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+      })
+      const blob = await new Promise<Blob>((resolve, reject) =>
+        canvas.toBlob(b => b ? resolve(b) : reject(new Error('toBlob failed')), 'image/jpeg', 0.92)
+      )
+      const file = new File([blob], 'volantino_A4.jpg', { type: 'image/jpeg' })
+      await navigator.share({ files: [file], title: 'Volantino DIGI Home Design' })
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name !== 'AbortError') {
+        setShareUnsupported(true)
+      }
+    } finally {
+      setSharing(false)
+    }
+  }
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,400;0,700;0,900;1,400;1,700&display=swap" rel="stylesheet" />
       {/* Bottone export */}
-      <div>
-        <button
-          onClick={handleExport}
-          className="btn-green"
-          style={{ padding: '9px 28px', fontSize: 14, fontFamily: 'inherit', fontWeight: 600 }}
-        >
-          Esporta JPG A4
-        </button>
-        <span style={{ marginLeft: 12, fontSize: 13, color: '#888' }}>
-          2480 × 3508 px — 300 DPI
-        </span>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+          <button
+            onClick={handleExport}
+            className="btn-green"
+            style={{ padding: '9px 28px', fontSize: 14, fontFamily: 'inherit', fontWeight: 600 }}
+          >
+            Esporta JPG A4
+          </button>
+          <button
+            onClick={handleExportPDF}
+            className="btn-green"
+            style={{ padding: '9px 28px', fontSize: 14, fontFamily: 'inherit', fontWeight: 600 }}
+          >
+            Esporta PDF A4
+          </button>
+          <button
+            onClick={handleShareWhatsApp}
+            disabled={sharing}
+            className={sharing ? 'btn-gray' : 'btn-green'}
+            style={{ padding: '9px 28px', fontSize: 14, fontFamily: 'inherit', fontWeight: 600 }}
+          >
+            {sharing ? 'Generazione...' : '📤 Condividi'}
+          </button>
+          <span style={{ fontSize: 13, color: '#888' }}>
+            2480 × 3508 px — 300 DPI
+          </span>
+        </div>
+        {shareUnsupported && (
+          <div style={{ fontSize: 13, color: '#b05000', background: '#fff8f0', border: '1px solid #f5cfa0', borderRadius: 6, padding: '7px 12px', maxWidth: 420 }}>
+            La condivisione diretta non è supportata su questo browser. Apri questa pagina dal cellulare oppure esporta il file e condividilo manualmente.
+          </div>
+        )}
       </div>
 
       {/* Contenitore preview scalato */}
@@ -239,7 +318,7 @@ export default function VolantinoClient({
             {/* Logo + nome sovrapposti */}
             <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: Math.round(H_HEADER * 0.04), gap: 1 }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/images/dgt.png" alt="logo" style={{ height: Math.round(H_HEADER * 0.15), width: 'auto' }} />
+              <img src="/images/dg-t.png" alt="logo" style={{ height: Math.round(H_HEADER * 0.15), width: 'auto' }} />
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/images/nome_tr.png" alt="Home Design" style={{ height: Math.round(H_HEADER * 0.11), width: 'auto' }} />
             </div>

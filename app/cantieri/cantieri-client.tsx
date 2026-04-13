@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useMemo, useTransition, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import {
   addCantiere, deleteCantiere, updateStatoCantiere,
   addLavoro, deleteLavoro, addMedia, deleteMedia, toggleVisibileCantiere,
@@ -311,7 +312,7 @@ function DettaglioCantiere({
 
   const tdS: React.CSSProperties = { padding: '6px 10px', fontSize: 13, borderBottom: '1px solid #eee' }
 
-  return (
+  return createPortal(
     <div style={{
       position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000,
       display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
@@ -474,7 +475,7 @@ function DettaglioCantiere({
         </div>
       </div>
     </div>
-  )
+  , document.body)
 }
 
 // ─── Riga tabella cantiere ────────────────────────────────────────────────────

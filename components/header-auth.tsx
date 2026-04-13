@@ -52,7 +52,7 @@ function InlineLoginForm() {
           type="submit"
           disabled={isPending}
           className={isPending ? 'btn-gray' : 'btn-green'}
-          style={{ padding: '4px 12px', fontSize: 13, borderRadius: 4 }}
+          style={{ padding: '8px 12px', fontSize: 13, borderRadius: 4, fontFamily: 'inherit' }}
         >
           {isPending ? '...' : 'Entra'}
         </button>
@@ -95,7 +95,7 @@ function DropdownLoginForm({ registrazioniDisabilitate }: { registrazioniDisabil
         type="submit"
         disabled={isPending}
         className={isPending ? 'btn-gray' : 'btn-green'}
-        style={{ padding: '6px 12px', fontSize: 13, borderRadius: 4 }}
+        style={{ padding: '8px 12px', fontSize: 13, borderRadius: 4, fontFamily: 'inherit' }}
       >
         {isPending ? '...' : 'Accedi'}
       </button>
@@ -149,25 +149,15 @@ export default function HeaderAuth({ username, registrazioniDisabilitate, forceD
   // utente loggato: logout stesso ingombro di "Accedi ▾"
   if (username) {
     return (
-      <div style={{ position: 'relative' }}>
-        <span style={{
-          position: 'absolute', top: -9, right: 0,
-          fontSize: 9, color: '#000', fontWeight: 700,
-          whiteSpace: 'nowrap', lineHeight: 1,
-          pointerEvents: 'none',
-        }}>
-          Benvenuto, <strong>{username}</strong>
-        </span>
-        <form action={logout}>
-          <button
-            type="submit"
-            className="btn-red"
-            style={{ padding: '5px 14px', fontSize: 13, borderRadius: 4, width: 92, fontFamily: 'inherit', lineHeight: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
-          >
-            Logout
-          </button>
-        </form>
-      </div>
+      <form action={logout}>
+        <button
+          type="submit"
+          className="btn-red"
+          style={{ padding: '8px 14px', fontSize: 13, borderRadius: 4, width: 92, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+        >
+          Logout
+        </button>
+      </form>
     )
   }
 
@@ -178,7 +168,7 @@ export default function HeaderAuth({ username, registrazioniDisabilitate, forceD
         <button
           onClick={() => setIsOpen(v => !v)}
           className={isOpen ? 'btn-rgb-c' : 'btn-green'}
-          style={{ padding: '5px 14px', fontSize: 13, borderRadius: 4, whiteSpace: 'nowrap', width: 92, fontFamily: 'inherit', lineHeight: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+          style={{ padding: '8px 14px', fontSize: 13, borderRadius: 4, whiteSpace: 'nowrap', width: 92, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
         >
           {isOpen ? '✕ Chiudi' : 'Accedi ▾'}
         </button>

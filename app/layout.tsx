@@ -14,6 +14,7 @@ import './globals.css'
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
+  maximumScale: 1,
 }
 
 export const metadata: Metadata = {
@@ -131,8 +132,8 @@ export default async function RootLayout({
           </div>
         )}
 
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100 }}>
-          <Header headerBg={settings.headerBg} headerBgMode={settings.headerBgMode} />
+        <div style={{ position: 'sticky', top: 0, zIndex: 100 }}>
+          <Header headerBg={settings.headerBg} headerBgMode={settings.headerBgMode} username={username} />
           {settings.bannerAbilitato && (
             <>
               <style>{`
@@ -143,7 +144,7 @@ export default async function RootLayout({
               `}</style>
               <div
                 className="class_silver_D_safe"
-                style={{ height: 48, overflow: 'hidden', display: 'flex', alignItems: 'center', borderBottom: '1px solid #aaa' }}
+                style={{ height: 42, overflow: 'hidden', display: 'flex', alignItems: 'center', borderBottom: '1px solid #aaa' }}
               >
                 <span style={{
                   display: 'inline-block',
@@ -158,15 +159,13 @@ export default async function RootLayout({
               </div>
             </>
           )}
-          {!inManutenzione && <Navbar role={role} disabledPages={settings.disabledPages} rolePermissions={rolePermissions} username={username} registrazioniDisabilitate={settings.registrazioniDisabilitate} />}
+          {!inManutenzione && <Navbar role={role} disabledPages={settings.disabledPages} rolePermissions={rolePermissions} username={username} registrazioniDisabilitate={settings.registrazioniDisabilitate} bannerAbilitato={settings.bannerAbilitato} />}
         </div>
 
-        <main style={{ flex: 1, padding: '32px 24px', paddingTop: inManutenzione
-          ? `calc(90px + ${settings.bannerAbilitato ? '48px + ' : ''}32px)`
-          : `calc(90px + ${settings.bannerAbilitato ? '48px + ' : ''}42px + 32px)` }}>
+        <main style={{ flex: 1, padding: '32px 24px' }}>
           {inManutenzione ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '50vh', gap: 20, textAlign: 'center' }}>
-              <Image src="/images/manutenzione.png" alt="Manutenzione" width={360} height={360} priority style={{ objectFit: 'contain' }} />
+              <Image src="/images/sito_manutenzione.png" alt="Manutenzione" width={108} height={108} priority style={{ objectFit: 'contain' }} />
               <p style={{ fontSize: 28, fontWeight: 600, color: '#444', maxWidth: 600, lineHeight: 1.6, margin: 0, textAlign: 'center' }}>
                 Stiamo lavorando per migliorare il sito.<br />
                 Torneremo online al più presto. Ci scusiamo per il disagio.

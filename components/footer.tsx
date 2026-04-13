@@ -200,7 +200,7 @@ export default function Footer({
           </div>
 
           {/* Icone social */}
-          <div style={{ display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap', background: 'rgba(255,255,255,0.20)', backdropFilter: 'blur(6px)', borderRadius: 10, padding: '8px 14px' }}>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', marginLeft: 'auto' }}>
             {socials.map(({ label, href, icon }) => href ? (
               <a
                 key={label}
