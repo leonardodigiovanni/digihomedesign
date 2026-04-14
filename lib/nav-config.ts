@@ -33,7 +33,7 @@ export const cardColors = [
 
 // Pagine 16-20: area amministrativa fissa
 export const adminPages: NavPage[] = [
-  { id: 19, label: 'Settings',        href: '/settings',        roles: ['admin'] },
+  { id: 19, label: 'Impostazioni',     href: '/settings',        roles: ['admin'] },
   { id: 20, label: 'Gestione Utenti', href: '/gestione-utenti', roles: ['admin'] },
 ]
 

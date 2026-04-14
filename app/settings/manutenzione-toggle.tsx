@@ -15,19 +15,11 @@ export default function ManutenzioneToggle({ manutenzione }: { manutenzione: boo
       border: '1px solid #e0e0e0',
       borderRadius: 10,
       padding: '24px 28px 28px',
-      marginBottom: 32,
     }}>
       <h3 style={{ fontSize: 15, fontWeight: 600, margin: '0 0 12px' }}>
-        Modalità manutenzione
+        {manutenzione ? 'Modalità manutenzione' : 'Sito attivo'}
       </h3>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-        <span style={{
-          fontSize: 11, fontWeight: 700, padding: '2px 10px', borderRadius: 10,
-          background: manutenzione ? '#c04444' : '#e0e0e0',
-          color: manutenzione ? '#fff' : '#888',
-        }}>
-          {manutenzione ? 'ATTIVA' : 'DISATTIVA'}
-        </span>
         <form action={action}>
           <button type="submit" disabled={pending}
             className={pending ? 'btn-gray' : manutenzione ? 'btn-green' : 'btn-red'}

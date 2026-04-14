@@ -131,17 +131,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
         )}
 
         {adminItems.length > 0 && (
-          <>
-            <NavSep />
-            {adminItems.map((p, i) => (
-              <React.Fragment key={p.id}>
-                {i > 0 && <NavSep />}
-                <Link href={p.href} className="nav-link" style={linkStyle(p.href)}>
-                  {p.label}
-                </Link>
-              </React.Fragment>
-            ))}
-          </>
+          <><NavSep /><AdminDropdown items={adminItems} isActive={isActive} linkStyle={linkStyle} /></>
         )}
 
         <div style={{ marginLeft: 'auto', paddingRight: 4 }}>
@@ -250,6 +240,58 @@ function InternalDropdown({
           boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 12,
           display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2,
           zIndex: 200, minWidth: 320,
+        }}>
+          {items.map(p => (
+            <Link
+              key={p.id}
+              href={p.href}
+              onClick={() => setOpen(false)}
+              className={isActive(p.href) ? 'nav-dropdown-link nav-dropdown-link-active' : 'nav-dropdown-link'}
+              style={{ padding: '7px 10px' }}
+            >
+              <span>{p.label}</span>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function AdminDropdown({
+  items,
+  isActive,
+  linkStyle,
+}: {
+  items: NavPage[]
+  isActive: (href: string) => boolean
+  linkStyle: (href: string) => React.CSSProperties
+}) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handle(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handle)
+    return () => document.removeEventListener('mousedown', handle)
+  }, [])
+
+  const anyActive = items.some(p => isActive(p.href))
+
+  return (
+    <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+      <button onClick={() => setOpen(o => !o)} className="nav-link" style={{ ...linkStyle('/admin'), gap: 4, color: anyActive ? '#000' : '#111', textDecoration: anyActive ? 'underline' : 'none', textDecorationThickness: anyActive ? '3px' : undefined, textUnderlineOffset: anyActive ? '4px' : undefined }}>
+        Amministrazione {open ? '▴' : '▾'}
+      </button>
+      {open && (
+        <div style={{
+          position: 'absolute', top: '100%', left: 0,
+          background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
+          boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 12,
+          display: 'flex', flexDirection: 'column', gap: 2,
+          zIndex: 200, minWidth: 200,
         }}>
           {items.map(p => (
             <Link

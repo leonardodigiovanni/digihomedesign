@@ -26,19 +26,11 @@ export default function BannerPanel({ abilitato, testo }: BannerPanelProps) {
       border: '1px solid #e0e0e0',
       borderRadius: 10,
       padding: '24px 28px 28px',
-      marginBottom: 32,
     }}>
       <h3 style={{ fontSize: 15, fontWeight: 600, margin: '0 0 16px' }}>Banner scorrevole</h3>
 
       {/* Toggle ON/OFF */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-        <span style={{
-          fontSize: 11, fontWeight: 700, padding: '2px 10px', borderRadius: 10,
-          background: abilitato ? '#3d9a3d' : '#e0e0e0',
-          color: abilitato ? '#fff' : '#888',
-        }}>
-          {abilitato ? 'ATTIVO' : 'DISATTIVO'}
-        </span>
         <form action={toggleAction}>
           <button type="submit" disabled={togglePending}
             className={togglePending ? 'btn-gray' : abilitato ? 'btn-red' : 'btn-green'}
@@ -50,7 +42,6 @@ export default function BannerPanel({ abilitato, testo }: BannerPanelProps) {
 
       {/* Testo */}
       <form key={testo} action={saveAction} onReset={() => setChanged(false)} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <label style={{ fontSize: 13, fontWeight: 500, color: '#444' }}>Testo del banner</label>
         <textarea
           name="bannerTesto"
           defaultValue={testo}

@@ -119,12 +119,11 @@ function RoleRow({ user, isSelf, hasClienti }: { user: User; isSelf: boolean; ha
 
   const badgeStyle: React.CSSProperties = {
     display: 'inline-block',
-    padding: '2px 8px',
-    borderRadius: 10,
     fontSize: 11,
     fontWeight: 600,
-    color: '#fff',
-    background: ROLE_COLORS[user.role] ?? '#888',
+    color: '#1a1a1a',
+    borderBottom: `8px solid ${ROLE_COLORS[user.role] ?? '#888'}`,
+    paddingBottom: 1,
   }
 
   const activeBadge: React.CSSProperties = {
@@ -160,41 +159,35 @@ function RoleRow({ user, isSelf, hasClienti }: { user: User; isSelf: boolean; ha
         <span style={badgeStyle}>{ROLE_LABELS[user.role] ?? user.role}</span>
       </td>
       <td style={{ padding: '10px 12px' }}>
-        <form action={toggleAction} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <input type="hidden" name="username" value={user.username} />
-          <span style={activeBadge}>{user.is_active ? 'Attivo' : 'Inattivo'}</span>
-          {!isSelf && (
-          <button
-            type="submit"
-            disabled={togglePending}
-            className={togglePending ? 'btn-gray' : user.is_active ? 'btn-red' : 'btn-green'}
-            style={{ padding: '4px 10px', fontSize: 12, borderRadius: 5, fontFamily: 'inherit' }}
-          >
-            {togglePending ? '...' : user.is_active ? 'Disattiva' : 'Attiva'}
-          </button>
-          )}
-          {toggleResult && !toggleResult.ok && (
-            <span style={{ fontSize: 12, color: '#c00' }}>{toggleResult.error}</span>
-          )}
-        </form>
+        {isSelf ? (
+          <span style={{ fontSize: 12, color: '#aaa', fontStyle: 'italic' }}>Non disattivabile</span>
+        ) : (
+          <form action={toggleAction} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <input type="hidden" name="username" value={user.username} />
+            <button
+              type="submit"
+              disabled={togglePending}
+              className={togglePending ? 'btn-gray' : user.is_active ? 'btn-red' : 'btn-green'}
+              style={{ padding: '4px 10px', fontSize: 12, borderRadius: 5, fontFamily: 'inherit', minWidth: 68 }}
+            >
+              {togglePending ? '...' : user.is_active ? 'Disattiva' : 'Attiva'}
+            </button>
+            {toggleResult && !toggleResult.ok && (
+              <span style={{ fontSize: 12, color: '#c00' }}>{toggleResult.error}</span>
+            )}
+          </form>
+        )}
       </td>
       {hasClienti && (
         <td style={{ padding: '10px 12px' }}>
           {user.role === 'cliente' ? (
             <form action={cantieriAction} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <input type="hidden" name="username" value={user.username} />
-              <span style={{
-                display: 'inline-block', padding: '2px 8px', borderRadius: 10,
-                fontSize: 11, fontWeight: 600, color: '#fff',
-                background: user.cantieri_visibili ? '#4a8f6b' : '#888',
-              }}>
-                {user.cantieri_visibili ? 'Visibile' : 'Nascosto'}
-              </span>
               <button
                 type="submit"
                 disabled={cantieriPending}
                 className={cantieriPending ? 'btn-gray' : user.cantieri_visibili ? 'btn-red' : 'btn-green'}
-                style={{ padding: '4px 10px', fontSize: 12, borderRadius: 5, fontFamily: 'inherit' }}
+                style={{ padding: '4px 10px', fontSize: 12, borderRadius: 5, fontFamily: 'inherit', minWidth: 72 }}
               >
                 {cantieriPending ? '...' : user.cantieri_visibili ? 'Nascondi' : 'Abilita'}
               </button>
@@ -209,18 +202,11 @@ function RoleRow({ user, isSelf, hasClienti }: { user: User; isSelf: boolean; ha
           {user.role === 'cliente' ? (
             <form action={ordiniAction} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <input type="hidden" name="username" value={user.username} />
-              <span style={{
-                display: 'inline-block', padding: '2px 8px', borderRadius: 10,
-                fontSize: 11, fontWeight: 600, color: '#fff',
-                background: user.miei_ordini_visibili ? '#4a8f6b' : '#888',
-              }}>
-                {user.miei_ordini_visibili ? 'Visibile' : 'Nascosto'}
-              </span>
               <button
                 type="submit"
                 disabled={ordiniPending}
                 className={ordiniPending ? 'btn-gray' : user.miei_ordini_visibili ? 'btn-red' : 'btn-green'}
-                style={{ padding: '4px 10px', fontSize: 12, borderRadius: 5, fontFamily: 'inherit' }}
+                style={{ padding: '4px 10px', fontSize: 12, borderRadius: 5, fontFamily: 'inherit', minWidth: 72 }}
               >
                 {ordiniPending ? '...' : user.miei_ordini_visibili ? 'Nascondi' : 'Abilita'}
               </button>

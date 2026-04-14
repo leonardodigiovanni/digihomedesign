@@ -12,10 +12,10 @@ export const metadata: Metadata = {
 }
 
 const testPages = [
-  { label: 'Test Sfondo Gold (A/B/C)',   href: '/test-gold'   },
-  { label: 'Test Sfondo Silver (A/B/C)', href: '/test-silver' },
-  { label: 'Test Sfondo RGB (A/B/C)',    href: '/test-rgb'    },
-  { label: 'Volantino',                  href: '/volantino'   },
+  { label: 'Test Sfondo Gold (A/B/C)',   href: '/test-gold',   icon: '🎨' },
+  { label: 'Test Sfondo Silver (A/B/C)', href: '/test-silver', icon: '🎨' },
+  { label: 'Test Sfondo RGB (A/B/C)',    href: '/test-rgb',    icon: '🎨' },
+  { label: 'Volantino',                  href: '/volantino',   icon: '📄' },
 ]
 
 export default async function Page() {
@@ -25,11 +25,17 @@ export default async function Page() {
   const settings = readSettings()
 
   return (
-    <div>
-      <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 24 }}>Settings</h2>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+      <h2 style={{ fontSize: 24, fontWeight: 600, margin: 0 }}>Impostazioni</h2>
 
-      <ManutenzioneToggle manutenzione={settings.manutenzione} />
-      <BannerPanel abilitato={settings.bannerAbilitato} testo={settings.bannerTesto} />
+      <div style={{ display: 'flex', gap: 32, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+        <div style={{ flex: '0 0 auto' }}>
+          <ManutenzioneToggle manutenzione={settings.manutenzione} />
+        </div>
+        <div style={{ flex: '1 1 300px' }}>
+          <BannerPanel abilitato={settings.bannerAbilitato} testo={settings.bannerTesto} />
+        </div>
+      </div>
 
       {/* Pannello pagine di test */}
       <div style={{
@@ -37,16 +43,17 @@ export default async function Page() {
         border: '1px solid #e0e0e0',
         borderRadius: 10,
         padding: '24px 28px 28px',
-        marginBottom: 32,
       }}>
         <h3 style={{ fontSize: 15, fontWeight: 600, margin: '0 0 12px' }}>Pagine di Test</h3>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-          {testPages.map(({ label, href }) => (
+          {testPages.map(({ label, href, icon }) => (
             <Link key={href} href={href} style={{
               display: 'inline-flex',
               alignItems: 'center',
               gap: 6,
-              padding: '6px 14px',
+              height: 33,
+              boxSizing: 'border-box',
+              padding: '0 14px',
               background: '#2a2a3e',
               border: '1px solid #444',
               borderRadius: 6,
@@ -56,7 +63,7 @@ export default async function Page() {
               textDecoration: 'none',
               transition: 'background 0.15s, border-color 0.15s',
             }}>
-              🔧 {label}
+              {icon} {label}
             </Link>
           ))}
         </div>

@@ -3,9 +3,9 @@
   "inactivityMinutes": 20,
   "countdownSeconds": 10,
   "headerBg": {
-    "r": 145,
-    "g": 85,
-    "b": 85,
+    "r": 140,
+    "g": 80,
+    "b": 80,
     "a": 100
   },
   "headerBgMode": "rgb_d",

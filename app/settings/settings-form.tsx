@@ -297,12 +297,12 @@ export default function SettingsForm({ inactivityMinutes, countdownSeconds, head
   }, [sessionResult])
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
       <style>{`
         .settings-grid-3 {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
-          gap: 20px;
+          gap: 32px;
           align-items: stretch;
         }
         .settings-grid-3 > * {
@@ -613,7 +613,7 @@ function RolePermissionsPanel({ rolePermissions }: { rolePermissions: Record<str
     setMatrix(prev => ({ ...prev, [role]: { ...prev[role], [pageId]: !prev[role][pageId] } }))
 
   const thStyle: React.CSSProperties = {
-    fontSize: 11, fontWeight: 600, color: '#666', padding: '6px 8px',
+    fontSize: 11, fontWeight: 600, color: '#000', padding: '6px 8px',
     textAlign: 'center', background: '#fafafa', border: '1px solid #e8e8e8',
   }
   const tdRole: React.CSSProperties = {
@@ -635,15 +635,19 @@ function RolePermissionsPanel({ rolePermissions }: { rolePermissions: Record<str
 
       <div style={{ ...panelStyle, maxWidth: '100%' }}>
         <h3 style={{ fontSize: 15, fontWeight: 600, margin: 0 }}>Matrice permessi ruolo × pagina</h3>
-        <p style={{ fontSize: 12, color: '#888', margin: 0 }}>
-          Seleziona quali pagine interne sono accessibili per ogni ruolo. La riga Admin è in sola lettura: vede sempre tutto.
-        </p>
-
         <div style={{ overflowX: 'auto' }}>
           <table style={{ borderCollapse: 'collapse', fontSize: 12, width: '100%' }}>
             <thead>
               <tr>
-                <th style={{ ...thStyle, textAlign: 'left', width: 110 }}>Ruolo</th>
+                <th style={{ ...thStyle, width: 110, padding: 0, position: 'relative', overflow: 'hidden', verticalAlign: 'bottom' }}>
+                  <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }} preserveAspectRatio="none">
+                    <line x1="0" y1="0" x2="100%" y2="100%" stroke="#ccc" strokeWidth="1" />
+                  </svg>
+                  <div style={{ position: 'relative', minHeight: 42 }}>
+                    <span style={{ position: 'absolute', top: 4, right: 6, fontSize: 12, fontWeight: 600, color: '#000' }}>Pagina</span>
+                    <span style={{ position: 'absolute', bottom: 4, left: 6, fontSize: 12, fontWeight: 600, color: '#000' }}>Ruolo</span>
+                  </div>
+                </th>
                 {internalPages.map(p => (
                   <th key={p.id} style={{ ...thStyle, width: `${(100 / (internalPages.length + 1)).toFixed(1)}%` }}>{p.label}</th>
                 ))}
