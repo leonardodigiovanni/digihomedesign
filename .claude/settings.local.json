@@ -27,7 +27,19 @@
       "Bash(git commit:*)",
       "Bash(grep -h \"CREATE TABLE\\\\|INSERT INTO\\\\|FROM\\\\|UPDATE\" \"C:\\\\Users\\\\User\\\\Desktop\\\\SITO\\\\sito-cursor\"/app/*/actions.ts)",
       "Bash(python3 -c ':*)",
-      "Bash(python -c ':*)"
+      "Bash(python -c ':*)",
+      "Bash(node -e \"const p=require\\('./node_modules/next/package.json'\\); console.log\\(p.version\\)\")",
+      "Bash(node -e \"console.log\\(process.version\\)\")",
+      "Bash(node_modules/.bin/next dev *)",
+      "Bash(mv app/magazzino app/area-lavoro/magazzino)",
+      "Bash(mv app/fatture app/area-lavoro/fatture)",
+      "Bash(mv app/bilancio app/area-lavoro/bilancio)",
+      "Bash(mv app/anagrafica-clienti app/area-lavoro/anagrafica-clienti)",
+      "Bash(mv app/adempimenti app/area-lavoro/adempimenti)",
+      "Bash(mv app/settings app/amministrazione/impostazioni)",
+      "Bash(mv app/gestione-utenti app/amministrazione/gestione-utenti)",
+      "Bash(date /t)",
+      "Bash(time /t)"
     ]
   }
 }

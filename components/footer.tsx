@@ -239,7 +239,7 @@ export default function Footer({
       <p style={{ textAlign: 'center', fontSize: 13, color: '#aaa', margin: 0 }}>
         © 2026  -  DIGI Home Design S.R.L.
       </p>
-      <Image src="/images/dg-t.png" alt="logo" width={69} height={46} id="subfooter-logo" style={{ display: 'block' }} />
+      <Image src="/images/dg-t.png" alt="logo" width={57} height={38} id="subfooter-logo" style={{ display: 'block' }} />
       <p style={{ textAlign: 'center', fontSize: 13, color: '#aaa', margin: 0 }}>
         Tutti i diritti sono riservati all&apos;autore
       </p>

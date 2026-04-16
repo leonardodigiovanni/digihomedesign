@@ -46,10 +46,10 @@ const STYLES = `
 
   .hero-grid {
     position: relative;
-    height: clamp(360px, 52vh, 620px);
+    height: clamp(420px, 65vh, 780px);
     border-radius: 12px;
     overflow: hidden;
-    margin-bottom: 32px;
+    margin-bottom: 0;
     border: 5px solid #ffffff;
     box-shadow: 0 4px 32px rgba(0,0,0,0.13);
     flex-shrink: 0;
@@ -272,7 +272,7 @@ export default function HeroCarousel() {
               alt={slide.title}
               sizes="(max-width: 1920px) 100vw, 1920px"
               priority={i === 0}
-              loading={i === 0 ? undefined : 'eager'}
+              loading={i === 0 ? 'eager' : undefined}
               style={{ objectFit: 'cover', objectPosition: 'center' }}
             />
           </div>

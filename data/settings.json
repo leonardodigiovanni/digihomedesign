@@ -31,16 +31,12 @@
   "bannerTesto": "Promozione: per ogni infisso in alluminio ordinato ricevi in omaggio un quadro d'autore disponibile nella sezione quadri. Fino ad esaurimento scorte. Affrettati!!",
   "rolePermissions": {
     "cliente": [
-      27,
-      30,
-      31
+      27
     ],
     "dipendente": [
-      27,
-      28
+      27
     ],
     "ragioniere": [
-      17,
       21,
       27
     ],
@@ -61,12 +57,10 @@
     ],
     "magazzino": [
       16,
-      17,
       27
     ],
     "direttore": [
-      27,
-      28
+      27
     ],
     "marketing": [
       27,

@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { clientPages, visibleAdminPages, visibleInternalPages, type NavPage } from '@/lib/nav-config'
+import { clientPages, visibleAdminPages, visibleInternalPages, visibleFornitoriPages, visibleClientiPages, aiutoPages, categoryGroups, areaClientiPages, type NavPage, type CategoryGroup } from '@/lib/nav-config'
 import HeaderAuth from '@/components/header-auth'
 
 interface NavbarProps {
@@ -20,6 +20,9 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
   const [sectionOpen, setSectionOpen] = useState(false)
   const pathname    = usePathname()
   const dropRef     = useRef<HTMLDivElement>(null)
+  const scrollRef   = useRef<HTMLDivElement>(null)
+  const innerRef    = useRef<HTMLDivElement>(null)
+  const scrollPos   = useRef(0)
 
   // Chiudi tutto al cambio pagina
   useEffect(() => {
@@ -47,9 +50,32 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
     return () => document.removeEventListener('mousedown', handleOutside)
   }, [])
 
+  // Scroll orizzontale con rotella: sposta l'inner div via transform
+  useEffect(() => {
+    const container = scrollRef.current
+    const inner     = innerRef.current
+    if (!container || !inner) return
+
+    function onWheel(e: WheelEvent) {
+      if (e.deltaY === 0) return
+      const maxScroll = inner.scrollWidth - container.clientWidth
+      if (maxScroll <= 0) return  // nessun overflow: lascia scorrere la pagina normalmente
+      const next = Math.max(0, Math.min(scrollPos.current + e.deltaY, maxScroll))
+      if (next === scrollPos.current) return  // già al limite: lascia scorrere la pagina
+      e.preventDefault()
+      scrollPos.current = next
+      inner.style.transform = `translateX(-${scrollPos.current}px)`
+    }
+
+    container.addEventListener('wheel', onWheel, { passive: false })
+    return () => container.removeEventListener('wheel', onWheel)
+  }, [])
+
   const adminItems         = visibleAdminPages(role)
   const internalItems      = visibleInternalPages(role, rolePermissions).filter(p => !disabledPages.includes(p.id))
   const visibleClientPages = clientPages.filter(p => !disabledPages.includes(p.id))
+  const fornitoriItems     = visibleFornitoriPages(role, rolePermissions, disabledPages)
+  const clientiItems       = visibleClientiPages(role, rolePermissions, disabledPages)
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/'
@@ -81,60 +107,93 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
 
       {/* ── Desktop ── */}
       <div className="nav-bar">
-        <Link href="/" className="nav-link" style={linkStyle('/')}>Home</Link>
+        {/* Area scrollabile — tutti i link tranne auth */}
+        <div className="nav-scroll" ref={scrollRef}>
+        <div className="nav-scroll-inner" ref={innerRef}>
+          <Link href="/" className="nav-link" style={linkStyle('/')}>Home</Link>
 
-        {visibleClientPages.length > 0 && (
-          <><NavSep />
-          <div ref={dropRef} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-            <button
-              onClick={() => setSectionOpen(o => !o)}
-              className="nav-link"
-              style={{ ...linkStyle('/pagine'), gap: 4 }}
-            >
-              Sezioni {sectionOpen ? '▴' : '▾'}
-            </button>
+          {visibleClientPages.length > 0 && (
+            <><NavSep />
+            <div ref={dropRef} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <button
+                onClick={() => setSectionOpen(o => !o)}
+                className="nav-link"
+                style={{ ...linkStyle('/brand'), gap: 4 }}
+              >
+                Brand {sectionOpen ? '▴' : '▾'}
+              </button>
 
-            {sectionOpen && (
-              <div style={{
-                position: 'absolute',
-                top: '100%',
-                left: 0,
-                background: '#fdfcf8',
-                border: '1px solid #c8960c',
-                borderRadius: 6,
-                boxShadow: '0 8px 24px rgba(0,0,0,0.1)',
-                padding: 12,
-                display: 'grid',
-                gridTemplateColumns: 'repeat(3, 1fr)',
-                gap: 2,
-                zIndex: 200,
-                minWidth: 360,
-              }}>
-                {visibleClientPages.map(p => (
-                  <Link
-                    key={p.id}
-                    href={p.href}
-                    className={isActive(p.href) ? 'nav-dropdown-link nav-dropdown-link-active' : 'nav-dropdown-link'}
-                    style={{ padding: '7px 10px' }}
-                  >
-                    <span>{p.label}</span>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-          </>
-        )}
+              {sectionOpen && (
+                <div style={{
+                  position: 'absolute',
+                  top: '100%',
+                  left: 0,
+                  background: '#fdfcf8',
+                  border: '1px solid #c8960c',
+                  borderRadius: 6,
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.1)',
+                  padding: 4,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 0,
+                  zIndex: 200,
+                  minWidth: 200,
+                }}>
+                  {visibleClientPages.map(p => (
+                    <Link
+                      key={p.id}
+                      href={p.href}
+                      className={isActive(p.href) ? 'nav-dropdown-link nav-dropdown-link-active' : 'nav-dropdown-link'}
+                      style={{ padding: '7px 10px' }}
+                    >
+                      <span>{p.label}</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+            </>
+          )}
 
-        {internalItems.length > 0 && (
-          <><NavSep /><InternalDropdown items={internalItems} isActive={isActive} linkStyle={linkStyle} /></>
-        )}
+          {categoryGroups.map(g => {
+            const visiblePages = g.pages.filter(p => !disabledPages.includes(p.id))
+            if (visiblePages.length === 0) return null
+            return (
+              <React.Fragment key={g.id}>
+                <NavSep />
+                <CategoryDropdown group={{ ...g, pages: visiblePages }} isActive={isActive} linkStyle={linkStyle} />
+              </React.Fragment>
+            )
+          })}
 
-        {adminItems.length > 0 && (
-          <><NavSep /><AdminDropdown items={adminItems} isActive={isActive} linkStyle={linkStyle} /></>
-        )}
+          {role && areaClientiPages.filter(p => !disabledPages.includes(p.id)).length > 0 && (
+            <><NavSep /><AreaClientiDropdown items={areaClientiPages.filter(p => !disabledPages.includes(p.id))} isActive={isActive} linkStyle={linkStyle} /></>
+          )}
 
-        <div style={{ marginLeft: 'auto', paddingRight: 4 }}>
+          {aiutoPages.filter(p => !disabledPages.includes(p.id)).length > 0 && (
+            <><NavSep /><AiutoDropdown items={aiutoPages.filter(p => !disabledPages.includes(p.id))} isActive={isActive} linkStyle={linkStyle} /></>
+          )}
+
+          {fornitoriItems.length > 0 && (
+            <><NavSep /><FornitoriDropdown items={fornitoriItems} isActive={isActive} linkStyle={linkStyle} /></>
+          )}
+
+          {clientiItems.length > 0 && (
+            <><NavSep /><ClientiDropdown items={clientiItems} isActive={isActive} linkStyle={linkStyle} /></>
+          )}
+
+          {internalItems.length > 0 && (
+            <><NavSep /><InternalDropdown items={internalItems} isActive={isActive} linkStyle={linkStyle} /></>
+          )}
+
+          {adminItems.length > 0 && (
+            <><NavSep /><AdminDropdown items={adminItems} isActive={isActive} linkStyle={linkStyle} /></>
+          )}
+        </div>{/* fine nav-scroll-inner */}
+        </div>{/* fine nav-scroll */}
+
+        {/* Auth — sempre visibile, non scorre */}
+        <div style={{ flexShrink: 0, paddingRight: 4, paddingLeft: 8, borderLeft: '1px solid #e8d89a' }}>
           <HeaderAuth username={username} registrazioniDisabilitate={registrazioniDisabilitate} forceDropdown />
         </div>
       </div>
@@ -172,8 +231,57 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
 
           {visibleClientPages.length > 0 && (
             <>
-              <div className="nav-mobile-section">Sezioni</div>
+              <div className="nav-mobile-section">Brand</div>
               {visibleClientPages.map(p => (
+                <MobileLink key={p.id} href={p.href} label={p.label} active={isActive(p.href)} indent />
+              ))}
+            </>
+          )}
+
+          {categoryGroups.map(g => {
+            const visiblePages = g.pages.filter(p => !disabledPages.includes(p.id))
+            if (visiblePages.length === 0) return null
+            return (
+              <React.Fragment key={g.id}>
+                <div className="nav-mobile-section">{g.label}</div>
+                {visiblePages.map(p => (
+                  <MobileLink key={p.href} href={p.href} label={p.label} active={isActive(p.href)} indent />
+                ))}
+              </React.Fragment>
+            )
+          })}
+
+          {role && areaClientiPages.filter(p => !disabledPages.includes(p.id)).length > 0 && (
+            <>
+              <div className="nav-mobile-section">Area Personale</div>
+              {areaClientiPages.filter(p => !disabledPages.includes(p.id)).map(p => (
+                <MobileLink key={p.id} href={p.href} label={p.label} active={isActive(p.href)} indent />
+              ))}
+            </>
+          )}
+
+          {aiutoPages.filter(p => !disabledPages.includes(p.id)).length > 0 && (
+            <>
+              <div className="nav-mobile-section">Aiuto</div>
+              {aiutoPages.filter(p => !disabledPages.includes(p.id)).map(p => (
+                <MobileLink key={p.id} href={p.href} label={p.label} active={isActive(p.href)} indent />
+              ))}
+            </>
+          )}
+
+          {fornitoriItems.length > 0 && (
+            <>
+              <div className="nav-mobile-section">Area Fornitori</div>
+              {fornitoriItems.map(p => (
+                <MobileLink key={p.id} href={p.href} label={p.label} active={isActive(p.href)} indent />
+              ))}
+            </>
+          )}
+
+          {clientiItems.length > 0 && (
+            <>
+              <div className="nav-mobile-section">Area Clienti</div>
+              {clientiItems.map(p => (
                 <MobileLink key={p.id} href={p.href} label={p.label} active={isActive(p.href)} indent />
               ))}
             </>
@@ -230,7 +338,7 @@ function InternalDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className="nav-link" style={{ ...linkStyle('/interno'), gap: 4, color: anyActive ? '#000' : '#111', textDecoration: anyActive ? 'underline' : 'none', textDecorationThickness: anyActive ? '3px' : undefined, textUnderlineOffset: anyActive ? '4px' : undefined }}>
+      <button onClick={() => setOpen(o => !o)} className="nav-link" style={{ ...linkStyle('/area-lavoro'), gap: 4, color: anyActive ? '#000' : '#111', textDecoration: anyActive ? 'underline' : 'none', textDecorationThickness: anyActive ? '3px' : undefined, textUnderlineOffset: anyActive ? '4px' : undefined }}>
         Area Lavoro {open ? '▴' : '▾'}
       </button>
       {open && (
@@ -240,6 +348,58 @@ function InternalDropdown({
           boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 12,
           display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2,
           zIndex: 200, minWidth: 320,
+        }}>
+          {items.map(p => (
+            <Link
+              key={p.id}
+              href={p.href}
+              onClick={() => setOpen(false)}
+              className={isActive(p.href) ? 'nav-dropdown-link nav-dropdown-link-active' : 'nav-dropdown-link'}
+              style={{ padding: '7px 10px' }}
+            >
+              <span>{p.label}</span>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function AiutoDropdown({
+  items,
+  isActive,
+  linkStyle,
+}: {
+  items: NavPage[]
+  isActive: (href: string) => boolean
+  linkStyle: (href: string) => React.CSSProperties
+}) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handle(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handle)
+    return () => document.removeEventListener('mousedown', handle)
+  }, [])
+
+  const anyActive = items.some(p => isActive(p.href))
+
+  return (
+    <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+      <button onClick={() => setOpen(o => !o)} className="nav-link" style={{ ...linkStyle('/aiuto'), gap: 4, color: anyActive ? '#000' : '#111', textDecoration: anyActive ? 'underline' : 'none', textDecorationThickness: anyActive ? '3px' : undefined, textUnderlineOffset: anyActive ? '4px' : undefined }}>
+        Aiuto {open ? '▴' : '▾'}
+      </button>
+      {open && (
+        <div style={{
+          position: 'absolute', top: '100%', left: 0,
+          background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
+          boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 12,
+          display: 'flex', flexDirection: 'column', gap: 2,
+          zIndex: 200, minWidth: 220,
         }}>
           {items.map(p => (
             <Link
@@ -282,7 +442,7 @@ function AdminDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className="nav-link" style={{ ...linkStyle('/admin'), gap: 4, color: anyActive ? '#000' : '#111', textDecoration: anyActive ? 'underline' : 'none', textDecorationThickness: anyActive ? '3px' : undefined, textUnderlineOffset: anyActive ? '4px' : undefined }}>
+      <button onClick={() => setOpen(o => !o)} className="nav-link" style={{ ...linkStyle('/amministrazione'), gap: 4, color: anyActive ? '#000' : '#111', textDecoration: anyActive ? 'underline' : 'none', textDecorationThickness: anyActive ? '3px' : undefined, textUnderlineOffset: anyActive ? '4px' : undefined }}>
         Amministrazione {open ? '▴' : '▾'}
       </button>
       {open && (
@@ -292,6 +452,227 @@ function AdminDropdown({
           boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 12,
           display: 'flex', flexDirection: 'column', gap: 2,
           zIndex: 200, minWidth: 200,
+        }}>
+          {items.map(p => (
+            <Link
+              key={p.id}
+              href={p.href}
+              onClick={() => setOpen(false)}
+              className={isActive(p.href) ? 'nav-dropdown-link nav-dropdown-link-active' : 'nav-dropdown-link'}
+              style={{ padding: '7px 10px' }}
+            >
+              <span>{p.label}</span>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function CategoryDropdown({
+  group,
+  isActive,
+  linkStyle,
+}: {
+  group: CategoryGroup
+  isActive: (href: string) => boolean
+  linkStyle: (href: string) => React.CSSProperties
+}) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handle(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handle)
+    return () => document.removeEventListener('mousedown', handle)
+  }, [])
+
+  const anyActive = isActive(group.href)
+
+  return (
+    <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+      <button
+        onClick={() => setOpen(o => !o)}
+        className="nav-link"
+        style={{
+          ...linkStyle(group.href),
+          gap: 4,
+          color: anyActive ? '#000' : '#111',
+          textDecoration: anyActive ? 'underline' : 'none',
+          textDecorationThickness: anyActive ? '3px' : undefined,
+          textUnderlineOffset: anyActive ? '4px' : undefined,
+        }}
+      >
+        {group.label} {open ? '▴' : '▾'}
+      </button>
+      {open && (
+        <div style={{
+          position: 'absolute', top: '100%', left: 0,
+          background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
+          boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 4,
+          display: 'grid',
+          gridTemplateColumns: group.id === 'edilizia' ? 'repeat(2, 1fr)' : '1fr',
+          gap: 0,
+          zIndex: 200, minWidth: group.id === 'edilizia' ? 320 : 180,
+        }}>
+          {group.pages.map(p => (
+            <Link
+              key={p.href}
+              href={p.href}
+              onClick={() => setOpen(false)}
+              className={isActive(p.href) ? 'nav-dropdown-link nav-dropdown-link-active' : 'nav-dropdown-link'}
+              style={{ padding: '7px 10px' }}
+            >
+              <span>{p.label}</span>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function FornitoriDropdown({
+  items,
+  isActive,
+  linkStyle,
+}: {
+  items: NavPage[]
+  isActive: (href: string) => boolean
+  linkStyle: (href: string) => React.CSSProperties
+}) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handle(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handle)
+    return () => document.removeEventListener('mousedown', handle)
+  }, [])
+
+  const anyActive = items.some(p => isActive(p.href))
+
+  return (
+    <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+      <button onClick={() => setOpen(o => !o)} className="nav-link" style={{ ...linkStyle('/area-fornitori'), gap: 4, color: anyActive ? '#000' : '#111', textDecoration: anyActive ? 'underline' : 'none', textDecorationThickness: anyActive ? '3px' : undefined, textUnderlineOffset: anyActive ? '4px' : undefined }}>
+        Area Fornitori {open ? '▴' : '▾'}
+      </button>
+      {open && (
+        <div style={{
+          position: 'absolute', top: '100%', left: 0,
+          background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
+          boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 4,
+          display: 'flex', flexDirection: 'column', gap: 0,
+          zIndex: 200, minWidth: 200,
+        }}>
+          {items.map(p => (
+            <Link
+              key={p.id}
+              href={p.href}
+              onClick={() => setOpen(false)}
+              className={isActive(p.href) ? 'nav-dropdown-link nav-dropdown-link-active' : 'nav-dropdown-link'}
+              style={{ padding: '7px 10px' }}
+            >
+              <span>{p.label}</span>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function ClientiDropdown({
+  items,
+  isActive,
+  linkStyle,
+}: {
+  items: NavPage[]
+  isActive: (href: string) => boolean
+  linkStyle: (href: string) => React.CSSProperties
+}) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handle(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handle)
+    return () => document.removeEventListener('mousedown', handle)
+  }, [])
+
+  const anyActive = items.some(p => isActive(p.href))
+
+  return (
+    <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+      <button onClick={() => setOpen(o => !o)} className="nav-link" style={{ ...linkStyle('/clienti'), gap: 4, color: anyActive ? '#000' : '#111', textDecoration: anyActive ? 'underline' : 'none', textDecorationThickness: anyActive ? '3px' : undefined, textUnderlineOffset: anyActive ? '4px' : undefined }}>
+        Area Clienti {open ? '▴' : '▾'}
+      </button>
+      {open && (
+        <div style={{
+          position: 'absolute', top: '100%', left: 0,
+          background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
+          boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 4,
+          display: 'flex', flexDirection: 'column', gap: 0,
+          zIndex: 200, minWidth: 180,
+        }}>
+          {items.map(p => (
+            <Link
+              key={p.id}
+              href={p.href}
+              onClick={() => setOpen(false)}
+              className={isActive(p.href) ? 'nav-dropdown-link nav-dropdown-link-active' : 'nav-dropdown-link'}
+              style={{ padding: '7px 10px' }}
+            >
+              <span>{p.label}</span>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function AreaClientiDropdown({
+  items,
+  isActive,
+  linkStyle,
+}: {
+  items: NavPage[]
+  isActive: (href: string) => boolean
+  linkStyle: (href: string) => React.CSSProperties
+}) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handle(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handle)
+    return () => document.removeEventListener('mousedown', handle)
+  }, [])
+
+  const anyActive = items.some(p => isActive(p.href))
+
+  return (
+    <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+      <button onClick={() => setOpen(o => !o)} className="nav-link" style={{ ...linkStyle('/area-clienti'), gap: 4, color: anyActive ? '#000' : '#111', textDecoration: anyActive ? 'underline' : 'none', textDecorationThickness: anyActive ? '3px' : undefined, textUnderlineOffset: anyActive ? '4px' : undefined }}>
+        Area Personale {open ? '▴' : '▾'}
+      </button>
+      {open && (
+        <div style={{
+          position: 'absolute', top: '100%', left: 0,
+          background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
+          boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 4,
+          display: 'flex', flexDirection: 'column', gap: 0,
+          zIndex: 200, minWidth: 180,
         }}>
           {items.map(p => (
             <Link
@@ -321,3 +702,4 @@ function MobileLink({ href, label, active, indent }: { href: string; label: stri
     </Link>
   )
 }
+

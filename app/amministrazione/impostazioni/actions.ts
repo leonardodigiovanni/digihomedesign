@@ -4,7 +4,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { writeSettings, readSettings, type Rgba, type BgMode } from '@/lib/settings'
 import { ALL_ROLES } from '@/lib/permissions'
-import { internalPages } from '@/lib/nav-config'
+import { internalPages, clientPages, categoryGroups, areaClientiPages, aiutoPages, clientiDipendentiPages, fornitoriDipendentiPages } from '@/lib/nav-config'
 
 export type SaveResult =
   | { ok: true; inactivityMinutes: number; countdownSeconds: number }
@@ -95,9 +95,15 @@ export async function saveDisabledPages(
     redirect('/')
   }
 
+  const allIds = [
+    ...clientPages.map(p => p.id),
+    ...categoryGroups.flatMap(g => g.pages.map(p => p.id)),
+    ...areaClientiPages.map(p => p.id),
+    ...aiutoPages.map(p => p.id),
+  ]
   const disabledPages: number[] = []
-  for (let i = 2; i <= 15; i++) {
-    if (!formData.get(`page_${i}`)) disabledPages.push(i)
+  for (const id of allIds) {
+    if (!formData.get(`page_${id}`)) disabledPages.push(id)
   }
 
   const current = readSettings()
@@ -168,7 +174,7 @@ export async function saveRolePermissions(
 
   const rolePermissions: Record<string, number[]> = {}
   for (const role of ALL_ROLES) {
-    rolePermissions[role] = internalPages
+    rolePermissions[role] = [...internalPages.filter(p => p.id !== 30 && p.id !== 31), ...fornitoriDipendentiPages, ...clientiDipendentiPages]
       .filter(p => formData.get(`perm_${role}_${p.id}`) === '1')
       .map(p => p.id)
   }

@@ -3,7 +3,7 @@
 import { useActionState, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { saveSettings, saveHeaderBg, saveFooterBg, savePageBg, saveDisabledPages, saveAccessControls, saveRolePermissions, type SaveResult, type SaveBgResult, type SaveAccessResult } from './actions'
-import { clientPages, internalPages } from '@/lib/nav-config'
+import { clientPages, internalPages, categoryGroups, areaClientiPages, aiutoPages, clientiDipendentiPages, fornitoriDipendentiPages } from '@/lib/nav-config'
 import FlashSuccess from '@/components/flash-success'
 import type { Rgba, BgMode } from '@/lib/settings'
 import { rgbGradient, rgbGradientInv, rgbBrushedBackground, rgbBrushedBackgroundInv, rgbLuminance } from '@/lib/bg-utils'
@@ -399,11 +399,12 @@ export default function SettingsForm({ inactivityMinutes, countdownSeconds, head
           loginDipendentiDisabilitato={loginDipendentiDisabilitato}
         />
 
-        <PagesPanel disabledPages={disabledPages} />
-
       </div>
 
-      {/* Riga 3: matrice permessi a tutta larghezza */}
+      {/* Pagine visibili — riga a tutta larghezza */}
+      <PagesPanel disabledPages={disabledPages} />
+
+      {/* Matrice permessi — riga a tutta larghezza */}
       <RolePermissionsPanel rolePermissions={rolePermissions} />
 
     </div>
@@ -438,31 +439,75 @@ function CheckRow({ label, checked, onChange, name }: { label: string; checked: 
   )
 }
 
+// Tutti i gruppi di pagine pubbliche con i loro ID
+const PAGE_GROUPS: { label: string; pages: { id: number; label: string }[] }[] = [
+  { label: 'Brand',        pages: clientPages },
+  ...categoryGroups.map(g => ({ label: g.label, pages: g.pages })),
+  { label: 'Area Personale', pages: areaClientiPages },
+  { label: 'Aiuto',        pages: aiutoPages },
+]
+
 function initPages(disabledPages: number[]): Record<number, boolean> {
   const init: Record<number, boolean> = {}
-  for (const p of clientPages) init[p.id] = !disabledPages.includes(p.id)
+  for (const g of PAGE_GROUPS)
+    for (const p of g.pages) init[p.id] = !disabledPages.includes(p.id)
   return init
+}
+
+function allPageIds(): number[] {
+  return PAGE_GROUPS.flatMap(g => g.pages.map(p => p.id))
 }
 
 function PagesPanel({ disabledPages }: { disabledPages: number[] }) {
   const router = useRouter()
   const [saved, setSaved] = useState(() => initPages(disabledPages))
   const [pages, setPages] = useState(() => initPages(disabledPages))
-  const dirty = clientPages.some(p => pages[p.id] !== saved[p.id])
+  const ids = allPageIds()
+  const dirty = ids.some(id => pages[id] !== saved[id])
   const [result, formAction, pending] = useActionState<SaveAccessResult | null, FormData>(saveDisabledPages, null)
 
   useEffect(() => {
     if (result?.ok) { setSaved({ ...pages }); router.refresh() }
   }, [result])
 
+  const groupHeaderStyle: React.CSSProperties = {
+    fontSize: 11, fontWeight: 700, color: '#888', textTransform: 'uppercase',
+    letterSpacing: '0.07em', marginBottom: 6, paddingBottom: 4,
+    borderBottom: '1px solid #e8e8e8', whiteSpace: 'nowrap',
+  }
+
   return (
     <form action={formAction} style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <div style={panelStyle}>
-        <h3 style={{ fontSize: 15, fontWeight: 600, margin: 0 }}>Pagine visibili (2–15)</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px 16px' }}>
-          {clientPages.map(p => (
-            <CheckRow key={p.id} label={p.label} checked={pages[p.id] ?? true} onChange={v => setPages(prev => ({ ...prev, [p.id]: v }))} name={`page_${p.id}`} />
-          ))}
+        <h3 style={{ fontSize: 15, fontWeight: 600, margin: '0 0 16px' }}>Pagine visibili</h3>
+
+        {/* Gruppi su una riga orizzontale con scroll */}
+        <div style={{ overflowX: 'auto', width: '100%' }}>
+        <div style={{ display: 'flex', flexWrap: 'nowrap', gap: '0 20px', alignItems: 'flex-start', paddingBottom: 4 }}>
+          {PAGE_GROUPS.map(g => {
+            const twoCol = g.pages.length > 7
+            return (
+              <div key={g.label} style={{ flexShrink: 0 }}>
+                <div style={groupHeaderStyle}>{g.label}</div>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: twoCol ? 'repeat(2, auto)' : '1fr',
+                  gap: '4px 12px',
+                }}>
+                  {g.pages.map(p => (
+                    <CheckRow
+                      key={p.id}
+                      label={p.label}
+                      checked={pages[p.id] ?? true}
+                      onChange={v => setPages(prev => ({ ...prev, [p.id]: v }))}
+                      name={`page_${p.id}`}
+                    />
+                  ))}
+                </div>
+              </div>
+            )
+          })}
+        </div>
         </div>
 
         {result && !result.ok && (
@@ -569,11 +614,14 @@ function RegistrazioniLoginPanel({
 
 type PermMatrix = Record<string, Record<number, boolean>>
 
+const permInternalPages = internalPages.filter(p => p.id !== 30 && p.id !== 31)
+const allPermPages = [...permInternalPages, ...fornitoriDipendentiPages, ...clientiDipendentiPages]
+
 function buildMatrix(rolePermissions: Record<string, number[]>): PermMatrix {
   const m: PermMatrix = {}
   for (const role of ALL_ROLES) {
     m[role] = {}
-    for (const p of internalPages) {
+    for (const p of allPermPages) {
       m[role][p.id] = (rolePermissions[role] ?? []).includes(p.id)
     }
   }
@@ -600,7 +648,7 @@ function RolePermissionsPanel({ rolePermissions }: { rolePermissions: Record<str
   const [matrix, setMatrix] = useState(() => buildMatrix(rolePermissions))
 
   const dirty = ALL_ROLES.some(role =>
-    internalPages.some(p => matrix[role][p.id] !== saved[role][p.id])
+    allPermPages.some(p => matrix[role][p.id] !== saved[role][p.id])
   )
 
   const [result, formAction, pending] = useActionState<SaveAccessResult | null, FormData>(saveRolePermissions, null)
@@ -628,7 +676,7 @@ function RolePermissionsPanel({ rolePermissions }: { rolePermissions: Record<str
     <form action={formAction}>
       {/* Hidden inputs per la submission */}
       {ALL_ROLES.map(role =>
-        internalPages.map(p => matrix[role][p.id] ? (
+        allPermPages.map(p => matrix[role][p.id] ? (
           <input key={`${role}_${p.id}`} type="hidden" name={`perm_${role}_${p.id}`} value="1" />
         ) : null)
       )}
@@ -639,7 +687,7 @@ function RolePermissionsPanel({ rolePermissions }: { rolePermissions: Record<str
           <table style={{ borderCollapse: 'collapse', fontSize: 12, width: '100%' }}>
             <thead>
               <tr>
-                <th style={{ ...thStyle, width: 110, padding: 0, position: 'relative', overflow: 'hidden', verticalAlign: 'bottom' }}>
+                <th style={{ ...thStyle, width: 110, padding: 0, position: 'relative', overflow: 'hidden', verticalAlign: 'bottom' }} rowSpan={2}>
                   <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }} preserveAspectRatio="none">
                     <line x1="0" y1="0" x2="100%" y2="100%" stroke="#ccc" strokeWidth="1" />
                   </svg>
@@ -648,8 +696,19 @@ function RolePermissionsPanel({ rolePermissions }: { rolePermissions: Record<str
                     <span style={{ position: 'absolute', bottom: 4, left: 6, fontSize: 12, fontWeight: 600, color: '#000' }}>Ruolo</span>
                   </div>
                 </th>
-                {internalPages.map(p => (
-                  <th key={p.id} style={{ ...thStyle, width: `${(100 / (internalPages.length + 1)).toFixed(1)}%` }}>{p.label}</th>
+                <th colSpan={permInternalPages.length} style={{ ...thStyle, background: '#edf2ff', color: '#3a5ab0', borderBottom: '2px solid #b0c4f8' }}>Area Lavoro</th>
+                <th colSpan={fornitoriDipendentiPages.length} style={{ ...thStyle, background: '#f0fdf4', color: '#276749', borderBottom: '2px solid #9ae6b4' }}>Area Fornitori</th>
+                <th colSpan={clientiDipendentiPages.length} style={{ ...thStyle, background: '#fff7ed', color: '#9a5a00', borderBottom: '2px solid #f8d4a0' }}>Area Clienti</th>
+              </tr>
+              <tr>
+                {permInternalPages.map(p => (
+                  <th key={p.id} style={{ ...thStyle, background: '#edf2ff' }}>{p.label}</th>
+                ))}
+                {fornitoriDipendentiPages.map(p => (
+                  <th key={p.id} style={{ ...thStyle, background: '#f0fdf4' }}>{p.label}</th>
+                ))}
+                {clientiDipendentiPages.map(p => (
+                  <th key={p.id} style={{ ...thStyle, background: '#fff7ed' }}>{p.label}</th>
                 ))}
               </tr>
             </thead>
@@ -657,7 +716,7 @@ function RolePermissionsPanel({ rolePermissions }: { rolePermissions: Record<str
               {/* Riga Admin: sola lettura, tutte abilitate */}
               <tr style={{ background: '#f5f5f5' }}>
                 <td style={{ ...tdRole, color: '#1a1a1a', fontStyle: 'italic' }}>Admin</td>
-                {internalPages.map(p => (
+                {allPermPages.map(p => (
                   <td key={p.id} style={tdCell}>
                     <input
                       type="checkbox"
@@ -671,7 +730,7 @@ function RolePermissionsPanel({ rolePermissions }: { rolePermissions: Record<str
               {ALL_ROLES.map(role => (
                 <tr key={role}>
                   <td style={tdRole}>{ROLE_LABELS[role] ?? role}</td>
-                  {internalPages.map(p => (
+                  {allPermPages.map(p => (
                     <td key={p.id} style={tdCell}>
                       <input
                         type="checkbox"
