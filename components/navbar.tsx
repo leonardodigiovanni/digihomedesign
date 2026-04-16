@@ -57,9 +57,10 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
     if (!container || !inner) return
 
     const innerEl = inner
+    const containerEl = container
     function onWheel(e: WheelEvent) {
       if (e.deltaY === 0) return
-      const maxScroll = innerEl.scrollWidth - container.clientWidth
+      const maxScroll = innerEl.scrollWidth - containerEl.clientWidth
       if (maxScroll <= 0) return  // nessun overflow: lascia scorrere la pagina normalmente
       const next = Math.max(0, Math.min(scrollPos.current + e.deltaY, maxScroll))
       if (next === scrollPos.current) return  // già al limite: lascia scorrere la pagina
@@ -68,8 +69,8 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
       innerEl.style.transform = `translateX(-${scrollPos.current}px)`
     }
 
-    container.addEventListener('wheel', onWheel, { passive: false })
-    return () => container.removeEventListener('wheel', onWheel)
+    containerEl.addEventListener('wheel', onWheel, { passive: false })
+    return () => containerEl.removeEventListener('wheel', onWheel)
   }, [])
 
   const adminItems         = visibleAdminPages(role)
