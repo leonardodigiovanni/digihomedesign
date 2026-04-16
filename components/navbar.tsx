@@ -56,15 +56,16 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
     const inner     = innerRef.current
     if (!container || !inner) return
 
+    const innerEl = inner
     function onWheel(e: WheelEvent) {
       if (e.deltaY === 0) return
-      const maxScroll = inner.scrollWidth - container.clientWidth
+      const maxScroll = innerEl.scrollWidth - container.clientWidth
       if (maxScroll <= 0) return  // nessun overflow: lascia scorrere la pagina normalmente
       const next = Math.max(0, Math.min(scrollPos.current + e.deltaY, maxScroll))
       if (next === scrollPos.current) return  // già al limite: lascia scorrere la pagina
       e.preventDefault()
       scrollPos.current = next
-      inner.style.transform = `translateX(-${scrollPos.current}px)`
+      innerEl.style.transform = `translateX(-${scrollPos.current}px)`
     }
 
     container.addEventListener('wheel', onWheel, { passive: false })
