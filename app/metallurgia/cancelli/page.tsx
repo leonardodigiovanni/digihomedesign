@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/metallurgia" style={{ color: '#888', textDecoration: 'underline' }}>Metallurgia</Link> / Cancelli
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', fontWeight: 700, marginBottom: 16 }}>Cancelli a Palermo</h1>
+      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Cancelli a Palermo</h1>
       <p>Progettiamo e installiamo <strong>cancelli su misura a Palermo</strong>: carrabili scorrevoli, a battente singolo e doppio, a libro e sollevabili in ferro zincato, acciaio inox o alluminio estruso. I cancelli vengono realizzati in officina su disegno tecnico e verniciati a polvere epossidica per la massima resistenza agli agenti atmosferici.</p>
       <p style={{ marginTop: 12 }}>Installiamo automazioni per apertura motorizzata con operatori interrati o a braccio dei principali marchi — FAAC, Nice, BFT, Came — con telecomandi, tastiere a codice, videocitofoni e lettori di transponder. I sistemi sono predisposti per l&apos;integrazione con impianti domotici e videosorveglianza.</p>
       <p style={{ marginTop: 12 }}>Realizziamo anche cancelletti pedonali a fianco e recinzioni perimetrali abbinate. Contattaci per un sopralluogo gratuito e un progetto con rendering 3D.</p>
