@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Infissi in Alluminio
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Infissi in Alluminio a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Infissi in Alluminio a Palermo</h1>
       <p>Gli <strong>infissi in alluminio a taglio termico a Palermo</strong> rappresentano la scelta ideale per chi cerca durata, minima manutenzione e design contemporaneo. Il taglio termico — una barriera in poliammide che interrompe il ponte termico tra il profilo esterno e quello interno — garantisce elevate prestazioni di isolamento termoacustico, riducendo sensibilmente i consumi energetici.</p>
       <p style={{ marginTop: 12 }}>Lavoriamo con sistemi certificati dei principali produttori — Schüco, Metra, Reynaers, Wicona — nelle versioni a battente, a vasistas, scorrevole alzante e a libro. Le finiture disponibili includono verniciatura a polvere in qualsiasi colore RAL, anodizzazione e legno-alluminio per l&apos;interno.</p>
       <p style={{ marginTop: 12 }}>Il servizio comprende sopralluogo, rilievo quote, fornitura con vetrocamera selezionata, posa in opera e sigillatura perimetrale. Contattaci per un preventivo gratuito.</p>

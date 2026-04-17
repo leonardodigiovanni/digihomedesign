@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/edilizia" style={{ color: '#888', textDecoration: 'underline' }}>Edilizia</Link> / Smaltimento Calcinacci
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Smaltimento Calcinacci a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Smaltimento Calcinacci a Palermo</h1>
       <p>Offriamo il servizio di <strong>smaltimento calcinacci e macerie a Palermo</strong>: raccolta dei detriti prodotti durante i lavori di demolizione, ristrutturazione o manutenzione, insaccamento o carico su cassone, trasporto e conferimento a discarica autorizzata per inerti nel rispetto della normativa sui rifiuti speciali.</p>
       <p style={{ marginTop: 12 }}>Forniamo il formulario di identificazione rifiuti (FIR) per ogni trasporto, garantendo al cliente la tracciabilità completa dello smaltimento. Disponiamo di cassoni scarrabili di varie dimensioni per cantieri di qualsiasi entità, con ritiro su prenotazione o programmato.</p>
       <p style={{ marginTop: 12 }}>Il servizio è disponibile anche in forma autonoma, indipendentemente da altri lavori edili. Contattaci per un preventivo basato sul volume stimato dei materiali.</p>

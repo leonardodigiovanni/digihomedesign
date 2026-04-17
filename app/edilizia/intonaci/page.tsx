@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/edilizia" style={{ color: '#888', textDecoration: 'underline' }}>Edilizia</Link> / Intonaci
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Intonaci a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Intonaci a Palermo</h1>
       <p>Applichiamo <strong>intonaci a Palermo</strong> per interni ed esterni: intonaci rustici in sabbia e cemento, civili a tre strati, rasature al gesso per superfici lisce pronte per la tinteggiatura, e intonaci termoisolanti per il miglioramento energetico dell&apos;involucro edilizio.</p>
       <p style={{ marginTop: 12 }}>Operiamo con posa manuale per superfici ridotte e con macchine intonacatrici per grandi superfici, riducendo i tempi di cantiere e garantendo uno strato omogeneo. Per gli esterni utilizziamo intonaci idrorepellenti e deumidificanti adatti al clima siciliano.</p>
       <p style={{ marginTop: 12 }}>Prima della posa verifichiamo lo stato del supporto e provvediamo alla rimozione dell&apos;intonaco ammalorato. Contattaci per un sopralluogo gratuito a Palermo e provincia.</p>

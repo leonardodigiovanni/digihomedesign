@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/metallurgia" style={{ color: '#888', textDecoration: 'underline' }}>Metallurgia</Link> / Pannelli Bugnato Alluminio
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Pannelli Bugnato Alluminio a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Pannelli Bugnato Alluminio a Palermo</h1>
       <p>I <strong>pannelli in alluminio bugnato</strong> sono elementi decorativi e funzionali ampiamente utilizzati per rivestimenti di facciate, tamponamenti di cancelli e recinzioni, pannellature per saracinesche e portoni industriali. La lavorazione bugnata conferisce rigidità strutturale al pannello pur mantenendo il peso ridotto tipico dell&apos;alluminio.</p>
       <p style={{ marginTop: 12 }}>Lavoriamo con lamiere in alluminio da 1 a 3 mm in vari pattern di bugne — quadra, tonda, elongata — con finitura grezza, anodizzata o verniciata a polvere in qualsiasi colore RAL. I pannelli vengono tagliati su misura e forati per il fissaggio a telai in ferro o alluminio estruso.</p>
       <p style={{ marginTop: 12 }}>Ideali per ambienti costieri grazie alla totale resistenza alla ruggine. Contattaci per un preventivo gratuito con campionatura delle finiture disponibili.</p>

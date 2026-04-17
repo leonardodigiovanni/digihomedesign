@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/elettricita" style={{ color: '#888', textDecoration: 'underline' }}>Elettricità</Link> / Elettrodomestici
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>
         Elettrodomestici a Palermo
       </h1>
       <p>

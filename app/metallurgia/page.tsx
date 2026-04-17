@@ -15,23 +15,30 @@ export const metadata: Metadata = {
 }
 
 const subcategories = [
+  { href: '/metallurgia/porte-corazzate',              label: 'Porte Corazzate',              desc: 'Porte corazzate su misura in acciaio per abitazioni, uffici e locali commerciali.' },
   { href: '/metallurgia/porte-blindate',               label: 'Porte Blindate',               desc: 'Porte blindate di sicurezza classe 3-6 per abitazioni e uffici.' },
+  { href: '/metallurgia/porte-antincendio',            label: 'Porte Antincendio',            desc: 'Porte REI certificate per compartimentazione antincendio in acciaio.' },
   { href: '/metallurgia/pannelli-bugnato-alluminio',   label: 'Pannelli Bugnato Alluminio',   desc: 'Pannelli decorativi in alluminio bugnato per facciate e rivestimenti.' },
   { href: '/metallurgia/cancelli',                     label: 'Cancelli',                     desc: 'Cancelli carrabili e pedonali in ferro battuto e acciaio, manuali o motorizzati.' },
   { href: '/metallurgia/grate',                        label: 'Grate',                        desc: 'Grate di sicurezza per finestre e vani in ferro e acciaio inox.' },
   { href: '/metallurgia/ringhiere',                    label: 'Ringhiere',                    desc: 'Ringhiere per scale e balconi in ferro, acciaio inox e alluminio su misura.' },
   { href: '/metallurgia/balconi',                      label: 'Balconi',                      desc: 'Strutture per balconi in acciaio e ferro con parapetti personalizzati.' },
+  { href: '/metallurgia/saracinesche-manuali',         label: 'Saracinesche Manuali',         desc: 'Saracinesche avvolgibili e a libro manuali per garage e locali commerciali.' },
   { href: '/metallurgia/saracinesche-motorizzate',     label: 'Saracinesche Motorizzate',     desc: 'Saracinesche avvolgibili e a libro motorizzate per garage e locali commerciali.' },
-  { href: '/metallurgia/strutture',                    label: 'Strutture',                    desc: 'Strutture metalliche per tettoie, pensiline, soppalchi e capannoni.' },
-  { href: '/metallurgia/scale',                        label: 'Scale',                        desc: 'Scale interne ed esterne in ferro, acciaio e acciaio inox su misura.' },
+  { href: '/metallurgia/strutture',                    label: 'Strutture Portanti',           desc: 'Strutture metalliche per tettoie, pensiline, soppalchi e capannoni.' },
+  { href: '/metallurgia/scale-a-rampe',                label: 'Scale a Rampe',                desc: 'Scale a rampe in ferro e acciaio su misura per interni ed esterni.' },
+  { href: '/metallurgia/scale-a-chiocciola',           label: 'Scale a Chiocciola',           desc: 'Scale elicoidali in ferro e acciaio compatte per spazi ridotti.' },
+  { href: '/metallurgia/scale-antincendio',            label: 'Scale Antincendio',            desc: 'Scale di emergenza esterne in acciaio zincato certificate.' },
   { href: '/metallurgia/armadi-blindati',              label: 'Armadi Blindati',              desc: 'Armadi blindati per armi, documenti e valori con serrature di sicurezza.' },
   { href: '/metallurgia/casseforti',                   label: 'Casseforti',                   desc: 'Casseforti da incasso e a pavimento per abitazioni e attività commerciali.' },
+  { href: '/metallurgia/tetti-coibentati',             label: 'Tetti Coibentati',             desc: 'Coperture metalliche coibentate per residenziale e industriale, sandwich e lamiera.' },
+  { href: '/metallurgia/grondaie',                     label: 'Grondaie',                     desc: 'Grondaie e pluviali in alluminio, rame e PVC su misura con posa inclusa.' },
 ]
 
 export default function Page() {
   return (
     <div style={{ maxWidth: 860, margin: '48px auto', padding: '0 20px 64px', color: '#444', fontSize: 15, lineHeight: 1.8 }}>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 12 }}>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 12 }}>
         Metallurgia a Palermo
       </h1>
       <p style={{ marginBottom: 36 }}>

@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Veneziane
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Veneziane a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Veneziane a Palermo</h1>
       <p>Forniamo e installiamo <strong>veneziane su misura a Palermo</strong> in tre configurazioni: veneziane da interno in alluminio con stecche da 16, 25 o 50 mm per uffici e abitazioni; veneziane esterne in alluminio estruso ad alta resistenza per la protezione solare delle facciate; e veneziane integrate nel vetrocamera — racchiuse tra i due vetri — per il controllo della luce senza polvere e senza manutenzione.</p>
       <p style={{ marginTop: 12 }}>Le stecche sono orientabili e sollevabili tramite cordino, catena o motorizzazione. I colori disponibili coprono l&apos;intera gamma RAL con finiture opache, lucide e in legno vero per le versioni da interno di pregio. Le veneziane esterne sono motorizzabili e integrabili nei sistemi domotici per il controllo automatico in base all&apos;irraggiamento.</p>
       <p style={{ marginTop: 12 }}>Ogni veneziana viene misurata sul posto e realizzata su misura. Contattaci per un preventivo gratuito a Palermo e provincia.</p>

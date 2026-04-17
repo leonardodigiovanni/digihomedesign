@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/metallurgia" style={{ color: '#888', textDecoration: 'underline' }}>Metallurgia</Link> / Saracinesche Motorizzate
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Saracinesche Motorizzate a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Saracinesche Motorizzate a Palermo</h1>
       <p>Installiamo <strong>saracinesche motorizzate a Palermo</strong> per garage privati, negozi, magazzini e locali commerciali: avvolgibili in doghe di acciaio zincato, alluminio estruso e PVC coibentato, con motorizzazione a soffitto o laterale dei principali marchi — Hörmann, Novoferm, Grün, FAAC.</p>
       <p style={{ marginTop: 12 }}>I sistemi sono dotati di telecomando multi-frequenza, fotocellule di sicurezza e fermo meccanico anti-sollevamento. Su richiesta integriamo tastiere a codice, lettori badge e sistemi di apertura da smartphone. Per i locali commerciali proponiamo saracinesche con inserti in policarbonato per la vetrinatura notturna.</p>
       <p style={{ marginTop: 12 }}>Offriamo anche il servizio di manutenzione e riparazione di saracinesche esistenti: sostituzione motore, guide, doghe danneggiate e centraline. Contattaci per un sopralluogo gratuito e un preventivo a Palermo e provincia.</p>

@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Vetrine
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Vetrine Commerciali a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Vetrine Commerciali a Palermo</h1>
       <p>Progettiamo e installiamo <strong>vetrine commerciali a Palermo</strong> su misura per negozi, show-room, ristoranti, banche e uffici: sistemi in alluminio strutturale con vetro stratificato di sicurezza, ingressi con porta a battente o scorrevole automatica, facciate continue vetrate e sistemi a libro per l&apos;apertura totale del fronte su strada.</p>
       <p style={{ marginTop: 12 }}>I profili in alluminio sono disponibili in sezione sottile per la massima visibilità del prodotto esposto, con finitura in qualsiasi colore RAL o anodizzatura. Il vetro viene scelto in base alle esigenze di sicurezza (stratificato 33.1 o 44.2), isolamento termico e resistenza al vento (calcolo NTC 2018).</p>
       <p style={{ marginTop: 12 }}>Ogni progetto viene accompagnato da un disegno tecnico in pianta e prospetto per l&apos;approvazione prima della produzione. Contattaci per un sopralluogo gratuito a Palermo e provincia.</p>

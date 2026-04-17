@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/metallurgia" style={{ color: '#888', textDecoration: 'underline' }}>Metallurgia</Link> / Strutture
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Strutture Metalliche a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Strutture Metalliche a Palermo</h1>
       <p>Progettiamo e realizziamo <strong>strutture metalliche a Palermo</strong>: tettoie per auto e cortili, pensiline per ingressi e marciapiedi, soppalchi abitativi e di servizio, capannoni industriali prefabbricati, pergolati e gazebo in acciaio verniciato. Ogni struttura è progettata con calcolo agli stati limite e realizzata in officina con profilati in acciaio S275 o S355.</p>
       <p style={{ marginTop: 12 }}>I componenti vengono zincati a caldo o trattati con ciclo epossidico-poliuretanico per la massima durabilità. Le coperture sono realizzate con lamiera grecata, pannelli sandwich coibentati, policarbonato alveolare o vetro strutturale a seconda delle esigenze.</p>
       <p style={{ marginTop: 12 }}>Forniamo il progetto strutturale firmato da ingegnere abilitato per il deposito in Comune. Contattaci per un sopralluogo gratuito e un preventivo dettagliato.</p>

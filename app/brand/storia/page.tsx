@@ -13,7 +13,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/brand" style={{ color: '#888', textDecoration: 'underline' }}>Brand</Link> / Storia
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>La Nostra Storia</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>La Nostra Storia</h1>
       <p>Digi Home Design nasce a Palermo dalla passione per il design d&apos;interni e la volontà di offrire soluzioni complete per la casa e gli spazi commerciali. Dalla progettazione alla posa in opera, ogni intervento è seguito con cura artigianale e attenzione al dettaglio.</p>
       <p style={{ marginTop: 12 }}>Nel corso degli anni abbiamo ampliato la nostra offerta abbracciando tutti gli ambiti dell&apos;edilizia, dalla falegnameria ai serramenti, dall&apos;impiantistica alle ristrutturazioni chiavi in mano — sempre con un unico interlocutore per il cliente.</p>
       <Link href="/brand" style={{ display: 'inline-block', marginTop: 32, color: '#1a1a1a', fontWeight: 600, textDecoration: 'underline' }}>← Torna a Brand</Link>

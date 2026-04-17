@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/metallurgia" style={{ color: '#888', textDecoration: 'underline' }}>Metallurgia</Link> / Armadi Blindati
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Armadi Blindati a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Armadi Blindati a Palermo</h1>
       <p>Forniamo e installiamo <strong>armadi blindati a Palermo</strong> per la custodia di armi da fuoco (omologati dal Ministero dell&apos;Interno), documenti riservati, valori e oggetti preziosi. Gli armadi sono costruiti in acciaio da 3 a 5 mm con serrature a chiave doppia mappa, a combinazione meccanica o elettronica con tastiera digitale.</p>
       <p style={{ marginTop: 12 }}>Gli armadi per armi rispettano le disposizioni del TULPS e del D.M. 15/07/1997 sulla custodia obbligatoria: disponibili in vari formati per pistole, fucili, carabine e munizioni in scomparto separato e a norma. Forniamo il manuale tecnico per la pratica in Questura.</p>
       <p style={{ marginTop: 12 }}>Gli armadi per documenti e valori sono disponibili in versione ignifuga (classe 60 o 120 minuti) con certificazione EN 1047-1. Contattaci per un preventivo gratuito.</p>

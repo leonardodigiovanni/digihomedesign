@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Verande
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Verande a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Verande a Palermo</h1>
       <p>Realizziamo <strong>verande su misura a Palermo</strong> in alluminio e vetro temperato o stratificato: verande a pannelli fissi, a vetri scorrevoli su binario, con ante a libro e sistemi bioclimatici con tetto a lamelle orientabili per la ventilazione naturale. Trasformiamo balconi, terrazze e giardini in ambienti vivibili tutto l&apos;anno, protetti dal vento, dalla pioggia e dal sole estivo.</p>
       <p style={{ marginTop: 12 }}>I profili in alluminio a taglio termico garantiscono comfort termoacustico anche nei mesi invernali, mentre i vetri basso-emissivi riducono il surriscaldamento estivo. Le tende interne o integrate nel vetro (vetro con veneziana incorporata) completano il controllo solare senza interventi successivi.</p>
       <p style={{ marginTop: 12 }}>Gestiamo le pratiche SCIA o i permessi necessari in Comune di Palermo e provincia. Contattaci per un sopralluogo gratuito e un progetto su misura.</p>

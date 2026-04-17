@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/metallurgia" style={{ color: '#888', textDecoration: 'underline' }}>Metallurgia</Link> / Porte Blindate
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Porte Blindate a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Porte Blindate a Palermo</h1>
       <p>Forniamo e installiamo <strong>porte blindate a Palermo</strong> certificate dalla classe 3 alla classe 6 secondo la norma UNI EN 1627: la scelta della classe dipende dal livello di rischio e dal contesto abitativo o commerciale. Ogni porta è dotata di serratura multipunto con chiusura perimetrale, cerniere anti-scasso e pannello esterno in acciaio da almeno 1,5 mm.</p>
       <p style={{ marginTop: 12 }}>Le ante sono disponibili con rivestimento esterno in acciaio inox satinato, laminato laccato o legno impiallacciato per integrarsi con l&apos;estetica dell&apos;ambiente. Installiamo modelli con apertura a destra, sinistra, doppia anta e scorrevole. La posa include la rimozione della vecchia porta, la posa del controtelaio in acciaio e il sigillamento perimetrale.</p>
       <p style={{ marginTop: 12 }}>Collaboriamo con i principali marchi italiani — Dierre, Alias, Oikos, Bertolotto Blindate. Contattaci per un sopralluogo e un preventivo gratuito.</p>

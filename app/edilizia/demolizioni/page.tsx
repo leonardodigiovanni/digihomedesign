@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/edilizia" style={{ color: '#888', textDecoration: 'underline' }}>Edilizia</Link> / Demolizioni
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Demolizioni a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Demolizioni a Palermo</h1>
       <p>Eseguiamo <strong>demolizioni selettive e totali a Palermo</strong>: abbattimento di tramezzi, muri non portanti, solai, pavimenti, rivestimenti e strutture in cls armato. Operiamo con attrezzatura meccanica e manuale a seconda delle condizioni del cantiere e delle strutture adiacenti da preservare.</p>
       <p style={{ marginTop: 12 }}>Prima di ogni demolizione effettuiamo un sopralluogo tecnico per verificare la natura strutturale delle pareti, la presenza di impianti nascosti e le eventuali necessità di puntellamento. Lavoriamo in sicurezza nel rispetto del D.Lgs. 81/08.</p>
       <p style={{ marginTop: 12 }}>Il servizio comprende la raccolta e il conferimento dei materiali di risulta a discarica autorizzata con formulario di trasporto. Contattaci per un preventivo gratuito.</p>

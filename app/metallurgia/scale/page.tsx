@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/metallurgia" style={{ color: '#888', textDecoration: 'underline' }}>Metallurgia</Link> / Scale
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Scale in Ferro a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Scale in Ferro a Palermo</h1>
       <p>Realizziamo <strong>scale in ferro e acciaio su misura a Palermo</strong>: scale a giorno con gradini in legno o in lamiera mandorlata, scale elicoidali compatte per spazi ridotti, scale retrattili per accesso a soppalchi e sottotetti, e scale esterne di servizio in acciaio zincato per edifici e terrazze.</p>
       <p style={{ marginTop: 12 }}>Ogni scala viene progettata rispettando le proporzioni ergonomiche (alzata 17–18 cm, pedata 28–30 cm) e i requisiti di sicurezza della normativa UNI EN 14975. Le strutture portanti in ferro piatto o tubolare vengono saldate in officina, verniciate a polvere e assemblate in opera con tasselli chimici ad alta resistenza.</p>
       <p style={{ marginTop: 12 }}>I corrimano e i parapetti possono essere abbinati alle ringhiere dello stesso stile per una coerenza estetica totale. Contattaci per un progetto gratuito a Palermo e provincia.</p>

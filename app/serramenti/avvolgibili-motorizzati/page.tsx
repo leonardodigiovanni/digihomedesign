@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Avvolgibili Motorizzati
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Avvolgibili Motorizzati a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Avvolgibili Motorizzati a Palermo</h1>
       <p>Installiamo <strong>avvolgibili e tapparelle motorizzate a Palermo</strong>: motori tubulari silenziosi integrati nell&apos;avvolgitore con comando tramite pulsante a parete, telecomando radio o app da smartphone. Compatibili con i principali sistemi domotici — KNX, BTicino, Google Home, Alexa — per l&apos;automazione programmata in base all&apos;ora, al sole e al vento.</p>
       <p style={{ marginTop: 12 }}>Le tapparelle sono disponibili in doghe di PVC coibentato (ottimo isolamento termoacustico), alluminio estruso e acciaio zincato per applicazioni di sicurezza. I motori — Somfy, Nice, Came, Rolly — sono dotati di finecorsa meccanico o elettronico e di sistema anti-ostacolo per la sicurezza di bambini e animali.</p>
       <p style={{ marginTop: 12 }}>Installiamo motorizzazioni su avvolgibili esistenti (retrofit) senza sostituire l&apos;intera tapparella, riducendo i costi di intervento. Contattaci per un sopralluogo gratuito e un preventivo a Palermo e provincia.</p>

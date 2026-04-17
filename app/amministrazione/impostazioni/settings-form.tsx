@@ -615,7 +615,8 @@ function RegistrazioniLoginPanel({
 type PermMatrix = Record<string, Record<number, boolean>>
 
 const permInternalPages = internalPages.filter(p => p.id !== 30 && p.id !== 31)
-const allPermPages = [...permInternalPages, ...fornitoriDipendentiPages, ...clientiDipendentiPages]
+const allPermPages = [...permInternalPages, ...fornitoriDipendentiPages, ...clientiDipendentiPages, ...areaClientiPages]
+const areaPersonaleIds = new Set(areaClientiPages.map(p => p.id))
 
 function buildMatrix(rolePermissions: Record<string, number[]>): PermMatrix {
   const m: PermMatrix = {}
@@ -699,6 +700,7 @@ function RolePermissionsPanel({ rolePermissions }: { rolePermissions: Record<str
                 <th colSpan={permInternalPages.length} style={{ ...thStyle, background: '#edf2ff', color: '#3a5ab0', borderBottom: '2px solid #b0c4f8' }}>Area Lavoro</th>
                 <th colSpan={fornitoriDipendentiPages.length} style={{ ...thStyle, background: '#f0fdf4', color: '#276749', borderBottom: '2px solid #9ae6b4' }}>Area Fornitori</th>
                 <th colSpan={clientiDipendentiPages.length} style={{ ...thStyle, background: '#fff7ed', color: '#9a5a00', borderBottom: '2px solid #f8d4a0' }}>Area Clienti</th>
+                <th colSpan={areaClientiPages.length} style={{ ...thStyle, background: '#fdf4ff', color: '#7a3a9a', borderBottom: '2px solid #d4a0f8' }}>Area Personale</th>
               </tr>
               <tr>
                 {permInternalPages.map(p => (
@@ -710,6 +712,9 @@ function RolePermissionsPanel({ rolePermissions }: { rolePermissions: Record<str
                 {clientiDipendentiPages.map(p => (
                   <th key={p.id} style={{ ...thStyle, background: '#fff7ed' }}>{p.label}</th>
                 ))}
+                {areaClientiPages.map(p => (
+                  <th key={p.id} style={{ ...thStyle, background: '#fdf4ff' }}>{p.label}</th>
+                ))}
               </tr>
             </thead>
             <tbody>
@@ -720,7 +725,7 @@ function RolePermissionsPanel({ rolePermissions }: { rolePermissions: Record<str
                   <td key={p.id} style={tdCell}>
                     <input
                       type="checkbox"
-                      checked
+                      checked={!areaPersonaleIds.has(p.id)}
                       disabled
                       style={{ width: 14, height: 14, accentColor: '#1a1a1a', opacity: 0.5 }}
                     />
@@ -730,16 +735,22 @@ function RolePermissionsPanel({ rolePermissions }: { rolePermissions: Record<str
               {ALL_ROLES.map(role => (
                 <tr key={role}>
                   <td style={tdRole}>{ROLE_LABELS[role] ?? role}</td>
-                  {allPermPages.map(p => (
-                    <td key={p.id} style={tdCell}>
-                      <input
-                        type="checkbox"
-                        checked={matrix[role][p.id] ?? false}
-                        onChange={() => toggle(role, p.id)}
-                        style={{ width: 14, height: 14, cursor: 'pointer', accentColor: '#1a1a1a' }}
-                      />
-                    </td>
-                  ))}
+                  {allPermPages.map(p => {
+                    const isDisabled =
+                      (areaPersonaleIds.has(p.id) && role !== 'cliente') ||
+                      (!areaPersonaleIds.has(p.id) && role === 'cliente')
+                    return (
+                      <td key={p.id} style={{ ...tdCell, background: isDisabled ? '#f5f5f5' : undefined }}>
+                        <input
+                          type="checkbox"
+                          checked={isDisabled ? false : (matrix[role][p.id] ?? false)}
+                          disabled={isDisabled}
+                          onChange={isDisabled ? undefined : () => toggle(role, p.id)}
+                          style={{ width: 14, height: 14, cursor: isDisabled ? 'default' : 'pointer', accentColor: '#1a1a1a', opacity: isDisabled ? 0.5 : 1 }}
+                        />
+                      </td>
+                    )
+                  })}
                 </tr>
               ))}
             </tbody>

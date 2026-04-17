@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/edilizia" style={{ color: '#888', textDecoration: 'underline' }}>Edilizia</Link> / Sanitari
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Sanitari a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Sanitari a Palermo</h1>
       <p>Forniamo e installiamo <strong>sanitari a Palermo</strong>: wc sospesi e a pavimento, lavabi, bidet, vasche da bagno, piatti doccia, box doccia su misura e rubinetteria di design. Lavoriamo con marchi selezionati — Ideal Standard, Catalano, Duravit, Hansgrohe — per garantire qualità e durata nel tempo.</p>
       <p style={{ marginTop: 12 }}>Il servizio di rifacimento bagno è chiavi in mano: demoluiamo i vecchi sanitari, adeguiamo gli scarichi e i sifoni, poniamo i nuovi elementi, siliconiamo i raccordi e collaghiamo i flessibili. Gestiamo anche il collegamento alla rete idrica con miscelatori termostatici e sistemi di scarico a zaino.</p>
       <p style={{ marginTop: 12 }}>Disponibile anche la sola sostituzione di singoli elementi senza demolizioni murarie. Contattaci per un preventivo gratuito a Palermo e provincia.</p>

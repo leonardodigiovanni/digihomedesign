@@ -112,7 +112,13 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
         {/* Area scrollabile — tutti i link tranne auth */}
         <div className="nav-scroll" ref={scrollRef}>
         <div className="nav-scroll-inner" ref={innerRef}>
-          <Link href="/" className="nav-link" style={linkStyle('/')}>Home</Link>
+          <Link href="/" className="nav-link" style={{ ...linkStyle('/'), display: 'inline-flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', gap: 2 }} aria-label="Home">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginTop: 1 }}>
+              <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/>
+              <text x="12" y="17.5" textAnchor="middle" fontSize="8" fontWeight="800" fill="#111" stroke="none" fontFamily="system-ui,sans-serif" strokeWidth="0">DG</text>
+            </svg>
+            <span style={{ display: 'block', width: 18, height: 3, borderRadius: 1, background: isActive('/') ? '#111' : 'transparent' }} />
+          </Link>
 
           {visibleClientPages.length > 0 && (
             <><NavSep />
@@ -168,7 +174,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             )
           })}
 
-          {role && areaClientiPages.filter(p => !disabledPages.includes(p.id)).length > 0 && (
+          {role === 'cliente' && areaClientiPages.filter(p => !disabledPages.includes(p.id)).length > 0 && (
             <><NavSep /><AreaClientiDropdown items={areaClientiPages.filter(p => !disabledPages.includes(p.id))} isActive={isActive} linkStyle={linkStyle} /></>
           )}
 
@@ -253,7 +259,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             )
           })}
 
-          {role && areaClientiPages.filter(p => !disabledPages.includes(p.id)).length > 0 && (
+          {role === 'cliente' && areaClientiPages.filter(p => !disabledPages.includes(p.id)).length > 0 && (
             <>
               <div className="nav-mobile-section">Area Personale</div>
               {areaClientiPages.filter(p => !disabledPages.includes(p.id)).map(p => (

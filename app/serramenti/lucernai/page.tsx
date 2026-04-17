@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Lucernai
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Lucernai a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Lucernai a Palermo</h1>
       <p>Installiamo <strong>lucernai a Palermo</strong> per portare luce naturale zenitale in ambienti privi di finestre laterali: bagni ciechi, corridoi, vani scale, sottotetti e ambienti commerciali. Le tipologie disponibili comprendono cupole in policarbonato a doppia camera, lucernai piani in vetro temperato stratificato su telaio in alluminio, e sistemi a shed con ventilazione naturale integrata.</p>
       <p style={{ marginTop: 12 }}>I lucernai apribili — a vasistas o a motore elettrico con sensore di pioggia — consentono la ventilazione naturale dell&apos;ambiente oltre all&apos;illuminazione. Per i piani inclinati gestiamo la sigillatura del controtelaio e la guaina di raccordo con il manto impermeabile per la massima tenuta all&apos;acqua.</p>
       <p style={{ marginTop: 12 }}>Realizziamo anche la pratica SCIA per l&apos;apertura in copertura ove richiesta. Contattaci per un sopralluogo gratuito e un preventivo a Palermo.</p>

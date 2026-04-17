@@ -28,6 +28,7 @@ export type AppSettings = {
   rolePermissions: Record<string, number[]>
   manutenzione: boolean
   bannerAbilitato: boolean
+  bannerCircolare: boolean
   bannerTesto: string
 }
 
@@ -48,6 +49,7 @@ const DEFAULTS: AppSettings = {
   loginDipendentiDisabilitato: false,
   manutenzione: false,
   bannerAbilitato: false,
+  bannerCircolare: false,
   bannerTesto: '',
   rolePermissions: {
     dipendente:      [16, 17, 18],

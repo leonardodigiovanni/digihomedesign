@@ -4,12 +4,12 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Persiane in Alluminio a Palermo — Fornitura e Installazione',
   description: 'Persiane in alluminio a Palermo: avvolgibili, veneziane e scuri su misura. Resistenti, eleganti e durevoli. Installazione professionale e preventivo gratuito.',
-  alternates: { canonical: 'https://www.digi-home-design.com/persiane-in-alluminio' },
+  alternates: { canonical: 'https://www.digi-home-design.com/persiane' },
   robots: { index: true, follow: true },
   openGraph: {
     title: 'Persiane in Alluminio a Palermo — Fornitura e Installazione',
     description: 'Persiane in alluminio a Palermo: avvolgibili, veneziane e scuri su misura. Resistenti, eleganti e durevoli. Installazione professionale e preventivo gratuito.',
-    url: 'https://www.digi-home-design.com/persiane-in-alluminio',
+    url: 'https://www.digi-home-design.com/persiane',
     type: 'website',
   },
 }
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <div style={{ maxWidth: 860, margin: '48px auto', padding: '0 20px 64px', color: '#444', fontSize: 15, lineHeight: 1.8 }}>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>
         Persiane in Alluminio a Palermo
       </h1>
       <p>

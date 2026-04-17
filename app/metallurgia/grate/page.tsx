@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/metallurgia" style={{ color: '#888', textDecoration: 'underline' }}>Metallurgia</Link> / Grate
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Grate di Sicurezza a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Grate di Sicurezza a Palermo</h1>
       <p>Realizziamo e installiamo <strong>grate di sicurezza a Palermo</strong> per la protezione di finestre, vani cantina, bocche di lupo e aperture di qualsiasi dimensione. Lavoriamo con ferro quadro, piatto e tondo, acciaio inox AISI 304 e alluminio, con saldature a piena penetrazione e verniciatura a polvere epossidica.</p>
       <p style={{ marginTop: 12 }}>Le grate sono disponibili in versione fissa a muro, apribile a cardine con serratura di sicurezza (obbligatoria come via di fuga secondo il D.M. 9/04/1994), o scorrevole su binario. I pattern decorativi spaziano dal classico a lancia al moderno geometrico, con possibilità di inserire motivi personalizzati in ferro battuto.</p>
       <p style={{ marginTop: 12 }}>Ogni grata viene misurata sul posto e realizzata su misura. Contattaci per un sopralluogo gratuito e un preventivo a Palermo e provincia.</p>

@@ -140,6 +140,17 @@ export async function toggleBanner(
   return { ok: true }
 }
 
+export async function toggleBannerCircolare(
+  _prev: SaveAccessResult | null,
+  _formData: FormData
+): Promise<SaveAccessResult> {
+  const cookieStore = await cookies()
+  if (cookieStore.get('session_role')?.value !== 'admin') redirect('/')
+  const current = readSettings()
+  writeSettings({ ...current, bannerCircolare: !current.bannerCircolare })
+  return { ok: true }
+}
+
 export async function saveBannerTesto(
   _prev: SaveAccessResult | null,
   formData: FormData
@@ -174,7 +185,7 @@ export async function saveRolePermissions(
 
   const rolePermissions: Record<string, number[]> = {}
   for (const role of ALL_ROLES) {
-    rolePermissions[role] = [...internalPages.filter(p => p.id !== 30 && p.id !== 31), ...fornitoriDipendentiPages, ...clientiDipendentiPages]
+    rolePermissions[role] = [...internalPages.filter(p => p.id !== 30 && p.id !== 31), ...fornitoriDipendentiPages, ...clientiDipendentiPages, ...areaClientiPages]
       .filter(p => formData.get(`perm_${role}_${p.id}`) === '1')
       .map(p => p.id)
   }

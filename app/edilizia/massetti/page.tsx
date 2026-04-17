@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/edilizia" style={{ color: '#888', textDecoration: 'underline' }}>Edilizia</Link> / Massetti
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Massetti a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Massetti a Palermo</h1>
       <p>Realizziamo <strong>massetti a Palermo</strong> per ogni tipo di posa: massetti tradizionali in sabbia e cemento per pavimentazioni ceramiche e in pietra, massetti autolivellanti a base di anidrite per superfici perfettamente piane in tempi rapidi, e massetti alleggeriti con argilla espansa per ridurre il carico sui solai.</p>
       <p style={{ marginTop: 12 }}>Eseguiamo anche massetti per pannelli radianti a pavimento, con spessori calibrati e posa della rete di rinforzo. La corretta realizzazione del massetto è fondamentale per la durabilità della pavimentazione finale: utilizziamo pompe e macchine miscelatrici per garantire omogeneità e resistenza.</p>
       <p style={{ marginTop: 12 }}>Disponibile anche il ripristino localizzato di massetti esistenti con lesioni o zone cedevoli. Preventivo gratuito a Palermo e provincia.</p>

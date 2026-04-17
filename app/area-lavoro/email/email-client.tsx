@@ -19,12 +19,16 @@ type Messaggio = {
 const TIPO_LABELS: Record<string, string> = {
   nuova_registrazione: 'Nuova registrazione',
   contatto:            'Richiesta contatto',
+  partnership:         'Richiesta partnership',
 }
 
 const TIPO_COLORS: Record<string, string> = {
   nuova_registrazione: '#4a8fa8',
   contatto:            '#6b8f71',
+  partnership:         '#7b5ea7',
 }
+
+const TUTTI_TIPI = Object.keys(TIPO_LABELS)
 
 export default function EmailClient({
   messaggi,
@@ -37,6 +41,9 @@ export default function EmailClient({
   const [letti, setLetti] = useState<Set<number>>(
     () => new Set(messaggi.filter(m => m.letto).map(m => m.id))
   )
+  const [filtroTipo, setFiltroTipo] = useState<string>('tutti')
+  const [filtroStato, setFiltroStato] = useState<'tutti' | 'letti' | 'non_letti'>('tutti')
+
   // mappa username_ref -> is_active (aggiornata localmente dopo attivazione)
   const [attiviMap, setAttiviMap] = useState<Record<string, number>>(
     () => {
@@ -68,12 +75,24 @@ export default function EmailClient({
 
   const nonLetti = messaggi.filter(m => !letti.has(m.id)).length
 
+  const messaggiFiltrati = messaggi.filter(m => {
+    if (filtroTipo !== 'tutti' && m.tipo !== filtroTipo) return false
+    if (filtroStato === 'letti'     && !letti.has(m.id)) return false
+    if (filtroStato === 'non_letti' &&  letti.has(m.id)) return false
+    return true
+  })
+
+  const chipBase: React.CSSProperties = {
+    padding: '4px 12px', borderRadius: 16, fontSize: 12, fontWeight: 600,
+    cursor: 'pointer', border: '1px solid transparent', transition: 'all 0.15s',
+  }
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
-      <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '20px 24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <h3 style={{ fontSize: 15, fontWeight: 600, margin: 0 }}>
+      <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '16px 20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+          <h3 style={{ fontSize: 15, fontWeight: 600, margin: 0, marginRight: 4 }}>
             Messaggi — {messaggi.length} totali
           </h3>
           {nonLetti > 0 && (
@@ -85,15 +104,64 @@ export default function EmailClient({
             </span>
           )}
         </div>
+
+        {/* Filtri tipo */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 14 }}>
+          <span style={{ fontSize: 11, fontWeight: 700, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.07em', alignSelf: 'center', marginRight: 2 }}>Tipo</span>
+          {(['tutti', ...TUTTI_TIPI] as string[]).map(t => {
+            const attivo = filtroTipo === t
+            const colore = t === 'tutti' ? '#555' : (TIPO_COLORS[t] ?? '#555')
+            return (
+              <button
+                key={t}
+                onClick={() => setFiltroTipo(t)}
+                style={{
+                  ...chipBase,
+                  background: attivo ? colore : '#f5f5f5',
+                  color:      attivo ? '#fff'  : '#444',
+                  borderColor: attivo ? colore : '#e0e0e0',
+                }}
+              >
+                {t === 'tutti' ? 'Tutti' : (TIPO_LABELS[t] ?? t)}
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Filtri stato letto */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 8 }}>
+          <span style={{ fontSize: 11, fontWeight: 700, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.07em', alignSelf: 'center', marginRight: 2 }}>Stato</span>
+          {([
+            { v: 'tutti',     label: 'Tutti'     },
+            { v: 'non_letti', label: 'Non letti' },
+            { v: 'letti',     label: 'Letti'     },
+          ] as { v: 'tutti' | 'letti' | 'non_letti'; label: string }[]).map(({ v, label }) => {
+            const attivo = filtroStato === v
+            return (
+              <button
+                key={v}
+                onClick={() => setFiltroStato(v)}
+                style={{
+                  ...chipBase,
+                  background: attivo ? '#444' : '#f5f5f5',
+                  color:      attivo ? '#fff' : '#444',
+                  borderColor: attivo ? '#444' : '#e0e0e0',
+                }}
+              >
+                {label}
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, overflow: 'hidden' }}>
-        {messaggi.length === 0 ? (
+        {messaggiFiltrati.length === 0 ? (
           <p style={{ padding: 24, textAlign: 'center', color: '#aaa', fontSize: 14 }}>
             Nessun messaggio.
           </p>
         ) : (
-          messaggi.map(m => {
+          messaggiFiltrati.map(m => {
             const isLetto   = letti.has(m.id)
             const isAperto  = aperto === m.id
             const tipoColor = TIPO_COLORS[m.tipo] ?? '#888'
@@ -114,7 +182,10 @@ export default function EmailClient({
                 <div
                   onClick={() => toggleApri(m.id)}
                   style={{
-                    display: 'flex', alignItems: 'center', gap: 12,
+                    display: 'grid',
+                    gridTemplateColumns: '14px 160px 1fr auto auto',
+                    alignItems: 'center',
+                    gap: 12,
                     padding: '12px 20px', cursor: 'pointer',
                     background: isAperto ? '#fafafa' : '#fff',
                     transition: 'background 0.15s',
@@ -122,21 +193,25 @@ export default function EmailClient({
                 >
                   {/* pallino non letto */}
                   <div style={{
-                    width: 8, height: 8, borderRadius: '50%', flexShrink: 0,
+                    width: 8, height: 8, borderRadius: '50%', justifySelf: 'center',
                     background: isLetto ? 'transparent' : '#c00',
                     border: isLetto ? '1px solid #ddd' : 'none',
                   }} />
 
-                  <span style={{
-                    display: 'inline-block', padding: '2px 8px', borderRadius: 10,
-                    fontSize: 11, fontWeight: 600, color: '#fff',
-                    background: tipoColor, flexShrink: 0,
-                  }}>
-                    {TIPO_LABELS[m.tipo] ?? m.tipo}
-                  </span>
+                  {/* Tipo — centrato */}
+                  <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <span style={{
+                      display: 'inline-block', padding: '2px 8px', borderRadius: 10,
+                      fontSize: 11, fontWeight: 600, color: '#fff',
+                      background: tipoColor, whiteSpace: 'nowrap',
+                    }}>
+                      {TIPO_LABELS[m.tipo] ?? m.tipo}
+                    </span>
+                  </div>
 
+                  {/* Oggetto — allineato a sinistra */}
                   <span style={{
-                    flex: 1, fontSize: 13,
+                    fontSize: 13, textAlign: 'left',
                     color: oggettoColor,
                     overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                   }}>
@@ -152,14 +227,14 @@ export default function EmailClient({
                     }
                   </span>
 
-                  <span style={{ fontSize: 12, color: '#aaa', flexShrink: 0 }}>
+                  <span style={{ fontSize: 12, color: '#aaa', whiteSpace: 'nowrap' }}>
                     {new Date(m.created_at).toLocaleString('it-IT', {
                       day: '2-digit', month: '2-digit', year: 'numeric',
                       hour: '2-digit', minute: '2-digit',
                     })}
                   </span>
 
-                  <span style={{ fontSize: 12, color: '#aaa', flexShrink: 0 }}>
+                  <span style={{ fontSize: 12, color: '#aaa' }}>
                     {isAperto ? '▲' : '▼'}
                   </span>
                 </div>

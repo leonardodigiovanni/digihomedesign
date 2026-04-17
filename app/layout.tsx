@@ -3,6 +3,7 @@ import { cookies } from 'next/headers'
 import Header from '@/components/header'
 import Navbar from '@/components/navbar'
 import Footer from '@/components/footer'
+import SitemapSection from '@/components/sitemap-section'
 import InactivityGuard from '@/components/inactivity-guard'
 import { readSettings, type BgMode } from '@/lib/settings'
 import { rgbGradient, rgbGradientInv, rgbBrushedBackground, rgbBrushedBackgroundInv, rgbBoxShadow } from '@/lib/bg-utils'
@@ -145,6 +146,7 @@ export default async function RootLayout({
 
   const bannerDur      = Math.max(21, Math.round(settings.bannerTesto.length * 0.18))
   const bannerPausePct = Math.round((1 - 1 / bannerDur) * 100)
+  const bannerCircolare = settings.bannerCircolare
 
   return (
     <html lang="it">
@@ -173,21 +175,38 @@ export default async function RootLayout({
                   ${bannerPausePct}% { transform: translateX(-100%); }
                   100%         { transform: translateX(-100%); }
                 }
+                @keyframes banner-circular {
+                  from { transform: translateX(0); }
+                  to   { transform: translateX(-50%); }
+                }
               `}</style>
               <div
                 className="class_silver_D_safe"
                 style={{ height: 42, overflow: 'hidden', display: 'flex', alignItems: 'center', borderBottom: '1px solid #aaa' }}
               >
-                <span style={{
-                  display: 'inline-block',
-                  whiteSpace: 'nowrap',
-                  fontSize: 17,
-                  fontWeight: 600,
-                  color: '#333',
-                  animation: `banner-scroll ${bannerDur}s linear infinite`,
-                }}>
-                  {'\u00A0\u00A0'}{settings.bannerTesto}
-                </span>
+                {bannerCircolare ? (
+                  <span style={{
+                    display: 'inline-block',
+                    whiteSpace: 'nowrap',
+                    fontSize: 17,
+                    fontWeight: 600,
+                    color: '#333',
+                    animation: `banner-circular ${bannerDur}s linear infinite`,
+                  }}>
+                    {settings.bannerTesto}{'\u00A0\u00A0\u00A0'}{settings.bannerTesto}{'\u00A0\u00A0\u00A0'}
+                  </span>
+                ) : (
+                  <span style={{
+                    display: 'inline-block',
+                    whiteSpace: 'nowrap',
+                    fontSize: 17,
+                    fontWeight: 600,
+                    color: '#333',
+                    animation: `banner-scroll ${bannerDur}s linear infinite`,
+                  }}>
+                    {'\u00A0\u00A0'}{settings.bannerTesto}
+                  </span>
+                )}
               </div>
             </>
           )}
@@ -206,6 +225,7 @@ export default async function RootLayout({
           ) : children}
         </main>
 
+        {!inManutenzione && <SitemapSection disabledPages={settings.disabledPages} />}
         <Footer footerBg={settings.footerBg} footerBgMode={settings.footerBgMode} />
 
         <EmergencyLogin inManutenzione={inManutenzione} />

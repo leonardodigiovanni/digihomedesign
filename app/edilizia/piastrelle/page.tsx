@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/edilizia" style={{ color: '#888', textDecoration: 'underline' }}>Edilizia</Link> / Piastrelle
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Piastrelle a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Piastrelle a Palermo</h1>
       <p>Posiamo <strong>piastrelle a Palermo</strong> per rivestimenti di bagni, cucine, docce, balconi e ambienti umidi: ceramica smaltata, gres porcellanato, klinker antiscivolo, mosaico in vetro e in pietra. Curiamo ogni dettaglio dalla preparazione del supporto alla stuccatura dei giunti con prodotti epossidici o cementizi.</p>
       <p style={{ marginTop: 12 }}>Realizziamo pose a correre, sfalsate, a spina e pattern decorativi personalizzati. Per le docce a pavimento gestiamo le pendenze di scarico, la membrana impermeabilizzante sotto-piastrella e i profili di raccordo. Utilizziamo adesivi ad alta deformabilità per evitare distacchi nel tempo.</p>
       <p style={{ marginTop: 12 }}>Offriamo anche il servizio di fornitura con selezione del materiale presso i nostri fornitori convenzionati. Contattaci per un preventivo gratuito.</p>

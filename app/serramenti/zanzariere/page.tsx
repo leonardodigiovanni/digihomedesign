@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Zanzariere
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Zanzariere a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Zanzariere a Palermo</h1>
       <p>Realizziamo e installiamo <strong>zanzariere su misura a Palermo</strong> per ogni tipo di apertura: a telaio fisso estraibile per finestre standard, a rullo verticale con molla a richiamoautomatico, plissé orizzontale per porte-finestre e balconi, scorrevoli su binario laterale per grandi aperture e zanzariere a soffitto per verande e porticati.</p>
       <p style={{ marginTop: 12 }}>I telai sono in alluminio anodizzato o verniciato, abbinabili al colore degli infissi esistenti. Le reti sono disponibili in fibra di vetro standard, in acciaio inox per ambienti marini, anti-polline ad alta densità e con trattamento antizanzara larvicida. I sistemi a rullo con cassonetto integrato nell&apos;infisso sono la soluzione più elegante perché invisibili quando non in uso.</p>
       <p style={{ marginTop: 12 }}>Ogni zanzariera viene misurata sul posto e prodotta su misura in pochi giorni. Contattaci per un preventivo gratuito a Palermo e provincia.</p>

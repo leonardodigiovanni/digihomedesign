@@ -39,7 +39,8 @@
       "Bash(mv app/settings app/amministrazione/impostazioni)",
       "Bash(mv app/gestione-utenti app/amministrazione/gestione-utenti)",
       "Bash(date /t)",
-      "Bash(time /t)"
+      "Bash(time /t)",
+      "Bash(python *)"
     ]
   }
 }

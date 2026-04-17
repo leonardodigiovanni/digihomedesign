@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/metallurgia" style={{ color: '#888', textDecoration: 'underline' }}>Metallurgia</Link> / Casseforti
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Casseforti a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Casseforti a Palermo</h1>
       <p>Forniamo e installiamo <strong>casseforti a Palermo</strong> certificate EN 1143-1 per abitazioni private, uffici, alberghi e attività commerciali: modelli da incasso a muro, a pavimento con ancoraggio in cls, da mobile e portatili. Le serrature disponibili sono a chiave doppia mappa, a combinazione meccanica, elettronica con codice PIN e biometrica con impronta digitale.</p>
       <p style={{ marginTop: 12 }}>La classe di resistenza (da I a VI) determina la protezione contro lo scasso: scegliamo insieme la classe più adatta in base al valore dei beni da custodire e al contesto di rischio. Le casseforti ignifughe (classe S60DIS o S120DIS) proteggono anche da incendio e acqua degli sprinkler.</p>
       <p style={{ marginTop: 12 }}>L&apos;installazione include il posizionamento, l&apos;ancoraggio strutturale e la programmazione della serratura. Contattaci per un preventivo gratuito a Palermo e provincia.</p>

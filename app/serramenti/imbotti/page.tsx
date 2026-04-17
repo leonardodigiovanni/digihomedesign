@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Imbotti
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Imbotti a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Imbotti a Palermo</h1>
       <p>Gli <strong>imbotti in alluminio e PVC a Palermo</strong> rivestono il vano finestra tra il telaio dell&apos;infisso e la muratura esterna, eliminando i ponti termici perimetrali, proteggendo l&apos;intonaco dall&apos;umidità di infiltrazione e conferendo all&apos;apertura un aspetto pulito e rifinito. Sono realizzati su misura per adattarsi a qualsiasi spessore di muro e profondità del vano.</p>
       <p style={{ marginTop: 12 }}>Gli imbotti in alluminio vengono verniciati nello stesso colore dell&apos;infisso per continuità estetica, mentre quelli in PVC sono disponibili in bianco e in versione foliata. La posa avviene con aggancio a clips o con viti a scomparsa, senza bisogno di opere murarie aggiuntive, e il giunto perimetrale viene sigillato con silicone neutro per la tenuta all&apos;acqua.</p>
       <p style={{ marginTop: 12 }}>Vengono installati contestualmente alla posa degli infissi o come intervento autonomo su serramenti esistenti. Contattaci per un preventivo gratuito.</p>

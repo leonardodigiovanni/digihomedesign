@@ -40,7 +40,7 @@ const subcategories = [
 export default function Page() {
   return (
     <div style={{ maxWidth: 860, margin: '48px auto', padding: '0 20px 64px', color: '#444', fontSize: 15, lineHeight: 1.8 }}>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 12 }}>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 12 }}>
         Servizi a Palermo
       </h1>
       <p style={{ marginBottom: 36 }}>

@@ -17,21 +17,23 @@ export const metadata: Metadata = {
 const subcategories = [
   { href: '/serramenti/infissi-in-alluminio',     label: 'Infissi in Alluminio',     desc: 'Finestre e porte-finestre in alluminio a taglio termico, eleganti e durevoli.' },
   { href: '/serramenti/infissi-in-pvc',           label: 'Infissi in PVC',           desc: 'Infissi in PVC multicamera ad alta efficienza termica e acustica.' },
-  { href: '/serramenti/verande',                  label: 'Verande',                  desc: 'Verande in alluminio e vetro per vivere gli spazi esterni tutto l\'anno.' },
-  { href: '/serramenti/persiane',                 label: 'Persiane',                 desc: 'Persiane in alluminio, PVC e legno per oscuramento e protezione solare.' },
-  { href: '/serramenti/imbotti',                  label: 'Imbotti',                  desc: 'Imbotti in alluminio e PVC per il rivestimento dei vani finestra.' },
+  { href: '/serramenti/verande-in-alluminio',      label: 'Verande in Alluminio',     desc: 'Verande in alluminio e vetro per vivere gli spazi esterni tutto l\'anno.' },
+  { href: '/serramenti/verande-in-pvc',            label: 'Verande in PVC',           desc: 'Verande in PVC multicamera ad alta efficienza termica e acustica.' },
+  { href: '/serramenti/persiane-in-alluminio',     label: 'Persiane',                 desc: 'Persiane in alluminio, PVC e legno per oscuramento e protezione solare.' },
+  { href: '/serramenti/imbotti',                  label: 'Imbotti in Alluminio',     desc: 'Imbotti in alluminio e PVC per il rivestimento dei vani finestra.' },
+  { href: '/serramenti/tapparelle-manuali',       label: 'Tapparelle Manuali',       desc: 'Tapparelle a manovella, cinghia o moschettone in PVC, alluminio e acciaio.' },
+  { href: '/serramenti/tapparelle-motorizzate',   label: 'Tapparelle Motorizzate',   desc: 'Tapparelle motorizzate con telecomando, timer e integrazione domotica.' },
   { href: '/serramenti/veneziane',                label: 'Veneziane',                desc: 'Veneziane in alluminio da interni ed esterni per il controllo della luce.' },
-  { href: '/serramenti/box-doccia',               label: 'Box Doccia',               desc: 'Box doccia in vetro temperato su misura: scorrevoli, a battente e walk-in.' },
   { href: '/serramenti/vetrine',                  label: 'Vetrine',                  desc: 'Vetrine commerciali in alluminio per negozi, show-room e attività.' },
   { href: '/serramenti/lucernai',                 label: 'Lucernai',                 desc: 'Lucernai e shed per l\'illuminazione naturale di soffitti e coperture.' },
   { href: '/serramenti/zanzariere',               label: 'Zanzariere',               desc: 'Zanzariere a rullo, plissé e con telaio fisso su misura per ogni apertura.' },
-  { href: '/serramenti/avvolgibili-motorizzati',  label: 'Avvolgibili Motorizzati',  desc: 'Tapparelle e avvolgibili motorizzati con controllo da remoto e domotica.' },
+  { href: '/serramenti/box-doccia',               label: 'Box Doccia',               desc: 'Box doccia in vetro temperato su misura: scorrevoli, a battente e walk-in.' },
 ]
 
 export default function Page() {
   return (
     <div style={{ maxWidth: 860, margin: '48px auto', padding: '0 20px 64px', color: '#444', fontSize: 15, lineHeight: 1.8 }}>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 12 }}>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 12 }}>
         Serramenti a Palermo
       </h1>
       <p style={{ marginBottom: 36 }}>

@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/edilizia" style={{ color: '#888', textDecoration: 'underline' }}>Edilizia</Link> / Pitturazioni
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Pitturazioni Decorative a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Pitturazioni Decorative a Palermo</h1>
       <p>Realizziamo <strong>pitturazioni decorative a Palermo</strong> per interni di pregio: velature traslucide, spatolati lisci e sabbiati, marmorino veneziano, effetti metallici, stucco lucido, pittura a calce e tecniche miste. Ogni finitura è applicata a mano da decoratori specializzati con esperienza pluriennale.</p>
       <p style={{ marginTop: 12 }}>Le pitturazioni decorative trasformano una semplice parete in un elemento di arredo, con texture, profondità e giochi di luce impossibili da ottenere con pitture standard. Realizziamo campioni su pannello prima dell&apos;applicazione definitiva, così il cliente può valutare l&apos;effetto in luce naturale e artificiale.</p>
       <p style={{ marginTop: 12 }}>Disponibile anche il servizio di restauro e ripristino di affreschi e decorazioni storiche. Contattaci per una consulenza creativa gratuita a Palermo.</p>

@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/edilizia" style={{ color: '#888', textDecoration: 'underline' }}>Edilizia</Link> / Opere Murarie
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Opere Murarie a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Opere Murarie a Palermo</h1>
       <p>Realizziamo <strong>opere murarie a Palermo</strong> di ogni tipo: costruzione di nuovi muri portanti e di tamponamento, apertura di vani porta e finestra con posa di architravi, rinforzi strutturali, sopraelevazioni e ricostruzioni. Lavoriamo con laterizio, blocchi in cls, pietra naturale e sistemi a secco.</p>
       <p style={{ marginTop: 12 }}>Per le modifiche strutturali collaboriamo con tecnici abilitati (ingegneri e geometri) per la redazione dei calcoli e il deposito delle pratiche in Comune. Ogni opera è eseguita a regola d&apos;arte con materiali certificati e garanzia sul lavoro.</p>
       <p style={{ marginTop: 12 }}>Operiamo su tutto il territorio palermitano con sopralluogo gratuito e preventivo dettagliato. Contattaci per valutare il tuo intervento.</p>

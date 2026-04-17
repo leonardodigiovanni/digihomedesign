@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/metallurgia" style={{ color: '#888', textDecoration: 'underline' }}>Metallurgia</Link> / Ringhiere
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Ringhiere a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Ringhiere a Palermo</h1>
       <p>Progettiamo e installiamo <strong>ringhiere su misura a Palermo</strong> per scale interne ed esterne, balconi, terrazze e soppalchi: in ferro verniciato, acciaio inox AISI 316L, alluminio anodizzato o sistemi misti acciaio-vetro per un effetto contemporaneo di massima luminosità.</p>
       <p style={{ marginTop: 12 }}>Le ringhiere in ferro battuto vengono lavorate artigianalmente con motivi classici — a lancia, a torciglione, con rosoni — o moderne con piattina e quadro geometrico. I sistemi in acciaio inox con cavi o pannelli in vetro temperato laminato sono ideali per ambienti di design dove si vuole mantenere la continuità visiva dello spazio.</p>
       <p style={{ marginTop: 12 }}>Ogni ringhiera rispetta le norme UNI EN 13374 sull&apos;altezza e la resistenza ai carichi. Contattaci per un sopralluogo gratuito e un preventivo personalizzato.</p>

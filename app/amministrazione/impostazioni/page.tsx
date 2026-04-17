@@ -33,7 +33,7 @@ export default async function Page() {
           <ManutenzioneToggle manutenzione={settings.manutenzione} />
         </div>
         <div style={{ flex: '1 1 300px' }}>
-          <BannerPanel abilitato={settings.bannerAbilitato} testo={settings.bannerTesto} />
+          <BannerPanel abilitato={settings.bannerAbilitato} circolare={settings.bannerCircolare} testo={settings.bannerTesto} />
         </div>
       </div>
 

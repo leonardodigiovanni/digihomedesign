@@ -4,12 +4,12 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Persiane a Palermo — Alluminio, PVC e Legno su Misura',
   description: 'Persiane a Palermo su misura: persiane in alluminio, PVC e legno per oscuramento, ventilazione e protezione solare. A battente, scorrevoli e a pannelli.',
-  alternates: { canonical: 'https://www.digi-home-design.com/serramenti/persiane' },
+  alternates: { canonical: 'https://www.digi-home-design.com/serramenti/persiane-in-alluminio' },
   robots: { index: true, follow: true },
   openGraph: {
     title: 'Persiane a Palermo — Alluminio, PVC e Legno su Misura',
     description: 'Persiane a Palermo su misura: persiane in alluminio, PVC e legno per oscuramento, ventilazione e protezione solare. A battente, scorrevoli e a pannelli.',
-    url: 'https://www.digi-home-design.com/serramenti/persiane',
+    url: 'https://www.digi-home-design.com/serramenti/persiane-in-alluminio',
     type: 'website',
   },
 }
@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Persiane
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Persiane a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Persiane a Palermo</h1>
       <p>Forniamo e installiamo <strong>persiane su misura a Palermo</strong> in alluminio, PVC e legno: persiane a battente con stecche orientabili o fisse, scorrevoli su binario laterale, a pannelli e a libro. Le persiane proteggono dall&apos;irraggiamento solare estivo — fondamentale in Sicilia — garantendo allo stesso tempo ventilazione e oscuramento regolabile.</p>
       <p style={{ marginTop: 12 }}>Le persiane in alluminio sono la soluzione più diffusa per durata e assenza di manutenzione: profili estrusi verniciati a polvere in qualsiasi colore RAL con stecche a 45° o 90°. Le persiane in legno — larice, abete o iroko — offrono un aspetto più tradizionale e sono trattate con impregnante o vernice per resistere alle intemperie.</p>
       <p style={{ marginTop: 12 }}>Ogni persiana viene misurata sul posto e realizzata su misura con accessori di chiusura inclusi. Contattaci per un preventivo gratuito.</p>

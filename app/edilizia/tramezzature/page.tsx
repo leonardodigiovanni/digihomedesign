@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/edilizia" style={{ color: '#888', textDecoration: 'underline' }}>Edilizia</Link> / Tramezzature
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Tramezzature a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Tramezzature a Palermo</h1>
       <p>Realizziamo <strong>tramezzature a Palermo</strong> per suddividere e ridistribuire gli spazi interni: pareti divisorie in laterizio forato da 8 o 12 cm, sistemi in cartongesso con intercapedine isolante, e blocchi in cls alleggerito per spessori ridotti. Ogni soluzione viene scelta in base alle esigenze di isolamento termico, acustico e di spazio.</p>
       <p style={{ marginTop: 12 }}>Le tramezzature in cartongesso sono particolarmente indicate per interventi rapidi: si posano a secco senza opere bagnate, riducendo i tempi di cantiere e la produzione di polvere. Possono ospitare canaline per impianti e intercapedini per lana di roccia fonoassorbente.</p>
       <p style={{ marginTop: 12 }}>Il servizio include la posa, la rasatura delle superfici e la preparazione per la tinteggiatura finale. Contattaci per un preventivo gratuito.</p>

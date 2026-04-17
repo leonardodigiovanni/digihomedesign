@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/edilizia" style={{ color: '#888', textDecoration: 'underline' }}>Edilizia</Link> / Pavimenti
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Pavimenti a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Pavimenti a Palermo</h1>
       <p>Posiamo <strong>pavimenti a Palermo</strong> in ogni materiale: ceramica, gres porcellanato grande formato, marmo, travertino, pietra lavica, cotto e pavimenti in resina. Curiamo la preparazione del sottofondo, la scelta della colla e delle fughe in base al materiale e all&apos;ambiente, e la stuccatura finale.</p>
       <p style={{ marginTop: 12 }}>Eseguiamo posature tradizionali a correre, a spina di pesce, a opus incertum e posature a grande formato con piastrelle fino a 120×280 cm. Per i pavimenti in resina gestiamo primer, strato di base, decorazione e finitura protettiva in un unico ciclo continuo senza fughe.</p>
       <p style={{ marginTop: 12 }}>Disponiamo di taglierine a acqua per tagli precisi su ogni formato. Contattaci per un preventivo al metro quadro con campionatura gratuita.</p>

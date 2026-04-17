@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/edilizia" style={{ color: '#888', textDecoration: 'underline' }}>Edilizia</Link> / Piscine
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Piscine a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Piscine a Palermo</h1>
       <p>Realizziamo <strong>piscine a Palermo</strong> su misura: interrate in cls armato con rivestimento in liner PVC, in mosaico di vetro, in resina o in gres porcellanato. Progettiamo la vasca in base allo spazio disponibile, alle normative locali e alle preferenze estetiche del cliente, con forme libere o geometriche.</p>
       <p style={{ marginTop: 12 }}>Il servizio è chiavi in mano: scavo, opere in cls, impermeabilizzazione, rivestimento, impianto di filtrazione e circolazione, skimmer, scalette, luci subacquee e automatismi per la copertura. Installiamo anche sistemi di trattamento acqua a sale, UV o ozono per ridurre l&apos;uso di cloro.</p>
       <p style={{ marginTop: 12 }}>Eseguiamo anche il rifacimento e l&apos;impermeabilizzazione di piscine esistenti con sostituzione del liner o applicazione di rivestimenti in resina poliuretanica. Contattaci per un sopralluogo e un progetto gratuito.</p>

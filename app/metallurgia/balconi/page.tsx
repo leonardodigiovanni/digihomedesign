@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/metallurgia" style={{ color: '#888', textDecoration: 'underline' }}>Metallurgia</Link> / Balconi
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Balconi in Ferro a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Balconi in Ferro a Palermo</h1>
       <p>Realizziamo <strong>strutture per balconi a Palermo</strong> in ferro e acciaio: mensole portanti, lamiere grecate per il piano di calpestio, profili perimetrali e parapetti decorativi. Interveniamo sia su nuove costruzioni che su ristrutturazioni, dove il vecchio balcone in cls risulta ammalorato e va sostituito con una struttura metallica più leggera e durabile.</p>
       <p style={{ marginTop: 12 }}>Ogni struttura viene progettata con calcolo strutturale e trattata con zincatura a caldo o primer antiruggine più verniciatura a polvere per la massima resistenza agli agenti atmosferici, soprattutto in ambiente marino come quello palermitano. I parapetti possono essere in ferro battuto classico, acciaio inox moderno o con pannelli di vetro.</p>
       <p style={{ marginTop: 12 }}>Collaboriamo con ingegneri strutturisti per le pratiche di SCIA o permesso di costruire ove necessario. Contattaci per un sopralluogo gratuito.</p>

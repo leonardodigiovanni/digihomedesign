@@ -20,7 +20,7 @@ export default function Page() {
       <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
         <Link href="/edilizia" style={{ color: '#888', textDecoration: 'underline' }}>Edilizia</Link> / Tetti
       </p>
-      <h1 style={{ fontSize: 28, fontWeight: 700, color: '#1a1a1a', marginBottom: 16 }}>Tetti a Palermo</h1>
+      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>Tetti a Palermo</h1>
       <p>Realizziamo il <strong>rifacimento e la manutenzione di tetti a Palermo</strong>: coperture a falde con tegole marsigliesi, portoghesi e in laterizio, tetti piani con guaine bituminose o liquide, lastrici solari e coperture in lamiera grecata o sandwich. Interveniamo su infiltrazioni, tegole rotte e strutture in legno danneggiate.</p>
       <p style={{ marginTop: 12 }}>Prima di ogni intervento eseguiamo una diagnosi della copertura per individuare i punti di perdita. Le lavorazioni vengono eseguite in sicurezza con ponteggi o linee vita certificate. Per i tetti in legno forniamo anche trattamenti antitarlo, antifungini e ignifughi.</p>
       <p style={{ marginTop: 12 }}>Il servizio include lo smaltimento del materiale rimosso e il ripristino degli elementi di gronda e pluviali. Contattaci per un sopralluogo gratuito.</p>
