@@ -32,6 +32,14 @@ async function ensureTable() {
     )
   `)
   await db.execute(`ALTER TABLE listini ADD COLUMN disponibile TINYINT(1) NOT NULL DEFAULT 1`).catch(() => {})
+  try {
+    await db.execute(`ALTER TABLE listini ADD COLUMN preventivabile TINYINT(1) NOT NULL DEFAULT 1`)
+    await db.execute(`UPDATE listini SET preventivabile = 0 WHERE categoria = 'marmi'`)
+  } catch { /* colonna già esistente */ }
+  await db.execute(`ALTER TABLE listini ADD COLUMN foto_url VARCHAR(500) NULL`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN profilo_frontale_mm DECIMAL(6,2) NULL`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN profilo_profondita_mm DECIMAL(6,2) NULL`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN trasmittanza_uw DECIMAL(5,3) NULL`).catch(() => {})
   await db.end()
 }
 
@@ -103,6 +111,19 @@ export async function toggleDisponibile(_: MutResult | null, fd: FormData): Prom
   } finally { await db.end() }
 }
 
+export async function togglePreventivabile(_: MutResult | null, fd: FormData): Promise<MutResult> {
+  await checkAccess()
+  const id = parseInt(fd.get('id') as string)
+  if (isNaN(id)) return { ok: false, error: 'ID non valido.' }
+  await ensureTable()
+  const db = await getConnection()
+  try {
+    await db.execute('UPDATE listini SET preventivabile = 1 - preventivabile WHERE id=?', [id])
+    revalidatePath('/listini')
+    return { ok: true }
+  } finally { await db.end() }
+}
+
 export async function deleteArticolo(_: MutResult | null, fd: FormData): Promise<MutResult> {
   await checkAccess()
 
@@ -114,6 +135,33 @@ export async function deleteArticolo(_: MutResult | null, fd: FormData): Promise
   try {
     await db.execute('DELETE FROM listini WHERE id=?', [id])
     revalidatePath('/listini')
+    return { ok: true }
+  } finally { await db.end() }
+}
+
+export async function updateSchedaTecnica(_: MutResult | null, fd: FormData): Promise<MutResult> {
+  await checkAccess()
+
+  const id = parseInt(fd.get('id') as string)
+  if (isNaN(id)) return { ok: false, error: 'ID non valido.' }
+
+  const frontale   = (fd.get('profilo_frontale_mm')   as string)?.trim()
+  const profondita = (fd.get('profilo_profondita_mm') as string)?.trim()
+  const trasmitt   = (fd.get('trasmittanza_uw')       as string)?.trim()
+
+  await ensureTable()
+  const db = await getConnection()
+  try {
+    await db.execute(
+      'UPDATE listini SET profilo_frontale_mm=?, profilo_profondita_mm=?, trasmittanza_uw=? WHERE id=?',
+      [
+        frontale   ? parseFloat(frontale)   : null,
+        profondita ? parseFloat(profondita) : null,
+        trasmitt   ? parseFloat(trasmitt)   : null,
+        id,
+      ]
+    )
+    revalidatePath('/area-lavoro/listini')
     return { ok: true }
   } finally { await db.end() }
 }

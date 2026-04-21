@@ -1,8 +1,8 @@
 'use client'
 
-import React, { useState, useMemo, useActionState } from 'react'
+import React, { useState, useMemo, useActionState, useTransition, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { addArticolo, updateArticolo, deleteArticolo, toggleDisponibile, type MutResult } from './actions'
+import { addArticolo, updateArticolo, deleteArticolo, toggleDisponibile, togglePreventivabile, updateSchedaTecnica, type MutResult } from './actions'
 
 // ─── Tipi ─────────────────────────────────────────────────────────────────────
 
@@ -16,7 +16,12 @@ export type Articolo = {
   prezzo_vendita: number
   note: string | null
   disponibile: number
+  preventivabile: number
   updated_at: string
+  foto_url: string | null
+  profilo_frontale_mm: number | null
+  profilo_profondita_mm: number | null
+  trasmittanza_uw: number | null
 }
 
 // ─── Costanti ─────────────────────────────────────────────────────────────────
@@ -120,6 +125,183 @@ function NuovoArticoloForm({ categorie, produttori, onDone }: {
   )
 }
 
+// ─── Scheda tecnica ───────────────────────────────────────────────────────────
+
+function SchedaTecnicaModal({ art, onClose }: { art: Articolo; onClose: () => void }) {
+  const router = useRouter()
+  const [result, formAction, pending] = useActionState<MutResult | null, FormData>(updateSchedaTecnica, null)
+  const [preview, setPreview] = useState<string | null>(art.foto_url ?? null)
+  const [uploading, setUploading] = useState(false)
+  const [uploadErr, setUploadErr] = useState<string | null>(null)
+  const fileRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (result?.ok) { router.refresh(); onClose() }
+  }, [result])
+
+  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0]
+    if (!f) return
+    setUploadErr(null)
+    setUploading(true)
+    setPreview(URL.createObjectURL(f))
+    const fd = new FormData()
+    fd.set('id', String(art.id))
+    fd.set('foto', f)
+    try {
+      const res  = await fetch('/api/listini/foto', { method: 'POST', body: fd })
+      const data = await res.json() as { ok: boolean; foto_url?: string; error?: string }
+      if (data.ok && data.foto_url) {
+        setPreview(data.foto_url + '?t=' + Date.now())
+      } else {
+        setUploadErr(data.error ?? 'Errore upload')
+      }
+    } catch {
+      setUploadErr('Errore di rete durante l\'upload')
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  const numInp: React.CSSProperties = {
+    padding: '6px 8px', border: '1px solid #ccc', borderRadius: 4,
+    fontSize: 13, fontFamily: 'inherit', width: '100%', boxSizing: 'border-box',
+  }
+  const lbl: React.CSSProperties = {
+    fontSize: 11, fontWeight: 600, color: '#555', textTransform: 'uppercase',
+    letterSpacing: '0.05em', display: 'block', marginBottom: 3,
+  }
+
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
+      zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20,
+    }}>
+      <div style={{
+        background: '#fff', borderRadius: 10, padding: 24, width: '100%', maxWidth: 480,
+        boxShadow: '0 8px 40px rgba(0,0,0,0.22)', maxHeight: '90vh', overflowY: 'auto',
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
+          <div>
+            <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700 }}>Scheda tecnica</h3>
+            <p style={{ margin: '2px 0 0', fontSize: 12, color: '#888' }}>{art.descrizione}</p>
+          </div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: '#888', lineHeight: 1 }}>✕</button>
+        </div>
+
+        <form action={formAction}>
+          <input type="hidden" name="id" value={art.id} />
+
+          {/* Foto profilo */}
+          <div style={{ marginBottom: 18 }}>
+            <span style={lbl}>Foto profilo</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+              <div
+                onClick={() => fileRef.current?.click()}
+                style={{
+                  width: 110, height: 90, border: '2px dashed #ccc', borderRadius: 6,
+                  cursor: 'pointer', overflow: 'hidden', background: '#f5f5f5',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                }}
+              >
+                {preview
+                  ? <img src={preview} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  : <span style={{ fontSize: 11, color: '#bbb', textAlign: 'center', padding: 8 }}>Clicca per<br/>caricare foto</span>
+                }
+              </div>
+              <div style={{ flex: 1 }}>
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  onChange={handleFile}
+                />
+                <button
+                  type="button"
+                  onClick={() => fileRef.current?.click()}
+                  disabled={uploading}
+                  style={{
+                    padding: '6px 14px', fontSize: 12, border: '1px solid #ccc',
+                    borderRadius: 4, background: '#f5f5f5', cursor: uploading ? 'wait' : 'pointer',
+                    display: 'block', marginBottom: 6,
+                  }}
+                >
+                  {uploading ? 'Caricamento…' : 'Scegli immagine…'}
+                </button>
+                <p style={{ margin: 0, fontSize: 11, color: '#aaa' }}>JPG, PNG, WebP — max 5 MB</p>
+                {uploadErr && <p style={{ margin: '4px 0 0', fontSize: 11, color: '#c00' }}>{uploadErr}</p>}
+              </div>
+            </div>
+          </div>
+
+          {/* Dati tecnici */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 16 }}>
+            <div>
+              <label style={lbl}>Frontale (mm)</label>
+              <input
+                name="profilo_frontale_mm"
+                type="number"
+                step="0.1"
+                min="0"
+                defaultValue={art.profilo_frontale_mm ?? ''}
+                placeholder="es. 70"
+                style={numInp}
+              />
+            </div>
+            <div>
+              <label style={lbl}>Profondità (mm)</label>
+              <input
+                name="profilo_profondita_mm"
+                type="number"
+                step="0.1"
+                min="0"
+                defaultValue={art.profilo_profondita_mm ?? ''}
+                placeholder="es. 80"
+                style={numInp}
+              />
+            </div>
+            <div>
+              <label style={lbl}>Uw (W/m²K)</label>
+              <input
+                name="trasmittanza_uw"
+                type="number"
+                step="0.001"
+                min="0"
+                defaultValue={art.trasmittanza_uw ?? ''}
+                placeholder="es. 1.3"
+                style={numInp}
+              />
+            </div>
+          </div>
+
+          {result && !result.ok && (
+            <p style={{ color: '#c00', fontSize: 12, margin: '0 0 12px', background: '#fff5f5', padding: '6px 10px', borderRadius: 4 }}>
+              {result.error}
+            </p>
+          )}
+
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+            <button type="button" onClick={onClose} style={{
+              padding: '7px 18px', fontSize: 13, border: '1px solid #ccc',
+              borderRadius: 5, background: '#f5f5f5', cursor: 'pointer',
+            }}>
+              Annulla
+            </button>
+            <button type="submit" disabled={pending} style={{
+              padding: '7px 20px', fontSize: 13, fontWeight: 700, borderRadius: 5,
+              background: pending ? '#aaa' : '#1a4a8a', color: '#fff', border: 'none',
+              cursor: pending ? 'not-allowed' : 'pointer',
+            }}>
+              {pending ? 'Salvataggio…' : 'Salva scheda'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
 // ─── Riga normale ─────────────────────────────────────────────────────────────
 
 function ToggleDisponibileBtn({ art }: { art: Articolo }) {
@@ -143,9 +325,31 @@ function ToggleDisponibileBtn({ art }: { art: Articolo }) {
   )
 }
 
-function RigaNormale({ art, onEdit, onDelete, pending }: {
+function TogglePreventivabileBtn({ art }: { art: Articolo }) {
+  const [, startT] = React.useTransition()
+  const router = useRouter()
+  const prev = art.preventivabile === 1
+  return (
+    <form style={{ display: 'contents' }} action={async fd => {
+      startT(async () => { await togglePreventivabile(null, fd); router.refresh() })
+    }}>
+      <input type="hidden" name="id" value={art.id} />
+      <button type="submit" style={{
+        padding: '2px 8px', fontSize: 10, fontWeight: 700, borderRadius: 3,
+        border: 'none', cursor: 'pointer', fontFamily: 'inherit',
+        background: prev ? '#1565c0' : '#aaa',
+        color: '#fff', whiteSpace: 'nowrap',
+      }}>
+        {prev ? 'Preventiv.' : 'No prev.'}
+      </button>
+    </form>
+  )
+}
+
+function RigaNormale({ art, onEdit, onScheda, onDelete, pending }: {
   art: Articolo
   onEdit: () => void
+  onScheda: () => void
   onDelete: () => void
   pending: boolean
 }) {
@@ -155,12 +359,20 @@ function RigaNormale({ art, onEdit, onDelete, pending }: {
     padding: '7px 10px', borderBottom: '1px solid #eee', fontSize: 12, verticalAlign: 'middle',
     opacity: nonDisp ? 0.45 : 1,
   }
+  const hasDati = art.profilo_frontale_mm != null || art.profilo_profondita_mm != null || art.trasmittanza_uw != null
 
   return (
     <tr onDoubleClick={onEdit} style={{ cursor: 'pointer', background: nonDisp ? '#f9f9f9' : undefined }} title="Doppio click per modificare">
       <td style={td}><span style={{ background: '#e8e8f8', borderRadius: 3, padding: '2px 7px', fontSize: 11, fontWeight: 600 }}>{art.categoria}</span></td>
       <td style={{ ...td, color: '#555' }}>{art.produttore || '—'}</td>
-      <td style={{ ...td, fontWeight: 500, maxWidth: 300 }}>{art.descrizione}</td>
+      <td style={{ ...td, fontWeight: 500, maxWidth: 300 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+          {art.foto_url && (
+            <img src={art.foto_url} alt="" style={{ width: 22, height: 22, objectFit: 'cover', borderRadius: 3, border: '1px solid #ddd', flexShrink: 0 }} />
+          )}
+          {art.descrizione}
+        </div>
+      </td>
       <td style={{ ...td, textAlign: 'center', color: '#666' }}>{art.unita}</td>
       <td style={{ ...td, textAlign: 'right', color: '#1565c0', fontWeight: 600 }}>{fmt(art.prezzo_acquisto)}</td>
       <td style={{ ...td, textAlign: 'right', color: '#2e7d32', fontWeight: 600 }}>{fmt(art.prezzo_vendita)}</td>
@@ -171,6 +383,15 @@ function RigaNormale({ art, onEdit, onDelete, pending }: {
       <td style={{ ...td, opacity: 1, whiteSpace: 'nowrap' }}>
         <div style={{ display: 'flex', gap: 4 }}>
           <ToggleDisponibileBtn art={art} />
+          <TogglePreventivabileBtn art={art} />
+          <button onClick={onScheda} style={{
+            padding: '3px 10px', fontSize: 11, cursor: 'pointer', fontFamily: 'inherit',
+            background: hasDati || art.foto_url ? '#1a5276' : '#3d3d5c',
+            color: hasDati || art.foto_url ? '#7fc8f8' : '#9999cc',
+            border: 'none', borderRadius: 3, fontWeight: 600,
+          }}>
+            {hasDati || art.foto_url ? '📋 Scheda' : 'Scheda'}
+          </button>
           <button onClick={onEdit} style={{
             padding: '3px 10px', fontSize: 11, cursor: 'pointer', fontFamily: 'inherit',
             background: '#2a2a3e', color: '#c8960c', border: 'none', borderRadius: 3, fontWeight: 600,
@@ -188,56 +409,66 @@ function RigaNormale({ art, onEdit, onDelete, pending }: {
 function RigaEdit({ art, categorie, produttori, onDone }: {
   art: Articolo; categorie: string[]; produttori: string[]; onDone: () => void
 }) {
-  const [result, action, pending] = useActionState<MutResult | null, FormData>(updateArticolo, null)
+  const [pending, startTransition] = useTransition()
+  const [error, setError] = useState<string | null>(null)
   const [unitaCustom, setUnitaCustom] = useState(!UNITA_PREDEFINITE.includes(art.unita))
   const [unitaSel, setUnitaSel] = useState(UNITA_PREDEFINITE.includes(art.unita) ? art.unita : UNITA_PREDEFINITE[0])
   const router = useRouter()
+  const trRef = useRef<HTMLTableRowElement>(null)
 
-  if (result?.ok) { router.refresh(); onDone() }
+  function handleSubmit() {
+    const fd = new FormData()
+    fd.set('id', String(art.id))
+    trRef.current?.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[name]').forEach(el => {
+      fd.set(el.name, el.value)
+    })
+    startTransition(async () => {
+      const result = await updateArticolo(null, fd)
+      if (result?.ok) { router.refresh(); onDone() }
+      else setError(result?.error ?? 'Errore')
+    })
+  }
 
   const tde: React.CSSProperties = { padding: '5px 6px', borderBottom: '1px solid #c8960c', background: '#fffdf0', verticalAlign: 'middle' }
 
   return (
-    <tr style={{ background: '#fffdf0' }}>
-      <form style={{ display: 'contents' }} action={action}>
-        <input type="hidden" name="id" value={art.id} />
-        <td style={tde}>
-          <input name="categoria" defaultValue={art.categoria} required style={inp} list="cat-list-edit" />
-          <datalist id="cat-list-edit">{categorie.map(c => <option key={c} value={c} />)}</datalist>
-        </td>
-        <td style={tde}>
-          <input name="produttore" defaultValue={art.produttore} style={inp} list="prod-list-edit" />
-          <datalist id="prod-list-edit">{produttori.map(p => <option key={p} value={p} />)}</datalist>
-        </td>
-        <td style={tde}><input name="descrizione" defaultValue={art.descrizione} required style={inp} /></td>
-        <td style={tde}>
-          {unitaCustom ? (
-            <input name="unita" defaultValue={art.unita} required style={{ ...inp, width: 60 }}
-              onBlur={e => { if (!e.target.value) setUnitaCustom(false) }} />
-          ) : (
-            <select name="unita" required style={{ ...inp, width: 70 }} value={unitaSel}
-              onChange={e => { if (e.target.value === '__altro__') setUnitaCustom(true); else setUnitaSel(e.target.value) }}>
-              {UNITA_PREDEFINITE.map(u => <option key={u} value={u}>{u}</option>)}
-              <option value="__altro__">+</option>
-            </select>
-          )}
-        </td>
-        <td style={tde}><input name="prezzo_acquisto" type="number" step="0.01" min="0" defaultValue={art.prezzo_acquisto} required style={{ ...inp, width: 80, textAlign: 'right' }} /></td>
-        <td style={tde}><input name="prezzo_vendita" type="number" step="0.01" min="0" defaultValue={art.prezzo_vendita} required style={{ ...inp, width: 80, textAlign: 'right' }} /></td>
-        <td style={tde} />
-        <td style={tde}><input name="note" defaultValue={art.note ?? ''} style={inp} /></td>
-        <td style={{ ...tde, whiteSpace: 'nowrap' }}>
-          <div style={{ display: 'flex', gap: 4 }}>
-            <button type="submit" className="btn-green" disabled={pending}
-              style={{ padding: '3px 10px', fontSize: 11, fontWeight: 700 }}>
-              {pending ? '…' : '✓'}
-            </button>
-            <button type="button" className="btn-gray" onClick={onDone}
-              style={{ padding: '3px 8px', fontSize: 11 }}>✕</button>
-          </div>
-          {result && !result.ok && <div style={{ color: '#c00', fontSize: 10, marginTop: 2 }}>{result.error}</div>}
-        </td>
-      </form>
+    <tr ref={trRef} style={{ background: '#fffdf0' }}>
+      <td style={tde}>
+        <input name="categoria" defaultValue={art.categoria} required style={inp} list="cat-list-edit" />
+        <datalist id="cat-list-edit">{categorie.map(c => <option key={c} value={c} />)}</datalist>
+      </td>
+      <td style={tde}>
+        <input name="produttore" defaultValue={art.produttore} style={inp} list="prod-list-edit" />
+        <datalist id="prod-list-edit">{produttori.map(p => <option key={p} value={p} />)}</datalist>
+      </td>
+      <td style={tde}><input name="descrizione" defaultValue={art.descrizione} required style={inp} /></td>
+      <td style={tde}>
+        {unitaCustom ? (
+          <input name="unita" defaultValue={art.unita} required style={{ ...inp, width: 60 }}
+            onBlur={e => { if (!e.target.value) setUnitaCustom(false) }} />
+        ) : (
+          <select name="unita" required style={{ ...inp, width: 70 }} value={unitaSel}
+            onChange={e => { if (e.target.value === '__altro__') setUnitaCustom(true); else setUnitaSel(e.target.value) }}>
+            {UNITA_PREDEFINITE.map(u => <option key={u} value={u}>{u}</option>)}
+            <option value="__altro__">+</option>
+          </select>
+        )}
+      </td>
+      <td style={tde}><input name="prezzo_acquisto" type="number" step="0.01" min="0" defaultValue={art.prezzo_acquisto} required style={{ ...inp, width: 80, textAlign: 'right' }} /></td>
+      <td style={tde}><input name="prezzo_vendita" type="number" step="0.01" min="0" defaultValue={art.prezzo_vendita} required style={{ ...inp, width: 80, textAlign: 'right' }} /></td>
+      <td style={tde} />
+      <td style={tde}><input name="note" defaultValue={art.note ?? ''} style={inp} /></td>
+      <td style={{ ...tde, whiteSpace: 'nowrap' }}>
+        <div style={{ display: 'flex', gap: 4 }}>
+          <button onClick={handleSubmit} className="btn-green" disabled={pending}
+            style={{ padding: '3px 10px', fontSize: 11, fontWeight: 700 }}>
+            {pending ? '…' : '✓'}
+          </button>
+          <button className="btn-gray" onClick={onDone}
+            style={{ padding: '3px 8px', fontSize: 11 }}>✕</button>
+        </div>
+        {error && <div style={{ color: '#c00', fontSize: 10, marginTop: 2 }}>{error}</div>}
+      </td>
     </tr>
   )
 }
@@ -251,6 +482,7 @@ export default function ListiniClient({ articoli }: { articoli: Articolo[] }) {
   const [filtroDisp, setFiltroDisp]             = useState<'tutti' | 'disp' | 'nondisp'>('tutti')
   const [nuovoOpen, setNuovoOpen]           = useState(false)
   const [editId, setEditId]                 = useState<number | null>(null)
+  const [schedaId, setSchedaId]             = useState<number | null>(null)
   const [deletingId, setDeletingId]         = useState<number | null>(null)
   const router = useRouter()
 
@@ -268,6 +500,8 @@ export default function ListiniClient({ articoli }: { articoli: Articolo[] }) {
     }
     return true
   }), [articoli, filtroCategoria, filtroProduttore, filtroTesto, filtroDisp])
+
+  const schedaArt = schedaId !== null ? (articoli.find(a => a.id === schedaId) ?? null) : null
 
   const selInp: React.CSSProperties = {
     padding: '6px 10px', fontSize: 13, border: '1px solid #ccc',
@@ -342,6 +576,7 @@ export default function ListiniClient({ articoli }: { articoli: Articolo[] }) {
                   ? <RigaEdit key={art.id} art={art} categorie={categorie} produttori={produttori} onDone={() => setEditId(null)} />
                   : <RigaNormale key={art.id} art={art}
                       onEdit={() => setEditId(art.id)}
+                      onScheda={() => setSchedaId(art.id)}
                       onDelete={() => handleDelete(art.id)}
                       pending={deletingId === art.id} />
               ))}
@@ -349,6 +584,9 @@ export default function ListiniClient({ articoli }: { articoli: Articolo[] }) {
           </table>
         </div>
       )}
+
+      {/* Scheda tecnica modale */}
+      {schedaArt && <SchedaTecnicaModal art={schedaArt} onClose={() => setSchedaId(null)} />}
     </div>
   )
 }

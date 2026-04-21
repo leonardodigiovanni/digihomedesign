@@ -1,5 +1,8 @@
 import type { Metadata, Viewport } from 'next'
+import { Merriweather } from 'next/font/google'
 import { cookies } from 'next/headers'
+
+const merriweather = Merriweather({ subsets: ['latin'], weight: ['300', '400', '700', '900'], display: 'swap' })
 import Header from '@/components/header'
 import Navbar from '@/components/navbar'
 import Footer from '@/components/footer'
@@ -149,7 +152,7 @@ export default async function RootLayout({
   const bannerCircolare = settings.bannerCircolare
 
   return (
-    <html lang="it">
+    <html lang="it" className={merriweather.className}>
       <body style={isPageEffect ? {} : { background: `rgba(${pageBg.r}, ${pageBg.g}, ${pageBg.b}, ${pageBg.a / 100})` }}>
 
         {/* Sfondo pagina con effetto (fixed, sotto tutto) */}
@@ -185,23 +188,21 @@ export default async function RootLayout({
                 style={{ height: 42, overflow: 'hidden', display: 'flex', alignItems: 'center', borderBottom: '1px solid #aaa' }}
               >
                 {bannerCircolare ? (
-                  <span style={{
+                  <span className="neon-oro" style={{
                     display: 'inline-block',
                     whiteSpace: 'nowrap',
                     fontSize: 17,
                     fontWeight: 600,
-                    color: '#333',
                     animation: `banner-circular ${bannerDur}s linear infinite`,
                   }}>
                     {settings.bannerTesto}{'\u00A0\u00A0\u00A0'}{settings.bannerTesto}{'\u00A0\u00A0\u00A0'}
                   </span>
                 ) : (
-                  <span style={{
+                  <span className="neon-oro" style={{
                     display: 'inline-block',
                     whiteSpace: 'nowrap',
                     fontSize: 17,
                     fontWeight: 600,
-                    color: '#333',
                     animation: `banner-scroll ${bannerDur}s linear infinite`,
                   }}>
                     {'\u00A0\u00A0'}{settings.bannerTesto}

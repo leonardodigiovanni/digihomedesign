@@ -1,0 +1,154 @@
+'use client'
+
+import { useActionState, useEffect, useState } from 'react'
+import { inviaContattoIngegnere } from '@/app/contatto-ingegnere-actions'
+import type { ContattoIngegnereResult } from '@/app/contatto-ingegnere-actions'
+
+const inputStyle: React.CSSProperties = {
+  width: '100%',
+  padding: '10px 12px',
+  fontSize: 14,
+  border: '1px solid #d0d0d0',
+  borderRadius: 7,
+  outline: 'none',
+  boxSizing: 'border-box',
+  fontFamily: 'inherit',
+  color: '#1a1a1a',
+  background: '#fff',
+}
+
+const labelStyle: React.CSSProperties = {
+  display: 'block',
+  fontSize: 13,
+  fontWeight: 600,
+  color: '#444',
+  marginBottom: 5,
+}
+
+export default function ContattoIngegnereForm() {
+  const [aperto, setAperto] = useState(false)
+  const [state, action, pending] = useActionState<ContattoIngegnereResult | null, FormData>(
+    inviaContattoIngegnere,
+    null
+  )
+
+  useEffect(() => {
+    if (!aperto) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setAperto(false) }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [aperto])
+
+  useEffect(() => {
+    document.body.style.overflow = aperto ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [aperto])
+
+  return (
+    <>
+      <button
+        onClick={() => setAperto(true)}
+        className="cta-btn-metal"
+        style={{ cursor: 'pointer', border: 'none', fontFamily: 'inherit' }}
+      >
+        Chiedi al nostro Ingegnere Edile
+      </button>
+
+      {aperto && (
+        <div
+          onClick={e => { if (e.target === e.currentTarget) setAperto(false) }}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 1000,
+            background: 'rgba(0,0,0,0.55)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: 20,
+          }}
+        >
+          <div style={{
+            background: '#fff', borderRadius: 12, padding: '32px 28px',
+            width: '100%', maxWidth: 480,
+            maxHeight: '90vh', overflowY: 'auto',
+            position: 'relative',
+          }}>
+            <button
+              onClick={() => setAperto(false)}
+              aria-label="Chiudi"
+              style={{
+                position: 'absolute', top: 14, right: 16,
+                background: 'none', border: 'none', fontSize: 22,
+                cursor: 'pointer', color: '#888', lineHeight: 1,
+                fontFamily: 'inherit',
+              }}
+            >
+              ×
+            </button>
+
+            <h2 style={{ fontSize: 20, fontWeight: 700, color: '#1a1a1a', marginBottom: 6 }}>
+              Chiedi al nostro Ingegnere Edile
+            </h2>
+            <p style={{ fontSize: 13, color: '#777', marginBottom: 24, lineHeight: 1.5 }}>
+              Compila il form e ti contatteremo per valutare insieme il tuo progetto.
+            </p>
+
+            {state?.ok ? (
+              <div style={{
+                background: '#f0faf4', border: '1px solid #a8d5b5', borderRadius: 8,
+                padding: '16px 18px', fontSize: 14, color: '#276749', lineHeight: 1.6,
+              }}>
+                Richiesta inviata. Ti contatteremo al più presto.
+              </div>
+            ) : (
+              <>
+                {state && !state.ok && (
+                  <div style={{
+                    background: '#fff0f0', border: '1px solid #f5c6c6', borderRadius: 8,
+                    padding: '12px 16px', marginBottom: 16, fontSize: 14, color: '#c00',
+                  }}>
+                    {state.error}
+                  </div>
+                )}
+
+                <form action={action} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  <div>
+                    <label style={labelStyle}>Nome *</label>
+                    <input name="nome" type="text" required style={inputStyle} placeholder="Mario Rossi" />
+                  </div>
+
+                  <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                    <div style={{ flex: '1 1 180px' }}>
+                      <label style={labelStyle}>Email *</label>
+                      <input name="email" type="email" required style={inputStyle} placeholder="mario@email.it" />
+                    </div>
+                    <div style={{ flex: '1 1 180px' }}>
+                      <label style={labelStyle}>Telefono</label>
+                      <input name="telefono" type="tel" style={inputStyle} placeholder="+39 091 000000" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label style={labelStyle}>Messaggio</label>
+                    <textarea
+                      name="messaggio"
+                      rows={4}
+                      defaultValue="Richiesta Ingegnere Edile"
+                      style={{ ...inputStyle, resize: 'vertical', lineHeight: 1.6 }}
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={pending}
+                    className="btn-green"
+                    style={{ padding: '11px 28px', fontSize: 14, fontFamily: 'inherit', marginTop: 4, opacity: pending ? 0.6 : 1 }}
+                  >
+                    {pending ? 'Invio in corso…' : 'Invia richiesta'}
+                  </button>
+                </form>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </>
+  )
+}

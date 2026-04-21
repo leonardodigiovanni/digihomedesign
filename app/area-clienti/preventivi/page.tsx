@@ -2,6 +2,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import type { Metadata } from 'next'
+import { creaPreventivo } from '../../clienti/preventivi/actions'
 
 export const metadata: Metadata = { title: 'Preventivi' }
 
@@ -41,7 +42,7 @@ async function getData(role: string, username: string): Promise<{ preventivi: Pr
         id               INT AUTO_INCREMENT PRIMARY KEY,
         numero           VARCHAR(50)   NOT NULL DEFAULT '',
         cliente_id       INT           NULL,
-        descrizione      TEXT          NOT NULL DEFAULT '',
+        descrizione      TEXT          NULL,
         stato            ENUM('bozza','inviato','accettato','rifiutato','scaduto') NOT NULL DEFAULT 'bozza',
         importo          DECIMAL(10,2) NOT NULL DEFAULT 0,
         data             DATE          NOT NULL,
@@ -57,7 +58,7 @@ async function getData(role: string, username: string): Promise<{ preventivi: Pr
 
     if (isStaff) {
       const [r] = await conn.query(`
-        SELECT p.*, COALESCE(c.ragione_sociale, CONCAT(c.cognome, ' ', c.nome), '') AS cliente_nome
+        SELECT p.*, CASE WHEN c.id IS NULL THEN '' WHEN c.ragione_sociale != '' THEN c.ragione_sociale ELSE CONCAT(TRIM(c.cognome), ' ', TRIM(c.nome)) END AS cliente_nome
         FROM preventivi p LEFT JOIN clienti c ON c.id = p.cliente_id
         ORDER BY p.data DESC, p.id DESC
       `)
@@ -101,11 +102,21 @@ export default async function Page() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      <div>
-        <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Preventivi</h2>
-        <p style={{ color: '#888', fontSize: 14, margin: '4px 0 0' }}>
-          {isStaff ? 'Tutti i preventivi emessi.' : 'I preventivi associati al tuo account.'}
-        </p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
+        <div>
+          <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Preventivi</h2>
+          <p style={{ color: '#888', fontSize: 14, margin: '4px 0 0' }}>
+            {isStaff ? 'Tutti i preventivi emessi.' : 'I preventivi associati al tuo account.'}
+          </p>
+        </div>
+        <form action={creaPreventivo}>
+          <button type="submit" style={{
+            padding: '9px 22px', fontSize: 13, fontWeight: 700, borderRadius: 6,
+            background: '#1a6e3b', color: '#fff', border: 'none', cursor: 'pointer',
+          }}>
+            + Nuovo preventivo
+          </button>
+        </form>
       </div>
 
       {preventivi.length === 0 ? (
@@ -129,7 +140,14 @@ export default async function Page() {
                 const [color, bg] = STATO_COLORS[p.stato] ?? ['#666', '#f5f5f5']
                 return (
                   <tr key={p.id}>
-                    <td style={tdStyle}>{p.numero || `#${p.id}`}</td>
+                    <td style={tdStyle}>
+                      <a
+                        href={isStaff ? `/clienti/preventivi/${p.id}` : `/area-clienti/preventivi/${p.id}`}
+                        style={{ color: '#2b6cb0', fontWeight: 600, textDecoration: 'none' }}
+                      >
+                        {p.numero || `#${p.id}`}
+                      </a>
+                    </td>
                     {isStaff && <td style={tdStyle}>{p.cliente_nome || '—'}</td>}
                     <td style={tdStyle}>{p.descrizione}</td>
                     <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>{p.data}</td>

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import ContattoIngegnereForm from '@/components/contatto-ingegnere-form'
 
 export const metadata: Metadata = {
   title: 'Ristrutturazioni Chiavi in Mano a Palermo — Unico Referente',
@@ -33,13 +34,11 @@ export default function Page() {
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginTop: 40, padding: '20px', background: '#fdfcf8', border: '1px solid #e8d89a', borderRadius: 10 }}>
         <div style={{ flex: '1 1 200px' }}>
           <p style={{ fontSize: 14, fontWeight: 600, color: '#1a1a1a', margin: '0 0 12px' }}>Hai un progetto in mente?</p>
-          <Link href="/aiuto/guida-preventivo" style={{ display: 'inline-block', padding: '10px 20px', background: '#c8960c', color: '#fff', borderRadius: 6, fontWeight: 600, fontSize: 14, textDecoration: 'none' }}>
-            Calcola il tuo preventivo
-          </Link>
+          <ContattoIngegnereForm />
         </div>
         <div style={{ flex: '1 1 200px' }}>
           <p style={{ fontSize: 14, fontWeight: 600, color: '#1a1a1a', margin: '0 0 12px' }}>Hai già un cantiere aperto?</p>
-          <Link href="/aiuto/guida-cantiere" style={{ display: 'inline-block', padding: '10px 20px', background: '#1a1a1a', color: '#fff', borderRadius: 6, fontWeight: 600, fontSize: 14, textDecoration: 'none' }}>
+          <Link href="/aiuto/guida-cantiere" className="cta-btn-metal">
             Segui il tuo cantiere online
           </Link>
         </div>

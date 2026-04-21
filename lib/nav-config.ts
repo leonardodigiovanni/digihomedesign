@@ -196,8 +196,9 @@ export const aiutoPages: NavPage[] = [
 
 // Pagine amministrazione: area amministrativa fissa
 export const adminPages: NavPage[] = [
-  { id: 19, label: 'Impostazioni',    href: '/amministrazione/impostazioni',    roles: ['admin'] },
-  { id: 20, label: 'Gestione Utenti', href: '/amministrazione/gestione-utenti', roles: ['admin'] },
+  { id: 19, label: 'Impostazioni',       href: '/amministrazione/impostazioni',    roles: ['admin'] },
+  { id: 20, label: 'Gestione Utenti',   href: '/amministrazione/gestione-utenti', roles: ['admin'] },
+  { id: 62, label: 'Template Preventivi', href: '/amministrazione/templates',     roles: ['admin'] },
 ]
 
 // Pagine Fornitori: visibili solo a dipendenti e admin

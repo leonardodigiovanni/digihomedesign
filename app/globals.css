@@ -100,12 +100,16 @@ a:active, a:active img, a:focus img {
   padding: 0;
 }
 
-html, body {
+html {
+  height: 100%;
+  overflow-x: hidden;
+}
+body {
   height: 100%;
 }
 
 body {
-  font-family: system-ui, sans-serif;
+  font-family: 'Merriweather', Georgia, 'Times New Roman', serif;
   font-size: 15px;
   min-height: 100vh;
   display: flex;
@@ -127,6 +131,30 @@ body {
   72%  { color: #fff;    text-shadow: 0 0 6px #fff, 0 0 18px #e0e0e0, 0 0 36px #aaaaaa; }
   84%  { color: #ddd;    text-shadow: none; }
   100% { color: #ddd;    text-shadow: none; }
+}
+
+.ombra-semplice {
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.35);
+}
+.ombra-semplice-chiaro {
+  color: #000;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.28);
+}
+.neon {
+  color: #fff;
+  text-shadow:
+    0 0 5px #00eaff,
+    0 0 10px #00eaff,
+    0 0 20px #00eaff,
+    0 0 40px #00eaff;
+}
+.neon-oro {
+  color: #000;
+  text-shadow:
+    0 0 3px #f7d774,
+    0 0 6px #e6c65c,
+    0 0 12px rgba(212, 175, 55, 0.7),
+    0 0 24px rgba(184, 134, 11, 0.45);
 }
 
 .effetto-3d {
@@ -218,6 +246,31 @@ body {
   filter: brightness(1.15);
 }
 
+.cta-btn-metal {
+  display: inline-block;
+  padding: 10px 20px;
+  color: #fff;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  background:
+    repeating-linear-gradient(
+      135deg,
+      rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 1px,
+      transparent 1px, transparent 6px
+    ),
+    linear-gradient(135deg,
+      #111 0%, #222 20%, #383838 45%, #222 80%, #111 100%
+    );
+  box-shadow: 0 2px 8px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08);
+  transition: filter 0.15s, transform 0.15s;
+}
+.cta-btn-metal:hover {
+  filter: brightness(1.18);
+  transform: scale(1.03);
+}
+
 /* ─── Home hero layout ─────────────────── */
 /* ── Home Hero — griglia adattiva ─────────────────────────
    Largo  (>960px):   [testo 1fr] [carousel 3fr] [cta 1fr]
@@ -296,6 +349,12 @@ body {
   .home-hero-text {
     height: auto;
     overflow: visible;
+  }
+}
+/* ── CTA: verticale su mobile stretto ── */
+@media (max-width: 540px) {
+  .home-hero-cta {
+    flex-direction: column;
   }
   .home-hero-cta .cta-home-btn {
     flex-direction: column;
@@ -1172,6 +1231,7 @@ body {
   position: relative;
   overflow: hidden;
   transition: color 0.1s;
+  white-space: nowrap;
 }
 .nav-dropdown-link::before {
   content: '';

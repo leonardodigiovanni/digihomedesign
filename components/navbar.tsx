@@ -135,7 +135,8 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
                 <div style={{
                   position: 'absolute',
                   top: '100%',
-                  left: 0,
+                  left: '50%',
+                  transform: 'translateX(-50%)',
                   background: '#fdfcf8',
                   border: '1px solid #c8960c',
                   borderRadius: 6,
@@ -145,6 +146,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
                   flexDirection: 'column',
                   gap: 0,
                   zIndex: 200,
+                  width: 'max-content',
                   minWidth: 200,
                 }}>
                   {visibleClientPages.map(p => (
@@ -351,11 +353,11 @@ function InternalDropdown({
       </button>
       {open && (
         <div style={{
-          position: 'absolute', top: '100%', left: 0,
+          position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
           background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
           boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 12,
-          display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2,
-          zIndex: 200, minWidth: 320,
+          display: 'grid', gridTemplateRows: 'repeat(6, auto)', gridAutoFlow: 'column', gridAutoColumns: 'max-content', gap: 2,
+          zIndex: 200, width: 'max-content', minWidth: 320,
         }}>
           {items.map(p => (
             <Link
@@ -403,11 +405,11 @@ function AiutoDropdown({
       </button>
       {open && (
         <div style={{
-          position: 'absolute', top: '100%', left: 0,
+          position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
           background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
           boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 12,
-          display: 'flex', flexDirection: 'column', gap: 2,
-          zIndex: 200, minWidth: 220,
+          display: 'grid', gridTemplateRows: 'repeat(6, auto)', gridAutoFlow: 'column', gridAutoColumns: 'max-content', gap: 2,
+          zIndex: 200, width: 'max-content', minWidth: 220,
         }}>
           {items.map(p => (
             <Link
@@ -455,11 +457,11 @@ function AdminDropdown({
       </button>
       {open && (
         <div style={{
-          position: 'absolute', top: '100%', left: 0,
+          position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
           background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
           boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 12,
-          display: 'flex', flexDirection: 'column', gap: 2,
-          zIndex: 200, minWidth: 200,
+          display: 'grid', gridTemplateRows: 'repeat(6, auto)', gridAutoFlow: 'column', gridAutoColumns: 'max-content', gap: 2,
+          zIndex: 200, width: 'max-content', minWidth: 200,
         }}>
           {items.map(p => (
             <Link
@@ -518,13 +520,15 @@ function CategoryDropdown({
       </button>
       {open && (
         <div style={{
-          position: 'absolute', top: '100%', left: 0,
+          position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
           background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
           boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 4,
           display: 'grid',
-          gridTemplateColumns: group.id === 'edilizia' ? 'repeat(2, 1fr)' : '1fr',
+          gridTemplateRows: 'repeat(6, auto)',
+          gridAutoFlow: 'column',
+          gridAutoColumns: 'max-content',
           gap: 0,
-          zIndex: 200, minWidth: group.id === 'edilizia' ? 320 : 180,
+          zIndex: 200, width: 'max-content', minWidth: group.id === 'edilizia' ? 320 : 180,
         }}>
           {group.pages.map(p => (
             <Link
@@ -572,11 +576,11 @@ function FornitoriDropdown({
       </button>
       {open && (
         <div style={{
-          position: 'absolute', top: '100%', left: 0,
+          position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
           background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
           boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 4,
-          display: 'flex', flexDirection: 'column', gap: 0,
-          zIndex: 200, minWidth: 200,
+          display: 'grid', gridTemplateRows: 'repeat(6, auto)', gridAutoFlow: 'column', gridAutoColumns: 'max-content', gap: 0,
+          zIndex: 200, width: 'max-content', minWidth: 200,
         }}>
           {items.map(p => (
             <Link
@@ -624,11 +628,11 @@ function ClientiDropdown({
       </button>
       {open && (
         <div style={{
-          position: 'absolute', top: '100%', left: 0,
+          position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
           background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
           boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 4,
-          display: 'flex', flexDirection: 'column', gap: 0,
-          zIndex: 200, minWidth: 180,
+          display: 'grid', gridTemplateRows: 'repeat(6, auto)', gridAutoFlow: 'column', gridAutoColumns: 'max-content', gap: 0,
+          zIndex: 200, width: 'max-content', minWidth: 180,
         }}>
           {items.map(p => (
             <Link
@@ -676,11 +680,11 @@ function AreaClientiDropdown({
       </button>
       {open && (
         <div style={{
-          position: 'absolute', top: '100%', left: 0,
+          position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
           background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
           boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 4,
-          display: 'flex', flexDirection: 'column', gap: 0,
-          zIndex: 200, minWidth: 180,
+          display: 'grid', gridTemplateRows: 'repeat(6, auto)', gridAutoFlow: 'column', gridAutoColumns: 'max-content', gap: 0,
+          zIndex: 200, width: 'max-content', minWidth: 180,
         }}>
           {items.map(p => (
             <Link

@@ -1,5 +1,5 @@
 {
-  "manutenzione": true,
+  "manutenzione": false,
   "inactivityMinutes": 20,
   "countdownSeconds": 10,
   "headerBg": {
@@ -50,13 +50,11 @@
     239,
     240,
     241,
-    242,
     243,
     244,
     245,
     246,
     247,
-    248,
     249,
     250,
     251,
@@ -85,12 +83,12 @@
     102,
     103
   ],
-  "registrazioniDisabilitate": true,
+  "registrazioniDisabilitate": false,
   "loginClientiDisabilitato": false,
   "loginDipendentiDisabilitato": false,
   "bannerAbilitato": true,
   "bannerCircolare": true,
-  "bannerTesto": "Esperienza che dura nel tempo...   Qualità che si vede...   Soluzioni su misura per te...   Più comfort, meno sprechi...   Innovazione al servizio della casa...   Affidabilità in ogni dettaglio...   Proteggiamo il valore della tua casa...   Design, sicurezza, durata...   La qualità parte dai dettagli...   Serramenti pensati per durare...   Comfort abitativo, ogni giorno...   Risparmio energetico concreto...   Eleganza e funzionalità...   Tradizione artigiana, visione moderna...   Cura artigianale, risultati moderni...   Materiali di qualità, risultati garantiti...   Ogni progetto prende forma...   La tua casa merita il meglio...   Più luce, più comfort...   Resistenza senza compromessi...   Bellezza che protegge...   Funzionalità che arreda...   Sicurezza e stile insieme...   Prestazioni che fanno la differenza...   Lavori fatti con precisione...   Costruiti per resistere...   Il dettaglio fa la qualità...   Il comfort inizia dagli infissi...   Soluzioni intelligenti per la tua casa...   Qualità, competenza, affidabilità...   Il partner giusto per la tua casa...   Tecnologia e artigianalità...   Protezione e design su misura...   Valore aggiunto ai tuoi spazi...   Più isolamento, più benessere...   La scelta giusta per abitare meglio...   Diamo forma ai tuoi spazi...   Esperienza, innovazione, risultati...   Ogni casa ha la sua soluzione...   Comfort e qualità senza tempo...",
+  "bannerTesto": "Esperienza che dura nel tempo...               Qualità che si vede...               Soluzioni su misura per te...               Più comfort, meno sprechi...               Innovazione al servizio della casa...               Affidabilità in ogni dettaglio...               Proteggiamo il valore della tua casa...               Design, sicurezza, durata...               La qualità parte dai dettagli...               Serramenti pensati per durare...               Comfort abitativo, ogni giorno...               Risparmio energetico concreto...               Eleganza e funzionalità...               Tradizione artigiana, visione moderna...               Cura artigianale, risultati moderni...               Materiali di qualità, risultati garantiti...               Ogni progetto prende forma...               La tua casa merita il meglio...               Più luce, più comfort...               Resistenza senza compromessi...               Bellezza che protegge...               Funzionalità che arreda...               Sicurezza e stile insieme...               Prestazioni che fanno la differenza...               Lavori fatti con precisione...               Costruiti per resistere...               Il dettaglio fa la qualità...               Il comfort inizia dagli infissi...               Soluzioni intelligenti per la tua casa...               Qualità, competenza, affidabilità...               Il partner giusto per la tua casa...               Tecnologia e artigianalità...               Protezione e design su misura...               Valore aggiunto ai tuoi spazi...               Più isolamento, più benessere...               La scelta giusta per abitare meglio...               Diamo forma ai tuoi spazi...               Esperienza, innovazione, risultati...               Ogni casa ha la sua soluzione...               Comfort e qualità senza tempo...               Nessuna brutta sorpresa...",
   "rolePermissions": {
     "cliente": [
       50,

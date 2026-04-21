@@ -81,7 +81,7 @@ const slides: { img: string; title: string; text: React.ReactNode }[] = [
   },
   {
     img: '/images/casa-ristrutturata-6.jpg',
-    title: 'Imbotti in alluminio con tapparelle coibentate',
+    title: 'Imbotti in alluminio',
     text: (<>
       <strong>Imbotti in alluminio con tapparelle coibentate a Palermo: protezione, isolamento e finiture di qualità</strong><br /><br />
       Gli imbotti in alluminio con tapparelle coibentate rappresentano una soluzione completa per migliorare l&apos;estetica del vano finestra, aumentare la protezione dell&apos;immobile e contribuire all&apos;isolamento termico e acustico della casa. Si tratta di un sistema pratico e funzionale, particolarmente adatto sia alle nuove costruzioni sia agli interventi di ristrutturazione.<br /><br />
@@ -150,13 +150,17 @@ const STYLES = `
   .hero-overlay {
     position: absolute;
     top: 0; left: 0; right: 0;
-    background: linear-gradient(135deg,
-      rgba(120, 120, 120, 0.95) 0%,
-      rgba(138, 138, 138, 0.92) 20%,
-      rgba(208, 208, 208, 0.92) 45%,
-      rgba(138, 138, 138, 0.92) 80%,
-      rgba(120, 120, 120, 0.95) 100%
-    );
+    background:
+      repeating-linear-gradient(
+        60deg,
+        rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px,
+        transparent 1px, transparent 6px
+      ),
+      linear-gradient(135deg,
+        rgba(0,0,0,0.88) 0%, rgba(20,20,20,0.85) 20%,
+        rgba(45,45,45,0.82) 45%, rgba(20,20,20,0.85) 80%,
+        rgba(0,0,0,0.88) 100%
+      );
     z-index: 5;
     overflow: hidden;
     max-height: 86px;
@@ -380,6 +384,7 @@ export default function HeroCarousel() {
         <div className="hero-overlay-header">
           <h2
             key={`title-${current}`}
+            className="ombra-semplice"
             style={{
               fontSize: 'clamp(17px, 2.6vw, 26px)',
               fontWeight: 700, color: '#fff', margin: 0, lineHeight: 1.25,
@@ -413,6 +418,7 @@ export default function HeroCarousel() {
         <div className="hero-overlay-body">
           <p
             key={`body-${current}`}
+            className="ombra-semplice"
             style={{
               fontSize: 15, color: '#fff', lineHeight: 1.8, margin: 0,
               animation: 'heroEntranceFade 0.3s ease forwards',

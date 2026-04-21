@@ -28,15 +28,28 @@ async function getData(): Promise<Articolo[]> {
       )
     `)
     await db.execute(`ALTER TABLE listini ADD COLUMN disponibile TINYINT(1) NOT NULL DEFAULT 1`).catch(() => {})
+    try {
+      await db.execute(`ALTER TABLE listini ADD COLUMN preventivabile TINYINT(1) NOT NULL DEFAULT 1`)
+      await db.execute(`UPDATE listini SET preventivabile = 0 WHERE categoria = 'marmi'`)
+    } catch { /* colonna già esistente */ }
+    await db.execute(`ALTER TABLE listini ADD COLUMN foto_url VARCHAR(500) NULL`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN profilo_frontale_mm DECIMAL(6,2) NULL`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN profilo_profondita_mm DECIMAL(6,2) NULL`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN trasmittanza_uw DECIMAL(5,3) NULL`).catch(() => {})
     const [rows] = await db.query(
-      'SELECT id, categoria, produttore, descrizione, unita, prezzo_acquisto, prezzo_vendita, note, disponibile, updated_at FROM listini ORDER BY categoria ASC, produttore ASC, descrizione ASC'
+      'SELECT id, categoria, produttore, descrizione, unita, prezzo_acquisto, prezzo_vendita, note, disponibile, preventivabile, updated_at, foto_url, profilo_frontale_mm, profilo_profondita_mm, trasmittanza_uw FROM listini ORDER BY categoria ASC, produttore ASC, descrizione ASC'
     )
     return (rows as Record<string, unknown>[]).map(r => ({
       ...r,
-      prezzo_acquisto: parseFloat(String(r.prezzo_acquisto ?? 0)),
-      prezzo_vendita:  parseFloat(String(r.prezzo_vendita  ?? 0)),
-      disponibile: Number(r.disponibile ?? 1),
-      updated_at: r.updated_at instanceof Date ? r.updated_at.toISOString() : String(r.updated_at ?? ''),
+      prezzo_acquisto:      parseFloat(String(r.prezzo_acquisto ?? 0)),
+      prezzo_vendita:       parseFloat(String(r.prezzo_vendita  ?? 0)),
+      disponibile:          Number(r.disponibile    ?? 1),
+      preventivabile:       Number(r.preventivabile ?? 1),
+      updated_at:           r.updated_at instanceof Date ? r.updated_at.toISOString() : String(r.updated_at ?? ''),
+      foto_url:             r.foto_url ? String(r.foto_url) : null,
+      profilo_frontale_mm:  r.profilo_frontale_mm  != null ? parseFloat(String(r.profilo_frontale_mm))  : null,
+      profilo_profondita_mm:r.profilo_profondita_mm != null ? parseFloat(String(r.profilo_profondita_mm)) : null,
+      trasmittanza_uw:      r.trasmittanza_uw != null ? parseFloat(String(r.trasmittanza_uw)) : null,
     })) as Articolo[]
   } finally {
     await db.end()

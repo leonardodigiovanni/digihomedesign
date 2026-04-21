@@ -45,14 +45,16 @@ export default async function Page() {
       <div className="home-hero">
         <div className="home-hero-text" style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10 }}>
           <div style={{ height: '100%', overflowY: 'auto', padding: '20px', boxSizing: 'border-box' }}>
-          <p style={{ textAlign: 'justify', fontSize: 15, color: '#555', lineHeight: 1.8, margin: 0 }}>
-            Dall&apos;esperienza maturata dal 1972 nel settore dei serramenti e della lavorazione del ferro, come stimata realtà artigiana a conduzione familiare, nasce una nuova azienda, organizzata, innovativa e moderna, che amplia i propri servizi anche al settore dell&apos;edilizia, delle ristrutturazioni e della riqualificazione energetica.<br /><br />
-            La nostra storia parte da solide competenze artigianali e si evolve in una struttura capace di offrire un servizio più completo. Oggi siamo il partner ideale per chi cerca qualità, affidabilità, soluzioni durevoli nel tempo e un unico interlocutore per progetti di miglioramento, recupero e valorizzazione degli immobili. Ci proponiamo sul mercato con prezzi competitivi e con l&apos;obiettivo di diventare un referente unico per interventi che spaziano dai serramenti alle opere edili, fino ai lavori di ristrutturazione e efficientamento energetico.<br /><br />
+          <p className="ombra-semplice-chiaro" style={{ textAlign: 'justify', fontSize: 15, lineHeight: 1.8, margin: 0 }}>
+            Con l&apos;esperienza maturata dal 1972 nel settore dei serramenti e della lavorazione del ferro, come stimata realtà artigiana a conduzione familiare, nasce DIGI. 
+            Azienda innovativa e moderna, che amplia i propri servizi anche al settore dell&apos;edilizia, delle ristrutturazioni e della riqualificazione energetica.<br /><br />
+            La nostra storia parte da solide competenze artigianali e si evolve in una struttura capace di offrire un servizio più completo.<br /><br /> Oggi siamo il partner ideale per chi cerca qualità, affidabilità, soluzioni durevoli nel tempo e un unico interlocutore per progetti di miglioramento, recupero e valorizzazione degli immobili. 
+            <br /><br /> Ci proponiamo sul mercato con <strong>prezzi competitivi</strong> e con l&apos;obiettivo di diventare un referente unico per interventi che spaziano dai serramenti alle opere edili, fino ai lavori di ristrutturazione e efficientamento energetico.<br /><br />
             Per i nostri clienti sono disponibili due servizi esclusivi e completamente gratuiti:<br />
-            — la possibilità di ottenere preventivi immediati online in completa autonomia, grazie a un widget semplice, veloce e intuitivo<br />
-            — il servizio di monitoraggio del cantiere online, per seguire i lavori di casa da qualunque parte del mondo, in qualsiasi momento, attraverso aggiornamenti giornalieri con rapporti, foto e video<br /><br />
-            Registrati e accedi alla tua area personale per iniziare subito.<br />
-            <strong>Affidati a un&apos;azienda che unisce esperienza artigiana, innovazione e nuovi servizi per l&apos;edilizia a Palermo.</strong>
+            — <strong>Preventivi Immediati Online</strong> in completa autonomia, grazie a un widget semplice, veloce e intuitivo;<br />
+            — <strong>Monitoraggio del Cantiere Online</strong>, grazie al quale potrai seguire i lavori di casa da qualunque parte del mondo, in qualsiasi momento, attraverso aggiornamenti giornalieri con rapporti, foto e video.
+            Registrati e accedi alla tua area personale per iniziare subito.<br /><br />
+            Affidati alla nostra azienda che unisce esperienza artigiana, innovazione e nuovi servizi per aiutarti a realizzare la <strong>casa dei tuoi sogni.</strong>
           </p>
           </div>
         </div>
@@ -101,7 +103,7 @@ export default async function Page() {
               />
             </div>
             <div style={{ padding: '14px 16px' }}>
-              <span style={{ fontSize: 15, fontWeight: 600, color: '#1a1a1a' }}>
+              <span className="ombra-semplice-chiaro" style={{ fontSize: 15, fontWeight: 600 }}>
                 {page.label}
               </span>
             </div>
@@ -151,14 +153,14 @@ export default async function Page() {
           <h2 className="effetto-3d" style={{ fontSize: 20, fontWeight: 700, marginBottom: 12 }}>
             La tua casa, il tuo ufficio — tutto a Palermo
           </h2>
-          <p>
+          <p className="ombra-semplice-chiaro">
             Siamo specialisti in <Link href="/infissi" aria-label="infissi-a-palermo" style={{ color: '#1a1a1a', fontWeight: 700 }}>infissi</Link> e <Link href="/serramenti" aria-label="serramenti-a-palermo" style={{ color: '#1a1a1a', fontWeight: 700 }}>serramenti</Link>: finestre, porte-finestre e scorrevoli su misura, installati e garantiti.
             Realizziamo <Link href="/verande" aria-label="verande-a-palermo" style={{ color: '#1a1a1a', fontWeight: 700 }}>verande</Link> per vivere gli spazi esterni tutto l&apos;anno, e montiamo <Link href="/porte-corazzate" aria-label="porte-corazzate-a-palermo" style={{ color: '#1a1a1a', fontWeight: 700 }}>porte corazzate</Link> e blindature antintrusione per la massima sicurezza.
             Le nostre <Link href="/persiane" aria-label="persiane-a-palermo" style={{ color: '#1a1a1a', fontWeight: 700 }}>persiane in alluminio</Link> coniugano estetica e durata nel tempo.
           </p>
-          <p style={{ marginTop: 12 }}>
+          <p className="ombra-semplice-chiaro" style={{ marginTop: 12 }}>
             Ci occupiamo di <Link href="/ristrutturazioni-chiavi-in-mano" aria-label="ristrutturazioni-chiavi-in-mano-a-palermo" style={{ color: '#1a1a1a', fontWeight: 700 }}>ristrutturazioni chiavi in mano</Link> a Palermo: dal progetto alla consegna, un unico referente segue ogni fase del lavoro.
-            Progettiamo e installiamo anche <Link href="/strutture-metalliche" aria-label="strutture-metalliche-a-palermo" style={{ color: '#1a1a1a', fontWeight: 700 }}>strutture metalliche</Link> — tettoie, pensiline, scale e pergolati — con prodotti di qualità e lavorazioni a regola d&apos;arte.
+            Progettiamo e installiamo anche <Link href="/strutture-metalliche" aria-label="strutture-metalliche-a-palermo" style={{ color: '#1a1a1a', fontWeight: 700 }}>strutture metalliche</Link>{' '}— tettoie, pensiline, scale e pergolati — con prodotti di qualità e lavorazioni a regola d&apos;arte.
           </p>
         </div>
       </div>
