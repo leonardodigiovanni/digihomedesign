@@ -158,6 +158,7 @@ export default function AggiungiArticoloForm({
     padding: '7px 10px', border: '1px solid #ccc',
     borderRadius: 4, fontSize: 13, fontFamily: 'inherit',
     width: '100%', boxSizing: 'border-box',
+    color: '#333', WebkitTextFillColor: '#333', background: '#fff',
   }
   const lbl: React.CSSProperties = {
     display: 'flex', flexDirection: 'column', gap: 3,
@@ -321,12 +322,12 @@ export default function AggiungiArticoloForm({
               </label>
             )}
             {selected.richiede_tipo_colore === 1 && (
-              <p className="testo-articoli" style={{ gridColumn: '1 / -1', margin: 0, background: '#fff8e1', border: '1px solid #f0b429', borderRadius: 5, padding: '7px 10px' }}>
+              <p className="testo-articoli" style={{ gridColumn: '1 / -1', margin: 0, background: '#fff8e1', border: '1px solid #f0b429', borderRadius: 5, padding: '7px 10px', WebkitTextFillColor: '#7a5800' }}>
                 Opzionare tra Colori standard o colori con maggiorazione di prezzo
               </p>
             )}
             {selected.richiede_tipo_vetro === 1 && (
-              <p className="testo-articoli" style={{ gridColumn: '1 / -1', margin: 0, background: '#fff8e1', border: '1px solid #f0b429', borderRadius: 5, padding: '7px 10px' }}>
+              <p className="testo-articoli" style={{ gridColumn: '1 / -1', margin: 0, background: '#fff8e1', border: '1px solid #f0b429', borderRadius: 5, padding: '7px 10px', WebkitTextFillColor: '#7a5800' }}>
                 Opzionare se Fornitura senza vetri o il tipo di vetri
               </p>
             )}
