@@ -13,13 +13,13 @@ export default async function Page() {
   const role = cookieStore.get('session_role')?.value ?? ''
   if (role !== 'admin') redirect('/')
 
-  const settings = readSettings()
+  const settings = await readSettings()
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <div>
         <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Volantino</h2>
-        <p style={{ color: '#888', fontSize: 14, margin: '4px 0 0' }}>Anteprima e export A4</p>
+        <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0' }}>Anteprima e export A4</p>
       </div>
       <VolantinoClient
         headerBg={settings.headerBg}

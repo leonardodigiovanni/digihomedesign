@@ -19,7 +19,7 @@ export async function startRegistration(
   _prev: StartResult | null,
   formData: FormData
 ): Promise<StartResult> {
-  const { registrazioniDisabilitate } = readSettings()
+  const { registrazioniDisabilitate } = await readSettings()
   if (registrazioniDisabilitate) {
     return { ok: false, error: 'Le nuove registrazioni sono temporaneamente disabilitate.' }
   }

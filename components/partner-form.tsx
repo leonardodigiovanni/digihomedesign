@@ -1,7 +1,6 @@
 'use client'
 
 import { useActionState, useEffect, useState } from 'react'
-import Image from 'next/image'
 import { inviaPartnership } from '@/app/partner-actions'
 import type { PartnershipResult } from '@/app/partner-actions'
 
@@ -51,10 +50,11 @@ export default function PartnerForm() {
       <button
         onClick={() => setAperto(true)}
         className="cta-home-btn"
-        style={{ width: 'auto', height: 'auto', padding: '14px 32px 42px', cursor: 'pointer', border: 'none', gap: 8, justifyContent: 'flex-start' }}
+        style={{ width: 'auto', height: 'auto', padding: '10px 24px 16px', cursor: 'pointer', border: 'none', gap: 8, justifyContent: 'flex-start' }}
       >
-        <Image src="/images/partnership - digi.png" alt="Partnership" width={115} height={115} style={{ objectFit: 'contain' }} />
-        <span className="animato" style={{ fontSize: 15 }}>Diventa nostro partner</span>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+<img src="/images/cta/partnership-con-digi-trasparente.png" alt="Partnership" width={75} height={75} style={{ objectFit: 'contain', display: 'block', background: 'transparent' }} />
+        <span className="testo-cta animato">Diventa nostro Partner</span>
       </button>
 
       {aperto && (
@@ -87,7 +87,7 @@ export default function PartnerForm() {
             </button>
 
             <h2 style={{ fontSize: 20, fontWeight: 700, color: '#1a1a1a', marginBottom: 6 }}>
-              Diventa nostro partner
+              Diventa nostro Partner
             </h2>
             <p style={{ fontSize: 13, color: '#777', marginBottom: 24, lineHeight: 1.5 }}>
               Compila il form e ti contatteremo per valutare insieme la collaborazione.

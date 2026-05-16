@@ -1,5 +1,9 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
+import Image from 'next/image'
 import type { Metadata } from 'next'
+import { cookies } from 'next/headers'
+import { readSettings } from '@/lib/settings'
+import AccediDropdown from '@/components/accedi-dropdown'
 
 export const metadata: Metadata = {
   title: 'Guida Preventivo Online',
@@ -7,73 +11,120 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://www.digi-home-design.com/aiuto/guida-preventivo' },
 }
 
-export default function GuidaPreventivo() {
+export default async function GuidaPreventivo() {
+  const { registrazioniDisabilitate } = await readSettings()
+  const cookieStore = await cookies()
+  const loggedIn = !!cookieStore.get('session_user')?.value
+  const cartRaw = cookieStore.get('digi_cart')?.value
+  const cartNonVuoto = !!cartRaw && (() => { try { const c = JSON.parse(cartRaw); return Array.isArray(c) && c.length > 0 } catch { return false } })()
   return (
-    <div>
-      <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 8 }}>Preventivo serramenti online</h2>
-      <p style={{ color: '#888', fontSize: 14, marginBottom: 32 }}>
-        Un servizio esclusivo per configurare il tuo preventivo in autonomia, senza aspettare.
+    <div style={{ maxWidth: 860, margin: '0 auto' }}>
+      <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
+        <Link href="/" style={{ color: '#888', textDecoration: 'underline' }}>Home</Link> / Aiuto / Guida Preventivo
+      </p>
+      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Preventivo serramenti online</h1>
+      <p className="sottotitolo-3d fs-14" style={{ marginBottom: 32 }}>
+        Un servizio esclusivo per configurare il tuo preventivo in autonomia, senza aspettare nessuno.
       </p>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 24, maxWidth: 720 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
-        {/* Descrizione */}
-        <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '24px 28px' }}>
-          <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 12 }}>Di cosa si tratta</h3>
-          <p style={{ fontSize: 14, color: '#444', lineHeight: 1.8 }}>
-            Il nostro sistema di preventivo online ti permette di configurare infissi, persiane, verande e porte
-            direttamente dal tuo browser. Inserisci le misure, scegli i materiali e le finiture: riceverai
-            una stima immediata e potrai richiedere la conferma con un click.
-          </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+
+        {/* Prima riga: primo articolo + foto */}
+        <div className="storia-row" style={{ display: 'flex', gap: 48, alignItems: 'flex-start' }}>
+
+          <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '24px 28px', flex: 1, minWidth: 0 }}>
+<p className="testo-articoli" style={{ lineHeight: 1.8 }}>
+              Il nostro sistema di preventivo online ti permette di configurare infissi, persiane, verande e porte
+              direttamente dal tuo browser o tramite DIGI-App. Inserisci le misure, scegli i materiali e le finiture: riceverai
+              una stima immediata e se soddisfatto potrai inviare con un click la richiesta di ricontatto.
+            </p>
+          </div>
+
+          <div className="storia-foto" style={{ flexShrink: 0, display: 'flex', flexWrap: 'wrap', gap: 20, justifyContent: 'center', alignItems: 'flex-start' }}>
+            <div className="page-card storia-card-1" style={{ width: 220, boxShadow: '0 8px 28px rgba(0,0,0,0.25)' }}>
+              <div style={{ position: 'relative', width: 220, height: 240 }}>
+                <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="220px" style={{ objectFit: 'cover' }} />
+              </div>
+              <div style={{ padding: '10px 12px 14px' }}>
+                <span className="testo-articoli">Fotografia da scegliere</span>
+              </div>
+            </div>
+            <div className="page-card storia-card-2" style={{ width: 220, boxShadow: '0 6px 22px rgba(0,0,0,0.2)' }}>
+              <div style={{ position: 'relative', width: 220, height: 240 }}>
+                <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="220px" style={{ objectFit: 'cover' }} />
+              </div>
+              <div style={{ padding: '10px 12px 14px' }}>
+                <span className="testo-articoli">Fotografia da scegliere</span>
+              </div>
+            </div>
+          </div>
+
         </div>
 
-        {/* Come funziona */}
+        </div>{/* fine gruppo ravvicinato */}
+
+        {/* Come funziona Fotografia da scegliere larghezza piena */}
         <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '24px 28px' }}>
-          <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 16 }}>Come funziona</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+<div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {[
-              { n: '1', titolo: 'Accedi alla tua area', testo: 'Registrati o accedi con le tue credenziali. Il servizio è riservato ai clienti registrati.' },
-              { n: '2', titolo: 'Configura il tuo preventivo', testo: 'Scegli il tipo di serramento, le dimensioni, i materiali e le finiture che preferisci.' },
-              { n: '3', titolo: 'Ricevi la stima', testo: 'Il sistema calcola il preventivo in tempo reale. Salvalo, modificalo o inviaci la richiesta di conferma.' },
+              { n: '1', titolo: 'Configura il tuo preventivo', testo: 'Scegli il tipo di serramento, le dimensioni, i materiali e le finiture che preferisci, per tutti gli elementi che devi acquistare. Potrai aggiungere elementi nel carrello-preventivo direttamente navigando tra i cataloghi oppure selezionandoli nella pagina preventivo-online.' },
+              { n: '2', titolo: 'Ricevi la stima iniziale', testo: `Il sistema calcola il preventivo in tempo reale. Puoi modificarlo, salvarlo, stamparlo a piacimento. (*)` },
+              { n: '3', titolo: 'Accedi alla tua area', testo: 'Se desideri scoprire le offerte e gli sconti abbinabili al preventivo, Accedi con le tue credenziali o se non ne hai Registrati.' },
+              { n: '4', titolo: 'Contattaci per il preventivo finale', testo: 'Se sei soddisfatto contattaci al più presto per la definizione del preventivo finale. Ti contatteremo perché abbiamo bisogno di informazioni aggiuntive come comune di destinazione dei prodotti, indirizzo, piano, tipo di fornitura richiesta se include montaggio, opere murarie, sopralluogo, rilevazione misure, etc.' },
             ].map(({ n, titolo, testo }) => (
               <div key={n} style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-                <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#c8960c', color: '#fff', fontWeight: 700, fontSize: 15, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <div className="fs-15" style={{ width: 32, height: 32, borderRadius: '50%', background: '#c8960c', color: '#fff', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   {n}
                 </div>
                 <div>
-                  <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 4 }}>{titolo}</div>
-                  <div style={{ fontSize: 14, color: '#555', lineHeight: 1.6 }}>{testo}</div>
+                  <div className="testo-articoli" style={{ marginBottom: 4 }}>{titolo}</div>
+                  <div className="testo-articoli" style={{ lineHeight: 1.6 }}>{testo}</div>
                 </div>
               </div>
             ))}
           </div>
+          <p className="testo-articoli" style={{ margin: '12px 0 0' }}>
+            (*) Il servizio è soggetto a limitazioni per utenti senza registrazione, fino all&apos;esclusione in caso di abusi.
+          </p>
         </div>
 
-        {/* Banner accesso */}
+        {/* Banner accesso Fotografia da scegliere larghezza piena */}
         <div style={{ background: '#fdfcf8', border: '2px solid #c8960c', borderRadius: 10, padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'flex-start' }}>
-          <p style={{ fontSize: 15, fontWeight: 600, color: '#1a1a1a', margin: 0 }}>
-            Per accedere al preventivo online è necessario registrarsi.
+          <p className="testo-articoli" style={{ margin: 0 }}>
+            Per accedere al preventivo online <span style={{ textDecoration: 'underline' }}>NON</span> è necessario registrarsi.
           </p>
-          <p style={{ fontSize: 14, color: '#555', margin: 0, lineHeight: 1.6 }}>
-            La registrazione è gratuita e richiede meno di un minuto. Una volta registrato avrai accesso
-            a tutti i servizi esclusivi: preventivi, cantiere in tempo reale e molto altro.
+          <p className="testo-articoli" style={{ margin: 0, lineHeight: 1.6 }}>
+            La registrazione comunque è gratuita e richiede meno di un minuto. Una volta registrato avrai accesso a tutte le promozioni disponibili e, se diventi cliente, al servizio Cantiere-Online in tempo reale, alla cronologia degli ultimi sei mesi (**) dei tuoi ordini, preventivi, cantieri, fatture e molto altro.
           </p>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 4 }}>
-            <Link href="/registrazione" className="btn-green" style={{
+            <AccediDropdown />
+            <Link href={registrazioniDisabilitate ? '/brand/contatti' : '/registrazione'} className="btn-black" style={{
               display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-              padding: '0 22px', height: 38, fontSize: 13, fontWeight: 600,
+              padding: '0 22px', height: 38, fontWeight: 600,
               borderRadius: 7, textDecoration: 'none',
             }}>
-              Registrati gratis
-            </Link>
-            <Link href="/" className="btn-gray" style={{
-              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-              padding: '0 22px', height: 38, fontSize: 13, fontWeight: 600,
-              borderRadius: 7, textDecoration: 'none',
-            }}>
-              Accedi
+              {registrazioniDisabilitate ? 'Richiedi registrazione' : 'Registrati'}
             </Link>
           </div>
+          <p className="testo-articoli" style={{ margin: '4px 0 0' }}>
+            (**) Si consiglia di scaricare e conservare o stampare i documenti del proprio archivio durante questo sufficiente periodo di tempo perché, una volta trascorso, saranno eliminati dal sistema.
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <Link href="/brand" className="fs-12" style={{ fontWeight: 600, color: '#1a1a1a', textDecoration: 'underline' }}>
+            ← Torna a Brand
+          </Link>
+          <Link href="/brand/cataloghi" className="fs-12" style={{ fontWeight: 600, color: '#1a1a1a', textDecoration: 'underline'}}>
+            Vai ai cataloghi per preventivi →
+          </Link>
+          {cartNonVuoto && (
+            <Link href="/area-clienti/carrello-preventivo" className="fs-12" style={{ fontWeight: 600, color: '#1a1a1a', textDecoration: 'underline' }}>
+              Vai al Carrello preventivi →
+            </Link>
+          )}
         </div>
 
       </div>

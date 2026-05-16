@@ -12,7 +12,7 @@ import path from 'path'
 async function checkAccess() {
   const cookieStore = await cookies()
   const role = cookieStore.get('session_role')?.value ?? ''
-  const settings = readSettings()
+  const settings = await readSettings()
   if (!hasPageAccess(role, 29, settings)) redirect('/')
 }
 

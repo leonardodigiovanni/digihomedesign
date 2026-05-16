@@ -12,8 +12,12 @@ export default async function RegistrazionePage() {
   const cookieStore = await cookies()
   if (cookieStore.get('session_user')?.value) redirect('/')
 
-  const { registrazioniDisabilitate } = readSettings()
+  const { registrazioniDisabilitate } = await readSettings()
   if (registrazioniDisabilitate) redirect('/')
 
-  return <RegistrationFlow />
+  return (
+    <div style={{ maxWidth: 560, margin: '0 auto', padding: '0 16px' }}>
+      <RegistrationFlow />
+    </div>
+  )
 }

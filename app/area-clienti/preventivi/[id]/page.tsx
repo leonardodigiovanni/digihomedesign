@@ -56,6 +56,18 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       validita_giorni: Number(raw.validita_giorni),
       note: raw.note != null ? String(raw.note) : null,
       visibile_cliente: Number(raw.visibile_cliente),
+      sconto_cliente_pct: Number(raw.sconto_cliente_pct ?? 0),
+    }
+
+    // Check scaduto automatico
+    if (preventivo.stato === 'inviato') {
+      const dataPreventivo = new Date(preventivo.data)
+      const scadenzaMs = dataPreventivo.getTime() + preventivo.validita_giorni * 24 * 60 * 60 * 1000
+      const oggi = new Date(); oggi.setHours(0, 0, 0, 0)
+      if (scadenzaMs < oggi.getTime()) {
+        await db.execute('UPDATE preventivi SET stato = ? WHERE id = ?', ['scaduto', prevId])
+        preventivo.stato = 'scaduto'
+      }
     }
 
     const [artRows] = await db.query(
@@ -79,21 +91,60 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       n_ante: Number(a.n_ante),
       quantita: Number(a.quantita),
       prezzo_totale: Number(a.prezzo_totale),
+      sconto_articolo_pct: Number(a.sconto_articolo_pct ?? 0),
       note: a.note != null ? String(a.note) : null,
+      parent_id: a.parent_id != null ? Number(a.parent_id) : null,
     }))
 
-    const [listiniRows] = await db.query(
-      'SELECT id, categoria, produttore, descrizione, unita, prezzo_vendita FROM listini WHERE disponibile = 1 AND preventivabile = 1 ORDER BY categoria, produttore, descrizione'
-    ) as [Record<string, unknown>[], unknown]
+    const [listiniRows] = await db.query(`
+      SELECT l.id, l.categoria, l.produttore, l.descrizione, l.unita,
+             l.prezzo_vendita, l.prezzo_acquisto, l.sconto_articolo,
+             COALESCE(f.ragione_sociale, '') AS fornitore_nome
+      FROM listini l
+      LEFT JOIN fornitori f ON f.id = l.fornitore_id
+      WHERE l.disponibile = 1 AND l.preventivabile = 1
+      ORDER BY l.categoria, l.produttore, l.descrizione
+    `) as [Record<string, unknown>[], unknown]
 
-    const listini: ListinoItem[] = (listiniRows as Record<string, unknown>[]).map(l => ({
+    type RawListino = { id: number; categoria: string; produttore: string; descrizione: string; unita: string; prezzo_vendita: number; prezzo_acquisto: number; sconto_articolo: number; fornitore_nome: string }
+    const allListini: RawListino[] = (listiniRows as Record<string, unknown>[]).map(l => ({
       id: Number(l.id),
       categoria: String(l.categoria ?? ''),
       produttore: String(l.produttore ?? ''),
       descrizione: String(l.descrizione ?? ''),
       unita: String(l.unita ?? 'pz'),
       prezzo_vendita: Number(l.prezzo_vendita),
+      prezzo_acquisto: Number(l.prezzo_acquisto),
+      sconto_articolo: Number(l.sconto_articolo ?? 0),
+      fornitore_nome: String(l.fornitore_nome ?? ''),
     }))
+
+    let listini: ListinoItem[]
+    if (isStaff) {
+      listini = allListini.map(l => ({ ...l, prezzo_acquisto: l.prezzo_acquisto }))
+    } else {
+      // Deduplicazione: un item per (categoria+produttore+descrizione), best margin
+      const best = new Map<string, RawListino>()
+      for (const l of allListini) {
+        const key = `${l.categoria}||${l.produttore}||${l.descrizione}`
+        const cur = best.get(key)
+        if (!cur || (l.prezzo_vendita - l.prezzo_acquisto) > (cur.prezzo_vendita - cur.prezzo_acquisto)) {
+          best.set(key, l)
+        }
+      }
+      listini = [...best.values()].map(l => ({ id: l.id, categoria: l.categoria, produttore: l.produttore, descrizione: l.descrizione, unita: l.unita, prezzo_vendita: l.prezzo_vendita, sconto_articolo: l.sconto_articolo, fornitore_nome: l.fornitore_nome }))
+    }
+
+    let clienteEmail = '', clienteCellulare = ''
+    {
+      const [uInfo] = await db.query('SELECT email FROM users WHERE username = ? LIMIT 1', [username]) as [{ email: string }[], unknown]
+      const userEmail = uInfo[0]?.email ?? ''
+      clienteEmail = userEmail
+      if (userEmail) {
+        const [cInfo] = await db.query('SELECT telefono FROM clienti WHERE email = ? LIMIT 1', [userEmail]) as [{ telefono: string }[], unknown]
+        clienteCellulare = cInfo[0]?.telefono ?? ''
+      }
+    }
 
     return (
       <PreventivoClient
@@ -102,6 +153,8 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         listini={listini}
         clienti={[]}
         isStaff={isStaff}
+        clienteEmail={clienteEmail}
+        clienteCellulare={clienteCellulare}
       />
     )
   } catch {

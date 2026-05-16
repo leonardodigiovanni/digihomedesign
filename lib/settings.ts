@@ -1,5 +1,4 @@
-import fs from 'fs'
-import path from 'path'
+import { getConnection } from '@/lib/db'
 
 export type Rgba = { r: number; g: number; b: number; a: number }
 
@@ -32,9 +31,7 @@ export type AppSettings = {
   bannerTesto: string
 }
 
-const SETTINGS_PATH = path.join(process.cwd(), 'data', 'settings.json')
-
-const DEFAULTS: AppSettings = {
+export const DEFAULTS: AppSettings = {
   inactivityMinutes: 30,
   countdownSeconds: 60,
   headerBg:     { r: 255, g: 255, b: 255, a: 100 },
@@ -65,19 +62,43 @@ const DEFAULTS: AppSettings = {
   },
 }
 
-export function readSettings(): AppSettings {
+async function ensureTable(db: Awaited<ReturnType<typeof getConnection>>) {
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS app_settings (
+      id   INT NOT NULL DEFAULT 1,
+      data JSON NOT NULL,
+      PRIMARY KEY (id)
+    )
+  `)
+}
+
+export async function readSettings(): Promise<AppSettings> {
+  const db = await getConnection()
   try {
-    const raw = fs.readFileSync(SETTINGS_PATH, 'utf-8')
-    return { ...DEFAULTS, ...JSON.parse(raw) }
+    await ensureTable(db)
+    const [rows] = await db.query('SELECT data FROM app_settings WHERE id = 1 LIMIT 1')
+    const row = (rows as { data: string | AppSettings }[])[0]
+    if (!row) return { ...DEFAULTS }
+    const parsed = typeof row.data === 'string' ? JSON.parse(row.data) : row.data
+    return { ...DEFAULTS, ...parsed }
   } catch {
     return { ...DEFAULTS }
+  } finally {
+    await db.end()
   }
 }
 
-export function writeSettings(settings: AppSettings): void {
-  const dir = path.dirname(SETTINGS_PATH)
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
-  const { manutenzione, ...rest } = settings
-  const ordered = { manutenzione, ...rest }
-  fs.writeFileSync(SETTINGS_PATH, JSON.stringify(ordered, null, 2), 'utf-8')
+export async function writeSettings(settings: AppSettings): Promise<void> {
+  const db = await getConnection()
+  try {
+    await ensureTable(db)
+    const { manutenzione, ...rest } = settings
+    const ordered = { manutenzione, ...rest }
+    await db.execute(
+      'INSERT INTO app_settings (id, data) VALUES (1, ?) ON DUPLICATE KEY UPDATE data = VALUES(data)',
+      [JSON.stringify(ordered)]
+    )
+  } finally {
+    await db.end()
+  }
 }

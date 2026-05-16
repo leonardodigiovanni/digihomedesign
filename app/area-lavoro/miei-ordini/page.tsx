@@ -41,7 +41,7 @@ export default async function Page() {
   const cookieStore = await cookies()
   const role     = cookieStore.get('session_role')?.value ?? ''
   const username = cookieStore.get('session_user')?.value ?? ''
-  const settings = readSettings()
+  const settings = await readSettings()
   if (!hasPageAccess(role, 30, settings)) redirect('/')
 
   const ordini = await getMieiOrdini(username)
@@ -49,7 +49,7 @@ export default async function Page() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <div>
         <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>I Miei Ordini</h2>
-        <p style={{ color: '#888', fontSize: 14, margin: '4px 0 0' }}>Riepilogo degli ordini associati al tuo account</p>
+        <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0' }}>Riepilogo degli ordini associati al tuo account</p>
       </div>
       <MieiOrdiniClient ordini={ordini} />
     </div>

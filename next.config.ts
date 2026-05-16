@@ -7,6 +7,10 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 31536000,
   },
   allowedDevOrigins: ['192.168.1.37'],
+  webpack: (config) => {
+    config.resolve.alias.canvas = false
+    return config
+  },
 };
 
 export default nextConfig;

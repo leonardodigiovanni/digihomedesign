@@ -88,7 +88,7 @@ export default async function Page() {
   return (
     <div>
       <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 6 }}>Cantieri</h2>
-      <p style={{ color: '#888', fontSize: 13, marginBottom: 24 }}>
+      <p style={{ color: '#000', fontSize: 13, marginBottom: 24 }}>
         {isStaff ? 'Tutti i cantieri — gestione completa.' : 'I tuoi cantieri attivi.'}
       </p>
       <CantieriClient cantieri={cantieri} lavori={lavori} media={media} clienti={clienti} isStaff={isStaff} />

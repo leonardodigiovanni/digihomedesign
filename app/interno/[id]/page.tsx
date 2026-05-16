@@ -17,13 +17,13 @@ export default async function PaginaInterna({
   const role = cookieStore.get('session_role')?.value ?? ''
   if (!role) redirect('/')
 
-  const settings = readSettings()
+  const settings = await readSettings()
   if (!hasPageAccess(role, page.id, settings)) redirect('/')
 
   return (
     <div>
       <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 8 }}>{page.label}</h2>
-      <p style={{ color: '#888', fontSize: 14 }}>Pagina {page.id} — contenuto in costruzione.</p>
+      <p style={{ color: '#000', fontSize: 14 }}>Pagina {page.id} — contenuto in costruzione.</p>
     </div>
   )
 }

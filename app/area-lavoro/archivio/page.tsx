@@ -39,7 +39,7 @@ async function getDocumenti(): Promise<Documento[]> {
 export default async function Page() {
   const cookieStore = await cookies()
   const role = cookieStore.get('session_role')?.value ?? ''
-  const settings = readSettings()
+  const settings = await readSettings()
   if (!hasPageAccess(role, 33, settings)) redirect('/')
 
   const documenti = await getDocumenti()
@@ -48,7 +48,7 @@ export default async function Page() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <div>
         <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Archivio</h2>
-        <p style={{ color: '#888', fontSize: 14, margin: '4px 0 0' }}>Conservazione documenti aziendali</p>
+        <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0' }}>Conservazione documenti aziendali</p>
       </div>
       <ArchivioClient documenti={documenti} role={role} />
     </div>

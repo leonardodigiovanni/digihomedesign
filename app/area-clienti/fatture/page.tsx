@@ -58,7 +58,7 @@ export default async function Page() {
   return (
     <div>
       <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 6 }}>Fatture</h2>
-      <p style={{ color: '#888', fontSize: 13, marginBottom: 24 }}>
+      <p style={{ color: '#000', fontSize: 13, marginBottom: 24 }}>
         {isStaff ? 'Tutte le fatture — gestione completa.' : 'Le fatture associate al tuo account.'}
       </p>
       <FattureClient fatture={fatture} pagamenti={pagamenti} />

@@ -64,3 +64,22 @@ export async function eliminaTemplate(_: MutResult | null, fd: FormData): Promis
     await db.end()
   }
 }
+
+export async function salvaDisegnoTemplate(_: MutResult | null, fd: FormData): Promise<MutResult> {
+  await checkAdmin()
+  const tipo = ((fd.get('tipo') as string) ?? '').trim()
+  const html = ((fd.get('html') as string) ?? '').trim()
+  if (!tipo) return { ok: false, error: 'Tipo non valido.' }
+  if (!html) return { ok: false, error: 'Il template non può essere vuoto.' }
+  const db = await getConnection()
+  try {
+    await db.execute(
+      'UPDATE preventivo_templates SET html = ? WHERE tipo = ?',
+      [html, tipo]
+    )
+    revalidatePath('/amministrazione/templates')
+    return { ok: true }
+  } finally {
+    await db.end()
+  }
+}

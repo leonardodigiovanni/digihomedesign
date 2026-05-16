@@ -150,27 +150,244 @@ function disegnoSVG(larghezza: number, altezza: number, nAnte: number, profiloMm
   return `<img src="${svgDataUri}" width="${W}" height="${H}" alt="Serramento" style="display:block;margin:0 auto;" />`
 }
 
-// ─── HTML singolo articolo ────────────────────────────────────────────────────
-function articoloHTML(a: Record<string, unknown>, idx: number): string {
-  const tipo    = String(a.tipo_prodotto ?? '')
-  const marca   = String(a.marca ?? '')
-  const modello = String(a.modello ?? '')
-  const colore  = String(a.colore ?? '')
-  const vetro   = String(a.tipo_vetro ?? '')
-  const acc     = String(a.accessori ?? '')
-  const h       = Number(a.altezza_cm)
-  const l       = Number(a.larghezza_cm)
-  const anteRaw = Number(a.n_ante)
+function disegnoSVGAbbr(abbr: string, larghezza: number, altezza: number, profiloMm = 70): string {
+  const chars = abbr.toUpperCase().replace(/[^SFAVRP]/g, '').split('')
+  if (chars.length === 0) return disegnoSVG(larghezza, altezza, 1, profiloMm)
+  const hasSopraluce = chars[0] === 'S'
+  const panelChars   = hasSopraluce ? chars.slice(1) : chars
+  if (panelChars.length === 0) return disegnoSVG(larghezza, altezza, 1, profiloMm)
+
+  const { W, H } = computeSVGDims(larghezza, altezza)
+  const PROFILE_CM = profiloMm / 10
+  const widthCm  = larghezza > 0 ? larghezza : 100
+  const heightCm = altezza   > 0 ? altezza   : 150
+
+  const padTop = 4, padRight = 4, lmm = 20, bmm = 16
+  const outerX = lmm, outerY = padTop
+  const outerW = W - lmm - padRight
+  const outerH = H - padTop - bmm
+  const pxPerCmX = outerW / widthCm, pxPerCmY = outerH / heightCm
+  const frameT_X = Math.max(4.5, PROFILE_CM * pxPerCmX)
+  const frameT_Y = Math.max(4.5, PROFILE_CM * pxPerCmY)
+  const innerX = outerX + frameT_X, innerY = outerY + frameT_Y
+  const innerW = Math.max(18, outerW - frameT_X * 2)
+  const innerH = Math.max(24, outerH - frameT_Y * 2)
+
+  const profColor = '#ffffff', lc = '#000', gf = '#cfeeff'
+  const parts: string[] = []
+
+  const MOBILE_W_CM  = 75
+  const SOPRA_REF_CM = 140
+  const FASCIA_CM    = 75
+
+  const sopraCm  = hasSopraluce ? Math.max(0, heightCm - SOPRA_REF_CM) : 0
+  const sopraPx  = Math.round((sopraCm / heightCm) * innerH)
+  const travT    = hasSopraluce ? Math.max(4, frameT_Y * 0.9) : 0
+  const panelY   = innerY + sopraPx + travT
+  const panelH   = Math.max(10, innerH - sopraPx - travT)
+  const panelHcm = heightCm - sopraCm
+
+  // sopraluce glass + traverso
+  if (hasSopraluce && sopraPx > 4) {
+    const sT  = Math.min(Math.max(2, PROFILE_CM * pxPerCmX * 0.6), innerW * 0.1)
+    const sTy = Math.min(Math.max(2, PROFILE_CM * pxPerCmY * 0.4), sopraPx * 0.3)
+    const gX  = innerX + sT, gY = innerY + sTy
+    const gW  = Math.max(2, innerW - sT * 2)
+    const gH  = Math.max(2, sopraPx - sTy - travT * 0.5)
+    parts.push(`<line x1="${gX.toFixed(1)}" y1="${gY.toFixed(1)}" x2="${innerX.toFixed(1)}" y2="${innerY.toFixed(1)}" stroke="${lc}" stroke-width="1"/>`)
+    parts.push(`<line x1="${(gX+gW).toFixed(1)}" y1="${gY.toFixed(1)}" x2="${(innerX+innerW).toFixed(1)}" y2="${innerY.toFixed(1)}" stroke="${lc}" stroke-width="1"/>`)
+    parts.push(`<rect x="${gX.toFixed(1)}" y="${gY.toFixed(1)}" width="${gW.toFixed(1)}" height="${gH.toFixed(1)}" fill="${gf}" stroke="${lc}" stroke-width="1"/>`)
+    const ty = innerY + sopraPx
+    parts.push(`<rect x="${innerX.toFixed(1)}" y="${ty.toFixed(1)}" width="${innerW.toFixed(1)}" height="${travT.toFixed(1)}" fill="${profColor}" stroke="${lc}" stroke-width="1"/>`)
+    parts.push(`<line x1="${innerX.toFixed(1)}" y1="${ty.toFixed(1)}" x2="${outerX.toFixed(1)}" y2="${ty.toFixed(1)}" stroke="${lc}" stroke-width="1"/>`)
+    parts.push(`<line x1="${(innerX+innerW).toFixed(1)}" y1="${ty.toFixed(1)}" x2="${(outerX+outerW).toFixed(1)}" y2="${ty.toFixed(1)}" stroke="${lc}" stroke-width="1"/>`)
+  }
+
+  // panel width distribution
+  const mCnt = panelChars.filter(c => 'AVRP'.includes(c)).length
+  const fCnt = panelChars.filter(c => c === 'F').length
+  const fwCm = fCnt > 0 ? Math.max(30, (widthCm - mCnt * MOBILE_W_CM) / fCnt) : 0
+  const pcms = panelChars.map(c => 'AVRP'.includes(c) ? MOBILE_W_CM : (c === 'F' ? fwCm : MOBILE_W_CM))
+  const tCm  = pcms.reduce((s, w) => s + w, 0) || widthCm
+  const ppx  = pcms.map(w => (w / tCm) * innerW)
+
+  let curX = innerX
+  for (let i = 0; i < panelChars.length; i++) {
+    const c   = panelChars[i]
+    const pw  = ppx[i]
+    const sx2 = curX + pw, sy2 = panelY + panelH
+    const isF = i === 0, isL = i === panelChars.length - 1
+    const topY = hasSopraluce ? (innerY + sopraPx) : outerY
+
+    const sT_X = Math.min(Math.max(3, PROFILE_CM * pxPerCmX), pw * 0.38)
+    const sT_Y = Math.min(Math.max(3, PROFILE_CM * pxPerCmY), panelH * 0.38)
+    const gX = curX + sT_X, gY = panelY + sT_Y
+    const gW = Math.max(2, pw - sT_X * 2), gH = Math.max(2, panelH - sT_Y * 2)
+
+    parts.push(`<rect x="${curX.toFixed(1)}" y="${panelY.toFixed(1)}" width="${pw.toFixed(1)}" height="${panelH.toFixed(1)}" fill="${profColor}" stroke="${lc}" stroke-width="1"/>`)
+    parts.push(`<line x1="${gX.toFixed(1)}" y1="${gY.toFixed(1)}" x2="${curX.toFixed(1)}" y2="${panelY.toFixed(1)}" stroke="${lc}" stroke-width="1"/>`)
+    parts.push(`<line x1="${(gX+gW).toFixed(1)}" y1="${gY.toFixed(1)}" x2="${sx2.toFixed(1)}" y2="${panelY.toFixed(1)}" stroke="${lc}" stroke-width="1"/>`)
+    parts.push(`<line x1="${gX.toFixed(1)}" y1="${(gY+gH).toFixed(1)}" x2="${curX.toFixed(1)}" y2="${sy2.toFixed(1)}" stroke="${lc}" stroke-width="1"/>`)
+    parts.push(`<line x1="${(gX+gW).toFixed(1)}" y1="${(gY+gH).toFixed(1)}" x2="${sx2.toFixed(1)}" y2="${sy2.toFixed(1)}" stroke="${lc}" stroke-width="1"/>`)
+    if (isF) {
+      parts.push(`<line x1="${curX.toFixed(1)}" y1="${panelY.toFixed(1)}" x2="${outerX.toFixed(1)}" y2="${topY.toFixed(1)}" stroke="${lc}" stroke-width="1"/>`)
+      parts.push(`<line x1="${curX.toFixed(1)}" y1="${sy2.toFixed(1)}" x2="${outerX.toFixed(1)}" y2="${(outerY+outerH).toFixed(1)}" stroke="${lc}" stroke-width="1"/>`)
+    }
+    if (isL) {
+      parts.push(`<line x1="${sx2.toFixed(1)}" y1="${panelY.toFixed(1)}" x2="${(outerX+outerW).toFixed(1)}" y2="${topY.toFixed(1)}" stroke="${lc}" stroke-width="1"/>`)
+      parts.push(`<line x1="${sx2.toFixed(1)}" y1="${sy2.toFixed(1)}" x2="${(outerX+outerW).toFixed(1)}" y2="${(outerY+outerH).toFixed(1)}" stroke="${lc}" stroke-width="1"/>`)
+    }
+
+    if (c === 'F') {
+      parts.push(`<rect x="${gX.toFixed(1)}" y="${gY.toFixed(1)}" width="${gW.toFixed(1)}" height="${gH.toFixed(1)}" fill="${gf}" stroke="${lc}" stroke-width="1"/>`)
+    } else if (c === 'A' || c === 'R' || c === 'P') {
+      if (c === 'P' && panelHcm > FASCIA_CM + 20) {
+        const fFrac  = 1 - FASCIA_CM / panelHcm
+        const fasciaY = panelY + Math.round(fFrac * panelH)
+        const fT      = Math.max(3, sT_Y * 0.6)
+        const gHup    = Math.max(0, fasciaY - fT/2 - gY)
+        const loGlY   = fasciaY + fT/2
+        const gHlo    = Math.max(0, sy2 - sT_Y - loGlY)
+        if (gHup > 0) parts.push(`<rect x="${gX.toFixed(1)}" y="${gY.toFixed(1)}" width="${gW.toFixed(1)}" height="${gHup.toFixed(1)}" fill="${gf}" stroke="${lc}" stroke-width="1"/>`)
+        parts.push(`<rect x="${curX.toFixed(1)}" y="${(fasciaY-fT/2).toFixed(1)}" width="${pw.toFixed(1)}" height="${fT.toFixed(1)}" fill="${profColor}" stroke="${lc}" stroke-width="1"/>`)
+        if (gHlo > 0) parts.push(`<rect x="${gX.toFixed(1)}" y="${loGlY.toFixed(1)}" width="${gW.toFixed(1)}" height="${gHlo.toFixed(1)}" fill="${gf}" stroke="${lc}" stroke-width="1"/>`)
+      } else {
+        parts.push(`<rect x="${gX.toFixed(1)}" y="${gY.toFixed(1)}" width="${gW.toFixed(1)}" height="${gH.toFixed(1)}" fill="${gf}" stroke="${lc}" stroke-width="1"/>`)
+      }
+      // hinges left
+      const hpW = Math.max(1.8, 5*pxPerCmX), hpH = Math.max(2.2, 5*pxPerCmY)
+      const hx  = curX - hpW/2
+      const hy1 = panelY + panelH*0.27 - hpH, hy2 = panelY + panelH*0.73 - hpH
+      parts.push(`<rect x="${hx.toFixed(1)}" y="${hy1.toFixed(1)}" width="${hpW.toFixed(1)}" height="${hpH.toFixed(1)}" fill="#fff" stroke="${lc}" stroke-width="1"/>`)
+      parts.push(`<rect x="${hx.toFixed(1)}" y="${(hy1+hpH).toFixed(1)}" width="${hpW.toFixed(1)}" height="${hpH.toFixed(1)}" fill="#fff" stroke="${lc}" stroke-width="1"/>`)
+      parts.push(`<rect x="${hx.toFixed(1)}" y="${hy2.toFixed(1)}" width="${hpW.toFixed(1)}" height="${hpH.toFixed(1)}" fill="#fff" stroke="${lc}" stroke-width="1"/>`)
+      parts.push(`<rect x="${hx.toFixed(1)}" y="${(hy2+hpH).toFixed(1)}" width="${hpW.toFixed(1)}" height="${hpH.toFixed(1)}" fill="#fff" stroke="${lc}" stroke-width="1"/>`)
+      // handle right
+      const hdW = Math.min(Math.max(1.4, 3*pxPerCmX), Math.max(1.2, sT_X - 1))
+      const hdH = Math.min(Math.max(4, 12*pxPerCmY), Math.max(6, panelH - 4))
+      const hdX = sx2 - sT_X + 0.6, hdY = panelY + (panelH - hdH)/2
+      parts.push(`<rect x="${hdX.toFixed(1)}" y="${hdY.toFixed(1)}" width="${hdW.toFixed(1)}" height="${hdH.toFixed(1)}" fill="#fff" stroke="${lc}" stroke-width="1"/>`)
+      if (c === 'R') {
+        const mx = curX + pw/2, bY = gY + gH*0.75, tY = gY + gH*0.25, hw = pw*0.12
+        parts.push(`<line x1="${mx.toFixed(1)}" y1="${bY.toFixed(1)}" x2="${mx.toFixed(1)}" y2="${tY.toFixed(1)}" stroke="${lc}" stroke-width="1.5"/>`)
+        parts.push(`<line x1="${(mx-hw).toFixed(1)}" y1="${(tY+hw).toFixed(1)}" x2="${mx.toFixed(1)}" y2="${tY.toFixed(1)}" stroke="${lc}" stroke-width="1.5"/>`)
+        parts.push(`<line x1="${(mx+hw).toFixed(1)}" y1="${(tY+hw).toFixed(1)}" x2="${mx.toFixed(1)}" y2="${tY.toFixed(1)}" stroke="${lc}" stroke-width="1.5"/>`)
+      }
+    } else if (c === 'V') {
+      parts.push(`<rect x="${gX.toFixed(1)}" y="${gY.toFixed(1)}" width="${gW.toFixed(1)}" height="${gH.toFixed(1)}" fill="${gf}" stroke="${lc}" stroke-width="1"/>`)
+      const hpW2 = Math.max(1.8, 5*pxPerCmX), hpH2 = Math.max(2.2, 5*pxPerCmY)
+      const hxL  = curX + pw*0.25 - hpW2/2, hxR = curX + pw*0.75 - hpW2/2
+      const hyB  = sy2 - hpH2
+      parts.push(`<rect x="${hxL.toFixed(1)}" y="${hyB.toFixed(1)}" width="${hpW2.toFixed(1)}" height="${hpH2.toFixed(1)}" fill="#fff" stroke="${lc}" stroke-width="1"/>`)
+      parts.push(`<rect x="${hxR.toFixed(1)}" y="${hyB.toFixed(1)}" width="${hpW2.toFixed(1)}" height="${hpH2.toFixed(1)}" fill="#fff" stroke="${lc}" stroke-width="1"/>`)
+      const hdW3 = Math.max(4, pw*0.2), hdH3 = Math.max(2, 3*pxPerCmY)
+      const hdX3 = curX + (pw - hdW3)/2, hdY3 = panelY + sT_Y*0.3
+      parts.push(`<rect x="${hdX3.toFixed(1)}" y="${hdY3.toFixed(1)}" width="${hdW3.toFixed(1)}" height="${hdH3.toFixed(1)}" fill="#fff" stroke="${lc}" stroke-width="1"/>`)
+    }
+    curX += pw
+  }
+
+  const svgMarkupA = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="display:block;margin:0 auto;">
+  <rect x="${outerX}" y="${outerY}" width="${outerW}" height="${outerH}" fill="${profColor}" stroke="${lc}" stroke-width="1"/>
+  <line x1="${(outerX+frameT_X).toFixed(1)}" y1="${(outerY+frameT_Y).toFixed(1)}" x2="${(outerX+outerW-frameT_X).toFixed(1)}" y2="${(outerY+frameT_Y).toFixed(1)}" stroke="${lc}" stroke-width="1"/>
+  <line x1="${(outerX+frameT_X).toFixed(1)}" y1="${(outerY+outerH-frameT_Y).toFixed(1)}" x2="${(outerX+outerW-frameT_X).toFixed(1)}" y2="${(outerY+outerH-frameT_Y).toFixed(1)}" stroke="${lc}" stroke-width="1"/>
+  <line x1="${(outerX+frameT_X).toFixed(1)}" y1="${(outerY+frameT_Y).toFixed(1)}" x2="${(outerX+frameT_X).toFixed(1)}" y2="${(outerY+outerH-frameT_Y).toFixed(1)}" stroke="${lc}" stroke-width="1"/>
+  <line x1="${(outerX+outerW-frameT_X).toFixed(1)}" y1="${(outerY+frameT_Y).toFixed(1)}" x2="${(outerX+outerW-frameT_X).toFixed(1)}" y2="${(outerY+outerH-frameT_Y).toFixed(1)}" stroke="${lc}" stroke-width="1"/>
+  ${parts.join('\n  ')}
+  ${larghezza > 0 ? `<text x="${(outerX+outerW/2).toFixed(1)}" y="${(outerY+outerH+12).toFixed(1)}" text-anchor="middle" font-size="9" fill="${lc}" font-family="Arial,sans-serif">${larghezza} cm</text>` : ''}
+  ${altezza > 0 ? `<text x="${(outerX-10).toFixed(1)}" y="${(outerY+outerH/2).toFixed(1)}" text-anchor="middle" font-size="9" fill="${lc}" font-family="Arial,sans-serif" transform="rotate(-90,${(outerX-10).toFixed(1)},${(outerY+outerH/2).toFixed(1)})">${altezza} cm</text>` : ''}
+</svg>`
+  const svgDataUriA = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svgMarkupA)}`
+  return `<img src="${svgDataUriA}" width="${W}" height="${H}" alt="Serramento" style="display:block;margin:0 auto;" />`
+}
+
+// ─── HTML sezione caratteristiche figlie ─────────────────────────────────────
+function caratteristicheHTML(children: Record<string, unknown>[], parentPrezzo: number, parentIdx: number, prezzoHTML: string): string {
+  let totaleBlocco = parentPrezzo
+  const righeCaratt = children.map(c => {
+    const tipo    = String(c.tipo_prodotto ?? '').trim()
+    const marca   = String(c.marca ?? '').trim()
+    const modello = String(c.modello ?? '').trim()
+    const label   = [tipo, [marca, modello].filter(Boolean).join(' ')].filter(Boolean).join(': ')
+    const contrib = Number(c.prezzo_totale ?? 0)
+    totaleBlocco += contrib
+    const fotoRaw = String(c.foto_url ?? '').trim()
+    const fotoUrl = fotoRaw
+      ? (fotoRaw.startsWith('http://') || fotoRaw.startsWith('https://') || fotoRaw.startsWith('/')
+          ? fotoRaw : `/${fotoRaw.replace(/^\/+/, '')}`)
+      : ''
+    const fotoAttr  = fotoUrl.replace(/"/g, '%22')
+    const sign      = contrib >= 0 ? '+' : '−'
+    const absAmt    = Math.abs(contrib).toFixed(2)
+    const contribColor = '#1a3a5c'
+    return `<div style="display:flex;align-items:center;gap:8px;padding:3px 0;border-bottom:1px solid #ececec;">
+      <div style="width:48px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+        ${fotoUrl
+          ? `<img src="${fotoAttr}" alt="" style="max-width:48px;max-height:36px;object-fit:contain;display:block;"/>`
+          : `<div style="width:48px;height:36px;background:#ececec;border-radius:2px;"></div>`}
+      </div>
+      <div style="flex:1;font-size:10.5px;color:#333;line-height:1.4;">${label || 'Caratteristica'}</div>
+      <div style="font-size:10.5px;font-weight:bold;color:${contribColor};white-space:nowrap;">${sign}€ ${absAmt}</div>
+    </div>`
+  }).join('\n')
+
+  const caratHeader = children.length > 0
+    ? `<div style="font-size:9px;font-weight:bold;color:#999;text-transform:uppercase;letter-spacing:.05em;margin-top:6px;margin-bottom:4px;">Caratteristiche incluse</div>`
+    : ''
+
+  return `<div style="border-top:1px solid #d0d0d0;background:#f8fafc;padding:6px 12px 8px;">
+  <div style="display:flex;align-items:center;gap:8px;padding:3px 0;border-bottom:1px solid #ececec;">
+    <div style="flex:1;font-size:10.5px;color:#333;line-height:1.4;">Subtotale indicativo</div>
+    <div style="font-size:10.5px;white-space:nowrap;text-align:right;">${prezzoHTML}</div>
+  </div>
+  ${caratHeader}
+  ${righeCaratt}
+  <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:bold;color:#1a3a5c;border-top:1px solid #c8d4e8;padding-top:4px;margin-top:4px;">
+    <span>Totale Articolo #${parentIdx + 1}:</span><span>€ ${totaleBlocco.toFixed(2)}</span>
+  </div>
+</div>`
+}
+
+// ─── HTML blocco articolo principale + caratteristiche figlie ─────────────────
+function articoloBlockHTML(parent: Record<string, unknown>, children: Record<string, unknown>[], idx: number): string {
+  const tipo    = String(parent.tipo_prodotto ?? '')
+  const marca   = String(parent.marca ?? '')
+  const modello = String(parent.modello ?? '')
+  const colore  = String(parent.colore ?? '')
+  const vetro   = String(parent.tipo_vetro ?? '')
+  const acc     = String(parent.accessori ?? '')
+  const h       = Number(parent.altezza_cm)
+  const l       = Number(parent.larghezza_cm)
+  const anteRaw = Number(parent.n_ante)
   const ante    = anteRaw >= 2 ? anteRaw : 2
-  const qtà     = Number(a.quantita)
-  const prezzo  = Number(a.prezzo_totale)
-  const fotoRaw = String(a.foto_url ?? '').trim()
+  const qtà     = Number(parent.quantita)
+  const prezzo  = Number(parent.prezzo_totale)
+  const unita   = String(parent.unita ?? 'pz')
+  const pb      = Number(parent.prezzo_base ?? 0)
+  const scontoArt = Number(parent.sconto_articolo_pct ?? 0)
+  const fotoRaw = String(parent.foto_url ?? '').trim()
   const fotoUrl = fotoRaw
     ? (fotoRaw.startsWith('http://') || fotoRaw.startsWith('https://') || fotoRaw.startsWith('/')
         ? fotoRaw
         : `/${fotoRaw.replace(/^\/+/, '')}`)
     : ''
   const fotoAttr = fotoUrl.replace(/"/g, '%22')
+  const abbr = String(parent.abbr ?? '').trim()
+
+  let prezzoBase = 0
+  if (unita === 'm²')      prezzoBase = Math.round(pb * (h/100) * (l/100) * qtà * 100) / 100
+  else if (unita === 'ml') prezzoBase = Math.round(pb * (l/100) * qtà * 100) / 100
+  else                     prezzoBase = Math.round(pb * qtà * 100) / 100
+
+  const scontoLabel = scontoArt < 0
+    ? `Magg. +${Math.abs(scontoArt)}%`
+    : `Promo −${scontoArt}%`
+  const scontoColor = scontoArt < 0 ? '#1565c0' : '#e65100'
+  const prezzoBaseHTML = scontoArt !== 0 && prezzoBase > 0
+    ? `<span style="color:#aaa;text-decoration:line-through;font-size:10.5px;font-weight:normal;">€ ${prezzoBase.toFixed(2)}</span>
+       <span style="color:${scontoColor};font-size:10.5px;font-weight:normal;margin-left:4px;">${scontoLabel}</span>
+       <span style="display:block;font-size:10.5px;font-weight:bold;color:#1a3a5c;">€ ${prezzo > 0 ? prezzo.toFixed(2) : '—'}</span>`
+    : `<span style="font-size:10.5px;font-weight:bold;color:#1a3a5c;">€ ${prezzo > 0 ? prezzo.toFixed(2) : '—'}</span>`
 
   const righe: string[] = []
   if (marca || modello) righe.push(`<span style="color:#555;">Profilo:</span> ${[marca, modello].filter(Boolean).join(' — ')}`)
@@ -188,9 +405,6 @@ function articoloHTML(a: Record<string, unknown>, idx: number): string {
   <div style="display:flex;">
     <div style="flex:1;padding:8px 12px;font-size:11.5px;line-height:1.75;">
       ${righe.join('<br/>')}
-      <div style="margin-top:6px;font-size:13px;font-weight:bold;color:#1a3a5c;">
-        Prezzo: € ${prezzo > 0 ? prezzo.toFixed(2) : '—'}
-      </div>
     </div>
     <div style="width:156px;border-left:1px solid #e0e0e0;padding:6px;display:flex;align-items:center;justify-content:center;background:#fcfcfc;">
       ${fotoUrl
@@ -198,9 +412,10 @@ function articoloHTML(a: Record<string, unknown>, idx: number): string {
         : `<div style="font-size:10px;color:#b0b0b0;text-align:center;">Nessuna immagine<br/>scheda tecnica</div>`}
     </div>
     <div style="width:170px;border-left:1px solid #e0e0e0;padding:6px;display:flex;align-items:center;justify-content:center;background:#fafafa;">
-      ${disegnoSVG(l, h, ante, Number(a.profilo_mm) > 0 ? Number(a.profilo_mm) : 70)}
+      ${abbr ? disegnoSVGAbbr(abbr, l, h, Number(parent.profilo_mm) > 0 ? Number(parent.profilo_mm) : 70) : disegnoSVG(l, h, ante, Number(parent.profilo_mm) > 0 ? Number(parent.profilo_mm) : 70)}
     </div>
   </div>
+  ${caratteristicheHTML(children, prezzo, idx, prezzoBaseHTML)}
 </div>`
 }
 
@@ -224,13 +439,23 @@ function estimaAltezzaArticolo(a: Record<string, unknown>): number {
   return headerBar + cardBody + 10    // + margin-bottom
 }
 
+// ─── Stima altezza blocco (articolo + caratteristiche) ────────────────────────
+function estimaAltezzaBlock(a: Record<string, unknown>, children: Record<string, unknown>[]): number {
+  const parentH = estimaAltezzaArticolo(a)
+  if (children.length === 0) return parentH
+  const n = children.length
+  // section header ~20px, each child row ~42px, breakdown (n+2 lines × 14px) + spacing ~16px
+  const caratH = 20 + n * 42 + (n + 2) * 14 + 16
+  return parentH + caratH
+}
+
 // ─── HTML intestazione completa (pagina 1) ────────────────────────────────────
-function headerFullHTML(data: string, numero: string, nome: string, indirizzo: string): string {
+function headerFullHTML(data: string, numero: string, nome: string, indirizzo: string, stato = 'bozza'): string {
   return `
 <table style="width:100%;margin-bottom:14px;border-collapse:collapse;">
   <tr>
     <td style="vertical-align:top;width:50%;">
-      <img src="/images/dg-t.png" alt="Logo" style="height:46px;margin-bottom:7px;display:block;"/>
+      <img src="/images/volantino/dg-t.png" alt="Logo" style="height:46px;margin-bottom:7px;display:block;"/>
       <div style="font-size:15px;font-weight:bold;color:#1a3a5c;">Digi Home Design S.r.l.</div>
       <div style="font-size:10px;color:#555;line-height:1.55;margin-top:3px;">
         Via Roberto Antiochia 3, 90121 Palermo (PA)<br/>
@@ -239,7 +464,7 @@ function headerFullHTML(data: string, numero: string, nome: string, indirizzo: s
       </div>
     </td>
     <td style="vertical-align:top;text-align:right;width:50%;">
-      <img src="/images/nome_tr.png" alt="Logo 2" style="height:46px;"/>
+      <img src="/images/volantino/nome_tr.png" alt="Logo 2" style="height:46px;"/>
     </td>
   </tr>
 </table>
@@ -259,7 +484,7 @@ function headerFullHTML(data: string, numero: string, nome: string, indirizzo: s
     </td>
   </tr>
 </table>
-<div style="font-size:12px;margin-bottom:6px;"><strong>Oggetto:</strong> Bozza di preventivo</div>
+<div style="font-size:12px;margin-bottom:6px;"><strong>Oggetto:</strong> ${stato === 'bozza' || stato === 'richiesto' ? 'Bozza di preventivo' : 'Preventivo'}</div>
 <div style="font-size:12px;margin-bottom:14px;line-height:1.6;">Gentile Cliente,<br/>Vi rimettiamo la nostra offerta escluso IVA di:</div>`
 }
 
@@ -267,7 +492,7 @@ function headerFullHTML(data: string, numero: string, nome: string, indirizzo: s
 function headerCompactHTML(data: string, numero: string): string {
   return `
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-  <img src="/images/dg-t.png" alt="Logo" style="height:32px;display:block;"/>
+  <img src="/images/volantino/dg-t.png" alt="Logo" style="height:32px;display:block;"/>
   <div style="font-size:10px;color:#555;text-align:right;line-height:1.5;">
     <strong style="color:#1a3a5c;">Digi Home Design S.r.l.</strong> &nbsp;|&nbsp;
     Preventivo N° ${numero} — ${data} &nbsp;|&nbsp; <em>continua</em>
@@ -297,52 +522,62 @@ const H_HEADER_N  = 58   // intestazione compatta
 const H_TOTAL     = 56   // blocco totale
 const H_NOTE_BASE = 48   // note (minimo)
 
-type Slice = {
-  articles: Array<{ a: Record<string, unknown>; idx: number }>
-  isFirst:  boolean
-  isLast:   boolean
-  pageNum:  number
-  total:    number   // totalPages (filled after all slices known)
-}
+type Block = { parent: Record<string, unknown>; children: Record<string, unknown>[]; idx: number }
 
 function buildPages(
   artRows: Record<string, unknown>[],
   nome: string, indirizzo: string,
   data: string, numero: string,
   totale: string, noteBlock: string,
+  scontoClientePct = 0,
+  stato = 'bozza',
 ): string[] {
-  const tagged = artRows.map((a, i) => ({ a, idx: i }))
+  // Group flat artRows into parent+children blocks
+  const roots = artRows.filter(a => a.parent_id == null)
+  const childrenMap = new Map<number, Record<string, unknown>[]>()
+  for (const c of artRows) {
+    if (c.parent_id == null) continue
+    const pid = Number(c.parent_id)
+    if (!childrenMap.has(pid)) childrenMap.set(pid, [])
+    childrenMap.get(pid)!.push(c)
+  }
+  const blocks: Block[] = roots.map((parent, i) => ({
+    parent,
+    children: childrenMap.get(Number(parent.id)) ?? [],
+    idx: i,
+  }))
+
   const hasNote = noteBlock.length > 0
   const extraH  = H_TOTAL + (hasNote ? H_NOTE_BASE : 0)
 
-  const buckets: Array<typeof tagged> = []
-  let remaining = [...tagged]
+  const buckets: Block[][] = []
+  let remaining = [...blocks]
 
   while (remaining.length > 0) {
-    const isFirst  = buckets.length === 0
-    const headerH  = isFirst ? H_HEADER1 : H_HEADER_N
+    const isFirst   = buckets.length === 0
+    const headerH   = isFirst ? H_HEADER1 : H_HEADER_N
     const available = AVAIL - headerH
 
     let count = 0, used = 0
-    for (const entry of remaining) {
-      const artH = estimaAltezzaArticolo(entry.a)
-      // Se questo è l'ultimo articolo rimasto, prenota spazio per il blocco finale
+    for (const block of remaining) {
+      const blockH = estimaAltezzaBlock(block.parent, block.children)
+      // Se questo è l'ultimo blocco rimasto, prenota spazio per il blocco finale
       const reserve = (count + 1 >= remaining.length) ? extraH : 0
-      if (used + artH + reserve > available) break
-      used += artH
+      if (used + blockH + reserve > available) break
+      used += blockH
       count++
     }
-    if (count === 0) count = 1  // almeno 1 articolo per pagina
+    if (count === 0) count = 1  // almeno 1 blocco per pagina
 
     buckets.push(remaining.splice(0, count))
   }
 
   // Se non c'è spazio per totale+note nell'ultima pagina, aggiunge pagina vuota
   if (buckets.length > 0) {
-    const last    = buckets[buckets.length - 1]
-    const hdr     = buckets.length === 1 ? H_HEADER1 : H_HEADER_N
-    let used      = hdr
-    for (const e of last) used += estimaAltezzaArticolo(e.a)
+    const last = buckets[buckets.length - 1]
+    const hdr  = buckets.length === 1 ? H_HEADER1 : H_HEADER_N
+    let used   = hdr
+    for (const block of last) used += estimaAltezzaBlock(block.parent, block.children)
     if (used + extraH > AVAIL) buckets.push([])
   }
 
@@ -350,23 +585,37 @@ function buildPages(
 
   const totalPages = buckets.length
 
-  return buckets.map((arts, i) => {
+  return buckets.map((blockList, i) => {
     const isFirst = i === 0
     const isLast  = i === buckets.length - 1
 
     const header = isFirst
-      ? headerFullHTML(data, numero, nome, indirizzo)
+      ? headerFullHTML(data, numero, nome, indirizzo, stato)
       : headerCompactHTML(data, numero)
 
-    const articlesHTML = arts.map(({ a, idx }) => articoloHTML(a, idx)).join('\n')
+    const articlesHTML = blockList.map(b => articoloBlockHTML(b.parent, b.children, b.idx)).join('\n')
 
-    const bottom = isLast ? `
-      <div style="margin-top:12px;text-align:right;padding:8px 14px;background:#f0f4fa;border-radius:4px;">
+    const totalBlock = (() => {
+      if (scontoClientePct > 0) {
+        const subtotale = artRows.reduce((s, a) => s + Number(a.prezzo_totale ?? 0), 0)
+        const scontoAmt = (subtotale * scontoClientePct / 100).toFixed(2)
+        return `<div style="margin-top:12px;text-align:right;padding:8px 14px;background:#f0f4fa;border-radius:4px;">
+          <div style="font-size:10px;color:#555;margin-bottom:3px;">Subtotale (escluso IVA)</div>
+          <div style="font-size:15px;font-weight:bold;color:#1a3a5c;margin-bottom:4px;">€ ${subtotale.toFixed(2)}</div>
+          <div style="font-size:10px;color:#e65100;margin-bottom:3px;">${scontoClientePct === 5 ? 'Sconto di benvenuto (5%)' : `Sconto riservato al cliente (${scontoClientePct}%)`}</div>
+          <div style="font-size:15px;font-weight:bold;color:#e65100;margin-bottom:6px;">− € ${scontoAmt}</div>
+          <div style="border-top:1px solid #c8d4e8;padding-top:6px;">
+            <div style="font-size:10px;color:#555;margin-bottom:2px;">Totale offerta (escluso IVA)</div>
+            <div style="font-size:20px;font-weight:bold;color:#1a3a5c;">€ ${totale}</div>
+          </div>
+        </div>`
+      }
+      return `<div style="margin-top:12px;text-align:right;padding:8px 14px;background:#f0f4fa;border-radius:4px;">
         <div style="font-size:10px;color:#555;margin-bottom:2px;">Totale offerta (escluso IVA)</div>
         <div style="font-size:20px;font-weight:bold;color:#1a3a5c;">€ ${totale}</div>
-      </div>
-      ${noteBlock}
-    ` : ''
+      </div>`
+    })()
+    const bottom = isLast ? `${totalBlock}${noteBlock}` : ''
 
     return (
       `<div style="font-family:Arial,Helvetica,sans-serif;width:794px;height:${PAGE_H}px;` +
@@ -408,7 +657,7 @@ async function loadData(prevId: number, username: string, isStaff: boolean): Pro
     }
 
     const [artRows] = await db.query(
-      `SELECT pa.*, l.profilo_frontale_mm AS profilo_mm, l.foto_url AS foto_url
+      `SELECT pa.*, l.profilo_frontale_mm AS profilo_mm, l.foto_url AS foto_url, l.abbr AS abbr
        FROM preventivo_articoli pa
        LEFT JOIN listini l ON pa.listino_id = l.id
        WHERE pa.preventivo_id = ?
@@ -420,11 +669,13 @@ async function loadData(prevId: number, username: string, isStaff: boolean): Pro
     const data    = isNaN(dataRaw.getTime()) ? String(p.data) : dataRaw.toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' })
     const numero  = String(p.numero || `#${p.id}`)
     const totale  = Number(p.importo).toFixed(2)
+    const scontoClientePct = Number(p.sconto_cliente_pct ?? 0)
+    const stato   = String(p.stato ?? 'bozza')
     const noteBlock = p.note
       ? `<div style="margin-top:10px;border-top:1px solid #eee;padding-top:8px;font-size:10px;color:#666;line-height:1.6;"><strong>Note:</strong><br/>${String(p.note)}</div>`
       : ''
 
-    return buildPages(artRows as Record<string, unknown>[], clienteNome, clienteIndirizzo, data, numero, totale, noteBlock)
+    return buildPages(artRows as Record<string, unknown>[], clienteNome, clienteIndirizzo, data, numero, totale, noteBlock, scontoClientePct, stato)
   } finally {
     await db.end()
   }

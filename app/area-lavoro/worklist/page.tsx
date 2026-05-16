@@ -94,7 +94,7 @@ export default async function Page() {
   const username = cookieStore.get('session_user')?.value ?? ''
 
   if (!role) redirect('/')
-  const settings = readSettings()
+  const settings = await readSettings()
   if (!hasPageAccess(role, 27, settings)) redirect('/')
 
   const { compiti, utenti, isGestore } = await getData(role, username)
@@ -102,7 +102,7 @@ export default async function Page() {
   return (
     <div>
       <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 6 }}>Worklist</h2>
-      <p style={{ color: '#888', fontSize: 13, marginBottom: 24 }}>
+      <p style={{ color: '#000', fontSize: 13, marginBottom: 24 }}>
         {isGestore
           ? 'Tutti i compiti — crea, assegna, monitora.'
           : 'I compiti assegnati a te.'}

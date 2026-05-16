@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import type { Rgba, BgMode } from '@/lib/settings'
-import { rgbGradient, rgbGradientInv, rgbBrushedBackground, rgbBrushedBackgroundInv, rgbBoxShadow, rgbBorderColor, rgbTextColors } from '@/lib/bg-utils'
+import { rgbGradient, rgbGradientInv, rgbBrushedBackground, rgbBrushedBackgroundInv, rgbBrushedBackgroundDark, rgbBrushedBackgroundDarkInv, rgbBoxShadow, rgbBorderColor, rgbTextColors } from '@/lib/bg-utils'
 
 interface FooterProps {
   footerBg?: Rgba
@@ -79,8 +79,10 @@ function getFooterBgStyle(mode: BgMode, bg: Rgba): React.CSSProperties {
   if (mode === 'rgb') return { background: `rgba(${bg.r},${bg.g},${bg.b},${bg.a / 100})` }
   if (mode === 'rgb_a' || mode === 'rgb_b')         return { background: rgbGradient(bg.r, bg.g, bg.b),            boxShadow: rgbBoxShadow(bg.r, bg.g, bg.b) }
   if (mode === 'rgb_a_inv' || mode === 'rgb_b_inv') return { background: rgbGradientInv(bg.r, bg.g, bg.b),         boxShadow: rgbBoxShadow(bg.r, bg.g, bg.b) }
-  if (mode === 'rgb_c' || mode === 'rgb_d')         return { background: rgbBrushedBackground(bg.r, bg.g, bg.b),    boxShadow: rgbBoxShadow(bg.r, bg.g, bg.b) }
-  if (mode === 'rgb_c_inv' || mode === 'rgb_d_inv') return { background: rgbBrushedBackgroundInv(bg.r, bg.g, bg.b), boxShadow: rgbBoxShadow(bg.r, bg.g, bg.b) }
+  if (mode === 'rgb_c')     return { background: rgbBrushedBackground(bg.r, bg.g, bg.b),        boxShadow: rgbBoxShadow(bg.r, bg.g, bg.b) }
+  if (mode === 'rgb_d')     return { background: rgbBrushedBackgroundDark(bg.r, bg.g, bg.b),    boxShadow: rgbBoxShadow(bg.r, bg.g, bg.b) }
+  if (mode === 'rgb_c_inv') return { background: rgbBrushedBackgroundInv(bg.r, bg.g, bg.b),     boxShadow: rgbBoxShadow(bg.r, bg.g, bg.b) }
+  if (mode === 'rgb_d_inv') return { background: rgbBrushedBackgroundDarkInv(bg.r, bg.g, bg.b), boxShadow: rgbBoxShadow(bg.r, bg.g, bg.b) }
   return {}
 }
 
@@ -151,7 +153,7 @@ const socials = [
 
 const infoRows = [
   { label: 'Azienda',      value: 'DIGI Home Design SRL' },
-  { label: 'Sede legale',  value: 'Via Roberto Antiochia 3, 90121 Palermo (PA)' },
+  { label: 'Sede legale',  value: 'Palermo (PA)' },
   { label: 'P.IVA',        value: '07407080824' },
   { label: 'Email',        value: 'info@digi-home-design.com' },
   { label: 'PEC',          value: 'digi_home_design_srl@namirialpec.it' },
@@ -188,59 +190,46 @@ export default function Footer({
       {shimmerClass && <div className={shimmerClass} />}
 
       <div style={{ position: 'relative', zIndex: 1 }}>
-        {/* Info + Social side by side, si incolonnano su schermi stretti */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 20, flexWrap: 'wrap', marginBottom: 16 }}>
-          {/* Dati aziendali */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            {infoRows.map(({ label, value }) => (
-              <div key={label} style={{ fontSize: 13, color: tc.value, lineHeight: 1.5 }}>
-                <span style={{ fontWeight: 600, color: tc.label }}>{label}:</span> {value}
-              </div>
-            ))}
-          </div>
-
-          {/* Icone social */}
-          <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', marginLeft: 'auto' }}>
-            {socials.map(({ label, href, icon }) => href ? (
-              <a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={label}
-                title={label}
-                className="footer-social-icon"
-                style={{ display: 'flex', alignItems: 'center' }}
-              >
-                {icon}
-              </a>
-            ) : (
-              <span
-                key={label}
-                role="img"
-                aria-label={label}
-                title={label}
-                className="footer-social-icon"
-                style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
-              >
-                {icon}
-              </span>
-            ))}
-          </div>
+        {/* Dati aziendali */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 16 }}>
+          {infoRows.map(({ label, value }) => (
+            <div key={label} className="testo-articoli" style={{ lineHeight: 1.5 }}>
+              <span>{label}:</span> {value}
+            </div>
+          ))}
         </div>
 
-        {/* Separatore */}
-        <div style={{ borderTop: `1px solid ${tc.sep}` }} />
       </div>
     </footer>
 
+    {/* Social icons — tra footer e subfooter */}
+    <div
+      style={{
+        background:
+          'repeating-linear-gradient(135deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 6px),' +
+          'linear-gradient(180deg, #1a1a1a 0%, #080808 40%, #111 60%, #080808 80%, #1a1a1a 100%)',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: 28,
+        flexWrap: 'wrap',
+        padding: '14px 24px',
+      }}
+    >
+      {socials.map(({ label, icon }) => (
+        <a key={label} href="#" aria-label={label} title={label} style={{ display: 'flex', alignItems: 'center' }}>
+          {icon}
+        </a>
+      ))}
+    </div>
+
     {/* Ultima riga nera */}
     <div className="subfooter-bar" style={{ background: '#000', padding: '10px 24px' }}>
-      <p style={{ textAlign: 'center', fontSize: 13, color: '#aaa', margin: 0 }}>
+      <p className="testo-indice" style={{ textAlign: 'center', margin: 0 }}>
         © 2026  -  DIGI Home Design S.R.L.
       </p>
-      <Image src="/images/dg-t.png" alt="logo" width={57} height={38} id="subfooter-logo" style={{ display: 'block' }} />
-      <p style={{ textAlign: 'center', fontSize: 13, color: '#aaa', margin: 0 }}>
+      <Image src="/images/footer/oooooo.png" alt="logo" width={34} height={22} id="subfooter-logo" unoptimized style={{ display: 'block' }} />
+      <p className="testo-indice" style={{ textAlign: 'center', margin: 0 }}>
         Tutti i diritti sono riservati all&apos;autore
       </p>
     </div>

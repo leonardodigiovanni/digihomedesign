@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -29,8 +29,11 @@ const subcategories = [
 
 export default function Page() {
   return (
-    <div style={{ maxWidth: 860, margin: '48px auto', padding: '0 20px 64px', color: '#444', fontSize: 15, lineHeight: 1.8 }}>
-      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 12 }}>
+    <div className="fs-15" style={{ maxWidth: 860, margin: '48px auto', padding: '0 20px 64px', color: '#444', lineHeight: 1.8 }}>
+      <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
+        <Link href="/" style={{ color: '#888', textDecoration: 'underline' }}>Home</Link> / Tessuti
+      </p>
+      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 12 }}>
         Tessuti a Palermo
       </h1>
       <p style={{ marginBottom: 36 }}>
@@ -53,13 +56,13 @@ export default function Page() {
               transition: 'box-shadow 0.15s',
             }}
           >
-            <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 8 }}>{s.label}</div>
-            <div style={{ fontSize: 14, color: '#555', lineHeight: 1.6 }}>{s.desc}</div>
+            <div className="fs-18" style={{ fontWeight: 700, marginBottom: 8 }}>{s.label}</div>
+            <div className="fs-14" style={{ color: '#555', lineHeight: 1.6 }}>{s.desc}</div>
           </Link>
         ))}
       </div>
 
-      <Link href="/" style={{ display: 'inline-block', marginTop: 40, color: '#1a1a1a', fontWeight: 600, textDecoration: 'underline' }}>
+      <Link href="/" className="fs-12" style={{ display: 'inline-block', marginTop: 40, color: '#1a1a1a', fontWeight: 600, textDecoration: 'underline' }}>
         ← Torna alla home
       </Link>
     </div>

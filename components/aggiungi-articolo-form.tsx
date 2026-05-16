@@ -12,18 +12,28 @@ export type ArticoloListino = {
   prezzo_acquisto?: number | null
   prezzo_vendita: number
   sconto_articolo?: number | null
+  richiede_larghezza?: number
+  richiede_altezza?: number
+  richiede_quantita?: number
+  richiede_piano?: number
+  richiede_km?: number
+  richiede_peso?: number
+  richiede_tipo_colore?: number
+  richiede_tipo_vetro?: number
 }
 
 
 export default function AggiungiArticoloForm({
   articoli,
   isStaff = false,
+  isLoggedIn = false,
   preventiviBozza,
   cartNonVuoto = false,
   parentPendente,
 }: {
   articoli: ArticoloListino[]
   isStaff?: boolean
+  isLoggedIn?: boolean
   preventiviBozza?: PreventivoDestOption[]
   cartNonVuoto?: boolean
   parentPendente?: { uid: number; desc: string }
@@ -35,6 +45,17 @@ export default function AggiungiArticoloForm({
   const [selectedId, setSelectedId] = useState<number>(articoli[0]?.id ?? 0)
   const [result, setResult] = useState<CartResult | null>(null)
   const [isPending, startTransition] = useTransition()
+  const [canSubmit, setCanSubmit] = useState(false)
+
+  useEffect(() => {
+    const sel = artFiltrati.find(a => a.id === selectedId) ?? artFiltrati[0]
+    const hasRequired = !!(sel && (
+      sel.richiede_larghezza === 1 || sel.richiede_altezza === 1 ||
+      sel.richiede_quantita === 1  || sel.richiede_piano === 1   ||
+      sel.richiede_km === 1        || sel.richiede_peso === 1
+    ))
+    setCanSubmit(!hasRequired)
+  }, [selectedId, step])
 
   const mostraDestinazione = !cartNonVuoto && (preventiviBozza?.length ?? 0) > 0
   const [destId, setDestId] = useState('cart')
@@ -68,13 +89,21 @@ export default function AggiungiArticoloForm({
   )
 
   const labelOf = (a: ArticoloListino) => {
-    const parts = [a.descrizione, a.produttore, a.serie, a.unita].filter(Boolean)
+    const parts = [a.descrizione, a.produttore, a.serie].filter(Boolean)
     const sc = a.sconto_articolo ?? 0
-    if (sc !== 0) parts.push(sc < 0 ? `magg. +${Math.abs(sc)}%` : `sconto ${sc}%`)
-    if (isStaff) {
-      if ((a.prezzo_acquisto ?? 0) > 0) parts.push(`acq. €${Number(a.prezzo_acquisto).toFixed(2)}`)
-      if (a.prezzo_vendita > 0) parts.push(`vend. €${Number(a.prezzo_vendita).toFixed(2)}`)
+    // prezzo + unità sempre
+    if (a.prezzo_vendita > 0) {
+      const unitPart = a.unita ? ` al ${a.unita}` : ''
+      parts.push(`(€${Number(a.prezzo_vendita).toFixed(2)}${unitPart})`)
+    } else if (a.unita) {
+      parts.push(a.unita)
     }
+    // maggiorazione sempre
+    if (sc < 0) parts.push(`magg. +${Math.abs(sc)}%`)
+    // sconto solo se loggato
+    else if (sc > 0 && isLoggedIn) parts.push(`sconto ${sc}%`)
+    // costo fornitore solo per dipendente/admin
+    if (isStaff && (a.prezzo_acquisto ?? 0) > 0) parts.push(`acq. €${Number(a.prezzo_acquisto).toFixed(2)}`)
     return parts.join(' - ')
   }
 
@@ -131,7 +160,7 @@ export default function AggiungiArticoloForm({
     width: '100%', boxSizing: 'border-box',
   }
   const lbl: React.CSSProperties = {
-    fontSize: 11, color: '#666', display: 'flex', flexDirection: 'column', gap: 3,
+    display: 'flex', flexDirection: 'column', gap: 3,
   }
 
   function handleAnnullaParent() {
@@ -149,9 +178,9 @@ export default function AggiungiArticoloForm({
           padding: '10px 14px', marginBottom: 16,
           display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap',
         }}>
-          <span style={{ fontSize: 13, flex: 1 }}>
+          <span className="testo-articoli" style={{ flex: 1 }}>
             Stai aggiungendo una <strong>caratteristica</strong> di:{' '}
-            <em style={{ color: '#555' }}>{parentPendente.desc}</em>
+            <em>{parentPendente.desc}</em>
           </span>
           <button
             type="button"
@@ -163,8 +192,8 @@ export default function AggiungiArticoloForm({
         </div>
       )}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14, flexWrap: 'wrap' }}>
-        <h2 style={{ fontSize: 16, fontWeight: 700, margin: 0, color: '#1a1a1a' }}>
-          {parentPendente ? 'Scegli la caratteristica da aggiungere' : 'Aggiungi articolo al preventivo'}
+        <h2 className="testo-articoli" style={{ margin: 0 }}>
+          {parentPendente ? 'Scegli la caratteristica da aggiungere' : 'Aggiungi articolo al preventivo da elenco'}
         </h2>
         {mostraDestinazione && (
           <select
@@ -185,7 +214,7 @@ export default function AggiungiArticoloForm({
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
             {produttori.length >= 2 && (
               <div style={{ flex: '1 1 150px' }}>
-                <label style={{ fontSize: 11, color: '#666', display: 'block', marginBottom: 3 }}>Produttore</label>
+                <label className="testo-articoli" style={{ display: 'block', marginBottom: 3 }}>Produttore</label>
                 <select value={produttoreFiltro} onChange={e => setProduttoreFiltro(e.target.value)} style={inpStyle}>
                   <option value="">— Tutti —</option>
                   {produttori.map(p => <option key={p} value={p}>{p}</option>)}
@@ -194,7 +223,7 @@ export default function AggiungiArticoloForm({
             )}
             {serie.length >= 2 && (
               <div style={{ flex: '1 1 150px' }}>
-                <label style={{ fontSize: 11, color: '#666', display: 'block', marginBottom: 3 }}>Serie</label>
+                <label className="testo-articoli" style={{ display: 'block', marginBottom: 3 }}>Serie</label>
                 <select value={serieFiltro} onChange={e => setSerieFiltro(e.target.value)} style={inpStyle}>
                   <option value="">— Tutte —</option>
                   {serie.map(s => <option key={s} value={s}>{s}</option>)}
@@ -202,7 +231,7 @@ export default function AggiungiArticoloForm({
               </div>
             )}
             <div style={{ flex: '2 1 200px' }}>
-              <label style={{ fontSize: 11, color: '#666', display: 'block', marginBottom: 3 }}>Cerca per descrizione</label>
+              <label className="testo-articoli" style={{ display: 'block', marginBottom: 3 }}>Cerca per descrizione</label>
               <input
                 type="text"
                 value={ricerca}
@@ -215,11 +244,11 @@ export default function AggiungiArticoloForm({
           {/* Selezione articolo */}
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'flex-end' }}>
             <div style={{ flex: '2 1 260px' }}>
-              <label style={{ fontSize: 11, color: '#666', display: 'block', marginBottom: 3 }}>
+              <label className="testo-articoli" style={{ display: 'block', marginBottom: 3 }}>
                 Articolo{artFiltrati.length !== articoli.length ? ` (${artFiltrati.length} di ${articoli.length})` : ''}
               </label>
               {artFiltrati.length === 0 ? (
-                <p style={{ fontSize: 13, color: '#c00', margin: 0 }}>Nessun articolo trovato.</p>
+                <p className="testo-articoli" style={{ margin: 0 }}>Nessun articolo trovato.</p>
               ) : (
                 <select
                   value={selectedId}
@@ -246,87 +275,76 @@ export default function AggiungiArticoloForm({
         </div>
       )}
 
-      {step === 'detail' && selected && (() => {
-        const u = selected.unita?.toLowerCase() ?? ''
-        const isMq = u === 'm²' || u === 'mq' || u === 'm2'
-        const isMl = u === 'ml' || u === 'm' || u === 'mt'
-        const isKg = u === 'kg'
-        return (
-        <form key={selected.id} onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 460 }}>
+      {step === 'detail' && selected && (
+        <form key={selected.id} onSubmit={handleSubmit} onChange={e => setCanSubmit((e.currentTarget as HTMLFormElement).checkValidity())} style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 460 }}>
           <input type="hidden" name="listino_id" value={selected.id} />
-          <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: '#1a1a1a' }}>
+          <p className="testo-articoli" style={{ margin: 0 }}>
             {selected.descrizione}{' '}
-            <span style={{ fontWeight: 400, color: '#888' }}>— {selected.produttore}</span>
+            <span style={{ fontWeight: 400 }}>— {selected.produttore}</span>
           </p>
 
-          {isMq && (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-              <label style={lbl}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+            {selected.richiede_larghezza === 1 && (
+              <label className="testo-articoli" style={{ ...lbl, gridColumn: '1 / -1' }}>
                 Larghezza (cm) *
                 <input name="larghezza" type="number" min={0} step="0.1" placeholder="es. 120" required style={inpStyle} />
               </label>
-              <label style={lbl}>
+            )}
+            {selected.richiede_altezza === 1 && (
+              <label className="testo-articoli" style={{ ...lbl, gridColumn: '1 / -1' }}>
                 Altezza (cm) *
                 <input name="altezza" type="number" min={0} step="0.1" placeholder="es. 210" required style={inpStyle} />
               </label>
-              <label style={lbl}>
-                N° ante (0 = da definire) *
-                <input name="ante" type="number" min={0} defaultValue={0} required style={inpStyle} />
-              </label>
-              <label style={lbl}>
+            )}
+            {selected.richiede_quantita === 1 && (
+              <label className="testo-articoli" style={lbl}>
                 Quantità *
                 <input name="quantita" type="number" min={1} defaultValue={1} required style={inpStyle} />
               </label>
-            </div>
-          )}
-
-          {isMl && (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-              <label style={lbl}>
-                Lunghezza (cm) *
-                <input name="larghezza" type="number" min={0} step="0.1" placeholder="es. 300" required style={inpStyle} />
+            )}
+            {selected.richiede_piano === 1 && (
+              <label className="testo-articoli" style={lbl}>
+                Piano *
+                <input name="piano" type="number" min={0} step="1" placeholder="es. 2" required style={inpStyle} />
               </label>
-              <label style={lbl}>
-                Quantità *
-                <input name="quantita" type="number" min={1} defaultValue={1} required style={inpStyle} />
+            )}
+            {selected.richiede_km === 1 && (
+              <label className="testo-articoli" style={lbl}>
+                Km *
+                <input name="km" type="number" min={0} step="0.1" placeholder="es. 15" required style={inpStyle} />
               </label>
-            </div>
-          )}
-
-          {isKg && (
-            <label style={lbl}>
-              Quantità (kg) *
-              <input name="quantita" type="number" min={0.1} step="0.1" placeholder="es. 5" required style={inpStyle} />
-            </label>
-          )}
-
-          {!isMq && !isMl && !isKg && (
-            <label style={lbl}>
-              Quantità *
-              <input name="quantita" type="number" min={1} defaultValue={1} required style={inpStyle} />
-            </label>
-          )}
-
-          <label style={lbl}>
-            Note (facoltative)
-            <textarea name="note" rows={2} style={{ ...inpStyle, resize: 'vertical' }} placeholder="Eventuali note..." />
-          </label>
+            )}
+            {selected.richiede_peso === 1 && (
+              <label className="testo-articoli" style={lbl}>
+                Peso (kg) *
+                <input name="peso" type="number" min={0} step="0.1" placeholder="es. 5" required style={inpStyle} />
+              </label>
+            )}
+            {selected.richiede_tipo_colore === 1 && (
+              <p className="testo-articoli" style={{ gridColumn: '1 / -1', margin: 0, background: '#fff8e1', border: '1px solid #f0b429', borderRadius: 5, padding: '7px 10px' }}>
+                Opzionare tra Colori standard o colori con maggiorazione di prezzo
+              </p>
+            )}
+            {selected.richiede_tipo_vetro === 1 && (
+              <p className="testo-articoli" style={{ gridColumn: '1 / -1', margin: 0, background: '#fff8e1', border: '1px solid #f0b429', borderRadius: 5, padding: '7px 10px' }}>
+                Opzionare se Fornitura senza vetri o il tipo di vetri
+              </p>
+            )}
+          </div>
 
           <div style={{ display: 'flex', gap: 10 }}>
             <button
               type="button"
               onClick={() => setStep('select')}
-              style={{
-                padding: '7px 16px', fontSize: 13, border: '1px solid #ccc',
-                borderRadius: 4, background: '#fff', cursor: 'pointer', fontFamily: 'inherit',
-              }}
+              className="btn-red"
+              style={{ padding: '7px 16px', fontSize: 13, fontFamily: 'inherit' }}
             >
               Annulla
             </button>
             <button
               type="submit"
-              disabled={isPending}
-              className="btn-green"
+              disabled={isPending || !canSubmit}
+              className={canSubmit && !isPending ? 'btn-green' : 'btn-gray'}
               style={{ padding: '7px 22px', fontSize: 13, fontWeight: 600 }}
             >
               {isPending
@@ -337,11 +355,10 @@ export default function AggiungiArticoloForm({
             </button>
           </div>
         </form>
-        )
-      })()}
+      )}
 
       {result?.ok && (
-        <p style={{ color: '#2e7d32', fontSize: 13, marginTop: 10, marginBottom: 0 }}>
+        <p className="testo-articoli" style={{ marginTop: 10, marginBottom: 0 }}>
           ✓ Articolo aggiunto.{' '}
           {result.preventivoId ? (
             <a href={isStaff ? `/clienti/preventivi/${result.preventivoId}` : `/area-clienti/preventivi/${result.preventivoId}`} style={{ color: '#2e7d32', fontWeight: 600 }}>
@@ -355,7 +372,7 @@ export default function AggiungiArticoloForm({
         </p>
       )}
       {result && !result.ok && (
-        <p style={{ color: '#c00', fontSize: 13, marginTop: 10, marginBottom: 0 }}>{result.error}</p>
+        <p className="testo-articoli" style={{ marginTop: 10, marginBottom: 0 }}>{result.error}</p>
       )}
     </div>
   )

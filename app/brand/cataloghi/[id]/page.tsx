@@ -33,15 +33,24 @@ async function getData(id: number) {
       [id]
     )
 
-    let articoliPreventivo: ArticoloListino[] = []
+    let articoliPrincipali: ArticoloListino[] = []
+    let articoliCaratteristiche: ArticoloListino[] = []
     let articoliAcquisto: ArticoloListinoAcquisto[] = []
     if (categoria.listino_categoria) {
       try {
+        await db.execute(`ALTER TABLE listini ADD COLUMN principale TINYINT(1) NOT NULL DEFAULT 1`).catch(() => {})
+        await db.execute(`ALTER TABLE listini ADD COLUMN caratteristica TINYINT(1) NOT NULL DEFAULT 1`).catch(() => {})
         const [rows1] = await db.query(
-          'SELECT id, descrizione, produttore, serie, unita, prezzo_acquisto, prezzo_vendita, sconto_articolo FROM listini WHERE categoria = ? AND disponibile = 1 AND preventivabile = 1 ORDER BY descrizione ASC',
+          'SELECT id, descrizione, produttore, serie, unita, prezzo_acquisto, prezzo_vendita, sconto_articolo, richiede_larghezza, richiede_altezza, richiede_quantita, richiede_piano, richiede_km, richiede_peso, richiede_tipo_colore, richiede_tipo_vetro FROM listini WHERE categoria = ? AND disponibile = 1 AND preventivabile = 1 AND principale = 1 ORDER BY descrizione ASC',
           [categoria.listino_categoria]
         )
-        articoliPreventivo = rows1 as ArticoloListino[]
+        articoliPrincipali = rows1 as ArticoloListino[]
+
+        const [rows1b] = await db.query(
+          'SELECT id, descrizione, produttore, serie, unita, prezzo_acquisto, prezzo_vendita, sconto_articolo, richiede_larghezza, richiede_altezza, richiede_quantita, richiede_piano, richiede_km, richiede_peso, richiede_tipo_colore, richiede_tipo_vetro FROM listini WHERE categoria = ? AND disponibile = 1 AND preventivabile = 1 AND caratteristica = 1 ORDER BY descrizione ASC',
+          [categoria.listino_categoria]
+        )
+        articoliCaratteristiche = rows1b as ArticoloListino[]
 
         const [rows2] = await db.query(
           'SELECT id, descrizione, produttore, unita, prezzo_vendita, max_acquistabile FROM listini WHERE categoria = ? AND disponibile = 1 AND acquistabile = 1 ORDER BY descrizione ASC',
@@ -57,7 +66,8 @@ async function getData(id: number) {
     return {
       categoria,
       voci: voci as { id: number; nome: string; pdf_filename: string; pdf_label: string }[],
-      articoliPreventivo,
+      articoliPrincipali,
+      articoliCaratteristiche,
       articoliAcquisto,
     }
   } finally {
@@ -126,24 +136,39 @@ export default async function Page({ params }: Props) {
 
   const parentCookieStr = cookieStore.get('digi_cart_parent')?.value
   let parentPendente: { uid: number; desc: string } | undefined
+  let lacuneAperte: string[] = []
   if (parentCookieStr) {
     try {
-      const p = JSON.parse(parentCookieStr) as { uid: number; desc: string }
-      if (p.uid && p.desc) parentPendente = p
+      const p = JSON.parse(parentCookieStr) as { uid: number; desc: string; lacune?: string[] }
+      if (p.uid && p.desc) { parentPendente = p; lacuneAperte = p.lacune ?? [] }
     } catch {}
   }
 
-  const { categoria, voci, articoliPreventivo, articoliAcquisto } = data
+  const { categoria, voci, articoliPrincipali, articoliCaratteristiche, articoliAcquisto } = data
+
+  let articoliPreventivo: ArticoloListino[]
+  if (!parentPendente) {
+    articoliPreventivo = articoliPrincipali
+  } else if (lacuneAperte.length === 0) {
+    articoliPreventivo = articoliCaratteristiche
+  } else {
+    articoliPreventivo = articoliCaratteristiche.filter(a =>
+      lacuneAperte.some(l =>
+        (l === 'tipo_colore' && a.richiede_tipo_colore === 1) ||
+        (l === 'tipo_vetro'  && a.richiede_tipo_vetro  === 1)
+      )
+    )
+  }
 
   return (
-    <div style={{ maxWidth: 900, margin: '48px auto', padding: '0 20px 64px', color: '#444', fontSize: 15, lineHeight: 1.8 }}>
-      <p style={{ fontSize: 12, color: '#000', marginBottom: 8, textShadow: 'none' }}>
+    <div className="fs-15" style={{ maxWidth: 900, margin: '48px auto', padding: '0 20px 64px', color: '#444', lineHeight: 1.8 }}>
+      <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
         <Link href="/brand" style={{ color: '#888', textDecoration: 'underline' }}>Brand</Link>
         {' / '}
         <Link href="/brand/cataloghi" style={{ color: '#888', textDecoration: 'underline' }}>Cataloghi</Link>
         {' / '}{categoria.nome}
       </p>
-      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 8 }}>
+      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>
         {categoria.nome}
       </h1>
       <p style={{ marginBottom: 32 }}>
@@ -154,22 +179,22 @@ export default async function Page({ params }: Props) {
 
       {articoliPreventivo.length > 0 && (
         <>
-          <h2 style={{ fontSize: 16, fontWeight: 700, margin: '40px 0 0', color: '#1a1a1a' }}>
+          <h2 className="fs-16" style={{ fontWeight: 700, margin: '40px 0 0', color: '#1a1a1a' }}>
             Articoli da preventivare
           </h2>
-          <p style={{ fontSize: 13, color: '#888', margin: '2px 0 0' }}>
+          <p className="fs-13" style={{ color: '#888', margin: '2px 0 0' }}>
             Questi articoli vengono aggiunti al carrello preventivo per ricevere un preventivo personalizzato.
           </p>
-          <AggiungiArticolo articoli={articoliPreventivo} isStaff={isStaff} preventiviBozza={preventiviBozza} cartNonVuoto={cartNonVuoto} parentPendente={parentPendente} />
+          <AggiungiArticolo articoli={articoliPreventivo} isStaff={isStaff} isLoggedIn={!!username} preventiviBozza={preventiviBozza} cartNonVuoto={cartNonVuoto} parentPendente={parentPendente} />
         </>
       )}
 
       {articoliAcquisto.length > 0 && (
         <>
-          <h2 style={{ fontSize: 16, fontWeight: 700, margin: '40px 0 0', color: '#1a1a1a' }}>
+          <h2 className="fs-16" style={{ fontWeight: 700, margin: '40px 0 0', color: '#1a1a1a' }}>
             Articoli acquistabili
           </h2>
-          <p style={{ fontSize: 13, color: '#888', margin: '2px 0 0' }}>
+          <p className="fs-13" style={{ color: '#888', margin: '2px 0 0' }}>
             Questi articoli sono disponibili per l&apos;acquisto diretto.
           </p>
           <AggiungiArticoloAcquisto articoli={articoliAcquisto} />
@@ -177,11 +202,11 @@ export default async function Page({ params }: Props) {
       )}
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 40 }}>
-        <Link href="/brand/cataloghi" style={{ color: '#1a1a1a', fontWeight: 600, textDecoration: 'underline', fontSize: 12 }}>
+        <Link href="/brand/cataloghi" className="fs-12" style={{ color: '#1a1a1a', fontWeight: 600, textDecoration: 'underline' }}>
           ← Torna ai Cataloghi
         </Link>
         {cartNonVuoto && (
-          <Link href="/area-clienti/carrello-preventivo" style={{ fontSize: 12, fontWeight: 600, color: '#1a1a1a', textDecoration: 'underline' }}>
+          <Link href="/area-clienti/carrello-preventivo" className="fs-12" style={{ fontWeight: 600, color: '#1a1a1a', textDecoration: 'underline' }}>
             Vai al Carrello preventivi →
           </Link>
         )}

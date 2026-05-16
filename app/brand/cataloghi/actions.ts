@@ -2,19 +2,34 @@
 
 import { cookies } from 'next/headers'
 import { getConnection } from '@/lib/db'
+import { decompressCart, type CartItem } from '@/lib/cart-cookie'
 
-export type CartResult = { ok: true; preventivoId?: number } | { ok: false; error: string }
+export type CartResult = { ok: true; preventivoId?: number; newCart?: string } | { ok: false; error: string }
 export type SaveResult = { ok: true; redirectUrl: string } | { ok: false; error: string }
 export type PreventivoDestOption = { id: number; label: string }
 
-type CartItem = {
-  id: number; q: number; ante?: number; l?: number; h?: number; colore?: string; note?: string
-  uid?: number; parent?: number; tipo?: 'articolo' | 'caratteristica'; desc?: string
+// Formato compresso nel cookie: chiavi brevi per stare sotto i 4096 byte
+type C = { id: number; q: number; u?: number; p?: number; t?: 1|2; a?: number; l?: number; h?: number; c?: string; n?: string; d?: string }
+
+function compressCart(cart: CartItem[]): C[] {
+  return cart.map(i => {
+    const o: C = { id: i.id, q: i.q }
+    if (i.uid    != null) o.u = i.uid
+    if (i.parent != null) o.p = i.parent
+    if (i.tipo === 'articolo')        o.t = 1
+    if (i.tipo === 'caratteristica')  o.t = 2
+    if (i.ante   != null) o.a = i.ante
+    if (i.l      != null) o.l = i.l
+    if (i.h      != null) o.h = i.h
+    if (i.colore) o.c = i.colore
+    if (i.note)   o.n = i.note
+    if (i.desc)   o.d = i.desc
+    return o
+  })
 }
 
 function normalizeCart(raw: string): CartItem[] {
-  let cart: CartItem[] = []
-  try { cart = raw ? JSON.parse(raw) : [] } catch {}
+  const cart = decompressCart(raw)
   let maxUid = 0
   for (const i of cart) if ((i.uid ?? 0) > maxUid) maxUid = i.uid!
   let nextUid = maxUid + 1
@@ -23,7 +38,7 @@ function normalizeCart(raw: string): CartItem[] {
 
 function saveCartCookie(cs: Awaited<ReturnType<typeof cookies>>, cart: CartItem[]) {
   if (cart.length === 0) cs.delete('digi_cart')
-  else cs.set('digi_cart', JSON.stringify(cart), { maxAge: 30 * 24 * 60 * 60, path: '/', sameSite: 'lax' })
+  else cs.set('digi_cart', JSON.stringify(compressCart(cart)), { maxAge: 30 * 24 * 60 * 60, path: '/', sameSite: 'lax' })
 }
 
 // ─── Aggiungi al carrello (sempre cookie, per tutti) ─────────────────────────
@@ -57,6 +72,22 @@ export async function aggiungiAlCarrello(_: CartResult | null, fd: FormData): Pr
       const parentItem = cart.find(i => i.uid === parentUid)
       if (parentItem?.uid != null) {
         newItem.parent = parentItem.uid
+
+        // Le caratteristiche tipo_vetro ereditano larghezza e altezza dal padre
+        if (!newItem.l && !newItem.h) {
+          const db2 = await getConnection()
+          try {
+            const [flagRows] = await db2.query(
+              'SELECT richiede_tipo_vetro FROM listini WHERE id = ? LIMIT 1', [listinoId]
+            ) as [{ richiede_tipo_vetro: number }[], unknown]
+            if (flagRows[0]?.richiede_tipo_vetro === 1) {
+              if (parentItem.l) newItem.l = parentItem.l
+              if (parentItem.h) newItem.h = parentItem.h
+              newItem.q = parentItem.q
+            }
+          } catch {} finally { await db2.end() }
+        }
+
         // Inserisci subito dopo il padre e i suoi figli già esistenti
         const parentIdx = cart.findIndex(i => i.uid === parentUid)
         let insertIdx = parentIdx + 1
@@ -111,15 +142,81 @@ export async function aggiornaArticoloCarrello(
     if (updates.note   != null) item.note   = updates.note
     if (updates.desc   != null) item.desc   = updates.desc
     cart[index] = item
+
+    // Propaga l/h/q ai figli tipo_vetro che li hanno ereditati
+    const propagaL = updates.l != null
+    const propagaH = updates.h != null
+    const propagaQ = updates.q != null
+    if (item.uid != null && (propagaL || propagaH || propagaQ)) {
+      const figli = cart.filter(i => i.parent === item.uid && i.id && i.id !== 0)
+      if (figli.length > 0) {
+        const ids = figli.map(i => i.id!)
+        const db = await getConnection()
+        try {
+          const ph = ids.map(() => '?').join(',')
+          const [flagRows] = await db.query(
+            `SELECT id, richiede_tipo_vetro FROM listini WHERE id IN (${ph})`, ids
+          ) as [{ id: number; richiede_tipo_vetro: number }[], unknown]
+          const vetroIds = new Set(flagRows.filter(r => r.richiede_tipo_vetro === 1).map(r => r.id))
+          for (let i = 0; i < cart.length; i++) {
+            if (cart[i].parent === item.uid && vetroIds.has(cart[i].id!)) {
+              const figlio = { ...cart[i] }
+              if (propagaL) figlio.l = updates.l
+              if (propagaH) figlio.h = updates.h
+              if (propagaQ) figlio.q = updates.q!
+              cart[i] = figlio
+            }
+          }
+        } catch {} finally { await db.end() }
+      }
+    }
   }
   saveCartCookie(cs, cart)
 }
 
+// ─── Applica caratteristica diretta a uno o più padri ────────────────────────
+
+export async function applicaCaratteristicaAlCarrello(
+  parentUids: number[],
+  listinoId: number
+): Promise<CartResult> {
+  if (!listinoId || parentUids.length === 0) return { ok: false, error: 'Dati non validi.' }
+  const cs   = await cookies()
+  const cart = normalizeCart(cs.get('digi_cart')?.value ?? '')
+
+  const db = await getConnection()
+  try {
+    const [rows] = await db.query(
+      'SELECT id, richiede_tipo_vetro FROM listini WHERE id = ? LIMIT 1', [listinoId]
+    ) as [{ id: number; richiede_tipo_vetro: number }[], unknown]
+    if (!rows[0]) return { ok: false, error: 'Articolo non trovato.' }
+    const isVetro = rows[0].richiede_tipo_vetro === 1
+
+    let nextUid = Math.max(0, ...cart.map(i => i.uid ?? 0)) + 1
+    for (const parentUid of parentUids) {
+      const parentItem = cart.find(i => i.uid === parentUid)
+      if (!parentItem) continue
+      const newItem: CartItem = { id: listinoId, q: parentItem.q, uid: nextUid++, tipo: 'articolo', parent: parentUid }
+      if (isVetro) {
+        if (parentItem.l) newItem.l = parentItem.l
+        if (parentItem.h) newItem.h = parentItem.h
+        newItem.q = parentItem.q
+      }
+      const parentIdx = cart.findIndex(i => i.uid === parentUid)
+      let insertIdx = parentIdx + 1
+      while (insertIdx < cart.length && cart[insertIdx].parent === parentUid) insertIdx++
+      cart.splice(insertIdx, 0, newItem)
+    }
+    saveCartCookie(cs, cart)
+    return { ok: true, newCart: JSON.stringify(compressCart(cart)) }
+  } finally { await db.end() }
+}
+
 // ─── Parent pendente: segnala al catalogo che il prossimo articolo è figlio ───
 
-export async function impostaParentPendente(parentUid: number, parentDesc: string): Promise<void> {
+export async function impostaParentPendente(parentUid: number, parentDesc: string, lacune: string[] = []): Promise<void> {
   const cs = await cookies()
-  cs.set('digi_cart_parent', JSON.stringify({ uid: parentUid, desc: parentDesc }), {
+  cs.set('digi_cart_parent', JSON.stringify({ uid: parentUid, desc: parentDesc, lacune }), {
     maxAge: 15 * 60, path: '/', sameSite: 'lax',
   })
 }
@@ -264,6 +361,7 @@ export async function salvaCarrelloComePreventivo(): Promise<SaveResult> {
     }
     await db.execute(`ALTER TABLE preventivi ADD COLUMN sconto_cliente_pct DECIMAL(5,2) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE preventivo_articoli ADD COLUMN sconto_articolo_pct DECIMAL(5,2) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE preventivo_articoli ADD COLUMN parent_id INT NULL DEFAULT NULL`).catch(() => {})
     await db.execute(`ALTER TABLE listini ADD COLUMN sconto_articolo DECIMAL(5,2) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE clienti ADD COLUMN sconto_pct DECIMAL(5,2) NOT NULL DEFAULT 0`).catch(() => {})
 
@@ -284,6 +382,9 @@ export async function salvaCarrelloComePreventivo(): Promise<SaveResult> {
     const dateStr = today.replace(/-/g, '')
     await db.execute('UPDATE preventivi SET numero = ? WHERE id = ?', [`${dateStr}-${String(preventivoId).padStart(6, '0')}`, preventivoId])
 
+    const uidToInsertId = new Map<number, number>()
+    const prezziPerUid  = new Map<number, number>()
+
     for (const item of cart) {
       if (item.tipo === 'caratteristica' || item.id === 0) continue
       const [rows] = await db.query(
@@ -295,21 +396,32 @@ export async function salvaCarrelloComePreventivo(): Promise<SaveResult> {
 
       const pb = Number(art.prezzo_vendita)
       const scontoArticoloPct = Number(art.sconto_articolo ?? 0)
-      const scontoFactor = 1 - scontoArticoloPct / 100
-      const h  = (item.h ?? 0) / 100
-      const l  = (item.l ?? 0) / 100
-      const q  = item.q
+      const parentDbId = item.parent != null ? (uidToInsertId.get(item.parent) ?? null) : null
       let prezzo = 0
-      if (art.unita === 'm²')      prezzo = pb * scontoFactor * h * l * q
-      else if (art.unita === 'ml') prezzo = pb * scontoFactor * l * q
-      else                         prezzo = pb * scontoFactor * q
-      prezzo = Math.round(prezzo * 100) / 100
 
-      await db.execute(
-        `INSERT INTO preventivo_articoli (preventivo_id, tipo_prodotto, marca, modello, listino_id, prezzo_base, unita, colore, tipo_vetro, accessori, altezza_cm, larghezza_cm, n_ante, quantita, prezzo_totale, note, sconto_articolo_pct)
-         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-        [preventivoId, art.categoria, art.produttore, art.descrizione, item.id, art.prezzo_vendita, art.unita, item.colore ?? '', '', null, item.h ?? 0, item.l ?? 0, item.ante ?? 1, item.q, prezzo, item.note ?? null, scontoArticoloPct]
-      )
+      if (parentDbId !== null && pb === 0 && scontoArticoloPct !== 0) {
+        const prezzoParent = prezziPerUid.get(item.parent!) ?? 0
+        prezzo = Math.round(-(prezzoParent * scontoArticoloPct / 100) * 100) / 100
+      } else {
+        const scontoFactor = 1 - scontoArticoloPct / 100
+        const h  = (item.h ?? 0) / 100
+        const l  = (item.l ?? 0) / 100
+        const q  = item.q
+        if (art.unita === 'm²')      prezzo = pb * scontoFactor * h * l * q
+        else if (art.unita === 'ml') prezzo = pb * scontoFactor * l * q
+        else                         prezzo = pb * scontoFactor * q
+        prezzo = Math.round(prezzo * 100) / 100
+      }
+
+      if (item.uid != null) prezziPerUid.set(item.uid, prezzo)
+
+      const [ins] = await db.execute(
+        `INSERT INTO preventivo_articoli (preventivo_id, tipo_prodotto, marca, modello, listino_id, prezzo_base, unita, colore, tipo_vetro, accessori, altezza_cm, larghezza_cm, n_ante, quantita, prezzo_totale, note, sconto_articolo_pct, parent_id)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+        [preventivoId, art.categoria, art.produttore, art.descrizione, item.id, art.prezzo_vendita, art.unita, item.colore ?? '', '', null, item.h ?? 0, item.l ?? 0, item.ante ?? 1, item.q, prezzo, item.note ?? null, scontoArticoloPct, parentDbId]
+      ) as [{ insertId: number }, unknown]
+
+      if (item.uid != null) uidToInsertId.set(item.uid, ins.insertId)
     }
 
     // Calcola totale con sconto cliente

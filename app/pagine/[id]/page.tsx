@@ -23,13 +23,13 @@ export default async function PaginaCliente({
   const page = clientPages.find(p => p.id === Number(id))
   if (!page) notFound()
 
-  const { disabledPages } = readSettings()
+  const { disabledPages } = await readSettings()
   if (disabledPages.includes(page.id)) notFound()
 
   return (
     <div>
       <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 8 }}>{page.label}</h2>
-      <p style={{ color: '#888', fontSize: 14 }}>Pagina {page.id} — contenuto in costruzione.</p>
+      <p style={{ color: '#000', fontSize: 14 }}>Pagina {page.id} — contenuto in costruzione.</p>
     </div>
   )
 }

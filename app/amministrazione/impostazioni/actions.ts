@@ -33,8 +33,8 @@ export async function saveSettings(
     return { ok: false, error: 'Secondi non validi (5–300).' }
   }
 
-  const current = readSettings()
-  writeSettings({ ...current, inactivityMinutes: minutes, countdownSeconds: seconds })
+  const current = await readSettings()
+  await writeSettings({ ...current, inactivityMinutes: minutes, countdownSeconds: seconds })
   return { ok: true, inactivityMinutes: minutes, countdownSeconds: seconds }
 }
 
@@ -64,9 +64,9 @@ async function saveBgField(
     return { ok: false, error: 'Valore alpha non valido (0–100).' }
   }
 
-  const current = readSettings()
+  const current = await readSettings()
   const color = { r, g, b, a }
-  writeSettings({ ...current, [field]: color, [modeField]: mode })
+  await writeSettings({ ...current, [field]: color, [modeField]: mode })
   return { ok: true, color, mode }
 }
 
@@ -106,8 +106,8 @@ export async function saveDisabledPages(
     if (!formData.get(`page_${id}`)) disabledPages.push(id)
   }
 
-  const current = readSettings()
-  writeSettings({ ...current, disabledPages })
+  const current = await readSettings()
+  await writeSettings({ ...current, disabledPages })
   return { ok: true }
 }
 
@@ -124,8 +124,8 @@ export async function saveAccessControls(
   const loginClientiDisabilitato     = !formData.get('loginClienti')
   const loginDipendentiDisabilitato  = !formData.get('loginDipendenti')
 
-  const current = readSettings()
-  writeSettings({ ...current, registrazioniDisabilitate, loginClientiDisabilitato, loginDipendentiDisabilitato })
+  const current = await readSettings()
+  await writeSettings({ ...current, registrazioniDisabilitate, loginClientiDisabilitato, loginDipendentiDisabilitato })
   return { ok: true }
 }
 
@@ -135,8 +135,8 @@ export async function toggleBanner(
 ): Promise<SaveAccessResult> {
   const cookieStore = await cookies()
   if (cookieStore.get('session_role')?.value !== 'admin') redirect('/')
-  const current = readSettings()
-  writeSettings({ ...current, bannerAbilitato: !current.bannerAbilitato })
+  const current = await readSettings()
+  await writeSettings({ ...current, bannerAbilitato: !current.bannerAbilitato })
   return { ok: true }
 }
 
@@ -146,8 +146,8 @@ export async function toggleBannerCircolare(
 ): Promise<SaveAccessResult> {
   const cookieStore = await cookies()
   if (cookieStore.get('session_role')?.value !== 'admin') redirect('/')
-  const current = readSettings()
-  writeSettings({ ...current, bannerCircolare: !current.bannerCircolare })
+  const current = await readSettings()
+  await writeSettings({ ...current, bannerCircolare: !current.bannerCircolare })
   return { ok: true }
 }
 
@@ -158,8 +158,8 @@ export async function saveBannerTesto(
   const cookieStore = await cookies()
   if (cookieStore.get('session_role')?.value !== 'admin') redirect('/')
   const bannerTesto = (formData.get('bannerTesto') as string) ?? ''
-  const current = readSettings()
-  writeSettings({ ...current, bannerTesto })
+  const current = await readSettings()
+  await writeSettings({ ...current, bannerTesto })
   return { ok: true }
 }
 
@@ -169,8 +169,8 @@ export async function toggleManutenzione(
 ): Promise<SaveAccessResult> {
   const cookieStore = await cookies()
   if (cookieStore.get('session_role')?.value !== 'admin') redirect('/')
-  const current = readSettings()
-  writeSettings({ ...current, manutenzione: !current.manutenzione })
+  const current = await readSettings()
+  await writeSettings({ ...current, manutenzione: !current.manutenzione })
   return { ok: true }
 }
 
@@ -190,7 +190,7 @@ export async function saveRolePermissions(
       .map(p => p.id)
   }
 
-  const current = readSettings()
-  writeSettings({ ...current, rolePermissions })
+  const current = await readSettings()
+  await writeSettings({ ...current, rolePermissions })
   return { ok: true }
 }

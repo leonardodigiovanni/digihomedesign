@@ -2,6 +2,7 @@
 
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { revalidatePath } from 'next/cache'
 import { getConnection } from '@/lib/db'
 
 export type MarkReadResult = { ok: true } | { ok: false; error: string }
@@ -16,6 +17,23 @@ export async function markRead(id: number): Promise<MarkReadResult> {
   const conn = await getConnection()
   try {
     await conn.execute('UPDATE email_inbox SET letto = 1 WHERE id = ?', [id])
+    revalidatePath('/', 'layout')
+    return { ok: true }
+  } finally {
+    await conn.end()
+  }
+}
+
+export type EliminaResult = { ok: true } | { ok: false; error: string }
+
+export async function eliminaMessaggio(id: number): Promise<EliminaResult> {
+  const cookieStore = await cookies()
+  if (cookieStore.get('session_role')?.value !== 'admin') redirect('/')
+
+  const conn = await getConnection()
+  try {
+    await conn.execute('DELETE FROM email_inbox WHERE id = ?', [id])
+    revalidatePath('/', 'layout')
     return { ok: true }
   } finally {
     await conn.end()

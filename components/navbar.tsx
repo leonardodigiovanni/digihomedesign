@@ -1,8 +1,9 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { clientPages, visibleAdminPages, visibleInternalPages, visibleFornitoriPages, visibleClientiPages, aiutoPages, categoryGroups, areaClientiPages, type NavPage, type CategoryGroup } from '@/lib/nav-config'
 import HeaderAuth from '@/components/header-auth'
 
@@ -13,30 +14,104 @@ interface NavbarProps {
   username?: string | null
   registrazioniDisabilitate?: boolean
   bannerAbilitato?: boolean
+  cartCount?: number
+  cartAcquistiCount?: number
+  unreadEmailCount?: number
 }
 
-export default function Navbar({ role, disabledPages = [], rolePermissions = {}, username, registrazioniDisabilitate, bannerAbilitato = false }: NavbarProps) {
+export default function Navbar({ role, disabledPages = [], rolePermissions = {}, username, registrazioniDisabilitate, bannerAbilitato = false, cartCount = 0, cartAcquistiCount = 0, unreadEmailCount = 0 }: NavbarProps) {
   const [menuOpen, setMenuOpen]       = useState(false)
   const [sectionOpen, setSectionOpen] = useState(false)
+  const [canLeft,  setCanLeft]  = useState(false)
+  const [canRight, setCanRight] = useState(false)
   const pathname    = usePathname()
   const dropRef     = useRef<HTMLDivElement>(null)
   const scrollRef   = useRef<HTMLDivElement>(null)
   const innerRef    = useRef<HTMLDivElement>(null)
   const scrollPos   = useRef(0)
 
-  // Chiudi tutto al cambio pagina
+  function updateArrows() {
+    const container = scrollRef.current
+    const inner     = innerRef.current
+    if (!container || !inner) return
+    const maxScroll = inner.offsetWidth - container.offsetWidth
+    setCanLeft(scrollPos.current > 0)
+    setCanRight(maxScroll > 0 && scrollPos.current < maxScroll - 1)
+  }
+
+  function scrollNav(direction: 'left' | 'right') {
+    const container = scrollRef.current
+    const inner     = innerRef.current
+    if (!container || !inner) return
+    const S = scrollPos.current
+    const W = container.offsetWidth
+    const AW = 42 // freccia quadrata: larghezza = altezza navbar
+    const items = Array.from(inner.children) as HTMLElement[]
+    const maxScroll = inner.offsetWidth - W
+    if (maxScroll <= 0) return
+
+    // Posizione iniziale basata sulla direzione
+    let initial: number
+    if (direction === 'right') {
+      const target = items.find(el => el.offsetLeft + el.offsetWidth > S + W - AW + 1)
+      initial = target ? Math.max(0, target.offsetLeft - AW) : maxScroll
+    } else {
+      initial = 0
+    }
+
+    initial = Math.max(0, Math.min(initial, maxScroll))
+
+    // Cleanup solo per destra: la sinistra va sempre a S=0 (inizio esatto)
+    let next = initial
+    for (let i = 0; i < 6 && direction === 'right'; i++) {
+      let adjusted = false
+      // Bordo freccia destra: x = W-AW in nav-scroll
+      if (next < maxScroll) {
+        const rEdge = next + W - AW
+        const rs = items.find(el => el.offsetLeft < rEdge && el.offsetLeft + el.offsetWidth > rEdge)
+        if (rs) { next = Math.min(maxScroll, rs.offsetLeft - (W - AW)); adjusted = true }
+      }
+      // Bordo freccia sinistra: x = AW in nav-scroll (solo se freccia sinistra visibile)
+      if (next > 0) {
+        const lEdge = next + AW
+        const ls = items.find(el => el.offsetLeft < lEdge && el.offsetLeft + el.offsetWidth > lEdge)
+        if (ls) { next = Math.min(maxScroll, ls.offsetLeft + ls.offsetWidth - AW); adjusted = true }
+      }
+      if (!adjusted) break
+    }
+
+    next = Math.max(0, Math.min(next, maxScroll))
+    scrollPos.current = next
+    inner.style.marginLeft = `-${next}px`
+    updateArrows()
+  }
+
+  // Chiudi tutto al cambio pagina e resetta scroll
   useEffect(() => {
     setMenuOpen(false)
     setSectionOpen(false)
+    scrollPos.current = 0
+    if (innerRef.current) innerRef.current.style.marginLeft = '0'
+    updateArrows()
   }, [pathname])
 
-  // Chiudi menu mobile se il browser diventa largo
+  // Chiudi menu mobile se il browser diventa largo; aggiorna frecce al resize
   useEffect(() => {
     function handleResize() {
       if (window.innerWidth > 768) setMenuOpen(false)
+      updateArrows()
     }
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  // Misura overflow iniziale e osserva variazioni di dimensione
+  useEffect(() => {
+    updateArrows()
+    const observer = new ResizeObserver(updateArrows)
+    if (scrollRef.current) observer.observe(scrollRef.current)
+    if (innerRef.current)  observer.observe(innerRef.current)
+    return () => observer.disconnect()
   }, [])
 
   // Chiudi dropdown desktop cliccando fuori
@@ -50,28 +125,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
     return () => document.removeEventListener('mousedown', handleOutside)
   }, [])
 
-  // Scroll orizzontale con rotella: sposta l'inner div via transform
-  useEffect(() => {
-    const container = scrollRef.current
-    const inner     = innerRef.current
-    if (!container || !inner) return
-
-    const innerEl = inner
-    const containerEl = container
-    function onWheel(e: WheelEvent) {
-      if (e.deltaY === 0) return
-      const maxScroll = innerEl.scrollWidth - containerEl.clientWidth
-      if (maxScroll <= 0) return  // nessun overflow: lascia scorrere la pagina normalmente
-      const next = Math.max(0, Math.min(scrollPos.current + e.deltaY, maxScroll))
-      if (next === scrollPos.current) return  // già al limite: lascia scorrere la pagina
-      e.preventDefault()
-      scrollPos.current = next
-      innerEl.style.transform = `translateX(-${scrollPos.current}px)`
-    }
-
-    containerEl.addEventListener('wheel', onWheel, { passive: false })
-    return () => containerEl.removeEventListener('wheel', onWheel)
-  }, [])
+  const brandDropRef = useDropdownAlign(sectionOpen)
 
   const adminItems         = visibleAdminPages(role)
   const internalItems      = visibleInternalPages(role, rolePermissions).filter(p => !disabledPages.includes(p.id))
@@ -86,12 +140,10 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
 
   const linkStyle = (href: string): React.CSSProperties => ({
     padding: '0 12px',
-    height: 42,
+    height: 46,
     display: 'flex',
     alignItems: 'center',
-    fontSize: 13,
     fontWeight: 500,
-    color: isActive(href) ? '#000' : '#111',
     textDecoration: isActive(href) ? 'underline' : 'none',
     textDecorationThickness: isActive(href) ? '3px' : undefined,
     textUnderlineOffset: isActive(href) ? '4px' : undefined,
@@ -109,15 +161,20 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
 
       {/* ── Desktop ── */}
       <div className="nav-bar">
-        {/* Area scrollabile — tutti i link tranne auth */}
+        {/* Area scrollabile — le frecce sono dentro, in position:absolute, coprono gli item parziali */}
         <div className="nav-scroll" ref={scrollRef}>
+        {canLeft && (
+          <button className="nav-arrow-btn nav-arrow-btn-left" onClick={() => scrollNav('left')} aria-label="Scorri sinistra">
+            <svg viewBox="0 0 14 12" width="14" height="12" fill="currentColor"><path d="M14 0 L8 6 L14 12 Z M6 0 L0 6 L6 12 Z"/></svg>
+          </button>
+        )}
         <div className="nav-scroll-inner" ref={innerRef}>
-          <Link href="/" className="nav-link" style={{ ...linkStyle('/'), display: 'inline-flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', gap: 2 }} aria-label="Home">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginTop: 1 }}>
-              <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/>
-              <text x="12" y="17.5" textAnchor="middle" fontSize="8" fontWeight="800" fill="#111" stroke="none" fontFamily="system-ui,sans-serif" strokeWidth="0">DG</text>
+          <Link href="/" className="nav-link testo-nav-bar" style={{ ...linkStyle('/'), display: 'inline-flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', gap: 2, marginLeft: 8, position: 'relative' }} aria-label="Home">
+            <svg xmlns="http://www.w3.org/2000/svg" width="34" height="28" viewBox="0 0 24 24" preserveAspectRatio="none" fill="none" stroke="#000" strokeWidth="1.2" strokeLinecap="square" strokeLinejoin="miter" style={{ marginTop: -6 }}>
+              <path d="M3 9.5 L12 3 L16.5 6.3 L16.5 3.5 L18 3.5 L18 7.3 L21 9.5 V18.25 M3 18.25 V9.5"/>
+              <text x="12" y="18" textAnchor="middle" fontSize="11" fontWeight="500" fill="#111" stroke="none" fontFamily="system-ui,sans-serif" strokeWidth="0">DG</text>
             </svg>
-            <span style={{ display: 'block', width: 18, height: 3, borderRadius: 1, background: isActive('/') ? '#111' : 'transparent' }} />
+            <span style={{ position: 'absolute', bottom: 10, left: '50%', transform: 'translateX(-50%)', display: 'block', width: 30, height: 3, background: isActive('/') ? '#111' : 'transparent' }} />
           </Link>
 
           {visibleClientPages.length > 0 && (
@@ -125,14 +182,14 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             <div ref={dropRef} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
               <button
                 onClick={() => setSectionOpen(o => !o)}
-                className="nav-link"
+                className="nav-link testo-nav-bar"
                 style={{ ...linkStyle('/brand'), gap: 4 }}
               >
                 Brand {sectionOpen ? '▴' : '▾'}
               </button>
 
               {sectionOpen && (
-                <div style={{
+                <div ref={brandDropRef} style={{
                   position: 'absolute',
                   top: '100%',
                   left: '50%',
@@ -193,17 +250,60 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
           )}
 
           {internalItems.length > 0 && (
-            <><NavSep /><InternalDropdown items={internalItems} isActive={isActive} linkStyle={linkStyle} /></>
+            <><NavSep /><InternalDropdown items={internalItems} isActive={isActive} linkStyle={linkStyle} unreadEmailCount={unreadEmailCount} /></>
           )}
 
           {adminItems.length > 0 && (
             <><NavSep /><AdminDropdown items={adminItems} isActive={isActive} linkStyle={linkStyle} /></>
           )}
         </div>{/* fine nav-scroll-inner */}
+        {canRight && (
+          <button className="nav-arrow-btn nav-arrow-btn-right" onClick={() => scrollNav('right')} aria-label="Scorri destra">
+            <svg viewBox="0 0 14 12" width="14" height="12" fill="currentColor"><path d="M0 0 L6 6 L0 12 Z M8 0 L14 6 L8 12 Z"/></svg>
+          </button>
+        )}
         </div>{/* fine nav-scroll */}
 
-        {/* Auth — sempre visibile, non scorre */}
-        <div style={{ flexShrink: 0, paddingRight: 4, paddingLeft: 8, borderLeft: '1px solid #e8d89a' }}>
+        {/* Icona carrello + Auth — sempre visibili, non scorrono */}
+        <div style={{ flexShrink: 0, paddingRight: 4, paddingLeft: 8, borderLeft: '1px solid #e8d89a', display: 'flex', alignItems: 'center', gap: 8 }}>
+          {cartCount > 0 && (
+          <Link
+            href="/area-clienti/carrello-preventivo"
+            title="Carrello preventivo"
+            className="cart-btn"
+            style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 41, height: 41, marginTop: 1, textDecoration: 'none' }}
+          >
+            <img src="/images/carrello/carrello-preventivo-t.png" alt="Carrello preventivo" style={{ height: 36, width: 36, display: 'block', objectFit: 'contain' }} />
+            <span className="fs-9" style={{
+              position: 'absolute', top: 4, right: 1,
+              background: '#2b8fcf', color: '#fff', borderRadius: '50%',
+              minWidth: 15, height: 15, fontWeight: 700,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              lineHeight: 1, padding: '0 2px',
+            }}>
+              {cartCount > 99 ? '99+' : cartCount}
+            </span>
+          </Link>
+          )}
+          {cartAcquistiCount > 0 && (
+          <Link
+            href="/area-clienti/carrello-acquisti"
+            title="Carrello acquisti"
+            className="cart-btn"
+            style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 41, height: 41, marginTop: 1, textDecoration: 'none' }}
+          >
+            <img src="/images/carrello/carrello-acquisti.png" alt="Carrello acquisti" style={{ height: 46, width: 46, display: 'block', objectFit: 'contain' }} />
+            <span className="fs-9" style={{
+              position: 'absolute', top: 4, right: 1,
+              background: '#e65100', color: '#fff', borderRadius: '50%',
+              minWidth: 15, height: 15, fontWeight: 700,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              lineHeight: 1, padding: '0 2px',
+            }}>
+              {cartAcquistiCount > 99 ? '99+' : cartAcquistiCount}
+            </span>
+          </Link>
+          )}
           <HeaderAuth username={username} registrazioniDisabilitate={registrazioniDisabilitate} forceDropdown />
         </div>
       </div>
@@ -212,15 +312,53 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
       <div className="nav-mobile-bar">
         <button
           type="button"
-          className="nav-hamburger"
+          className="nav-hamburger testo-nav-bar"
           onClick={() => setMenuOpen(o => !o)}
           aria-expanded={menuOpen}
           aria-label={menuOpen ? 'Chiudi menu' : 'Apri menu'}
         >
-          <span style={{ fontSize: 18, width: 20, display: 'inline-block', textAlign: 'center' }}>{menuOpen ? '✕' : '☰'}</span>
+          <span className="fs-18" style={{ width: 20, display: 'inline-block', textAlign: 'center' }}>{menuOpen ? '✕' : '☰'}</span>
           Menu
         </button>
-        <div style={{ marginLeft: 'auto', paddingRight: 12 }}>
+        <div style={{ marginLeft: 'auto', paddingRight: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
+          {cartCount > 0 && (
+          <Link
+            href="/area-clienti/carrello-preventivo"
+            title="Carrello preventivo"
+            className="cart-btn"
+            style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 41, height: 41, marginTop: 1, textDecoration: 'none' }}
+          >
+            <img src="/images/carrello/carrello-preventivo-t.png" alt="Carrello preventivo" style={{ height: 36, width: 36, display: 'block', objectFit: 'contain' }} />
+            <span className="fs-9" style={{
+              position: 'absolute', top: 4, right: 0,
+              background: '#2b8fcf', color: '#fff', borderRadius: '50%',
+              minWidth: 15, height: 15, fontWeight: 700,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              lineHeight: 1, padding: '0 2px',
+            }}>
+              {cartCount > 99 ? '99+' : cartCount}
+            </span>
+          </Link>
+          )}
+          {cartAcquistiCount > 0 && (
+          <Link
+            href="/area-clienti/carrello-acquisti"
+            title="Carrello acquisti"
+            className="cart-btn"
+            style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 41, height: 41, marginTop: 1, textDecoration: 'none' }}
+          >
+            <img src="/images/carrello/carrello-acquisti.png" alt="Carrello acquisti" style={{ height: 46, width: 46, display: 'block', objectFit: 'contain' }} />
+            <span className="fs-9" style={{
+              position: 'absolute', top: 4, right: 0,
+              background: '#e65100', color: '#fff', borderRadius: '50%',
+              minWidth: 15, height: 15, fontWeight: 700,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              lineHeight: 1, padding: '0 2px',
+            }}>
+              {cartAcquistiCount > 99 ? '99+' : cartAcquistiCount}
+            </span>
+          </Link>
+          )}
           <HeaderAuth username={username} registrazioniDisabilitate={registrazioniDisabilitate} forceDropdown />
         </div>
       </div>
@@ -299,7 +437,14 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
 
           {internalItems.length > 0 && (
             <>
-              <div className="nav-mobile-section">Area Lavoro</div>
+              <div className="nav-mobile-section" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                Area Lavoro
+                {unreadEmailCount > 0 && (
+                  <span style={{ background: '#e53e3e', color: '#fff', borderRadius: '50%', minWidth: 18, height: 18, fontSize: 11, fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>
+                    {unreadEmailCount > 99 ? '99+' : unreadEmailCount}
+                  </span>
+                )}
+              </div>
               {internalItems.map(p => (
                 <MobileLink key={p.id} href={p.href} label={p.label} active={isActive(p.href)} indent />
               ))}
@@ -320,6 +465,42 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
   )
 }
 
+function useDropdownAlign(open: boolean): React.RefObject<HTMLDivElement> {
+  const ref = useRef<HTMLDivElement>(null)
+  useLayoutEffect(() => {
+    const el = ref.current
+    if (!el || !open) return
+
+    const trigger = el.parentElement
+    if (!trigger) return
+    const tRect = trigger.getBoundingClientRect()
+
+    // fixed sfugge a overflow-x:clip su nav-scroll
+    el.style.position = 'fixed'
+    el.style.top = `${tRect.bottom}px`
+    el.style.maxWidth = `${window.innerWidth - 16}px`
+    el.style.overflowX = 'auto'
+
+    // centra sotto il trigger
+    el.style.left = `${tRect.left + tRect.width / 2}px`
+    el.style.right = 'auto'
+    el.style.transform = 'translateX(-50%)'
+
+    // aggiusta se esce dal viewport
+    const eRect = el.getBoundingClientRect()
+    if (eRect.right > window.innerWidth - 8) {
+      el.style.left = 'auto'
+      el.style.right = '8px'
+      el.style.transform = 'none'
+    } else if (eRect.left < 8) {
+      el.style.left = '8px'
+      el.style.right = 'auto'
+      el.style.transform = 'none'
+    }
+  }, [open])
+  return ref as React.RefObject<HTMLDivElement>
+}
+
 function NavSep() {
   return <div style={{ width: 1, height: 18, background: 'rgba(0,0,0,0.22)', flexShrink: 0, alignSelf: 'center', margin: '0 2px' }} />
 }
@@ -328,13 +509,46 @@ function InternalDropdown({
   items,
   isActive,
   linkStyle,
+  unreadEmailCount = 0,
 }: {
   items: NavPage[]
   isActive: (href: string) => boolean
   linkStyle: (href: string) => React.CSSProperties
+  unreadEmailCount?: number
 }) {
   const [open, setOpen] = useState(false)
+  const [unread, setUnread] = useState(unreadEmailCount)
   const ref = useRef<HTMLDivElement>(null)
+  const alignRef = useDropdownAlign(open)
+  const audio = useRef<HTMLAudioElement | null>(null)
+  const unreadRef = useRef(unreadEmailCount)
+  const router = useRouter()
+  const pathname = usePathname()
+
+  useEffect(() => {
+    audio.current = new Audio('/sounds/horse.mp3')
+    audio.current.preload = 'auto'
+  }, [])
+
+  useEffect(() => { setUnread(unreadEmailCount) }, [unreadEmailCount])
+
+  useEffect(() => {
+    async function fetchCount() {
+      try {
+        const res = await fetch('/api/email/unread', { cache: 'no-store' })
+        const data = await res.json() as { count: number }
+        setUnread(prev => {
+          if (data.count > prev) audio.current?.play().catch(() => {})
+          return data.count
+        })
+        if (data.count > unreadRef.current && pathname === '/area-lavoro/email') router.refresh()
+        unreadRef.current = data.count
+      } catch {}
+    }
+    fetchCount()
+    const id = setInterval(fetchCount, 30_000)
+    return () => clearInterval(id)
+  }, [])
 
   useEffect(() => {
     function handle(e: MouseEvent) {
@@ -348,11 +562,35 @@ function InternalDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className="nav-link" style={{ ...linkStyle('/area-lavoro'), gap: 4, color: anyActive ? '#000' : '#111', textDecoration: anyActive ? 'underline' : 'none', textDecorationThickness: anyActive ? '3px' : undefined, textUnderlineOffset: anyActive ? '4px' : undefined }}>
-        Area Lavoro {open ? '▴' : '▾'}
+      <button onClick={() => setOpen(o => !o)} className="nav-link testo-nav-bar" style={{ ...linkStyle('/area-lavoro'), gap: 4, textDecoration: 'none' }}>
+        <span className={anyActive ? 'nav-trigger-underline' : undefined}>Area Lavoro</span> {open ? '▴' : '▾'}
+        {unread > 0 && (
+          <span
+            style={{
+              position: 'absolute',
+              top: 6,
+              right: 6,
+              background: '#e53e3e',
+              color: '#fff',
+              borderRadius: '999px',
+              minWidth: 16,
+              height: 16,
+              fontSize: 10,
+              fontWeight: 700,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '0 3px',
+              textDecoration: 'none',
+              boxShadow: '0 0 0 1px rgba(0,0,0,0.2)',
+            }}
+          >
+            {unread > 99 ? '99+' : unread}
+          </span>
+        )}
       </button>
       {open && (
-        <div style={{
+        <div ref={alignRef} style={{
           position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
           background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
           boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 12,
@@ -387,6 +625,7 @@ function AiutoDropdown({
 }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+  const alignRef = useDropdownAlign(open)
 
   useEffect(() => {
     function handle(e: MouseEvent) {
@@ -400,11 +639,11 @@ function AiutoDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className="nav-link" style={{ ...linkStyle('/aiuto'), gap: 4, color: anyActive ? '#000' : '#111', textDecoration: anyActive ? 'underline' : 'none', textDecorationThickness: anyActive ? '3px' : undefined, textUnderlineOffset: anyActive ? '4px' : undefined }}>
+      <button onClick={() => setOpen(o => !o)} className="nav-link testo-nav-bar" style={{ ...linkStyle('/aiuto'), gap: 4, textDecoration: anyActive ? 'underline' : 'none', textDecorationThickness: anyActive ? '3px' : undefined, textUnderlineOffset: anyActive ? '4px' : undefined }}>
         Aiuto {open ? '▴' : '▾'}
       </button>
       {open && (
-        <div style={{
+        <div ref={alignRef} style={{
           position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
           background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
           boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 12,
@@ -439,6 +678,7 @@ function AdminDropdown({
 }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+  const alignRef = useDropdownAlign(open)
 
   useEffect(() => {
     function handle(e: MouseEvent) {
@@ -452,11 +692,11 @@ function AdminDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className="nav-link" style={{ ...linkStyle('/amministrazione'), gap: 4, color: anyActive ? '#000' : '#111', textDecoration: anyActive ? 'underline' : 'none', textDecorationThickness: anyActive ? '3px' : undefined, textUnderlineOffset: anyActive ? '4px' : undefined }}>
-        Amministrazione {open ? '▴' : '▾'}
+      <button onClick={() => setOpen(o => !o)} className="nav-link testo-nav-bar" style={{ ...linkStyle('/amministrazione'), gap: 4, textDecoration: 'none' }}>
+        <span className={anyActive ? 'nav-trigger-underline' : undefined}>Amministrazione</span> {open ? '▴' : '▾'}
       </button>
       {open && (
-        <div style={{
+        <div ref={alignRef} style={{
           position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
           background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
           boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 12,
@@ -490,27 +730,52 @@ function CategoryDropdown({
   linkStyle: (href: string) => React.CSSProperties
 }) {
   const [open, setOpen] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
+  const [isMounted, setIsMounted] = useState(false)
+  const triggerRef = useRef<HTMLDivElement>(null)
+  const dropRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => { setIsMounted(true) }, [])
+
+  useLayoutEffect(() => {
+    if (!open || !triggerRef.current || !dropRef.current) return
+    const tr = triggerRef.current.getBoundingClientRect()
+    const el = dropRef.current
+    el.style.top = `${tr.bottom}px`
+    el.style.left = `${tr.left + tr.width / 2}px`
+    el.style.right = 'auto'
+    el.style.transform = 'translateX(-50%)'
+    const er = el.getBoundingClientRect()
+    if (er.right > window.innerWidth - 8) {
+      el.style.left = 'auto'
+      el.style.right = '8px'
+      el.style.transform = 'none'
+    } else if (er.left < 8) {
+      el.style.left = '8px'
+      el.style.right = 'auto'
+      el.style.transform = 'none'
+    }
+  }, [open])
 
   useEffect(() => {
+    if (!open) return
     function handle(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+      const t = e.target as Node
+      if (!triggerRef.current?.contains(t) && !dropRef.current?.contains(t)) setOpen(false)
     }
     document.addEventListener('mousedown', handle)
     return () => document.removeEventListener('mousedown', handle)
-  }, [])
+  }, [open])
 
   const anyActive = isActive(group.href)
 
   return (
-    <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+    <div ref={triggerRef} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
       <button
         onClick={() => setOpen(o => !o)}
-        className="nav-link"
+        className="nav-link testo-nav-bar"
         style={{
           ...linkStyle(group.href),
           gap: 4,
-          color: anyActive ? '#000' : '#111',
           textDecoration: anyActive ? 'underline' : 'none',
           textDecorationThickness: anyActive ? '3px' : undefined,
           textUnderlineOffset: anyActive ? '4px' : undefined,
@@ -518,30 +783,47 @@ function CategoryDropdown({
       >
         {group.label} {open ? '▴' : '▾'}
       </button>
-      {open && (
-        <div style={{
-          position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
-          background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
-          boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 4,
-          display: 'grid',
-          gridTemplateRows: 'repeat(6, auto)',
-          gridAutoFlow: 'column',
-          gridAutoColumns: 'max-content',
-          gap: 0,
-          zIndex: 200, width: 'max-content', minWidth: group.id === 'edilizia' ? 320 : 180,
-        }}>
-          {group.pages.map(p => (
-            <Link
-              key={p.href}
-              href={p.href}
-              onClick={() => setOpen(false)}
-              className={isActive(p.href) ? 'nav-dropdown-link nav-dropdown-link-active' : 'nav-dropdown-link'}
-              style={{ padding: '7px 10px' }}
-            >
-              <span>{p.label}</span>
-            </Link>
-          ))}
-        </div>
+      {isMounted && open && createPortal(
+        <div
+          ref={dropRef}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            background: '#fdfcf8',
+            border: '1px solid #c8960c',
+            borderRadius: 6,
+            boxShadow: '0 8px 24px rgba(0,0,0,0.1)',
+            zIndex: 9000,
+            overflowX: 'auto',
+            maxWidth: 'calc(100vw - 16px)',
+          }}
+        >
+          <div style={{
+            display: 'grid',
+            gridTemplateRows: 'repeat(6, auto)',
+            gridAutoFlow: 'column',
+            gridAutoColumns: 'max-content',
+            gap: 0,
+            padding: 4,
+            width: 'max-content',
+            minWidth: group.id === 'edilizia' ? 320 : 180,
+          }}>
+            {group.pages.map(p => (
+              <Link
+                key={p.href}
+                href={p.href}
+                onClick={() => setOpen(false)}
+                className={isActive(p.href) ? 'nav-dropdown-link nav-dropdown-link-active' : 'nav-dropdown-link'}
+                style={{ padding: '7px 10px' }}
+              >
+                <span>{p.label}</span>
+              </Link>
+            ))}
+          </div>
+        </div>,
+        document.body
       )}
     </div>
   )
@@ -558,6 +840,7 @@ function FornitoriDropdown({
 }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+  const alignRef = useDropdownAlign(open)
 
   useEffect(() => {
     function handle(e: MouseEvent) {
@@ -571,11 +854,11 @@ function FornitoriDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className="nav-link" style={{ ...linkStyle('/area-fornitori'), gap: 4, color: anyActive ? '#000' : '#111', textDecoration: anyActive ? 'underline' : 'none', textDecorationThickness: anyActive ? '3px' : undefined, textUnderlineOffset: anyActive ? '4px' : undefined }}>
+      <button onClick={() => setOpen(o => !o)} className="nav-link testo-nav-bar" style={{ ...linkStyle('/area-fornitori'), gap: 4, textDecoration: anyActive ? 'underline' : 'none', textDecorationThickness: anyActive ? '3px' : undefined, textUnderlineOffset: anyActive ? '4px' : undefined }}>
         Area Fornitori {open ? '▴' : '▾'}
       </button>
       {open && (
-        <div style={{
+        <div ref={alignRef} style={{
           position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
           background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
           boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 4,
@@ -610,6 +893,7 @@ function ClientiDropdown({
 }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+  const alignRef = useDropdownAlign(open)
 
   useEffect(() => {
     function handle(e: MouseEvent) {
@@ -623,11 +907,11 @@ function ClientiDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className="nav-link" style={{ ...linkStyle('/clienti'), gap: 4, color: anyActive ? '#000' : '#111', textDecoration: anyActive ? 'underline' : 'none', textDecorationThickness: anyActive ? '3px' : undefined, textUnderlineOffset: anyActive ? '4px' : undefined }}>
+      <button onClick={() => setOpen(o => !o)} className="nav-link testo-nav-bar" style={{ ...linkStyle('/clienti'), gap: 4, textDecoration: anyActive ? 'underline' : 'none', textDecorationThickness: anyActive ? '3px' : undefined, textUnderlineOffset: anyActive ? '4px' : undefined }}>
         Area Clienti {open ? '▴' : '▾'}
       </button>
       {open && (
-        <div style={{
+        <div ref={alignRef} style={{
           position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
           background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
           boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 4,
@@ -662,6 +946,7 @@ function AreaClientiDropdown({
 }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+  const alignRef = useDropdownAlign(open)
 
   useEffect(() => {
     function handle(e: MouseEvent) {
@@ -675,11 +960,11 @@ function AreaClientiDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className="nav-link" style={{ ...linkStyle('/area-clienti'), gap: 4, color: anyActive ? '#000' : '#111', textDecoration: anyActive ? 'underline' : 'none', textDecorationThickness: anyActive ? '3px' : undefined, textUnderlineOffset: anyActive ? '4px' : undefined }}>
+      <button onClick={() => setOpen(o => !o)} className="nav-link testo-nav-bar" style={{ ...linkStyle('/area-clienti'), gap: 4, color: '#000', textDecoration: anyActive ? 'underline' : 'none', textDecorationThickness: anyActive ? '3px' : undefined, textUnderlineOffset: anyActive ? '4px' : undefined }}>
         Area Personale {open ? '▴' : '▾'}
       </button>
       {open && (
-        <div style={{
+        <div ref={alignRef} style={{
           position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
           background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
           boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 4,

@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
-import { markRead, attivaUtente } from './actions'
+import { useState, useEffect, useRef } from 'react'
+import { useRouter } from 'next/navigation'
+import { markRead, attivaUtente, eliminaMessaggio } from './actions'
 
 type Messaggio = {
   id: number
@@ -17,15 +18,27 @@ type Messaggio = {
 }
 
 const TIPO_LABELS: Record<string, string> = {
-  nuova_registrazione: 'Nuova registrazione',
-  contatto:            'Richiesta contatto',
-  partnership:         'Richiesta partnership',
+  nuova_registrazione:  'Nuova registrazione',
+  contatto:             'Richiesta contatto',
+  partnership:          'Richiesta partnership',
+  ingegnere_edile:      'Contatto ingegnere',
+  richiesta_preventivo: 'Richiesta preventivo',
+  preventivo_inviato:   'Preventivo inviato',
+  preventivo_accettato: 'Preventivo accettato',
+  preventivo_rifiutato: 'Preventivo rifiutato',
+  log_pdf_preventivo:   'Log PDF preventivo',
 }
 
 const TIPO_COLORS: Record<string, string> = {
-  nuova_registrazione: '#4a8fa8',
-  contatto:            '#6b8f71',
-  partnership:         '#7b5ea7',
+  nuova_registrazione:  '#4a8fa8',
+  contatto:             '#6b8f71',
+  partnership:          '#7b5ea7',
+  ingegnere_edile:      '#4a7a8f',
+  richiesta_preventivo: '#b7791f',
+  preventivo_inviato:   '#276749',
+  preventivo_accettato: '#276749',
+  preventivo_rifiutato: '#c00',
+  log_pdf_preventivo:   '#555',
 }
 
 const TUTTI_TIPI = Object.keys(TIPO_LABELS)
@@ -37,10 +50,23 @@ export default function EmailClient({
   messaggi: Messaggio[]
   isAdmin: boolean
 }) {
+  const router = useRouter()
   const [aperto, setAperto] = useState<number | null>(null)
+  const [eliminati, setEliminati] = useState<Set<number>>(new Set())
   const [letti, setLetti] = useState<Set<number>>(
     () => new Set(messaggi.filter(m => m.letto).map(m => m.id))
   )
+
+// Aggiorna letti quando arrivano nuovi messaggi dal server
+  useEffect(() => {
+    setLetti(prev => new Set([...prev, ...messaggi.filter(m => m.letto).map(m => m.id)]))
+  }, [messaggi])
+
+  // Polling: aggiorna la lista ogni 30s
+  useEffect(() => {
+    const id = setInterval(() => router.refresh(), 30_000)
+    return () => clearInterval(id)
+  }, [router])
   const [filtroTipo, setFiltroTipo] = useState<string>('tutti')
   const [filtroStato, setFiltroStato] = useState<'tutti' | 'letti' | 'non_letti'>('tutti')
 
@@ -66,6 +92,13 @@ export default function EmailClient({
     }
   }
 
+  async function handleElimina(e: React.MouseEvent, id: number) {
+    e.stopPropagation()
+    if (!confirm('Eliminare questo messaggio?')) return
+    setEliminati(s => new Set([...s, id]))
+    await eliminaMessaggio(id)
+  }
+
   async function handleAttiva(username: string) {
     const res = await attivaUtente(username)
     if (res.ok) {
@@ -76,6 +109,7 @@ export default function EmailClient({
   const nonLetti = messaggi.filter(m => !letti.has(m.id)).length
 
   const messaggiFiltrati = messaggi.filter(m => {
+    if (eliminati.has(m.id)) return false
     if (filtroTipo !== 'tutti' && m.tipo !== filtroTipo) return false
     if (filtroStato === 'letti'     && !letti.has(m.id)) return false
     if (filtroStato === 'non_letti' &&  letti.has(m.id)) return false
@@ -234,9 +268,19 @@ export default function EmailClient({
                     })}
                   </span>
 
-                  <span style={{ fontSize: 12, color: '#aaa' }}>
-                    {isAperto ? '▲' : '▼'}
-                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    {isAdmin && (
+                      <button
+                        onClick={e => handleElimina(e, m.id)}
+                        className="btn-red"
+                        style={{ width: 28, height: 28, padding: 0, border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'inherit' }}
+                        title="Elimina"
+                      >
+                        ✕
+                      </button>
+                    )}
+                    <span style={{ fontSize: 12, color: '#aaa' }}>{isAperto ? '▲' : '▼'}</span>
+                  </div>
                 </div>
 
                 {isAperto && (

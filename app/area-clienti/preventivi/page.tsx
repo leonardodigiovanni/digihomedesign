@@ -22,7 +22,7 @@ type Preventivo = {
 }
 
 const STATO_COLORS: Record<string, [string, string]> = {
-  bozza:     ['#666', '#f5f5f5'],
+  bozza:     ['#000', 'transparent'],
   inviato:   ['#2b6cb0', '#ebf8ff'],
   accettato: ['#276749', '#f0fff4'],
   rifiutato: ['#c00', '#fff5f5'],
@@ -52,6 +52,12 @@ async function getData(role: string, username: string): Promise<{ preventivi: Pr
         created_at       TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
       )
     `)
+    const [col] = await conn.query(
+      `SELECT COUNT(*) AS cnt FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'preventivi' AND COLUMN_NAME = 'creato_da'`
+    ) as [{ cnt: number }[], unknown]
+    if ((col[0]?.cnt ?? 0) === 0) {
+      await conn.execute(`ALTER TABLE preventivi ADD COLUMN creato_da VARCHAR(100) NULL DEFAULT NULL`)
+    }
 
     const isStaff = role === 'admin' || role === 'dipendente'
     let rows: Record<string, unknown>[]
@@ -66,13 +72,16 @@ async function getData(role: string, username: string): Promise<{ preventivi: Pr
     } else {
       const [userRows] = await conn.execute('SELECT email FROM users WHERE username = ? LIMIT 1', [username]) as [{ email: string }[], unknown]
       const email = userRows[0]?.email ?? ''
-      if (!email) return { preventivi: [], isStaff: false }
       const [r] = await conn.query(`
         SELECT p.*, '' AS cliente_nome FROM preventivi p
-        INNER JOIN clienti c ON c.id = p.cliente_id AND c.email = ?
+        LEFT JOIN clienti c ON c.id = p.cliente_id
         WHERE p.visibile_cliente = 1
+          AND (
+            (c.email = ?)
+            OR (p.creato_da = ? AND p.cliente_id IS NULL)
+          )
         ORDER BY p.data DESC, p.id DESC
-      `, [email])
+      `, [email || null, username])
       rows = r as Record<string, unknown>[]
     }
 
@@ -90,6 +99,9 @@ export default async function Page() {
 
   const { preventivi, isStaff } = await getData(role, username)
 
+  const cartRaw = cookieStore.get('digi_cart')?.value
+  const cartNonVuoto = !!cartRaw && (() => { try { const c = JSON.parse(cartRaw); return Array.isArray(c) && c.length > 0 } catch { return false } })()
+
   const thStyle: React.CSSProperties = {
     padding: '9px 14px', fontSize: 11, fontWeight: 600, color: '#888',
     textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.06em',
@@ -105,18 +117,31 @@ export default async function Page() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
         <div>
           <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Preventivi</h2>
-          <p style={{ color: '#888', fontSize: 14, margin: '4px 0 0' }}>
+          <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0' }}>
             {isStaff ? 'Tutti i preventivi emessi.' : 'I preventivi associati al tuo account.'}
           </p>
         </div>
-        <form action={creaPreventivo}>
-          <button type="submit" style={{
-            padding: '9px 22px', fontSize: 13, fontWeight: 700, borderRadius: 6,
-            background: '#1a6e3b', color: '#fff', border: 'none', cursor: 'pointer',
-          }}>
-            + Nuovo preventivo
-          </button>
-        </form>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
+          <form action={creaPreventivo}>
+            <button
+              type="submit"
+              disabled={cartNonVuoto}
+              className={cartNonVuoto ? 'btn-gray' : 'btn-green'}
+              style={{ padding: '9px 22px', fontSize: 13, fontWeight: 700, opacity: cartNonVuoto ? 0.5 : 1, cursor: cartNonVuoto ? 'not-allowed' : 'pointer' }}
+            >
+              + Nuovo preventivo
+            </button>
+          </form>
+          {cartNonVuoto && (
+            <p style={{ margin: 0, fontSize: 12, color: '#888' }}>
+              Hai articoli nel{' '}
+              <a href="/area-clienti/carrello-preventivo" style={{ color: '#2b6cb0', fontWeight: 600 }}>
+                carrello preventivi
+              </a>
+              .
+            </p>
+          )}
+        </div>
       </div>
 
       {preventivi.length === 0 ? (

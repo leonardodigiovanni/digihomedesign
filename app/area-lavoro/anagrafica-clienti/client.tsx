@@ -17,6 +17,7 @@ export type Cliente = {
   codice_sdi: string
   codice_fiscale: string
   partita_iva: string
+  sconto_pct: number
   created_at: string
 }
 
@@ -151,6 +152,15 @@ function ClienteForm({ defaults, onClose, action, pending, error }: {
           </div>
         )}
         {tipo === 'fisica' && <input type="hidden" name="partita_iva" value="" />}
+      </div>
+
+      {/* Sconto cliente */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+        <label style={{ fontSize: 13, fontWeight: 500, color: '#444' }}>Sconto cliente %</label>
+        <input name="sconto_pct" type="number" step="0.01" min="0" max="100"
+          defaultValue={defaults?.sconto_pct ?? 0}
+          style={{ ...inputStyle, width: '50%' }}
+          placeholder="0 = nessuno sconto" />
       </div>
 
       {error && (
@@ -293,12 +303,13 @@ export default function AnagraficaClientiClient({ clienti, role }: { clienti: Cl
                 <th style={thStyle} onClick={() => handleSort('email')}>Email <SortIcon col="email" sortCol={sortCol} sortDir={sortDir} /></th>
                 <th style={thStyle} onClick={() => handleSort('codice_sdi')}>PEC / SDI <SortIcon col="codice_sdi" sortCol={sortCol} sortDir={sortDir} /></th>
                 <th style={{ ...thStyle, cursor: 'default' }}>CF / P.IVA</th>
+                <th style={{ ...thStyle, cursor: 'default' }}>Sconto %</th>
                 <th style={{ ...thStyle, cursor: 'default' }}>Azioni</th>
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 ? (
-                <tr><td colSpan={8} style={{ padding: 32, textAlign: 'center', color: '#aaa', fontSize: 14 }}>Nessun cliente trovato.</td></tr>
+                <tr><td colSpan={9} style={{ padding: 32, textAlign: 'center', color: '#aaa', fontSize: 14 }}>Nessun cliente trovato.</td></tr>
               ) : filtered.map(c => (
                 <tr key={c.id} style={{ borderBottom: '1px solid #f0f0f0' }}>
                   <td style={tdStyle}><TipoBadge tipo={c.tipo} /></td>
@@ -324,6 +335,11 @@ export default function AnagraficaClientiClient({ clienti, role }: { clienti: Cl
                         : <span style={{ color: '#ccc' }}>—</span>}
                       {c.partita_iva && <span style={{ fontFamily: 'monospace', color: '#888', letterSpacing: '0.06em' }}>P.IVA {c.partita_iva}</span>}
                     </div>
+                  </td>
+                  <td style={tdStyle}>
+                    {c.sconto_pct > 0
+                      ? <span style={{ color: '#e65100', fontWeight: 700, fontSize: 13 }}>{c.sconto_pct}%</span>
+                      : <span style={{ color: '#ccc' }}>—</span>}
                   </td>
                   <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>
                     <div style={{ display: 'flex', gap: 6, justifyContent: 'center' }}>

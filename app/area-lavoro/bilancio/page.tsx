@@ -62,7 +62,7 @@ async function getAnni(): Promise<number[]> {
 export default async function Page({ searchParams }: { searchParams: Promise<{ anno?: string }> }) {
   const cookieStore = await cookies()
   const role = cookieStore.get('session_role')?.value ?? ''
-  const settings = readSettings()
+  const settings = await readSettings()
   if (!hasPageAccess(role, 18, settings)) redirect('/')
 
   await ensureTable()
@@ -83,7 +83,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ a
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <div>
         <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Bilancio</h2>
-        <p style={{ color: '#888', fontSize: 14, margin: '4px 0 0' }}>Conto economico e stato patrimoniale</p>
+        <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0' }}>Conto economico e stato patrimoniale</p>
       </div>
       <BilancioClient movimenti={movimenti} anno={anno} anni={anni} role={role} />
     </div>

@@ -70,7 +70,7 @@ function InlineLoginForm() {
   )
 }
 
-function DropdownLoginForm({ registrazioniDisabilitate }: { registrazioniDisabilitate?: boolean }) {
+export function DropdownLoginForm({ registrazioniDisabilitate }: { registrazioniDisabilitate?: boolean }) {
   const [error, formAction, isPending] = useActionState(login, null)
   const showError = useLoginFlash(error, isPending)
 
@@ -94,7 +94,7 @@ function DropdownLoginForm({ registrazioniDisabilitate }: { registrazioniDisabil
       <button
         type="submit"
         disabled={isPending}
-        className={isPending ? 'btn-gray' : 'btn-green'}
+        className={isPending ? 'btn-gray' : 'btn-black'}
         style={{ padding: '8px 12px', fontSize: 13, borderRadius: 4, fontFamily: 'inherit' }}
       >
         {isPending ? '...' : 'Accedi'}
@@ -152,7 +152,7 @@ export default function HeaderAuth({ username, registrazioniDisabilitate, forceD
       <form action={logout}>
         <button
           type="submit"
-          className="btn-red"
+          className="btn-orange"
           style={{ padding: '8px 14px', fontSize: 13, borderRadius: 4, width: 92, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
         >
           Logout
@@ -167,10 +167,10 @@ export default function HeaderAuth({ username, registrazioniDisabilitate, forceD
       <div ref={wrapperRef} style={{ position: 'relative' }}>
         <button
           onClick={() => setIsOpen(v => !v)}
-          className={isOpen ? 'btn-rgb-c' : 'btn-green'}
+          className={isOpen ? 'btn-orange' : 'btn-black'}
           style={{ padding: '8px 14px', fontSize: 13, borderRadius: 4, whiteSpace: 'nowrap', width: 92, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
         >
-          {isOpen ? '✕ Chiudi' : 'Accedi ▾'}
+          {isOpen ? 'Chiudi ▴' : 'Accedi ▾'}
         </button>
         {isOpen && (
           <div style={{

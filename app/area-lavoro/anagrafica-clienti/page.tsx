@@ -39,9 +39,10 @@ async function getClienti(): Promise<Cliente[]> {
       await conn.execute(`ALTER TABLE clienti ADD COLUMN codice_fiscale VARCHAR(16) NOT NULL DEFAULT ''`)
       await conn.execute(`ALTER TABLE clienti ADD COLUMN partita_iva VARCHAR(11) NOT NULL DEFAULT ''`)
     }
+    await conn.execute(`ALTER TABLE clienti ADD COLUMN sconto_pct DECIMAL(5,2) NOT NULL DEFAULT 0`).catch(() => {})
 
     const [rows] = await conn.execute(
-      `SELECT id,tipo,nome,cognome,ragione_sociale,indirizzo,telefono,email,pec,codice_sdi,codice_fiscale,partita_iva,created_at
+      `SELECT id,tipo,nome,cognome,ragione_sociale,indirizzo,telefono,email,pec,codice_sdi,codice_fiscale,partita_iva,sconto_pct,created_at
        FROM clienti ORDER BY ragione_sociale ASC, cognome ASC, nome ASC`
     ) as [Cliente[], unknown]
     return rows
@@ -51,7 +52,7 @@ async function getClienti(): Promise<Cliente[]> {
 export default async function Page() {
   const cookieStore = await cookies()
   const role = cookieStore.get('session_role')?.value ?? ''
-  const settings = readSettings()
+  const settings = await readSettings()
   if (!hasPageAccess(role, 21, settings)) redirect('/')
 
   const clienti = await getClienti()
@@ -59,7 +60,7 @@ export default async function Page() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <div>
         <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Anagrafica Clienti</h2>
-        <p style={{ color: '#888', fontSize: 14, margin: '4px 0 0' }}>Elenco clienti — persone fisiche e giuridiche</p>
+        <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0' }}>Elenco clienti — persone fisiche e giuridiche</p>
       </div>
       <AnagraficaClientiClient clienti={clienti} role={role} />
     </div>

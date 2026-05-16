@@ -31,7 +31,7 @@ export async function login(
   }
 
   if (role !== 'admin') {
-    const { loginClientiDisabilitato, loginDipendentiDisabilitato, manutenzione } = readSettings()
+    const { loginClientiDisabilitato, loginDipendentiDisabilitato, manutenzione } = await readSettings()
     if (manutenzione) {
       return 'Sito in manutenzione — accesso riservato agli amministratori.'
     }

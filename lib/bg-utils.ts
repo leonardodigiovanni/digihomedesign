@@ -48,6 +48,42 @@ export function rgbBrushedBackgroundInv(r: number, g: number, b: number): string
   ].join(', ')
 }
 
+/** Gradiente metallico scuro: variazione tonale visibile ma rimane sempre buio (per effetto D) */
+export function rgbGradientDark(r: number, g: number, b: number): string {
+  const dark  = darken(r, g, b, 0.30)
+  const mid   = darken(r, g, b, 0.58)
+  const base  = `#${hex2(r)}${hex2(g)}${hex2(b)}`
+  const soft  = lighten(r, g, b, 0.08)
+  const peak  = lighten(r, g, b, 0.14)
+  return `linear-gradient(135deg, ${dark} 0%, ${mid} 18%, ${base} 35%, ${soft} 45%, ${peak} 50%, ${soft} 55%, ${base} 65%, ${mid} 82%, ${dark} 100%)`
+}
+
+/** Gradiente scuro invertito (per effetto D inv) */
+export function rgbGradientDarkInv(r: number, g: number, b: number): string {
+  const dark  = darken(r, g, b, 0.30)
+  const mid   = darken(r, g, b, 0.58)
+  const base  = `#${hex2(r)}${hex2(g)}${hex2(b)}`
+  const soft  = lighten(r, g, b, 0.08)
+  const peak  = lighten(r, g, b, 0.14)
+  return `linear-gradient(135deg, ${peak} 0%, ${soft} 18%, ${base} 35%, ${mid} 45%, ${dark} 50%, ${mid} 55%, ${base} 65%, ${soft} 82%, ${peak} 100%)`
+}
+
+/** Gradiente spazzolato scuro (per effetto D) */
+export function rgbBrushedBackgroundDark(r: number, g: number, b: number): string {
+  return [
+    'repeating-linear-gradient(60deg, rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 1px, transparent 1px, transparent 6px)',
+    rgbGradientDark(r, g, b),
+  ].join(', ')
+}
+
+/** Gradiente spazzolato scuro invertito (per effetto D inv) */
+export function rgbBrushedBackgroundDarkInv(r: number, g: number, b: number): string {
+  return [
+    'repeating-linear-gradient(60deg, rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 1px, transparent 1px, transparent 6px)',
+    rgbGradientDarkInv(r, g, b),
+  ].join(', ')
+}
+
 /** Box-shadow per effetti RGB */
 export function rgbBoxShadow(r: number, g: number, b: number): string {
   return `0 4px 24px rgba(${r},${g},${b},0.4), inset 0 1px 0 rgba(255,255,255,0.5)`

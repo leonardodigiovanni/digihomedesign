@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Rgba, BgMode } from '@/lib/settings'
-import { rgbGradient, rgbGradientInv, rgbBrushedBackground, rgbBrushedBackgroundInv, rgbBoxShadow, rgbBorderColor } from '@/lib/bg-utils'
+import { rgbGradient, rgbGradientInv, rgbBrushedBackground, rgbBrushedBackgroundInv, rgbBrushedBackgroundDark, rgbBrushedBackgroundDarkInv, rgbBoxShadow, rgbBorderColor } from '@/lib/bg-utils'
 
 interface HeaderProps {
   headerBg?: Rgba
@@ -61,11 +61,17 @@ function buildHeaderStyle(mode: BgMode, bg: Rgba): React.CSSProperties {
   if (mode === 'rgb_a_inv' || mode === 'rgb_b_inv') {
     return { background: rgbGradientInv(bg.r, bg.g, bg.b), boxShadow: rgbBoxShadow(bg.r, bg.g, bg.b) }
   }
-  if (mode === 'rgb_c' || mode === 'rgb_d') {
+  if (mode === 'rgb_c') {
     return { background: rgbBrushedBackground(bg.r, bg.g, bg.b), boxShadow: rgbBoxShadow(bg.r, bg.g, bg.b) }
   }
-  if (mode === 'rgb_c_inv' || mode === 'rgb_d_inv') {
+  if (mode === 'rgb_d') {
+    return { background: rgbBrushedBackgroundDark(bg.r, bg.g, bg.b), boxShadow: rgbBoxShadow(bg.r, bg.g, bg.b) }
+  }
+  if (mode === 'rgb_c_inv') {
     return { background: rgbBrushedBackgroundInv(bg.r, bg.g, bg.b), boxShadow: rgbBoxShadow(bg.r, bg.g, bg.b) }
+  }
+  if (mode === 'rgb_d_inv') {
+    return { background: rgbBrushedBackgroundDarkInv(bg.r, bg.g, bg.b), boxShadow: rgbBoxShadow(bg.r, bg.g, bg.b) }
   }
   return {}
 }
@@ -97,6 +103,7 @@ export default function Header({
         borderBottom: `1px solid ${borderColor}`,
         padding: '0 32px 0 16px',
         height: 90,
+        overflow: 'visible',
         position: 'relative',
         ...(isRgbEffect ? { position: 'relative' } : {}),
       }}
@@ -107,15 +114,15 @@ export default function Header({
       {shimmerClass && <div className={shimmerClass} />}
 
       <div style={{ display: 'flex', alignItems: 'center', height: '100%', position: 'relative', zIndex: 1 }}>
-        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 6, textDecoration: 'none', color: 'inherit', height: '100%', outline: 'none', cursor: 'pointer' }}>
-          <Image src="/images/digi_tr.png" alt="Home Design" width={95} height={95} sizes="95px" style={{ objectFit: 'contain', display: 'block', alignSelf: 'center', flexShrink: 0 }} />
-          <Image src="/images/nome_tr.png" alt="Home Design" width={143} height={48} sizes="143px" loading="eager" style={{ objectFit: 'contain', display: 'block', alignSelf: 'center', position: 'relative', top: 12, flexShrink: 0 }} />
+        <Link href="/" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 6, textDecoration: 'none', color: 'inherit', outline: 'none', cursor: 'pointer' }}>
+          <Image src="/images/header/qqqqqqqqqqqqqqqqqqq-Photoroom.png" alt="Home Design" width={44} height={44} unoptimized style={{ objectFit: 'contain', display: 'block' }} />
+          <Image src="/images/volantino/nome_tr.png?v=2" alt="Home Design" width={110} height={37} unoptimized style={{ objectFit: 'contain', display: 'block', marginTop: 20 }} />
         </Link>
       </div>
       {username && (
-        <span style={{
+        <span className="fs-9" style={{
           position: 'absolute', top: 8, right: 8,
-          fontSize: 12, fontWeight: 500, color: '#fff',
+          fontWeight: 500, color: '#fff',
           whiteSpace: 'nowrap', zIndex: 2,
           textShadow: '0 1px 3px rgba(0,0,0,0.4)',
         }}>

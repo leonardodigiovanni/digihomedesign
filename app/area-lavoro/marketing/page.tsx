@@ -42,7 +42,7 @@ export default async function Page() {
   const role = cookieStore.get('session_role')?.value ?? ''
 
   if (!role) redirect('/')
-  const settings = readSettings()
+  const settings = await readSettings()
   if (!hasPageAccess(role, 29, settings)) redirect('/')
 
   const records = await getData()
@@ -50,7 +50,7 @@ export default async function Page() {
   return (
     <div>
       <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 6 }}>Marketing</h2>
-      <p style={{ color: '#888', fontSize: 13, marginBottom: 24 }}>
+      <p style={{ color: '#000', fontSize: 13, marginBottom: 24 }}>
         Registro delle campagne e azioni di marketing.
       </p>
       <MarketingClient records={records} />

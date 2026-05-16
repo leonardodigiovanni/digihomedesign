@@ -24,7 +24,7 @@ export default function ManutenzioneToggle({ manutenzione }: { manutenzione: boo
           <button type="submit" disabled={pending}
             className={pending ? 'btn-gray' : manutenzione ? 'btn-green' : 'btn-red'}
             style={{ padding: '8px 20px', fontSize: 13, borderRadius: 7, fontFamily: 'inherit', whiteSpace: 'nowrap' }}>
-            {pending ? '…' : manutenzione ? '✓ Ripristina sito' : <><span style={{ verticalAlign: 'middle', lineHeight: 1, position: 'relative', top: '-3px' }}>⊘</span>{' Attiva manutenzione'}</>}
+            {pending ? '…' : manutenzione ? 'Ripristina sito' : 'Attiva manutenzione'}
           </button>
         </form>
       </div>

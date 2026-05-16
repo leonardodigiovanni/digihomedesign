@@ -12,17 +12,17 @@ export const metadata: Metadata = {
 }
 
 const testPages = [
-  { label: 'Test Sfondo Gold (A/B/C)',   href: '/test-gold',   icon: '🎨' },
-  { label: 'Test Sfondo Silver (A/B/C)', href: '/test-silver', icon: '🎨' },
-  { label: 'Test Sfondo RGB (A/B/C)',    href: '/test-rgb',    icon: '🎨' },
-  { label: 'Volantino',                  href: '/volantino',   icon: '📄' },
+  { label: 'Test Sfondo Gold (A/B/C)',   href: '/test-gold'   },
+  { label: 'Test Sfondo Silver (A/B/C)', href: '/test-silver' },
+  { label: 'Test Sfondo RGB (A/B/C)',    href: '/test-rgb'    },
+  { label: 'Volantino',                  href: '/volantino'   },
 ]
 
 export default async function Page() {
   const cookieStore = await cookies()
   if (cookieStore.get('session_role')?.value !== 'admin') redirect('/')
 
-  const settings = readSettings()
+  const settings = await readSettings()
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
@@ -46,24 +46,16 @@ export default async function Page() {
       }}>
         <h3 style={{ fontSize: 15, fontWeight: 600, margin: '0 0 12px' }}>Pagine di Test</h3>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-          {testPages.map(({ label, href, icon }) => (
-            <Link key={href} href={href} style={{
+          {testPages.map(({ label, href }) => (
+            <Link key={href} href={href} className="btn-black" style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: 6,
-              height: 33,
-              boxSizing: 'border-box',
               padding: '0 14px',
-              background: '#2a2a3e',
-              border: '1px solid #444',
-              borderRadius: 6,
-              color: '#c8960c',
               fontSize: 13,
-              fontWeight: 500,
+              fontWeight: 600,
               textDecoration: 'none',
-              transition: 'background 0.15s, border-color 0.15s',
             }}>
-              {icon} {label}
+              {label}
             </Link>
           ))}
         </div>

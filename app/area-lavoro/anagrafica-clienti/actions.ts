@@ -28,6 +28,7 @@ export async function addCliente(_p: MutResult | null, fd: FormData): Promise<Mu
   const codice_sdi      = (fd.get('codice_sdi') as string)?.trim() ?? ''
   const codice_fiscale  = (fd.get('codice_fiscale') as string)?.trim().toUpperCase() ?? ''
   const partita_iva     = (fd.get('partita_iva') as string)?.trim() ?? ''
+  const sconto_pct      = parseFloat((fd.get('sconto_pct') as string) ?? '0') || 0
 
   if (tipo !== 'fisica' && tipo !== 'giuridica') return { ok: false, error: 'Tipo non valido.' }
   if (tipo === 'fisica' && (!nome || !cognome)) return { ok: false, error: 'Nome e cognome obbligatori.' }
@@ -36,9 +37,9 @@ export async function addCliente(_p: MutResult | null, fd: FormData): Promise<Mu
   const conn = await getConnection()
   try {
     await conn.execute(
-      `INSERT INTO clienti (tipo,nome,cognome,ragione_sociale,indirizzo,telefono,email,pec,codice_sdi,codice_fiscale,partita_iva)
-       VALUES (?,?,?,?,?,?,?,?,?,?,?)`,
-      [tipo, nome, cognome, ragione_sociale, indirizzo, telefono, email, pec, codice_sdi, codice_fiscale, partita_iva]
+      `INSERT INTO clienti (tipo,nome,cognome,ragione_sociale,indirizzo,telefono,email,pec,codice_sdi,codice_fiscale,partita_iva,sconto_pct)
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`,
+      [tipo, nome, cognome, ragione_sociale, indirizzo, telefono, email, pec, codice_sdi, codice_fiscale, partita_iva, sconto_pct]
     )
     return { ok: true }
   } catch { return { ok: false, error: 'Errore durante il salvataggio.' } }
@@ -60,6 +61,7 @@ export async function updateCliente(_p: MutResult | null, fd: FormData): Promise
   const codice_sdi      = (fd.get('codice_sdi') as string)?.trim() ?? ''
   const codice_fiscale  = (fd.get('codice_fiscale') as string)?.trim().toUpperCase() ?? ''
   const partita_iva     = (fd.get('partita_iva') as string)?.trim() ?? ''
+  const sconto_pct      = parseFloat((fd.get('sconto_pct') as string) ?? '0') || 0
 
   if (isNaN(id)) return { ok: false, error: 'ID non valido.' }
   if (tipo !== 'fisica' && tipo !== 'giuridica') return { ok: false, error: 'Tipo non valido.' }
@@ -69,8 +71,8 @@ export async function updateCliente(_p: MutResult | null, fd: FormData): Promise
   const conn = await getConnection()
   try {
     await conn.execute(
-      `UPDATE clienti SET tipo=?,nome=?,cognome=?,ragione_sociale=?,indirizzo=?,telefono=?,email=?,pec=?,codice_sdi=?,codice_fiscale=?,partita_iva=? WHERE id=?`,
-      [tipo, nome, cognome, ragione_sociale, indirizzo, telefono, email, pec, codice_sdi, codice_fiscale, partita_iva, id]
+      `UPDATE clienti SET tipo=?,nome=?,cognome=?,ragione_sociale=?,indirizzo=?,telefono=?,email=?,pec=?,codice_sdi=?,codice_fiscale=?,partita_iva=?,sconto_pct=? WHERE id=?`,
+      [tipo, nome, cognome, ragione_sociale, indirizzo, telefono, email, pec, codice_sdi, codice_fiscale, partita_iva, sconto_pct, id]
     )
     return { ok: true }
   } catch { return { ok: false, error: 'Errore durante il salvataggio.' } }

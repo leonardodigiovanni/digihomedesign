@@ -89,7 +89,7 @@ export default async function Page() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <div>
         <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Documenti</h2>
-        <p style={{ color: '#888', fontSize: 14, margin: '4px 0 0' }}>
+        <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0' }}>
           {isStaff ? 'Tutti i documenti caricati.' : 'I documenti condivisi con te.'}
         </p>
       </div>

@@ -69,29 +69,24 @@ export default function StampaClient({ pages }: { pages: string[] }) {
     <div style={{ background: '#d0d0d0', minHeight: '100vh', padding: '24px 0' }}>
 
       {/* Barra azioni */}
-      <div className="no-print" style={{
+      <div style={{
         display: 'flex', gap: 12, justifyContent: 'center',
         marginBottom: 28, flexWrap: 'wrap',
       }}>
-        <a href=".." style={{
-          padding: '9px 20px', fontSize: 13, fontWeight: 600, borderRadius: 6,
-          background: '#555', color: '#fff', textDecoration: 'none',
-        }}>
+        <a href=".." className="btn-black" style={{ padding: '9px 20px', fontSize: 13, fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>
           ← Torna al preventivo
         </a>
-        <button onClick={handlePDF} disabled={busy} style={{
-          padding: '9px 22px', fontSize: 13, fontWeight: 700, borderRadius: 6,
-          background: busy ? '#aaa' : '#1a4a8a', color: '#fff',
-          border: 'none', cursor: busy ? 'not-allowed' : 'pointer',
+        <button onClick={handlePDF} disabled={busy} className="btn-black" style={{
+          padding: '9px 22px', fontSize: 13, fontWeight: 700,
+          border: 'none', cursor: busy ? 'not-allowed' : 'pointer', opacity: busy ? 0.5 : 1,
         }}>
-          {loadingPdf ? `Generazione pagina…` : '⬇ Scarica PDF'}
+          {loadingPdf ? 'Generazione…' : 'Scarica PDF'}
         </button>
-        <button onClick={handlePrint} disabled={busy} style={{
-          padding: '9px 20px', fontSize: 13, fontWeight: 600, borderRadius: 6,
-          background: busy ? '#aaa' : '#1a6e3b', color: '#fff',
-          border: 'none', cursor: busy ? 'not-allowed' : 'pointer',
+        <button onClick={handlePrint} disabled={busy} className="btn-black" style={{
+          padding: '9px 20px', fontSize: 13, fontWeight: 600,
+          border: 'none', cursor: busy ? 'not-allowed' : 'pointer', opacity: busy ? 0.5 : 1,
         }}>
-          {loadingPrint ? 'Generazione…' : '🖨 Stampa'}
+          {loadingPrint ? 'Generazione…' : 'Stampa'}
         </button>
         <span style={{ fontSize: 12, color: '#666', alignSelf: 'center' }}>
           {pages.length} pagina{pages.length !== 1 ? 'e' : ''} A4

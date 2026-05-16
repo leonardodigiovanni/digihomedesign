@@ -1,0 +1,212 @@
+/* ─────────────────────────────────────────
+   PWA App — classi prefissate app-*
+   Non modificare da qui il sito vetrina.
+───────────────────────────────────────── */
+
+/* Shell */
+.app-shell {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: inherit;
+}
+
+/* Top bar */
+.app-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  height: 56px;
+  background: #1c1c1c;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.app-topbar-logo {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+}
+
+.app-topbar-title {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #fff;
+}
+
+.app-topbar-user {
+  font-size: 12px;
+  color: #bbb;
+  text-align: right;
+  line-height: 1.3;
+}
+
+/* Scroll area */
+.app-content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 20px 16px 24px;
+}
+
+/* Card generica */
+.app-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.app-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 6px;
+}
+
+.app-card-body {
+  font-size: 13px;
+  color: #555;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Bottone primario */
+.app-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #1c1c1c;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.app-btn:active {
+  opacity: 0.85;
+}
+
+.app-btn-outline {
+  background: transparent;
+  color: #1c1c1c;
+  border: 2px solid #1c1c1c;
+}
+
+/* Sezione con titolo */
+.app-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #999;
+  margin: 0 0 10px;
+}
+
+/* Welcome */
+.app-welcome-logo {
+  display: block;
+  margin: 32px auto 20px;
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+}
+
+.app-welcome-title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 8px;
+}
+
+.app-welcome-sub {
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+  line-height: 1.6;
+  margin: 0 0 32px;
+}
+
+/* Bottom nav */
+.app-bottom-nav {
+  display: flex;
+  align-items: center;
+  height: 92px;
+  background: #fff;
+  border-top: 1px solid #e0e0e0;
+  flex-shrink: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.app-bottom-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.app-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  color: #888;
+  font-size: 11px;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 8px 12px;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+  min-width: 72px;
+}
+
+.app-nav-item.active {
+  color: #1c1c1c;
+  background:
+    repeating-linear-gradient(60deg, rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px, transparent 1px, transparent 6px),
+    linear-gradient(135deg, #b89030 0%, #c8960c 18%, #f5d060 38%, #f0c840 50%, #f5d060 62%, #c8960c 82%, #b89030 100%);
+  border-radius: 10px;
+}
+
+/* Slot fisso per l'icona — sempre 44px di altezza */
+.app-nav-icon-slot {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Slot fisso per il testo — sempre 16px di altezza */
+.app-nav-label {
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.app-nav-icon {
+  font-size: 26px;
+  line-height: 1;
+}

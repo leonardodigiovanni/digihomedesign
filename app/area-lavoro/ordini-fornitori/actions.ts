@@ -12,7 +12,7 @@ async function checkAccess() {
   const cookieStore = await cookies()
   const role = cookieStore.get('session_role')?.value ?? ''
   const user = cookieStore.get('session_user')?.value ?? ''
-  const settings = readSettings()
+  const settings = await readSettings()
   if (!hasPageAccess(role, 26, settings)) redirect('/')
   return { role, user }
 }

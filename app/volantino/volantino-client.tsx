@@ -354,13 +354,13 @@ export default function VolantinoClient({
           <div style={{ width: '100%', height: H_HEADER, position: 'relative', overflow: 'hidden' }}>
             {/* Immagine di sfondo chiave */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/chiave.png" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+            <img src="/images/volantino/chiave.png" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
             {/* Logo + nome sovrapposti */}
             <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: Math.round(H_HEADER * 0.04), gap: 1 }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/images/dg-t.png" alt="logo" style={{ height: Math.round(H_HEADER * 0.15), width: 'auto' }} />
+              <img src="/images/volantino/rrr.png" alt="logo" style={{ height: Math.round(H_HEADER * 0.15), width: 'auto' }} />
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/images/nome_tr.png" alt="Home Design" style={{ height: Math.round(H_HEADER * 0.11), width: 'auto' }} />
+              <img src="/images/volantino/nome_tr.png" alt="Home Design" style={{ height: Math.round(H_HEADER * 0.11), width: 'auto' }} />
             </div>
           </div>
 
@@ -471,7 +471,7 @@ export default function VolantinoClient({
             </div>
             {/* Immagine sinistra */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/mano-t.png" alt="Mano" style={{
+            <img src="/images/volantino/mano-t.png" alt="Mano" style={{
               position: 'absolute',
               left: 0,
               bottom: -4,
@@ -496,7 +496,7 @@ export default function VolantinoClient({
             </div>
             {/* Immagine destra */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/app.png" alt="App" style={{
+            <img src="/images/volantino/app.png" alt="App" style={{
               position: 'absolute',
               right: 12,
               top: 12,

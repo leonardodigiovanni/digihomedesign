@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import type { Metadata } from 'next'
 import { creaPreventivo } from './actions'
+import EliminaBtn from './elimina-btn'
 
 export const metadata: Metadata = { title: 'Preventivi Clienti' }
 
@@ -22,7 +23,7 @@ type Preventivo = {
 }
 
 const STATO_COLORS: Record<string, [string, string]> = {
-  bozza:     ['#666', '#f5f5f5'],
+  bozza:     ['#000', 'transparent'],
   inviato:   ['#2b6cb0', '#ebf8ff'],
   accettato: ['#276749', '#f0fff4'],
   rifiutato: ['#c00', '#fff5f5'],
@@ -88,13 +89,11 @@ export default async function Page() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
         <div>
           <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Preventivi Clienti</h2>
-          <p style={{ color: '#888', fontSize: 14, margin: '4px 0 0' }}>Tutti i preventivi emessi.</p>
+          <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0' }}>Tutti i preventivi emessi.</p>
         </div>
         <form action={creaPreventivo}>
-          <button type="submit" style={{
-            padding: '9px 22px', fontSize: 13, fontWeight: 700, borderRadius: 6,
-            background: '#1a6e3b', color: '#fff', border: 'none', cursor: 'pointer',
-          }}>
+          <button type="submit" className="btn-green"
+            style={{ padding: '9px 22px', fontSize: 13, fontWeight: 700 }}>
             + Nuovo preventivo
           </button>
         </form>
@@ -115,6 +114,7 @@ export default async function Page() {
                 <th style={thStyle}>Validità</th>
                 <th style={{ ...thStyle, textAlign: 'center' }}>Stato</th>
                 <th style={{ ...thStyle, textAlign: 'center' }}>Visibile</th>
+                <th style={thStyle}></th>
               </tr>
             </thead>
             <tbody>
@@ -141,6 +141,9 @@ export default async function Page() {
                       <span style={{ fontSize: 11, fontWeight: 600, color: p.visibile_cliente ? '#276749' : '#c00' }}>
                         {p.visibile_cliente ? 'Sì' : 'No'}
                       </span>
+                    </td>
+                    <td style={{ ...tdStyle, textAlign: 'right' }}>
+                      <EliminaBtn id={p.id} />
                     </td>
                   </tr>
                 )

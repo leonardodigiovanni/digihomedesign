@@ -2,9 +2,14 @@
 
 import React, { useState, useMemo, useActionState, useTransition, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { addArticolo, updateArticolo, deleteArticolo, toggleDisponibile, togglePreventivabile, updateSchedaTecnica, type MutResult } from './actions'
+import { addArticolo, updateArticolo, deleteArticolo, toggleDisponibile, togglePreventivabile, toggleAcquistabile, togglePrincipale, toggleCaratteristica, toggleColonnaBooleana, updateSchedaTecnica, type MutResult, type AddResult } from './actions'
 
 // ─── Tipi ─────────────────────────────────────────────────────────────────────
+
+export type Fornitore = {
+  id: number
+  ragione_sociale: string
+}
 
 export type Articolo = {
   id: number
@@ -17,11 +22,30 @@ export type Articolo = {
   note: string | null
   disponibile: number
   preventivabile: number
+  acquistabile: number
+  max_acquistabile: number | null
+  sconto_articolo: number
+  serie: string
   updated_at: string
   foto_url: string | null
+  schema_url: string | null
   profilo_frontale_mm: number | null
   profilo_profondita_mm: number | null
   trasmittanza_uw: number | null
+  fornitore_id: number | null
+  fornitore_nome: string
+  principale: number
+  caratteristica: number
+  richiede_larghezza: number
+  richiede_altezza: number
+  richiede_quantita: number
+  richiede_piano: number
+  richiede_km: number
+  richiede_peso: number
+  richiede_tipo_colore: number
+  richiede_tipo_vetro: number
+  costante: number
+  abbr: string
 }
 
 // ─── Costanti ─────────────────────────────────────────────────────────────────
@@ -54,15 +78,32 @@ const thS: React.CSSProperties = {
 
 // ─── Form nuovo articolo ──────────────────────────────────────────────────────
 
-function NuovoArticoloForm({ categorie, produttori, onDone }: {
-  categorie: string[]; produttori: string[]; onDone: () => void
+function NuovoArticoloForm({ categorie, produttori, fornitori, onDone }: {
+  categorie: string[]; produttori: string[]; fornitori: Fornitore[]; onDone: () => void
 }) {
-  const [result, action, pending] = useActionState<MutResult | null, FormData>(addArticolo, null)
+  const [result, action, pending] = useActionState<AddResult | null, FormData>(addArticolo, null)
   const [unitaCustom, setUnitaCustom] = useState(false)
   const [unitaSel, setUnitaSel] = useState(UNITA_PREDEFINITE[0])
+  const [preview, setPreview] = useState<string | null>(null)
+  const fileRef      = useRef<HTMLInputElement>(null)
+  const pendingFile  = useRef<File | null>(null)
   const router = useRouter()
 
-  if (result?.ok) { router.refresh(); onDone() }
+  useEffect(() => {
+    if (!result?.ok) return
+    const file = pendingFile.current
+    if (file) {
+      const fd = new FormData()
+      fd.set('id', String(result.id))
+      fd.set('foto', file)
+      fd.set('tipo', 'foto')
+      fetch('/api/listini/foto', { method: 'POST', body: fd }).finally(() => {
+        router.refresh(); onDone()
+      })
+    } else {
+      router.refresh(); onDone()
+    }
+  }, [result])
 
   const lbl: React.CSSProperties = { fontSize: 11, color: '#555', display: 'block', marginBottom: 2 }
 
@@ -72,20 +113,79 @@ function NuovoArticoloForm({ categorie, produttori, onDone }: {
       padding: '16px 18px', marginBottom: 20,
     }}>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 10, marginBottom: 10 }}>
+
         <div>
           <label style={lbl}>Categoria *</label>
           <input name="categoria" required style={inp} list="cat-list" placeholder="Es. Infissi" />
           <datalist id="cat-list">{categorie.map(c => <option key={c} value={c} />)}</datalist>
         </div>
+
         <div>
-          <label style={lbl}>Produttore</label>
+          <label style={lbl}>Produttore / Marca</label>
           <input name="produttore" style={inp} list="prod-list" placeholder="Es. Schüco" />
           <datalist id="prod-list">{produttori.map(p => <option key={p} value={p} />)}</datalist>
         </div>
+
+        <div>
+          <label style={lbl}>Serie / Modello</label>
+          <input name="serie" style={inp} placeholder="Es. AWS 75" />
+        </div>
+
         <div style={{ gridColumn: 'span 2' }}>
-          <label style={lbl}>Descrizione *</label>
+          <label style={lbl}>Etichetta / Descrizione *</label>
           <input name="descrizione" required style={inp} placeholder="Es. Finestra scorrevole 2 ante" />
         </div>
+
+        {/* Upload foto */}
+        <div style={{ gridColumn: '1 / -1' }}>
+          <label style={lbl}>Foto prodotto</label>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div
+              onClick={() => fileRef.current?.click()}
+              style={{
+                width: 80, height: 64, border: '2px dashed #ccc', borderRadius: 5,
+                cursor: 'pointer', overflow: 'hidden', background: '#f0f0f0', flexShrink: 0,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}
+            >
+              {preview
+                ? <img src={preview} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                : <span style={{ fontSize: 10, color: '#bbb', textAlign: 'center' }}>Clicca</span>
+              }
+            </div>
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/*"
+              style={{ display: 'none' }}
+              onChange={e => {
+                const f = e.target.files?.[0]
+                if (!f) return
+                pendingFile.current = f
+                setPreview(URL.createObjectURL(f))
+              }}
+            />
+            <button type="button" onClick={() => fileRef.current?.click()}
+              style={{ padding: '5px 12px', fontSize: 12, border: '1px solid #ccc', borderRadius: 4, background: '#f5f5f5', cursor: 'pointer' }}>
+              {preview ? 'Cambia immagine' : 'Scegli immagine…'}
+            </button>
+            {preview && (
+              <button type="button" onClick={() => { pendingFile.current = null; setPreview(null); if (fileRef.current) fileRef.current.value = '' }}
+                style={{ padding: '5px 10px', fontSize: 12, border: '1px solid #ecc', borderRadius: 4, background: '#fff5f5', color: '#c00', cursor: 'pointer' }}>
+                ✕
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div>
+          <label style={lbl}>Fornitore</label>
+          <select name="fornitore_id" style={inp}>
+            <option value="">— nessuno —</option>
+            {fornitori.map(f => <option key={f.id} value={f.id}>{f.ragione_sociale}</option>)}
+          </select>
+        </div>
+
         <div>
           <label style={lbl}>Unità *</label>
           {unitaCustom ? (
@@ -99,18 +199,32 @@ function NuovoArticoloForm({ categorie, produttori, onDone }: {
             </select>
           )}
         </div>
+
         <div>
           <label style={lbl}>P. Acquisto (€)</label>
           <input name="prezzo_acquisto" type="number" step="0.01" min="0" defaultValue="0" style={inp} />
         </div>
+
         <div>
           <label style={lbl}>P. Vendita (€)</label>
           <input name="prezzo_vendita" type="number" step="0.01" min="0" defaultValue="0" style={inp} />
         </div>
+
         <div style={{ gridColumn: '1 / -1' }}>
           <label style={lbl}>Note</label>
           <input name="note" style={inp} placeholder="Opzionale" />
         </div>
+
+        <div>
+          <label style={lbl}>Max acquistabile</label>
+          <input name="max_acquistabile" type="number" min={0} step="1" style={inp} placeholder="vuoto=illimitato, 0=esaurito" />
+        </div>
+
+        <div>
+          <label style={lbl}>Sconto articolo %</label>
+          <input name="sconto_articolo" type="number" step="0.01" min="-100" max="100" defaultValue="0" style={inp} placeholder="0 = nessuno, neg. = magg." />
+        </div>
+
       </div>
       {result && !result.ok && <div style={{ color: '#c00', fontSize: 12, marginBottom: 8 }}>{result.error}</div>}
       <div style={{ display: 'flex', gap: 8 }}>
@@ -125,34 +239,95 @@ function NuovoArticoloForm({ categorie, produttori, onDone }: {
   )
 }
 
+// ─── Riga upload immagine riusabile ──────────────────────────────────────────
+
+function ImgUploadRow({ preview, isTarget, pasteFlash, uploading, fileRef, onActivate, onFileChange }: {
+  preview: string | null
+  isTarget: boolean
+  pasteFlash: boolean
+  uploading: boolean
+  fileRef: React.RefObject<HTMLInputElement | null>
+  onActivate: () => void
+  onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+}) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+      <div
+        onClick={() => fileRef.current?.click()}
+        style={{
+          width: 110, height: 90, border: '2px dashed #ccc', borderRadius: 6,
+          cursor: 'pointer', overflow: 'hidden', background: '#f5f5f5',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+        }}
+      >
+        {preview
+          ? <img src={preview} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+          : <span style={{ fontSize: 11, color: '#bbb', textAlign: 'center', padding: 8 }}>Clicca per<br/>caricare</span>
+        }
+      </div>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={onFileChange} />
+        <button
+          type="button"
+          onClick={() => fileRef.current?.click()}
+          disabled={uploading}
+          style={{ padding: '6px 14px', fontSize: 12, border: '1px solid #ccc', borderRadius: 4, background: '#f5f5f5', cursor: uploading ? 'wait' : 'pointer' }}
+        >
+          {uploading ? 'Caricamento…' : 'Scegli file…'}
+        </button>
+        <div
+          onClick={onActivate}
+          style={{
+            border: `2px ${isTarget ? 'solid' : 'dashed'} ${pasteFlash ? '#2b6cb0' : isTarget ? '#2b6cb0' : '#ccc'}`,
+            borderRadius: 5, padding: '8px 10px',
+            background: pasteFlash ? '#ebf4ff' : isTarget ? '#f0f6ff' : '#fafafa',
+            textAlign: 'center', fontSize: 11,
+            color: pasteFlash ? '#2b6cb0' : isTarget ? '#2b6cb0' : '#aaa',
+            transition: 'all 0.2s', userSelect: 'none', cursor: 'pointer',
+          }}
+        >
+          {pasteFlash ? '✓ Incollata' : isTarget ? '📋 Ctrl+V qui (attivo)' : '📋 Clicca per attivare Ctrl+V'}
+        </div>
+        <p style={{ margin: 0, fontSize: 10, color: '#bbb' }}>JPG, PNG, WebP — max 5 MB</p>
+      </div>
+    </div>
+  )
+}
+
 // ─── Scheda tecnica ───────────────────────────────────────────────────────────
 
 function SchedaTecnicaModal({ art, onClose }: { art: Articolo; onClose: () => void }) {
   const router = useRouter()
   const [result, formAction, pending] = useActionState<MutResult | null, FormData>(updateSchedaTecnica, null)
-  const [preview, setPreview] = useState<string | null>(art.foto_url ?? null)
-  const [uploading, setUploading] = useState(false)
-  const [uploadErr, setUploadErr] = useState<string | null>(null)
-  const fileRef = useRef<HTMLInputElement>(null)
+  const [preview,       setPreview]       = useState<string | null>(art.foto_url   ?? null)
+  const [previewSchema, setPreviewSchema] = useState<string | null>(art.schema_url ?? null)
+  const [uploading,  setUploading]  = useState(false)
+  const [uploadErr,  setUploadErr]  = useState<string | null>(null)
+  const [pasteFlash,       setPasteFlash]       = useState(false)
+  const [pasteFlashSchema, setPasteFlashSchema] = useState(false)
+  const [pasteTarget, setPasteTarget] = useState<'foto' | 'schema'>('foto')
+  const fileRef       = useRef<HTMLInputElement>(null)
+  const fileRefSchema = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (result?.ok) { router.refresh(); onClose() }
   }, [result])
 
-  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0]
-    if (!f) return
+  async function uploadFile(f: File, tipo: 'foto' | 'schema') {
     setUploadErr(null)
     setUploading(true)
-    setPreview(URL.createObjectURL(f))
+    const objUrl = URL.createObjectURL(f)
+    if (tipo === 'foto') setPreview(objUrl); else setPreviewSchema(objUrl)
     const fd = new FormData()
     fd.set('id', String(art.id))
     fd.set('foto', f)
+    fd.set('tipo', tipo)
     try {
       const res  = await fetch('/api/listini/foto', { method: 'POST', body: fd })
-      const data = await res.json() as { ok: boolean; foto_url?: string; error?: string }
-      if (data.ok && data.foto_url) {
-        setPreview(data.foto_url + '?t=' + Date.now())
+      const data = await res.json() as { ok: boolean; foto_url?: string; schema_url?: string; error?: string }
+      if (data.ok) {
+        if (tipo === 'foto'   && data.foto_url)   setPreview      (data.foto_url   + '?t=' + Date.now())
+        if (tipo === 'schema' && data.schema_url) setPreviewSchema(data.schema_url + '?t=' + Date.now())
       } else {
         setUploadErr(data.error ?? 'Errore upload')
       }
@@ -161,6 +336,33 @@ function SchedaTecnicaModal({ art, onClose }: { art: Articolo; onClose: () => vo
     } finally {
       setUploading(false)
     }
+  }
+
+  // Paste globale mentre il modale è aperto — va al target attivo
+  useEffect(() => {
+    function handlePaste(e: ClipboardEvent) {
+      const items = e.clipboardData?.items
+      if (!items) return
+      for (const item of Array.from(items)) {
+        if (item.type.startsWith('image/')) {
+          const file = item.getAsFile()
+          if (file) {
+            if (pasteTarget === 'foto') { setPasteFlash(true); setTimeout(() => setPasteFlash(false), 600) }
+            else                        { setPasteFlashSchema(true); setTimeout(() => setPasteFlashSchema(false), 600) }
+            uploadFile(file, pasteTarget)
+          }
+          break
+        }
+      }
+    }
+    document.addEventListener('paste', handlePaste)
+    return () => document.removeEventListener('paste', handlePaste)
+  }, [pasteTarget])
+
+  function handleFile(e: React.ChangeEvent<HTMLInputElement>, tipo: 'foto' | 'schema') {
+    const f = e.target.files?.[0]
+    if (!f) return
+    uploadFile(f, tipo)
   }
 
   const numInp: React.CSSProperties = {
@@ -192,48 +394,35 @@ function SchedaTecnicaModal({ art, onClose }: { art: Articolo; onClose: () => vo
         <form action={formAction}>
           <input type="hidden" name="id" value={art.id} />
 
-          {/* Foto profilo */}
-          <div style={{ marginBottom: 18 }}>
-            <span style={lbl}>Foto profilo</span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-              <div
-                onClick={() => fileRef.current?.click()}
-                style={{
-                  width: 110, height: 90, border: '2px dashed #ccc', borderRadius: 6,
-                  cursor: 'pointer', overflow: 'hidden', background: '#f5f5f5',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-                }}
-              >
-                {preview
-                  ? <img src={preview} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  : <span style={{ fontSize: 11, color: '#bbb', textAlign: 'center', padding: 8 }}>Clicca per<br/>caricare foto</span>
-                }
-              </div>
-              <div style={{ flex: 1 }}>
-                <input
-                  ref={fileRef}
-                  type="file"
-                  accept="image/*"
-                  style={{ display: 'none' }}
-                  onChange={handleFile}
-                />
-                <button
-                  type="button"
-                  onClick={() => fileRef.current?.click()}
-                  disabled={uploading}
-                  style={{
-                    padding: '6px 14px', fontSize: 12, border: '1px solid #ccc',
-                    borderRadius: 4, background: '#f5f5f5', cursor: uploading ? 'wait' : 'pointer',
-                    display: 'block', marginBottom: 6,
-                  }}
-                >
-                  {uploading ? 'Caricamento…' : 'Scegli immagine…'}
-                </button>
-                <p style={{ margin: 0, fontSize: 11, color: '#aaa' }}>JPG, PNG, WebP — max 5 MB</p>
-                {uploadErr && <p style={{ margin: '4px 0 0', fontSize: 11, color: '#c00' }}>{uploadErr}</p>}
-              </div>
-            </div>
+          {/* Foto prodotto */}
+          <div style={{ marginBottom: 14 }}>
+            <span style={lbl}>Foto prodotto</span>
+            <ImgUploadRow
+              preview={preview}
+              isTarget={pasteTarget === 'foto'}
+              pasteFlash={pasteFlash}
+              uploading={uploading}
+              fileRef={fileRef}
+              onActivate={() => setPasteTarget('foto')}
+              onFileChange={e => handleFile(e, 'foto')}
+            />
           </div>
+
+          {/* Schema */}
+          <div style={{ marginBottom: 18 }}>
+            <span style={lbl}>Schema</span>
+            <ImgUploadRow
+              preview={previewSchema}
+              isTarget={pasteTarget === 'schema'}
+              pasteFlash={pasteFlashSchema}
+              uploading={uploading}
+              fileRef={fileRefSchema}
+              onActivate={() => setPasteTarget('schema')}
+              onFileChange={e => handleFile(e, 'schema')}
+            />
+          </div>
+
+          {uploadErr && <p style={{ color: '#c00', fontSize: 11, margin: '-10px 0 14px', background: '#fff5f5', padding: '6px 10px', borderRadius: 4 }}>{uploadErr}</p>}
 
           {/* Dati tecnici */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 16 }}>
@@ -346,6 +535,92 @@ function TogglePreventivabileBtn({ art }: { art: Articolo }) {
   )
 }
 
+function ToggleAcquistabileBtn({ art }: { art: Articolo }) {
+  const [, startT] = React.useTransition()
+  const router = useRouter()
+  const acq = art.acquistabile === 1
+  return (
+    <form style={{ display: 'contents' }} action={async fd => {
+      startT(async () => { await toggleAcquistabile(null, fd); router.refresh() })
+    }}>
+      <input type="hidden" name="id" value={art.id} />
+      <button type="submit" style={{
+        padding: '2px 8px', fontSize: 10, fontWeight: 700, borderRadius: 3,
+        border: 'none', cursor: 'pointer', fontFamily: 'inherit',
+        background: acq ? '#6a1b9a' : '#aaa',
+        color: '#fff', whiteSpace: 'nowrap',
+      }}>
+        {acq ? 'Acquist.' : 'No acq.'}
+      </button>
+    </form>
+  )
+}
+
+function TogglePrincipaleBtn({ art }: { art: Articolo }) {
+  const [, startT] = React.useTransition()
+  const router = useRouter()
+  const val = art.principale === 1
+  return (
+    <form style={{ display: 'contents' }} action={async fd => {
+      startT(async () => { await togglePrincipale(null, fd); router.refresh() })
+    }}>
+      <input type="hidden" name="id" value={art.id} />
+      <button type="submit" style={{
+        padding: '2px 8px', fontSize: 10, fontWeight: 700, borderRadius: 3,
+        border: 'none', cursor: 'pointer', fontFamily: 'inherit',
+        background: val ? '#1b5e20' : '#aaa',
+        color: '#fff', whiteSpace: 'nowrap',
+      }}>
+        {val ? 'Princ.' : 'No princ.'}
+      </button>
+    </form>
+  )
+}
+
+function ToggleCheckbox({ id, colonna, valore }: { id: number; colonna: string; valore: number }) {
+  const [, startT] = React.useTransition()
+  const router = useRouter()
+  const checked = valore === 1
+  return (
+    <form style={{ display: 'contents' }} action={async fd => {
+      startT(async () => { await toggleColonnaBooleana(null, fd); router.refresh() })
+    }}>
+      <input type="hidden" name="id" value={id} />
+      <input type="hidden" name="colonna" value={colonna} />
+      <button type="submit" style={{
+        width: 18, height: 18, padding: 0, cursor: 'pointer', fontFamily: 'inherit',
+        background: checked ? '#1565c0' : '#fff',
+        border: `2px solid ${checked ? '#1565c0' : '#bbb'}`,
+        borderRadius: 3, display: 'flex', alignItems: 'center', justifyContent: 'center',
+        color: '#fff', fontSize: 12, lineHeight: 1,
+      }}>
+        {checked ? '✓' : ''}
+      </button>
+    </form>
+  )
+}
+
+function ToggleCaratteristicaBtn({ art }: { art: Articolo }) {
+  const [, startT] = React.useTransition()
+  const router = useRouter()
+  const val = art.caratteristica === 1
+  return (
+    <form style={{ display: 'contents' }} action={async fd => {
+      startT(async () => { await toggleCaratteristica(null, fd); router.refresh() })
+    }}>
+      <input type="hidden" name="id" value={art.id} />
+      <button type="submit" style={{
+        padding: '2px 8px', fontSize: 10, fontWeight: 700, borderRadius: 3,
+        border: 'none', cursor: 'pointer', fontFamily: 'inherit',
+        background: val ? '#4a148c' : '#aaa',
+        color: '#fff', whiteSpace: 'nowrap',
+      }}>
+        {val ? 'Carat.' : 'No carat.'}
+      </button>
+    </form>
+  )
+}
+
 function RigaNormale({ art, onEdit, onScheda, onDelete, pending }: {
   art: Articolo
   onEdit: () => void
@@ -365,25 +640,66 @@ function RigaNormale({ art, onEdit, onScheda, onDelete, pending }: {
     <tr onDoubleClick={onEdit} style={{ cursor: 'pointer', background: nonDisp ? '#f9f9f9' : undefined }} title="Doppio click per modificare">
       <td style={td}><span style={{ background: '#e8e8f8', borderRadius: 3, padding: '2px 7px', fontSize: 11, fontWeight: 600 }}>{art.categoria}</span></td>
       <td style={{ ...td, color: '#555' }}>{art.produttore || '—'}</td>
+      <td style={{ ...td, color: '#555' }}>{art.serie || '—'}</td>
+      <td style={{ ...td, color: '#555' }}>{art.fornitore_nome || '—'}</td>
+      <td style={{ ...td, padding: 4, width: 140, minWidth: 120 }}>
+        {art.schema_url
+          ? <img src={art.schema_url} alt="schema" style={{ display: 'block', width: '100%', height: 90, objectFit: 'contain', background: '#f5f5f5', borderRadius: 3 }} />
+          : <div style={{ width: '100%', height: 90, background: '#f5f5f5', borderRadius: 3 }} />
+        }
+      </td>
+      <td style={{ ...td, padding: 4, width: 140, minWidth: 120 }}>
+        {art.foto_url
+          ? <img src={art.foto_url} alt={art.descrizione} style={{ display: 'block', width: '100%', height: 90, objectFit: 'contain', background: '#f5f5f5', borderRadius: 3 }} />
+          : <div style={{ width: '100%', height: 90, background: '#f5f5f5', borderRadius: 3 }} />
+        }
+      </td>
       <td style={{ ...td, fontWeight: 500, maxWidth: 300 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-          {art.foto_url && (
-            <img src={art.foto_url} alt="" style={{ width: 22, height: 22, objectFit: 'cover', borderRadius: 3, border: '1px solid #ddd', flexShrink: 0 }} />
-          )}
-          {art.descrizione}
-        </div>
+        {art.descrizione}
       </td>
       <td style={{ ...td, textAlign: 'center', color: '#666' }}>{art.unita}</td>
       <td style={{ ...td, textAlign: 'right', color: '#1565c0', fontWeight: 600 }}>{fmt(art.prezzo_acquisto)}</td>
       <td style={{ ...td, textAlign: 'right', color: '#2e7d32', fontWeight: 600 }}>{fmt(art.prezzo_vendita)}</td>
+      <td style={{ ...td, textAlign: 'right', color: '#aaa', fontSize: 11 }}>
+        {art.costante !== 0 ? art.costante : ''}
+      </td>
+      <td style={{ ...td, color: '#aaa', fontSize: 11 }}>
+        {art.abbr || ''}
+      </td>
+      <td style={{ ...td, textAlign: 'center' }}>
+        {art.sconto_articolo !== 0
+          ? <span style={{ color: art.sconto_articolo < 0 ? '#1565c0' : '#e65100', fontWeight: 700, fontSize: 11 }}>
+              {art.sconto_articolo < 0 ? `+${Math.abs(art.sconto_articolo)}%` : `${art.sconto_articolo}%`}
+            </span>
+          : <span style={{ color: '#ccc' }}>—</span>}
+      </td>
       <td style={{ ...td, textAlign: 'center' }}>
         {m ? <span style={{ color: m.color, fontWeight: 700, fontSize: 11 }}>{m.pct}</span> : <span style={{ color: '#ccc' }}>—</span>}
       </td>
-      <td style={{ ...td, color: '#888', maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{art.note || '—'}</td>
+      <td style={{ ...td, color: '#888', maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        {art.note || '—'}
+        {art.max_acquistabile === 0 && (
+          <span style={{ marginLeft: 6, background: '#c62828', color: '#fff', fontSize: 9, fontWeight: 700, borderRadius: 3, padding: '1px 5px' }}>ESAURITO</span>
+        )}
+        {art.max_acquistabile != null && art.max_acquistabile > 0 && (
+          <span style={{ marginLeft: 6, background: '#e65100', color: '#fff', fontSize: 9, fontWeight: 700, borderRadius: 3, padding: '1px 5px' }}>Max {art.max_acquistabile}</span>
+        )}
+      </td>
+      <td style={{ ...td, textAlign: 'center' }}><ToggleCheckbox id={art.id} colonna="richiede_larghezza"   valore={art.richiede_larghezza} /></td>
+      <td style={{ ...td, textAlign: 'center' }}><ToggleCheckbox id={art.id} colonna="richiede_altezza"    valore={art.richiede_altezza} /></td>
+      <td style={{ ...td, textAlign: 'center' }}><ToggleCheckbox id={art.id} colonna="richiede_quantita"   valore={art.richiede_quantita} /></td>
+      <td style={{ ...td, textAlign: 'center' }}><ToggleCheckbox id={art.id} colonna="richiede_piano"      valore={art.richiede_piano} /></td>
+      <td style={{ ...td, textAlign: 'center' }}><ToggleCheckbox id={art.id} colonna="richiede_km"         valore={art.richiede_km} /></td>
+      <td style={{ ...td, textAlign: 'center' }}><ToggleCheckbox id={art.id} colonna="richiede_peso"       valore={art.richiede_peso} /></td>
+      <td style={{ ...td, textAlign: 'center' }}><ToggleCheckbox id={art.id} colonna="richiede_tipo_colore" valore={art.richiede_tipo_colore} /></td>
+      <td style={{ ...td, textAlign: 'center' }}><ToggleCheckbox id={art.id} colonna="richiede_tipo_vetro"  valore={art.richiede_tipo_vetro} /></td>
       <td style={{ ...td, opacity: 1, whiteSpace: 'nowrap' }}>
         <div style={{ display: 'flex', gap: 4 }}>
           <ToggleDisponibileBtn art={art} />
           <TogglePreventivabileBtn art={art} />
+          <ToggleAcquistabileBtn art={art} />
+          <TogglePrincipaleBtn art={art} />
+          <ToggleCaratteristicaBtn art={art} />
           <button onClick={onScheda} style={{
             padding: '3px 10px', fontSize: 11, cursor: 'pointer', fontFamily: 'inherit',
             background: hasDati || art.foto_url ? '#1a5276' : '#3d3d5c',
@@ -406,8 +722,8 @@ function RigaNormale({ art, onEdit, onScheda, onDelete, pending }: {
 
 // ─── Riga in modifica ─────────────────────────────────────────────────────────
 
-function RigaEdit({ art, categorie, produttori, onDone }: {
-  art: Articolo; categorie: string[]; produttori: string[]; onDone: () => void
+function RigaEdit({ art, categorie, produttori, fornitori, onDone }: {
+  art: Articolo; categorie: string[]; produttori: string[]; fornitori: Fornitore[]; onDone: () => void
 }) {
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
@@ -441,6 +757,17 @@ function RigaEdit({ art, categorie, produttori, onDone }: {
         <input name="produttore" defaultValue={art.produttore} style={inp} list="prod-list-edit" />
         <datalist id="prod-list-edit">{produttori.map(p => <option key={p} value={p} />)}</datalist>
       </td>
+      <td style={tde}>
+        <input name="serie" defaultValue={art.serie} style={inp} placeholder="Es. AWS 75" />
+      </td>
+      <td style={tde}>
+        <select name="fornitore_id" defaultValue={art.fornitore_id ?? ''} style={{ ...inp, width: 130 }}>
+          <option value="">—</option>
+          {fornitori.map(f => <option key={f.id} value={f.id}>{f.ragione_sociale}</option>)}
+        </select>
+      </td>
+      <td style={tde} />
+      <td style={tde} />
       <td style={tde}><input name="descrizione" defaultValue={art.descrizione} required style={inp} /></td>
       <td style={tde}>
         {unitaCustom ? (
@@ -456,8 +783,18 @@ function RigaEdit({ art, categorie, produttori, onDone }: {
       </td>
       <td style={tde}><input name="prezzo_acquisto" type="number" step="0.01" min="0" defaultValue={art.prezzo_acquisto} required style={{ ...inp, width: 80, textAlign: 'right' }} /></td>
       <td style={tde}><input name="prezzo_vendita" type="number" step="0.01" min="0" defaultValue={art.prezzo_vendita} required style={{ ...inp, width: 80, textAlign: 'right' }} /></td>
+      <td style={tde}><input name="costante" type="number" step="0.0001" defaultValue={art.costante} style={{ ...inp, width: 80, textAlign: 'right' }} /></td>
+      <td style={tde}><input name="abbr" defaultValue={art.abbr} style={{ ...inp, width: 70 }} placeholder="abbr" /></td>
+      <td style={tde}><input name="sconto_articolo" type="number" step="0.01" min="-100" max="100" defaultValue={art.sconto_articolo} style={{ ...inp, width: 60, textAlign: 'right' }} /></td>
       <td style={tde} />
-      <td style={tde}><input name="note" defaultValue={art.note ?? ''} style={inp} /></td>
+      <td style={tde}>
+        <input name="note" defaultValue={art.note ?? ''} style={{ ...inp, marginBottom: 3 }} placeholder="Note" />
+        <input name="max_acquistabile" type="number" min={0} step="1"
+          defaultValue={art.max_acquistabile ?? ''} style={{ ...inp, width: 70 }}
+          placeholder="max" title="vuoto=illimitato, 0=esaurito" />
+      </td>
+      <td style={tde} /><td style={tde} /><td style={tde} /><td style={tde} />
+      <td style={tde} /><td style={tde} /><td style={tde} /><td style={tde} />
       <td style={{ ...tde, whiteSpace: 'nowrap' }}>
         <div style={{ display: 'flex', gap: 4 }}>
           <button onClick={handleSubmit} className="btn-green" disabled={pending}
@@ -475,10 +812,12 @@ function RigaEdit({ art, categorie, produttori, onDone }: {
 
 // ─── Componente principale ────────────────────────────────────────────────────
 
-export default function ListiniClient({ articoli }: { articoli: Articolo[] }) {
+export default function ListiniClient({ articoli, fornitori }: { articoli: Articolo[]; fornitori: Fornitore[] }) {
   const [filtroTesto, setFiltroTesto]           = useState('')
   const [filtroCategoria, setFiltroCategoria]   = useState('')
   const [filtroProduttore, setFiltroProduttore] = useState('')
+  const [filtroSerie, setFiltroSerie]           = useState('')
+  const [filtroFornitore, setFiltroFornitore]   = useState('')
   const [filtroDisp, setFiltroDisp]             = useState<'tutti' | 'disp' | 'nondisp'>('tutti')
   const [nuovoOpen, setNuovoOpen]           = useState(false)
   const [editId, setEditId]                 = useState<number | null>(null)
@@ -488,18 +827,21 @@ export default function ListiniClient({ articoli }: { articoli: Articolo[] }) {
 
   const categorie  = useMemo(() => [...new Set(articoli.map(a => a.categoria))].sort(), [articoli])
   const produttori = useMemo(() => [...new Set(articoli.map(a => a.produttore).filter(Boolean))].sort(), [articoli])
+  const serie      = useMemo(() => [...new Set(articoli.map(a => a.serie).filter(Boolean))].sort(), [articoli])
 
   const filtrati = useMemo(() => articoli.filter(a => {
     if (filtroCategoria && a.categoria !== filtroCategoria) return false
     if (filtroProduttore && a.produttore !== filtroProduttore) return false
+    if (filtroSerie && a.serie !== filtroSerie) return false
+    if (filtroFornitore && String(a.fornitore_id ?? '') !== filtroFornitore) return false
     if (filtroDisp === 'disp' && a.disponibile !== 1) return false
     if (filtroDisp === 'nondisp' && a.disponibile !== 0) return false
     if (filtroTesto) {
       const t = filtroTesto.toLowerCase()
-      return a.descrizione.toLowerCase().includes(t) || a.produttore.toLowerCase().includes(t) || (a.note ?? '').toLowerCase().includes(t)
+      return a.descrizione.toLowerCase().includes(t) || a.produttore.toLowerCase().includes(t) || a.fornitore_nome.toLowerCase().includes(t) || (a.note ?? '').toLowerCase().includes(t)
     }
     return true
-  }), [articoli, filtroCategoria, filtroProduttore, filtroTesto, filtroDisp])
+  }), [articoli, filtroCategoria, filtroProduttore, filtroSerie, filtroFornitore, filtroTesto, filtroDisp])
 
   const schedaArt = schedaId !== null ? (articoli.find(a => a.id === schedaId) ?? null) : null
 
@@ -532,6 +874,14 @@ export default function ListiniClient({ articoli }: { articoli: Articolo[] }) {
           <option value="">Tutti i produttori</option>
           {produttori.map(p => <option key={p} value={p}>{p}</option>)}
         </select>
+        <select value={filtroSerie} onChange={e => setFiltroSerie(e.target.value)} style={selInp}>
+          <option value="">Tutte le serie</option>
+          {serie.map(s => <option key={s} value={s}>{s}</option>)}
+        </select>
+        <select value={filtroFornitore} onChange={e => setFiltroFornitore(e.target.value)} style={selInp}>
+          <option value="">Tutti i fornitori</option>
+          {fornitori.map(f => <option key={f.id} value={f.id}>{f.ragione_sociale}</option>)}
+        </select>
         <select value={filtroDisp} onChange={e => setFiltroDisp(e.target.value as 'tutti' | 'disp' | 'nondisp')} style={selInp}>
           <option value="tutti">Tutti gli stati</option>
           <option value="disp">Solo disponibili</option>
@@ -547,7 +897,7 @@ export default function ListiniClient({ articoli }: { articoli: Articolo[] }) {
           + Nuovo articolo
         </button>
       ) : (
-        <NuovoArticoloForm categorie={categorie} produttori={produttori} onDone={() => setNuovoOpen(false)} />
+        <NuovoArticoloForm categorie={categorie} produttori={produttori} fornitori={fornitori} onDone={() => setNuovoOpen(false)} />
       )}
 
       {filtrati.length === 0 ? (
@@ -561,19 +911,34 @@ export default function ListiniClient({ articoli }: { articoli: Articolo[] }) {
               <tr>
                 <th style={thS}>Categoria</th>
                 <th style={thS}>Produttore</th>
+                <th style={thS}>Serie</th>
+                <th style={thS}>Fornitore</th>
+                <th style={{ ...thS, width: 140 }}>Schema</th>
+                <th style={{ ...thS, width: 140 }}>Foto prodotto</th>
                 <th style={thS}>Descrizione</th>
                 <th style={{ ...thS, textAlign: 'center' }}>Unità</th>
                 <th style={{ ...thS, textAlign: 'right', color: '#90caf9' }}>P. Acquisto €</th>
                 <th style={{ ...thS, textAlign: 'right', color: '#a5d6a7' }}>P. Vendita €</th>
+                <th style={{ ...thS, textAlign: 'right', color: '#b0bec5', fontSize: 10 }}>Costante</th>
+                <th style={{ ...thS, color: '#b0bec5', fontSize: 10 }}>Abbr</th>
+                <th style={{ ...thS, textAlign: 'center', color: '#ffb74d' }}>Sconto %</th>
                 <th style={{ ...thS, textAlign: 'center' }}>Margine</th>
-                <th style={thS}>Note</th>
+                <th style={thS}>Note / Max</th>
+                <th style={{ ...thS, textAlign: 'center', color: '#80cbc4' }}>larghezza</th>
+                <th style={{ ...thS, textAlign: 'center', color: '#80cbc4' }}>altezza</th>
+                <th style={{ ...thS, textAlign: 'center', color: '#80cbc4' }}>quantita</th>
+                <th style={{ ...thS, textAlign: 'center', color: '#80cbc4' }}>piano</th>
+                <th style={{ ...thS, textAlign: 'center', color: '#80cbc4' }}>km</th>
+                <th style={{ ...thS, textAlign: 'center', color: '#80cbc4' }}>peso</th>
+                <th style={{ ...thS, textAlign: 'center', color: '#ce93d8' }}>tipo_colore</th>
+                <th style={{ ...thS, textAlign: 'center', color: '#ce93d8' }}>tipo_vetro</th>
                 <th style={thS}>Azioni</th>
               </tr>
             </thead>
             <tbody>
               {filtrati.map(art => (
                 editId === art.id
-                  ? <RigaEdit key={art.id} art={art} categorie={categorie} produttori={produttori} onDone={() => setEditId(null)} />
+                  ? <RigaEdit key={art.id} art={art} categorie={categorie} produttori={produttori} fornitori={fornitori} onDone={() => setEditId(null)} />
                   : <RigaNormale key={art.id} art={art}
                       onEdit={() => setEditId(art.id)}
                       onScheda={() => setSchedaId(art.id)}

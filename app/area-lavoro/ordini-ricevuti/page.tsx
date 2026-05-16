@@ -71,7 +71,7 @@ async function getOrdini(): Promise<{ ordini: OrdineRicevuto[]; clienti: Cliente
 export default async function Page() {
   const cookieStore = await cookies()
   const role = cookieStore.get('session_role')?.value ?? ''
-  const settings = readSettings()
+  const settings = await readSettings()
   if (!hasPageAccess(role, 35, settings)) redirect('/')
 
   const { ordini, clienti } = await getOrdini()
@@ -79,7 +79,7 @@ export default async function Page() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <div>
         <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Ordini Ricevuti</h2>
-        <p style={{ color: '#888', fontSize: 14, margin: '4px 0 0' }}>Ordini ricevuti dai clienti — clicca una riga per le note interne</p>
+        <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0' }}>Ordini ricevuti dai clienti — clicca una riga per le note interne</p>
       </div>
       <OrdiniRicevutiClient ordini={ordini} clienti={clienti} role={role} />
     </div>

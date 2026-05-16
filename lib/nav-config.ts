@@ -23,8 +23,8 @@ export const categoryGroups: CategoryGroup[] = [
       { id: 203,  label: 'Verande in Alluminio',    href: '/serramenti/verande-in-alluminio'    },
       { id: 2031, label: 'Verande in PVC',         href: '/serramenti/verande-in-pvc'          },
       { id: 204, label: 'Persiane in Alluminio',   href: '/serramenti/persiane-in-alluminio'   },
-      { id: 205,  label: 'Imbotti in Alluminio',    href: '/serramenti/imbotti'                 },
-      { id: 2051, label: 'Tapparelle Manuali',     href: '/serramenti/tapparelle-manuali'      },
+      { id: 205,  label: 'Cassonetti',               href: '/serramenti/imbotti'                 },
+      { id: 2051, label: 'Tapparelle',              href: '/serramenti/tapparelle-manuali'      },
       { id: 2052, label: 'Tapparelle Motorizzate', href: '/serramenti/tapparelle-motorizzate'  },
       { id: 206,  label: 'Veneziane',              href: '/serramenti/veneziane'               },
       { id: 208, label: 'Vetrine',                 href: '/serramenti/vetrine'                 },
@@ -196,9 +196,10 @@ export const aiutoPages: NavPage[] = [
 
 // Pagine amministrazione: area amministrativa fissa
 export const adminPages: NavPage[] = [
-  { id: 19, label: 'Impostazioni',       href: '/amministrazione/impostazioni',    roles: ['admin'] },
-  { id: 20, label: 'Gestione Utenti',   href: '/amministrazione/gestione-utenti', roles: ['admin'] },
-  { id: 62, label: 'Template Preventivi', href: '/amministrazione/templates',     roles: ['admin'] },
+  { id: 19, label: 'Impostazioni',         href: '/amministrazione/impostazioni',    roles: ['admin'] },
+  { id: 20, label: 'Gestione Utenti',     href: '/amministrazione/gestione-utenti', roles: ['admin'] },
+  { id: 62, label: 'Templates Carte Intestate', href: '/amministrazione/templates',       roles: ['admin'] },
+  { id: 63, label: 'Editor Disegno',      href: '/disegno',                         roles: ['admin'] },
 ]
 
 // Pagine Fornitori: visibili solo a dipendenti e admin
@@ -228,7 +229,7 @@ export const internalPages: NavPage[] = [
   { id: 29, label: 'Marketing',            href: '/area-lavoro/marketing'            },
   { id: 30, label: 'I Miei Ordini',        href: '/area-lavoro/miei-ordini'          },
   { id: 31, label: 'I Miei Cantieri',      href: '/area-lavoro/cantieri'             },
-  { id: 32, label: 'Email',                href: '/area-lavoro/email'                },
+  { id: 32, label: 'Notifiche',             href: '/area-lavoro/email'                },
   { id: 33, label: 'Archivio',             href: '/area-lavoro/archivio'             },
   { id: 34, label: 'Facsimili',            href: '/area-lavoro/facsimili'            },
 ]

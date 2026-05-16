@@ -49,7 +49,7 @@ async function getMateriali(): Promise<Materiale[]> {
 export default async function Page() {
   const cookieStore = await cookies()
   const role = cookieStore.get('session_role')?.value ?? ''
-  const settings = readSettings()
+  const settings = await readSettings()
   if (!hasPageAccess(role, 16, settings)) redirect('/')
 
   const materiali = await getMateriali()
@@ -58,7 +58,7 @@ export default async function Page() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <div>
         <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Magazzino</h2>
-        <p style={{ color: '#888', fontSize: 14, margin: '4px 0 0' }}>Gestione materiali e giacenze</p>
+        <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0' }}>Gestione materiali e giacenze</p>
       </div>
       <MagazzinoClient materiali={materiali} role={role} />
     </div>

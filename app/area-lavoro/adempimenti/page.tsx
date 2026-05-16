@@ -48,7 +48,7 @@ async function getAdempimenti(): Promise<Adempimento[]> {
 export default async function Page() {
   const cookieStore = await cookies()
   const role = cookieStore.get('session_role')?.value ?? ''
-  const settings = readSettings()
+  const settings = await readSettings()
   if (!hasPageAccess(role, 22, settings)) redirect('/')
 
   const adempimenti = await getAdempimenti()
@@ -56,7 +56,7 @@ export default async function Page() {
   return (
     <div>
       <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 6 }}>Adempimenti</h2>
-      <p style={{ color: '#888', fontSize: 13, marginBottom: 24 }}>
+      <p style={{ color: '#000', fontSize: 13, marginBottom: 24 }}>
         Scadenze fiscali e amministrative della SRL — promemoria ricorrente.
       </p>
       <AdempimentiClient adempimenti={adempimenti} />

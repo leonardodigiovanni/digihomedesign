@@ -5,7 +5,7 @@ import Image from 'next/image'
 
 const slides: { img: string; title: string; text: React.ReactNode }[] = [
   {
-    img: '/images/casa-ristrutturata-1.jpg',
+    img: '/images/carousel/porta-finestra-2-ante.jpg',
     title: 'Infissi in alluminio',
     text: (<>
       <strong>Infissi in alluminio a Palermo: design, resistenza e isolamento per ogni ambiente</strong><br /><br />
@@ -20,7 +20,7 @@ const slides: { img: string; title: string; text: React.ReactNode }[] = [
     </>),
   },
   {
-    img: '/images/casa-ristrutturata-2.jpg',
+    img: '/images/manutenzione/under-contruction.jpg',
     title: 'Infissi in PVC',
     text: (<>
       <strong>Infissi in PVC a Palermo: comfort, risparmio energetico e praticità</strong><br /><br />
@@ -35,7 +35,7 @@ const slides: { img: string; title: string; text: React.ReactNode }[] = [
     </>),
   },
   {
-    img: '/images/casa-ristrutturata-3.jpg',
+    img: '/images/carousel/veranda-sportelli-scorrevoli.jpg',
     title: 'Verande in alluminio',
     text: (<>
       <strong>Verande in alluminio a Palermo: eleganza, luminosità e funzionalità per i tuoi spazi</strong><br /><br />
@@ -50,7 +50,7 @@ const slides: { img: string; title: string; text: React.ReactNode }[] = [
     </>),
   },
   {
-    img: '/images/casa-ristrutturata-4.jpg',
+    img: '/images/manutenzione/under-contruction.jpg',
     title: 'Verande in PVC',
     text: (<>
       <strong>Verande in PVC a Palermo: una soluzione pratica e conveniente per chiudere gli spazi esterni</strong><br /><br />
@@ -65,7 +65,7 @@ const slides: { img: string; title: string; text: React.ReactNode }[] = [
     </>),
   },
   {
-    img: '/images/casa-ristrutturata-5.jpg',
+    img: '/images/carousel/persiane-in-alluminio.jpg',
     title: 'Persiane in alluminio',
     text: (<>
       <strong>Persiane in alluminio a Palermo: sicurezza, durata e stile per la tua casa</strong><br /><br />
@@ -80,7 +80,7 @@ const slides: { img: string; title: string; text: React.ReactNode }[] = [
     </>),
   },
   {
-    img: '/images/casa-ristrutturata-6.jpg',
+    img: '/images/carousel/imbotti-in-alluminio.jpg',
     title: 'Imbotti in alluminio',
     text: (<>
       <strong>Imbotti in alluminio con tapparelle coibentate a Palermo: protezione, isolamento e finiture di qualità</strong><br /><br />
@@ -107,7 +107,7 @@ const entranceTransform: Record<Effect, string> = {
   slideRight: 'translateX(70px)',
   slideUp:    'translateY(-55px)',
   slideDown:  'translateY(55px)',
-  zoom:       'scale(1.15)',
+  zoom:       'scale(1.06)',
 }
 
 const STYLES = `
@@ -116,7 +116,7 @@ const STYLES = `
 
   .hero-grid {
     position: relative;
-    height: clamp(420px, 65vh, 780px);
+    height: clamp(340px, 52vh, 620px);
     border-radius: 12px;
     overflow: hidden;
     margin-bottom: 0;
@@ -190,6 +190,12 @@ const STYLES = `
     z-index: 1;
   }
 
+  .hero-overlay-body p strong {
+    background: rgba(160, 160, 160, 0.3);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
   .hero-dots {
     position: absolute;
     bottom: calc(10% - 22px);
@@ -201,7 +207,7 @@ const STYLES = `
   }
 
   @media (max-width: 640px) {
-    .hero-grid { height: clamp(420px, 80vw, 560px); }
+    .hero-grid { height: clamp(280px, 65vw, 460px); }
     .hero-overlay { max-height: 74px; }
     .hero-overlay-header { padding: 16px 18px; min-height: 74px; }
     .hero-overlay-body { padding: 0 18px 20px; }
@@ -384,7 +390,7 @@ export default function HeroCarousel() {
         <div className="hero-overlay-header">
           <h2
             key={`title-${current}`}
-            className="ombra-semplice"
+           
             style={{
               fontSize: 'clamp(17px, 2.6vw, 26px)',
               fontWeight: 700, color: '#fff', margin: 0, lineHeight: 1.25,
@@ -398,27 +404,28 @@ export default function HeroCarousel() {
             aria-label={expanded ? 'Chiudi testo' : 'Leggi testo'}
             style={{
               flexShrink: 0,
-              width: 34, height: 34,
-              borderRadius: '50%',
-              border: '2px solid rgba(255,255,255,0.5)',
+              height: 30,
+              borderRadius: 15,
+              border: '1.5px solid rgba(255,255,255,0.5)',
               background: 'rgba(255,255,255,0.12)',
               color: '#fff',
-              fontSize: 22, fontWeight: 400,
+              fontSize: 12, fontWeight: 600,
               cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              padding: 0,
+              padding: '0 12px',
               lineHeight: '1',
-              fontFamily: 'Arial, sans-serif',
+              fontFamily: 'inherit',
               transition: 'background 0.2s',
+              whiteSpace: 'nowrap',
             }}
           >
-            {expanded ? '−' : '+'}
+            {expanded ? 'Chiudi' : 'Scopri di più..'}
           </button>
         </div>
         <div className="hero-overlay-body">
           <p
             key={`body-${current}`}
-            className="ombra-semplice"
+           
             style={{
               fontSize: 15, color: '#fff', lineHeight: 1.8, margin: 0,
               animation: 'heroEntranceFade 0.3s ease forwards',

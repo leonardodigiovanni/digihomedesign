@@ -3,8 +3,10 @@ import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import Link from 'next/link'
 import type { Metadata } from 'next'
-import CarrelloClient, { type ArticoloCarrello } from './carrello-client'
+import CarrelloClient, { type ArticoloCarrello, type CaratteristicaListino } from './carrello-client'
+import { decompressCart } from '@/lib/cart-cookie'
 
+export const dynamic = 'force-dynamic'
 export const metadata: Metadata = { title: 'Carrello Preventivo' }
 
 function dateToLocal(d: unknown): string {
@@ -38,13 +40,13 @@ async function getArticoliDaCookie(cart: CartItem[]) {
   const artItems = normalized.filter(i => i.tipo !== 'caratteristica' && i.id !== 0)
   const ids = artItems.map(i => i.id)
 
-  let rows: { id: number; categoria: string; produttore: string; descrizione: string; unita: string; prezzo_vendita: number }[] = []
+  let rows: { id: number; categoria: string; produttore: string; descrizione: string; unita: string; prezzo_vendita: number; sconto_articolo: number; richiede_larghezza: number; richiede_altezza: number; richiede_quantita: number; richiede_tipo_colore: number; richiede_tipo_vetro: number }[] = []
   if (ids.length > 0) {
     const db = await getConnection()
     try {
       const ph = ids.map(() => '?').join(',')
       const [r] = await db.query(
-        `SELECT id, categoria, produttore, descrizione, unita, prezzo_vendita FROM listini WHERE id IN (${ph})`,
+        `SELECT id, categoria, produttore, descrizione, unita, prezzo_vendita, sconto_articolo, richiede_larghezza, richiede_altezza, richiede_quantita, richiede_tipo_colore, richiede_tipo_vetro FROM listini WHERE id IN (${ph})`,
         ids
       ) as [typeof rows, unknown]
       rows = r
@@ -79,6 +81,12 @@ async function getArticoliDaCookie(cart: CartItem[]) {
       descrizione: art.descrizione,
       unita: art.unita,
       prezzo_vendita: Number(art.prezzo_vendita),
+      sconto_articolo: Number(art.sconto_articolo ?? 0),
+      richiede_larghezza:   Number(art.richiede_larghezza   ?? 0),
+      richiede_altezza:     Number(art.richiede_altezza     ?? 0),
+      richiede_quantita:    Number(art.richiede_quantita    ?? 0),
+      richiede_tipo_colore: Number(art.richiede_tipo_colore ?? 0),
+      richiede_tipo_vetro:  Number(art.richiede_tipo_vetro  ?? 0),
       quantita: item.q,
       ante: item.ante,
       larghezza_cm: item.l,
@@ -200,11 +208,38 @@ export default async function Page() {
     redirect('/area-clienti/preventivi')
   }
 
-  let cart: CartItem[] = []
-  try { cart = digiCart ? JSON.parse(digiCart) : [] } catch {}
+  const cart = decompressCart(digiCart)
 
   const articoli = await getArticoliDaCookie(cart)
   const isLoggedIn = !!username
+
+  // Carica caratteristiche disponibili (colore + vetro)
+  let caratteristiche: CaratteristicaListino[] = []
+  try {
+    const db2 = await getConnection()
+    try {
+      const [cr] = await db2.query(
+        `SELECT id, categoria, produttore, descrizione, unita, prezzo_vendita, sconto_articolo,
+                richiede_tipo_colore, richiede_tipo_vetro
+         FROM listini
+         WHERE (richiede_tipo_colore = 1 OR richiede_tipo_vetro = 1)
+           AND disponibile = 1
+           AND principale = 0
+         ORDER BY categoria ASC, descrizione ASC`
+      ) as [Record<string, unknown>[], unknown]
+      caratteristiche = cr.map(r => ({
+        id:                  Number(r.id),
+        categoria:           String(r.categoria ?? ''),
+        produttore:          String(r.produttore ?? ''),
+        descrizione:         String(r.descrizione ?? ''),
+        unita:               String(r.unita ?? 'pz'),
+        prezzo_vendita:      Number(r.prezzo_vendita ?? 0),
+        sconto_articolo:     Number(r.sconto_articolo ?? 0),
+        richiede_tipo_colore: Number(r.richiede_tipo_colore ?? 0),
+        richiede_tipo_vetro:  Number(r.richiede_tipo_vetro  ?? 0),
+      }))
+    } finally { await db2.end() }
+  } catch {}
 
   // Leggi sconto cliente se loggato
   let scontoClientePct = 0
@@ -227,10 +262,10 @@ export default async function Page() {
         <Link href="/" style={{ color: '#888', textDecoration: 'underline' }}>Home</Link>
         {' / '}Carrello preventivo
       </p>
-      <h1 className="effetto-3d" style={{ fontSize: 26, fontWeight: 700, marginBottom: 20 }}>
+      <h1 style={{ fontSize: 26, fontWeight: 700, marginBottom: 20 }}>
         Il tuo carrello preventivo
       </h1>
-      <CarrelloClient articoli={articoli} isLoggedIn={isLoggedIn} scontoClientePct={scontoClientePct} />
+      <CarrelloClient articoli={articoli} isLoggedIn={isLoggedIn} scontoClientePct={scontoClientePct} caratteristiche={caratteristiche} />
 
       {isStaff && (
         <div style={{ marginTop: 56, borderTop: '2px solid #e8e8e8', paddingTop: 40 }}>

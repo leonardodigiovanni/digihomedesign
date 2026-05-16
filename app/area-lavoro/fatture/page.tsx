@@ -77,7 +77,7 @@ async function getData(): Promise<{ fatture: Fattura[]; pagamenti: Pagamento[] }
 export default async function Page() {
   const cookieStore = await cookies()
   const role = cookieStore.get('session_role')?.value ?? ''
-  const settings = readSettings()
+  const settings = await readSettings()
   if (!hasPageAccess(role, 17, settings)) redirect('/')
 
   const { fatture, pagamenti } = await getData()

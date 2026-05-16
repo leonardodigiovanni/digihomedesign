@@ -1,6 +1,9 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
+import Image from 'next/image'
 import type { Metadata } from 'next'
 
+import CtaPreventivo from '@/components/cta-preventivo'
+import CtaCantiere from '@/components/cta-cantiere'
 export const metadata: Metadata = {
   title: 'Pannelli Solari a Palermo — Fotovoltaico e Solare Termico',
   description: 'Pannelli solari a Palermo: impianti fotovoltaici per autoproduzione di energia e solare termico per acqua calda sanitaria. Incentivi e pratiche incluse.',
@@ -16,38 +19,75 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <div style={{ maxWidth: 860, margin: '48px auto', padding: '0 20px 64px', color: '#444', fontSize: 15, lineHeight: 1.8 }}>
-      <p style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>
+    <div className="fs-15" style={{ maxWidth: 860, margin: '48px auto', padding: '0 20px 64px', color: '#444', lineHeight: 1.8 }}>
+      <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
         <Link href="/elettricita" style={{ color: '#888', textDecoration: 'underline' }}>Elettricità</Link> / Pannelli Solari
       </p>
-      <h1 className="effetto-3d" style={{ fontSize: 28, fontWeight: 700, marginBottom: 16 }}>
+      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 16 }}>
         Pannelli Solari a Palermo
       </h1>
-      <p>
-        Palermo è tra le città italiane con la maggiore irradiazione solare: investire in <strong>pannelli solari fotovoltaici</strong> significa abbattere la bolletta elettrica e aumentare l&apos;autonomia energetica della tua abitazione o azienda. Progettiamo e installiamo impianti fotovoltaici residenziali e commerciali con sistemi di accumulo (batterie) per massimizzare l&apos;autoconsumo.
-      </p>
-      <p style={{ marginTop: 12 }}>
-        Realizziamo anche impianti solari termici per la produzione di acqua calda sanitaria, integrabili con la caldaia esistente o con la pompa di calore. Ogni impianto viene dimensionato sul reale fabbisogno energetico del cliente.
-      </p>
-      <p style={{ marginTop: 12 }}>
-        Gestiamo le pratiche per gli incentivi vigenti (Conto Energia, detrazione fiscale 50%) e le comunicazioni al GSE e al gestore di rete. Contattaci per un&apos;analisi energetica gratuita.
-      </p>
-      {/* CTA esclusivi */}
-      <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginTop: 40, padding: '20px', background: '#fdfcf8', border: '1px solid #e8d89a', borderRadius: 10 }}>
-        <div style={{ flex: '1 1 200px' }}>
-          <p style={{ fontSize: 14, fontWeight: 600, color: '#1a1a1a', margin: '0 0 12px' }}>Hai un progetto in mente?</p>
-          <Link href="/aiuto/guida-preventivo" className="cta-btn-metal">
-            Calcola il tuo preventivo
-          </Link>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+
+          {/* Prima riga: primo articolo + foto */}
+          <div className="storia-row" style={{ display: 'flex', gap: 48, alignItems: 'flex-start' }}>
+            <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '24px 28px', flex: 1, minWidth: 0 }}>
+              <p className="testo-articoli" style={{ margin: 0 }}>
+                Palermo è tra le città italiane con la maggiore irradiazione solare: investire in <strong>pannelli solari fotovoltaici</strong> significa abbattere la bolletta elettrica e aumentare l&apos;autonomia energetica della tua abitazione o azienda. Progettiamo e installiamo impianti fotovoltaici residenziali e commerciali con sistemi di accumulo (batterie) per massimizzare l&apos;autoconsumo.
+              </p>
+            </div>
+            <div className="storia-foto" style={{ flexShrink: 0, display: 'flex', flexWrap: 'wrap', gap: 20, justifyContent: 'space-evenly', alignItems: 'flex-start' }}>
+              <div className="page-card storia-card-1" style={{ width: 220, boxShadow: '0 8px 28px rgba(0,0,0,0.25)' }}>
+                <div style={{ position: 'relative', width: 220, height: 240 }}>
+                  <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="220px" style={{ objectFit: 'cover' }} />
+                </div>
+                <div style={{ padding: '10px 12px 14px' }}>
+                  <span className="testo-articoli">Fotografia da scegliere</span>
+                </div>
+              </div>
+              <div className="page-card storia-card-2" style={{ width: 220, boxShadow: '0 6px 22px rgba(0,0,0,0.2)' }}>
+                <div style={{ position: 'relative', width: 220, height: 240 }}>
+                  <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="220px" style={{ objectFit: 'cover' }} />
+                </div>
+                <div style={{ padding: '10px 12px 14px' }}>
+                  <span className="testo-articoli">Fotografia da scegliere</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Secondo articolo */}
+          <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '24px 28px' }}>
+            <p className="testo-articoli" style={{ margin: 0 }}>
+              Realizziamo anche impianti solari termici per la produzione di acqua calda sanitaria, integrabili con la caldaia esistente o con la pompa di calore. Ogni impianto viene dimensionato sul reale fabbisogno energetico del cliente.
+            </p>
+          </div>
+
         </div>
-        <div style={{ flex: '1 1 200px' }}>
-          <p style={{ fontSize: 14, fontWeight: 600, color: '#1a1a1a', margin: '0 0 12px' }}>Hai già un cantiere aperto?</p>
-          <Link href="/aiuto/guida-cantiere" className="cta-btn-metal">
-            Segui il tuo cantiere online
-          </Link>
+
+        {/* Terzo articolo */}
+        <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '24px 28px' }}>
+          <p className="testo-articoli" style={{ margin: 0 }}>
+            Gestiamo le pratiche per gli incentivi vigenti (Conto Energia, detrazione fiscale 50%) e le comunicazioni al GSE e al gestore di rete. Contattaci per un&apos;analisi energetica gratuita.
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', gap: 28, flexWrap: 'wrap', padding: '24px 28px', background: '#fdfcf8', border: '1px solid #e8d89a', borderRadius: 10 }}>
+        <div style={{ flex: '1 1 0', display: 'flex', flexDirection: 'column', padding: '0 20px' }}>
+          <p className="testo-articoli" style={{ margin: '0 0 12px' }}>Hai un progetto in mente?</p>
+          <CtaPreventivo />
+        </div>
+        <div style={{ flex: '1 1 0', display: 'flex', flexDirection: 'column', padding: '0 20px' }}>
+          <p className="testo-articoli" style={{ margin: '0 0 12px' }}>Hai già un cantiere aperto?</p>
+          <CtaCantiere />
         </div>
       </div>
-      <Link href="/elettricita" style={{ display: 'inline-block', marginTop: 32, color: '#1a1a1a', fontWeight: 600, textDecoration: 'underline' }}>
+
+      </div>
+
+      <Link href="/elettricita" className="fs-12" style={{ display: 'inline-block', marginTop: 32, color: '#1a1a1a', fontWeight: 600, textDecoration: 'underline' }}>
         ← Torna a Elettricità
       </Link>
     </div>

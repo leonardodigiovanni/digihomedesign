@@ -40,6 +40,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       validita_giorni: Number(raw.validita_giorni),
       note: raw.note != null ? String(raw.note) : null,
       visibile_cliente: Number(raw.visibile_cliente),
+      sconto_cliente_pct: Number(raw.sconto_cliente_pct ?? 0),
     }
 
     const [artRows] = await db.query(
@@ -64,12 +65,24 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       n_ante: Number(a.n_ante),
       quantita: Number(a.quantita),
       prezzo_totale: Number(a.prezzo_totale),
+      sconto_articolo_pct: Number(a.sconto_articolo_pct ?? 0),
       note: a.note != null ? String(a.note) : null,
+      parent_id: a.parent_id != null ? Number(a.parent_id) : null,
     }))
 
-    const [listiniRows] = await db.query(
-      'SELECT id, categoria, produttore, descrizione, unita, prezzo_vendita FROM listini WHERE disponibile = 1 AND preventivabile = 1 ORDER BY categoria, produttore, descrizione'
-    ) as [Record<string, unknown>[], unknown]
+    await db.execute(`ALTER TABLE listini ADD COLUMN principale TINYINT(1) NOT NULL DEFAULT 1`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN caratteristica TINYINT(1) NOT NULL DEFAULT 1`).catch(() => {})
+
+    const [listiniRows] = await db.query(`
+      SELECT l.id, l.categoria, l.produttore, l.descrizione, l.unita,
+             l.prezzo_vendita, l.prezzo_acquisto, l.sconto_articolo,
+             l.principale, l.caratteristica,
+             COALESCE(f.ragione_sociale, '') AS fornitore_nome
+      FROM listini l
+      LEFT JOIN fornitori f ON f.id = l.fornitore_id
+      WHERE l.disponibile = 1 AND l.preventivabile = 1
+      ORDER BY l.categoria, l.produttore, l.descrizione
+    `) as [Record<string, unknown>[], unknown]
 
     const listini: ListinoItem[] = (listiniRows as Record<string, unknown>[]).map(l => ({
       id: Number(l.id),
@@ -78,6 +91,11 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       descrizione: String(l.descrizione ?? ''),
       unita: String(l.unita ?? 'pz'),
       prezzo_vendita: Number(l.prezzo_vendita),
+      prezzo_acquisto: Number(l.prezzo_acquisto),
+      sconto_articolo: Number(l.sconto_articolo ?? 0),
+      fornitore_nome: String(l.fornitore_nome ?? ''),
+      principale: Number(l.principale ?? 1),
+      caratteristica: Number(l.caratteristica ?? 1),
     }))
 
     const [clientiRows] = await db.query(
@@ -90,7 +108,14 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         || `${String(c.cognome ?? '')} ${String(c.nome ?? '')}`.trim(),
     }))
 
-    return <PreventivoClient preventivo={preventivo} articoli={articoli} listini={listini} clienti={clienti} />
+    let clienteEmail = '', clienteCellulare = ''
+    if (preventivo.cliente_id) {
+      const [cInfo] = await db.query('SELECT email, telefono FROM clienti WHERE id = ? LIMIT 1', [preventivo.cliente_id]) as [{ email: string; telefono: string }[], unknown]
+      clienteEmail      = cInfo[0]?.email    ?? ''
+      clienteCellulare  = cInfo[0]?.telefono ?? ''
+    }
+
+    return <PreventivoClient preventivo={preventivo} articoli={articoli} listini={listini} clienti={clienti} isStaff={true} clienteEmail={clienteEmail} clienteCellulare={clienteCellulare} />
   } catch {
     redirect('/clienti/preventivi')
   } finally {

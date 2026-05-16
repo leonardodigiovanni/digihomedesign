@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState, useTransition, useState } from 'react'
+import { useActionState, useTransition, useState, useEffect } from 'react'
 import {
   startRegistration,
   verifyEmail,
@@ -37,6 +37,8 @@ const input: React.CSSProperties = {
   borderRadius: 5,
   outline: 'none',
   fontFamily: 'inherit',
+  width: '100%',
+  boxSizing: 'border-box',
 }
 const primaryBtn: React.CSSProperties = {
   marginTop: 6,
@@ -95,10 +97,11 @@ function Step1({ onSuccess }: { onSuccess: (id: number) => void }) {
     null
   )
 
-  if (state?.ok) {
-    onSuccess(state.pendingId)
-    return null
-  }
+  useEffect(() => {
+    if (state?.ok) onSuccess(state.pendingId)
+  }, [state?.ok, state?.pendingId, onSuccess])
+
+  if (state?.ok) return null
 
   return (
     <form
@@ -152,7 +155,7 @@ function Step1({ onSuccess }: { onSuccess: (id: number) => void }) {
 
         {state && !state.ok && <div style={errorBox}>{state.error}</div>}
 
-        <button type="submit" className={isPending ? 'btn-gray' : 'btn-green'} style={primaryBtn}>
+        <button type="submit" className={isPending ? 'btn-gray' : 'btn-black'} style={primaryBtn}>
           {isPending ? 'Invio codici...' : 'Continua →'}
         </button>
       </fieldset>
@@ -208,7 +211,7 @@ function Step2({ pendingId, onSuccess }: { pendingId: number; onSuccess: () => v
       </label>
       {error && <div style={errorBox}>{error}</div>}
       {resendMsg && <div style={{ fontSize: 13, color: '#555' }}>{resendMsg}</div>}
-      <button type="submit" className={isPending ? 'btn-gray' : 'btn-green'} style={primaryBtn} disabled={isPending}>
+      <button type="submit" className={isPending ? 'btn-gray' : 'btn-black'} style={primaryBtn} disabled={isPending}>
         {isPending ? 'Verifica...' : 'Verifica email →'}
       </button>
       <button
@@ -271,7 +274,7 @@ function Step3({ pendingId, onSuccess }: { pendingId: number; onSuccess: () => v
       </label>
       {error && <div style={errorBox}>{error}</div>}
       {resendMsg && <div style={{ fontSize: 13, color: '#555' }}>{resendMsg}</div>}
-      <button type="submit" className={isPending ? 'btn-gray' : 'btn-green'} style={primaryBtn} disabled={isPending}>
+      <button type="submit" className={isPending ? 'btn-gray' : 'btn-black'} style={primaryBtn} disabled={isPending}>
         {isPending ? 'Verifica...' : 'Completa registrazione →'}
       </button>
       <button

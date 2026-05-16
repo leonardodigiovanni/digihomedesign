@@ -13,23 +13,19 @@ const topPages = [
 const brandPages = clientPages.map(p => ({ label: p.label, href: p.href }))
 
 const headingStyle: React.CSSProperties = {
-  fontSize: 12,
   fontWeight: 700,
   letterSpacing: '0.08em',
   textTransform: 'uppercase',
-  color: '#888',
-  marginBottom: 10,
+  marginBottom: 8,
   marginTop: 0,
 }
 
 const linkStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'baseline',
-  gap: 6,
-  fontSize: 13,
-  color: '#555',
+  gap: 4,
   textDecoration: 'none',
-  lineHeight: 1.9,
+  lineHeight: 1.7,
 }
 
 
@@ -48,61 +44,62 @@ export default function SitemapSection({ disabledPages }: { disabledPages: numbe
 
   return (
     <section style={{
-      borderTop: '1px solid rgba(0,0,0,0.1)',
-      padding: '40px 24px 32px',
+      padding: '32px 24px 28px',
+      background: '#1c1c1c',
     }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-        <div style={{ background: '#fff', borderRadius: 12, padding: '28px 24px' }}>
-        <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#666', marginBottom: 28 }}>
+      <div style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.7)' }}>
+        <p className="fs-10" style={{ fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#777', marginBottom: 18 }}>
           Indice pagine
         </p>
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
-          gap: '28px 20px',
-        }}>
+        <div className="sitemap-scroll" style={{ overflowX: 'auto', overflowY: 'hidden' }}>
+          <div style={{
+            display: 'flex',
+            flexWrap: 'nowrap',
+            alignItems: 'flex-start',
+            gap: '0 16px',
+          }}>
 
-          {/* Prodotti principali — sempre visibili */}
-          <div>
-            <p style={headingStyle}>Prodotti</p>
-            {topPages.map(p => (
-              <Link key={p.href} href={p.href} style={linkStyle}>
-                <span style={{ color: '#1a1a1a', flexShrink: 0 }}>•</span>
-                <span>{p.label}</span>
-              </Link>
+            {/* Prodotti principali — sempre visibili */}
+            <div style={{ flex: '0 0 120px', width: 120 }}>
+              <p className="testo-indice" style={headingStyle}>Prodotti</p>
+              {topPages.map(p => (
+                <Link key={p.href} href={p.href} className="testo-indice" style={linkStyle}>
+                  <span style={{ color: '#777', flexShrink: 0 }}>•</span>
+                  <span>{p.label}</span>
+                </Link>
+              ))}
+            </div>
+
+            {/* Brand — filtrato */}
+            {visibleBrand.length > 0 && (
+              <div style={{ flex: '0 0 120px', width: 120 }}>
+                <p className="testo-indice" style={headingStyle}>Brand</p>
+                {visibleBrand.map(p => (
+                  <Link key={p.href} href={p.href} className="testo-indice" style={linkStyle}>
+                    <span style={{ color: '#777', flexShrink: 0 }}>•</span>
+                    <span>{p.label}</span>
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            {/* Categorie prodotto — filtrate */}
+            {visibleGroups.map(g => (
+              <div key={g.id} style={{ flex: '0 0 120px', width: 120 }}>
+                <Link href={g.href} className="testo-indice" style={{ ...headingStyle, textDecoration: 'none', display: 'block' }}>
+                  {g.label}
+                </Link>
+                {g.pages.map(p => (
+                  <Link key={p.id} href={p.href} className="testo-indice" style={linkStyle}>
+                    <span style={{ color: '#777', flexShrink: 0 }}>•</span>
+                    <span>{p.label}</span>
+                  </Link>
+                ))}
+              </div>
             ))}
+
           </div>
-
-          {/* Brand — filtrato */}
-          {visibleBrand.length > 0 && (
-            <div>
-              <p style={headingStyle}>Brand</p>
-              {visibleBrand.map(p => (
-                <Link key={p.href} href={p.href} style={linkStyle}>
-                  <span style={{ color: '#1a1a1a', flexShrink: 0 }}>•</span>
-                  <span>{p.label}</span>
-                </Link>
-              ))}
-            </div>
-          )}
-
-          {/* Categorie prodotto — filtrate */}
-          {visibleGroups.map(g => (
-            <div key={g.id}>
-              <Link href={g.href} style={{ ...headingStyle, textDecoration: 'none', display: 'block' }}>
-                {g.label}
-              </Link>
-              {g.pages.map(p => (
-                <Link key={p.id} href={p.href} style={linkStyle}>
-                  <span style={{ color: '#1a1a1a', flexShrink: 0 }}>•</span>
-                  <span>{p.label}</span>
-                </Link>
-              ))}
-            </div>
-          ))}
-
-        </div>
         </div>
       </div>
     </section>

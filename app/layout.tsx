@@ -1,28 +1,28 @@
 import type { Metadata, Viewport } from 'next'
-import { Merriweather } from 'next/font/google'
 import { cookies } from 'next/headers'
-
-const merriweather = Merriweather({ subsets: ['latin'], weight: ['300', '400', '700', '900'], display: 'swap' })
 import Header from '@/components/header'
 import Navbar from '@/components/navbar'
 import Footer from '@/components/footer'
 import SitemapSection from '@/components/sitemap-section'
 import InactivityGuard from '@/components/inactivity-guard'
 import { readSettings, type BgMode } from '@/lib/settings'
-import { rgbGradient, rgbGradientInv, rgbBrushedBackground, rgbBrushedBackgroundInv, rgbBoxShadow } from '@/lib/bg-utils'
+import { rgbGradient, rgbGradientInv, rgbBrushedBackground, rgbBrushedBackgroundInv, rgbBrushedBackgroundDark, rgbBrushedBackgroundDarkInv, rgbBoxShadow } from '@/lib/bg-utils'
 import { getConnection } from '@/lib/db'
+import { decompressCart } from '@/lib/cart-cookie'
 import Image from 'next/image'
 import EmergencyLogin from '@/components/emergency-login'
+import PwaRegister from '@/components/pwa-register'
 import './globals.css'
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
+  themeColor: '#1c1c1c',
 }
 
 const BASE_URL = 'https://www.digi-home-design.com'
-const OG_IMAGE  = `${BASE_URL}/images/big_digi_tr.png`
+const OG_IMAGE  = `${BASE_URL}/images/opengraph/big_digi_tr.png`
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
@@ -54,6 +54,9 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: BASE_URL,
+  },
+  icons: {
+    icon: '/icon.png',
   },
 }
 
@@ -108,7 +111,7 @@ export default async function RootLayout({
   const username = cookieStore.get('session_user')?.value ?? null
   const role     = cookieStore.get('session_role')?.value ?? null
 
-  const settings = readSettings()
+  const settings = await readSettings()
   let rolePermissions = settings.rolePermissions
 
   // Per i clienti: verifica i flag per-utente per nascondere voci di menu
@@ -128,31 +131,62 @@ export default async function RootLayout({
     } catch { /* ignora — colonne potrebbero non esistere ancora */ }
   }
 
+  // Cart count — sempre dal cookie (il carrello vive solo nel browser)
+  let cartCount = 0
+  const digiCartRaw = cookieStore.get('digi_cart')?.value ?? ''
+  if (digiCartRaw) {
+    const cart = decompressCart(digiCartRaw)
+    cartCount = cart.filter(i => !i.parent).reduce((s, i) => s + Math.max(0, Number(i.q) || 0), 0)
+  }
+
+  let cartAcquistiCount = 0
+  const digiCartAcquistiRaw = cookieStore.get('digi_cart_acquisti')?.value ?? ''
+  if (digiCartAcquistiRaw) {
+    try {
+      const cartA = JSON.parse(digiCartAcquistiRaw) as Array<{ id: number; q: number }>
+      cartAcquistiCount = cartA.reduce((s, i) => s + Math.max(0, Number(i.q) || 0), 0)
+    } catch {}
+  }
+
+  // Conteggio email non lette — solo per ruoli staff/admin
+  let unreadEmailCount = 0
+  const STAFF_ROLES = ['dipendente','magazzino','direttore','admin','venditore','commercialista','ragioniere','operaio','marketing','email']
+  if (role && STAFF_ROLES.includes(role)) {
+    try {
+      const db = await getConnection()
+      const [rows] = await db.query('SELECT COUNT(*) as n FROM email_inbox WHERE letto = 0') as [Record<string, unknown>[], unknown]
+      await db.end()
+      unreadEmailCount = Number((rows[0] as { n: number }).n) || 0
+    } catch {}
+  }
+
   const { pageBgMode, pageBg } = settings
   const isPageEffect    = pageBgMode !== 'rgb'
   const isPageRgbEffect = pageBgMode.startsWith('rgb_')
   const pageShimmer     = ({ ...PAGE_SHIMMER, rgb_b: 'gold-shimmer-wrap', rgb_c: 'gold-shimmer-wrap', rgb_b_inv: 'gold-shimmer-wrap', rgb_c_inv: 'gold-shimmer-wrap' } as Record<string, string>)[pageBgMode] ?? null
-  const pageRadial      = ({ ...PAGE_RADIAL, rgb_c: RADIAL_RGB, rgb_c_inv: RADIAL_RGB, rgb_d: RADIAL_RGB, rgb_d_inv: RADIAL_RGB } as Record<string, string>)[pageBgMode] ?? null
+  // rgb_d non ha radial overlay (rimane scuro)
+  const pageRadial = ({ ...PAGE_RADIAL, rgb_c: RADIAL_RGB, rgb_c_inv: RADIAL_RGB } as Record<string, string>)[pageBgMode] ?? null
 
-  const isBrushed = (m: string) => m === 'rgb_c' || m === 'rgb_c_inv' || m === 'rgb_d' || m === 'rgb_d_inv'
-  const isInv     = (m: string) => m.endsWith('_inv')
+  const isInv = (m: string) => m.endsWith('_inv')
+  const pageBgFn = (m: string) => {
+    if (m === 'rgb_c')     return rgbBrushedBackground(pageBg.r, pageBg.g, pageBg.b)
+    if (m === 'rgb_d')     return rgbBrushedBackgroundDark(pageBg.r, pageBg.g, pageBg.b)
+    if (m === 'rgb_c_inv') return rgbBrushedBackgroundInv(pageBg.r, pageBg.g, pageBg.b)
+    if (m === 'rgb_d_inv') return rgbBrushedBackgroundDarkInv(pageBg.r, pageBg.g, pageBg.b)
+    return isInv(m) ? rgbGradientInv(pageBg.r, pageBg.g, pageBg.b) : rgbGradient(pageBg.r, pageBg.g, pageBg.b)
+  }
   const pageRgbStyle: React.CSSProperties = isPageRgbEffect
-    ? {
-        background: isBrushed(pageBgMode)
-          ? (isInv(pageBgMode) ? rgbBrushedBackgroundInv(pageBg.r, pageBg.g, pageBg.b) : rgbBrushedBackground(pageBg.r, pageBg.g, pageBg.b))
-          : (isInv(pageBgMode) ? rgbGradientInv(pageBg.r, pageBg.g, pageBg.b) : rgbGradient(pageBg.r, pageBg.g, pageBg.b)),
-        boxShadow: rgbBoxShadow(pageBg.r, pageBg.g, pageBg.b),
-      }
+    ? { background: pageBgFn(pageBgMode), boxShadow: rgbBoxShadow(pageBg.r, pageBg.g, pageBg.b) }
     : {}
 
   const inManutenzione = settings.manutenzione && role !== 'admin'
 
-  const bannerDur      = Math.max(21, Math.round(settings.bannerTesto.length * 0.18))
+  const bannerDur      = Math.max(26, Math.round(settings.bannerTesto.length * 0.23))
   const bannerPausePct = Math.round((1 - 1 / bannerDur) * 100)
   const bannerCircolare = settings.bannerCircolare
 
   return (
-    <html lang="it" className={merriweather.className}>
+    <html lang="it">
       <body style={isPageEffect ? {} : { background: `rgba(${pageBg.r}, ${pageBg.g}, ${pageBg.b}, ${pageBg.a / 100})` }}>
 
         {/* Sfondo pagina con effetto (fixed, sotto tutto) */}
@@ -184,25 +218,20 @@ export default async function RootLayout({
                 }
               `}</style>
               <div
-                className="class_silver_D_safe"
-                style={{ height: 42, overflow: 'hidden', display: 'flex', alignItems: 'center', borderBottom: '1px solid #aaa' }}
+                style={{ height: 22, overflow: 'hidden', display: 'flex', alignItems: 'center', borderBottom: '1px solid #aaa', background: '#fff' }}
               >
                 {bannerCircolare ? (
-                  <span className="neon-oro" style={{
+                  <span className="testo-banner" style={{
                     display: 'inline-block',
                     whiteSpace: 'nowrap',
-                    fontSize: 17,
-                    fontWeight: 600,
                     animation: `banner-circular ${bannerDur}s linear infinite`,
                   }}>
                     {settings.bannerTesto}{'\u00A0\u00A0\u00A0'}{settings.bannerTesto}{'\u00A0\u00A0\u00A0'}
                   </span>
                 ) : (
-                  <span className="neon-oro" style={{
+                  <span className="testo-banner" style={{
                     display: 'inline-block',
                     whiteSpace: 'nowrap',
-                    fontSize: 17,
-                    fontWeight: 600,
                     animation: `banner-scroll ${bannerDur}s linear infinite`,
                   }}>
                     {'\u00A0\u00A0'}{settings.bannerTesto}
@@ -211,14 +240,14 @@ export default async function RootLayout({
               </div>
             </>
           )}
-          {!inManutenzione && <Navbar role={role} disabledPages={settings.disabledPages} rolePermissions={rolePermissions} username={username} registrazioniDisabilitate={settings.registrazioniDisabilitate} bannerAbilitato={settings.bannerAbilitato} />}
+          {!inManutenzione && <Navbar role={role} disabledPages={settings.disabledPages} rolePermissions={rolePermissions} username={username} registrazioniDisabilitate={settings.registrazioniDisabilitate} bannerAbilitato={settings.bannerAbilitato} cartCount={cartCount} cartAcquistiCount={cartAcquistiCount} unreadEmailCount={unreadEmailCount} />}
         </div>
 
-        <main style={{ flex: 1, padding: '32px 24px' }}>
+        <main style={{ flex: 1, padding: '8px 8px' }}>
           {inManutenzione ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '50vh', gap: 20, textAlign: 'center' }}>
-              <Image src="/images/sito_manutenzione.png" alt="Manutenzione" width={108} height={108} priority style={{ objectFit: 'contain' }} />
-              <p style={{ fontSize: 28, fontWeight: 600, color: '#444', maxWidth: 600, lineHeight: 1.6, margin: 0, textAlign: 'center' }}>
+              <Image src="/images/manutenzione/sito_manutenzione.png" alt="Manutenzione" width={108} height={108} priority style={{ objectFit: 'contain' }} />
+              <p className="fs-28" style={{ fontWeight: 600, color: '#444', maxWidth: 600, lineHeight: 1.6, margin: 0, textAlign: 'center' }}>
                 Stiamo lavorando per migliorare il sito.<br />
                 Torneremo online al più presto. Ci scusiamo per il disagio.
               </p>
@@ -230,6 +259,7 @@ export default async function RootLayout({
         <Footer footerBg={settings.footerBg} footerBgMode={settings.footerBgMode} />
 
         <EmergencyLogin inManutenzione={inManutenzione} />
+        <PwaRegister />
 
         {username && !inManutenzione && (
           <InactivityGuard
@@ -237,6 +267,7 @@ export default async function RootLayout({
             countdownSec={settings.countdownSeconds}
           />
         )}
+
       </body>
     </html>
   )

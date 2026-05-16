@@ -71,7 +71,7 @@ export default async function Page() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <div>
         <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Documenti Clienti</h2>
-        <p style={{ color: '#888', fontSize: 14, margin: '4px 0 0' }}>Tutti i documenti caricati.</p>
+        <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0' }}>Tutti i documenti caricati.</p>
       </div>
 
       {documenti.length === 0 ? (

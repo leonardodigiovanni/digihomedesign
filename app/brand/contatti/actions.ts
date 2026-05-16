@@ -109,6 +109,7 @@ export async function inviaContatto(
   const codice    = (fd.get('codice')    as string)?.trim()
 
   if (!nome)                          return { ok: false, error: 'Il nome è obbligatorio.' }
+  if (!cognome)                       return { ok: false, error: 'Il cognome è obbligatorio.' }
   if (!email || !email.includes('@')) return { ok: false, error: 'Email non valida.' }
   if (!cellulare)                     return { ok: false, error: 'Il cellulare è obbligatorio.' }
   if (!messaggio)                     return { ok: false, error: 'Il messaggio è obbligatorio.' }

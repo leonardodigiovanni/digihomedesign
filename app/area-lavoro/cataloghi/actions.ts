@@ -14,7 +14,7 @@ const STAFF_ROLES = ['admin', 'dipendente', 'direttore']
 async function checkAccess() {
   const cookieStore = await cookies()
   const role = cookieStore.get('session_role')?.value ?? ''
-  const settings = readSettings()
+  const settings = await readSettings()
   if (!hasPageAccess(role, 23, settings)) redirect('/')
   return role
 }
@@ -28,6 +28,12 @@ async function ensureTables() {
       ordine INT NOT NULL DEFAULT 0
     )
   `)
+  const [colCheck] = await db.query(
+    `SELECT COUNT(*) AS cnt FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'catalogo_categorie' AND COLUMN_NAME = 'listino_categoria'`
+  ) as [{ cnt: number }[], unknown]
+  if ((colCheck[0]?.cnt ?? 0) === 0) {
+    await db.execute(`ALTER TABLE catalogo_categorie ADD COLUMN listino_categoria VARCHAR(100) NULL DEFAULT NULL`)
+  }
   await db.execute(`
     CREATE TABLE IF NOT EXISTS catalogo_voci (
       id           INT AUTO_INCREMENT PRIMARY KEY,
@@ -39,6 +45,7 @@ async function ensureTables() {
       FOREIGN KEY (categoria_id) REFERENCES catalogo_categorie(id) ON DELETE CASCADE
     )
   `)
+  await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN serie VARCHAR(200) NOT NULL DEFAULT ''`).catch(() => {})
   await db.end()
 }
 
@@ -96,6 +103,7 @@ export async function addVoce(_: MutResult | null, fd: FormData): Promise<MutRes
 
   const categoria_id = parseInt(fd.get('categoria_id') as string)
   const nome         = (fd.get('nome')         as string)?.trim()
+  const serie        = (fd.get('serie')        as string)?.trim() ?? ''
   const pdf_filename = (fd.get('pdf_filename') as string)?.trim()
   const pdf_label    = (fd.get('pdf_label')    as string)?.trim() ?? ''
 
@@ -106,9 +114,63 @@ export async function addVoce(_: MutResult | null, fd: FormData): Promise<MutRes
   const db = await getConnection()
   try {
     await db.execute(
-      'INSERT INTO catalogo_voci (categoria_id, nome, pdf_filename, pdf_label) VALUES (?,?,?,?)',
-      [categoria_id, nome, pdf_filename, pdf_label]
+      'INSERT INTO catalogo_voci (categoria_id, nome, pdf_filename, pdf_label, serie) VALUES (?,?,?,?,?)',
+      [categoria_id, nome, pdf_filename, pdf_label, serie]
     )
+    revalidatePath('/cataloghi')
+    return { ok: true }
+  } finally { await db.end() }
+}
+
+export async function updateListinoCategoria(_: MutResult | null, fd: FormData): Promise<MutResult> {
+  const role = await checkAccess()
+  if (!STAFF_ROLES.includes(role)) return { ok: false, error: 'Non autorizzato.' }
+
+  const id = parseInt(fd.get('id') as string)
+  const listino_categoria = (fd.get('listino_categoria') as string)?.trim() || null
+  if (isNaN(id)) return { ok: false, error: 'ID non valido.' }
+
+  await ensureTables()
+  const db = await getConnection()
+  try {
+    await db.execute('UPDATE catalogo_categorie SET listino_categoria = ? WHERE id = ?', [listino_categoria, id])
+    revalidatePath('/area-lavoro/cataloghi')
+    return { ok: true }
+  } finally { await db.end() }
+}
+
+export async function updateVoce(_: MutResult | null, fd: FormData): Promise<MutResult> {
+  const role = await checkAccess()
+  if (!STAFF_ROLES.includes(role)) return { ok: false, error: 'Non autorizzato.' }
+
+  const id              = parseInt(fd.get('id') as string)
+  const nome            = (fd.get('nome')            as string)?.trim()
+  const serie           = (fd.get('serie')           as string)?.trim() ?? ''
+  const pdf_label       = (fd.get('pdf_label')       as string)?.trim() ?? ''
+  const new_pdf_filename = (fd.get('new_pdf_filename') as string)?.trim() || null
+
+  if (isNaN(id) || !nome) return { ok: false, error: 'Dati incompleti.' }
+
+  await ensureTables()
+  const db = await getConnection()
+  try {
+    if (new_pdf_filename) {
+      const [rows] = await db.query('SELECT pdf_filename FROM catalogo_voci WHERE id = ?', [id])
+      const old = (rows as { pdf_filename: string }[])[0]
+      await db.execute(
+        'UPDATE catalogo_voci SET nome=?, serie=?, pdf_label=?, pdf_filename=? WHERE id=?',
+        [nome, serie, pdf_label, new_pdf_filename, id]
+      )
+      if (old) {
+        const dir = path.join(process.cwd(), 'public', 'uploads', 'cataloghi')
+        await unlink(path.join(dir, old.pdf_filename)).catch(() => {})
+      }
+    } else {
+      await db.execute(
+        'UPDATE catalogo_voci SET nome=?, serie=?, pdf_label=? WHERE id=?',
+        [nome, serie, pdf_label, id]
+      )
+    }
     revalidatePath('/cataloghi')
     return { ok: true }
   } finally { await db.end() }
