@@ -455,7 +455,7 @@ function headerCompactHTML(data: string): string {
 
 function footerHTML(pageNum: number, totalPages: number): string {
   return `
-<div style="flex-shrink:0;padding:5px 50px 12px;border-top:1px solid #ddd;display:flex;justify-content:space-between;font-size:8px;color:#aaa;line-height:1.5;box-sizing:border-box;">
+<div style="position:absolute;bottom:16px;left:50px;right:50px;border-top:1px solid #ddd;padding-top:5px;display:flex;justify-content:space-between;font-size:8px;color:#aaa;line-height:1.5;">
   <span>Digi Home Design S.r.l. — Via Roberto Antiochia 3, 90121 Palermo (PA) — P.IVA 07407080824 — Tel +39 351 871 6731 — info@digi-home-design.com</span>
   <span style="white-space:nowrap;font-weight:bold;color:#888;">Pag. ${pageNum} / ${totalPages}</span>
 </div>`
@@ -538,11 +538,9 @@ function buildPages(arts: ArtRow[], headerHtml: string, data: string, totale: st
 
     return (
       `<div style="font-family:Arial,Helvetica,sans-serif;width:794px;height:${PAGE_H}px;` +
-      `padding:0;background:#fff;box-sizing:border-box;overflow:hidden;` +
-      `display:flex;flex-direction:column;">` +
-      `<div style="flex:1;overflow:hidden;padding:${PAD_TOP}px 50px 12px;box-sizing:border-box;">` +
+      `padding:${PAD_TOP}px 50px ${PAD_BTM}px;position:relative;background:#fff;` +
+      `box-sizing:border-box;overflow:hidden;">` +
       header + articlesHTML + bottom +
-      `</div>` +
       footerHTML(i + 1, totalPages) +
       `</div>`
     )
