@@ -5,10 +5,8 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ['sharp', 'mysql2', 'pdfjs-dist', 'canvas'],
   outputFileTracingExcludes: {
     '*': [
-      './node_modules/@img/sharp-darwin-x64/**',
-      './node_modules/@img/sharp-darwin-arm64/**',
-      './node_modules/@img/sharp-win32-ia32/**',
-      './node_modules/@img/sharp-win32-x64/**',
+      './node_modules/@img/**',
+      './node_modules/sharp/build/**',
     ],
   },
   images: {
