@@ -28,16 +28,8 @@ export default function StampaProvvisorioClient({ pages }: { pages: string[] }) 
         backgroundColor: '#ffffff',
         logging:         false,
         imageTimeout:    15000,
-        width:           794,
-        height:          1123,
-        windowWidth:     1200,
-        windowHeight:    1123,
         scrollX:         0,
         scrollY:         0,
-        onclone:         (clonedDoc: Document) => {
-          // Rimuove la CSS globale dell'app — le pagine PDF usano solo stili inline
-          clonedDoc.querySelectorAll('link[rel="stylesheet"]').forEach(l => l.remove())
-        },
       })
 
       pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, pdfW, pdfH)
