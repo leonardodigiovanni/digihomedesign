@@ -54,14 +54,14 @@ a:active, a:active img, a:focus img {
   font-size: 16px;
   font-weight: 300;
   letter-spacing: 1px;
-  color: purple;
-  -webkit-text-fill-color: purple;
-  /* background:
+  /*color: purple;
+  -webkit-text-fill-color: purple;*/
+   background:
     repeating-linear-gradient(180deg, rgba(255,255,255,0.14) 0px, rgba(255,255,255,0.14) 1px, transparent 1px, transparent 4px),
     linear-gradient(180deg, #000 0%, #111 30%, #1a1a1a 50%, #111 70%, #000 100%);
   -webkit-background-clip: text;
   background-clip: text;
-  -webkit-text-fill-color: transparent; */
+  -webkit-text-fill-color: transparent; 
 }
 
 /* ── Navbar items ── */
