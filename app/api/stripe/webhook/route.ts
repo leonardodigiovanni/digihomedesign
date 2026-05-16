@@ -2,9 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getStripe } from '@/lib/stripe'
 import { getConnection } from '@/lib/db'
 
-// Il webhook riceve il body grezzo — Next.js non deve parsarlo
-export const config = { api: { bodyParser: false } }
-
 export async function POST(req: NextRequest) {
   const secret = process.env.STRIPE_WEBHOOK_SECRET
   if (!secret) return NextResponse.json({ error: 'Webhook secret non configurato' }, { status: 500 })
