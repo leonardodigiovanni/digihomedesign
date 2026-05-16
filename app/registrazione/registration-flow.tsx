@@ -99,7 +99,7 @@ function Step1({ onSuccess }: { onSuccess: (id: number) => void }) {
 
   useEffect(() => {
     if (state?.ok) onSuccess(state.pendingId)
-  }, [state?.ok, state?.pendingId, onSuccess])
+  }, [state, onSuccess])
 
   if (state?.ok) return null
 
