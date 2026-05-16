@@ -391,91 +391,41 @@ function estimaAltezzaBlock(children: ArtRow[]): number {
   return parentH + caratH
 }
 
-// ─── Header da template DB (con placeholder sostituiti) ──────────────────────
+// ─── Template completo dal DB con sostituzione placeholder ────────────────────
 
-async function getHeaderTemplate(data: string, nome: string): Promise<string> {
-  try {
-    const db = await getConnection()
-    try {
-      const [rows] = await db.query(
-        `SELECT html FROM preventivo_templates WHERE tipo = 'preventivo_provvisorio' LIMIT 1`
-      ) as [{ html: string }[], unknown]
-      let html = rows[0]?.html ?? ''
-      if (html) {
-        html = html
-          .replace(/\/images\/dg-t\.png/g, '/images/volantino/rrr.png')
-          .replace(/\/images\/nome_tr\.png/g, '/images/volantino/nome_tr.png')
-        return html
-          .replace(/\{\{data\}\}/g, data)
-          .replace(/\{\{cliente_nome\}\}/g, nome)
-          .replace(/<img[^>]*nome_tr[^>]*>/gi, '')
-      }
-    } finally {
-      await db.end()
-    }
-  } catch { /* fallback sotto */ }
-
-  // Fallback hardcoded se il template non è ancora in DB
-  return `<table style="width:100%;margin-bottom:14px;border-collapse:collapse;"><tr>` +
-    `<td style="vertical-align:top;width:50%;"><img src="/images/volantino/rrr.png" alt="Logo" style="height:46px;margin-bottom:7px;display:block;"/>` +
-    `<div style="font-size:15px;font-weight:bold;color:#1a3a5c;">Digi Home Design S.r.l.</div>` +
-    `<div style="font-size:10px;color:#555;line-height:1.55;margin-top:3px;">Via Roberto Antiochia 3, 90121 Palermo (PA)<br/>P.IVA: 07407080824 &nbsp;|&nbsp; Tel: +39 351 871 6731<br/>info@digi-home-design.com</div></td>` +
-    `<td style="vertical-align:top;text-align:right;width:50%;"></td></tr></table>` +
-    `<hr style="border:none;border-top:2px solid #1a3a5c;margin:0 0 12px;"/>` +
-    `<table style="width:100%;margin-bottom:12px;border-collapse:collapse;"><tr>` +
-    `<td style="vertical-align:top;width:50%;"><div style="font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px;">Data</div>` +
-    `<div style="font-size:12px;font-weight:bold;">${data}</div>` +
-    `<div style="font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.07em;margin:6px 0 2px;">Tipo</div>` +
-    `<div style="font-size:12px;font-weight:bold;color:#1a3a5c;">Preventivo Provvisorio</div></td>` +
-    `<td style="vertical-align:top;text-align:right;width:50%;"><div style="font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px;">Spett.le</div>` +
-    `<div style="font-size:13px;font-weight:bold;color:#1a3a5c;">${nome}</div></td></tr></table>` +
-    `<div style="font-size:12px;margin-bottom:6px;"><strong>Oggetto:</strong> Preventivo provvisorio</div>` +
-    `<div style="font-size:12px;margin-bottom:10px;line-height:1.6;">Gentile Cliente,<br/>vi trasmettiamo la nostra stima indicativa dei seguenti articoli:</div>` +
-    `<div style="font-size:11px;margin-bottom:14px;padding:8px 12px;background:#f0f4fa;border-left:3px solid #1a3a5c;line-height:1.7;color:#444;">` +
-    `<strong>Importante:</strong> Il presente preventivo è da intendersi come stima orientativa basata sui prezzi di listino correnti. ` +
-    `I prezzi definitivi potranno variare a seguito di sopralluogo tecnico e rilevazione delle misure effettive.<br/>` +
-    `Per confermare il preventivo e concordare un appuntamento si prega di contattare la nostra azienda ai recapiti sopra indicati.</div>`
-}
-
-// ─── HTML intestazione compatta (pagine successive) ───────────────────────────
-
-function headerCompactHTML(data: string): string {
-  return `
-<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-  <img src="/images/volantino/rrr.png" alt="Logo" style="height:32px;display:block;"/>
-  <div style="font-size:10px;color:#555;text-align:right;line-height:1.5;">
-    <strong style="color:#1a3a5c;">Digi Home Design S.r.l.</strong> &nbsp;|&nbsp;
-    Preventivo Provvisorio — ${data} &nbsp;|&nbsp; <em>continua</em>
-  </div>
-</div>
-<hr style="border:none;border-top:1.5px solid #1a3a5c;margin:0 0 12px;"/>`
-}
-
-// ─── HTML piè di pagina ───────────────────────────────────────────────────────
-
-function footerHTML(pageNum: number, totalPages: number): string {
-  return `
-<div style="position:absolute;bottom:16px;left:50px;right:50px;border-top:1px solid #ddd;padding-top:5px;display:flex;justify-content:space-between;font-size:8px;color:#aaa;line-height:1.5;">
-  <span>Digi Home Design S.r.l. — Via Roberto Antiochia 3, 90121 Palermo (PA) — P.IVA 07407080824 — Tel +39 351 871 6731 — info@digi-home-design.com</span>
-  <span style="white-space:nowrap;font-weight:bold;color:#888;">Pag. ${pageNum} / ${totalPages}</span>
+const NOTE_BLOCK = `<div style="font-size:11px;margin-top:16px;padding:10px 14px;background:#f5f5f0;border-left:3px solid #1a3a5c;line-height:1.6;color:#555;">
+  <strong>Nota:</strong> I prezzi indicati sono a listino e potrebbero variare in base alle dimensioni effettive e al sopralluogo tecnico. Il preventivo definitivo verrà emesso successivamente.
 </div>`
-}
 
-// ─── Paginazione ──────────────────────────────────────────────────────────────
+const FALLBACK_TEMPLATE = `<div style="font-family:Arial,Helvetica,sans-serif;width:794px;min-height:1050px;padding:40px 50px 90px;position:relative;background:#fff;box-sizing:border-box;">
+  <div style="font-size:17px;font-weight:bold;color:#1a3a5c;margin-bottom:4px;">Digi Home Design S.r.l.</div>
+  <div style="font-size:11px;color:#555;line-height:1.7;margin-bottom:20px;">Via Roberto Antiochia 3, 90121 Palermo (PA) — P.IVA: 07407080824 — Tel: +39 351 871 6731</div>
+  <hr style="border:none;border-top:2px solid #1a3a5c;margin:0 0 20px;"/>
+  <div style="margin-bottom:22px;"><div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px;">Data</div><div style="font-size:13px;font-weight:bold;">{{data}}</div></div>
+  <div style="font-size:13px;margin-bottom:10px;"><strong>Oggetto:</strong> Preventivo Provvisorio</div>
+  <div style="font-size:13px;margin-bottom:22px;line-height:1.7;">Gentile Cliente,<br/>Vi rimettiamo la nostra offerta escluso IVA di:</div>
+  {{articoli}}
+  <div style="text-align:right;margin-top:22px;padding:12px 16px;background:#f0f4fa;border-radius:4px;">
+    <div style="font-size:11px;color:#555;margin-bottom:2px;">Totale offerta (escluso IVA)</div>
+    <div style="font-size:22px;font-weight:bold;color:#1a3a5c;">€ {{totale}}</div>
+  </div>
+  {{note_block}}
+  <div style="position:absolute;bottom:24px;left:50px;right:50px;border-top:1px solid #ddd;padding-top:8px;font-size:9px;color:#888;text-align:center;line-height:1.6;">
+    Digi Home Design S.r.l. — Via Roberto Antiochia 3, 90121 Palermo (PA) — P.IVA 07407080824 — Tel +39 351 871 6731 — info@digi-home-design.com
+  </div>
+</div>`
 
-const PAGE_H     = 1123
-const PAD_TOP    = 38
-const PAD_BTM    = 56
-const AVAIL      = PAGE_H - PAD_TOP - PAD_BTM
+async function buildPageFromTemplate(opts: {
+  arts: ArtRow[]
+  totale: string
+  data: string
+  numero: string
+  clienteNome: string
+  clienteIndirizzo: string
+}): Promise<string> {
+  const { arts, totale, data, numero, clienteNome, clienteIndirizzo } = opts
 
-const H_HEADER1  = 280  // header provvisorio pagina 1 (più compatto del regolare)
-const H_HEADER_N = 58
-const H_EXTRA    = 76   // totale + avviso finale
-
-type Block = { parent: ArtRow; children: ArtRow[] }
-
-function buildPages(arts: ArtRow[], headerHtml: string, data: string, totale: string): string[] {
-  // Raggruppa in blocchi parent+figli usando uid/parent_uid dal cookie
+  // Genera HTML articoli
   const roots = arts.filter(a => a.parent_uid == null)
   const childrenMap = new Map<number, ArtRow[]>()
   for (const c of arts) {
@@ -483,75 +433,38 @@ function buildPages(arts: ArtRow[], headerHtml: string, data: string, totale: st
     if (!childrenMap.has(c.parent_uid)) childrenMap.set(c.parent_uid, [])
     childrenMap.get(c.parent_uid)!.push(c)
   }
-  const blocks: Block[] = roots.map(parent => ({
-    parent,
-    children: parent.uid != null ? (childrenMap.get(parent.uid) ?? []) : [],
-  }))
+  const articoliHtml = roots
+    .map(p => articoloBlockHTML(p, p.uid != null ? (childrenMap.get(p.uid) ?? []) : [], arts))
+    .join('\n')
 
-  const buckets: Block[][] = []
-  let remaining = [...blocks]
-
-  while (remaining.length > 0) {
-    const isFirst   = buckets.length === 0
-    const headerH   = isFirst ? H_HEADER1 : H_HEADER_N
-    const available = AVAIL - headerH
-
-    let count = 0, used = 0
-    for (const block of remaining) {
-      const blockH  = estimaAltezzaBlock(block.children)
-      const reserve = (count + 1 >= remaining.length) ? H_EXTRA : 0
-      if (used + blockH + reserve > available) break
-      used += blockH
-      count++
+  // Leggi template dal DB
+  let tpl = FALLBACK_TEMPLATE
+  try {
+    const db = await getConnection()
+    try {
+      const [rows] = await db.query(
+        `SELECT html FROM preventivo_templates WHERE tipo = 'preventivo_provvisorio' LIMIT 1`
+      ) as [{ html: string }[], unknown]
+      if (rows[0]?.html) tpl = rows[0].html
+    } finally {
+      await db.end()
     }
-    if (count === 0) count = 1
+  } catch { /* usa fallback */ }
 
-    buckets.push(remaining.splice(0, count))
-  }
-
-  // Pagina extra per totale se non entra nell'ultima
-  if (buckets.length > 0) {
-    const last = buckets[buckets.length - 1]
-    const hdr  = buckets.length === 1 ? H_HEADER1 : H_HEADER_N
-    let used   = hdr
-    for (const block of last) used += estimaAltezzaBlock(block.children)
-    if (used + H_EXTRA > AVAIL) buckets.push([])
-  }
-
-  if (buckets.length === 0) buckets.push([])
-
-  const totalPages = buckets.length
-
-  return buckets.map((blockList, i) => {
-    const isFirst = i === 0
-    const isLast  = i === buckets.length - 1
-
-    const header       = isFirst ? headerHtml : headerCompactHTML(data)
-    const articlesHTML = blockList.map(b => articoloBlockHTML(b.parent, b.children, arts)).join('\n')
-
-    const bottom = isLast ? `
-      <div style="margin-top:12px;text-align:right;padding:8px 14px;background:#f0f4fa;border-radius:4px;">
-        <div style="font-size:10px;color:#555;margin-bottom:2px;">Totale indicativo (prezzi di listino, escluso IVA)</div>
-        <div style="font-size:20px;font-weight:bold;color:#1a3a5c;">€ ${totale}</div>
-      </div>
-    ` : ''
-
-    return (
-      `<div style="font-family:Arial,Helvetica,sans-serif;width:794px;height:${PAGE_H}px;` +
-      `padding:${PAD_TOP}px 50px ${PAD_BTM}px;position:relative;background:#fff;` +
-      `box-sizing:border-box;overflow:hidden;">` +
-      header + articlesHTML + bottom +
-      footerHTML(i + 1, totalPages) +
-      `</div>`
-    )
-  })
+  return tpl
+    .replace(/\{\{data\}\}/g, data)
+    .replace(/\{\{numero\}\}/g, numero)
+    .replace(/\{\{cliente_nome\}\}/g, clienteNome)
+    .replace(/\{\{cliente_indirizzo\}\}/g, clienteIndirizzo)
+    .replace(/\{\{articoli\}\}/g, articoliHtml)
+    .replace(/\{\{totale\}\}/g, totale)
+    .replace(/\{\{note_block\}\}/g, NOTE_BLOCK)
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function Page() {
   const cookieStore = await cookies()
-  const role     = cookieStore.get('session_role')?.value ?? ''
   const username = cookieStore.get('session_user')?.value ?? ''
   const digiCart = cookieStore.get('digi_cart')?.value ?? ''
 
@@ -563,6 +476,7 @@ export default async function Page() {
   const db = await getConnection()
   let arts: ArtRow[] = []
   let clienteNome = 'N/D'
+  let clienteIndirizzo = ''
 
   try {
     // Articoli dal listino
@@ -605,11 +519,12 @@ export default async function Page() {
       const email = uRows[0]?.email ?? ''
       if (email) {
         const [cRows] = await db.query(
-          'SELECT nome, cognome, ragione_sociale FROM clienti WHERE email = ? LIMIT 1', [email]
-        ) as [{ nome: string; cognome: string; ragione_sociale: string }[], unknown]
+          'SELECT nome, cognome, ragione_sociale, indirizzo FROM clienti WHERE email = ? LIMIT 1', [email]
+        ) as [{ nome: string; cognome: string; ragione_sociale: string; indirizzo: string }[], unknown]
         if (cRows[0]) {
           const c = cRows[0]
           clienteNome = String(c.ragione_sociale || '').trim() || `${String(c.cognome ?? '')} ${String(c.nome ?? '')}`.trim() || username
+          clienteIndirizzo = String(c.indirizzo || '').trim()
         } else {
           clienteNome = username
         }
@@ -623,10 +538,12 @@ export default async function Page() {
 
   if (arts.length === 0) redirect('/area-clienti/carrello-preventivo')
 
-  const today      = new Date().toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' })
-  const totale     = arts.reduce((s, a) => s + calcolaPrezzo(a, arts), 0).toFixed(2)
-  const headerHtml = await getHeaderTemplate(today, clienteNome)
-  const pages      = buildPages(arts, headerHtml, today, totale)
+  const today  = new Date().toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' })
+  const totale = arts.reduce((s, a) => s + calcolaPrezzo(a, arts), 0).toFixed(2)
+  const now    = new Date()
+  const numero = `PP-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`
 
-  return <StampaProvvisorioClient pages={pages} />
+  const pageHtml = await buildPageFromTemplate({ arts, totale, data: today, numero, clienteNome, clienteIndirizzo })
+
+  return <StampaProvvisorioClient pages={[pageHtml]} />
 }
