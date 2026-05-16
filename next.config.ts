@@ -3,15 +3,13 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   turbopack: {},
   serverExternalPackages: ['sharp', 'mysql2', 'pdfjs-dist', 'canvas'],
-  experimental: {
-    outputFileTracingExcludes: {
-      '*': [
-        './node_modules/@img/sharp-darwin-x64/**',
-        './node_modules/@img/sharp-darwin-arm64/**',
-        './node_modules/@img/sharp-win32-ia32/**',
-        './node_modules/@img/sharp-win32-x64/**',
-      ],
-    },
+  outputFileTracingExcludes: {
+    '*': [
+      './node_modules/@img/sharp-darwin-x64/**',
+      './node_modules/@img/sharp-darwin-arm64/**',
+      './node_modules/@img/sharp-win32-ia32/**',
+      './node_modules/@img/sharp-win32-x64/**',
+    ],
   },
   images: {
     imageSizes: [69, 95, 128, 216, 256, 384],
