@@ -210,7 +210,7 @@ export default async function Page() {
         colore: item.colore ?? '',
         note: item.note ?? '',
       }
-    }).filter((x): x is ArtRow => x !== null)
+    }).filter(x => x !== null) as ArtRow[]
 
     if (username) {
       const [uRows] = await db.query(

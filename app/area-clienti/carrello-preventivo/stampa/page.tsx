@@ -595,7 +595,7 @@ export default async function Page() {
         profilo_mm: Number(r.profilo_frontale_mm ?? 0),
         abbr: r.abbr ?? '',
       }
-    }).filter((x): x is ArtRow => x !== null)
+    }).filter(x => x !== null) as ArtRow[]
 
     // Nome utente loggato
     if (username) {
