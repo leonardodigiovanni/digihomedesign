@@ -151,7 +151,7 @@ export default async function Page() {
         {/* ── Serramenti ── */}
         {ok('/serramenti/infissi-in-alluminio') && (
         <Link href="/serramenti/infissi-in-alluminio" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/casa-ristrutturata-1.jpg" alt="Infissi in Alluminio" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/infissi-in-alluminio/photo_2026-04-15_23-14-30.jpg" alt="Infissi in Alluminio" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Infissi in Alluminio</span></div>
         </Link>
         )}
