@@ -40,8 +40,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# upload utenti (file binari locali, non nel repo)
-/public/uploads/
-
 # impostazioni locali Claude Code
 /.claude/
