@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   turbopack: {},
+  serverExternalPackages: ['sharp', 'mysql2', 'pdfjs-dist', 'canvas'],
   images: {
     imageSizes: [69, 95, 128, 216, 256, 384],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
