@@ -366,6 +366,7 @@ export async function salvaCarrelloComePreventivo(): Promise<SaveResult> {
     await db.execute(`ALTER TABLE preventivo_articoli ADD COLUMN prezzo_pre_sconto DECIMAL(10,2) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE preventivo_articoli ADD COLUMN prezzo_scontato DECIMAL(10,2) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE listini ADD COLUMN sconto_articolo DECIMAL(5,2) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN costante DECIMAL(10,4) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE clienti ADD COLUMN sconto_pct DECIMAL(5,2) NOT NULL DEFAULT 0`).catch(() => {})
 
     const [uRows] = await db.query('SELECT cliente_id FROM users WHERE username = ? LIMIT 1', [username]) as [{ cliente_id: number | null }[], unknown]
