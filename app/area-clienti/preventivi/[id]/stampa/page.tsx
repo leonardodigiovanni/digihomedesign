@@ -419,120 +419,60 @@ function articoloBlockHTML(parent: Record<string, unknown>, children: Record<str
 </div>`
 }
 
-// ─── Stima altezza articolo in px (per paginazione) ───────────────────────────
-function estimaAltezzaArticolo(a: Record<string, unknown>): number {
-  let lines = 1 // quantità
-  if (String(a.marca ?? '') || String(a.modello ?? '')) lines++
-  if (String(a.colore ?? '')) lines++
-  if (Number(a.altezza_cm) > 0 || Number(a.larghezza_cm) > 0) lines++
-  if ((Number(a.n_ante) || 1) > 1) lines++
-  if (String(a.tipo_vetro ?? '')) lines++
-  if (String(a.accessori ?? '')) lines++
-  lines++ // prezzo
+// ─── Template completo dal DB con sostituzione placeholder ────────────────────
 
-  const lineH    = 11.5 * 1.75        // font-size * line-height ≈ 20px
-  const textH    = 16 + lines * lineH + 6 + 16  // pad-top + lines + gap + price
-  const { H: svgH } = computeSVGDims(Number(a.larghezza_cm), Number(a.altezza_cm))
-  const mediaH = Math.max(svgH + 16, 136) // colonna scheda + colonna disegno
-  const cardBody = Math.max(textH, mediaH)
-  const headerBar = 23                // 5+5 padding + 11px text line
-  return headerBar + cardBody + 10    // + margin-bottom
-}
-
-// ─── Stima altezza blocco (articolo + caratteristiche) ────────────────────────
-function estimaAltezzaBlock(a: Record<string, unknown>, children: Record<string, unknown>[]): number {
-  const parentH = estimaAltezzaArticolo(a)
-  if (children.length === 0) return parentH
-  const n = children.length
-  // section header ~20px, each child row ~42px, breakdown (n+2 lines × 14px) + spacing ~16px
-  const caratH = 20 + n * 42 + (n + 2) * 14 + 16
-  return parentH + caratH
-}
-
-// ─── HTML intestazione completa (pagina 1) ────────────────────────────────────
-function headerFullHTML(data: string, numero: string, nome: string, indirizzo: string, stato = 'bozza'): string {
-  return `
-<table style="width:100%;margin-bottom:14px;border-collapse:collapse;">
-  <tr>
+const FALLBACK_TEMPLATE_DEF = `<div style="font-family:Arial,Helvetica,sans-serif;width:794px;min-height:1050px;padding:40px 50px 90px;position:relative;background:#fff;box-sizing:border-box;">
+  <table style="width:100%;margin-bottom:14px;border-collapse:collapse;"><tr>
     <td style="vertical-align:top;width:50%;">
       <img src="/images/volantino/dg-t.png" alt="Logo" style="height:46px;margin-bottom:7px;display:block;"/>
       <div style="font-size:15px;font-weight:bold;color:#1a3a5c;">Digi Home Design S.r.l.</div>
       <div style="font-size:10px;color:#555;line-height:1.55;margin-top:3px;">
-        Via Roberto Antiochia 3, 90121 Palermo (PA)<br/>
-        P.IVA: 07407080824 &nbsp;|&nbsp; Tel: +39 351 871 6731<br/>
-        info@digi-home-design.com
+        Via Roberto Antiochia 3, 90121 Palermo (PA)<br/>P.IVA: 07407080824 &nbsp;|&nbsp; Tel: +39 351 871 6731<br/>info@digi-home-design.com
       </div>
     </td>
     <td style="vertical-align:top;text-align:right;width:50%;">
       <img src="/images/volantino/nome_tr.png" alt="Logo 2" style="height:46px;"/>
     </td>
-  </tr>
-</table>
-<hr style="border:none;border-top:2px solid #1a3a5c;margin:0 0 12px;"/>
-<table style="width:100%;margin-bottom:12px;border-collapse:collapse;">
-  <tr>
+  </tr></table>
+  <hr style="border:none;border-top:2px solid #1a3a5c;margin:0 0 12px;"/>
+  <table style="width:100%;margin-bottom:12px;border-collapse:collapse;"><tr>
     <td style="vertical-align:top;width:50%;">
       <div style="font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px;">Data</div>
-      <div style="font-size:12px;font-weight:bold;">${data}</div>
+      <div style="font-size:12px;font-weight:bold;">{{data}}</div>
       <div style="font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.07em;margin:6px 0 2px;">Rif. N°</div>
-      <div style="font-size:12px;font-weight:bold;">${numero}</div>
+      <div style="font-size:12px;font-weight:bold;">{{numero}}</div>
     </td>
     <td style="vertical-align:top;text-align:right;width:50%;">
       <div style="font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px;">Spett.le</div>
-      <div style="font-size:13px;font-weight:bold;color:#1a3a5c;">${nome}</div>
-      ${indirizzo ? `<div style="font-size:11px;color:#555;margin-top:3px;line-height:1.5;">${indirizzo}</div>` : ''}
+      <div style="font-size:13px;font-weight:bold;color:#1a3a5c;">{{cliente_nome}}</div>
+      <div style="font-size:11px;color:#555;margin-top:3px;line-height:1.5;">{{cliente_indirizzo}}</div>
     </td>
-  </tr>
-</table>
-<div style="font-size:12px;margin-bottom:6px;"><strong>Oggetto:</strong> ${stato === 'bozza' || stato === 'richiesto' ? 'Bozza di preventivo' : 'Preventivo'}</div>
-<div style="font-size:12px;margin-bottom:14px;line-height:1.6;">Gentile Cliente,<br/>Vi rimettiamo la nostra offerta escluso IVA di:</div>`
-}
-
-// ─── HTML intestazione compatta (pagine successive) ───────────────────────────
-function headerCompactHTML(data: string, numero: string): string {
-  return `
-<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-  <img src="/images/volantino/dg-t.png" alt="Logo" style="height:32px;display:block;"/>
-  <div style="font-size:10px;color:#555;text-align:right;line-height:1.5;">
-    <strong style="color:#1a3a5c;">Digi Home Design S.r.l.</strong> &nbsp;|&nbsp;
-    Preventivo N° ${numero} — ${data} &nbsp;|&nbsp; <em>continua</em>
+  </tr></table>
+  <div style="font-size:12px;margin-bottom:6px;"><strong>Oggetto:</strong> {{oggetto}}</div>
+  <div style="font-size:12px;margin-bottom:14px;line-height:1.6;">Gentile Cliente,<br/>Vi rimettiamo la nostra offerta escluso IVA di:</div>
+  {{articoli}}
+  {{sconto_block}}
+  {{note_block}}
+  <div style="position:absolute;bottom:24px;left:50px;right:50px;border-top:1px solid #ddd;padding-top:8px;font-size:9px;color:#888;text-align:center;line-height:1.6;">
+    Digi Home Design S.r.l. — Via Roberto Antiochia 3, 90121 Palermo (PA) — P.IVA 07407080824 — Tel +39 351 871 6731 — info@digi-home-design.com
   </div>
-</div>
-<hr style="border:none;border-top:1.5px solid #1a3a5c;margin:0 0 12px;"/>`
-}
-
-// ─── HTML piè di pagina ───────────────────────────────────────────────────────
-function footerHTML(pageNum: number, totalPages: number): string {
-  return `
-<div style="position:absolute;bottom:16px;left:50px;right:50px;border-top:1px solid #ddd;padding-top:5px;display:flex;justify-content:space-between;font-size:8px;color:#aaa;line-height:1.5;">
-  <span>Digi Home Design S.r.l. — Via Roberto Antiochia 3, 90121 Palermo (PA) — P.IVA 07407080824 — Tel +39 351 871 6731 — info@digi-home-design.com</span>
-  <span style="white-space:nowrap;font-weight:bold;color:#888;">Pag. ${pageNum} / ${totalPages}</span>
 </div>`
-}
 
-// ─── Paginazione ──────────────────────────────────────────────────────────────
-// Dimensioni A4 in CSS px a 96 DPI: 794 × 1123
-const PAGE_H      = 1123
-const PAD_TOP     = 38
-const PAD_BTM     = 56   // lascia spazio al footer assoluto
-const AVAIL       = PAGE_H - PAD_TOP - PAD_BTM  // 1029 px
+async function buildPageFromTemplate(opts: {
+  artRows: Record<string, unknown>[]
+  totale: string
+  data: string
+  numero: string
+  clienteNome: string
+  clienteIndirizzo: string
+  stato: string
+  scontoClientePct: number
+  noteRaw: string | null
+  db: Awaited<ReturnType<typeof getConnection>>
+}): Promise<string> {
+  const { artRows, totale, data, numero, clienteNome, clienteIndirizzo, stato, scontoClientePct, noteRaw, db } = opts
 
-const H_HEADER1   = 302  // intestazione completa
-const H_HEADER_N  = 58   // intestazione compatta
-const H_TOTAL     = 56   // blocco totale
-const H_NOTE_BASE = 48   // note (minimo)
-
-type Block = { parent: Record<string, unknown>; children: Record<string, unknown>[]; idx: number }
-
-function buildPages(
-  artRows: Record<string, unknown>[],
-  nome: string, indirizzo: string,
-  data: string, numero: string,
-  totale: string, noteBlock: string,
-  scontoClientePct = 0,
-  stato = 'bozza',
-): string[] {
-  // Group flat artRows into parent+children blocks
+  // Raggruppa articoli in blocchi padre+figli
   const roots = artRows.filter(a => a.parent_id == null)
   const childrenMap = new Map<number, Record<string, unknown>[]>()
   for (const c of artRows) {
@@ -541,91 +481,58 @@ function buildPages(
     if (!childrenMap.has(pid)) childrenMap.set(pid, [])
     childrenMap.get(pid)!.push(c)
   }
-  const blocks: Block[] = roots.map((parent, i) => ({
-    parent,
-    children: childrenMap.get(Number(parent.id)) ?? [],
-    idx: i,
-  }))
+  const articoliHtml = roots
+    .map((parent, i) => articoloBlockHTML(parent, childrenMap.get(Number(parent.id)) ?? [], i))
+    .join('\n')
 
-  const hasNote = noteBlock.length > 0
-  const extraH  = H_TOTAL + (hasNote ? H_NOTE_BASE : 0)
-
-  const buckets: Block[][] = []
-  let remaining = [...blocks]
-
-  while (remaining.length > 0) {
-    const isFirst   = buckets.length === 0
-    const headerH   = isFirst ? H_HEADER1 : H_HEADER_N
-    const available = AVAIL - headerH
-
-    let count = 0, used = 0
-    for (const block of remaining) {
-      const blockH = estimaAltezzaBlock(block.parent, block.children)
-      // Se questo è l'ultimo blocco rimasto, prenota spazio per il blocco finale
-      const reserve = (count + 1 >= remaining.length) ? extraH : 0
-      if (used + blockH + reserve > available) break
-      used += blockH
-      count++
-    }
-    if (count === 0) count = 1  // almeno 1 blocco per pagina
-
-    buckets.push(remaining.splice(0, count))
-  }
-
-  // Se non c'è spazio per totale+note nell'ultima pagina, aggiunge pagina vuota
-  if (buckets.length > 0) {
-    const last = buckets[buckets.length - 1]
-    const hdr  = buckets.length === 1 ? H_HEADER1 : H_HEADER_N
-    let used   = hdr
-    for (const block of last) used += estimaAltezzaBlock(block.parent, block.children)
-    if (used + extraH > AVAIL) buckets.push([])
-  }
-
-  if (buckets.length === 0) buckets.push([])  // preventivo senza articoli
-
-  const totalPages = buckets.length
-
-  return buckets.map((blockList, i) => {
-    const isFirst = i === 0
-    const isLast  = i === buckets.length - 1
-
-    const header = isFirst
-      ? headerFullHTML(data, numero, nome, indirizzo, stato)
-      : headerCompactHTML(data, numero)
-
-    const articlesHTML = blockList.map(b => articoloBlockHTML(b.parent, b.children, b.idx)).join('\n')
-
-    const totalBlock = (() => {
-      if (scontoClientePct > 0) {
-        const subtotale = artRows.reduce((s, a) => s + Number(a.prezzo_totale ?? 0), 0)
-        const scontoAmt = (subtotale * scontoClientePct / 100).toFixed(2)
-        return `<div style="margin-top:12px;text-align:right;padding:8px 14px;background:#f0f4fa;border-radius:4px;">
-          <div style="font-size:10px;color:#555;margin-bottom:3px;">Subtotale (escluso IVA)</div>
-          <div style="font-size:15px;font-weight:bold;color:#1a3a5c;margin-bottom:4px;">€ ${subtotale.toFixed(2)}</div>
-          <div style="font-size:10px;color:#e65100;margin-bottom:3px;">${scontoClientePct === 5 ? 'Sconto di benvenuto (5%)' : `Sconto riservato al cliente (${scontoClientePct}%)`}</div>
-          <div style="font-size:15px;font-weight:bold;color:#e65100;margin-bottom:6px;">− € ${scontoAmt}</div>
-          <div style="border-top:1px solid #c8d4e8;padding-top:6px;">
-            <div style="font-size:10px;color:#555;margin-bottom:2px;">Totale offerta (escluso IVA)</div>
-            <div style="font-size:20px;font-weight:bold;color:#1a3a5c;">€ ${totale}</div>
-          </div>
-        </div>`
-      }
-      return `<div style="margin-top:12px;text-align:right;padding:8px 14px;background:#f0f4fa;border-radius:4px;">
-        <div style="font-size:10px;color:#555;margin-bottom:2px;">Totale offerta (escluso IVA)</div>
-        <div style="font-size:20px;font-weight:bold;color:#1a3a5c;">€ ${totale}</div>
+  // Blocco sconto + totale
+  const scontoBlock = (() => {
+    if (scontoClientePct > 0) {
+      const subtotale = artRows.reduce((s, a) => s + Number(a.prezzo_totale ?? 0), 0)
+      const scontoAmt = (subtotale * scontoClientePct / 100).toFixed(2)
+      return `<div style="margin-top:22px;text-align:right;padding:12px 16px;background:#f0f4fa;border-radius:4px;">
+        <div style="font-size:10px;color:#555;margin-bottom:3px;">Subtotale (escluso IVA)</div>
+        <div style="font-size:15px;font-weight:bold;color:#1a3a5c;margin-bottom:4px;">€ ${subtotale.toFixed(2)}</div>
+        <div style="font-size:10px;color:#e65100;margin-bottom:3px;">${scontoClientePct === 5 ? 'Sconto di benvenuto (5%)' : `Sconto riservato al cliente (${scontoClientePct}%)`}</div>
+        <div style="font-size:15px;font-weight:bold;color:#e65100;margin-bottom:6px;">− € ${scontoAmt}</div>
+        <div style="border-top:1px solid #c8d4e8;padding-top:6px;">
+          <div style="font-size:10px;color:#555;margin-bottom:2px;">Totale offerta (escluso IVA)</div>
+          <div style="font-size:22px;font-weight:bold;color:#1a3a5c;">€ ${totale}</div>
+        </div>
       </div>`
-    })()
-    const bottom = isLast ? `${totalBlock}${noteBlock}` : ''
+    }
+    return `<div style="margin-top:22px;text-align:right;padding:12px 16px;background:#f0f4fa;border-radius:4px;">
+      <div style="font-size:11px;color:#555;margin-bottom:2px;">Totale offerta (escluso IVA)</div>
+      <div style="font-size:22px;font-weight:bold;color:#1a3a5c;">€ ${totale}</div>
+    </div>`
+  })()
 
-    return (
-      `<div style="font-family:Arial,Helvetica,sans-serif;width:794px;height:${PAGE_H}px;` +
-      `padding:${PAD_TOP}px 50px ${PAD_BTM}px;position:relative;background:#fff;` +
-      `box-sizing:border-box;overflow:hidden;">` +
-      header + articlesHTML + bottom +
-      footerHTML(i + 1, totalPages) +
-      `</div>`
-    )
-  })
+  const noteBlock = noteRaw
+    ? `<div style="margin-top:16px;border-top:1px solid #eee;padding-top:10px;font-size:11px;color:#666;line-height:1.6;"><strong>Note:</strong><br/>${noteRaw}</div>`
+    : ''
+
+  const oggetto = stato === 'bozza' || stato === 'richiesto' ? 'Bozza di preventivo' : 'Preventivo'
+
+  // Leggi template dal DB
+  let tpl = FALLBACK_TEMPLATE_DEF
+  try {
+    const [tplRows] = await db.query(
+      `SELECT html FROM preventivo_templates WHERE tipo = 'preventivo' AND attivo = 1 ORDER BY id DESC LIMIT 1`
+    ) as [{ html: string }[], unknown]
+    if (tplRows[0]?.html) tpl = tplRows[0].html
+  } catch { /* usa fallback */ }
+
+  return tpl
+    .replace(/\{\{data\}\}/g, data)
+    .replace(/\{\{numero\}\}/g, numero)
+    .replace(/\{\{cliente_nome\}\}/g, clienteNome)
+    .replace(/\{\{cliente_indirizzo\}\}/g, clienteIndirizzo)
+    .replace(/\{\{oggetto\}\}/g, oggetto)
+    .replace(/\{\{stato\}\}/g, stato)
+    .replace(/\{\{articoli\}\}/g, articoliHtml)
+    .replace(/\{\{sconto_block\}\}/g, scontoBlock)
+    .replace(/\{\{totale\}\}/g, totale)
+    .replace(/\{\{note_block\}\}/g, noteBlock)
 }
 
 // ─── Caricamento dati ─────────────────────────────────────────────────────────
@@ -657,7 +564,11 @@ async function loadData(prevId: number, username: string, isStaff: boolean): Pro
     }
 
     const [artRows] = await db.query(
-      `SELECT pa.*, l.profilo_frontale_mm AS profilo_mm, l.foto_url AS foto_url, l.abbr AS abbr
+      `SELECT pa.id, pa.preventivo_id, pa.tipo_prodotto, pa.marca, pa.modello,
+              pa.listino_id, pa.prezzo_base, pa.unita, pa.colore, pa.tipo_vetro,
+              pa.accessori, pa.altezza_cm, pa.larghezza_cm, pa.n_ante, pa.quantita,
+              pa.prezzo_totale, pa.note, pa.sconto_articolo_pct, pa.parent_id,
+              l.profilo_frontale_mm AS profilo_mm, l.foto_url AS foto_url, l.abbr AS abbr
        FROM preventivo_articoli pa
        LEFT JOIN listini l ON pa.listino_id = l.id
        WHERE pa.preventivo_id = ?
@@ -669,13 +580,21 @@ async function loadData(prevId: number, username: string, isStaff: boolean): Pro
     const data    = isNaN(dataRaw.getTime()) ? String(p.data) : dataRaw.toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' })
     const numero  = String(p.numero || `#${p.id}`)
     const totale  = Number(p.importo).toFixed(2)
-    const scontoClientePct = Number(p.sconto_cliente_pct ?? 0)
-    const stato   = String(p.stato ?? 'bozza')
-    const noteBlock = p.note
-      ? `<div style="margin-top:10px;border-top:1px solid #eee;padding-top:8px;font-size:10px;color:#666;line-height:1.6;"><strong>Note:</strong><br/>${String(p.note)}</div>`
-      : ''
 
-    return buildPages(artRows as Record<string, unknown>[], clienteNome, clienteIndirizzo, data, numero, totale, noteBlock, scontoClientePct, stato)
+    const pageHtml = await buildPageFromTemplate({
+      artRows: artRows as Record<string, unknown>[],
+      totale,
+      data,
+      numero,
+      clienteNome,
+      clienteIndirizzo,
+      stato: String(p.stato ?? 'bozza'),
+      scontoClientePct: Number(p.sconto_cliente_pct ?? 0),
+      noteRaw: p.note != null ? String(p.note) : null,
+      db,
+    })
+
+    return [pageHtml]
   } finally {
     await db.end()
   }

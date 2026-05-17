@@ -471,15 +471,20 @@ export async function inviaAlCliente(_: InviaResult | null, fd: FormData): Promi
     const cloneNumero = `${dateStr}-${String(cloneId).padStart(6, '0')}`
     await db.execute('UPDATE preventivi SET numero = ? WHERE id = ?', [cloneNumero, cloneId])
 
-    // Clona articoli
+    // Clona articoli preservando la gerarchia padre/figlio
     const [artRows] = await db.query(
       'SELECT * FROM preventivo_articoli WHERE preventivo_id = ? ORDER BY id ASC', [preventivo_id]
     ) as [Record<string, unknown>[], unknown]
+
+    const idMap = new Map<number, number>() // old_id → new_id
+
+    // Prima passata: root (parent_id NULL) — ottieni il nuovo insertId
     for (const a of artRows as Record<string, unknown>[]) {
-      await db.execute(
+      if (a.parent_id != null) continue
+      const [res] = await db.execute(
         `INSERT INTO preventivo_articoli (preventivo_id, tipo_prodotto, marca, modello, listino_id, prezzo_base, unita,
-         colore, tipo_vetro, accessori, altezza_cm, larghezza_cm, n_ante, quantita, prezzo_totale, note, sconto_articolo_pct)
-         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+         colore, tipo_vetro, accessori, altezza_cm, larghezza_cm, n_ante, quantita, prezzo_totale, note, sconto_articolo_pct, parent_id)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
         [cloneId, String(a.tipo_prodotto ?? ''), String(a.marca ?? ''), String(a.modello ?? ''),
          a.listino_id != null ? Number(a.listino_id) : null,
          Number(a.prezzo_base), String(a.unita ?? 'pz'),
@@ -487,7 +492,27 @@ export async function inviaAlCliente(_: InviaResult | null, fd: FormData): Promi
          Number(a.altezza_cm), Number(a.larghezza_cm), Number(a.n_ante),
          Number(a.quantita), Number(a.prezzo_totale),
          a.note != null ? String(a.note) : null,
-         Number(a.sconto_articolo_pct ?? 0)] as (string | number | null)[]
+         Number(a.sconto_articolo_pct ?? 0), null] as (string | number | null)[]
+      ) as [{ insertId: number }, unknown]
+      idMap.set(Number(a.id), res.insertId)
+    }
+
+    // Seconda passata: figli — usa il nuovo ID del padre
+    for (const a of artRows as Record<string, unknown>[]) {
+      if (a.parent_id == null) continue
+      const newParentId = idMap.get(Number(a.parent_id)) ?? null
+      await db.execute(
+        `INSERT INTO preventivo_articoli (preventivo_id, tipo_prodotto, marca, modello, listino_id, prezzo_base, unita,
+         colore, tipo_vetro, accessori, altezza_cm, larghezza_cm, n_ante, quantita, prezzo_totale, note, sconto_articolo_pct, parent_id)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+        [cloneId, String(a.tipo_prodotto ?? ''), String(a.marca ?? ''), String(a.modello ?? ''),
+         a.listino_id != null ? Number(a.listino_id) : null,
+         Number(a.prezzo_base), String(a.unita ?? 'pz'),
+         String(a.colore ?? ''), String(a.tipo_vetro ?? ''), String(a.accessori ?? ''),
+         Number(a.altezza_cm), Number(a.larghezza_cm), Number(a.n_ante),
+         Number(a.quantita), Number(a.prezzo_totale),
+         a.note != null ? String(a.note) : null,
+         Number(a.sconto_articolo_pct ?? 0), newParentId] as (string | number | null)[]
       )
     }
 

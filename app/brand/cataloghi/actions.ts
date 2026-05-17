@@ -313,8 +313,7 @@ export async function salvaCarrelloComePreventivo(): Promise<SaveResult> {
 
   const raw = cookieStore.get('digi_cart')?.value
   if (!raw) return { ok: false, error: 'Carrello vuoto.' }
-  let cart: CartItem[] = []
-  try { cart = JSON.parse(raw) } catch { return { ok: false, error: 'Dati carrello non validi.' } }
+  const cart = decompressCart(raw)
   if (cart.length === 0) return { ok: false, error: 'Carrello vuoto.' }
 
   const db = await getConnection()
