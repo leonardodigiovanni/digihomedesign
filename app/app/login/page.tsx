@@ -9,13 +9,6 @@ export default function AppLoginPage() {
 
   return (
     <div style={{ maxWidth: 360, margin: '32px auto 0', padding: '0 8px' }}>
-      <Image
-        src="/images/app/digi.png"
-        alt="DIGI"
-        width={72}
-        height={72}
-        className="app-welcome-logo"
-      />
       <h1 className="app-welcome-title" style={{ marginBottom: 4 }}>Accedi</h1>
       <p className="app-welcome-sub" style={{ marginBottom: 28 }}>Inserisci le tue credenziali per continuare.</p>
 
