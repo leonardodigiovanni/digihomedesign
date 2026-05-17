@@ -40,13 +40,13 @@ async function getArticoliDaCookie(cart: CartItem[]) {
   const artItems = normalized.filter(i => i.tipo !== 'caratteristica' && i.id !== 0)
   const ids = artItems.map(i => i.id)
 
-  let rows: { id: number; categoria: string; produttore: string; descrizione: string; unita: string; prezzo_vendita: number; sconto_articolo: number; richiede_larghezza: number; richiede_altezza: number; richiede_quantita: number; richiede_tipo_colore: number; richiede_tipo_vetro: number }[] = []
+  let rows: { id: number; categoria: string; produttore: string; descrizione: string; unita: string; prezzo_vendita: number; sconto_articolo: number; costante: number; richiede_larghezza: number; richiede_altezza: number; richiede_quantita: number; richiede_tipo_colore: number; richiede_tipo_vetro: number }[] = []
   if (ids.length > 0) {
     const db = await getConnection()
     try {
       const ph = ids.map(() => '?').join(',')
       const [r] = await db.query(
-        `SELECT id, categoria, produttore, descrizione, unita, prezzo_vendita, sconto_articolo, richiede_larghezza, richiede_altezza, richiede_quantita, richiede_tipo_colore, richiede_tipo_vetro FROM listini WHERE id IN (${ph})`,
+        `SELECT id, categoria, produttore, descrizione, unita, prezzo_vendita, sconto_articolo, costante, richiede_larghezza, richiede_altezza, richiede_quantita, richiede_tipo_colore, richiede_tipo_vetro FROM listini WHERE id IN (${ph})`,
         ids
       ) as [typeof rows, unknown]
       rows = r
@@ -82,6 +82,7 @@ async function getArticoliDaCookie(cart: CartItem[]) {
       unita: art.unita,
       prezzo_vendita: Number(art.prezzo_vendita),
       sconto_articolo: Number(art.sconto_articolo ?? 0),
+      costante: Number(art.costante ?? 0),
       richiede_larghezza:   Number(art.richiede_larghezza   ?? 0),
       richiede_altezza:     Number(art.richiede_altezza     ?? 0),
       richiede_quantita:    Number(art.richiede_quantita    ?? 0),
@@ -246,10 +247,10 @@ export default async function Page() {
   if (username && role === 'cliente') {
     try {
       const db = await getConnection()
-      const [uRows] = await db.query('SELECT email FROM users WHERE username = ? LIMIT 1', [username]) as [{ email: string }[], unknown]
-      const email = uRows[0]?.email ?? ''
-      if (email) {
-        const [cRows] = await db.query('SELECT sconto_pct FROM clienti WHERE email = ? LIMIT 1', [email]) as [{ sconto_pct: number }[], unknown]
+      const [uRows] = await db.query('SELECT cliente_id FROM users WHERE username = ? LIMIT 1', [username]) as [{ cliente_id: number | null }[], unknown]
+      const clienteId = uRows[0]?.cliente_id ?? null
+      if (clienteId) {
+        const [cRows] = await db.query('SELECT sconto_pct FROM clienti WHERE id = ? LIMIT 1', [clienteId]) as [{ sconto_pct: number }[], unknown]
         scontoClientePct = Number(cRows[0]?.sconto_pct ?? 0)
       }
       await db.end()

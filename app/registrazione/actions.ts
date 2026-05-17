@@ -1,5 +1,6 @@
 'use server'
 
+import { cookies } from 'next/headers'
 import { getConnection } from '@/lib/db'
 import { sendEmail } from '@/lib/email'
 import { sendSms } from '@/lib/sms'
@@ -193,11 +194,58 @@ export async function verifyPhone(
     if (new Date() > new Date(row.expires_at)) return { ok: false, error: 'Codice scaduto. Ricomincia la registrazione.' }
     if (row.phone_code !== code.trim()) return { ok: false, error: 'Codice non corretto.' }
 
-    await conn.execute(
-      `INSERT INTO users (username, password, role, is_active, nome, cognome, data_nascita, luogo_nascita, email, email_verificata, cellulare, cellulare_verificato)
-       VALUES (?, ?, 'cliente', 0, ?, ?, ?, ?, ?, 1, ?, 1)`,
-      [row.username, row.password, row.nome, row.cognome, row.data_nascita, row.luogo_nascita, row.email, row.cellulare]
-    )
+    // DDL fuori transazione (MySQL fa implicit commit su DDL)
+    await conn.execute(`CREATE TABLE IF NOT EXISTS clienti (
+      id               INT AUTO_INCREMENT PRIMARY KEY,
+      tipo             ENUM('fisica','giuridica') NOT NULL DEFAULT 'fisica',
+      nome             VARCHAR(100)  NOT NULL DEFAULT '',
+      cognome          VARCHAR(100)  NOT NULL DEFAULT '',
+      ragione_sociale  VARCHAR(255)  NOT NULL DEFAULT '',
+      indirizzo        VARCHAR(255)  NOT NULL DEFAULT '',
+      telefono         VARCHAR(50)   NOT NULL DEFAULT '',
+      email            VARCHAR(150)  NOT NULL DEFAULT '',
+      pec              VARCHAR(150)  NOT NULL DEFAULT '',
+      codice_sdi       VARCHAR(7)    NOT NULL DEFAULT '',
+      codice_fiscale   VARCHAR(16)   NOT NULL DEFAULT '',
+      partita_iva      VARCHAR(11)   NOT NULL DEFAULT '',
+      sconto_pct       DECIMAL(5,2)  NOT NULL DEFAULT 0,
+      utente_id        INT           NULL     DEFAULT NULL,
+      created_at       DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )`)
+    await conn.execute(`ALTER TABLE clienti ADD COLUMN utente_id INT NULL DEFAULT NULL`).catch(() => {})
+    await conn.execute(`ALTER TABLE clienti ADD COLUMN sconto_pct DECIMAL(5,2) NOT NULL DEFAULT 0`).catch(() => {})
+    await conn.execute(`ALTER TABLE users ADD COLUMN cliente_id INT NULL DEFAULT NULL`).catch(() => {})
+
+    // Transazione atomica: entrambe le insert riescono o nessuna
+    await conn.beginTransaction()
+    try {
+      const [clientiRes] = await conn.execute(
+        `INSERT INTO clienti (tipo, nome, cognome, ragione_sociale, indirizzo, telefono, email, pec, codice_sdi, codice_fiscale, partita_iva, sconto_pct)
+         VALUES ('fisica', ?, ?, '', '', ?, ?, '', '', '', '', 5)`,
+        [row.nome, row.cognome, row.cellulare, row.email]
+      ) as [{ insertId: number }, unknown]
+      const clienteId = clientiRes.insertId
+
+      const [usersRes] = await conn.execute(
+        `INSERT INTO users (username, password, role, is_active, nome, cognome, data_nascita, luogo_nascita, email, email_verificata, cellulare, cellulare_verificato, cliente_id)
+         VALUES (?, ?, 'cliente', 0, ?, ?, ?, ?, ?, 1, ?, 1, ?)`,
+        [row.username, row.password, row.nome, row.cognome, row.data_nascita, row.luogo_nascita, row.email, row.cellulare, clienteId]
+      ) as [{ insertId: number }, unknown]
+      const userId = usersRes.insertId
+
+      await conn.execute('UPDATE clienti SET utente_id = ? WHERE id = ?', [userId, clienteId])
+
+      await conn.commit()
+
+      // Login automatico dopo registrazione completata
+      const cookieStore = await cookies()
+      cookieStore.set('session_user', row.username, { httpOnly: true, path: '/' })
+      cookieStore.set('session_role', 'cliente',    { httpOnly: true, path: '/' })
+    } catch (err) {
+      await conn.rollback()
+      throw err
+    }
+
     await conn.execute('DELETE FROM pending_registrations WHERE id = ?', [pendingId])
 
     const dataOra = new Date().toLocaleString('it-IT')

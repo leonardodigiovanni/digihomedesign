@@ -227,13 +227,14 @@ export async function aggiungiArticolo(_: MutResult | null, fd: FormData): Promi
     scontoArticoloPct = Number(lRows[0]?.sconto_articolo ?? 0)
   }
 
-  let prezzo = 0
+  let prezzo    = 0
+  let prezzoPre = 0
 
   if (parent_id) {
     const [pRows] = await db.query(
-      'SELECT larghezza_cm, altezza_cm, quantita, n_ante, prezzo_totale FROM preventivo_articoli WHERE id = ? LIMIT 1',
+      'SELECT larghezza_cm, altezza_cm, quantita, n_ante, prezzo_totale, prezzo_pre_sconto, prezzo_scontato, listino_id FROM preventivo_articoli WHERE id = ? LIMIT 1',
       [parent_id]
-    ) as [{ larghezza_cm: number; altezza_cm: number; quantita: number; n_ante: number; prezzo_totale: number }[], unknown]
+    ) as [{ larghezza_cm: number; altezza_cm: number; quantita: number; n_ante: number; prezzo_totale: number; prezzo_pre_sconto: number; prezzo_scontato: number; listino_id: number | null }[], unknown]
     const par = pRows[0]
     if (!par) { await db.end(); return { ok: false, error: 'Articolo padre non trovato.' } }
 
@@ -242,31 +243,50 @@ export async function aggiungiArticolo(_: MutResult | null, fd: FormData): Promi
     n_ante       = Number(par.n_ante)
     quantita     = 0
 
+    let costante = 1
+    if (par.listino_id) {
+      const [lCRows] = await db.query('SELECT costante FROM listini WHERE id = ? LIMIT 1', [par.listino_id]) as [{ costante: number }[], unknown]
+      const c = Number(lCRows[0]?.costante ?? 0)
+      if (c > 0) costante = c
+    }
+
     const uLower = unita.toLowerCase()
-    if (scontoArticoloPct !== 0) {
-      prezzo = Math.round(-(Number(par.prezzo_totale) * scontoArticoloPct / 100) * 100) / 100
-    } else if (uLower === 'm²' || uLower === 'mq' || uLower === 'm2') {
-      const h = altezza_cm / 100
+    if (prezzo_base === 0 && scontoArticoloPct !== 0) {
+      const parentPre      = Number(par.prezzo_pre_sconto) || Number(par.prezzo_totale)
+      const parentScontato = Number(par.prezzo_scontato)   || Number(par.prezzo_totale)
+      prezzoPre = Math.round(-(parentPre      * scontoArticoloPct / 100) * 100) / 100
+      prezzo    = Math.round(-(parentScontato * scontoArticoloPct / 100) * 100) / 100
+    } else {
+      const scontoFactor = 1 - scontoArticoloPct / 100
+      const h = altezza_cm  / 100
       const l = larghezza_cm / 100
-      prezzo = Math.round(prezzo_base * h * l * Number(par.quantita) * 100) / 100
+      const q = Number(par.quantita)
+      let prezzoLordo = 0
+      if (uLower === 'm²' || uLower === 'mq' || uLower === 'm2') prezzoLordo = prezzo_base * h * l * q * costante
+      else if (uLower === 'ml')                                   prezzoLordo = prezzo_base * l * q * costante
+      else                                                        prezzoLordo = prezzo_base * q * costante
+      prezzoPre = Math.round(prezzoLordo * 100) / 100
+      prezzo    = Math.round(prezzoLordo * scontoFactor * 100) / 100
     }
   } else {
     const h  = altezza_cm  / 100
     const l  = larghezza_cm / 100
     const scontoFactor = 1 - scontoArticoloPct / 100
-    if (unita === 'm²')      prezzo = prezzo_base * scontoFactor * h * l * quantita
-    else if (unita === 'ml') prezzo = prezzo_base * scontoFactor * l * quantita
-    else                     prezzo = prezzo_base * scontoFactor * quantita
-    prezzo = Math.round(prezzo * 100) / 100
+    let prezzoLordo = 0
+    if (unita === 'm²')      prezzoLordo = prezzo_base * h * l * quantita
+    else if (unita === 'ml') prezzoLordo = prezzo_base * l * quantita
+    else                     prezzoLordo = prezzo_base * quantita
+    prezzoPre = Math.round(prezzoLordo * 100) / 100
+    prezzo    = Math.round(prezzoLordo * scontoFactor * 100) / 100
   }
 
   await db.execute(
     `INSERT INTO preventivo_articoli
      (preventivo_id, tipo_prodotto, marca, modello, listino_id, prezzo_base, unita,
-      colore, tipo_vetro, accessori, altezza_cm, larghezza_cm, n_ante, quantita, prezzo_totale, note, sconto_articolo_pct, parent_id)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+      colore, tipo_vetro, accessori, altezza_cm, larghezza_cm, n_ante, quantita, prezzo_totale, prezzo_pre_sconto, prezzo_scontato, note, sconto_articolo_pct, parent_id)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
     [preventivo_id, tipo_prodotto, marca, modello, listino_id, prezzo_base, unita,
-     colore, tipo_vetro, accessori, altezza_cm, larghezza_cm, n_ante, quantita, prezzo, note, scontoArticoloPct, parent_id]
+     colore, tipo_vetro, accessori, altezza_cm, larghezza_cm, n_ante, quantita, prezzo, prezzoPre, prezzo, note, scontoArticoloPct, parent_id]
   )
 
   await ricalcolaTotaleConSconti(db, preventivo_id)
@@ -361,26 +381,36 @@ export async function modificaArticolo(_: MutResult | null, fd: FormData): Promi
   const db = await getConnection()
   try {
     const [artRows] = await db.query(
-      'SELECT unita FROM preventivo_articoli WHERE id = ? LIMIT 1', [id]
-    ) as [{ unita: string }[], unknown]
-    const unita = artRows[0]?.unita ?? 'pz'
+      'SELECT unita, listino_id FROM preventivo_articoli WHERE id = ? LIMIT 1', [id]
+    ) as [{ unita: string; listino_id: number | null }[], unknown]
+    const unita     = artRows[0]?.unita      ?? 'pz'
+    const listinoId = artRows[0]?.listino_id ?? null
 
     const h = altezza_cm / 100
     const l = larghezza_cm / 100
     const factor = 1 - sconto_art / 100
-    let prezzo = 0
-    if (unita === 'm²')      prezzo = prezzo_base * factor * h * l * quantita
-    else if (unita === 'ml') prezzo = prezzo_base * factor * l * quantita
-    else                     prezzo = prezzo_base * factor * quantita
-    prezzo = Math.round(prezzo * 100) / 100
+    let prezzoLordo = 0
+    if (unita === 'm²')      prezzoLordo = prezzo_base * h * l * quantita
+    else if (unita === 'ml') prezzoLordo = prezzo_base * l * quantita
+    else                     prezzoLordo = prezzo_base * quantita
+    const prezzoPre = Math.round(prezzoLordo * 100) / 100
+    const prezzo    = Math.round(prezzoLordo * factor * 100) / 100
 
     await db.execute(
       `UPDATE preventivo_articoli
        SET altezza_cm=?, larghezza_cm=?, n_ante=?, quantita=?,
-           prezzo_base=?, sconto_articolo_pct=?, prezzo_totale=?, note=?
+           prezzo_base=?, sconto_articolo_pct=?, prezzo_totale=?, prezzo_pre_sconto=?, prezzo_scontato=?, note=?
        WHERE id=? AND preventivo_id=?`,
-      [altezza_cm, larghezza_cm, n_ante, quantita, prezzo_base, sconto_art, prezzo, note || null, id, preventivo_id]
+      [altezza_cm, larghezza_cm, n_ante, quantita, prezzo_base, sconto_art, prezzo, prezzoPre, prezzo, note || null, id, preventivo_id]
     )
+
+    // Fetch parent's costante for child recalculation
+    let costante = 1
+    if (listinoId) {
+      const [lCRows] = await db.query('SELECT costante FROM listini WHERE id = ? LIMIT 1', [listinoId]) as [{ costante: number }[], unknown]
+      const c = Number(lCRows[0]?.costante ?? 0)
+      if (c > 0) costante = c
+    }
 
     // Aggiorna figli: ereditano le nuove dimensioni e ricalcolano il loro contributo
     const [childRows] = await db.query(
@@ -389,16 +419,25 @@ export async function modificaArticolo(_: MutResult | null, fd: FormData): Promi
     ) as [{ id: number; unita: string; pb: number; scp: number }[], unknown]
     for (const child of childRows) {
       const uLower = (child.unita ?? '').toLowerCase()
-      let childPrezzo = 0
+      const childPb     = Number(child.pb  ?? 0)
       const childSconto = Number(child.scp ?? 0)
-      if (childSconto !== 0) {
-        childPrezzo = Math.round(-(prezzo * childSconto / 100) * 100) / 100
-      } else if (uLower === 'm²' || uLower === 'mq' || uLower === 'm2') {
-        childPrezzo = Math.round(Number(child.pb) * h * l * quantita * 100) / 100
+      let childPrezzoPre = 0
+      let childPrezzo    = 0
+      if (childPb === 0 && childSconto !== 0) {
+        childPrezzoPre = Math.round(-(prezzoPre * childSconto / 100) * 100) / 100
+        childPrezzo    = Math.round(-(prezzo    * childSconto / 100) * 100) / 100
+      } else {
+        const childFactor = 1 - childSconto / 100
+        let childLordo = 0
+        if (uLower === 'm²' || uLower === 'mq' || uLower === 'm2') childLordo = childPb * h * l * quantita * costante
+        else if (uLower === 'ml')                                   childLordo = childPb * l * quantita * costante
+        else                                                        childLordo = childPb * quantita * costante
+        childPrezzoPre = Math.round(childLordo * 100) / 100
+        childPrezzo    = Math.round(childLordo * childFactor * 100) / 100
       }
       await db.execute(
-        'UPDATE preventivo_articoli SET larghezza_cm=?, altezza_cm=?, n_ante=?, prezzo_totale=? WHERE id=?',
-        [larghezza_cm, altezza_cm, n_ante, childPrezzo, child.id]
+        'UPDATE preventivo_articoli SET larghezza_cm=?, altezza_cm=?, n_ante=?, prezzo_totale=?, prezzo_pre_sconto=?, prezzo_scontato=? WHERE id=?',
+        [larghezza_cm, altezza_cm, n_ante, childPrezzo, childPrezzoPre, childPrezzo, child.id]
       )
     }
 

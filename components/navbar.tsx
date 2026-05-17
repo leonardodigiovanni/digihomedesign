@@ -17,9 +17,10 @@ interface NavbarProps {
   cartCount?: number
   cartAcquistiCount?: number
   unreadEmailCount?: number
+  clienteAbilitato?: boolean
 }
 
-export default function Navbar({ role, disabledPages = [], rolePermissions = {}, username, registrazioniDisabilitate, bannerAbilitato = false, cartCount = 0, cartAcquistiCount = 0, unreadEmailCount = 0 }: NavbarProps) {
+export default function Navbar({ role, disabledPages = [], rolePermissions = {}, username, registrazioniDisabilitate, bannerAbilitato = false, cartCount = 0, cartAcquistiCount = 0, unreadEmailCount = 0, clienteAbilitato = true }: NavbarProps) {
   const [menuOpen, setMenuOpen]       = useState(false)
   const [sectionOpen, setSectionOpen] = useState(false)
   const [canLeft,  setCanLeft]  = useState(false)
@@ -233,9 +234,11 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             )
           })}
 
-          {role === 'cliente' && areaClientiPages.filter(p => !disabledPages.includes(p.id)).length > 0 && (
-            <><NavSep /><AreaClientiDropdown items={areaClientiPages.filter(p => !disabledPages.includes(p.id))} isActive={isActive} linkStyle={linkStyle} /></>
-          )}
+          {role === 'cliente' && (() => {
+            const allItems = areaClientiPages.filter(p => !disabledPages.includes(p.id))
+            const items = clienteAbilitato ? allItems : allItems.filter(p => p.href === '/area-clienti/preventivi')
+            return items.length > 0 ? <><NavSep /><AreaClientiDropdown items={items} isActive={isActive} linkStyle={linkStyle} /></> : null
+          })()}
 
           {aiutoPages.filter(p => !disabledPages.includes(p.id)).length > 0 && (
             <><NavSep /><AiutoDropdown items={aiutoPages.filter(p => !disabledPages.includes(p.id))} isActive={isActive} linkStyle={linkStyle} /></>
@@ -399,14 +402,18 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             )
           })}
 
-          {role === 'cliente' && areaClientiPages.filter(p => !disabledPages.includes(p.id)).length > 0 && (
-            <>
-              <div className="nav-mobile-section">Area Personale</div>
-              {areaClientiPages.filter(p => !disabledPages.includes(p.id)).map(p => (
-                <MobileLink key={p.id} href={p.href} label={p.label} active={isActive(p.href)} indent />
-              ))}
-            </>
-          )}
+          {role === 'cliente' && (() => {
+            const allItems = areaClientiPages.filter(p => !disabledPages.includes(p.id))
+            const items = clienteAbilitato ? allItems : allItems.filter(p => p.href === '/area-clienti/preventivi')
+            return items.length > 0 ? (
+              <>
+                <div className="nav-mobile-section">Area Personale</div>
+                {items.map(p => (
+                  <MobileLink key={p.id} href={p.href} label={p.label} active={isActive(p.href)} indent />
+                ))}
+              </>
+            ) : null
+          })()}
 
           {aiutoPages.filter(p => !disabledPages.includes(p.id)).length > 0 && (
             <>

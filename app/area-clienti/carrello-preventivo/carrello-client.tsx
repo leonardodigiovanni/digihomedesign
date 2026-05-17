@@ -41,6 +41,7 @@ export type ArticoloCarrello = {
   tipo?: 'articolo' | 'caratteristica'
   desc?: string
   sconto_articolo?: number
+  costante?: number
   richiede_larghezza?: number
   richiede_altezza?: number
   richiede_quantita?: number
@@ -145,8 +146,11 @@ export default function CarrelloClient({
     const h  = (a.altezza_cm  ?? 0) / 100
     const l  = (a.larghezza_cm ?? 0) / 100
     const q  = a.quantita
-    if (a.unita === 'm²') return Math.round(pb * h * l * q * 100) / 100
-    if (a.unita === 'ml') return Math.round(pb * l * q * 100) / 100
+    const costante = a.parent != null
+      ? (tutti.find(x => x.uid === a.parent)?.costante || 1)
+      : 1
+    if (a.unita === 'm²') return Math.round(pb * h * l * q * costante * 100) / 100
+    if (a.unita === 'ml') return Math.round(pb * l * q * costante * 100) / 100
     return Math.round(pb * q * 100) / 100
   }
 
@@ -601,6 +605,13 @@ export default function CarrelloClient({
           </div>
         ))
       })()}
+
+      {/* Avviso trasporto e montaggio */}
+      <div style={{ background: '#fff5f5', border: '1px solid #feb2b2', borderRadius: 10, padding: '14px 20px' }}>
+        <p style={{ fontSize: 14, fontWeight: 600, margin: 0, color: '#9b2c2c' }}>
+          Salvando il preventivo riceverai il prezzo scontato degli articoli ma è escluso trasporto e montaggio perché abbiamo bisogno di conoscere il luogo di destinazione. Contattaci per avere il preventivo ufficiale.
+        </p>
+      </div>
 
       {/* Articoli a card */}
       {(() => {

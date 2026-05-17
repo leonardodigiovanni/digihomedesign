@@ -305,29 +305,57 @@ function disegnoSVGAbbr(abbr: string, larghezza: number, altezza: number, profil
 function caratteristicheHTML(children: Record<string, unknown>[], parentPrezzo: number, parentIdx: number, prezzoHTML: string): string {
   let totaleBlocco = parentPrezzo
   const righeCaratt = children.map(c => {
-    const tipo    = String(c.tipo_prodotto ?? '').trim()
-    const marca   = String(c.marca ?? '').trim()
-    const modello = String(c.modello ?? '').trim()
-    const label   = [tipo, [marca, modello].filter(Boolean).join(' ')].filter(Boolean).join(': ')
-    const contrib = Number(c.prezzo_totale ?? 0)
+    const tipo       = String(c.tipo_prodotto ?? '').trim()
+    const marca      = String(c.marca ?? '').trim()
+    const modello    = String(c.modello ?? '').trim()
+    const label      = [tipo, [marca, modello].filter(Boolean).join(' ')].filter(Boolean).join(': ')
+    const contrib    = Number(c.prezzo_totale ?? 0)
+    const prezzoBase = Number(c.prezzo_base ?? 0)
+    const scontoPct  = Number(c.sconto_articolo_pct ?? 0)
     totaleBlocco += contrib
     const fotoRaw = String(c.foto_url ?? '').trim()
     const fotoUrl = fotoRaw
       ? (fotoRaw.startsWith('http://') || fotoRaw.startsWith('https://') || fotoRaw.startsWith('/')
           ? fotoRaw : `/${fotoRaw.replace(/^\/+/, '')}`)
       : ''
-    const fotoAttr  = fotoUrl.replace(/"/g, '%22')
-    const sign      = contrib >= 0 ? '+' : '−'
-    const absAmt    = Math.abs(contrib).toFixed(2)
-    const contribColor = '#1a3a5c'
-    return `<div style="display:flex;align-items:center;gap:8px;padding:3px 0;border-bottom:1px solid #ececec;">
+    const fotoAttr = fotoUrl.replace(/"/g, '%22')
+
+    // Calcola cella prezzo in base al tipo di caratteristica
+    let prezzoCell: string
+    if (prezzoBase === 0 && scontoPct !== 0) {
+      // Caratteristica percentuale (sconto o maggiorazione sul padre)
+      const pctAbs = Math.abs(scontoPct)
+      if (scontoPct < 0) {
+        // Maggiorazione
+        prezzoCell = `<div style="font-size:9.5px;color:#1565c0;margin-bottom:2px;">Maggiorazione del ${pctAbs}%</div>
+          <div style="font-size:10.5px;font-weight:bold;color:#1565c0;white-space:nowrap;">+ € ${contrib.toFixed(2)}</div>`
+      } else {
+        // Sconto percentuale
+        prezzoCell = `<div style="font-size:9.5px;color:#e65100;margin-bottom:2px;">Sconto del ${pctAbs}%</div>
+          <div style="font-size:10.5px;font-weight:bold;color:#e65100;white-space:nowrap;">− € ${Math.abs(contrib).toFixed(2)}</div>`
+      }
+    } else {
+      // Caratteristica con prezzo proprio
+      const prezzoOriginale = Number(c.prezzo_pre_sconto ?? 0)
+      const prezzoScontato  = Math.abs(contrib) > 0.001 ? Math.abs(contrib) : prezzoOriginale
+
+      if (scontoPct > 0) {
+        prezzoCell = `<div style="font-size:9.5px;color:#aaa;text-decoration:line-through;white-space:nowrap;">€ ${prezzoOriginale.toFixed(2)}</div>
+          <div style="font-size:9.5px;color:#e65100;margin:1px 0;">Sconto ${scontoPct}%</div>
+          <div style="font-size:10.5px;font-weight:bold;color:#1a3a5c;white-space:nowrap;">+ € ${prezzoScontato.toFixed(2)}</div>`
+      } else {
+        prezzoCell = `<div style="font-size:10.5px;font-weight:bold;color:#1a3a5c;white-space:nowrap;">+ € ${Math.abs(contrib).toFixed(2)}</div>`
+      }
+    }
+
+    return `<div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid #ececec;">
       <div style="width:48px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
         ${fotoUrl
           ? `<img src="${fotoAttr}" alt="" style="max-width:48px;max-height:36px;object-fit:contain;display:block;"/>`
           : `<div style="width:48px;height:36px;background:#ececec;border-radius:2px;"></div>`}
       </div>
       <div style="flex:1;font-size:10.5px;color:#333;line-height:1.4;">${label || 'Caratteristica'}</div>
-      <div style="font-size:10.5px;font-weight:bold;color:${contribColor};white-space:nowrap;">${sign}€ ${absAmt}</div>
+      <div style="text-align:right;">${prezzoCell}</div>
     </div>`
   }).join('\n')
 
@@ -421,20 +449,12 @@ function articoloBlockHTML(parent: Record<string, unknown>, children: Record<str
 
 // ─── Template completo dal DB con sostituzione placeholder ────────────────────
 
+const FOOTER_HTML = `<div style="position:absolute;bottom:24px;left:50px;right:50px;border-top:1px solid #ddd;padding-top:8px;font-size:9px;color:#888;text-align:center;line-height:1.6;">Digi Home Design S.r.l. — Via Roberto Antiochia 3, 90121 Palermo (PA) — P.IVA 07407080824 — Tel +39 351 871 6731 — info@digi-home-design.com</div>`
+
+const HEADER_COMUNE = `<table style="width:100%;margin-bottom:14px;border-collapse:collapse;"><tr><td style="vertical-align:top;width:50%;"><img src="/images/volantino/dg-t.png" alt="Logo" style="height:46px;margin-bottom:7px;display:block;"/><div style="font-size:15px;font-weight:bold;color:#1a3a5c;">Digi Home Design S.r.l.</div><div style="font-size:10px;color:#555;line-height:1.55;margin-top:3px;">Via Roberto Antiochia 3, 90121 Palermo (PA)<br/>P.IVA: 07407080824 &nbsp;|&nbsp; Tel: +39 351 871 6731<br/>info@digi-home-design.com</div></td><td style="vertical-align:top;text-align:right;width:50%;"><img src="/images/volantino/nome_tr.png" alt="Logo 2" style="height:46px;"/></td></tr></table><hr style="border:none;border-top:2px solid #1a3a5c;margin:0 0 12px;"/>`
+
 const FALLBACK_TEMPLATE_DEF = `<div style="font-family:Arial,Helvetica,sans-serif;width:794px;min-height:1050px;padding:40px 50px 90px;position:relative;background:#fff;box-sizing:border-box;">
-  <table style="width:100%;margin-bottom:14px;border-collapse:collapse;"><tr>
-    <td style="vertical-align:top;width:50%;">
-      <img src="/images/volantino/dg-t.png" alt="Logo" style="height:46px;margin-bottom:7px;display:block;"/>
-      <div style="font-size:15px;font-weight:bold;color:#1a3a5c;">Digi Home Design S.r.l.</div>
-      <div style="font-size:10px;color:#555;line-height:1.55;margin-top:3px;">
-        Via Roberto Antiochia 3, 90121 Palermo (PA)<br/>P.IVA: 07407080824 &nbsp;|&nbsp; Tel: +39 351 871 6731<br/>info@digi-home-design.com
-      </div>
-    </td>
-    <td style="vertical-align:top;text-align:right;width:50%;">
-      <img src="/images/volantino/nome_tr.png" alt="Logo 2" style="height:46px;"/>
-    </td>
-  </tr></table>
-  <hr style="border:none;border-top:2px solid #1a3a5c;margin:0 0 12px;"/>
+  ${HEADER_COMUNE}
   <table style="width:100%;margin-bottom:12px;border-collapse:collapse;"><tr>
     <td style="vertical-align:top;width:50%;">
       <div style="font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px;">Data</div>
@@ -453,9 +473,30 @@ const FALLBACK_TEMPLATE_DEF = `<div style="font-family:Arial,Helvetica,sans-seri
   {{articoli}}
   {{sconto_block}}
   {{note_block}}
-  <div style="position:absolute;bottom:24px;left:50px;right:50px;border-top:1px solid #ddd;padding-top:8px;font-size:9px;color:#888;text-align:center;line-height:1.6;">
-    Digi Home Design S.r.l. — Via Roberto Antiochia 3, 90121 Palermo (PA) — P.IVA 07407080824 — Tel +39 351 871 6731 — info@digi-home-design.com
-  </div>
+  ${FOOTER_HTML}
+</div>`
+
+const FALLBACK_TEMPLATE_PROVVISORIO = `<div style="font-family:Arial,Helvetica,sans-serif;width:794px;min-height:1050px;padding:40px 50px 90px;position:relative;background:#fff;box-sizing:border-box;">
+  ${HEADER_COMUNE}
+  <table style="width:100%;margin-bottom:12px;border-collapse:collapse;"><tr>
+    <td style="vertical-align:top;width:50%;">
+      <div style="font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px;">Data</div>
+      <div style="font-size:12px;font-weight:bold;">{{data}}</div>
+      <div style="font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.07em;margin:6px 0 2px;">Tipo</div>
+      <div style="font-size:12px;font-weight:bold;color:#1a3a5c;">Preventivo Provvisorio</div>
+    </td>
+    <td style="vertical-align:top;text-align:right;width:50%;">
+      <div style="font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px;">Spett.le</div>
+      <div style="font-size:13px;font-weight:bold;color:#1a3a5c;">{{cliente_nome}}</div>
+    </td>
+  </tr></table>
+  <div style="font-size:12px;margin-bottom:6px;"><strong>Oggetto:</strong> Preventivo provvisorio</div>
+  <div style="font-size:12px;margin-bottom:10px;line-height:1.6;">Gentile Cliente,<br/>vi trasmettiamo la nostra stima indicativa dei seguenti articoli:</div>
+  <div style="font-size:11px;margin-bottom:14px;padding:8px 12px;background:#f0f4fa;border-left:3px solid #1a3a5c;line-height:1.7;color:#444;"><strong>Importante:</strong> Il presente preventivo è da intendersi come stima orientativa basata sui prezzi di listino correnti. I prezzi definitivi potranno variare a seguito di sopralluogo tecnico e rilevazione delle misure effettive.<br/>Per confermare il preventivo e concordare un appuntamento si prega di contattare la nostra azienda ai recapiti sopra indicati.</div>
+  {{articoli}}
+  {{sconto_block}}
+  {{note_block}}
+  ${FOOTER_HTML}
 </div>`
 
 async function buildPageFromTemplate(opts: {
@@ -487,13 +528,24 @@ async function buildPageFromTemplate(opts: {
 
   // Blocco sconto + totale
   const scontoBlock = (() => {
-    if (scontoClientePct > 0) {
-      const subtotale = artRows.reduce((s, a) => s + Number(a.prezzo_totale ?? 0), 0)
-      const scontoAmt = (subtotale * scontoClientePct / 100).toFixed(2)
+    const subtotale = artRows.reduce((s, a) => s + Number(a.prezzo_totale ?? 0), 0)
+    const totaleNum = parseFloat(totale)
+    // Se sconto_cliente_pct non è salvato, inferisce dalla differenza tra subtotale e importo
+    const pctEffettivo = scontoClientePct > 0
+      ? scontoClientePct
+      : (subtotale > 0.005 && subtotale - totaleNum > 0.005
+          ? Math.round((subtotale - totaleNum) / subtotale * 10000) / 100
+          : 0)
+
+    if (pctEffettivo > 0) {
+      const scontoAmt = (subtotale * pctEffettivo / 100).toFixed(2)
+      const label = pctEffettivo === 5
+        ? 'Sconto di benvenuto (5%)'
+        : `Sconto riservato al cliente (${pctEffettivo}%)`
       return `<div style="margin-top:22px;text-align:right;padding:12px 16px;background:#f0f4fa;border-radius:4px;">
         <div style="font-size:10px;color:#555;margin-bottom:3px;">Subtotale (escluso IVA)</div>
         <div style="font-size:15px;font-weight:bold;color:#1a3a5c;margin-bottom:4px;">€ ${subtotale.toFixed(2)}</div>
-        <div style="font-size:10px;color:#e65100;margin-bottom:3px;">${scontoClientePct === 5 ? 'Sconto di benvenuto (5%)' : `Sconto riservato al cliente (${scontoClientePct}%)`}</div>
+        <div style="font-size:10px;color:#e65100;margin-bottom:3px;">${label}</div>
         <div style="font-size:15px;font-weight:bold;color:#e65100;margin-bottom:6px;">− € ${scontoAmt}</div>
         <div style="border-top:1px solid #c8d4e8;padding-top:6px;">
           <div style="font-size:10px;color:#555;margin-bottom:2px;">Totale offerta (escluso IVA)</div>
@@ -511,13 +563,15 @@ async function buildPageFromTemplate(opts: {
     ? `<div style="margin-top:16px;border-top:1px solid #eee;padding-top:10px;font-size:11px;color:#666;line-height:1.6;"><strong>Note:</strong><br/>${noteRaw}</div>`
     : ''
 
-  const oggetto = stato === 'bozza' || stato === 'richiesto' ? 'Bozza di preventivo' : 'Preventivo'
+  const oggetto = stato === 'bozza' || stato === 'richiesto' ? 'Bozza di preventivo provvisorio' : 'Preventivo ufficiale'
 
-  // Leggi template dal DB
-  let tpl = FALLBACK_TEMPLATE_DEF
+  // Leggi template dal DB: provvisorio per bozza/richiesto, definitivo per gli altri stati
+  const tipoTpl = (stato === 'bozza' || stato === 'richiesto') ? 'preventivo_provvisorio' : 'preventivo'
+  let tpl = tipoTpl === 'preventivo_provvisorio' ? FALLBACK_TEMPLATE_PROVVISORIO : FALLBACK_TEMPLATE_DEF
   try {
     const [tplRows] = await db.query(
-      `SELECT html FROM preventivo_templates WHERE tipo = 'preventivo' AND attivo = 1 ORDER BY id DESC LIMIT 1`
+      `SELECT html FROM preventivo_templates WHERE tipo = ? AND attivo = 1 ORDER BY id DESC LIMIT 1`,
+      [tipoTpl]
     ) as [{ html: string }[], unknown]
     if (tplRows[0]?.html) tpl = tplRows[0].html
   } catch { /* usa fallback */ }
@@ -531,7 +585,7 @@ async function buildPageFromTemplate(opts: {
     .replace(/\{\{stato\}\}/g, stato)
     .replace(/\{\{articoli\}\}/g, articoliHtml)
     .replace(/\{\{sconto_block\}\}/g, scontoBlock)
-    .replace(/\{\{totale\}\}/g, totale)
+    .replace(/\{\{totale\}\}/g, scontoBlock)
     .replace(/\{\{note_block\}\}/g, noteBlock)
 }
 
@@ -544,10 +598,11 @@ async function loadData(prevId: number, username: string, isStaff: boolean): Pro
     const p = pRows[0]
 
     if (!isStaff) {
-      const [uRows] = await db.query('SELECT email FROM users WHERE username = ? LIMIT 1', [username]) as [{ email: string }[], unknown]
-      const email = uRows[0]?.email ?? ''
-      const [cRows] = await db.query('SELECT id FROM clienti WHERE email = ? LIMIT 1', [email]) as [{ id: number }[], unknown]
-      if (Number(p.cliente_id) !== (cRows[0]?.id ?? null)) return null
+      const [uRows] = await db.query('SELECT cliente_id FROM users WHERE username = ? LIMIT 1', [username]) as [{ cliente_id: number | null }[], unknown]
+      const clienteId = uRows[0]?.cliente_id ?? null
+      const ownedByClienteId = clienteId !== null && Number(p.cliente_id) === clienteId
+      const ownedByUsername  = p.cliente_id == null && String(p.creato_da ?? '') === username
+      if (!ownedByClienteId && !ownedByUsername) return null
     }
 
     let clienteNome = '—', clienteIndirizzo = ''
@@ -567,7 +622,7 @@ async function loadData(prevId: number, username: string, isStaff: boolean): Pro
       `SELECT pa.id, pa.preventivo_id, pa.tipo_prodotto, pa.marca, pa.modello,
               pa.listino_id, pa.prezzo_base, pa.unita, pa.colore, pa.tipo_vetro,
               pa.accessori, pa.altezza_cm, pa.larghezza_cm, pa.n_ante, pa.quantita,
-              pa.prezzo_totale, pa.note, pa.sconto_articolo_pct, pa.parent_id,
+              pa.prezzo_totale, pa.prezzo_pre_sconto, pa.note, pa.sconto_articolo_pct, pa.parent_id,
               l.profilo_frontale_mm AS profilo_mm, l.foto_url AS foto_url, l.abbr AS abbr
        FROM preventivo_articoli pa
        LEFT JOIN listini l ON pa.listino_id = l.id

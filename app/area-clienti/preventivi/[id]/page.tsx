@@ -35,14 +35,12 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     // Clienti possono vedere solo i propri preventivi
     if (!isStaff) {
       const [uRows] = await db.query(
-        'SELECT email FROM users WHERE username = ? LIMIT 1', [username]
-      ) as [{ email: string }[], unknown]
-      const email = uRows[0]?.email ?? ''
-      const [cRows] = await db.query(
-        'SELECT id FROM clienti WHERE email = ? LIMIT 1', [email]
-      ) as [{ id: number }[], unknown]
-      const clienteId = cRows[0]?.id ?? null
-      if (Number(raw.cliente_id) !== clienteId) redirect('/area-clienti/preventivi')
+        'SELECT cliente_id FROM users WHERE username = ? LIMIT 1', [username]
+      ) as [{ cliente_id: number | null }[], unknown]
+      const clienteId = uRows[0]?.cliente_id ?? null
+      const ownedByClienteId = clienteId !== null && Number(raw.cliente_id) === clienteId
+      const ownedByUsername  = raw.cliente_id == null && String(raw.creato_da ?? '') === username
+      if (!ownedByClienteId && !ownedByUsername) redirect('/area-clienti/preventivi')
     }
 
     const preventivo: Preventivo = {
@@ -91,6 +89,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       n_ante: Number(a.n_ante),
       quantita: Number(a.quantita),
       prezzo_totale: Number(a.prezzo_totale),
+      prezzo_pre_sconto: Number(a.prezzo_pre_sconto ?? 0),
       sconto_articolo_pct: Number(a.sconto_articolo_pct ?? 0),
       note: a.note != null ? String(a.note) : null,
       parent_id: a.parent_id != null ? Number(a.parent_id) : null,

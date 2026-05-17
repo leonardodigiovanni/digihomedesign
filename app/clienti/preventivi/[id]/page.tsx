@@ -65,6 +65,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       n_ante: Number(a.n_ante),
       quantita: Number(a.quantita),
       prezzo_totale: Number(a.prezzo_totale),
+      prezzo_pre_sconto: Number(a.prezzo_pre_sconto ?? 0),
       sconto_articolo_pct: Number(a.sconto_articolo_pct ?? 0),
       note: a.note != null ? String(a.note) : null,
       parent_id: a.parent_id != null ? Number(a.parent_id) : null,

@@ -73,6 +73,13 @@ export default async function Page() {
   const username = cookieStore.get('session_user')?.value ?? ''
   if (!role) redirect('/')
 
+  if (role === 'cliente') {
+    const db = await getConnection()
+    const [uRows] = await db.query('SELECT is_active FROM users WHERE username = ? LIMIT 1', [username]) as [{ is_active: number }[], unknown]
+    await db.end()
+    if ((uRows[0]?.is_active ?? 0) === 0) redirect('/area-clienti/preventivi')
+  }
+
   const { documenti, isStaff } = await getData(role, username)
 
   const thStyle: React.CSSProperties = {

@@ -348,6 +348,8 @@ export async function salvaCarrelloComePreventivo(): Promise<SaveResult> {
       n_ante INT NOT NULL DEFAULT 1,
       quantita INT NOT NULL DEFAULT 1,
       prezzo_totale DECIMAL(10,2) NOT NULL DEFAULT 0,
+      prezzo_pre_sconto DECIMAL(10,2) NOT NULL DEFAULT 0,
+      prezzo_scontato DECIMAL(10,2) NOT NULL DEFAULT 0,
       note TEXT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )`)
@@ -361,16 +363,13 @@ export async function salvaCarrelloComePreventivo(): Promise<SaveResult> {
     await db.execute(`ALTER TABLE preventivi ADD COLUMN sconto_cliente_pct DECIMAL(5,2) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE preventivo_articoli ADD COLUMN sconto_articolo_pct DECIMAL(5,2) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE preventivo_articoli ADD COLUMN parent_id INT NULL DEFAULT NULL`).catch(() => {})
+    await db.execute(`ALTER TABLE preventivo_articoli ADD COLUMN prezzo_pre_sconto DECIMAL(10,2) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE preventivo_articoli ADD COLUMN prezzo_scontato DECIMAL(10,2) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE listini ADD COLUMN sconto_articolo DECIMAL(5,2) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE clienti ADD COLUMN sconto_pct DECIMAL(5,2) NOT NULL DEFAULT 0`).catch(() => {})
 
-    let clienteId: number | null = null
-    const [uRows] = await db.query('SELECT email FROM users WHERE username = ? LIMIT 1', [username]) as [{ email: string }[], unknown]
-    const email = uRows[0]?.email ?? ''
-    if (email) {
-      const [cRows] = await db.query('SELECT id FROM clienti WHERE email = ? LIMIT 1', [email]) as [{ id: number }[], unknown]
-      clienteId = cRows[0]?.id ?? null
-    }
+    const [uRows] = await db.query('SELECT cliente_id FROM users WHERE username = ? LIMIT 1', [username]) as [{ cliente_id: number | null }[], unknown]
+    const clienteId = uRows[0]?.cliente_id ?? null
 
     const today = new Date().toISOString().slice(0, 10)
     const [res] = await db.execute(
@@ -381,15 +380,17 @@ export async function salvaCarrelloComePreventivo(): Promise<SaveResult> {
     const dateStr = today.replace(/-/g, '')
     await db.execute('UPDATE preventivi SET numero = ? WHERE id = ?', [`${dateStr}-${String(preventivoId).padStart(6, '0')}`, preventivoId])
 
-    const uidToInsertId = new Map<number, number>()
-    const prezziPerUid  = new Map<number, number>()
+    const uidToInsertId   = new Map<number, number>()
+    const prezziPerUid    = new Map<number, number>()  // prezzo_scontato per uid
+    const prezziPrePerUid = new Map<number, number>()  // prezzo_pre_sconto per uid
+    const costantiPerUid  = new Map<number, number>()  // costante listino del padre per uid
 
     for (const item of cart) {
       if (item.tipo === 'caratteristica' || item.id === 0) continue
       const [rows] = await db.query(
-        'SELECT id, categoria, produttore, descrizione, unita, prezzo_vendita, sconto_articolo FROM listini WHERE id = ? LIMIT 1',
+        'SELECT id, categoria, produttore, descrizione, unita, prezzo_vendita, sconto_articolo, costante FROM listini WHERE id = ? LIMIT 1',
         [item.id]
-      ) as [{ id: number; categoria: string; produttore: string; descrizione: string; unita: string; prezzo_vendita: number; sconto_articolo: number }[], unknown]
+      ) as [{ id: number; categoria: string; produttore: string; descrizione: string; unita: string; prezzo_vendita: number; sconto_articolo: number; costante: number }[], unknown]
       const art = rows[0]
       if (!art) continue
 
@@ -397,27 +398,38 @@ export async function salvaCarrelloComePreventivo(): Promise<SaveResult> {
       const scontoArticoloPct = Number(art.sconto_articolo ?? 0)
       const parentDbId = item.parent != null ? (uidToInsertId.get(item.parent) ?? null) : null
       let prezzo = 0
+      let prezzoPre = 0
 
       if (parentDbId !== null && pb === 0 && scontoArticoloPct !== 0) {
-        const prezzoParent = prezziPerUid.get(item.parent!) ?? 0
-        prezzo = Math.round(-(prezzoParent * scontoArticoloPct / 100) * 100) / 100
+        const prezzoParent    = prezziPerUid.get(item.parent!)    ?? 0
+        const prezzoParentPre = prezziPrePerUid.get(item.parent!) ?? 0
+        prezzo    = Math.round(-(prezzoParent    * scontoArticoloPct / 100) * 100) / 100
+        prezzoPre = Math.round(-(prezzoParentPre * scontoArticoloPct / 100) * 100) / 100
       } else {
         const scontoFactor = 1 - scontoArticoloPct / 100
         const h  = (item.h ?? 0) / 100
         const l  = (item.l ?? 0) / 100
         const q  = item.q
-        if (art.unita === 'm²')      prezzo = pb * scontoFactor * h * l * q
-        else if (art.unita === 'ml') prezzo = pb * scontoFactor * l * q
-        else                         prezzo = pb * scontoFactor * q
-        prezzo = Math.round(prezzo * 100) / 100
+        // Per i figli usa la costante del padre; per i primari costante = 1
+        const costante = parentDbId !== null
+          ? (costantiPerUid.get(item.parent!) || 1)
+          : 1
+        let prezzoLordo = 0
+        if (art.unita === 'm²')      prezzoLordo = pb * h * l * q * costante
+        else if (art.unita === 'ml') prezzoLordo = pb * l * q * costante
+        else                         prezzoLordo = pb * q * costante
+        prezzoPre = Math.round(prezzoLordo * 100) / 100
+        prezzo    = Math.round(prezzoLordo * scontoFactor * 100) / 100
       }
 
       if (item.uid != null) prezziPerUid.set(item.uid, prezzo)
+      if (item.uid != null) prezziPrePerUid.set(item.uid, prezzoPre)
+      if (item.uid != null) costantiPerUid.set(item.uid, Number(art.costante) > 0 ? Number(art.costante) : 1)
 
       const [ins] = await db.execute(
-        `INSERT INTO preventivo_articoli (preventivo_id, tipo_prodotto, marca, modello, listino_id, prezzo_base, unita, colore, tipo_vetro, accessori, altezza_cm, larghezza_cm, n_ante, quantita, prezzo_totale, note, sconto_articolo_pct, parent_id)
-         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-        [preventivoId, art.categoria, art.produttore, art.descrizione, item.id, art.prezzo_vendita, art.unita, item.colore ?? '', '', null, item.h ?? 0, item.l ?? 0, item.ante ?? 1, item.q, prezzo, item.note ?? null, scontoArticoloPct, parentDbId]
+        `INSERT INTO preventivo_articoli (preventivo_id, tipo_prodotto, marca, modello, listino_id, prezzo_base, unita, colore, tipo_vetro, accessori, altezza_cm, larghezza_cm, n_ante, quantita, prezzo_totale, note, sconto_articolo_pct, parent_id, prezzo_pre_sconto, prezzo_scontato)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+        [preventivoId, art.categoria, art.produttore, art.descrizione, item.id, art.prezzo_vendita, art.unita, item.colore ?? '', '', null, item.h ?? 0, item.l ?? 0, item.ante ?? 1, item.q, prezzo, item.note ?? null, scontoArticoloPct, parentDbId, prezzoPre, prezzo]
       ) as [{ insertId: number }, unknown]
 
       if (item.uid != null) uidToInsertId.set(item.uid, ins.insertId)
@@ -508,16 +520,17 @@ export async function aggiungiAlPreventivoDaCatalogo(fd: FormData): Promise<Cart
     const scontoFactor = 1 - scontoArticoloPct / 100
     const h = altezza / 100
     const l = larghezza / 100
-    let prezzo = 0
-    if (art.unita === 'm²')      prezzo = pb * scontoFactor * h * l * quantita
-    else if (art.unita === 'ml') prezzo = pb * scontoFactor * l * quantita
-    else                         prezzo = pb * scontoFactor * quantita
-    prezzo = Math.round(prezzo * 100) / 100
+    let prezzoLordo = 0
+    if (art.unita === 'm²')      prezzoLordo = pb * h * l * quantita
+    else if (art.unita === 'ml') prezzoLordo = pb * l * quantita
+    else                         prezzoLordo = pb * quantita
+    const prezzoPre = Math.round(prezzoLordo * 100) / 100
+    const prezzo    = Math.round(prezzoLordo * scontoFactor * 100) / 100
 
     await db.execute(
-      `INSERT INTO preventivo_articoli (preventivo_id, tipo_prodotto, marca, modello, listino_id, prezzo_base, unita, colore, tipo_vetro, accessori, altezza_cm, larghezza_cm, n_ante, quantita, prezzo_totale, note, sconto_articolo_pct)
-       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-      [preventivoId, art.categoria, art.produttore, art.descrizione, listinoId, art.prezzo_vendita, art.unita, colore, '', null, altezza, larghezza, ante, quantita, prezzo, note || null, scontoArticoloPct]
+      `INSERT INTO preventivo_articoli (preventivo_id, tipo_prodotto, marca, modello, listino_id, prezzo_base, unita, colore, tipo_vetro, accessori, altezza_cm, larghezza_cm, n_ante, quantita, prezzo_totale, note, sconto_articolo_pct, prezzo_pre_sconto, prezzo_scontato)
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+      [preventivoId, art.categoria, art.produttore, art.descrizione, listinoId, art.prezzo_vendita, art.unita, colore, '', null, altezza, larghezza, ante, quantita, prezzo, note || null, scontoArticoloPct, prezzoPre, prezzo]
     )
 
     const [totRow] = await db.query(

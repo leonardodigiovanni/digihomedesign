@@ -70,18 +70,17 @@ async function getData(role: string, username: string): Promise<{ preventivi: Pr
       `)
       rows = r as Record<string, unknown>[]
     } else {
-      const [userRows] = await conn.execute('SELECT email FROM users WHERE username = ? LIMIT 1', [username]) as [{ email: string }[], unknown]
-      const email = userRows[0]?.email ?? ''
+      const [userRows] = await conn.execute('SELECT cliente_id FROM users WHERE username = ? LIMIT 1', [username]) as [{ cliente_id: number | null }[], unknown]
+      const clienteId = userRows[0]?.cliente_id ?? null
       const [r] = await conn.query(`
         SELECT p.*, '' AS cliente_nome FROM preventivi p
-        LEFT JOIN clienti c ON c.id = p.cliente_id
         WHERE p.visibile_cliente = 1
           AND (
-            (c.email = ?)
+            (p.cliente_id = ?)
             OR (p.creato_da = ? AND p.cliente_id IS NULL)
           )
         ORDER BY p.data DESC, p.id DESC
-      `, [email || null, username])
+      `, [clienteId, username])
       rows = r as Record<string, unknown>[]
     }
 

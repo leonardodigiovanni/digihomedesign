@@ -149,6 +149,13 @@ export default async function Page() {
 
   const isStaff = role === 'admin' || role === 'dipendente'
 
+  if (role === 'cliente') {
+    const db = await getConnection()
+    const [uRows] = await db.query('SELECT is_active FROM users WHERE username = ? LIMIT 1', [username]) as [{ is_active: number }[], unknown]
+    await db.end()
+    if ((uRows[0]?.is_active ?? 0) === 0) redirect('/area-clienti/preventivi')
+  }
+
   if (isStaff) {
     const [{ ordini, clienti }, ordiniAcquisti] = await Promise.all([
       getDataStaff(),

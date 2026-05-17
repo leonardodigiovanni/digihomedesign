@@ -115,15 +115,17 @@ export default async function RootLayout({
   let rolePermissions = settings.rolePermissions
 
   // Per i clienti: verifica i flag per-utente per nascondere voci di menu
+  let clienteAbilitato = true
   if (role === 'cliente' && username) {
     try {
       const db = await getConnection()
       const [rows] = await db.query(
-        'SELECT cantieri_visibili, miei_ordini_visibili FROM users WHERE username = ? LIMIT 1', [username]
+        'SELECT cantieri_visibili, miei_ordini_visibili, is_active FROM users WHERE username = ? LIMIT 1', [username]
       ) as [Record<string, unknown>[], unknown]
       await db.end()
       const cantieriVisibili = (rows[0]?.cantieri_visibili as number) ?? 1
       const ordiniVisibili   = (rows[0]?.miei_ordini_visibili as number) ?? 1
+      clienteAbilitato       = ((rows[0]?.is_active as number) ?? 0) === 1
       let pagesCliente = rolePermissions.cliente ?? []
       if (!cantieriVisibili) pagesCliente = pagesCliente.filter((id: number) => id !== 31)
       if (!ordiniVisibili)   pagesCliente = pagesCliente.filter((id: number) => id !== 30)
@@ -240,7 +242,7 @@ export default async function RootLayout({
               </div>
             </>
           )}
-          {!inManutenzione && <Navbar role={role} disabledPages={settings.disabledPages} rolePermissions={rolePermissions} username={username} registrazioniDisabilitate={settings.registrazioniDisabilitate} bannerAbilitato={settings.bannerAbilitato} cartCount={cartCount} cartAcquistiCount={cartAcquistiCount} unreadEmailCount={unreadEmailCount} />}
+          {!inManutenzione && <Navbar role={role} disabledPages={settings.disabledPages} rolePermissions={rolePermissions} username={username} registrazioniDisabilitate={settings.registrazioniDisabilitate} bannerAbilitato={settings.bannerAbilitato} cartCount={cartCount} cartAcquistiCount={cartAcquistiCount} unreadEmailCount={unreadEmailCount} clienteAbilitato={clienteAbilitato} />}
         </div>
 
         <main style={{ flex: 1, padding: '8px 8px' }}>

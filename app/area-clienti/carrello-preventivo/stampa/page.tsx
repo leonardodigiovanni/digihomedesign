@@ -19,6 +19,7 @@ type ArtRow = {
   unita: string
   prezzo_vendita: number
   sconto_articolo: number
+  costante: number
   quantita: number
   larghezza_cm: number
   altezza_cm: number
@@ -30,15 +31,18 @@ type ArtRow = {
 function calcolaPrezzo(a: ArtRow, allArts?: ArtRow[]): number {
   if (a.parent_uid != null && a.prezzo_vendita === 0 && a.sconto_articolo !== 0 && allArts) {
     const padre = allArts.find(x => x.uid === a.parent_uid)
-    if (padre) return Math.round(-(calcolaPrezzo(padre) * a.sconto_articolo / 100) * 100) / 100
+    if (padre) return Math.round(-(calcolaPrezzo(padre, allArts) * a.sconto_articolo / 100) * 100) / 100
     return 0
   }
   const pb = a.prezzo_vendita
   const h  = a.altezza_cm  / 100
   const l  = a.larghezza_cm / 100
   const q  = a.quantita
-  if (a.unita === 'm²') return Math.round(pb * h * l * q * 100) / 100
-  if (a.unita === 'ml') return Math.round(pb * l * q * 100) / 100
+  const costante = (a.parent_uid != null && allArts)
+    ? (allArts.find(x => x.uid === a.parent_uid)?.costante || 1)
+    : 1
+  if (a.unita === 'm²') return Math.round(pb * h * l * q * costante * 100) / 100
+  if (a.unita === 'ml') return Math.round(pb * l * q * costante * 100) / 100
   return Math.round(pb * q * 100) / 100
 }
 
@@ -483,9 +487,9 @@ export default async function Page() {
     const ids = cart.map(i => i.id)
     const ph  = ids.map(() => '?').join(',')
     const [rows] = await db.query(
-      `SELECT id, categoria, produttore, descrizione, unita, prezzo_vendita, sconto_articolo, foto_url, profilo_frontale_mm, abbr FROM listini WHERE id IN (${ph})`,
+      `SELECT id, categoria, produttore, descrizione, unita, prezzo_vendita, sconto_articolo, costante, foto_url, profilo_frontale_mm, abbr FROM listini WHERE id IN (${ph})`,
       ids
-    ) as [{ id: number; categoria: string; produttore: string; descrizione: string; unita: string; prezzo_vendita: number; sconto_articolo: number; foto_url: string | null; profilo_frontale_mm: number | null; abbr: string | null }[], unknown]
+    ) as [{ id: number; categoria: string; produttore: string; descrizione: string; unita: string; prezzo_vendita: number; sconto_articolo: number; costante: number; foto_url: string | null; profilo_frontale_mm: number | null; abbr: string | null }[], unknown]
 
     let rootIdx = 0
     arts = cart.map((item) => {
@@ -502,6 +506,7 @@ export default async function Page() {
         unita: r.unita,
         prezzo_vendita: Number(r.prezzo_vendita),
         sconto_articolo: Number(r.sconto_articolo ?? 0),
+        costante: Number(r.costante ?? 0),
         quantita: item.q,
         larghezza_cm: item.l ?? 0,
         altezza_cm: item.h ?? 0,

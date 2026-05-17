@@ -37,6 +37,7 @@ export type Articolo = {
   n_ante: number
   quantita: number
   prezzo_totale: number
+  prezzo_pre_sconto: number
   sconto_articolo_pct: number
   note: string | null
   parent_id: number | null
@@ -1120,7 +1121,7 @@ export default function PreventivoClient({
                       <td style={{ ...tdS, textAlign: 'right', whiteSpace: 'nowrap' }}>
                         {a.sconto_articolo_pct !== 0 ? (
                           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1 }}>
-                            <span style={{ color: '#aaa', fontSize: 11, textDecoration: 'line-through' }}>€ {prezzoBase.toFixed(2)}</span>
+                            {(isChild ? a.prezzo_pre_sconto : prezzoBase) > 0 && <span style={{ color: '#aaa', fontSize: 11, textDecoration: 'line-through' }}>€ {(isChild ? a.prezzo_pre_sconto : prezzoBase).toFixed(2)}</span>}
                             <span style={{ color: a.sconto_articolo_pct < 0 ? '#1565c0' : '#e65100', fontSize: 11 }}>
                               {a.sconto_articolo_pct < 0 ? `Magg. +${Math.abs(a.sconto_articolo_pct)}%` : `Promo −${a.sconto_articolo_pct}%`}
                             </span>

@@ -240,7 +240,7 @@ function Step3({ pendingId, onSuccess }: { pendingId: number; onSuccess: () => v
     startTransition(async () => {
       const res: VerifyResult = await verifyPhone(pendingId, code)
       if (res.ok) {
-        onSuccess()
+        window.location.href = '/area-clienti/carrello-preventivo'
       } else {
         setError(res.error)
       }
