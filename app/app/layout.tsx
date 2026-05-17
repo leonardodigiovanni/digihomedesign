@@ -3,7 +3,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import AppBottomNav from './app-bottom-nav'
 import { appLogout } from './login/actions'
-import './app.css'
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies()
@@ -14,10 +13,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
       {/* Top bar */}
       <header className="app-topbar">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
-          <Image src="/images/header/digi-tr.png" alt="DIGI" width={76} height={76} unoptimized style={{ objectFit: 'contain' }} />
-          <Image src="/images/volantino/nome_tr.png" alt="Home Design" width={90} height={30} unoptimized style={{ objectFit: 'contain', marginLeft: -9, marginTop: 16 }} />
-        </div>
+        <Link href="/app" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, textDecoration: 'none' }}>
+          <Image src="/images/header/qqqqqqqqqqqqqqqqqqq-Photoroom.png" alt="DIGI Home Design" width={82} height={82} unoptimized style={{ objectFit: 'contain', display: 'block' }} />
+          <Image src="/images/volantino/nome_tr.png" alt="Home Design" width={110} height={37} unoptimized style={{ objectFit: 'contain', display: 'block', marginTop: -8 }} />
+        </Link>
         <div className="app-topbar-user">
           {username ? (
             <>
