@@ -354,12 +354,7 @@ export async function salvaCarrelloComePreventivo(): Promise<SaveResult> {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )`)
 
-    const [col] = await db.query(
-      `SELECT COUNT(*) AS cnt FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'preventivi' AND COLUMN_NAME = 'creato_da'`
-    ) as [{ cnt: number }[], unknown]
-    if ((col[0]?.cnt ?? 0) === 0) {
-      await db.execute(`ALTER TABLE preventivi ADD COLUMN creato_da VARCHAR(100) NULL DEFAULT NULL`)
-    }
+    await db.execute(`ALTER TABLE preventivi ADD COLUMN creato_da VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
     await db.execute(`ALTER TABLE preventivi ADD COLUMN sconto_cliente_pct DECIMAL(5,2) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE preventivo_articoli ADD COLUMN sconto_articolo_pct DECIMAL(5,2) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE preventivo_articoli ADD COLUMN parent_id INT NULL DEFAULT NULL`).catch(() => {})
@@ -368,6 +363,7 @@ export async function salvaCarrelloComePreventivo(): Promise<SaveResult> {
     await db.execute(`ALTER TABLE listini ADD COLUMN sconto_articolo DECIMAL(5,2) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE listini ADD COLUMN costante DECIMAL(10,4) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE clienti ADD COLUMN sconto_pct DECIMAL(5,2) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE users ADD COLUMN cliente_id INT NULL DEFAULT NULL`).catch(() => {})
 
     const [uRows] = await db.query('SELECT cliente_id FROM users WHERE username = ? LIMIT 1', [username]) as [{ cliente_id: number | null }[], unknown]
     const clienteId = uRows[0]?.cliente_id ?? null
