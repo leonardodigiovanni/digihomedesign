@@ -63,7 +63,7 @@ function CardLink({ c }: { c: CategoriaCard }) {
         justifyContent: 'center',
         minHeight: 100,
         background: '#fff',
-        border: '1px solid #e0e0e0',
+        border: '2px solid #c8960c',
         borderRadius: 10,
         textDecoration: 'none',
         color: '#1a1a1a',
@@ -109,7 +109,7 @@ export default async function Page() {
         <Link href="/brand" style={{ color: '#888', textDecoration: 'underline' }}>Brand</Link> / Cataloghi
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Cataloghi</h1>
-      <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '24px 28px', marginBottom: 32 }}>
+      <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '24px 28px', marginBottom: 32 }}>
         <p className="testo-articoli" style={{ margin: 0 }}>Consulta e scarica i cataloghi dei nostri prodotti, organizzati per categoria. Clicca su una categoria per vedere i depliant disponibili.</p>
       </div>
 

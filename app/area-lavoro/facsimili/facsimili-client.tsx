@@ -142,7 +142,7 @@ function CategoriaSection({ categoria, docs, role, search }: { categoria: string
   if (filtered.length === 0) return null
 
   return (
-    <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, overflow: 'hidden' }}>
+    <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, overflow: 'hidden' }}>
       <div style={{ padding: '12px 20px', background: '#f7f8fa', borderBottom: '1px solid #e8e8e8', display: 'flex', alignItems: 'center', gap: 10 }}>
         <span style={{ fontSize: 14, fontWeight: 700, color: '#1a1a1a' }}>{categoria}</span>
         <span style={{ fontSize: 12, color: '#aaa' }}>{filtered.length} {filtered.length === 1 ? 'file' : 'file'}</span>

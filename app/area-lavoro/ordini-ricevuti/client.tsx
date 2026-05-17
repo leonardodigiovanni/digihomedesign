@@ -349,7 +349,7 @@ export default function OrdiniRicevutiClient({ ordini, clienti, role }: { ordini
         </button>
       </div>
 
-      <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, overflow: 'hidden' }}>
+      <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, overflow: 'hidden' }}>
         <div style={{ padding: '14px 24px 10px', borderBottom: '1px solid #f0f0f0', display: 'flex', alignItems: 'center', gap: 12 }}>
           <h3 style={{ fontSize: 15, fontWeight: 600, margin: 0 }}>
             Ordini{(search||statoFilter) ? ` — ${filtered.length} risultati` : ` — ${ordini.length} totali`}

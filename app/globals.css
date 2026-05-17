@@ -37,7 +37,7 @@ a:active, a:active img, a:focus img {
 
 .testo-titoli {
   font-family: 'Times New Roman', Times, serif;
-  font-size: 36px;
+  font-size: 48px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -51,8 +51,9 @@ a:active, a:active img, a:focus img {
 
 .testo-articoli {
   font-family: 'Times New Roman', Times, serif;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 300;
+  /*text-transform: uppercase;*/
   letter-spacing: 1px;
   /*color: purple;
   -webkit-text-fill-color: purple;*/
@@ -267,6 +268,13 @@ body {
     linear-gradient(135deg, #b89030 0%, #c8960c 18%, #f5d060 38%, #f0c840 50%, #f5d060 62%, #c8960c 82%, #b89030 100%) border-box;
   box-shadow: 0 2px 8px rgba(200,150,12,0.35), inset 0 1px 0 rgba(255,250,200,0.7);
   transition: transform 0.15s, box-shadow 0.15s;
+}
+.home-hero-cards .page-card {
+  aspect-ratio: 1 / 1;
+}
+.home-hero-cards .page-card > div:first-child {
+  flex: 1 !important;
+  height: auto !important;
 }
 .page-card:hover {
   transform: translateY(-3px);
@@ -1200,17 +1208,6 @@ body {
    .btn-red    → annulla / logout / elimina
    .btn-gray   → stato disabilitato
    ───────────────────────────────────────── */
-:root {
-  --btn-shimmer-speed: 4s;
-}
-
-@keyframes btn-shimmer {
-  0%, 35%   { transform: skewX(-12deg) translateX(-180%); opacity: 0; }
-  40%        { opacity: 1; }
-  62%        { opacity: 0; }
-  68%, 100%  { transform: skewX(-12deg) translateX(460%);  opacity: 0; }
-}
-
 /* Verde — conferma / salva / login */
 .btn-green {
   background:
@@ -1238,18 +1235,6 @@ body {
 .btn-green:hover:not(:disabled) {
   filter: brightness(1.14);
 }
-.btn-green::after {
-  content: '';
-  position: absolute;
-  top: -30%;
-  left: 0;
-  width: 35%;
-  height: 160%;
-  background: linear-gradient(90deg, transparent 0%, rgba(180,255,180,0.45) 50%, transparent 100%);
-  animation: btn-shimmer var(--btn-shimmer-speed) ease-in-out infinite;
-  pointer-events: none;
-}
-
 /* Rosso — annulla / logout / elimina */
 .btn-red {
   background:
@@ -1277,19 +1262,6 @@ body {
 .btn-red:hover:not(:disabled) {
   filter: brightness(1.14);
 }
-.btn-red::after {
-  content: '';
-  position: absolute;
-  top: -30%;
-  left: 0;
-  width: 35%;
-  height: 160%;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,140,140,0.45) 50%, transparent 100%);
-  animation: btn-shimmer var(--btn-shimmer-speed) ease-in-out infinite;
-  animation-delay: calc(var(--btn-shimmer-speed) / -2);
-  pointer-events: none;
-}
-
 /* Arancione — sollecito / avviso */
 .btn-orange {
   background:
@@ -1314,19 +1286,6 @@ body {
 .btn-orange:hover:not(:disabled) {
   filter: brightness(1.14);
 }
-.btn-orange::after {
-  content: '';
-  position: absolute;
-  top: -30%;
-  left: 0;
-  width: 35%;
-  height: 160%;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,210,140,0.45) 50%, transparent 100%);
-  animation: btn-shimmer var(--btn-shimmer-speed) ease-in-out infinite;
-  animation-delay: calc(var(--btn-shimmer-speed) / -3);
-  pointer-events: none;
-}
-
 /* RGB-C rame — stesso stile btn-green/red ma con colore header rgb (r=145,g=85,b=85) */
 .btn-rgb-c {
   background:
@@ -1351,19 +1310,6 @@ body {
 .btn-rgb-c:hover:not(:disabled) {
   filter: brightness(1.14);
 }
-.btn-rgb-c::after {
-  content: '';
-  position: absolute;
-  top: -30%;
-  left: 0;
-  width: 35%;
-  height: 160%;
-  background: linear-gradient(90deg, transparent 0%, rgba(210,170,170,0.45) 50%, transparent 100%);
-  animation: btn-shimmer var(--btn-shimmer-speed) ease-in-out infinite;
-  animation-delay: calc(var(--btn-shimmer-speed) / -4);
-  pointer-events: none;
-}
-
 /* Blu lucido spazzolato */
 .btn-blue {
   background:
@@ -1391,18 +1337,6 @@ body {
 .btn-blue:hover:not(:disabled) {
   filter: brightness(1.18);
 }
-.btn-blue::after {
-  content: '';
-  position: absolute;
-  top: -30%;
-  left: 0;
-  width: 35%;
-  height: 160%;
-  background: linear-gradient(90deg, transparent 0%, rgba(180,210,255,0.35) 50%, transparent 100%);
-  animation: btn-shimmer var(--btn-shimmer-speed) ease-in-out infinite;
-  pointer-events: none;
-}
-
 /* Nero lucido spazzolato */
 .btn-black {
   background:
@@ -1431,18 +1365,6 @@ body {
 .btn-black:hover:not(:disabled) {
   filter: brightness(1.18);
 }
-.btn-black::after {
-  content: '';
-  position: absolute;
-  top: -30%;
-  left: 0;
-  width: 35%;
-  height: 160%;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.18) 50%, transparent 100%);
-  animation: btn-shimmer var(--btn-shimmer-speed) ease-in-out infinite;
-  pointer-events: none;
-}
-
 /* Grigio — disabilitato */
 .btn-gray {
   background:
@@ -1631,38 +1553,11 @@ body {
   background: linear-gradient(90deg, rgba(200,150,12,0.35), transparent);
 }
 
-/* ─── Brand / Storia — layout responsive ─────────────────────────────────── */
-@media (min-width: 901px) {
-  .storia-foto {
-    display: block !important;
-    position: relative;
-    width: 430px;
-    height: 330px;
-  }
-  .storia-card-1 {
-    position: absolute;
-    top: 0;
-    left: 0;
-    transform: rotate(-4deg);
-    z-index: 0;
-    transition: transform 0.25s, z-index 0s;
-  }
-  .storia-card-1:hover {
-    transform: rotate(-4deg) scale(1.03);
-    z-index: 2;
-  }
-  .storia-card-2 {
-    position: absolute;
-    top: 30px;
-    left: 190px;
-    transform: rotate(3deg);
-    z-index: 1;
-    transition: transform 0.25s, z-index 0s;
-  }
-  .storia-card-2:hover {
-    transform: rotate(3deg) scale(1.03);
-    z-index: 2;
-  }
+/* ─── Brand / Storia — card decorative ────────────────────────────────────── */
+.storia-card-1:hover,
+.storia-card-2:hover {
+  transform: scale(1.03);
+  transition: transform 0.25s;
 }
 @media (max-width: 900px) {
   .storia-row {

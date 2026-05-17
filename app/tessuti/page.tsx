@@ -47,7 +47,7 @@ export default function Page() {
             href={s.href}
             style={{
               flex: '1 1 280px',
-              border: '1px solid #e0e0e0',
+              border: '2px solid #c8960c',
               borderRadius: 10,
               padding: '24px 20px',
               textDecoration: 'none',

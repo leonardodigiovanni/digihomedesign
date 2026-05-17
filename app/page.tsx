@@ -50,19 +50,18 @@ export default async function Page() {
       <div className="home-hero">
         <div className="home-hero-text class_silver_D_safe" style={{ borderRadius: 20 }}>
           <div style={{ height: '100%', overflowY: 'auto', padding: '28px 28px 24px', boxSizing: 'border-box' }}>
-<p className="testo-articoli" style={{ lineHeight: 1.8, margin: 0 }}>
-            <span style={{ fontSize: 19, fontWeight: 700 }}>DIGI Home Design</span><br />
-            nasce da <strong>oltre 60 anni di esperienza</strong> nel settore della lavorazione del ferro e dell&apos;acciaio, avviata nei primi anni &apos;60 e proseguita, nei primi anni &apos;80, nel mondo dei serramenti. Da <strong>realtà artigiana a conduzione familiare</strong>, stimata nella città di <strong>Palermo</strong>, l&apos;azienda si è evoluta nel tempo fino a diventare una realtà moderna e innovativa, capace di integrare competenze nell&apos;edilizia, nelle ristrutturazioni e nella riqualificazione energetica.<br /><br />
-            Alla base del nostro percorso ci sono la passione per il <strong>design d&apos;interni</strong> e la volontà di offrire <strong>soluzioni complete</strong> per abitazioni e spazi commerciali. Dalla progettazione alla posa in opera, ogni intervento viene seguito con <strong>cura artigianale, precisione e attenzione al dettaglio</strong>.<br /><br />
-            Nel corso degli anni abbiamo ampliato la nostra offerta, abbracciando diversi ambiti: dai serramenti alla falegnameria, dall&apos;impiantistica alle opere edili, fino alle <strong>ristrutturazioni chiavi in mano</strong>. Il tutto con un <strong>unico interlocutore</strong>, in grado di coordinare ogni fase del lavoro.<br /><br />
-            Oggi ci proponiamo come <strong>partner di fiducia</strong> per chi desidera migliorare, recuperare o valorizzare il proprio immobile. Gestiamo l&apos;intero processo, semplificando la comunicazione tra le figure coinvolte e sollevando il committente da problematiche organizzative, tecniche e gestionali.<br /><br />
-            Siamo al fianco delle famiglie con soluzioni durevoli, <strong>prezzi onesti e competitivi</strong>, occupandoci di interventi che spaziano dai serramenti alle opere edili, fino ai lavori di ristrutturazione ed <strong>efficientamento energetico</strong>.<br /><br />
-            Per rendere l&apos;esperienza ancora più semplice e trasparente, mettiamo a disposizione <strong>due servizi esclusivi e completamente gratuiti</strong>:<br /><br />
-            — <strong><span>Preventivi Immediati Online</span></strong>:<br />
-            Senza registrazione e in completa autonomia, grazie a un widget semplice, veloce e intuitivo. Registrandoti, potrai inoltre scoprire <strong>offerte dedicate, sconti fedeltà progressivi, premialità referral</strong> &ldquo;porta un amico&rdquo; e accedere a <strong>finanziamenti convenzionati</strong>, per realizzare i tuoi progetti anche con <strong>comode rate mensili</strong>.<br /><br />
-            — <strong><span>Monitoraggio del Cantiere Online</span></strong>:<br />
-            Un servizio pensato per <strong>seguire i lavori ovunque ti trovi</strong> e in qualsiasi momento, attraverso aggiornamenti giornalieri, rapporti di lavoro, foto e video documentali. Accedendo alla tua <strong>area personale</strong>, potrai verificare in modo semplice e trasparente l&apos;avanzamento del cantiere.<br /><br />
-            Affidati a un&apos;azienda che unisce <strong>esperienza artigiana</strong>, innovazione e servizi evoluti per aiutarti a realizzare la <strong>casa dei tuoi sogni</strong>.
+          <p className="testo-articoli">
+            DIGI Home Design nasce da oltre 60 anni di esperienza nel settore della lavorazione del ferro e dell&apos;acciaio, avviata nei primi anni &apos;60 e proseguita, nei primi anni &apos;80, nel mondo dei serramenti. Da realtà artigiana a conduzione familiare, stimata nella città di Palermo, l&apos;azienda si è evoluta nel tempo fino a diventare una realtà moderna e innovativa, capace di integrare competenze nell&apos;edilizia, nelle ristrutturazioni e nella riqualificazione energetica.<br /><br />
+            Alla base del nostro percorso ci sono la passione per il design d&apos;interni e la volontà di offrire soluzioni complete per abitazioni e spazi commerciali. Dalla progettazione alla posa in opera, ogni intervento viene seguito con cura artigianale, precisione e attenzione al dettaglio.<br /><br />
+            Nel corso degli anni abbiamo ampliato la nostra offerta, abbracciando diversi ambiti: dai serramenti alla falegnameria, dall&apos;impiantistica alle opere edili, fino alle ristrutturazioni chiavi in mano. Il tutto con un unico interlocutore, in grado di coordinare ogni fase del lavoro.<br /><br />
+            Oggi ci proponiamo come partner di fiducia per chi desidera migliorare, recuperare o valorizzare il proprio immobile. Gestiamo l&apos;intero processo, semplificando la comunicazione tra le figure coinvolte e sollevando il committente da problematiche organizzative, tecniche e gestionali.<br /><br />
+            Siamo al fianco delle famiglie con soluzioni durevoli, prezzi onesti e competitivi, occupandoci di interventi che spaziano dai serramenti alle opere edili, fino ai lavori di ristrutturazione ed efficientamento energetico.<br /><br />
+            Per rendere l&apos;esperienza ancora più semplice e trasparente, mettiamo a disposizione due servizi esclusivi e completamente gratuiti:<br /><br />
+            — <span>Preventivi Immediati Online</span>:<br />
+            Senza registrazione e in completa autonomia, grazie a un widget semplice, veloce e intuitivo. Registrandoti, potrai inoltre scoprire offerte dedicate, sconti fedeltà progressivi, premialità referral &ldquo;porta un amico&rdquo; e accedere a finanziamenti convenzionati, per realizzare i tuoi progetti anche con comode rate mensili.<br /><br />
+            — <span>Monitoraggio del Cantiere Online</span>:<br />
+            Un servizio pensato per seguire i lavori ovunque ti trovi e in qualsiasi momento, attraverso aggiornamenti giornalieri, rapporti di lavoro, foto e video documentali. Accedendo alla tua area personale, potrai verificare in modo semplice e trasparente l&apos;avanzamento del cantiere.<br /><br />
+            Affidati a un&apos;azienda che unisce esperienza artigiana, innovazione e servizi evoluti per aiutarti a realizzare la casa dei tuoi sogni.
           </p>
           </div>
         </div>
@@ -789,7 +788,7 @@ export default async function Page() {
               { src: '/images/brand/partners/moskout.png',   alt: 'Moskout',   href: '#' },
             ].map(m => (
               <a key={m.alt} href={m.href} target={m.href !== '#' ? '_blank' : undefined} rel="noopener noreferrer"
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 8px', height: 52, border: '1px solid #e0e0e0', borderRadius: 6, background: '#fff', flexShrink: 0 }}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 8px', height: 52, border: '2px solid #c8960c', borderRadius: 6, background: '#fff', flexShrink: 0 }}
               >
                 <Image src={m.src} alt={m.alt} width={130} height={40} style={{ objectFit: 'contain' }} />
               </a>
@@ -801,9 +800,9 @@ export default async function Page() {
       </div>
 
       {/* Partners */}
-      <div className="page-section-wrapper" style={{ maxWidth: 1100, margin: '32px auto 0', padding: '0 20px' }}>
+      {/* <div className="page-section-wrapper" style={{ maxWidth: 1100, margin: '32px auto 0', padding: '0 20px' }}>
         <PartnersBlock />
-      </div>
+      </div> */}
 
       {/* Blocco SEO keyword cluster */}
       <div className="page-section-wrapper" style={{ maxWidth: 1100, margin: '48px auto 48px', padding: '0 20px' }}>
@@ -817,8 +816,8 @@ export default async function Page() {
                 <li>Vendita + consegna diretta + montaggio a <strong>Palermo e Provincia</strong> entro <strong>30 giorni</strong></li>
                 <li>Vendita + consegna diretta + montaggio in tutto il <strong>resto della Sicilia</strong> entro <strong>45 giorni</strong></li>
                 <li>Vendita + consegna mezzo corriere nel <strong>resto d&apos;Italia</strong> entro <strong>60 giorni</strong> (montaggio concordabile)</li>
-                <li>Vendita + consegna mezzo corriere nel <strong>resto d&apos;Europa</strong> entro <strong>90 giorni</strong></li>
-                <li>Vendita + consegna mezzo corriere nel <strong>resto del Mondo</strong> entro <strong>120 giorni</strong></li>
+                {/* <li>Vendita + consegna mezzo corriere nel <strong>resto d&apos;Europa</strong> entro <strong>90 giorni</strong></li> */}
+                {/* <li>Vendita + consegna mezzo corriere nel <strong>resto del Mondo</strong> entro <strong>120 giorni</strong></li> */}
               </ul>
             </div>
             {/* Cronometro SVG */}

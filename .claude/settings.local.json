@@ -70,7 +70,9 @@
       "Bash(grep -r 'className=\"fs-14\" style={{ fontWeight: 600, color' app/ --include=\"*.tsx\")",
       "Bash(sed -i 's/<label style={{ \\\\.\\\\.\\\\.lbl, gridColumn: .1 \\\\/ -1. }}>/<label className=\"testo-articoli\" style={{ ...lbl, gridColumn: '\\\\''1 \\\\/ -1'\\\\'' }}>/g' components/aggiungi-articolo-form.tsx)",
       "Bash(sed -i 's/<label style={lbl}>/<label className=\"testo-articoli\" style={lbl}>/g' components/aggiungi-articolo-form.tsx)",
-      "Bash(Get-Date *)"
+      "Bash(Get-Date *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\User\\\\Desktop\\\\SITO\\\\sito-cursor\\\\app\\\\brand\" -Directory)",
+      "Bash(Select-Object Name)"
     ]
   }
 }

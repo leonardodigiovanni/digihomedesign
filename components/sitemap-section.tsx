@@ -26,8 +26,34 @@ const linkStyle: React.CSSProperties = {
   gap: 4,
   textDecoration: 'none',
   lineHeight: 1.7,
+  whiteSpace: 'nowrap',
 }
 
+const MAX_PER_COL = 5
+
+function chunk<T>(arr: T[], size: number): T[][] {
+  const out: T[][] = []
+  for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size))
+  return out
+}
+
+type SimpleLink = { label: string; href: string }
+
+function renderColumns(heading: string, pages: SimpleLink[]) {
+  return chunk(pages, MAX_PER_COL).map((group, ci) => (
+    <div key={`${heading}-${ci}`} style={{ flex: '0 0 auto', minWidth: 100 }}>
+      <p className="testo-indice" style={{ ...headingStyle, visibility: ci === 0 ? 'visible' : 'hidden' }}>
+        {heading}
+      </p>
+      {group.map(p => (
+        <Link key={p.href} href={p.href} className="testo-indice" style={linkStyle}>
+          <span style={{ color: '#777', flexShrink: 0 }}>•</span>
+          <span>{p.label}</span>
+        </Link>
+      ))}
+    </div>
+  ))
+}
 
 export default function SitemapSection({ disabledPages }: { disabledPages: number[] }) {
   const visibleBrand = brandPages.filter(p => {
@@ -60,44 +86,40 @@ export default function SitemapSection({ disabledPages }: { disabledPages: numbe
             gap: '0 16px',
           }}>
 
-            {/* Prodotti principali — sempre visibili */}
-            <div style={{ flex: '0 0 120px', width: 120 }}>
-              <p className="testo-indice" style={headingStyle}>Prodotti</p>
-              {topPages.map(p => (
-                <Link key={p.href} href={p.href} className="testo-indice" style={linkStyle}>
-                  <span style={{ color: '#777', flexShrink: 0 }}>•</span>
-                  <span>{p.label}</span>
-                </Link>
-              ))}
-            </div>
+            {/* Prodotti principali */}
+            {renderColumns('Prodotti', topPages)}
 
             {/* Brand — filtrato */}
             {visibleBrand.length > 0 && (
-              <div style={{ flex: '0 0 120px', width: 120 }}>
-                <p className="testo-indice" style={headingStyle}>Brand</p>
-                {visibleBrand.map(p => (
-                  <Link key={p.href} href={p.href} className="testo-indice" style={linkStyle}>
-                    <span style={{ color: '#777', flexShrink: 0 }}>•</span>
-                    <span>{p.label}</span>
-                  </Link>
-                ))}
-              </div>
+              <>
+                <div style={{ width: 1, background: 'rgba(255,255,255,0.18)', alignSelf: 'stretch', flexShrink: 0 }} />
+                {renderColumns('Brand', visibleBrand)}
+              </>
             )}
 
-            {/* Categorie prodotto — filtrate */}
-            {visibleGroups.map(g => (
-              <div key={g.id} style={{ flex: '0 0 120px', width: 120 }}>
-                <Link href={g.href} className="testo-indice" style={{ ...headingStyle, textDecoration: 'none', display: 'block' }}>
-                  {g.label}
-                </Link>
-                {g.pages.map(p => (
-                  <Link key={p.id} href={p.href} className="testo-indice" style={linkStyle}>
-                    <span style={{ color: '#777', flexShrink: 0 }}>•</span>
-                    <span>{p.label}</span>
-                  </Link>
-                ))}
-              </div>
-            ))}
+            {/* Categorie prodotto — una serie di colonne per gruppo */}
+            {visibleGroups.map(g =>
+              chunk(g.pages, MAX_PER_COL).map((group, ci) => (
+                <div key={`${g.id}-${ci}`} style={{ display: 'contents' }}>
+                  {ci === 0 && <div style={{ width: 1, background: 'rgba(255,255,255,0.18)', alignSelf: 'stretch', flexShrink: 0 }} />}
+                <div style={{ flex: '0 0 auto', minWidth: 100 }}>
+                  {ci === 0 ? (
+                    <Link href={g.href} className="testo-indice" style={{ ...headingStyle, textDecoration: 'none', display: 'block' }}>
+                      {g.label}
+                    </Link>
+                  ) : (
+                    <p className="testo-indice" style={{ ...headingStyle, visibility: 'hidden' }}>{g.label}</p>
+                  )}
+                  {group.map(p => (
+                    <Link key={p.id} href={p.href} className="testo-indice" style={linkStyle}>
+                      <span style={{ color: '#777', flexShrink: 0 }}>•</span>
+                      <span>{p.label}</span>
+                    </Link>
+                  ))}
+                </div>
+                </div>
+              ))
+            )}
 
           </div>
         </div>

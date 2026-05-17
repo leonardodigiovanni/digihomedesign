@@ -94,7 +94,7 @@ export default async function Page({ searchParams }: Props) {
 
       {/* Riepilogo articoli */}
       {articoli.length > 0 && (
-        <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, overflow: 'hidden', marginBottom: 28 }}>
+        <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, overflow: 'hidden', marginBottom: 28 }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr>

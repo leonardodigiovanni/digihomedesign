@@ -28,7 +28,7 @@ export default function AccediDropdown() {
       {open && (
         <div style={{
           position: 'absolute', top: 'calc(100% + 8px)', left: 0,
-          background: '#fff', border: '1px solid #e0e0e0', borderRadius: 6,
+          background: '#fff', border: '2px solid #c8960c', borderRadius: 6,
           boxShadow: '0 4px 20px rgba(0,0,0,0.12)', minWidth: 210, zIndex: 200,
         }}>
           <DropdownLoginForm />

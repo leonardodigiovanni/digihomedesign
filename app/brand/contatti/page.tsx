@@ -48,10 +48,10 @@ export default async function Page() {
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 16 }}>Contatti</h1>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 0 }}>
-        <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '24px 28px' }}>
+        <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '24px 28px' }}>
           <p className="testo-articoli" style={{ margin: 0 }}>Siamo a disposizione per sopralluoghi gratuiti, preventivi e informazioni su tutti i nostri servizi. Contattaci telefonicamente, via email o compila il modulo — ti risponderemo entro 24 ore.</p>
         </div>
-        <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '24px 28px' }}>
+        <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '24px 28px' }}>
           <p className="testo-articoli" style={{ margin: 0 }}>Operiamo direttamente a Palermo e in tutta la Provincia e nel resto della Sicilia. Potremmo affidarci alla nostra rete di selezionati e fidati collaboratori per gestire distanze maggiori.</p>
         </div>
       </div>
@@ -71,7 +71,7 @@ export default async function Page() {
           <div key={r.label} style={{
             flex: `${r.grow} 1 160px`,
             background: '#fff',
-            border: '1px solid #e0e0e0',
+            border: '2px solid #c8960c',
             borderRadius: 10,
             padding: '16px 18px',
             display: 'flex',

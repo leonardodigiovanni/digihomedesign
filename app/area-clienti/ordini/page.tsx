@@ -106,7 +106,7 @@ function SezioneOrdiniAcquisti({ ordini, showUsername }: { ordini: (OrdineAcquis
         <h3 style={{ fontSize: 17, fontWeight: 700, margin: 0, color: '#4a0080' }}>Ordini acquisto online</h3>
         <p style={{ fontSize: 13, color: '#888', margin: '2px 0 0' }}>Pagamenti completati tramite Stripe</p>
       </div>
-      <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, overflow: 'hidden' }}>
+      <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, overflow: 'hidden' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr>

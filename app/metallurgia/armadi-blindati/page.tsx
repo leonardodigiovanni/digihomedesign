@@ -27,52 +27,44 @@ export default function Page() {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '24px 28px' }}>
 
-          {/* Prima riga: primo articolo + foto */}
-          <div className="storia-row" style={{ display: 'flex', gap: 48, alignItems: 'flex-start' }}>
-            <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '24px 28px', flex: 1, minWidth: 0 }}>
-              <p className="testo-articoli" style={{ margin: 0 }}>
-                Forniamo e installiamo <strong>armadi blindati a Palermo</strong> per la custodia di armi da fuoco (omologati dal Ministero dell&apos;Interno), documenti riservati, valori e oggetti preziosi. Gli armadi sono costruiti in acciaio da 3 a 5 mm con serrature a chiave doppia mappa, a combinazione meccanica o elettronica con tastiera digitale.
-              </p>
-            </div>
-            <div className="storia-foto" style={{ flexShrink: 0, display: 'flex', flexWrap: 'wrap', gap: 20, justifyContent: 'space-evenly', alignItems: 'flex-start' }}>
-              <div className="page-card storia-card-1" style={{ width: 220, boxShadow: '0 8px 28px rgba(0,0,0,0.25)' }}>
-                <div style={{ position: 'relative', width: 220, height: 240 }}>
-                  <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="220px" style={{ objectFit: 'cover' }} />
-                </div>
-                <div style={{ padding: '10px 12px 14px' }}>
-                  <span className="testo-articoli">Fotografia da scegliere</span>
-                </div>
+          {/* Card foto — dentro il riquadro, centrate in alto */}
+          <div style={{ display: 'flex', gap: 24, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 32 }}>
+            <div className="page-card" style={{ width: 280, boxShadow: '0 8px 28px rgba(0,0,0,0.25)' }}>
+              <div style={{ position: 'relative', width: 280, height: 300 }}>
+                <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="280px" style={{ objectFit: 'cover' }} />
               </div>
-              <div className="page-card storia-card-2" style={{ width: 220, boxShadow: '0 6px 22px rgba(0,0,0,0.2)' }}>
-                <div style={{ position: 'relative', width: 220, height: 240 }}>
-                  <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="220px" style={{ objectFit: 'cover' }} />
-                </div>
-                <div style={{ padding: '10px 12px 14px' }}>
-                  <span className="testo-articoli">Fotografia da scegliere</span>
-                </div>
+              <div style={{ padding: '10px 12px 14px' }}>
+                <span className="testo-articoli">Fotografia da scegliere</span>
+              </div>
+            </div>
+            <div className="page-card" style={{ width: 280, boxShadow: '0 6px 22px rgba(0,0,0,0.2)' }}>
+              <div style={{ position: 'relative', width: 280, height: 300 }}>
+                <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="280px" style={{ objectFit: 'cover' }} />
+              </div>
+              <div style={{ padding: '10px 12px 14px' }}>
+                <span className="testo-articoli">Fotografia da scegliere</span>
               </div>
             </div>
           </div>
 
-          {/* Secondo articolo */}
-          <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '24px 28px' }}>
+          {/* Testo — piena larghezza */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+            <p className="testo-articoli" style={{ margin: 0 }}>
+              Forniamo e installiamo <strong>armadi blindati a Palermo</strong> per la custodia di armi da fuoco (omologati dal Ministero dell&apos;Interno), documenti riservati, valori e oggetti preziosi. Gli armadi sono costruiti in acciaio da 3 a 5 mm con serrature a chiave doppia mappa, a combinazione meccanica o elettronica con tastiera digitale.
+            </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
               Gli armadi per armi rispettano le disposizioni del TULPS e del D.M. 15/07/1997 sulla custodia obbligatoria: disponibili in vari formati per pistole, fucili, carabine e munizioni in scomparto separato e a norma. Forniamo il manuale tecnico per la pratica in Questura.
+            </p>
+            <p className="testo-articoli" style={{ margin: 0 }}>
+              Gli armadi per documenti e valori sono disponibili in versione ignifuga (classe 60 o 120 minuti) con certificazione EN 1047-1. Contattaci per un preventivo gratuito.
             </p>
           </div>
 
         </div>
 
-        {/* Terzo articolo */}
-        <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '24px 28px' }}>
-          <p className="testo-articoli" style={{ margin: 0 }}>
-            Gli armadi per documenti e valori sono disponibili in versione ignifuga (classe 60 o 120 minuti) con certificazione EN 1047-1. Contattaci per un preventivo gratuito.
-          </p>
-        </div>
-
-        <div style={{ display: 'flex', gap: 28, flexWrap: 'wrap', padding: '24px 28px', background: '#fdfcf8', border: '1px solid #e8d89a', borderRadius: 10 }}>
+        <div style={{ display: 'flex', gap: 28, flexWrap: 'wrap', padding: '24px 28px', background: '#fdfcf8', border: '2px solid #c8960c', borderRadius: 10 }}>
         <div style={{ flex: '1 1 0', display: 'flex', flexDirection: 'column', padding: '0 20px' }}>
           <p className="testo-articoli" style={{ margin: '0 0 12px' }}>Hai un progetto in mente?</p>
           <CtaPreventivo />

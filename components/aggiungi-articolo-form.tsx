@@ -170,7 +170,7 @@ export default function AggiungiArticoloForm({
 
   return (
     <div style={{
-      background: '#fdfcf8', border: '1px solid #2b8fcf', borderRadius: 10,
+      background: '#fdfcf8', border: '2px solid #c8960c', borderRadius: 10,
       padding: '20px 24px', marginTop: 32,
     }}>
       {parentPendente && (

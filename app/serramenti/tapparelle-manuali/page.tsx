@@ -27,46 +27,44 @@ export default function Page() {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '24px 28px' }}>
 
-          {/* Prima riga: primo articolo + foto */}
-          <div className="storia-row" style={{ display: 'flex', gap: 48, alignItems: 'flex-start' }}>
-            <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '24px 28px', flex: 1, minWidth: 0 }}>
-              <p className="testo-articoli" style={{ margin: 0 }}>
-                Forniamo e installiamo <strong>tapparelle manuali su misura a Palermo</strong> in PVC coibentato, alluminio estruso e acciaio zincato: a cinghia, a manovella laterale o a moschettone, con avvolgitore a cassonetto incassato o a vista. Le tapparelle manuali sono la soluzione più semplice e affidabile per oscuramento, isolamento termoacustico e sicurezza delle aperture.
-              </p>
-            </div>
-            <div className="storia-foto" style={{ flexShrink: 0, display: 'flex', flexWrap: 'wrap', gap: 20, justifyContent: 'space-evenly', alignItems: 'flex-start' }}>
-              <div className="page-card storia-card-1" style={{ width: 220, boxShadow: '0 8px 28px rgba(0,0,0,0.25)' }}>
-                <div style={{ position: 'relative', width: 220, height: 240 }}>
-                  <Image src="/images/serramenti/tapparelle-manuali/20240802_170856.jpg" alt="Tapparelle manuali installate" fill sizes="220px" style={{ objectFit: 'cover' }} />
-                </div>
+          {/* Card foto — dentro il riquadro, centrate in alto */}
+          <div style={{ display: 'flex', gap: 24, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 32 }}>
+            <div className="page-card" style={{ width: 280, boxShadow: '0 8px 28px rgba(0,0,0,0.25)' }}>
+              <div style={{ position: 'relative', width: 280, height: 300 }}>
+                <Image src="/images/serramenti/tapparelle-manuali/20240802_170856.jpg" alt="Tapparelle manuali installate" fill sizes="280px" style={{ objectFit: 'cover' }} />
               </div>
-              <div className="page-card storia-card-2" style={{ width: 220, boxShadow: '0 6px 22px rgba(0,0,0,0.2)' }}>
-                <div style={{ position: 'relative', width: 220, height: 240 }}>
-                  <Image src="/images/serramenti/tapparelle-manuali/photo_2026-04-15_23-14-37.jpg" alt="Tapparelle manuali su misura" fill sizes="220px" style={{ objectFit: 'cover' }} />
-                </div>
+              <div style={{ padding: '10px 12px 14px' }}>
+                <span className="testo-articoli">Tapparelle manuali installate</span>
+              </div>
+            </div>
+            <div className="page-card" style={{ width: 280, boxShadow: '0 6px 22px rgba(0,0,0,0.2)' }}>
+              <div style={{ position: 'relative', width: 280, height: 300 }}>
+                <Image src="/images/serramenti/tapparelle-manuali/photo_2026-04-15_23-14-37.jpg" alt="Tapparelle manuali su misura" fill sizes="280px" style={{ objectFit: 'cover' }} />
+              </div>
+              <div style={{ padding: '10px 12px 14px' }}>
+                <span className="testo-articoli">Tapparelle manuali su misura</span>
               </div>
             </div>
           </div>
 
-          {/* Secondo articolo */}
-          <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '24px 28px' }}>
+          {/* Testo — piena larghezza */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+            <p className="testo-articoli" style={{ margin: 0 }}>
+              Forniamo e installiamo <strong>tapparelle manuali su misura a Palermo</strong> in PVC coibentato, alluminio estruso e acciaio zincato: a cinghia, a manovella laterale o a moschettone, con avvolgitore a cassonetto incassato o a vista. Le tapparelle manuali sono la soluzione più semplice e affidabile per oscuramento, isolamento termoacustico e sicurezza delle aperture.
+            </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
               Le doghe in PVC coibentato garantiscono ottimo isolamento termico e acustico, riducendo i ponti freddi e il rumore esterno. Le doghe in alluminio estruso sono più leggere e resistenti alla corrosione, ideali per ambienti marini o ad alta umidità. Disponibili in tutti i colori RAL e con finiture effetto legno.
+            </p>
+            <p className="testo-articoli" style={{ margin: 0 }}>
+              Ogni tapparella viene misurata sul posto e realizzata su misura. Contattaci per un preventivo gratuito a Palermo e provincia.
             </p>
           </div>
 
         </div>
 
-        {/* Terzo articolo */}
-        <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '24px 28px' }}>
-          <p className="testo-articoli" style={{ margin: 0 }}>
-            Ogni tapparella viene misurata sul posto e realizzata su misura. Contattaci per un preventivo gratuito a Palermo e provincia.
-          </p>
-        </div>
-
-        <div style={{ display: 'flex', gap: 28, flexWrap: 'wrap', padding: '24px 28px', background: '#fdfcf8', border: '1px solid #e8d89a', borderRadius: 10 }}>
+        <div style={{ display: 'flex', gap: 28, flexWrap: 'wrap', padding: '24px 28px', background: '#fdfcf8', border: '2px solid #c8960c', borderRadius: 10 }}>
         <div style={{ flex: '1 1 0', display: 'flex', flexDirection: 'column', padding: '0 20px' }}>
           <p className="testo-articoli" style={{ margin: '0 0 12px' }}>Hai un progetto in mente?</p>
           <CtaPreventivo />

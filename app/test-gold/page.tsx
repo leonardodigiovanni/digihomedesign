@@ -16,7 +16,7 @@ export default async function TestGoldPage() {
       {/* A */}
       <section style={{ marginBottom: 36 }}>
         <p style={{ marginBottom: 10, fontWeight: 600, fontSize: 15 }}>A — Gradiente oro statico</p>
-        <div className="class_gold_A" style={{ height: 150, borderRadius: 12, border: '1px solid #c8960c' }} />
+        <div className="class_gold_A" style={{ height: 150, borderRadius: 12, border: '2px solid #c8960c' }} />
         <code style={{ fontSize: 12, color: '#888', marginTop: 6, display: 'block' }}>
           {'<div className="class_gold_A">'}
         </code>
@@ -25,7 +25,7 @@ export default async function TestGoldPage() {
       {/* B */}
       <section style={{ marginBottom: 36 }}>
         <p style={{ marginBottom: 10, fontWeight: 600, fontSize: 15 }}>B — Oro con shimmer animato</p>
-        <div className="class_gold_B" style={{ height: 150, borderRadius: 12, border: '1px solid #c8960c' }} />
+        <div className="class_gold_B" style={{ height: 150, borderRadius: 12, border: '2px solid #c8960c' }} />
         <code style={{ fontSize: 12, color: '#888', marginTop: 6, display: 'block' }}>
           {'<div className="class_gold_B">'}
         </code>

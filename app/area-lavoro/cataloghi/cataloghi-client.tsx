@@ -197,7 +197,7 @@ function VoceEditForm({ voce, onDone }: { voce: Voce; onDone: () => void }) {
 
   return (
     <form onSubmit={handleSubmit} style={{
-      background: '#fffdf0', border: '1px solid #c8960c', borderRadius: 0,
+      background: '#fffdf0', border: '2px solid #c8960c', borderRadius: 0,
       padding: '14px 16px',
     }}>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, marginBottom: 10 }}>

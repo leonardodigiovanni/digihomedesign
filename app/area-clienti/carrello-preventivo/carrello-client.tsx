@@ -71,7 +71,7 @@ function LoginBanner() {
   }, [open])
 
   return (
-    <div style={{ background: '#fdfcf8', border: '1px solid #e8d89a', borderRadius: 10, padding: '20px 24px' }}>
+    <div style={{ background: '#fdfcf8', border: '2px solid #c8960c', borderRadius: 10, padding: '20px 24px' }}>
       <p style={{ fontSize: 15, fontWeight: 700, margin: '0 0 6px', color: '#1a1a1a' }}>
         Accedi per sbloccare gli sconti riservati ai nostri clienti
       </p>
@@ -90,7 +90,7 @@ function LoginBanner() {
           {open && (
             <div style={{
               position: 'absolute', top: 'calc(100% + 8px)', left: 0,
-              background: '#fff', border: '1px solid #e0e0e0', borderRadius: 6,
+              background: '#fff', border: '2px solid #c8960c', borderRadius: 6,
               boxShadow: '0 4px 20px rgba(0,0,0,0.12)', minWidth: 210, zIndex: 200,
             }}>
               <DropdownLoginForm />
@@ -334,7 +334,7 @@ export default function CarrelloClient({
 
   if (articoli.length === 0) {
     return (
-      <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '40px 28px', textAlign: 'center', color: '#aaa' }}>
+      <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '40px 28px', textAlign: 'center', color: '#aaa' }}>
         <p style={{ margin: '0 0 12px', fontSize: 15 }}>Il tuo carrello è vuoto.</p>
         <a href="/brand/cataloghi" style={{ color: '#2b6cb0', fontWeight: 600, fontSize: 13 }}>
           Sfoglia i cataloghi →
@@ -542,7 +542,7 @@ export default function CarrelloClient({
 
       {/* Barra azioni */}
       <div style={{
-        background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10,
+        background: '#fff', border: '2px solid #c8960c', borderRadius: 10,
         padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 12,
       }}>
         <p style={{ fontSize: 13, color: '#888', margin: 0 }}>
@@ -642,7 +642,7 @@ export default function CarrelloClient({
           <div style={{ overflowX: 'auto' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8, minWidth: 900 }}>
             {/* Header */}
-            <div style={{ background: '#fafafa', border: '1px solid #e0e0e0', borderRadius: 8, overflow: 'hidden' }}>
+            <div style={{ background: '#fafafa', border: '2px solid #c8960c', borderRadius: 8, overflow: 'hidden' }}>
               <table style={{ width: '100%', minWidth: 900, borderCollapse: 'collapse', tableLayout: 'fixed' }}>
                 {renderColgroup()}
                 <thead>
@@ -664,7 +664,7 @@ export default function CarrelloClient({
 
             {/* Group cards */}
             {groups.map((group, gi) => (
-              <div key={group[0].index} className="class_silver_D_safe" style={{ border: '1px solid #c8960c', borderRadius: 8, overflow: 'hidden' }}>
+              <div key={group[0].index} className="class_silver_D_safe" style={{ border: '2px solid #c8960c', borderRadius: 8, overflow: 'hidden' }}>
                 <table style={{ width: '100%', minWidth: 900, borderCollapse: 'collapse', tableLayout: 'fixed' }}>
                   {renderColgroup()}
                   <tbody>
@@ -767,7 +767,7 @@ export default function CarrelloClient({
             ))}
 
             {/* Totale */}
-            <div style={{ background: '#fafafa', border: '1px solid #e0e0e0', borderRadius: 8, overflow: 'hidden' }}>
+            <div style={{ background: '#fafafa', border: '2px solid #c8960c', borderRadius: 8, overflow: 'hidden' }}>
               <table style={{ width: '100%', minWidth: 900, borderCollapse: 'collapse', tableLayout: 'fixed' }}>
                 {renderColgroup()}
                 <tbody>
@@ -794,7 +794,7 @@ export default function CarrelloClient({
       })()}
 
       {/* Bottoni aggiunta articoli */}
-      <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '16px 20px' }}>
+      <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '16px 20px' }}>
         <p style={{ fontSize: 11, fontWeight: 600, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '0 0 12px' }}>
           Aggiungi al carrello
         </p>

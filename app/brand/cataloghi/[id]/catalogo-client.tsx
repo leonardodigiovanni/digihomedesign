@@ -31,7 +31,7 @@ function PdfViewer({ voce, onClose }: { voce: Voce; onClose: () => void }) {
   })
 
   return (
-    <div style={{ border: '1px solid #e0e0e0', borderRadius: 10, overflow: 'hidden', background: '#fff' }}>
+    <div style={{ border: '2px solid #c8960c', borderRadius: 10, overflow: 'hidden', background: '#fff' }}>
       {/* Toolbar */}
       <div style={{ borderBottom: '1px solid #e0e0e0', background: '#fafafa' }}>
         {/* Riga 1: titolo + azioni */}
@@ -172,7 +172,7 @@ export default function CatalogoClient({ voci }: { voci: Voce[] }) {
                 flex: '1 1 160px', maxWidth: 210,
                 display: 'flex', flexDirection: 'column', alignItems: 'stretch',
                 gap: 0, background: '#fff',
-                border: isActive ? '2px solid #2b6cb0' : '1px solid #e0e0e0',
+                border: isActive ? '2px solid #c8960c' : '1px solid #c8960c',
                 borderRadius: 10, color: '#1a1a1a',
                 padding: '10px 10px 12px', textAlign: 'center', cursor: 'pointer',
                 overflow: 'hidden',

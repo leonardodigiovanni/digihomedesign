@@ -101,8 +101,8 @@ export default function Header({
       style={{
         ...dynamicStyle,
         borderBottom: `1px solid ${borderColor}`,
-        padding: '0 32px 0 16px',
-        height: 90,
+        padding: '0 16px',
+        height: 122,
         overflow: 'visible',
         position: 'relative',
         ...(isRgbEffect ? { position: 'relative' } : {}),
@@ -113,10 +113,10 @@ export default function Header({
       )}
       {shimmerClass && <div className={shimmerClass} />}
 
-      <div style={{ display: 'flex', alignItems: 'center', height: '100%', position: 'relative', zIndex: 1 }}>
-        <Link href="/" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 6, textDecoration: 'none', color: 'inherit', outline: 'none', cursor: 'pointer' }}>
-          <Image src="/images/header/qqqqqqqqqqqqqqqqqqq-Photoroom.png" alt="Home Design" width={44} height={44} unoptimized style={{ objectFit: 'contain', display: 'block' }} />
-          <Image src="/images/volantino/nome_tr.png?v=2" alt="Home Design" width={110} height={37} unoptimized style={{ objectFit: 'contain', display: 'block', marginTop: 20 }} />
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', position: 'relative', zIndex: 1 }}>
+        <Link href="/" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, textDecoration: 'none', color: 'inherit', outline: 'none', cursor: 'pointer' }}>
+          <Image src="/images/header/qqqqqqqqqqqqqqqqqqq-Photoroom.png" alt="Home Design" width={82} height={82} unoptimized style={{ objectFit: 'contain', display: 'block' }} />
+          <Image src="/images/volantino/nome_tr.png?v=2" alt="Home Design" width={110} height={37} unoptimized style={{ objectFit: 'contain', display: 'block', marginTop: -8 }} />
         </Link>
       </div>
       {username && (

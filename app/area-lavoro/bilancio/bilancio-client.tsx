@@ -81,7 +81,7 @@ function sumSP(movimenti: Movimento[], tipo: 'entrata' | 'uscita', sezione: stri
 
 const card: React.CSSProperties = {
   background: '#fff',
-  border: '1px solid #e0e0e0',
+  border: '2px solid #c8960c',
   borderRadius: 10,
   overflow: 'hidden',
 }
@@ -521,7 +521,7 @@ function KpiCards({ movimenti }: { movimenti: Movimento[] }) {
   const risultato  = totEntrate - totUscite
 
   const kCard: React.CSSProperties = {
-    background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '18px 22px',
+    background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '18px 22px',
     display: 'flex', flexDirection: 'column', gap: 4,
   }
 

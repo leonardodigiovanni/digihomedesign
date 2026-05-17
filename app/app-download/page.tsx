@@ -33,7 +33,7 @@ const numStyle: React.CSSProperties = {
 
 const cardStyle: React.CSSProperties = {
   background: '#fff',
-  border: '1px solid #e0e0e0',
+  border: '2px solid #c8960c',
   borderRadius: 12,
   padding: '20px 22px',
   flex: '1 1 360px',

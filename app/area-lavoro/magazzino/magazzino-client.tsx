@@ -312,7 +312,7 @@ function RiepilogoMagazzino({ materiali }: { materiali: Materiale[] }) {
   const unitaRows = Object.entries(perUnita).sort((a, b) => b[1].valore - a[1].valore)
 
   const card: React.CSSProperties = {
-    background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10,
+    background: '#fff', border: '2px solid #c8960c', borderRadius: 10,
     padding: '18px 24px', display: 'flex', flexDirection: 'column', gap: 4,
   }
 
@@ -340,7 +340,7 @@ function RiepilogoMagazzino({ materiali }: { materiali: Materiale[] }) {
 
       {/* Tabella per tipo unità */}
       {unitaRows.length > 0 && (
-        <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, overflow: 'hidden' }}>
+        <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, overflow: 'hidden' }}>
           <div style={{ padding: '14px 24px 10px', borderBottom: '1px solid #f0f0f0' }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, margin: 0 }}>Giacenza per tipo unità</h3>
           </div>
@@ -462,7 +462,7 @@ export default function MagazzinoClient({ materiali, role }: { materiali: Materi
       </div>
 
       {/* Tabella */}
-      <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, overflow: 'hidden' }}>
+      <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, overflow: 'hidden' }}>
         <div style={{ padding: '16px 24px 12px', borderBottom: '1px solid #f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <h3 style={{ fontSize: 15, fontWeight: 600, margin: 0 }}>
             Materiali{(search || unitaFilter) ? ` — ${filtered.length} risultati` : ` — ${liveMateriali.length} totali`}

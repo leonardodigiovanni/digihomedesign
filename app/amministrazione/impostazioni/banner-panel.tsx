@@ -25,7 +25,7 @@ export default function BannerPanel({ abilitato, circolare, testo }: BannerPanel
   return (
     <div style={{
       background: '#fff',
-      border: '1px solid #e0e0e0',
+      border: '2px solid #c8960c',
       borderRadius: 10,
       padding: '24px 28px 28px',
     }}>

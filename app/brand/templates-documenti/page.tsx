@@ -15,10 +15,10 @@ export default function Page() {
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 16 }}>Documenti Legali</h1>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 28 }}>
-        <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '24px 28px' }}>
+        <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '24px 28px' }}>
           <p className="testo-articoli" style={{ margin: 0 }}>Raccolta dei modelli di documento ufficiali Digi Home Design: contratti di appalto, moduli di accettazione preventivo, dichiarazioni di conformità impianti, verbali di consegna lavori e liberatorie per accesso cantiere.</p>
         </div>
-        <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '24px 28px' }}>
+        <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '24px 28px' }}>
           <p className="testo-articoli" style={{ margin: 0 }}>I template sono disponibili in formato PDF, pronti per essere scaricati. Per modelli personalizzati o versioni aggiornate contatta il nostro ufficio amministrativo.</p>
         </div>
       </div>
@@ -37,7 +37,7 @@ export default function Page() {
             style={{
               display: 'flex', alignItems: 'center', gap: 14,
               padding: '12px 16px',
-              background: '#fff', border: '1px solid #e0e0e0', borderRadius: 8,
+              background: '#fff', border: '2px solid #c8960c', borderRadius: 8,
               textDecoration: 'none', color: '#1a1a1a', fontWeight: 500,
             }}
           >

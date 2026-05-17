@@ -117,49 +117,41 @@ export default async function Page() {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '24px 28px' }}>
 
-          {/* Prima riga: primo articolo + foto */}
-          <div className="storia-row" style={{ display: 'flex', gap: 48, alignItems: 'flex-start' }}>
-            <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '24px 28px', flex: 1, minWidth: 0 }}>
-              <p className="testo-articoli" style={{ margin: 0 }}>
-                Gli <strong>infissi in alluminio a taglio termico a Palermo</strong> rappresentano la scelta ideale per chi cerca durata, minima manutenzione e design contemporaneo. Il taglio termico — una barriera in poliammide che interrompe il ponte termico tra il profilo esterno e quello interno — garantisce elevate prestazioni di isolamento termoacustico, riducendo sensibilmente i consumi energetici.
-              </p>
-            </div>
-            <div className="storia-foto" style={{ flexShrink: 0, display: 'flex', flexWrap: 'wrap', gap: 20, justifyContent: 'space-evenly', alignItems: 'flex-start' }}>
-              <div className="page-card storia-card-1" style={{ width: 220, boxShadow: '0 8px 28px rgba(0,0,0,0.25)' }}>
-                <div style={{ position: 'relative', width: 220, height: 240 }}>
-                  <Image src="/images/serramenti/infissi-in-alluminio/infisso-balcone.jpg" alt="Infisso balcone" fill sizes="220px" style={{ objectFit: 'cover' }} />
-                </div>
-                <div style={{ padding: '10px 12px 14px' }}>
-                  <span className="testo-articoli">Infisso balcone</span>
-                </div>
+          {/* Card foto — dentro il riquadro, centrate in alto */}
+          <div style={{ display: 'flex', gap: 24, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 32 }}>
+            <div className="page-card" style={{ width: 280, boxShadow: '0 8px 28px rgba(0,0,0,0.25)' }}>
+              <div style={{ position: 'relative', width: 280, height: 300 }}>
+                <Image src="/images/serramenti/infissi-in-alluminio/infisso-balcone.jpg" alt="Infisso balcone" fill sizes="280px" style={{ objectFit: 'cover' }} />
               </div>
-              <div className="page-card storia-card-2" style={{ width: 220, boxShadow: '0 6px 22px rgba(0,0,0,0.2)' }}>
-                <div style={{ position: 'relative', width: 220, height: 240 }}>
-                  <Image src="/images/serramenti/infissi-in-alluminio/infisso-finestra.jpg" alt="Infisso finestra" fill sizes="220px" style={{ objectFit: 'cover' }} />
-                </div>
-                <div style={{ padding: '10px 12px 14px' }}>
-                  <span className="testo-articoli">Infisso finestra</span>
-                </div>
+              <div style={{ padding: '10px 12px 14px' }}>
+                <span className="testo-articoli">Infisso balcone</span>
+              </div>
+            </div>
+            <div className="page-card" style={{ width: 280, boxShadow: '0 6px 22px rgba(0,0,0,0.2)' }}>
+              <div style={{ position: 'relative', width: 280, height: 300 }}>
+                <Image src="/images/serramenti/infissi-in-alluminio/infisso-finestra.jpg" alt="Infisso finestra" fill sizes="280px" style={{ objectFit: 'cover' }} />
+              </div>
+              <div style={{ padding: '10px 12px 14px' }}>
+                <span className="testo-articoli">Infisso finestra</span>
               </div>
             </div>
           </div>
 
-          {/* Secondo articolo */}
-          <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '24px 28px' }}>
+          {/* Testo — piena larghezza */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+            <p className="testo-articoli" style={{ margin: 0 }}>
+              Gli <strong>infissi in alluminio a taglio termico a Palermo</strong> rappresentano la scelta ideale per chi cerca durata, minima manutenzione e design contemporaneo. Il taglio termico — una barriera in poliammide che interrompe il ponte termico tra il profilo esterno e quello interno — garantisce elevate prestazioni di isolamento termoacustico, riducendo sensibilmente i consumi energetici.
+            </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
               Lavoriamo con sistemi certificati dei principali produttori — Schüco, Metra, Reynaers, Wicona — nelle versioni a battente, a vasistas, scorrevole alzante e a libro. Le finiture disponibili includono verniciatura a polvere in qualsiasi colore RAL, anodizzazione e legno-alluminio per l&apos;interno.
             </p>
+            <p className="testo-articoli" style={{ margin: 0 }}>
+              Il servizio comprende sopralluogo, rilievo quote, fornitura con vetrocamera selezionata, posa in opera e sigillatura perimetrale. Contattaci per un preventivo gratuito.
+            </p>
           </div>
 
-        </div>
-
-        {/* Terzo articolo */}
-        <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '24px 28px' }}>
-          <p className="testo-articoli" style={{ margin: 0 }}>
-            Il servizio comprende sopralluogo, rilievo quote, fornitura con vetrocamera selezionata, posa in opera e sigillatura perimetrale. Contattaci per un preventivo gratuito.
-          </p>
         </div>
 
         {/* Cataloghi PDF */}
@@ -174,7 +166,7 @@ export default async function Page() {
         {catalogo && <AggiungiArticolo articoli={catalogo.articoli} isStaff={isStaff} isLoggedIn={!!username} preventiviBozza={preventiviBozza} cartNonVuoto={cartNonVuoto} />}
 
         {/* CTA */}
-        <div style={{ display: 'flex', gap: 28, flexWrap: 'wrap', padding: '24px 28px', background: '#fdfcf8', border: '1px solid #e8d89a', borderRadius: 10 }}>
+        <div style={{ display: 'flex', gap: 28, flexWrap: 'wrap', padding: '24px 28px', background: '#fdfcf8', border: '2px solid #c8960c', borderRadius: 10 }}>
           <div style={{ flex: '1 1 0', display: 'flex', flexDirection: 'column', padding: '0 20px' }}>
             <p className="testo-articoli" style={{ margin: '0 0 12px' }}>Hai già un cantiere aperto?</p>
             <CtaCantiere />

@@ -27,46 +27,44 @@ export default function Page() {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '24px 28px' }}>
 
-          {/* Prima riga: primo articolo + foto */}
-          <div className="storia-row" style={{ display: 'flex', gap: 48, alignItems: 'flex-start' }}>
-            <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '24px 28px', flex: 1, minWidth: 0 }}>
-              <p className="testo-articoli" style={{ margin: 0 }}>
-                Gli <strong>imbotti in alluminio e PVC a Palermo</strong> rivestono il vano finestra tra il telaio dell&apos;infisso e la muratura esterna, eliminando i ponti termici perimetrali, proteggendo l&apos;intonaco dall&apos;umidità di infiltrazione e conferendo all&apos;apertura un aspetto pulito e rifinito. Sono realizzati su misura per adattarsi a qualsiasi spessore di muro e profondità del vano.
-              </p>
-            </div>
-            <div className="storia-foto" style={{ flexShrink: 0, display: 'flex', flexWrap: 'wrap', gap: 20, justifyContent: 'space-evenly', alignItems: 'flex-start' }}>
-              <div className="page-card storia-card-1" style={{ width: 220, boxShadow: '0 8px 28px rgba(0,0,0,0.25)' }}>
-                <div style={{ position: 'relative', width: 220, height: 240 }}>
-                  <Image src="/images/serramenti/imbotti-in-alluminio/20240802_183635.jpg" alt="Imbotti in alluminio installati" fill sizes="220px" style={{ objectFit: 'cover' }} />
-                </div>
+          {/* Card foto — dentro il riquadro, centrate in alto */}
+          <div style={{ display: 'flex', gap: 24, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 32 }}>
+            <div className="page-card" style={{ width: 280, boxShadow: '0 8px 28px rgba(0,0,0,0.25)' }}>
+              <div style={{ position: 'relative', width: 280, height: 300 }}>
+                <Image src="/images/serramenti/imbotti-in-alluminio/20240802_183635.jpg" alt="Imbotti in alluminio installati" fill sizes="280px" style={{ objectFit: 'cover' }} />
               </div>
-              <div className="page-card storia-card-2" style={{ width: 220, boxShadow: '0 6px 22px rgba(0,0,0,0.2)' }}>
-                <div style={{ position: 'relative', width: 220, height: 240 }}>
-                  <Image src="/images/serramenti/imbotti-in-alluminio/cassonetto_mediterraneo-800x533.jpg" alt="Cassonetto mediterraneo in alluminio" fill sizes="220px" style={{ objectFit: 'cover' }} />
-                </div>
+              <div style={{ padding: '10px 12px 14px' }}>
+                <span className="testo-articoli">Imbotti in alluminio installati</span>
+              </div>
+            </div>
+            <div className="page-card" style={{ width: 280, boxShadow: '0 6px 22px rgba(0,0,0,0.2)' }}>
+              <div style={{ position: 'relative', width: 280, height: 300 }}>
+                <Image src="/images/serramenti/imbotti-in-alluminio/cassonetto_mediterraneo-800x533.jpg" alt="Cassonetto mediterraneo in alluminio" fill sizes="280px" style={{ objectFit: 'cover' }} />
+              </div>
+              <div style={{ padding: '10px 12px 14px' }}>
+                <span className="testo-articoli">Cassonetto mediterraneo in alluminio</span>
               </div>
             </div>
           </div>
 
-          {/* Secondo articolo */}
-          <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '24px 28px' }}>
+          {/* Testo — piena larghezza */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+            <p className="testo-articoli" style={{ margin: 0 }}>
+              Gli <strong>imbotti in alluminio e PVC a Palermo</strong> rivestono il vano finestra tra il telaio dell&apos;infisso e la muratura esterna, eliminando i ponti termici perimetrali, proteggendo l&apos;intonaco dall&apos;umidità di infiltrazione e conferendo all&apos;apertura un aspetto pulito e rifinito. Sono realizzati su misura per adattarsi a qualsiasi spessore di muro e profondità del vano.
+            </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
               Gli imbotti in alluminio vengono verniciati nello stesso colore dell&apos;infisso per continuità estetica, mentre quelli in PVC sono disponibili in bianco e in versione foliata. La posa avviene con aggancio a clips o con viti a scomparsa, senza bisogno di opere murarie aggiuntive, e il giunto perimetrale viene sigillato con silicone neutro per la tenuta all&apos;acqua.
+            </p>
+            <p className="testo-articoli" style={{ margin: 0 }}>
+              Vengono installati contestualmente alla posa degli infissi o come intervento autonomo su serramenti esistenti. Contattaci per un preventivo gratuito.
             </p>
           </div>
 
         </div>
 
-        {/* Terzo articolo */}
-        <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '24px 28px' }}>
-          <p className="testo-articoli" style={{ margin: 0 }}>
-            Vengono installati contestualmente alla posa degli infissi o come intervento autonomo su serramenti esistenti. Contattaci per un preventivo gratuito.
-          </p>
-        </div>
-
-        <div style={{ display: 'flex', gap: 28, flexWrap: 'wrap', padding: '24px 28px', background: '#fdfcf8', border: '1px solid #e8d89a', borderRadius: 10 }}>
+        <div style={{ display: 'flex', gap: 28, flexWrap: 'wrap', padding: '24px 28px', background: '#fdfcf8', border: '2px solid #c8960c', borderRadius: 10 }}>
         <div style={{ flex: '1 1 0', display: 'flex', flexDirection: 'column', padding: '0 20px' }}>
           <p className="testo-articoli" style={{ margin: '0 0 12px' }}>Hai un progetto in mente?</p>
           <CtaPreventivo />

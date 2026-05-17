@@ -27,52 +27,44 @@ export default function Page() {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '24px 28px' }}>
 
-          {/* Prima riga: primo articolo + foto */}
-          <div className="storia-row" style={{ display: 'flex', gap: 48, alignItems: 'flex-start' }}>
-            <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '24px 28px', flex: 1, minWidth: 0 }}>
-              <p className="testo-articoli" style={{ margin: 0 }}>
-                Forniamo e installiamo <strong>casseforti a Palermo</strong> certificate EN 1143-1 per abitazioni private, uffici, alberghi e attività commerciali: modelli da incasso a muro, a pavimento con ancoraggio in cls, da mobile e portatili. Le serrature disponibili sono a chiave doppia mappa, a combinazione meccanica, elettronica con codice PIN e biometrica con impronta digitale.
-              </p>
-            </div>
-            <div className="storia-foto" style={{ flexShrink: 0, display: 'flex', flexWrap: 'wrap', gap: 20, justifyContent: 'space-evenly', alignItems: 'flex-start' }}>
-              <div className="page-card storia-card-1" style={{ width: 220, boxShadow: '0 8px 28px rgba(0,0,0,0.25)' }}>
-                <div style={{ position: 'relative', width: 220, height: 240 }}>
-                  <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="220px" style={{ objectFit: 'cover' }} />
-                </div>
-                <div style={{ padding: '10px 12px 14px' }}>
-                  <span className="testo-articoli">Fotografia da scegliere</span>
-                </div>
+          {/* Card foto — dentro il riquadro, centrate in alto */}
+          <div style={{ display: 'flex', gap: 24, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 32 }}>
+            <div className="page-card" style={{ width: 280, boxShadow: '0 8px 28px rgba(0,0,0,0.25)' }}>
+              <div style={{ position: 'relative', width: 280, height: 300 }}>
+                <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="280px" style={{ objectFit: 'cover' }} />
               </div>
-              <div className="page-card storia-card-2" style={{ width: 220, boxShadow: '0 6px 22px rgba(0,0,0,0.2)' }}>
-                <div style={{ position: 'relative', width: 220, height: 240 }}>
-                  <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="220px" style={{ objectFit: 'cover' }} />
-                </div>
-                <div style={{ padding: '10px 12px 14px' }}>
-                  <span className="testo-articoli">Fotografia da scegliere</span>
-                </div>
+              <div style={{ padding: '10px 12px 14px' }}>
+                <span className="testo-articoli">Fotografia da scegliere</span>
+              </div>
+            </div>
+            <div className="page-card" style={{ width: 280, boxShadow: '0 6px 22px rgba(0,0,0,0.2)' }}>
+              <div style={{ position: 'relative', width: 280, height: 300 }}>
+                <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="280px" style={{ objectFit: 'cover' }} />
+              </div>
+              <div style={{ padding: '10px 12px 14px' }}>
+                <span className="testo-articoli">Fotografia da scegliere</span>
               </div>
             </div>
           </div>
 
-          {/* Secondo articolo */}
-          <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '24px 28px' }}>
+          {/* Testo — piena larghezza */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+            <p className="testo-articoli" style={{ margin: 0 }}>
+              Forniamo e installiamo <strong>casseforti a Palermo</strong> certificate EN 1143-1 per abitazioni private, uffici, alberghi e attività commerciali: modelli da incasso a muro, a pavimento con ancoraggio in cls, da mobile e portatili. Le serrature disponibili sono a chiave doppia mappa, a combinazione meccanica, elettronica con codice PIN e biometrica con impronta digitale.
+            </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
               La classe di resistenza (da I a VI) determina la protezione contro lo scasso: scegliamo insieme la classe più adatta in base al valore dei beni da custodire e al contesto di rischio. Le casseforti ignifughe (classe S60DIS o S120DIS) proteggono anche da incendio e acqua degli sprinkler.
+            </p>
+            <p className="testo-articoli" style={{ margin: 0 }}>
+              L&apos;installazione include il posizionamento, l&apos;ancoraggio strutturale e la programmazione della serratura. Contattaci per un preventivo gratuito a Palermo e provincia.
             </p>
           </div>
 
         </div>
 
-        {/* Terzo articolo */}
-        <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '24px 28px' }}>
-          <p className="testo-articoli" style={{ margin: 0 }}>
-            L&apos;installazione include il posizionamento, l&apos;ancoraggio strutturale e la programmazione della serratura. Contattaci per un preventivo gratuito a Palermo e provincia.
-          </p>
-        </div>
-
-        <div style={{ display: 'flex', gap: 28, flexWrap: 'wrap', padding: '24px 28px', background: '#fdfcf8', border: '1px solid #e8d89a', borderRadius: 10 }}>
+        <div style={{ display: 'flex', gap: 28, flexWrap: 'wrap', padding: '24px 28px', background: '#fdfcf8', border: '2px solid #c8960c', borderRadius: 10 }}>
         <div style={{ flex: '1 1 0', display: 'flex', flexDirection: 'column', padding: '0 20px' }}>
           <p className="testo-articoli" style={{ margin: '0 0 12px' }}>Hai un progetto in mente?</p>
           <CtaPreventivo />

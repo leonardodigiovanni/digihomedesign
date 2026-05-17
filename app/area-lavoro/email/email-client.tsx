@@ -124,7 +124,7 @@ export default function EmailClient({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
-      <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '16px 20px' }}>
+      <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '16px 20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
           <h3 style={{ fontSize: 15, fontWeight: 600, margin: 0, marginRight: 4 }}>
             Messaggi — {messaggi.length} totali
@@ -189,7 +189,7 @@ export default function EmailClient({
         </div>
       </div>
 
-      <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, overflow: 'hidden' }}>
+      <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, overflow: 'hidden' }}>
         {messaggiFiltrati.length === 0 ? (
           <p style={{ padding: 24, textAlign: 'center', color: '#aaa', fontSize: 14 }}>
             Nessun messaggio.

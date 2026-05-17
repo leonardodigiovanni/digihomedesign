@@ -130,7 +130,7 @@ function BgColorPanel({
   const hex = '#' + [color.r, color.g, color.b].map(v => v.toString(16).padStart(2, '0')).join('')
 
   return (
-    <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '28px 32px', height: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '28px 32px', height: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column' }}>
       <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 14 }}>{title}</h3>
 
       {/* Selettore mode — ordine: RGB statico | RGB A/B/C | Oro A/B/C | Arg A/B/C */}
@@ -203,7 +203,7 @@ function BgColorPanel({
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <div style={{
-                width: 64, height: 40, borderRadius: 6, border: '1px solid #e0e0e0', flexShrink: 0,
+                width: 64, height: 40, borderRadius: 6, border: '2px solid #c8960c', flexShrink: 0,
                 background: `repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%) 0 0 / 10px 10px`,
                 position: 'relative', overflow: 'hidden',
               }}>
@@ -327,7 +327,7 @@ export default function SettingsForm({ inactivityMinutes, countdownSeconds, head
       <div className="settings-grid-3">
 
         {/* Pannello sessione */}
-        <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '28px 32px', height: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '28px 32px', height: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column' }}>
           <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 20 }}>Sessione utente</h3>
           <form action={sessionAction} style={{ display: 'flex', flexDirection: 'column', gap: 16, flex: 1 }}>
           <label style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 13, fontWeight: 500, color: '#444' }}>
@@ -413,7 +413,7 @@ export default function SettingsForm({ inactivityMinutes, countdownSeconds, head
 
 const panelStyle: React.CSSProperties = {
   background: '#fff',
-  border: '1px solid #e0e0e0',
+  border: '2px solid #c8960c',
   borderRadius: 10,
   padding: '24px 28px 28px',
   display: 'flex',

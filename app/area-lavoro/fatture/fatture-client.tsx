@@ -577,7 +577,7 @@ export default function FattureClient({ fatture, pagamenti }: { fatture: Fattura
   const passiveFiltrate = useMemo(() => filtraPerPeriodo(fatture.filter(f => f.tipo === 'passiva'), anno, trimestre), [fatture, anno, trimestre])
 
   const boxStyle: React.CSSProperties = {
-    background: '#fff', border: '1px solid #e0e0e0',
+    background: '#fff', border: '2px solid #c8960c',
     borderRadius: 10, padding: '20px 24px', marginBottom: 28,
   }
   const titleStyle: React.CSSProperties = {

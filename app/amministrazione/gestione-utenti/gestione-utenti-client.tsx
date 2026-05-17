@@ -318,7 +318,7 @@ export default function GestioneUtentiClient({ users, currentUser }: { users: Us
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
       {/* Filtri */}
-      <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '20px 24px' }}>
+      <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '20px 24px' }}>
         <h3 style={{ fontSize: 15, fontWeight: 600, margin: '0 0 12px' }}>Filtra utenti</h3>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           <input
@@ -348,7 +348,7 @@ export default function GestioneUtentiClient({ users, currentUser }: { users: Us
       </div>
 
       {/* Tabella utenti */}
-      <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, overflow: 'hidden' }}>
+      <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, overflow: 'hidden' }}>
         <div style={{ padding: '20px 24px 12px', borderBottom: '1px solid #f0f0f0' }}>
           <h3 style={{ fontSize: 15, fontWeight: 600, margin: 0 }}>
             Utenti registrati{(filter || roleFilter) ? ` — ${filtered.length} risultati` : ` — ${users.length} totali`}

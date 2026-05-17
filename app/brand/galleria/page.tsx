@@ -15,10 +15,10 @@ export default function Page() {
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 16 }}>Galleria Lavori</h1>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '24px 28px' }}>
+        <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '24px 28px' }}>
           <p className="testo-articoli" style={{ margin: 0 }}>Sfoglia la nostra galleria fotografica con i principali lavori realizzati a Palermo e provincia: ristrutturazioni complete, posa serramenti, arredamenti su misura, impianti termici ed elettrici, strutture metalliche e molto altro.</p>
         </div>
-        <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '24px 28px' }}>
+        <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '24px 28px' }}>
           <p className="testo-articoli" style={{ margin: 0 }}>Ogni progetto racconta una storia diversa — materiali scelti insieme al cliente, soluzioni su misura per ogni spazio, risultati che durano nel tempo.</p>
         </div>
       </div>

@@ -76,7 +76,7 @@ export default function CarrelloAcquistiClient({
 
   if (articoli.length === 0) {
     return (
-      <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '40px 28px', textAlign: 'center', color: '#aaa' }}>
+      <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '40px 28px', textAlign: 'center', color: '#aaa' }}>
         <p style={{ margin: '0 0 12px', fontSize: 15 }}>Il tuo carrello acquisti è vuoto.</p>
         <a href="/brand/cataloghi" style={{ color: '#e65100', fontWeight: 600, fontSize: 13 }}>
           Sfoglia i cataloghi →
@@ -89,7 +89,7 @@ export default function CarrelloAcquistiClient({
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       {/* Barra azioni */}
       <div style={{
-        background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10,
+        background: '#fff', border: '2px solid #c8960c', borderRadius: 10,
         padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 12,
       }}>
         {!isLoggedIn && (
@@ -154,7 +154,7 @@ export default function CarrelloAcquistiClient({
       </div>
 
       {/* Tabella articoli */}
-      <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, overflow: 'hidden' }}>
+      <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, overflow: 'hidden' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr>

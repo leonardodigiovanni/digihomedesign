@@ -27,7 +27,7 @@ export default function AppPage() {
         {/* Prima riga: primo articolo + foto */}
         <div className="storia-row" style={{ display: 'flex', gap: 48, alignItems: 'flex-start' }}>
 
-          <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '24px 28px', flex: 1, minWidth: 0 }}>
+          <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '24px 28px', flex: 1, minWidth: 0 }}>
             <h3 className="testo-articoli" style={{ marginBottom: 12 }}>Tutto in tasca</h3>
             <p className="testo-articoli" style={{ lineHeight: 1.8 }}>
               Con la nostra app hai a portata di mano i preventivi, lo stato del tuo cantiere in tempo reale,
@@ -37,17 +37,17 @@ export default function AppPage() {
           </div>
 
           <div className="storia-foto" style={{ flexShrink: 0, display: 'flex', flexWrap: 'wrap', gap: 20, justifyContent: 'center', alignItems: 'flex-start' }}>
-            <div className="page-card storia-card-1" style={{ width: 220, boxShadow: '0 8px 28px rgba(0,0,0,0.25)' }}>
-              <div style={{ position: 'relative', width: 220, height: 240 }}>
-                <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="220px" style={{ objectFit: 'cover' }} />
+            <div className="page-card storia-card-1" style={{ width: 280, boxShadow: '0 8px 28px rgba(0,0,0,0.25)' }}>
+              <div style={{ position: 'relative', width: 280, height: 300 }}>
+                <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="280px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '10px 12px 14px' }}>
                 <span className="testo-articoli">Fotografia da scegliere</span>
               </div>
             </div>
-            <div className="page-card storia-card-2" style={{ width: 220, boxShadow: '0 6px 22px rgba(0,0,0,0.2)' }}>
-              <div style={{ position: 'relative', width: 220, height: 240 }}>
-                <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="220px" style={{ objectFit: 'cover' }} />
+            <div className="page-card storia-card-2" style={{ width: 280, boxShadow: '0 6px 22px rgba(0,0,0,0.2)' }}>
+              <div style={{ position: 'relative', width: 280, height: 300 }}>
+                <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="280px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '10px 12px 14px' }}>
                 <span className="testo-articoli">Fotografia da scegliere</span>
@@ -60,7 +60,7 @@ export default function AppPage() {
         </div>{/* fine gruppo ravvicinato */}
 
         {/* Cosa puoi fare Fotografia da scegliere larghezza piena */}
-        <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: 10, padding: '24px 28px' }}>
+        <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '24px 28px' }}>
           <h3 className="testo-articoli" style={{ marginBottom: 16 }}>Cosa puoi fare dall&apos;app</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {[
