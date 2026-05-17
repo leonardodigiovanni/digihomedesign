@@ -634,7 +634,31 @@ async function loadData(prevId: number, username: string, isStaff: boolean): Pro
     const dataRaw = p.data instanceof Date ? p.data : new Date(String(p.data))
     const data    = isNaN(dataRaw.getTime()) ? String(p.data) : dataRaw.toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' })
     const numero  = String(p.numero || `#${p.id}`)
-    const totale  = Number(p.importo).toFixed(2)
+
+    // Leggi sconto_cliente_pct: prima dal preventivo, poi dal record clienti come fallback
+    let scontoClientePct = Number(p.sconto_cliente_pct ?? 0)
+    if (scontoClientePct === 0) {
+      let clienteIdLookup: number | null = p.cliente_id ? Number(p.cliente_id) : null
+      if (!clienteIdLookup && !isStaff) {
+        try {
+          const [uRows] = await db.query('SELECT cliente_id FROM users WHERE username = ? LIMIT 1', [username]) as [{ cliente_id: number | null }[], unknown]
+          clienteIdLookup = uRows[0]?.cliente_id ?? null
+        } catch {}
+      }
+      if (clienteIdLookup) {
+        try {
+          const [cRows] = await db.query('SELECT sconto_pct FROM clienti WHERE id = ? LIMIT 1', [clienteIdLookup]) as [{ sconto_pct: number }[], unknown]
+          scontoClientePct = Number(cRows[0]?.sconto_pct ?? 0)
+        } catch {}
+      }
+    }
+
+    // Se lo sconto non era stato applicato all'importo in DB, ricalcola il totale
+    const subtotaleArticoli = (artRows as Record<string, unknown>[]).reduce((s, a) => s + Number(a.prezzo_totale ?? 0), 0)
+    const importoDb = Number(p.importo)
+    const totale = (scontoClientePct > 0 && Math.abs(importoDb - subtotaleArticoli) < 0.05)
+      ? (subtotaleArticoli * (1 - scontoClientePct / 100)).toFixed(2)
+      : importoDb.toFixed(2)
 
     const pageHtml = await buildPageFromTemplate({
       artRows: artRows as Record<string, unknown>[],
@@ -644,7 +668,7 @@ async function loadData(prevId: number, username: string, isStaff: boolean): Pro
       clienteNome,
       clienteIndirizzo,
       stato: String(p.stato ?? 'bozza'),
-      scontoClientePct: Number(p.sconto_cliente_pct ?? 0),
+      scontoClientePct,
       noteRaw: p.note != null ? String(p.note) : null,
       db,
     })
