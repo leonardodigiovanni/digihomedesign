@@ -58,7 +58,7 @@ export const DEFAULTS: AppSettings = {
     direttore:       [28],
     marketing:       [29],
     email:           [],
-    cliente:         [30, 31],
+    cliente:         [50, 51, 52, 53, 55],
   },
 }
 
@@ -80,7 +80,14 @@ export async function readSettings(): Promise<AppSettings> {
     const row = (rows as { data: string | AppSettings }[])[0]
     if (!row) return { ...DEFAULTS }
     const parsed = typeof row.data === 'string' ? JSON.parse(row.data) : row.data
-    return { ...DEFAULTS, ...parsed }
+    const merged: AppSettings = { ...DEFAULTS, ...parsed }
+    // Migra vecchio default cliente:[30,31] (internalPages) verso areaClientiPages IDs
+    const areaClientiIds = [50, 51, 52, 53, 55]
+    const clientePerms: number[] = merged.rolePermissions?.cliente ?? []
+    if (!clientePerms.some(id => areaClientiIds.includes(id))) {
+      merged.rolePermissions = { ...merged.rolePermissions, cliente: areaClientiIds }
+    }
+    return merged
   } catch {
     return { ...DEFAULTS }
   } finally {

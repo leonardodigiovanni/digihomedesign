@@ -2,7 +2,8 @@
 
 import React, { useState, useMemo, useTransition, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { aggiungiArticolo, rimuoviArticolo, associaCliente, aggiornaDatiPreventivo, inoltroRichiesta, modificaArticolo, aggiornaSconto, inviaAlCliente, accettaPreventivo, rifiutaPreventivo, annullaPreventivo } from '../actions'
+import { aggiungiArticolo, rimuoviArticolo, associaCliente, aggiornaDatiPreventivo, inoltroRichiesta, modificaArticolo, aggiornaSconto, modificaPreventivo, inviaAlCliente, accettaPreventivo, rifiutaPreventivo, annullaPreventivo } from '../actions'
+import PreviewInfisso from '@/components/preview-infisso'
 
 // ─── Tipi ─────────────────────────────────────────────────────────────────────
 
@@ -10,6 +11,7 @@ export type ListinoItem = {
   id: number
   categoria: string
   produttore: string
+  serie?: string
   descrizione: string
   unita: string
   prezzo_vendita: number
@@ -18,6 +20,11 @@ export type ListinoItem = {
   fornitore_nome?: string
   principale?: number
   caratteristica?: number
+  richiede_tipo_colore?: number
+  richiede_tipo_colore_acc?: number
+  richiede_tipo_vetro?: number
+  richiede_tipo_montaggio?: number
+  minimo?: number | null
 }
 
 export type Articolo = {
@@ -41,6 +48,11 @@ export type Articolo = {
   sconto_articolo_pct: number
   note: string | null
   parent_id: number | null
+  abbr: string
+  profilo_mm: number
+  listino_foto_url: string
+  bar_color: string | null
+  bar_color_acc: string | null
 }
 
 export type Preventivo = {
@@ -48,7 +60,7 @@ export type Preventivo = {
   numero: string
   cliente_id: number | null
   descrizione: string
-  stato: 'bozza' | 'richiesto' | 'inviato' | 'accettato' | 'rifiutato' | 'scaduto' | 'annullato'
+  stato: 'bozza' | 'richiesto' | 'inviato' | 'accettato' | 'rifiutato' | 'scaduto' | 'annullato' | 'da inviare'
   importo: number
   data: string
   validita_giorni: number
@@ -85,8 +97,13 @@ const TIPI_CON_VETRO = new Set([
   'scorrevoli', 'alzanti scorrevoli', 'lucernari',
 ])
 
+function fmt(n: number): string {
+  const [int, dec] = Math.abs(n).toFixed(2).split('.')
+  return int.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ',' + dec
+}
+
 const STATO_COLORS: Record<string, string> = {
-  bozza: '#000', richiesto: '#b7791f', inviato: '#2b6cb0', accettato: '#276749',
+  bozza: '#8C0808', richiesto: '#b7791f', inviato: '#2b6cb0', accettato: '#276749',
   rifiutato: '#c00', scaduto: '#8a6d3b', annullato: '#718096',
 }
 
@@ -105,20 +122,23 @@ const label: React.CSSProperties = {
 
 // ─── Dati preventivo (descrizione + note) ────────────────────────────────────
 
-function DatiPreventivo({ preventivo, readOnly = false }: { preventivo: Preventivo; readOnly?: boolean }) {
+function DatiPreventivo({ preventivo, readOnly = false, isStaff = false }: { preventivo: Preventivo; readOnly?: boolean; isStaff?: boolean }) {
   const router = useRouter()
   const [pending, startT] = useTransition()
-  const [desc, setDesc]   = useState(preventivo.descrizione ?? '')
-  const [note, setNote]   = useState(preventivo.note ?? '')
-  const [saved, setSaved] = useState(false)
+  const [desc, setDesc]       = useState(preventivo.descrizione ?? '')
+  const [note, setNote]       = useState(preventivo.note ?? '')
+  const [validita, setValidita] = useState(preventivo.validita_giorni)
+  const [saved, setSaved]     = useState(false)
+  const [open, setOpen]       = useState(false)
 
-  const dirty = desc !== (preventivo.descrizione ?? '') || note !== (preventivo.note ?? '')
+  const dirty = desc !== (preventivo.descrizione ?? '') || note !== (preventivo.note ?? '') || (isStaff && validita !== preventivo.validita_giorni)
 
   function handleSave() {
     const fd = new FormData()
     fd.set('preventivo_id', String(preventivo.id))
     fd.set('descrizione', desc)
     fd.set('note', note)
+    fd.set('validita_giorni', String(validita))
     startT(async () => {
       await aggiornaDatiPreventivo(null, fd)
       setSaved(true)
@@ -127,22 +147,35 @@ function DatiPreventivo({ preventivo, readOnly = false }: { preventivo: Preventi
     })
   }
 
+  const header = (
+    <button
+      type="button"
+      onClick={() => setOpen(o => !o)}
+      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'inherit' }}
+    >
+      <span style={{ fontSize: 11, fontWeight: 600, color: '#333', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Riferimento e note</span>
+      <span style={{ fontSize: 12, color: '#333' }}>{open ? '▲' : '▼'}</span>
+    </button>
+  )
+
   if (readOnly) {
     return (
-      <div style={{
-        background: '#fafafa', border: '1px solid #e8e8e8', borderRadius: 8,
-        padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 8,
-      }}>
-        {preventivo.descrizione && (
-          <div>
-            <span style={{ fontSize: 11, fontWeight: 600, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Descrizione</span>
-            <p style={{ margin: '4px 0 0', fontSize: 14, color: '#444' }}>{preventivo.descrizione}</p>
-          </div>
-        )}
-        {preventivo.note && (
-          <div>
-            <span style={{ fontSize: 11, fontWeight: 600, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Note</span>
-            <p style={{ margin: '4px 0 0', fontSize: 13, color: '#666', whiteSpace: 'pre-wrap' }}>{preventivo.note}</p>
+      <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 8, padding: '10px 16px' }}>
+        {header}
+        {open && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 10 }}>
+            {preventivo.descrizione && (
+              <div>
+                <span style={{ fontSize: 11, fontWeight: 600, color: '#333', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Riferimento</span>
+                <p style={{ margin: '4px 0 0', fontSize: 14, color: '#444' }}>{preventivo.descrizione}</p>
+              </div>
+            )}
+            {preventivo.note && (
+              <div>
+                <span style={{ fontSize: 11, fontWeight: 600, color: '#333', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Note</span>
+                <p style={{ margin: '4px 0 0', fontSize: 13, color: '#666', whiteSpace: 'pre-wrap' }}>{preventivo.note}</p>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -150,42 +183,52 @@ function DatiPreventivo({ preventivo, readOnly = false }: { preventivo: Preventi
   }
 
   return (
-    <div style={{
-      background: '#fff', border: '1px solid #e8e8e8', borderRadius: 8,
-      padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 10,
-    }}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-        <span style={{ fontSize: 11, fontWeight: 600, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Descrizione</span>
-        <input
-          value={desc}
-          onChange={e => { setDesc(e.target.value); setSaved(false) }}
-          placeholder="Descrizione preventivo…"
-          style={{ ...inp, fontSize: 14 }}
-        />
-      </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-        <span style={{ fontSize: 11, fontWeight: 600, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Note</span>
-        <textarea
-          value={note}
-          onChange={e => { setNote(e.target.value); setSaved(false) }}
-          placeholder="Note interne o per il cliente…"
-          rows={3}
-          style={{ ...inp, resize: 'vertical', fontSize: 13 }}
-        />
-      </div>
-      <div>
-        <button
-          onClick={handleSave}
-          disabled={pending || !dirty}
-          className="btn-green"
-          style={{
-            padding: '6px 18px', fontSize: 13, fontWeight: 600,
-            opacity: !dirty ? 0.4 : 1,
-          }}
-        >
-          {saved ? '✓ Salvato' : pending ? '…' : 'Salva'}
-        </button>
-      </div>
+    <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 8, padding: '10px 16px' }}>
+      {header}
+      {open && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 10 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <span style={{ fontSize: 11, fontWeight: 600, color: '#333', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Riferimento</span>
+            <input
+              value={desc}
+              onChange={e => { setDesc(e.target.value); setSaved(false) }}
+              placeholder="Riferimento…"
+              style={{ ...inp, fontSize: 14 }}
+            />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <span style={{ fontSize: 11, fontWeight: 600, color: '#333', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Note</span>
+            <textarea
+              value={note}
+              onChange={e => { setNote(e.target.value); setSaved(false) }}
+              placeholder="Note interne o per il cliente…"
+              rows={3}
+              style={{ ...inp, resize: 'vertical', fontSize: 13 }}
+            />
+          </div>
+          {isStaff && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              <span style={{ fontSize: 11, fontWeight: 600, color: '#333', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Validità (giorni)</span>
+              <input
+                type="number" min={1} max={365}
+                value={validita}
+                onChange={e => { setValidita(parseInt(e.target.value) || 5); setSaved(false) }}
+                style={{ ...inp, width: 100, fontSize: 13 }}
+              />
+            </div>
+          )}
+          <div>
+            <button
+              onClick={handleSave}
+              disabled={pending || !dirty}
+              className="btn-green"
+              style={{ height: 42, padding: '0 18px', borderRadius: 21, fontSize: 13, fontWeight: 600, opacity: !dirty ? 0.4 : 1 }}
+            >
+              {saved ? '✓ Salvato' : pending ? '…' : 'Salva'}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -218,15 +261,10 @@ function ClienteSelector({ preventivo_id, cliente_id, clienti }: {
 
   return (
     <div style={{
-      background: '#f7f9fc', border: '1px solid #dde3ed', borderRadius: 8,
+      background: '#fff', border: '1px solid #c8960c', borderRadius: 8,
       padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap',
     }}>
       <span style={{ fontSize: 13, color: '#555', fontWeight: 600, whiteSpace: 'nowrap' }}>Cliente:</span>
-      {current && sel === cliente_id?.toString() ? (
-        <span style={{ fontSize: 13, fontWeight: 700, color: '#1a4a8a' }}>{current.label}</span>
-      ) : (
-        <span style={{ fontSize: 13, color: '#aaa' }}>— non assegnato —</span>
-      )}
       <select
         value={sel}
         onChange={e => { setSel(e.target.value); setSaved(false) }}
@@ -243,7 +281,7 @@ function ClienteSelector({ preventivo_id, cliente_id, clienti }: {
         disabled={pending || sel === (cliente_id?.toString() ?? '')}
         className="btn-green"
         style={{
-          padding: '6px 16px', fontSize: 13, fontWeight: 600,
+          height: 42, padding: '0 16px', fontSize: 13, fontWeight: 600, borderRadius: 21,
           opacity: sel === (cliente_id?.toString() ?? '') ? 0.4 : 1,
         }}
       >
@@ -256,13 +294,16 @@ function ClienteSelector({ preventivo_id, cliente_id, clienti }: {
 // ─── Form aggiunta articolo ───────────────────────────────────────────────────
 
 function ArticoloForm({
-  preventivo_id, listini, prefill, parentId = null, parentArt = null, onClose, isStaff = true,
+  preventivo_id, listini, prefill, parentId = null, parentArt = null, existingChildTypes = [], gapTypeFilter = null, altriParentIds = [], onClose, isStaff = true,
 }: {
   preventivo_id: number
   listini: ListinoItem[]
   prefill: Partial<Articolo> | null
   parentId?: number | null
   parentArt?: Articolo | null
+  existingChildTypes?: string[]
+  gapTypeFilter?: 'tipo_colore' | 'tipo_colore_acc' | 'tipo_vetro' | 'tipo_montaggio' | null
+  altriParentIds?: number[]
   onClose: () => void
   isStaff?: boolean
 }) {
@@ -270,7 +311,10 @@ function ArticoloForm({
   const [pending, startT] = useTransition()
   const [error, setError] = useState('')
 
-  const [tipo, setTipo]         = useState(prefill?.tipo_prodotto ?? '')
+  const isCaratteristicaMode = parentId !== null && !!gapTypeFilter
+  const [tipo, setTipo]         = useState(() =>
+    isCaratteristicaMode && parentArt ? parentArt.tipo_prodotto : (prefill?.tipo_prodotto ?? '')
+  )
   const [marca, setMarca]       = useState(prefill?.marca ?? '')
   const [listinoId, setListinoId] = useState(prefill?.listino_id?.toString() ?? '')
   const [colore, setColore]     = useState(prefill?.colore ?? '')
@@ -279,12 +323,27 @@ function ArticoloForm({
     prefill?.accessori ? prefill.accessori.split(',').filter(Boolean) : []
   )
 
-  const listiniFiltrati = useMemo(
-    () => parentId !== null
-      ? listini.filter(l => l.caratteristica === 1)
-      : listini.filter(l => l.principale === 1),
-    [listini, parentId]
-  )
+  const listiniFiltrati = useMemo(() => {
+    if (parentId !== null) {
+      let filtered = listini.filter(l =>
+        l.caratteristica === 1 &&
+        (parentArt ? l.categoria === parentArt.tipo_prodotto : true)
+      )
+      if (gapTypeFilter) {
+        filtered = filtered.filter(l =>
+          gapTypeFilter === 'tipo_colore'     ? (l.richiede_tipo_colore     ?? 0) === 1 :
+          gapTypeFilter === 'tipo_colore_acc' ? (l.richiede_tipo_colore_acc ?? 0) === 1 :
+          gapTypeFilter === 'tipo_vetro'      ? (l.richiede_tipo_vetro      ?? 0) === 1 :
+                                                (l.richiede_tipo_montaggio  ?? 0) === 1
+        )
+      } else {
+        const usedMarche = new Set(existingChildTypes)
+        filtered = filtered.filter(l => !usedMarche.has(l.produttore))
+      }
+      return filtered
+    }
+    return listini.filter(l => l.principale === 1)
+  }, [listini, parentId, parentArt, existingChildTypes, gapTypeFilter])
 
   const tipi   = useMemo(() => [...new Set(listiniFiltrati.map(l => l.categoria))].sort(), [listiniFiltrati])
   const marche = useMemo(
@@ -292,8 +351,10 @@ function ArticoloForm({
     [listiniFiltrati, tipo]
   )
   const modelli = useMemo(
-    () => listiniFiltrati.filter(l => l.categoria === tipo && l.produttore === marca),
-    [listiniFiltrati, tipo, marca]
+    () => isCaratteristicaMode
+      ? listiniFiltrati
+      : listiniFiltrati.filter(l => l.categoria === tipo && l.produttore === marca),
+    [listiniFiltrati, tipo, marca, isCaratteristicaMode]
   )
   const listinoSel = useMemo(
     () => listiniFiltrati.find(l => l.id === parseInt(listinoId)),
@@ -316,22 +377,51 @@ function ArticoloForm({
     setMarca(m); setListinoId('')
   }
 
+  function buildFd(targetParentId: number | null): FormData {
+    const fd = new FormData()
+    fd.set('preventivo_id', String(preventivo_id))
+    fd.set('listino_id',    listinoId)
+    fd.set('prezzo_base',   String(listinoSel?.prezzo_vendita ?? 0))
+    fd.set('unita',         listinoSel?.unita ?? 'pz')
+    fd.set('modello',       listinoSel?.descrizione ?? '')
+    fd.set('tipo_prodotto', tipo)
+    fd.set('marca',         marca)
+    fd.set('accessori',     accessoriSel.join(','))
+    if (targetParentId) fd.set('parent_id', String(targetParentId))
+    return fd
+  }
+
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!e.currentTarget.checkValidity()) { e.currentTarget.reportValidity(); return }
-    if (!listinoId) { setError('Seleziona un modello.'); return }
-    const fd = new FormData(e.currentTarget)
-    fd.set('accessori', accessoriSel.join(','))
-    if (parentId) fd.set('parent_id', String(parentId))
-    if (listinoSel) {
-      fd.set('modello',     listinoSel.descrizione)
-      fd.set('prezzo_base', String(listinoSel.prezzo_vendita))
-      fd.set('unita',       listinoSel.unita)
+    if (!listinoId) { setError('Seleziona un elemento.'); return }
+    const fd = isCaratteristicaMode ? buildFd(parentId) : new FormData(e.currentTarget)
+    if (!isCaratteristicaMode) {
+      fd.set('accessori', accessoriSel.join(','))
+      if (parentId) fd.set('parent_id', String(parentId))
+      if (listinoSel) {
+        fd.set('modello',     listinoSel.descrizione)
+        fd.set('prezzo_base', String(listinoSel.prezzo_vendita))
+        fd.set('unita',       listinoSel.unita)
+      }
     }
     setError('')
     startT(async () => {
       const res = await aggiungiArticolo(null, fd)
       if (!res.ok) { setError(res.error); return }
+      router.refresh()
+      onClose()
+    })
+  }
+
+  function handleApplicaATutti() {
+    if (!listinoId) { setError('Seleziona una caratteristica.'); return }
+    setError('')
+    startT(async () => {
+      for (const pid of [parentId!, ...altriParentIds]) {
+        const res = await aggiungiArticolo(null, buildFd(pid))
+        if (!res.ok) { setError(res.error); return }
+      }
       router.refresh()
       onClose()
     })
@@ -370,62 +460,98 @@ function ArticoloForm({
 
           <div style={{ display: 'grid', gap: 14 }}>
 
-            {/* Tipo prodotto */}
-            <div>
-              <span style={label}>Tipo prodotto *</span>
-              <select
-                name="tipo_prodotto"
-                value={tipo}
-                onChange={e => handleChangeTipo(e.target.value)}
-                required
-                style={inp}
-              >
-                <option value="">— Seleziona tipo —</option>
-                {tipi.map(t => <option key={t} value={t}>{t}</option>)}
-              </select>
-            </div>
+            {isCaratteristicaMode ? (
+              <>
+                <input type="hidden" name="tipo_prodotto" value={tipo} />
+                <input type="hidden" name="marca" value={marca} />
+                <div>
+                  <span style={label}>Caratteristica *</span>
+                  <select
+                    value={listinoId}
+                    onChange={e => {
+                      const id = e.target.value
+                      setListinoId(id)
+                      const sel = modelli.find(m => m.id === parseInt(id))
+                      if (sel) setMarca(sel.produttore)
+                    }}
+                    style={inp}
+                  >
+                    <option value="">— Seleziona —</option>
+                    {modelli.map(m => {
+                      const sc = m.sconto_articolo ?? 0
+                      const promo = sc !== 0 ? (sc < 0 ? ` · Magg. +${Math.abs(sc)}%` : ` · Sconto -${sc}%`) : ''
+                      const details = isStaff
+                        ? ` — acq. €${Number(m.prezzo_acquisto ?? 0).toFixed(2)} / cli. €${Number(m.prezzo_vendita).toFixed(2)}`
+                        : ` — €${Number(m.prezzo_vendita).toFixed(2)}`
+                      return (
+                        <option key={m.id} value={m.id}>
+                          {m.descrizione}{m.produttore ? ` · ${m.produttore}` : ''} ({m.unita}{details}){promo}
+                        </option>
+                      )
+                    })}
+                  </select>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Tipo prodotto */}
+                <div>
+                  <span style={label}>Tipo prodotto *</span>
+                  <select
+                    name="tipo_prodotto"
+                    value={tipo}
+                    onChange={e => handleChangeTipo(e.target.value)}
+                    required
+                    style={inp}
+                  >
+                    <option value="">— Seleziona tipo —</option>
+                    {tipi.map(t => <option key={t} value={t}>{t}</option>)}
+                  </select>
+                </div>
 
-            {/* Marca */}
-            {tipo && (
-              <div>
-                <span style={label}>Marca *</span>
-                <select
-                  name="marca"
-                  value={marca}
-                  onChange={e => handleChangeMarca(e.target.value)}
-                  required
-                  style={inp}
-                >
-                  <option value="">— Seleziona marca —</option>
-                  {marche.map(m => <option key={m} value={m}>{m}</option>)}
-                </select>
-              </div>
-            )}
+                {/* Marca */}
+                {tipo && (
+                  <div>
+                    <span style={label}>Marca *</span>
+                    <select
+                      name="marca"
+                      value={marca}
+                      onChange={e => handleChangeMarca(e.target.value)}
+                      required
+                      style={inp}
+                    >
+                      <option value="">— Seleziona marca —</option>
+                      {marche.map(m => <option key={m} value={m}>{m}</option>)}
+                    </select>
+                  </div>
+                )}
 
-            {/* Modello */}
-            {marca && (
-              <div>
-                <span style={label}>Modello / Profilo *</span>
-                <select
-                  value={listinoId}
-                  onChange={e => setListinoId(e.target.value)}
-                  style={inp}
-                >
-                  <option value="">— Seleziona modello —</option>
-                  {modelli.map(m => {
-                    const sc = m.sconto_articolo ?? 0
-                    const promo = sc !== 0 ? (sc < 0 ? ` · Magg. +${Math.abs(sc)}%` : ` · Sconto -${sc}%`) : ''
-                    const details = isStaff
-                      ? ` — acq. €${Number(m.prezzo_acquisto ?? 0).toFixed(2)} / cli. €${Number(m.prezzo_vendita).toFixed(2)}${m.fornitore_nome ? ` · ${m.fornitore_nome}` : ''}`
-                      : ` — €${Number(m.prezzo_vendita).toFixed(2)}${m.fornitore_nome ? ` · ${m.fornitore_nome}` : ''}`
-                    return (
-                      <option key={m.id} value={m.id}>
-                        {m.descrizione} ({m.unita}{details}){promo}
-                      </option>
-                    )
-                  })}
-                </select>
-              </div>
+                {/* Modello */}
+                {marca && (
+                  <div>
+                    <span style={label}>Modello / Profilo *</span>
+                    <select
+                      value={listinoId}
+                      onChange={e => setListinoId(e.target.value)}
+                      style={inp}
+                    >
+                      <option value="">— Seleziona modello —</option>
+                      {modelli.map(m => {
+                        const sc = m.sconto_articolo ?? 0
+                        const promo = sc !== 0 ? (sc < 0 ? ` · Magg. +${Math.abs(sc)}%` : ` · Sconto -${sc}%`) : ''
+                        const details = isStaff
+                          ? ` — acq. €${Number(m.prezzo_acquisto ?? 0).toFixed(2)} / cli. €${Number(m.prezzo_vendita).toFixed(2)}${m.fornitore_nome ? ` · ${m.fornitore_nome}` : ''}`
+                          : ` — €${Number(m.prezzo_vendita).toFixed(2)}${m.fornitore_nome ? ` · ${m.fornitore_nome}` : ''}`
+                        return (
+                          <option key={m.id} value={m.id}>
+                            {m.descrizione} ({m.unita}{details}){promo}
+                          </option>
+                        )
+                      })}
+                    </select>
+                  </div>
+                )}
+              </>
             )}
 
             {/* Campi dettaglio — visibili solo dopo aver selezionato il modello */}
@@ -448,7 +574,7 @@ function ArticoloForm({
 
                   {/* Figlio: dimensioni e quantità ereditati dal padre, non chiederli */}
                   {!parentArt && isMq && (
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 12 }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
                       <div>
                         <span style={label}>Larghezza (cm) *</span>
                         <input type="number" name="larghezza_cm" min={0} step="0.1" defaultValue={prefill?.larghezza_cm || ''} style={inp} placeholder="es. 120" required />
@@ -456,10 +582,6 @@ function ArticoloForm({
                       <div>
                         <span style={label}>Altezza (cm) *</span>
                         <input type="number" name="altezza_cm" min={0} step="0.1" defaultValue={prefill?.altezza_cm || ''} style={inp} placeholder="es. 210" required />
-                      </div>
-                      <div>
-                        <span style={label}>N° ante (0 = da definire) *</span>
-                        <input type="number" name="n_ante" min={0} defaultValue={prefill?.n_ante ?? 0} style={inp} required />
                       </div>
                       <div>
                         <span style={label}>Quantità *</span>
@@ -484,7 +606,7 @@ function ArticoloForm({
                   {!parentArt && isKg && (
                     <div>
                       <span style={label}>Quantità (kg) *</span>
-                      <input type="number" name="quantita" min={0.1} step="0.1" defaultValue={prefill?.quantita ?? ''} style={inp} placeholder="es. 5" required />
+                      <input type="number" name="quantita" min={0.1} step="0.1" defaultValue={prefill?.quantita ?? 1} style={inp} placeholder="es. 5" required />
                     </div>
                   )}
 
@@ -501,10 +623,6 @@ function ArticoloForm({
                     </p>
                   )}
 
-                  <div>
-                    <span style={label}>Note articolo</span>
-                    <textarea name="note" rows={2} defaultValue={''} style={{ ...inp, resize: 'vertical' }} placeholder="Eventuali note..." />
-                  </div>
                 </div>
               )
             })()}
@@ -517,15 +635,22 @@ function ArticoloForm({
 
             <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', paddingTop: 4 }}>
               <button type="button" onClick={onClose} style={{
-                padding: '8px 20px', fontSize: 13, fontWeight: 600,
-                border: '1px solid #ccc', borderRadius: 6, background: '#f5f5f5', cursor: 'pointer',
+                height: 42, padding: '0 20px', fontSize: 13, fontWeight: 600,
+                border: '1px solid #ccc', borderRadius: 21, background: '#f5f5f5', cursor: 'pointer',
               }}>
                 Annulla
               </button>
-              <button type="submit" disabled={pending || !tipo || !marca || !listinoId}
-                className={pending || !tipo || !marca || !listinoId ? 'btn-gray' : 'btn-green'}
-                style={{ padding: '8px 22px', fontSize: 13, fontWeight: 700 }}>
-                {pending ? 'Salvataggio…' : 'Salva articolo'}
+              {isCaratteristicaMode && altriParentIds.length > 0 && (
+                <button type="button" onClick={handleApplicaATutti} disabled={pending || !listinoId}
+                  className={pending || !listinoId ? 'btn-gray' : 'btn-green'}
+                  style={{ height: 42, padding: '0 18px', fontSize: 13, fontWeight: 700, borderRadius: 21 }}>
+                  {pending ? '…' : 'Applica a tutti'}
+                </button>
+              )}
+              <button type="submit" disabled={pending || (isCaratteristicaMode ? !listinoId : (!tipo || !marca || !listinoId))}
+                className={pending || (isCaratteristicaMode ? !listinoId : (!tipo || !marca || !listinoId)) ? 'btn-gray' : 'btn-green'}
+                style={{ height: 42, padding: '0 22px', fontSize: 13, fontWeight: 700, borderRadius: 21 }}>
+                {pending ? '…' : isCaratteristicaMode ? 'Applica' : 'Aggiungi'}
               </button>
             </div>
           </div>
@@ -570,7 +695,7 @@ function ScontoClienteEditor({ preventivoId, currentPct }: { preventivoId: numbe
         onClick={handleSave}
         disabled={pending || !dirty}
         className="btn-green"
-        style={{ padding: '0 14px', fontSize: 12, fontFamily: 'inherit', opacity: !dirty ? 0.4 : 1 }}
+        style={{ height: 42, padding: '0 14px', fontSize: 12, borderRadius: 21, fontFamily: 'inherit', opacity: !dirty ? 0.4 : 1 }}
       >
         {saved ? '✓' : pending ? '…' : 'Applica'}
       </button>
@@ -580,16 +705,39 @@ function ScontoClienteEditor({ preventivoId, currentPct }: { preventivoId: numbe
 
 // ─── Modale Modifica Articolo (staff) ────────────────────────────────────────
 
-function ModificaArticoloModal({ articolo, onClose }: { articolo: Articolo; onClose: () => void }) {
+function ModificaArticoloModal({ articolo, parentArt, listini, onClose, isStaff = true }: {
+  articolo: Articolo
+  parentArt?: Articolo | null
+  listini: ListinoItem[]
+  onClose: () => void
+  isStaff?: boolean
+}) {
   const router = useRouter()
   const [pending, startT] = useTransition()
   const [error, setError] = useState('')
+  const [magg, setMagg] = useState(Math.abs(articolo.sconto_articolo_pct))
+
+  const isChild = articolo.parent_id !== null
+  const uLower  = (articolo.unita ?? '').toLowerCase()
+  const isChildUnit = isChild && (uLower === 'm²' || uLower === 'mq' || uLower === 'm2' || uLower === 'ml')
+  const childListino = listini.find(l => l.id === articolo.listino_id)
+  const isChildMontaggio = isChild && !isChildUnit && (childListino?.richiede_tipo_montaggio ?? 0) === 1
+  const isChildPerc = isChild && !isChildUnit && !isChildMontaggio
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const fd = new FormData(e.currentTarget)
     fd.set('id',            String(articolo.id))
     fd.set('preventivo_id', String(articolo.preventivo_id))
+    if (isChild) {
+      fd.set('altezza_cm',   String(articolo.altezza_cm))
+      fd.set('larghezza_cm', String(articolo.larghezza_cm))
+      fd.set('quantita',     String(articolo.quantita))
+    }
+    if (isChildPerc) {
+      fd.set('sconto_articolo_pct', String(-Math.abs(magg)))
+      fd.set('prezzo_base',  String(articolo.prezzo_base))
+    }
     setError('')
     startT(async () => {
       const res = await modificaArticolo(null, fd)
@@ -600,62 +748,120 @@ function ModificaArticoloModal({ articolo, onClose }: { articolo: Articolo; onCl
   }
 
   return (
-    <div style={{
-      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)',
-      zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20,
-    }}>
-      <div style={{
-        background: '#fff', borderRadius: 10, padding: 28, width: '100%', maxWidth: 540,
-        maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 8px 40px rgba(0,0,0,0.18)',
-      }}>
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+      <div style={{ background: '#fff', borderRadius: 10, padding: 28, width: '100%', maxWidth: isChild ? 400 : 540, maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 8px 40px rgba(0,0,0,0.18)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
           <h3 style={{ margin: 0, fontSize: 17, fontWeight: 700 }}>Modifica articolo #{articolo.id}</h3>
           <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: '#888', lineHeight: 1 }}>✕</button>
         </div>
-        <div style={{ fontSize: 12, color: '#888', marginBottom: 16 }}>
+        <div style={{ fontSize: 12, color: '#333', marginBottom: 16 }}>
           {articolo.tipo_prodotto} — {articolo.marca} {articolo.modello}
         </div>
         <form onSubmit={handleSubmit}>
           <div style={{ display: 'grid', gap: 14 }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 12 }}>
-              <div>
-                <span style={label}>Altezza (cm)</span>
-                <input type="number" name="altezza_cm" min={0} step="0.1" defaultValue={articolo.altezza_cm} style={inp} />
-              </div>
-              <div>
-                <span style={label}>Larghezza (cm)</span>
-                <input type="number" name="larghezza_cm" min={0} step="0.1" defaultValue={articolo.larghezza_cm} style={inp} />
-              </div>
-              <div>
-                <span style={label}>N° ante</span>
-                <input type="number" name="n_ante" min={1} defaultValue={articolo.n_ante} style={inp} />
-              </div>
-              <div>
-                <span style={label}>Quantità</span>
-                <input type="number" name="quantita" min={1} defaultValue={articolo.quantita} style={inp} />
-              </div>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-              <div>
-                <span style={label}>Prezzo base ({articolo.unita})</span>
-                <input type="number" name="prezzo_base" min={0} step="0.01" defaultValue={articolo.prezzo_base} style={inp} />
-              </div>
-              <div>
-                <span style={label}>Sconto articolo %</span>
-                <input type="number" name="sconto_articolo_pct" min={-100} max={100} step="0.01" defaultValue={articolo.sconto_articolo_pct} style={inp} />
-              </div>
-            </div>
-            <div>
-              <span style={label}>Note</span>
-              <textarea name="note" rows={2} defaultValue={articolo.note ?? ''} style={{ ...inp, resize: 'vertical' }} />
-            </div>
-            {error && (
-              <p style={{ color: '#c00', fontSize: 13, margin: 0, background: '#fff5f5', padding: '8px 12px', borderRadius: 5 }}>{error}</p>
+            {isChildUnit ? (
+              <>
+                {articolo.altezza_cm > 0 && (
+                  <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 6, padding: '10px 14px', fontSize: 13, color: '#555' }}>
+                    Dimensioni: <strong>{articolo.altezza_cm} × {articolo.larghezza_cm} cm</strong>
+                    {parentArt && parentArt.quantita > 0 && <> · Qtà <strong>{parentArt.quantita}</strong></>}
+                  </div>
+                )}
+                <div>
+                  <span style={label}>Prezzo unitario ({articolo.unita})</span>
+                  <input type="number" name="prezzo_base" min={0} step="0.01" defaultValue={articolo.prezzo_base} style={inp} autoFocus />
+                </div>
+                <div>
+                  <span style={label}>Sconto %</span>
+                  <input type="number" name="sconto_articolo_pct" min={-100} max={100} step="0.01" defaultValue={articolo.sconto_articolo_pct} style={inp} />
+                </div>
+              </>
+            ) : isChildMontaggio ? (
+              <>
+                {parentArt && parentArt.quantita > 0 && (
+                  <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 6, padding: '10px 14px', fontSize: 13, color: '#555' }}>
+                    Qtà primario: <strong>{parentArt.quantita}</strong>
+                  </div>
+                )}
+                <div>
+                  <span style={label}>Prezzo unitario ({articolo.unita})</span>
+                  <input type="number" name="prezzo_base" min={0} step="0.01" defaultValue={articolo.prezzo_base} style={inp} autoFocus />
+                </div>
+                <div>
+                  <span style={label}>Sconto %</span>
+                  <input type="number" name="sconto_articolo_pct" min={-100} max={100} step="0.01" defaultValue={articolo.sconto_articolo_pct} style={inp} />
+                </div>
+              </>
+            ) : isChildPerc ? (
+              <>
+                {parentArt && (
+                  <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 6, padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 4 }}>
+                    <span style={{ ...label, marginBottom: 0 }}>Prezzo articolo primario</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 4 }}>
+                      <span style={{ fontSize: 14, color: '#aaa', textDecoration: 'line-through' }}>€ {parentArt.prezzo_pre_sconto.toFixed(2)}</span>
+                      <span style={{ fontSize: 16, fontWeight: 700, color: '#1a4a8a' }}>€ {parentArt.prezzo_totale.toFixed(2)}</span>
+                    </div>
+                  </div>
+                )}
+                <div>
+                  <span style={label}>Maggiorazione %</span>
+                  <input
+                    type="number" min={0} max={100} step="0.01"
+                    value={magg}
+                    onChange={e => setMagg(parseFloat(e.target.value) || 0)}
+                    style={inp}
+                    autoFocus
+                  />
+                  {parentArt && magg > 0 && (
+                    <div style={{ marginTop: 6, display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <span style={{ fontSize: 13, color: '#aaa', textDecoration: 'line-through' }}>
+                        € {(parentArt.prezzo_pre_sconto * magg / 100).toFixed(2)}
+                      </span>
+                      <span style={{ fontSize: 14, fontWeight: 700, color: '#1a4a8a' }}>
+                        € {(parentArt.prezzo_totale * magg / 100).toFixed(2)}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+                  <div>
+                    <span style={label}>Altezza (cm)</span>
+                    <input type="number" name="altezza_cm" min={0} step="0.1" defaultValue={articolo.altezza_cm} style={inp} />
+                  </div>
+                  <div>
+                    <span style={label}>Larghezza (cm)</span>
+                    <input type="number" name="larghezza_cm" min={0} step="0.1" defaultValue={articolo.larghezza_cm} style={inp} />
+                  </div>
+                  <div>
+                    <span style={label}>Quantità</span>
+                    <input type="number" name="quantita" min={1} defaultValue={articolo.quantita} style={inp} />
+                  </div>
+                </div>
+                {isStaff ? (
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                    <div>
+                      <span style={label}>Prezzo base ({articolo.unita})</span>
+                      <input type="number" name="prezzo_base" min={0} step="0.01" defaultValue={articolo.prezzo_base} style={inp} />
+                    </div>
+                    <div>
+                      <span style={label}>Sconto articolo %</span>
+                      <input type="number" name="sconto_articolo_pct" min={-100} max={100} step="0.01" defaultValue={articolo.sconto_articolo_pct} style={inp} />
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <input type="hidden" name="prezzo_base" value={articolo.prezzo_base} />
+                    <input type="hidden" name="sconto_articolo_pct" value={articolo.sconto_articolo_pct} />
+                  </>
+                )}
+              </>
             )}
+            {error && <p style={{ color: '#c00', fontSize: 13, margin: 0, background: '#fff5f5', padding: '8px 12px', borderRadius: 5 }}>{error}</p>}
             <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', paddingTop: 4 }}>
-              <button type="button" onClick={onClose} className="btn-red" style={{ padding: '0 20px', fontSize: 13, fontFamily: 'inherit' }}>
-                Annulla
-              </button>
+              <button type="button" onClick={onClose} className="btn-red" style={{ padding: '0 20px', fontSize: 13, fontFamily: 'inherit' }}>Annulla</button>
               <button type="submit" disabled={pending} className={pending ? 'btn-gray' : 'btn-green'} style={{ padding: '0 22px', fontSize: 13, fontWeight: 700, fontFamily: 'inherit' }}>
                 {pending ? 'Salvataggio…' : 'Salva modifiche'}
               </button>
@@ -734,18 +940,18 @@ function InoltraModal({
             {error && (
               <p style={{ color: '#c00', fontSize: 13, margin: 0, background: '#fff5f5', padding: '8px 12px', borderRadius: 5 }}>{error}</p>
             )}
-            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', paddingTop: 4 }}>
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', paddingTop: 4, alignItems: 'center' }}>
               <button type="button" onClick={onClose} style={{
-                padding: '8px 20px', fontSize: 13, fontWeight: 600, borderRadius: 6, border: 'none',
+                height: 42, borderRadius: 21, fontSize: 13, fontWeight: 600, border: 'none',
                 background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.04) 0px,rgba(255,255,255,0.04) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#5a0000 0%,#8c0808 20%,#a01212 45%,#8c0808 80%,#5a0000 100%)',
                 boxShadow: '0 4px 14px rgba(100,0,0,0.45),inset 0 1px 0 rgba(255,255,255,0.07)',
-                color: '#fff', cursor: 'pointer', fontFamily: 'inherit',
+                color: '#fff', cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingLeft: 20, paddingRight: 20,
               }}>
                 Annulla
               </button>
               <button type="submit" disabled={pending}
                 className={pending ? 'btn-gray' : 'btn-green'}
-                style={{ padding: '8px 22px', fontSize: 13, fontWeight: 700 }}>
+                style={{ height: 42, borderRadius: 21, fontSize: 13, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', paddingLeft: 22, paddingRight: 22 }}>
                 {pending ? 'Inoltro…' : 'Inoltra'}
               </button>
             </div>
@@ -760,7 +966,7 @@ function InoltraModal({
 
 export default function PreventivoClient({
   preventivo, articoli, listini, clienti, isStaff = true,
-  clienteEmail = '', clienteCellulare = '',
+  clienteEmail = '', clienteCellulare = '', backHref, stampaHref,
 }: {
   preventivo: Preventivo
   articoli: Articolo[]
@@ -769,6 +975,8 @@ export default function PreventivoClient({
   isStaff?: boolean
   clienteEmail?: string
   clienteCellulare?: string
+  backHref?: string
+  stampaHref?: string
 }) {
   const router = useRouter()
   const [showForm, setShowForm]         = useState(false)
@@ -777,6 +985,8 @@ export default function PreventivoClient({
   const [prefill, setPrefill]           = useState<Partial<Articolo> | null>(null)
   const [parentId, setParentId]         = useState<number | null>(null)
   const [parentArt, setParentArt]       = useState<Articolo | null>(null)
+  const [gapType, setGapType]           = useState<'tipo_colore' | 'tipo_colore_acc' | 'tipo_vetro' | 'tipo_montaggio' | null>(null)
+  const [modificaPending, startModifica]  = useTransition()
   const [inviaPending, startInvia]        = useTransition()
   const [inviaError, setInviaError]       = useState('')
   const [accettaPending, startAccetta]    = useTransition()
@@ -787,8 +997,54 @@ export default function PreventivoClient({
   useEffect(() => { setImporto(preventivo.importo) }, [preventivo.importo])
   useEffect(() => { setStatoLocale(preventivo.stato) }, [preventivo.stato])
   const [delPending, startDel]            = useTransition()
+  const [previewArt, setPreviewArt]        = useState<Articolo | null>(null)
+  const [isTouch, setIsTouch]              = useState(false)
+  useEffect(() => { setIsTouch(window.matchMedia('(pointer: coarse)').matches) }, [])
+  const [expandedIds, setExpandedIds]      = useState<Set<number>>(() => new Set())
+  function toggleExpand(id: number) {
+    setExpandedIds(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n })
+  }
 
   const lastArticolo = articoli.filter(a => !a.parent_id).at(-1) ?? null
+
+  const altriParentIds = useMemo(() => {
+    if (!gapType || parentId === null) return []
+    const currentRoot = articoli.find(a => a.id === parentId)
+    if (!currentRoot) return []
+    const fl = gapType === 'tipo_colore' ? 'richiede_tipo_colore' as const : gapType === 'tipo_colore_acc' ? 'richiede_tipo_colore_acc' as const : gapType === 'tipo_vetro' ? 'richiede_tipo_vetro' as const : 'richiede_tipo_montaggio' as const
+    return articoli
+      .filter(a => !a.parent_id && a.id !== parentId && a.tipo_prodotto === currentRoot.tipo_prodotto)
+      .filter(a => {
+        const rootListino = listini.find(l => l.id === a.listino_id)
+        if ((rootListino?.[fl] ?? 0) !== 1) return false
+        const kids = articoli.filter(c => c.parent_id === a.id)
+        return !kids.map(c => listini.find(l => l.id === c.listino_id)).some(l => (l?.[fl] ?? 0) === 1)
+      })
+      .map(a => a.id)
+  }, [articoli, listini, gapType, parentId])
+
+  const tuttiSanati = useMemo(() => {
+    const roots = articoli.filter(a => !a.parent_id)
+    if (roots.length === 0) return false
+    return roots.every(a => {
+      const children = articoli.filter(c => c.parent_id === a.id)
+      const rootListino = listini.find(l => l.id === a.listino_id)
+      const needsC  = (rootListino?.richiede_tipo_colore     ?? 0) === 1
+      const needsCA = (rootListino?.richiede_tipo_colore_acc ?? 0) === 1
+      const needsV  = (rootListino?.richiede_tipo_vetro      ?? 0) === 1
+      const needsM  = (rootListino?.richiede_tipo_montaggio  ?? 0) === 1
+      if (needsC || needsCA || needsV || needsM) {
+        const cl = children.map(c => listini.find(l => l.id === c.listino_id))
+        const okC  = !needsC  || cl.some(l => (l?.richiede_tipo_colore     ?? 0) === 1)
+        const okCA = !needsCA || cl.some(l => (l?.richiede_tipo_colore_acc ?? 0) === 1)
+        const okV  = !needsV  || cl.some(l => (l?.richiede_tipo_vetro      ?? 0) === 1)
+        const okM  = !needsM  || cl.some(l => (l?.richiede_tipo_montaggio  ?? 0) === 1)
+        return okC && okCA && okV && okM
+      }
+      const usedMarche = new Set(children.map(c => c.marca))
+      return !listini.some(l => l.caratteristica === 1 && l.categoria === a.tipo_prodotto && !usedMarche.has(l.produttore))
+    })
+  }, [articoli, listini])
 
   function openNuovo() {
     setPrefill(null)
@@ -810,15 +1066,18 @@ export default function PreventivoClient({
     setShowForm(true)
   }
 
-  function openCaratteristica(artId: number) {
+  function openCaratteristica(artId: number, marcaPrefill?: string, gap?: 'tipo_colore' | 'tipo_colore_acc' | 'tipo_vetro' | 'tipo_montaggio') {
     const art = articoli.find(a => a.id === artId) ?? null
-    setPrefill(null)
+    setPrefill(marcaPrefill ? { marca: marcaPrefill, tipo_prodotto: art?.tipo_prodotto ?? '' } : null)
+    setGapType(gap ?? null)
     setParentId(artId)
     setParentArt(art)
     setShowForm(true)
   }
 
   function handleElimina(art: Articolo) {
+    const label = art.parent_id ? `la caratteristica "${art.modello || art.tipo_prodotto}"` : `l'articolo "${art.modello || art.tipo_prodotto}"`
+    if (!confirm(`Eliminare ${label}?`)) return
     const fd = new FormData()
     fd.set('id',            String(art.id))
     fd.set('preventivo_id', String(preventivo.id))
@@ -828,8 +1087,18 @@ export default function PreventivoClient({
     })
   }
 
+  function handleModifica() {
+    const fd = new FormData()
+    fd.set('preventivo_id', String(preventivo.id))
+    startModifica(async () => {
+      const res = await modificaPreventivo(null, fd)
+      if (!res.ok) { alert('Errore: ' + res.error); return }
+      router.push(`/clienti/preventivi/${res.cloneId}`)
+    })
+  }
+
   function handleInvia() {
-    if (!confirm('Inviare il preventivo al cliente? Questo preventivo sarà annullato e verrà creata una copia in stato "inviato".')) return
+    if (!confirm('Inviare il preventivo al cliente?')) return
     const fd = new FormData()
     fd.set('preventivo_id', String(preventivo.id))
     setInviaError('')
@@ -872,25 +1141,35 @@ export default function PreventivoClient({
 
 
   const thS: React.CSSProperties = {
-    padding: '8px 12px', fontSize: 11, fontWeight: 600, color: '#888',
-    textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.05em',
-    background: '#fafafa', borderBottom: '1px solid #e8e8e8', whiteSpace: 'nowrap',
+    padding: '8px 8px', fontSize: 13, fontWeight: 700, color: '#1a1a1a',
+    textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.06em',
+    background: '#fff', borderBottom: '1px solid #c8960c', whiteSpace: 'nowrap',
+    fontFamily: 'monospace',
   }
   const tdS: React.CSSProperties = {
-    padding: '9px 12px', fontSize: 13, color: '#333',
-    borderBottom: '1px solid #f0f0f0', verticalAlign: 'middle',
+    padding: '2px 8px', fontSize: 12, color: '#333',
+    borderBottom: '1px solid #c8960c', verticalAlign: 'middle',
+    overflow: 'hidden', wordBreak: 'break-word', fontFamily: 'monospace',
+  }
+
+  function renderPrezzo(value: number) {
+    const s = fmt(value)
+    const idx = s.lastIndexOf(',')
+    return (
+      <div style={{ display: 'flex', alignItems: 'baseline', fontFamily: 'monospace', fontSize: 12 }}>
+        <span style={{ flex: 1, textAlign: 'right' }}>{s.slice(0, idx)}</span>
+        <span>{s.slice(idx)}</span>
+      </div>
+    )
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
 
-      {/* Breadcrumb + header */}
+      {/* Header */}
       <div>
-        <a href={isStaff ? '/clienti/preventivi' : '/area-clienti/preventivi'} style={{ fontSize: 13, color: '#2b6cb0', textDecoration: 'none' }}>
-          ← Preventivi
-        </a>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 8, flexWrap: 'wrap' }}>
-          <h2 style={{ margin: 0, fontSize: 22, fontWeight: 700 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+          <h2 className="effetto-3d" style={{ margin: 0, fontSize: 22, fontWeight: 700 }}>
             Preventivo {preventivo.numero || `#${preventivo.id}`}
           </h2>
           <span style={{
@@ -898,16 +1177,13 @@ export default function PreventivoClient({
             borderBottom: `3px solid ${STATO_COLORS[statoLocale] ?? '#888'}`,
             paddingBottom: 1, textTransform: 'uppercase', letterSpacing: '0.06em',
           }}>
-            {statoLocale}
+            {statoLocale === 'bozza' ? 'provvisorio' : statoLocale}
           </span>
         </div>
-        <p style={{ color: '#000', fontSize: 13, margin: '4px 0 0' }}>
-          {preventivo.descrizione} — {preventivo.data}
-        </p>
       </div>
 
-      {/* Descrizione e note */}
-      <DatiPreventivo preventivo={preventivo} readOnly={!isStaff && preventivo.stato !== 'bozza'} />
+      {/* Riferimento e note */}
+      <DatiPreventivo preventivo={preventivo} readOnly={!isStaff && preventivo.stato !== 'bozza'} isStaff={isStaff} />
 
       {/* Selettore cliente — solo staff */}
       {isStaff && (
@@ -919,13 +1195,13 @@ export default function PreventivoClient({
       )}
 
       {/* Pulsanti azione */}
-      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-        {(preventivo.stato === 'bozza' || (isStaff && preventivo.stato === 'richiesto')) && (
+      <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 8, padding: '12px 16px', display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+        {(preventivo.stato === 'bozza' || (isStaff && preventivo.stato === 'da inviare')) && (
           <>
             <button
               onClick={openNuovo}
               className="btn-green"
-              style={{ padding: '9px 20px', fontSize: 13, fontWeight: 700 }}
+              style={{ flex: 1, minWidth: 'max-content', height: 42, padding: '0 20px', fontSize: 13, fontWeight: 700, whiteSpace: 'nowrap', borderRadius: 21 }}
             >
               + Aggiungi articolo
             </button>
@@ -934,49 +1210,62 @@ export default function PreventivoClient({
               <button
                 onClick={openTipoPrecedente}
                 className="btn-green"
-                style={{ padding: '9px 20px', fontSize: 13, fontWeight: 600 }}
+                style={{ flex: 1, minWidth: 'max-content', height: 42, padding: '0 20px', fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap', borderRadius: 21 }}
               >
-                + Articolo del tipo precedente
-              </button>
-            )}
-            {lastArticolo && (
-              <button
-                onClick={() => openCaratteristica(lastArticolo.id)}
-                className="btn-green"
-                style={{ padding: '9px 20px', fontSize: 13, fontWeight: 600 }}
-              >
-                + Caratteristica dell&apos;articolo precedente
+                + Ripeti articolo
               </button>
             )}
           </>
         )}
 
-        <a
-          href={`/area-clienti/preventivi/${preventivo.id}/stampa`}
-          className="btn-black"
-          style={{
-            padding: '9px 20px', fontSize: 13, fontWeight: 600, textDecoration: 'none', display: 'inline-block',
-          }}
-        >
-          Stampa / PDF
-        </a>
+        {tuttiSanati ? (
+          <a
+            href={stampaHref ?? `/area-clienti/preventivi/${preventivo.id}/stampa`}
+            className="btn-black"
+            style={{ flex: 1, minWidth: 'max-content', height: 42, padding: '0 20px', fontSize: 13, fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', whiteSpace: 'nowrap', borderRadius: 21 }}
+          >
+            Stampa / PDF
+          </a>
+        ) : (
+          <span
+            className="btn-gray"
+            style={{ flex: 1, minWidth: 'max-content', height: 42, padding: '0 20px', fontSize: 13, fontWeight: 600, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'not-allowed', opacity: 0.5, whiteSpace: 'nowrap', borderRadius: 21 }}
+            title="Completa tutte le caratteristiche prima di stampare"
+          >
+            Stampa / PDF
+          </span>
+        )}
 
         {!isStaff && preventivo.stato === 'bozza' && (
           <button
             onClick={() => setShowInoltra(true)}
-            className="btn-black"
-            style={{ padding: '0 22px', fontSize: 13, fontWeight: 700, fontFamily: 'inherit' }}
+            disabled={!tuttiSanati}
+            className={!tuttiSanati ? 'btn-gray' : 'btn-black'}
+            style={{ flex: 1, minWidth: 'max-content', height: 42, padding: '0 22px', fontSize: 13, fontWeight: 700, fontFamily: 'inherit', opacity: !tuttiSanati ? 0.5 : 1, cursor: !tuttiSanati ? 'not-allowed' : 'pointer', whiteSpace: 'nowrap', borderRadius: 21 }}
+            title={!tuttiSanati ? 'Completa tutte le caratteristiche prima di inviare' : undefined}
           >
-            <span className="animato">Inoltra richiesta</span>
+            <span className={tuttiSanati ? 'animato' : ''}>Inoltra richiesta</span>
           </button>
         )}
 
-        {isStaff && (preventivo.stato === 'bozza' || preventivo.stato === 'richiesto') && (
+        {isStaff && preventivo.stato === 'richiesto' && (
+          <button
+            onClick={handleModifica}
+            disabled={modificaPending}
+            className={modificaPending ? 'btn-gray' : 'btn-black'}
+            style={{ flex: 1, minWidth: 'max-content', height: 42, padding: '0 22px', fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', borderRadius: 21 }}
+          >
+            {modificaPending ? 'Preparazione…' : 'Modifica'}
+          </button>
+        )}
+
+        {isStaff && (preventivo.stato === 'bozza' || preventivo.stato === 'da inviare') && (
           <button
             onClick={handleInvia}
-            disabled={inviaPending}
-            className={inviaPending ? 'btn-gray' : 'btn-green'}
-            style={{ padding: '0 22px', fontSize: 13, fontWeight: 700, fontFamily: 'inherit' }}
+            disabled={inviaPending || !tuttiSanati}
+            className={inviaPending || !tuttiSanati ? 'btn-gray' : 'btn-green'}
+            style={{ flex: 1, minWidth: 'max-content', height: 42, padding: '0 22px', fontSize: 13, fontWeight: 700, fontFamily: 'inherit', opacity: !tuttiSanati ? 0.5 : 1, cursor: !tuttiSanati ? 'not-allowed' : 'pointer', whiteSpace: 'nowrap', borderRadius: 21 }}
+            title={!tuttiSanati ? 'Completa tutte le caratteristiche prima di inviare' : undefined}
           >
             {inviaPending ? 'Invio…' : 'Invia al cliente'}
           </button>
@@ -988,7 +1277,7 @@ export default function PreventivoClient({
               onClick={handleAccetta}
               disabled={accettaPending}
               className={accettaPending ? 'btn-gray' : 'btn-green'}
-              style={{ padding: '0 22px', fontSize: 13, fontWeight: 700, fontFamily: 'inherit' }}
+              style={{ flex: 1, minWidth: 'max-content', height: 42, padding: '0 22px', fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', borderRadius: 21 }}
             >
               {accettaPending ? '…' : 'Accetta'}
             </button>
@@ -996,7 +1285,7 @@ export default function PreventivoClient({
               onClick={handleRifiuta}
               disabled={rifiutaPending}
               className={rifiutaPending ? 'btn-gray' : 'btn-red'}
-              style={{ padding: '0 22px', fontSize: 13, fontWeight: 700, fontFamily: 'inherit' }}
+              style={{ flex: 1, minWidth: 'max-content', height: 42, padding: '0 22px', fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', borderRadius: 21 }}
             >
               {rifiutaPending ? '…' : 'Rifiuta'}
             </button>
@@ -1008,7 +1297,7 @@ export default function PreventivoClient({
             onClick={handleAnnulla}
             disabled={annullaPending}
             className={annullaPending ? 'btn-gray' : 'btn-red'}
-            style={{ padding: '0 22px', fontSize: 13, fontWeight: 700, fontFamily: 'inherit' }}
+            style={{ flex: 1, minWidth: 'max-content', height: 42, padding: '0 22px', fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', borderRadius: 21 }}
           >
             {annullaPending ? '…' : 'Annulla preventivo'}
           </button>
@@ -1021,155 +1310,358 @@ export default function PreventivoClient({
         </div>
       )}
 
-      {/* Totale corrente */}
-      {importo > 0 && (() => {
-        const subtotale = articoli.reduce((s, a) => s + a.prezzo_totale, 0)
-        const scontoCliPct = preventivo.sconto_cliente_pct ?? 0
-        const scontoAmt = Math.round(subtotale * scontoCliPct / 100 * 100) / 100
-        return (
-          <div style={{ background: '#f7f9fc', border: '1px solid #dde3ed', borderRadius: 8, padding: '12px 20px' }}>
-            {scontoCliPct > 0 ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <span style={{ fontSize: 13, color: '#555', minWidth: 200 }}>Subtotale (escluso IVA):</span>
-                  <span style={{ fontSize: 15, color: '#444' }}>€ {subtotale.toFixed(2)}</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <span style={{ fontSize: 13, color: '#e65100', minWidth: 200 }}>{scontoCliPct === 5 ? `Sconto di benvenuto (5%):` : `Sconto riservato al cliente (${scontoCliPct}%):`}</span>
-                  <span style={{ fontSize: 15, color: '#e65100' }}>− € {scontoAmt.toFixed(2)}</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, borderTop: '1px solid #dde3ed', paddingTop: 6, marginTop: 2 }}>
-                  <span style={{ fontSize: 13, color: '#555', minWidth: 200, fontWeight: 600 }}>Importo preventivo:</span>
-                  <span style={{ fontSize: 20, fontWeight: 700, color: '#1a4a8a' }}>€ {importo.toFixed(2)}</span>
-                </div>
-              </div>
-            ) : (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <span style={{ fontSize: 13, color: '#555' }}>Importo preventivo:</span>
-                <span style={{ fontSize: 20, fontWeight: 700, color: '#1a4a8a' }}>€ {importo.toFixed(2)}</span>
-              </div>
-            )}
-            {isStaff && <ScontoClienteEditor preventivoId={preventivo.id} currentPct={scontoCliPct} />}
-          </div>
-        )
-      })()}
-
       {/* Tabella articoli */}
       {articoli.length === 0 ? (
         <p style={{ color: '#000', fontSize: 14 }}>
           Nessun articolo aggiunto. Usa «Aggiungi articolo» per iniziare.
         </p>
-      ) : (
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff', border: '1px solid #e8e8e8', borderRadius: 8 }}>
-            <thead>
-              <tr>
-                <th style={thS}>#</th>
-                <th style={thS}>Tipo</th>
-                <th style={thS}>Marca</th>
-                <th style={thS}>Modello</th>
-                <th style={thS}>Colore</th>
-                <th style={thS}>Vetro</th>
-                <th style={thS}>H×L (cm)</th>
-                <th style={{ ...thS, textAlign: 'center' }}>Ante</th>
-                <th style={{ ...thS, textAlign: 'center' }}>Qtà</th>
-                <th style={{ ...thS, textAlign: 'right' }}>Prezzo</th>
-                <th style={thS}></th>
-              </tr>
-            </thead>
-            <tbody>
-              {(() => {
-                const roots = articoli.filter(a => !a.parent_id)
-                const childrenOf = (id: number) => articoli.filter(a => a.parent_id === id)
-                const canEdit = preventivo.stato === 'bozza' || preventivo.stato === 'richiesto'
+      ) : (() => {
+        const roots = articoli.filter(a => !a.parent_id)
+        const childrenOf = (id: number) => articoli.filter(a => a.parent_id === id)
+        const canEdit = preventivo.stato === 'bozza' || preventivo.stato === 'richiesto'
 
-                function renderRow(a: Articolo, label: string | number, isChild: boolean) {
-                  const h = a.altezza_cm / 100
-                  const l = a.larghezza_cm / 100
-                  const q = a.quantita
-                  const pb = a.prezzo_base
-                  let prezzoBase = 0
-                  if (a.unita === 'm²')      prezzoBase = Math.round(pb * h * l * q * 100) / 100
-                  else if (a.unita === 'ml') prezzoBase = Math.round(pb * l * q * 100) / 100
-                  else                       prezzoBase = Math.round(pb * q * 100) / 100
+        function childTypeOrder(child: Articolo): number {
+          const l = listini.find(li => li.id === child.listino_id)
+          if ((l?.richiede_tipo_colore     ?? 0) === 1) return 0
+          if ((l?.richiede_tipo_colore_acc ?? 0) === 1) return 1
+          if ((l?.richiede_tipo_vetro      ?? 0) === 1) return 2
+          if ((l?.richiede_tipo_montaggio  ?? 0) === 1) return 3
+          return 4
+        }
+        const groups: Articolo[][] = roots.map(root => {
+          const kids = childrenOf(root.id).slice().sort((a, b) => childTypeOrder(a) - childTypeOrder(b))
+          return [root, ...kids]
+        })
 
-                  const rowStyle: React.CSSProperties = isChild
-                    ? { background: '#f5f8ff', borderLeft: '3px solid #c3d4f0' }
-                    : {}
-                  return (
-                    <tr key={a.id} style={rowStyle}>
-                      <td style={{ ...tdS, color: '#aaa', width: 32, paddingRight: 4 }}>
-                        {isChild ? '' : label}
-                      </td>
-                      <td style={{ ...tdS, paddingLeft: isChild ? 48 : 12 }}>
-                        {isChild && (
-                          <span style={{ color: '#b0bec5', fontWeight: 700, marginRight: 6, fontSize: 14 }}>└</span>
-                        )}
-                        {a.tipo_prodotto}
-                      </td>
-                      <td style={tdS}>{a.marca || '—'}</td>
-                      <td style={{ ...tdS, maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={a.modello}>
-                        {a.modello || '—'}
-                      </td>
-                      <td style={tdS}>{a.colore || '—'}</td>
-                      <td style={tdS}>{a.tipo_vetro || '—'}</td>
-                      <td style={{ ...tdS, whiteSpace: 'nowrap' }}>
-                        {a.altezza_cm > 0 ? `${a.altezza_cm}×${a.larghezza_cm}` : '—'}
-                      </td>
-                      <td style={{ ...tdS, textAlign: 'center' }}>{a.n_ante || '—'}</td>
-                      <td style={{ ...tdS, textAlign: 'center' }}>{a.quantita || '—'}</td>
-                      <td style={{ ...tdS, textAlign: 'right', whiteSpace: 'nowrap' }}>
-                        {a.sconto_articolo_pct !== 0 ? (
-                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1 }}>
-                            {(isChild ? a.prezzo_pre_sconto : prezzoBase) > 0 && <span style={{ color: '#aaa', fontSize: 11, textDecoration: 'line-through' }}>€ {(isChild ? a.prezzo_pre_sconto : prezzoBase).toFixed(2)}</span>}
-                            <span style={{ color: a.sconto_articolo_pct < 0 ? '#1565c0' : '#e65100', fontSize: 11 }}>
-                              {a.sconto_articolo_pct < 0 ? `Magg. +${Math.abs(a.sconto_articolo_pct)}%` : `Promo −${a.sconto_articolo_pct}%`}
-                            </span>
-                            <span style={{ fontWeight: 700, fontSize: 13 }}>
-                              {a.prezzo_totale < 0
-                                ? `−€ ${Math.abs(a.prezzo_totale).toFixed(2)}`
-                                : `€ ${a.prezzo_totale.toFixed(2)}`}
-                            </span>
-                          </div>
-                        ) : (
-                          <span style={{ fontWeight: 600, color: isChild && a.prezzo_totale < 0 ? '#c44' : 'inherit' }}>
-                            {a.prezzo_totale < 0
-                              ? `−€ ${Math.abs(a.prezzo_totale).toFixed(2)}`
-                              : a.prezzo_totale > 0
-                                ? `${isChild ? '+' : ''}€ ${a.prezzo_totale.toFixed(2)}`
-                                : '—'}
-                          </span>
-                        )}
-                      </td>
-                      <td style={{ ...tdS, whiteSpace: 'nowrap' }}>
-                        {isStaff && canEdit && (
-                          <button onClick={() => setEditArticolo(a)} style={{ background: 'none', border: 'none', color: '#2b6cb0', fontSize: 15, cursor: 'pointer', padding: '2px 6px' }} title="Modifica articolo">✎</button>
-                        )}
-                        {canEdit && !isChild && (
-                          <button onClick={() => openCaratteristica(a.id)} style={{ background: 'none', border: 'none', color: '#2b6cb0', fontSize: 16, fontWeight: 700, cursor: 'pointer', padding: '2px 6px' }} title="Aggiungi caratteristica">+</button>
-                        )}
-                        {(preventivo.stato === 'bozza' || (isStaff && preventivo.stato === 'richiesto')) && (
-                          <button onClick={() => handleElimina(a)} disabled={delPending} style={{ background: 'none', border: 'none', color: '#c00', fontSize: 16, cursor: 'pointer', padding: '2px 6px' }} title="Elimina articolo">✕</button>
-                        )}
-                      </td>
+        const catGroups: { key: string; label: string; groups: Articolo[][] }[] = []
+        for (const group of groups) {
+          const root = group[0]
+          const serie = listini.find(l => l.id === root.listino_id)?.serie ?? ''
+          const key = `${root.tipo_prodotto}||${root.marca}||${serie}`
+          let cg = catGroups.find(c => c.key === key)
+          if (!cg) {
+            cg = { key, label: [root.tipo_prodotto, root.marca, serie].filter(Boolean).join(' · '), groups: [] }
+            catGroups.push(cg)
+          }
+          cg.groups.push(group)
+        }
+
+        let globalIdx = 0
+        return (
+          <div className="carrello-overflow" style={{ overflowX: 'auto' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, width: '100%' }}>
+            {catGroups.map(cg => (
+              <div key={cg.key} className="class_silver_D_safe" style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 8, overflow: 'hidden', width: '100%', boxSizing: 'border-box' }}>
+                <div style={{ padding: '6px 14px', background: '#fff', borderBottom: '1px solid #c8960c', fontSize: 12, fontWeight: 700, color: '#7a6000', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                  {cg.label}
+                </div>
+                <table className="carrello-table" style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
+                  <colgroup>
+                    <col style={{ width: 58 }} />
+                    <col style={{ width: 72 }} />
+                    <col />
+                    <col style={{ width: 80 }} />
+                    <col style={{ width: 58 }} />
+                  </colgroup>
+                  <thead>
+                    <tr>
+                      <th style={{ ...thS, textAlign: 'center' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="10" cy="18" r="2" fill="currentColor" stroke="none"/></svg>
+                        </div>
+                      </th>
+                      <th style={{ ...thS, textAlign: 'center' }}>Q.tà<br/>Rif.</th>
+                      <th style={thS}>Articolo</th>
+                      <th style={{ ...thS, textAlign: 'center' }}>Prezzo<br/>€</th>
+                      <th style={{ ...thS, textAlign: 'center' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                          <span style={{ fontSize: 14, display: 'inline-block', transform: 'rotate(135deg)', lineHeight: 1 }}>✏</span>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        </div>
+                      </th>
                     </tr>
-                  )
-                }
+                  </thead>
+                  <tbody>
+                    {cg.groups.map((group, groupIdx) => {
+                      globalIdx++
+                      const gi = globalIdx - 1
+                      const root = group[0]
+                      const children = group.slice(1)
+                      const isExpanded = expandedIds.has(root.id)
+                      const rootListino = listini.find(l => l.id === root.listino_id)
+                      const needsC  = (rootListino?.richiede_tipo_colore     ?? 0) === 1
+                      const needsCA = (rootListino?.richiede_tipo_colore_acc ?? 0) === 1
+                      const needsV  = (rootListino?.richiede_tipo_vetro      ?? 0) === 1
+                      const needsM  = (rootListino?.richiede_tipo_montaggio  ?? 0) === 1
+                      const useTypeGaps = needsC || needsCA || needsV || needsM
 
-                let idx = 0
-                return roots.flatMap(a => {
-                  idx++
-                  return [renderRow(a, idx, false), ...childrenOf(a.id).map(c => renderRow(c, idx, true))]
-                })
-              })()}
-            </tbody>
-          </table>
-        </div>
-      )}
+                      // calcola lacune
+                      const cl = children.map(c => listini.find(l => l.id === c.listino_id))
+                      const hasLacune = useTypeGaps
+                        ? (
+                          (needsC  && !cl.some(l => (l?.richiede_tipo_colore     ?? 0) === 1)) ||
+                          (needsCA && !cl.some(l => (l?.richiede_tipo_colore_acc ?? 0) === 1)) ||
+                          (needsV  && !cl.some(l => (l?.richiede_tipo_vetro      ?? 0) === 1)) ||
+                          (needsM  && !cl.some(l => (l?.richiede_tipo_montaggio  ?? 0) === 1))
+                        )
+                        : canEdit && [...new Set(listini.filter(l => l.caratteristica === 1 && l.categoria === root.tipo_prodotto && l.produttore).map(l => l.produttore))].some(p => !children.some(c => c.marca === p))
+
+                      const hasDetails = children.length > 0 || hasLacune
+                      const expandBgRoot = isExpanded ? (hasLacune ? '#f5b8b4' : '#b8d9b8') : undefined
+                      const expandBg    = isExpanded ? (hasLacune ? '#fdecea' : '#d6ecd6') : undefined
+
+                      // gap rows
+                      let gapRows: React.ReactNode
+                      if (canEdit && useTypeGaps) {
+                        const showC  = needsC  && !cl.some(l => (l?.richiede_tipo_colore     ?? 0) === 1)
+                        const showCA = needsCA && !cl.some(l => (l?.richiede_tipo_colore_acc ?? 0) === 1)
+                        const showV  = needsV  && !cl.some(l => (l?.richiede_tipo_vetro      ?? 0) === 1)
+                        const showM  = needsM  && !cl.some(l => (l?.richiede_tipo_montaggio  ?? 0) === 1)
+                        gapRows = (showC || showCA || showV || showM) ? (
+                          <tr style={{ background: expandBg ?? 'transparent' }}>
+                            <td colSpan={5} style={{ padding: 8, borderBottom: '1px solid #c8960c', borderRight: 'none', textAlign: 'left', background: expandBg }}>
+                              <div style={{ display: 'flex', gap: 8 }}>
+                                {showC  && <button onClick={() => openCaratteristica(root.id, undefined, 'tipo_colore')}     className="btn-green" style={{ flex: 1, height: 42, padding: '0 10px', borderRadius: 21, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', border: 'none', cursor: 'pointer' }}>+ Colore</button>}
+                                {showCA && <button onClick={() => openCaratteristica(root.id, undefined, 'tipo_colore_acc')} className="btn-green" style={{ flex: 1, height: 42, padding: '0 10px', borderRadius: 21, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', border: 'none', cursor: 'pointer' }}>+ Accessori</button>}
+                                {showV  && <button onClick={() => openCaratteristica(root.id, undefined, 'tipo_vetro')}      className="btn-green" style={{ flex: 1, height: 42, padding: '0 10px', borderRadius: 21, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', border: 'none', cursor: 'pointer' }}>+ Vetro</button>}
+                                {showM  && <button onClick={() => openCaratteristica(root.id, undefined, 'tipo_montaggio')}  className="btn-green" style={{ flex: 1, height: 42, padding: '0 10px', borderRadius: 21, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', border: 'none', cursor: 'pointer' }}>+ Montaggio</button>}
+                              </div>
+                            </td>
+                          </tr>
+                        ) : null
+                      } else {
+                        const usedMarche = new Set(children.map(c => c.marca))
+                        const gapProduttori = canEdit
+                          ? ([...new Set(listini.filter(l => l.caratteristica === 1 && l.categoria === root.tipo_prodotto && l.produttore && !usedMarche.has(l.produttore)).map(l => l.produttore))] as string[])
+                          : [] as string[]
+                        gapRows = gapProduttori.map(prod => (
+                          <tr key={`gap-${root.id}-${prod}`} style={{ background: expandBg ?? 'transparent' }}>
+                            <td style={{ padding: '4px', textAlign: 'center', borderBottom: '1px solid #f0f0f0' }}>
+                              <button onClick={() => openCaratteristica(root.id, prod)} className="btn-green"
+                                style={{ width: 42, height: 42, padding: 0, borderRadius: 21, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <span style={{ position: 'relative', zIndex: 1, fontSize: 22, lineHeight: 1, fontWeight: 300 }}>+</span>
+                              </button>
+                            </td>
+                            <td colSpan={4} style={{ padding: '4px 8px', borderBottom: '1px solid #f0f0f0' }}>
+                              <span style={{ fontSize: 11, color: '#8b0000', background: '#fff', border: '1px solid #e53e3e', borderRadius: 4, padding: '3px 8px', display: 'inline-block' }}>
+                                {root.tipo_prodotto} — {prod}
+                              </span>
+                            </td>
+                          </tr>
+                        ))
+                      }
+
+                      return (
+                        <React.Fragment key={root.id}>
+                          {/* ── Riga articolo principale ── */}
+                          <tr style={{ background: expandBgRoot ?? '#fff', borderTop: groupIdx > 0 ? '1px solid #c8960c' : undefined }}>
+                            {/* Col 1: eye + expand */}
+                            <td style={{ ...tdS, textAlign: 'center', padding: '4px 0' }}>
+                              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                                <button onClick={() => setPreviewArt(root)} disabled={hasLacune || (!root.abbr && !root.listino_foto_url)} className={(hasLacune || (!root.abbr && !root.listino_foto_url)) ? 'btn-gray' : 'btn-black'} title="Anteprima infisso"
+                                  style={{ width: 42, height: 42, padding: 0, borderRadius: 21, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                                  <svg style={{ position: 'relative', zIndex: 1 }} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                </button>
+                                {hasDetails && (
+                                  <button type="button" onClick={() => toggleExpand(root.id)}
+                                    className={hasLacune ? 'btn-red' : 'btn-black'}
+                                    style={{ width: 42, height: 42, padding: 0, borderRadius: 21, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
+                                    <svg style={{ position: 'relative', zIndex: 1 }} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="10" cy="18" r="2" fill="currentColor" stroke="none"/></svg>
+                                    <span style={{ position: 'relative', zIndex: 1, fontSize: 10 }}>{isExpanded ? '▴' : '▾'}</span>
+                                  </button>
+                                )}
+                              </div>
+                            </td>
+                            {/* Col 2: N°qty / Rif# */}
+                            <td style={{ ...tdS, padding: 0, height: 1 }}>
+                              <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid #c8960c', fontSize: 12, color: '#1a1a1a', padding: '0 4px' }}>
+                                  N°&nbsp;{root.quantita}
+                                </div>
+                                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, color: '#1a1a1a', padding: '0 4px' }}>
+                                  Rif#{String(gi + 1).padStart(3, '0')}
+                                </div>
+                              </div>
+                            </td>
+                            {/* Col 3: Articolo */}
+                            <td style={{ ...tdS, paddingLeft: 8 }}>
+                              {root.modello || '—'}
+                              {(() => {
+                                const parts: string[] = []
+                                if (root.altezza_cm > 0 && root.larghezza_cm > 0) parts.push(`${root.larghezza_cm}×${root.altezza_cm} cm`)
+                                if (root.n_ante > 1) parts.push(`${root.n_ante} ante`)
+                                if (root.colore) parts.push(root.colore)
+                                parts.push(`€ ${fmt(Number(root.prezzo_base))}/${root.unita}`)
+                                return <div style={{ fontSize: 10, color: '#555', marginTop: 1 }}>{parts.join(' · ')}</div>
+                              })()}
+                              {root.note && <div style={{ fontSize: 10, color: '#555', marginTop: 1, fontStyle: 'italic' }}>{root.note}</div>}
+                            </td>
+                            {/* Col 4: Prezzo */}
+                            <td style={{ ...tdS, whiteSpace: 'nowrap', padding: '2px 0 2px 4px' }}>
+                              {isExpanded ? (
+                                <>
+                                  {root.sconto_articolo_pct !== 0 && (
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0, fontFamily: 'monospace' }}>
+                                      {root.prezzo_pre_sconto > 0 && (
+                                        <span style={{ color: '#aaa', fontSize: 10, textDecoration: 'line-through' }}>{fmt(root.prezzo_pre_sconto)}</span>
+                                      )}
+                                      <span style={{ fontSize: 10, color: root.sconto_articolo_pct < 0 ? '#1565c0' : '#e65100' }}>
+                                        {root.sconto_articolo_pct < 0 ? `+${Math.abs(root.sconto_articolo_pct)}%` : `−${root.sconto_articolo_pct}%`}
+                                      </span>
+                                    </div>
+                                  )}
+                                  {renderPrezzo(root.prezzo_totale)}
+                                </>
+                              ) : (() => {
+                                const lordo   = root.prezzo_pre_sconto + children.reduce((s, c) => s + c.prezzo_pre_sconto, 0)
+                                const netto   = root.prezzo_totale     + children.reduce((s, c) => s + c.prezzo_totale,     0)
+                                const hasDiff = Math.abs(lordo - netto) >= 0.01
+                                return (
+                                  <>
+                                    {hasDiff && (
+                                      <div style={{ display: 'flex', justifyContent: 'flex-end', fontFamily: 'monospace' }}>
+                                        <span style={{ color: '#aaa', fontSize: 10, textDecoration: 'line-through' }}>{fmt(lordo)}</span>
+                                      </div>
+                                    )}
+                                    {renderPrezzo(netto)}
+                                  </>
+                                )
+                              })()}
+                            </td>
+                            {/* Col 5: ✏ ✕ */}
+                            <td style={{ ...tdS, padding: '4px 0', textAlign: 'center' }}>
+                              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                                {canEdit && (
+                                  <button onClick={() => setEditArticolo(root)} className="btn-black" title="Modifica"
+                                    style={{ width: 42, height: 42, padding: 0, borderRadius: 21, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <span style={{ position: 'relative', zIndex: 1, fontSize: 13, display: 'inline-block', transform: 'rotate(135deg)' }}>✏</span>
+                                  </button>
+                                )}
+                                {canEdit && (
+                                  <button onClick={() => handleElimina(root)} disabled={delPending} className="btn-red"
+                                    style={{ width: 42, height: 42, padding: 0, borderRadius: 21, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <span style={{ position: 'relative', zIndex: 1, fontSize: 13 }}>✕</span>
+                                  </button>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+
+                          {/* ── Righe caratteristiche figlie (espanse) ── */}
+                          {isExpanded && children.map(child => (
+                            <tr key={child.id} style={{ background: expandBg ?? 'rgba(0,0,0,0.04)' }}>
+                              {/* Col 1: foto */}
+                              <td style={{ ...tdS, padding: 4, textAlign: 'center' }}>
+                                {child.listino_foto_url && (
+                                  // eslint-disable-next-line @next/next/no-img-element
+                                  <img
+                                    src={child.listino_foto_url.startsWith('/') ? child.listino_foto_url : `/${child.listino_foto_url}`}
+                                    alt=""
+                                    style={{ width: 42, height: 42, objectFit: 'cover', borderRadius: 4, display: 'block', margin: '0 auto' }}
+                                  />
+                                )}
+                              </td>
+                              {/* Col 2: tipo caratteristica */}
+                              <td style={{ ...tdS, textAlign: 'center', whiteSpace: 'nowrap', padding: '2px 4px' }}>
+                                {(() => {
+                                  const l = listini.find(li => li.id === child.listino_id)
+                                  return (l?.richiede_tipo_colore     ?? 0) === 1 ? 'Colore'
+                                    : (l?.richiede_tipo_colore_acc ?? 0) === 1 ? 'Accessori'
+                                    : (l?.richiede_tipo_vetro      ?? 0) === 1 ? 'Vetro'
+                                    : (l?.richiede_tipo_montaggio  ?? 0) === 1 ? 'Montaggio'
+                                    : ''
+                                })()}
+                              </td>
+                              {/* Col 3: descrizione */}
+                              <td style={{ ...tdS, paddingLeft: 12 }}>
+                                <span style={{ fontSize: 11, color: '#777' }}>↳</span>{' '}
+                                {child.modello || child.tipo_prodotto || '—'}
+                                {child.note && <div style={{ fontSize: 10, color: '#555', marginTop: 1, fontStyle: 'italic' }}>{child.note}</div>}
+                              </td>
+                              {/* Col 4: contributo prezzo */}
+                              <td style={{ ...tdS, whiteSpace: 'nowrap', padding: '2px 0 2px 4px' }}>
+                                {child.sconto_articolo_pct !== 0 && (
+                                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0, fontFamily: 'monospace' }}>
+                                    {child.prezzo_pre_sconto !== 0 && (
+                                      <span style={{ color: '#aaa', fontSize: 10, textDecoration: 'line-through' }}>{fmt(Math.abs(child.prezzo_pre_sconto))}</span>
+                                    )}
+                                    <span style={{ fontSize: 10, color: child.sconto_articolo_pct < 0 ? '#1565c0' : '#e65100' }}>
+                                      {child.sconto_articolo_pct < 0 ? `+${Math.abs(child.sconto_articolo_pct)}%` : `−${child.sconto_articolo_pct}%`}
+                                    </span>
+                                  </div>
+                                )}
+                                {renderPrezzo(child.prezzo_totale)}
+                              </td>
+                              {/* Col 5: ✏ ✕ */}
+                              <td style={{ ...tdS, padding: '4px 0', textAlign: 'center' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                                  {isStaff && canEdit && (
+                                    <button onClick={() => setEditArticolo(child)} className="btn-black" title="Modifica"
+                                      style={{ width: 42, height: 42, padding: 0, borderRadius: 21, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                                      <span style={{ position: 'relative', zIndex: 1, fontSize: 13, display: 'inline-block', transform: 'rotate(135deg)' }}>✏</span>
+                                    </button>
+                                  )}
+                                  {canEdit && (
+                                    <button onClick={() => handleElimina(child)} disabled={delPending} className="btn-red"
+                                      style={{ width: 42, height: 42, padding: 0, borderRadius: 21, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                                      <span style={{ position: 'relative', zIndex: 1, fontSize: 13 }}>✕</span>
+                                    </button>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+
+                          {/* ── Gap rows (visibili solo se espanso) ── */}
+                          {isExpanded && gapRows}
+                        </React.Fragment>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            ))}
+          </div>
+          </div>
+        )
+      })()}
+
+      {/* Totale corrente */}
+      {importo > 0 && (() => {
+        const lordo       = articoli.reduce((s, a) => s + a.prezzo_pre_sconto, 0)
+        const subtotale   = articoli.reduce((s, a) => s + a.prezzo_totale, 0)
+        const scontiPromo = Math.round((lordo - subtotale) * 100) / 100
+        const scontoCliPct = preventivo.sconto_cliente_pct ?? 0
+        const scontoCliAmt = Math.round(subtotale * scontoCliPct / 100 * 100) / 100
+        const hasScontiPromo = scontiPromo >= 0.01
+
+        const row = (label: string, value: string, opts?: { color?: string; bold?: boolean; separator?: boolean; large?: boolean }) => (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, ...(opts?.separator ? { borderTop: '1px solid #dde3ed', paddingTop: 6, marginTop: 2 } : {}) }}>
+            <span style={{ fontSize: 13, color: opts?.color ?? '#555', fontWeight: opts?.bold ? 600 : 400, fontFamily: 'monospace' }}>{label}</span>
+            <span style={{ fontSize: opts?.large ? 20 : 15, fontWeight: opts?.bold ? 700 : 400, color: opts?.color ?? '#444', minWidth: 110, textAlign: 'right', fontFamily: 'monospace' }}>{value}</span>
+          </div>
+        )
+
+        return (
+          <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 8, padding: '12px 20px', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
+            {hasScontiPromo && row('Listino (escluso IVA):', `€ ${fmt(lordo)}`)}
+            {hasScontiPromo && row('Sconti promozionali:', `− € ${fmt(scontiPromo)}`, { color: '#e65100' })}
+            {(hasScontiPromo || scontoCliPct > 0) && row('Subtotale:', `€ ${fmt(subtotale)}`, { separator: hasScontiPromo })}
+            {scontoCliPct > 0 && row(
+              scontoCliPct === 5 ? 'Sconto di benvenuto (5%):' : `Sconto riservato al cliente (${scontoCliPct}%):`,
+              `− € ${fmt(scontoCliAmt)}`,
+              { color: '#e65100' }
+            )}
+            {row('Importo preventivo:', `€ ${fmt(importo)}`, { bold: true, large: true, color: '#111', separator: true })}
+            {isStaff && <ScontoClienteEditor preventivoId={preventivo.id} currentPct={scontoCliPct} />}
+          </div>
+        )
+      })()}
 
       {/* Accessori mostrati in tooltip/dettaglio sotto la tabella se presenti */}
       {articoli.some(a => a.accessori) && (
-        <div style={{ fontSize: 12, color: '#888' }}>
+        <div style={{ fontSize: 12, color: '#333' }}>
           <strong>Accessori per articolo:</strong>{' '}
           {articoli.filter(a => a.accessori).map((a, i) => (
             <span key={a.id}>#{i + 1} {a.accessori}{i < articoli.length - 1 ? ' · ' : ''}</span>
@@ -1185,7 +1677,10 @@ export default function PreventivoClient({
           prefill={prefill}
           parentId={parentId}
           parentArt={parentArt}
-          onClose={() => { setShowForm(false); setParentId(null); setParentArt(null) }}
+          existingChildTypes={parentId !== null ? articoli.filter(a => a.parent_id === parentId).map(a => a.marca) : []}
+          gapTypeFilter={gapType}
+          altriParentIds={altriParentIds}
+          onClose={() => { setShowForm(false); setParentId(null); setParentArt(null); setGapType(null) }}
           isStaff={isStaff}
         />
       )}
@@ -1202,8 +1697,58 @@ export default function PreventivoClient({
       {editArticolo && (
         <ModificaArticoloModal
           articolo={editArticolo}
+          parentArt={editArticolo.parent_id !== null ? (articoli.find(a => a.id === editArticolo.parent_id) ?? null) : null}
+          listini={listini}
           onClose={() => setEditArticolo(null)}
+          isStaff={isStaff}
         />
+      )}
+
+      {/* Bottone torna ai preventivi */}
+      <div>
+        <a
+          href={backHref ?? (isStaff ? '/clienti/preventivi' : '/area-clienti/preventivi')}
+          className="btn-black"
+          style={{ height: 42, padding: '0 20px', fontSize: 13, fontWeight: 700, borderRadius: 21, textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
+        >
+          ← Preventivi
+        </a>
+      </div>
+
+      {previewArt && (
+        <div
+          onClick={() => setPreviewArt(null)}
+          onTouchStart={() => setPreviewArt(null)}
+          style={{ position: 'fixed', inset: 0, background: '#fff', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+        >
+          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}>
+            {previewArt.abbr ? (
+              <PreviewInfisso
+                larghezza_cm={previewArt.larghezza_cm || 100}
+                altezza_cm={previewArt.altezza_cm || 150}
+                colore={previewArt.colore || 'Bianco'}
+                descrizione={previewArt.modello}
+                tipo_prodotto={previewArt.tipo_prodotto}
+                n_ante={previewArt.n_ante || 1}
+                abbr={previewArt.abbr}
+                profilo_mm={previewArt.profilo_mm}
+                bar_color={previewArt.bar_color ?? undefined}
+                bar_color_acc={previewArt.bar_color_acc ?? undefined}
+                maxHeight="100vh"
+              />
+            ) : previewArt.listino_foto_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={previewArt.listino_foto_url.startsWith('/') ? previewArt.listino_foto_url : `/${previewArt.listino_foto_url}`}
+                alt={previewArt.modello}
+                style={{ maxWidth: '100%', maxHeight: '100vh', objectFit: 'contain', display: 'block' }}
+              />
+            ) : null}
+          </div>
+          <p style={{ position: 'absolute', bottom: 16, left: 0, right: 0, textAlign: 'center', margin: 0, fontSize: 11, color: '#bbb', fontStyle: 'italic', pointerEvents: 'none' }}>
+            {isTouch ? 'Tocca per chiudere' : 'Clicca per chiudere'}
+          </p>
+        </div>
       )}
     </div>
   )

@@ -17,11 +17,21 @@ interface NavbarProps {
   cartCount?: number
   cartAcquistiCount?: number
   unreadEmailCount?: number
+  unreadAvvisiCount?: number
   clienteAbilitato?: boolean
 }
 
-export default function Navbar({ role, disabledPages = [], rolePermissions = {}, username, registrazioniDisabilitate, bannerAbilitato = false, cartCount = 0, cartAcquistiCount = 0, unreadEmailCount = 0, clienteAbilitato = true }: NavbarProps) {
+export default function Navbar({ role, disabledPages = [], rolePermissions = {}, username, registrazioniDisabilitate, bannerAbilitato = false, cartCount = 0, cartAcquistiCount = 0, unreadEmailCount = 0, unreadAvvisiCount = 0, clienteAbilitato = true }: NavbarProps) {
   const [menuOpen, setMenuOpen]       = useState(false)
+  const [liveAvvisiCount, setLiveAvvisiCount] = useState(unreadAvvisiCount)
+
+  useEffect(() => {
+    function handle(e: Event) {
+      setLiveAvvisiCount((e as CustomEvent<{ count: number }>).detail.count)
+    }
+    window.addEventListener('avvisi-count-changed', handle)
+    return () => window.removeEventListener('avvisi-count-changed', handle)
+  }, [])
   const [sectionOpen, setSectionOpen] = useState(false)
   const [canLeft,  setCanLeft]  = useState(false)
   const [canRight, setCanRight] = useState(false)
@@ -154,7 +164,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
     background: 'none',
     border: 'none',
     cursor: 'pointer',
-    fontFamily: 'inherit',
+    fontFamily: 'monospace',
   })
 
   return (
@@ -235,9 +245,13 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
           })}
 
           {role === 'cliente' && (() => {
-            const allItems = areaClientiPages.filter(p => !disabledPages.includes(p.id))
+            const allowed = rolePermissions['cliente']
+            const allItems = areaClientiPages.filter(p =>
+              !disabledPages.includes(p.id) &&
+              (allowed === undefined || allowed.includes(p.id))
+            )
             const items = clienteAbilitato ? allItems : allItems.filter(p => p.href === '/area-clienti/preventivi')
-            return items.length > 0 ? <><NavSep /><AreaClientiDropdown items={items} isActive={isActive} linkStyle={linkStyle} /></> : null
+            return items.length > 0 ? <><NavSep /><AreaClientiDropdown items={items} isActive={isActive} linkStyle={linkStyle} unreadAvvisiCount={liveAvvisiCount} /></> : null
           })()}
 
           {aiutoPages.filter(p => !disabledPages.includes(p.id)).length > 0 && (
@@ -267,7 +281,8 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
         )}
         </div>{/* fine nav-scroll */}
 
-        {/* Icona carrello + Auth — sempre visibili, non scorrono */}
+        {/* Icone carrello — sempre visibili, non scorrono */}
+        {(cartCount > 0 || cartAcquistiCount > 0) && (
         <div style={{ flexShrink: 0, paddingRight: 4, paddingLeft: 8, borderLeft: '1px solid #e8d89a', display: 'flex', alignItems: 'center', gap: 8 }}>
           {cartCount > 0 && (
           <Link
@@ -277,12 +292,12 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 41, height: 41, marginTop: 1, textDecoration: 'none' }}
           >
             <img src="/images/carrello/carrello-preventivo-t.png" alt="Carrello preventivo" style={{ height: 36, width: 36, display: 'block', objectFit: 'contain' }} />
-            <span className="fs-9" style={{
+            <span style={{
               position: 'absolute', top: 4, right: 1,
               background: '#2b8fcf', color: '#fff', borderRadius: '50%',
-              minWidth: 15, height: 15, fontWeight: 700,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              lineHeight: 1, padding: '0 2px',
+              minWidth: 18, height: 18, fontSize: 11, fontWeight: 700,
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              padding: '0 4px',
             }}>
               {cartCount > 99 ? '99+' : cartCount}
             </span>
@@ -299,16 +314,16 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             <span className="fs-9" style={{
               position: 'absolute', top: 4, right: 1,
               background: '#e65100', color: '#fff', borderRadius: '50%',
-              minWidth: 15, height: 15, fontWeight: 700,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              lineHeight: 1, padding: '0 2px',
+              minWidth: 18, height: 18, fontSize: 11, fontWeight: 700,
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              padding: '0 4px',
             }}>
               {cartAcquistiCount > 99 ? '99+' : cartAcquistiCount}
             </span>
           </Link>
           )}
-          <HeaderAuth username={username} registrazioniDisabilitate={registrazioniDisabilitate} forceDropdown />
         </div>
+        )}
       </div>
 
       {/* ── Mobile bar: hamburger + auth ── */}
@@ -319,9 +334,15 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
           onClick={() => setMenuOpen(o => !o)}
           aria-expanded={menuOpen}
           aria-label={menuOpen ? 'Chiudi menu' : 'Apri menu'}
+          style={{ position: 'relative' }}
         >
           <span className="fs-18" style={{ width: 20, display: 'inline-block', textAlign: 'center' }}>{menuOpen ? '✕' : '☰'}</span>
           Menu
+          {!menuOpen && (unreadEmailCount > 0 || liveAvvisiCount > 0) && (
+            <span style={{ position: 'absolute', top: 4, right: 4, background: '#e53e3e', color: '#fff', borderRadius: '50%', minWidth: 18, height: 18, fontSize: 11, fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>
+              {Math.min(99, unreadEmailCount + liveAvvisiCount)}
+            </span>
+          )}
         </button>
         <div style={{ marginLeft: 'auto', paddingRight: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
           {cartCount > 0 && (
@@ -332,12 +353,12 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 41, height: 41, marginTop: 1, textDecoration: 'none' }}
           >
             <img src="/images/carrello/carrello-preventivo-t.png" alt="Carrello preventivo" style={{ height: 36, width: 36, display: 'block', objectFit: 'contain' }} />
-            <span className="fs-9" style={{
+            <span style={{
               position: 'absolute', top: 4, right: 0,
               background: '#2b8fcf', color: '#fff', borderRadius: '50%',
-              minWidth: 15, height: 15, fontWeight: 700,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              lineHeight: 1, padding: '0 2px',
+              minWidth: 18, height: 18, fontSize: 11, fontWeight: 700,
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              padding: '0 4px',
             }}>
               {cartCount > 99 ? '99+' : cartCount}
             </span>
@@ -351,18 +372,17 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 41, height: 41, marginTop: 1, textDecoration: 'none' }}
           >
             <img src="/images/carrello/carrello-acquisti.png" alt="Carrello acquisti" style={{ height: 46, width: 46, display: 'block', objectFit: 'contain' }} />
-            <span className="fs-9" style={{
+            <span style={{
               position: 'absolute', top: 4, right: 0,
               background: '#e65100', color: '#fff', borderRadius: '50%',
-              minWidth: 15, height: 15, fontWeight: 700,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              lineHeight: 1, padding: '0 2px',
+              minWidth: 18, height: 18, fontSize: 11, fontWeight: 700,
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              padding: '0 4px',
             }}>
               {cartAcquistiCount > 99 ? '99+' : cartAcquistiCount}
             </span>
           </Link>
           )}
-          <HeaderAuth username={username} registrazioniDisabilitate={registrazioniDisabilitate} forceDropdown />
         </div>
       </div>
 
@@ -403,13 +423,18 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
           })}
 
           {role === 'cliente' && (() => {
-            const allItems = areaClientiPages.filter(p => !disabledPages.includes(p.id))
+            const allowed = rolePermissions['cliente']
+            const allItems = areaClientiPages.filter(p =>
+              !disabledPages.includes(p.id) &&
+              (allowed === undefined || allowed.includes(p.id))
+            )
             const items = clienteAbilitato ? allItems : allItems.filter(p => p.href === '/area-clienti/preventivi')
             return items.length > 0 ? (
               <>
                 <div className="nav-mobile-section">Area Personale</div>
                 {items.map(p => (
-                  <MobileLink key={p.id} href={p.href} label={p.label} active={isActive(p.href)} indent />
+                  <MobileLink key={p.id} href={p.href} label={p.label} active={isActive(p.href)} indent
+                    badge={p.href === '/area-clienti/avvisi' ? liveAvvisiCount : 0} />
                 ))}
               </>
             ) : null
@@ -444,16 +469,10 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
 
           {internalItems.length > 0 && (
             <>
-              <div className="nav-mobile-section" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                Area Lavoro
-                {unreadEmailCount > 0 && (
-                  <span style={{ background: '#e53e3e', color: '#fff', borderRadius: '50%', minWidth: 18, height: 18, fontSize: 11, fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>
-                    {unreadEmailCount > 99 ? '99+' : unreadEmailCount}
-                  </span>
-                )}
-              </div>
+              <div className="nav-mobile-section">Area Lavoro</div>
               {internalItems.map(p => (
-                <MobileLink key={p.id} href={p.href} label={p.label} active={isActive(p.href)} indent />
+                <MobileLink key={p.id} href={p.href} label={p.label} active={isActive(p.href)} indent
+                  badge={p.href === '/area-lavoro/email' ? unreadEmailCount : 0} />
               ))}
             </>
           )}
@@ -571,27 +590,8 @@ function InternalDropdown({
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
       <button onClick={() => setOpen(o => !o)} className="nav-link testo-nav-bar" style={{ ...linkStyle('/area-lavoro'), gap: 4, textDecoration: 'none' }}>
         <span className={anyActive ? 'nav-trigger-underline' : undefined}>Area Lavoro</span> {open ? '▴' : '▾'}
-        {unread > 0 && (
-          <span
-            style={{
-              position: 'absolute',
-              top: 6,
-              right: 6,
-              background: '#e53e3e',
-              color: '#fff',
-              borderRadius: '999px',
-              minWidth: 16,
-              height: 16,
-              fontSize: 10,
-              fontWeight: 700,
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '0 3px',
-              textDecoration: 'none',
-              boxShadow: '0 0 0 1px rgba(0,0,0,0.2)',
-            }}
-          >
+        {!open && unread > 0 && (
+          <span style={{ position: 'absolute', top: 6, right: 6, background: '#e53e3e', color: '#fff', borderRadius: '50%', minWidth: 18, height: 18, fontSize: 11, fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>
             {unread > 99 ? '99+' : unread}
           </span>
         )}
@@ -610,9 +610,14 @@ function InternalDropdown({
               href={p.href}
               onClick={() => setOpen(false)}
               className={isActive(p.href) ? 'nav-dropdown-link nav-dropdown-link-active' : 'nav-dropdown-link'}
-              style={{ padding: '7px 10px' }}
+              style={{ padding: '7px 10px', display: 'flex', alignItems: 'center', gap: 6 }}
             >
               <span>{p.label}</span>
+              {p.href === '/area-lavoro/email' && unread > 0 && (
+                <span style={{ background: '#e53e3e', color: '#fff', borderRadius: '50%', minWidth: 18, height: 18, fontSize: 11, fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px', textDecoration: 'none', flexShrink: 0 }}>
+                  {unread > 99 ? '99+' : unread}
+                </span>
+              )}
             </Link>
           ))}
         </div>
@@ -946,14 +951,43 @@ function AreaClientiDropdown({
   items,
   isActive,
   linkStyle,
+  unreadAvvisiCount = 0,
 }: {
   items: NavPage[]
   isActive: (href: string) => boolean
   linkStyle: (href: string) => React.CSSProperties
+  unreadAvvisiCount?: number
 }) {
-  const [open, setOpen] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
-  const alignRef = useDropdownAlign(open)
+  const [open, setOpen]       = useState(false)
+  const [unread, setUnread]   = useState(unreadAvvisiCount)
+  const ref       = useRef<HTMLDivElement>(null)
+  const alignRef  = useDropdownAlign(open)
+  const router    = useRouter()
+  const pathname  = usePathname()
+  const unreadRef = useRef(unreadAvvisiCount)
+
+  useEffect(() => { setUnread(unreadAvvisiCount) }, [unreadAvvisiCount])
+
+  useEffect(() => {
+    async function fetchCount() {
+      try {
+        const res = await fetch('/api/avvisi/unread', { cache: 'no-store' })
+        const data = await res.json() as { count: number }
+        setUnread(data.count)
+        if (data.count > unreadRef.current && pathname === '/area-clienti/avvisi') router.refresh()
+        unreadRef.current = data.count
+      } catch {}
+    }
+    function handleEvent(e: Event) {
+      const count = (e as CustomEvent<{ count: number }>).detail.count
+      setUnread(count)
+      unreadRef.current = count
+    }
+    fetchCount()
+    const id = setInterval(fetchCount, 30_000)
+    window.addEventListener('avvisi-count-changed', handleEvent)
+    return () => { clearInterval(id); window.removeEventListener('avvisi-count-changed', handleEvent) }
+  }, [])
 
   useEffect(() => {
     function handle(e: MouseEvent) {
@@ -967,8 +1001,15 @@ function AreaClientiDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className="nav-link testo-nav-bar" style={{ ...linkStyle('/area-clienti'), gap: 4, color: '#000', textDecoration: anyActive ? 'underline' : 'none', textDecorationThickness: anyActive ? '3px' : undefined, textUnderlineOffset: anyActive ? '4px' : undefined }}>
-        Area Personale {open ? '▴' : '▾'}
+      <button onClick={() => setOpen(o => !o)} className="nav-link testo-nav-bar" style={{ ...linkStyle('/area-clienti'), gap: 4, color: '#000', textDecoration: 'none' }}>
+        <span style={{ textDecoration: anyActive ? 'underline' : 'none', textDecorationThickness: anyActive ? '3px' : undefined, textUnderlineOffset: anyActive ? '4px' : undefined }}>
+          Area Personale {open ? '▴' : '▾'}
+        </span>
+        {!open && unread > 0 && (
+          <span style={{ background: '#e53e3e', color: '#fff', borderRadius: '50%', minWidth: 18, height: 18, fontSize: 11, fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px', flexShrink: 0 }}>
+            {unread > 99 ? '99+' : unread}
+          </span>
+        )}
       </button>
       {open && (
         <div ref={alignRef} style={{
@@ -984,9 +1025,14 @@ function AreaClientiDropdown({
               href={p.href}
               onClick={() => setOpen(false)}
               className={isActive(p.href) ? 'nav-dropdown-link nav-dropdown-link-active' : 'nav-dropdown-link'}
-              style={{ padding: '7px 10px' }}
+              style={{ padding: '7px 10px', display: 'flex', alignItems: 'center', gap: 6 }}
             >
               <span>{p.label}</span>
+              {p.href === '/area-clienti/avvisi' && open && unread > 0 && (
+                <span style={{ background: '#e53e3e', color: '#fff', borderRadius: '50%', minWidth: 18, height: 18, fontSize: 11, fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px', textDecoration: 'none', flexShrink: 0 }}>
+                  {unread > 99 ? '99+' : unread}
+                </span>
+              )}
             </Link>
           ))}
         </div>
@@ -995,14 +1041,19 @@ function AreaClientiDropdown({
   )
 }
 
-function MobileLink({ href, label, active, indent }: { href: string; label: string; active: boolean; indent?: boolean }) {
+function MobileLink({ href, label, active, indent, badge = 0 }: { href: string; label: string; active: boolean; indent?: boolean; badge?: number }) {
   return (
     <Link
       href={href}
       className={active ? 'nav-mobile-link nav-mobile-link-active' : 'nav-mobile-link'}
-      style={{ padding: `10px ${indent ? 28 : 16}px` }}
+      style={{ padding: `10px ${indent ? 28 : 16}px`, display: 'flex', alignItems: 'center', gap: 6 }}
     >
       <span>{label}</span>
+      {badge > 0 && (
+        <span style={{ background: '#e53e3e', color: '#fff', borderRadius: '50%', minWidth: 18, height: 18, fontSize: 11, fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px', textDecoration: 'none', flexShrink: 0 }}>
+          {badge > 99 ? '99+' : badge}
+        </span>
+      )}
     </Link>
   )
 }
