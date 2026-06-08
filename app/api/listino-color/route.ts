@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import sharp from 'sharp'
 import fs from 'fs/promises'
 import path from 'path'
 
@@ -7,6 +6,7 @@ export async function GET(req: NextRequest) {
   const fotoUrl = req.nextUrl.searchParams.get('url')
   if (!fotoUrl) return NextResponse.json({ color: null })
   try {
+    const sharp = (await import('sharp')).default
     let buf: Buffer
     if (fotoUrl.startsWith('http://') || fotoUrl.startsWith('https://')) {
       const resp = await fetch(fotoUrl)

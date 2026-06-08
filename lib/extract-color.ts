@@ -1,10 +1,10 @@
-import sharp from 'sharp'
 import fs from 'fs/promises'
 import path from 'path'
 
 export async function extractAvgColor(fotoUrl: string): Promise<string | null> {
   if (!fotoUrl) return null
   try {
+    const sharp = (await import('sharp')).default
     let buf: Buffer
     if (fotoUrl.startsWith('http://') || fotoUrl.startsWith('https://')) {
       const resp = await fetch(fotoUrl)
