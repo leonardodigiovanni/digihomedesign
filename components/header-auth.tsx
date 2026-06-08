@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useActionState } from 'react'
+import { usePathname } from 'next/navigation'
 import { login, logout } from '@/app/actions'
 
 interface HeaderAuthProps {
@@ -26,19 +27,20 @@ function useLoginFlash(error: string | null, isPending: boolean) {
   return visible
 }
 
-function InlineLoginForm() {
+function InlineLoginForm({ redirectTo }: { redirectTo?: string }) {
   const [error, formAction, isPending] = useActionState(login, null)
   const showError = useLoginFlash(error, isPending)
 
   return (
     <div style={{ position: 'relative' }}>
       <form action={formAction} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        {redirectTo && <input type="hidden" name="redirect_to" value={redirectTo} />}
         <input
           name="username"
           placeholder="Username"
           autoComplete="username"
           required
-          style={{ padding: '4px 8px', fontSize: 13, border: '1px solid #ccc', borderRadius: 4, width: 110 }}
+          style={{ padding: '4px 8px', fontSize: 13, border: '1px solid #ccc', borderRadius: 4, width: 110, fontFamily: 'monospace' }}
         />
         <input
           name="password"
@@ -46,13 +48,13 @@ function InlineLoginForm() {
           placeholder="Password"
           autoComplete="current-password"
           required
-          style={{ padding: '4px 8px', fontSize: 13, border: '1px solid #ccc', borderRadius: 4, width: 110 }}
+          style={{ padding: '4px 8px', fontSize: 13, border: '1px solid #ccc', borderRadius: 4, width: 110, fontFamily: 'monospace' }}
         />
         <button
           type="submit"
           disabled={isPending}
           className={isPending ? 'btn-gray' : 'btn-green'}
-          style={{ padding: '8px 12px', fontSize: 13, borderRadius: 4, fontFamily: 'inherit' }}
+          style={{ padding: '0 12px', height: 42, fontSize: 13, borderRadius: 21, fontFamily: 'monospace' }}
         >
           {isPending ? '...' : 'Entra'}
         </button>
@@ -70,18 +72,19 @@ function InlineLoginForm() {
   )
 }
 
-export function DropdownLoginForm({ registrazioniDisabilitate }: { registrazioniDisabilitate?: boolean }) {
+export function DropdownLoginForm({ registrazioniDisabilitate, redirectTo }: { registrazioniDisabilitate?: boolean; redirectTo?: string }) {
   const [error, formAction, isPending] = useActionState(login, null)
   const showError = useLoginFlash(error, isPending)
 
   return (
     <form action={formAction} style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: '14px 16px' }}>
+      {redirectTo && <input type="hidden" name="redirect_to" value={redirectTo} />}
       <input
         name="username"
         placeholder="Username"
         autoComplete="username"
         required
-        style={{ padding: '6px 8px', fontSize: 13, border: '1px solid #ccc', borderRadius: 4 }}
+        style={{ padding: '6px 8px', fontSize: 13, border: '1px solid #ccc', borderRadius: 4, fontFamily: 'monospace' }}
       />
       <input
         name="password"
@@ -89,13 +92,13 @@ export function DropdownLoginForm({ registrazioniDisabilitate }: { registrazioni
         placeholder="Password"
         autoComplete="current-password"
         required
-        style={{ padding: '6px 8px', fontSize: 13, border: '1px solid #ccc', borderRadius: 4 }}
+        style={{ padding: '6px 8px', fontSize: 13, border: '1px solid #ccc', borderRadius: 4, fontFamily: 'monospace' }}
       />
       <button
         type="submit"
         disabled={isPending}
         className={isPending ? 'btn-gray' : 'btn-black'}
-        style={{ padding: '8px 12px', fontSize: 13, borderRadius: 4, fontFamily: 'inherit' }}
+        style={{ padding: '0 12px', height: 42, fontSize: 13, borderRadius: 21, fontFamily: 'monospace' }}
       >
         {isPending ? '...' : 'Accedi'}
       </button>
@@ -111,8 +114,8 @@ export function DropdownLoginForm({ registrazioniDisabilitate }: { registrazioni
         <>
           <hr style={{ border: 'none', borderTop: '1px solid #eee', margin: '2px 0' }} />
           <a
-            href="/registrazione"
-            style={{ fontSize: 12, color: '#555', textDecoration: 'none', textAlign: 'center' }}
+            href={`/registrazione${redirectTo ? `?from=${encodeURIComponent(redirectTo)}` : ''}`}
+            style={{ fontSize: 12, color: '#555', textDecoration: 'none', textAlign: 'center', fontFamily: 'monospace' }}
           >
             Non hai un account? <strong>Registrati</strong>
           </a>
@@ -123,8 +126,10 @@ export function DropdownLoginForm({ registrazioniDisabilitate }: { registrazioni
 }
 
 export default function HeaderAuth({ username, registrazioniDisabilitate, forceDropdown }: HeaderAuthProps) {
+  const pathname = usePathname()
   const [isNarrow, setIsNarrow] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
+  const [dropdownRedirectTo, setDropdownRedirectTo] = useState<string | undefined>(undefined)
   const wrapperRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -132,6 +137,17 @@ export default function HeaderAuth({ username, registrazioniDisabilitate, forceD
     check()
     window.addEventListener('resize', check)
     return () => window.removeEventListener('resize', check)
+  }, [])
+
+  // apri dropdown da evento esterno (es. bottone Acquista)
+  useEffect(() => {
+    const handle = (e: Event) => {
+      const detail = (e as CustomEvent).detail as { redirectTo?: string } | undefined
+      setDropdownRedirectTo(detail?.redirectTo)
+      setIsOpen(true)
+    }
+    window.addEventListener('open-login-form', handle)
+    return () => window.removeEventListener('open-login-form', handle)
   }, [])
 
   // chiudi dropdown al click fuori
@@ -150,12 +166,13 @@ export default function HeaderAuth({ username, registrazioniDisabilitate, forceD
   if (username) {
     return (
       <form action={logout}>
+        <input type="hidden" name="current_url" value={pathname} />
         <button
           type="submit"
           className="btn-orange"
-          style={{ padding: '8px 14px', fontSize: 13, borderRadius: 4, width: 92, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+          style={{ height: 42, padding: '0 16px', fontSize: 13, borderRadius: 21, fontFamily: 'monospace', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
         >
-          Logout
+          Esci
         </button>
       </form>
     )
@@ -168,7 +185,7 @@ export default function HeaderAuth({ username, registrazioniDisabilitate, forceD
         <button
           onClick={() => setIsOpen(v => !v)}
           className={isOpen ? 'btn-orange' : 'btn-black'}
-          style={{ padding: '8px 14px', fontSize: 13, borderRadius: 4, whiteSpace: 'nowrap', width: 92, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+          style={{ padding: '0 14px', height: 42, fontSize: 13, borderRadius: 21, whiteSpace: 'nowrap', width: 92, fontFamily: 'monospace', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
         >
           {isOpen ? 'Chiudi ▴' : 'Accedi ▾'}
         </button>
@@ -178,7 +195,7 @@ export default function HeaderAuth({ username, registrazioniDisabilitate, forceD
             background: '#fff', border: '1px solid #e0e0e0', borderRadius: 6,
             boxShadow: '0 4px 20px rgba(0,0,0,0.12)', minWidth: 210, zIndex: 200,
           }}>
-            <DropdownLoginForm registrazioniDisabilitate={registrazioniDisabilitate} />
+            <DropdownLoginForm registrazioniDisabilitate={registrazioniDisabilitate} redirectTo={dropdownRedirectTo ?? pathname} />
           </div>
         )}
       </div>
@@ -192,14 +209,14 @@ export default function HeaderAuth({ username, registrazioniDisabilitate, forceD
         <>
           <a
             href="/registrazione"
-            style={{ fontSize: 13, color: '#555', textDecoration: 'none', whiteSpace: 'nowrap' }}
+            style={{ fontSize: 13, color: '#555', textDecoration: 'none', whiteSpace: 'nowrap', fontFamily: 'monospace' }}
           >
             Registrati
           </a>
           <div style={{ width: 1, height: 16, background: '#e0e0e0' }} />
         </>
       )}
-      <InlineLoginForm />
+      <InlineLoginForm redirectTo={pathname} />
     </div>
   )
 }

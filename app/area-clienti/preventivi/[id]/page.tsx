@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import type { Metadata } from 'next'
 import PreventivoClient, { type Articolo, type ListinoItem, type Preventivo } from '../../../clienti/preventivi/[id]/preventivo-client'
+import { extractAvgColor } from '@/lib/extract-color'
 
 export const metadata: Metadata = { title: 'Preventivo' }
 
@@ -25,6 +26,8 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
   const db = await getConnection()
   try {
+    await db.execute(`ALTER TABLE listini ADD COLUMN richiede_tipo_colore_acc TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+
     const [prevRows] = await db.query(
       'SELECT * FROM preventivi WHERE id = ?', [prevId]
     ) as [Record<string, unknown>[], unknown]
@@ -69,7 +72,8 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     }
 
     const [artRows] = await db.query(
-      'SELECT * FROM preventivo_articoli WHERE preventivo_id = ? ORDER BY id ASC', [prevId]
+      `SELECT pa.*, l.abbr, l.profilo_frontale_mm, l.foto_url AS listino_foto_url, l.richiede_tipo_colore_acc FROM preventivo_articoli pa LEFT JOIN listini l ON l.id = pa.listino_id WHERE pa.preventivo_id = ? ORDER BY pa.id ASC`,
+      [prevId]
     ) as [Record<string, unknown>[], unknown]
 
     const articoli: Articolo[] = (artRows as Record<string, unknown>[]).map(a => ({
@@ -93,34 +97,70 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       sconto_articolo_pct: Number(a.sconto_articolo_pct ?? 0),
       note: a.note != null ? String(a.note) : null,
       parent_id: a.parent_id != null ? Number(a.parent_id) : null,
+      abbr: a.abbr != null ? String(a.abbr) : '',
+      profilo_mm: a.profilo_frontale_mm != null ? Number(a.profilo_frontale_mm) : 80,
+      listino_foto_url: a.listino_foto_url != null ? String(a.listino_foto_url) : '',
+      bar_color: null,
+      bar_color_acc: null,
+    }))
+
+    await Promise.all(articoli.map(async a => {
+      const up = a.abbr.trim().toUpperCase()
+      if (!up.startsWith('TC(') && !up.startsWith('TA(')) return
+      const isNotAcc = (c: typeof articoli[0]) => (artRows as Record<string, unknown>[]).find(r => Number(r.id) === c.id && Number(r.richiede_tipo_colore_acc) === 1) == null
+      const child = articoli.find(c => c.parent_id === a.id && isNotAcc(c) && /color/i.test(c.tipo_prodotto + ' ' + c.modello))
+        ?? articoli.find(c => c.parent_id === a.id && isNotAcc(c) && c.listino_foto_url)
+      if (child?.listino_foto_url) {
+        const normalized = child.listino_foto_url.startsWith('/') ? child.listino_foto_url : `/${child.listino_foto_url}`
+        a.bar_color = await extractAvgColor(normalized)
+      }
+      const rawChildAcc = (artRows as Record<string, unknown>[]).find(
+        r => Number(r.parent_id) === a.id && Number(r.richiede_tipo_colore_acc) === 1
+      )
+      const fotoAcc = rawChildAcc?.listino_foto_url != null ? String(rawChildAcc.listino_foto_url) : ''
+      if (fotoAcc) {
+        const normalized = fotoAcc.startsWith('/') ? fotoAcc : `/${fotoAcc}`
+        a.bar_color_acc = await extractAvgColor(normalized)
+      }
     }))
 
     const [listiniRows] = await db.query(`
-      SELECT l.id, l.categoria, l.produttore, l.descrizione, l.unita,
+      SELECT l.id, l.categoria, l.produttore, l.serie, l.descrizione, l.unita,
              l.prezzo_vendita, l.prezzo_acquisto, l.sconto_articolo,
+             l.principale, l.caratteristica,
+             l.richiede_tipo_colore, l.richiede_tipo_colore_acc, l.richiede_tipo_vetro, l.richiede_tipo_montaggio,
+             l.minimo,
              COALESCE(f.ragione_sociale, '') AS fornitore_nome
       FROM listini l
       LEFT JOIN fornitori f ON f.id = l.fornitore_id
       WHERE l.disponibile = 1 AND l.preventivabile = 1
-      ORDER BY l.categoria, l.produttore, l.descrizione
+      ORDER BY l.categoria, l.produttore, l.serie, l.descrizione
     `) as [Record<string, unknown>[], unknown]
 
-    type RawListino = { id: number; categoria: string; produttore: string; descrizione: string; unita: string; prezzo_vendita: number; prezzo_acquisto: number; sconto_articolo: number; fornitore_nome: string }
+    type RawListino = { id: number; categoria: string; produttore: string; serie: string; descrizione: string; unita: string; prezzo_vendita: number; prezzo_acquisto: number; sconto_articolo: number; fornitore_nome: string; principale: number; caratteristica: number; richiede_tipo_colore: number; richiede_tipo_colore_acc: number; richiede_tipo_vetro: number; richiede_tipo_montaggio: number; minimo: number | null }
     const allListini: RawListino[] = (listiniRows as Record<string, unknown>[]).map(l => ({
       id: Number(l.id),
       categoria: String(l.categoria ?? ''),
       produttore: String(l.produttore ?? ''),
+      serie: String(l.serie ?? ''),
       descrizione: String(l.descrizione ?? ''),
       unita: String(l.unita ?? 'pz'),
       prezzo_vendita: Number(l.prezzo_vendita),
       prezzo_acquisto: Number(l.prezzo_acquisto),
       sconto_articolo: Number(l.sconto_articolo ?? 0),
       fornitore_nome: String(l.fornitore_nome ?? ''),
+      principale: Number(l.principale ?? 1),
+      caratteristica: Number(l.caratteristica ?? 1),
+      richiede_tipo_colore:     Number(l.richiede_tipo_colore     ?? 0),
+      richiede_tipo_colore_acc: Number(l.richiede_tipo_colore_acc ?? 0),
+      richiede_tipo_vetro:      Number(l.richiede_tipo_vetro      ?? 0),
+      richiede_tipo_montaggio:  Number(l.richiede_tipo_montaggio  ?? 0),
+      minimo: l.minimo != null ? Number(l.minimo) : null,
     }))
 
     let listini: ListinoItem[]
     if (isStaff) {
-      listini = allListini.map(l => ({ ...l, prezzo_acquisto: l.prezzo_acquisto }))
+      listini = allListini.map(l => ({ ...l }))
     } else {
       // Deduplicazione: un item per (categoria+produttore+descrizione), best margin
       const best = new Map<string, RawListino>()
@@ -131,7 +171,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
           best.set(key, l)
         }
       }
-      listini = [...best.values()].map(l => ({ id: l.id, categoria: l.categoria, produttore: l.produttore, descrizione: l.descrizione, unita: l.unita, prezzo_vendita: l.prezzo_vendita, sconto_articolo: l.sconto_articolo, fornitore_nome: l.fornitore_nome }))
+      listini = [...best.values()].map(l => ({ id: l.id, categoria: l.categoria, produttore: l.produttore, serie: l.serie, descrizione: l.descrizione, unita: l.unita, prezzo_vendita: l.prezzo_vendita, sconto_articolo: l.sconto_articolo, fornitore_nome: l.fornitore_nome, principale: l.principale, caratteristica: l.caratteristica, richiede_tipo_colore: l.richiede_tipo_colore, richiede_tipo_colore_acc: l.richiede_tipo_colore_acc, richiede_tipo_vetro: l.richiede_tipo_vetro, richiede_tipo_montaggio: l.richiede_tipo_montaggio, minimo: l.minimo }))
     }
 
     let clienteEmail = '', clienteCellulare = ''
@@ -146,15 +186,18 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     }
 
     return (
-      <PreventivoClient
-        preventivo={preventivo}
-        articoli={articoli}
-        listini={listini}
-        clienti={[]}
-        isStaff={isStaff}
-        clienteEmail={clienteEmail}
-        clienteCellulare={clienteCellulare}
-      />
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <PreventivoClient
+          preventivo={preventivo}
+          articoli={articoli}
+          listini={listini}
+          clienti={[]}
+          isStaff={isStaff}
+          clienteEmail={clienteEmail}
+          clienteCellulare={clienteCellulare}
+        />
+        <div className="IsDebug fs-11" style={{ marginTop: 8 }}>pagina revisionata</div>
+      </div>
     )
   } catch {
     redirect('/area-clienti/preventivi')

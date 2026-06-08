@@ -4,6 +4,9 @@ import { getConnection } from '@/lib/db'
 import type { Metadata } from 'next'
 import { creaPreventivo } from './actions'
 import EliminaBtn from './elimina-btn'
+import VisibilitaBtn from './visibilita-btn'
+import ApriBtnPreventivo from '../../area-clienti/preventivi/apri-btn'
+import { decompressCart } from '@/lib/cart-cookie'
 
 export const metadata: Metadata = { title: 'Preventivi Clienti' }
 
@@ -47,7 +50,7 @@ async function getData(): Promise<Preventivo[]> {
         stato            ENUM('bozza','inviato','accettato','rifiutato','scaduto') NOT NULL DEFAULT 'bozza',
         importo          DECIMAL(10,2) NOT NULL DEFAULT 0,
         data             DATE          NOT NULL,
-        validita_giorni  INT           NOT NULL DEFAULT 30,
+        validita_giorni  INT           NOT NULL DEFAULT 5,
         note             TEXT          NULL,
         visibile_cliente TINYINT(1)    NOT NULL DEFAULT 1,
         created_at       TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
@@ -58,11 +61,16 @@ async function getData(): Promise<Preventivo[]> {
       FROM preventivi p LEFT JOIN clienti c ON c.id = p.cliente_id
       ORDER BY p.data DESC, p.id DESC
     `)
-    return (rows as Record<string, unknown>[]).map(r => ({
-      ...r,
-      data: dateToLocal(r.data),
-      created_at: dateToLocal(r.created_at),
-    })) as Preventivo[]
+    const today = new Date(); today.setHours(0,0,0,0)
+    return (rows as Record<string, unknown>[]).map(r => {
+      let stato = String(r.stato ?? 'bozza')
+      if (!['accettato','rifiutato','annullato','scaduto'].includes(stato)) {
+        const exp = new Date(r.data as string)
+        exp.setDate(exp.getDate() + Number(r.validita_giorni ?? 5))
+        if (exp < today) stato = 'scaduto'
+      }
+      return { ...r, stato, data: dateToLocal(r.data), created_at: dateToLocal(r.created_at) }
+    }) as Preventivo[]
   } catch { return [] }
   finally { await conn.end() }
 }
@@ -73,6 +81,9 @@ export default async function Page() {
   if (role !== 'admin' && role !== 'dipendente') redirect('/')
 
   const preventivi = await getData()
+
+  const cartRaw = cookieStore.get('digi_cart')?.value ?? ''
+  const cartNonVuoto = decompressCart(cartRaw).filter(i => i.parent == null).length > 0
 
   const thStyle: React.CSSProperties = {
     padding: '9px 14px', fontSize: 11, fontWeight: 600, color: '#888',
@@ -91,12 +102,25 @@ export default async function Page() {
           <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Preventivi Clienti</h2>
           <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0' }}>Tutti i preventivi emessi.</p>
         </div>
-        <form action={creaPreventivo}>
-          <button type="submit" className="btn-green"
-            style={{ padding: '9px 22px', fontSize: 13, fontWeight: 700 }}>
-            + Nuovo preventivo
-          </button>
-        </form>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+          <form action={creaPreventivo}>
+            <button type="submit" className="btn-green"
+              style={{ height: 42, borderRadius: 21, padding: '0 24px', fontSize: 13, fontWeight: 600, fontFamily: 'monospace' }}>
+              + Nuovo preventivo
+            </button>
+          </form>
+          {cartNonVuoto ? (
+            <a href="/area-clienti/carrello-preventivo" className="btn-black"
+              style={{ display: 'inline-flex', alignItems: 'center', height: 42, padding: '0 20px', borderRadius: 21, textDecoration: 'none', fontSize: 13, fontWeight: 700, fontFamily: 'monospace' }}>
+              Vai alla simulazione →
+            </a>
+          ) : (
+            <a href="/area-clienti/carrello-preventivo" className="btn-green"
+              style={{ display: 'inline-flex', alignItems: 'center', height: 42, padding: '0 24px', borderRadius: 21, textDecoration: 'none', fontSize: 13, fontWeight: 700, fontFamily: 'monospace' }}>
+              + Simula preventivo
+            </a>
+          )}
+        </div>
       </div>
 
       {preventivi.length === 0 ? (
@@ -106,7 +130,7 @@ export default async function Page() {
           <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff', border: '1px solid #e8e8e8', borderRadius: 8 }}>
             <thead>
               <tr>
-                <th style={thStyle}>N°</th>
+                <th style={thStyle}>N° PREVENTIVO</th>
                 <th style={thStyle}>Cliente</th>
                 <th style={thStyle}>Descrizione</th>
                 <th style={thStyle}>Data</th>
@@ -123,9 +147,7 @@ export default async function Page() {
                 return (
                   <tr key={p.id}>
                     <td style={tdStyle}>
-                      <a href={`/clienti/preventivi/${p.id}`} style={{ color: '#2b6cb0', fontWeight: 600, textDecoration: 'none' }}>
-                        {p.numero || `#${p.id}`}
-                      </a>
+                      <ApriBtnPreventivo id={p.id} numero={p.numero} isStaff={true} />
                     </td>
                     <td style={tdStyle}>{p.cliente_nome || '—'}</td>
                     <td style={tdStyle}>{p.descrizione}</td>
@@ -138,9 +160,7 @@ export default async function Page() {
                       </span>
                     </td>
                     <td style={{ ...tdStyle, textAlign: 'center' }}>
-                      <span style={{ fontSize: 11, fontWeight: 600, color: p.visibile_cliente ? '#276749' : '#c00' }}>
-                        {p.visibile_cliente ? 'Sì' : 'No'}
-                      </span>
+                      <VisibilitaBtn id={p.id} visibile={p.visibile_cliente === 1} />
                     </td>
                     <td style={{ ...tdStyle, textAlign: 'right' }}>
                       <EliminaBtn id={p.id} />

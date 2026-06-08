@@ -42,11 +42,11 @@ export default async function Page() {
 
   return (
     <>
-      <h2 style={{ textAlign: 'center', margin: '18px 6px 24px' }}>
-        <span className="testo-titoli" style={{ display: 'block' }}>Infissi, persiane, verande, porte.</span><br />
-        <span className="testo-titoli" style={{ display: 'block' }}>Soluzioni su misura per casa e ufficio.</span><br />
-        <span className="testo-titoli" style={{ display: 'block' }}>Progetti e ristrutturazioni complete.</span>
-      </h2>
+      <p style={{ textAlign: 'center', margin: '6px 6px 6px' }}>
+      <span className="testo-titoli" style={{ display: 'block' }}>Infissi Verande</span>
+      <span className="testo-titoli" style={{ display: 'block' }}>Persiane Porte</span>
+      <span className="testo-titoli" style={{ display: 'block' }}>Ristrutturazioni</span>
+      </p>
       <div className="home-hero">
         <div className="home-hero-text class_silver_D_safe" style={{ borderRadius: 20 }}>
           <div style={{ height: '100%', overflowY: 'auto', padding: '28px 28px 24px', boxSizing: 'border-box' }}>
@@ -69,15 +69,15 @@ export default async function Page() {
         <div className="home-hero-cta">
           <Link href={ctaPreventivi} className="cta-home-btn">
             <Image src="/images/cta/preventivo-online-t.png" alt="Preventivo" width={130} height={130} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '60%', flexShrink: 1 }} />
-            <span className="testo-cta"><span className="animato">Preventivo Online</span></span>
+            <span className="testo-cta"><span className="animato">Calcola Preventivo Online</span></span>
           </Link>
           <Link href={ctaCantiere} className="cta-home-btn">
             <Image src="/images/cta/cantieri-online-t.png" alt="Cantiere" width={130} height={130} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '60%', flexShrink: 1 }} />
-            <span className="testo-cta"><span className="animato">Cantiere Online</span></span>
+            <span className="testo-cta"><span className="animato">Foto/Video dal tuo Cantiere Online</span></span>
           </Link>
           <Link href="/app-download" className="cta-home-btn cta-home-btn-app">
-            <Image src="/images/cta/digi-home-design-app.png" alt="App" width={60} height={60} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '60%', flexShrink: 1 }} unoptimized />
-            <span className="testo-cta"><span className="animato">DIGI App</span> <span style={{ fontSize: 11, opacity: 0.8 }}>(Android/Apple)</span></span>
+            <Image src="/images/cta/digi-home-design-app.png" alt="App" width={70} height={70} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '60%', flexShrink: 1 }} unoptimized />
+            <span className="testo-cta"><span className="animato">Scarica la comoda DIGI-App</span> (Android/Apple)</span>
           </Link>
         </div>
       <div className="home-hero-cards" style={{ display: 'flex', flexWrap: 'wrap', gap: 16, alignContent: 'flex-start', justifyContent: 'center', padding: '8px' }}>
@@ -873,6 +873,7 @@ export default async function Page() {
           </p>
         </div>
       </div>
+      <p className="IsDebug fs-11" style={{ marginTop: 8 }}>login e logout non devono cambiare pagina</p>
     </>
   )
 }

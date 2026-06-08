@@ -2,6 +2,8 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import type { Metadata } from 'next'
+import { DeleteDocumentoButton } from './delete-button'
+import { UploadDocumentoForm } from './upload-form'
 
 export const metadata: Metadata = { title: 'Documenti' }
 
@@ -17,12 +19,18 @@ type Documento = {
   created_at: string
 }
 
+type ClienteOption = { id: number; label: string }
+
 function dateToLocal(d: unknown): string {
   if (!(d instanceof Date)) return String(d ?? '')
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
 }
 
-async function getData(role: string, username: string): Promise<{ documenti: Documento[]; isStaff: boolean }> {
+async function getData(role: string, username: string): Promise<{
+  documenti: Documento[]
+  isStaff: boolean
+  clienti: ClienteOption[]
+}> {
   const conn = await getConnection()
   try {
     await conn.execute(`
@@ -40,18 +48,25 @@ async function getData(role: string, username: string): Promise<{ documenti: Doc
 
     const isStaff = role === 'admin' || role === 'dipendente'
     let rows: Record<string, unknown>[]
+    let clienti: ClienteOption[] = []
 
     if (isStaff) {
       const [r] = await conn.query(`
-        SELECT d.*, COALESCE(c.ragione_sociale, CONCAT(c.cognome, ' ', c.nome), '') AS cliente_nome
+        SELECT d.*, COALESCE(NULLIF(c.ragione_sociale, ''), CONCAT(c.cognome, ' ', c.nome), '') AS cliente_nome
         FROM documenti_cliente d LEFT JOIN clienti c ON c.id = d.cliente_id
         ORDER BY d.created_at DESC
       `)
       rows = r as Record<string, unknown>[]
+
+      const [cr] = await conn.query(
+        `SELECT id, COALESCE(NULLIF(ragione_sociale, ''), CONCAT(cognome, ' ', nome)) AS label
+         FROM clienti ORDER BY label`
+      )
+      clienti = (cr as { id: number; label: string }[]).map(c => ({ id: c.id, label: c.label }))
     } else {
       const [userRows] = await conn.execute('SELECT email FROM users WHERE username = ? LIMIT 1', [username]) as [{ email: string }[], unknown]
       const email = userRows[0]?.email ?? ''
-      if (!email) return { documenti: [], isStaff: false }
+      if (!email) return { documenti: [], isStaff: false, clienti: [] }
       const [r] = await conn.query(`
         SELECT d.*, '' AS cliente_nome FROM documenti_cliente d
         INNER JOIN clienti c ON c.id = d.cliente_id AND c.email = ?
@@ -62,14 +77,14 @@ async function getData(role: string, username: string): Promise<{ documenti: Doc
     }
 
     const documenti = rows.map(r => ({ ...r, created_at: dateToLocal(r.created_at) })) as Documento[]
-    return { documenti, isStaff }
-  } catch { return { documenti: [], isStaff: false } }
+    return { documenti, isStaff, clienti }
+  } catch { return { documenti: [], isStaff: false, clienti: [] } }
   finally { await conn.end() }
 }
 
 export default async function Page() {
   const cookieStore = await cookies()
-  const role    = cookieStore.get('session_role')?.value ?? ''
+  const role     = cookieStore.get('session_role')?.value ?? ''
   const username = cookieStore.get('session_user')?.value ?? ''
   if (!role) redirect('/')
 
@@ -80,68 +95,87 @@ export default async function Page() {
     if ((uRows[0]?.is_active ?? 0) === 0) redirect('/area-clienti/preventivi')
   }
 
-  const { documenti, isStaff } = await getData(role, username)
+  const { documenti, isStaff, clienti } = await getData(role, username)
 
   const thStyle: React.CSSProperties = {
-    padding: '9px 14px', fontSize: 11, fontWeight: 600, color: '#888',
+    padding: '9px 14px', fontSize: 11, fontWeight: 700, color: '#7a6000',
     textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.06em',
-    background: '#fafafa', borderBottom: '1px solid #e8e8e8', whiteSpace: 'nowrap',
+    background: '#fff', borderBottom: '1px solid #c8960c', whiteSpace: 'nowrap',
+    fontFamily: 'monospace',
   }
   const tdStyle: React.CSSProperties = {
     padding: '10px 14px', fontSize: 13, color: '#333',
-    borderBottom: '1px solid #f0f0f0', verticalAlign: 'middle',
+    borderBottom: '1px solid #c8960c', verticalAlign: 'middle',
+    fontFamily: 'monospace',
   }
-
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       <div>
-        <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Documenti</h2>
-        <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0' }}>
+        <h2 className="effetto-3d" style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Documenti</h2>
+        <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0', fontFamily: 'monospace' }}>
           {isStaff ? 'Tutti i documenti caricati.' : 'I documenti condivisi con te.'}
         </p>
       </div>
 
+      {/* ── FORM UPLOAD (solo staff) ── */}
+      {isStaff && <UploadDocumentoForm clienti={clienti} />}
+
+      {/* ── TABELLA ── */}
       {documenti.length === 0 ? (
-        <p style={{ color: '#aaa', fontSize: 14 }}>Nessun documento disponibile.</p>
+        <p style={{ color: '#aaa', fontSize: 14, fontFamily: 'monospace' }}>Nessun documento disponibile.</p>
       ) : (
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff', border: '1px solid #e8e8e8', borderRadius: 8 }}>
+        <div style={{
+          overflowX: 'auto', overflowY: 'hidden', borderRadius: 8, border: '1px solid #c8960c',
+          boxShadow: '0 4px 24px rgba(200,150,12,0.18), inset 0 1px 0 rgba(255,250,200,0.5)',
+        }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff' }}>
             <thead>
               <tr>
+                <th style={thStyle}>File</th>
                 {isStaff && <th style={thStyle}>Cliente</th>}
                 <th style={thStyle}>Titolo</th>
                 <th style={thStyle}>Tipo</th>
-                <th style={thStyle}>File</th>
                 <th style={thStyle}>Data</th>
                 {isStaff && <th style={{ ...thStyle, textAlign: 'center' }}>Visibile</th>}
+                {isStaff && <th style={{ ...thStyle, textAlign: 'center' }}></th>}
               </tr>
             </thead>
             <tbody>
-              {documenti.map(d => (
-                <tr key={d.id}>
-                  {isStaff && <td style={tdStyle}>{d.cliente_nome || '—'}</td>}
-                  <td style={tdStyle}>{d.titolo}</td>
-                  <td style={tdStyle}>{d.tipo}</td>
-                  <td style={tdStyle}>
-                    <a href={`/uploads/${d.filename}`} target="_blank" rel="noopener noreferrer"
-                       style={{ color: '#c8960c', textDecoration: 'underline' }}>
-                      {d.filename}
+              {documenti.map((d, idx) => {
+                const td = idx === documenti.length - 1 ? { ...tdStyle, borderBottom: 'none' } : tdStyle
+                return (
+                <tr key={d.id} style={{ height: 60 }}>
+                  <td style={td}>
+                    <a href={`/uploads/documenti/${d.filename}`} target="_blank" rel="noopener noreferrer"
+                       className="btn-black"
+                       style={{ height: 36, padding: '0 14px', borderRadius: 18, fontSize: 12, fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
+                      {d.filename.replace(/^\d+_/, '')}
                     </a>
                   </td>
-                  <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>{d.created_at}</td>
+                  {isStaff && <td style={td}>{d.cliente_nome || '—'}</td>}
+                  <td style={td}>{d.titolo}</td>
+                  <td style={td}>{d.tipo}</td>
+                  <td style={{ ...td, whiteSpace: 'nowrap' }}>{d.created_at}</td>
                   {isStaff && (
-                    <td style={{ ...tdStyle, textAlign: 'center' }}>
+                    <td style={{ ...td, textAlign: 'center' }}>
                       <span style={{ fontSize: 11, fontWeight: 600, color: d.visibile_cliente ? '#276749' : '#c00' }}>
                         {d.visibile_cliente ? 'Sì' : 'No'}
                       </span>
                     </td>
                   )}
+                  {isStaff && (
+                    <td style={{ ...td, textAlign: 'center' }}>
+                      <DeleteDocumentoButton id={d.id} filename={d.filename} titolo={d.titolo} />
+                    </td>
+                  )}
                 </tr>
-              ))}
+                )
+              })}
             </tbody>
           </table>
         </div>
       )}
+      <div className="IsDebug fs-11" style={{marginTop:8}}>pagina revisionata</div>
     </div>
   )
 }

@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useActionState, useTransition, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { addArticolo, updateArticolo, deleteArticolo, toggleDisponibile, togglePreventivabile, toggleAcquistabile, togglePrincipale, toggleCaratteristica, toggleColonnaBooleana, updateSchedaTecnica, type MutResult, type AddResult } from './actions'
+import { addArticolo, updateArticolo, deleteArticolo, toggleDisponibile, togglePreventivabile, toggleAcquistabile, togglePrincipale, toggleCaratteristica, toggleColonnaBooleana, updateSchedaTecnica, clearImmagine, type MutResult, type AddResult } from './actions'
 
 // ─── Tipi ─────────────────────────────────────────────────────────────────────
 
@@ -43,9 +43,12 @@ export type Articolo = {
   richiede_km: number
   richiede_peso: number
   richiede_tipo_colore: number
+  richiede_tipo_colore_acc: number
   richiede_tipo_vetro: number
+  richiede_tipo_montaggio: number
   costante: number
   abbr: string
+  minimo: number | null
 }
 
 // ─── Costanti ─────────────────────────────────────────────────────────────────
@@ -506,7 +509,7 @@ function ToggleDisponibileBtn({ art }: { art: Articolo }) {
         padding: '2px 8px', fontSize: 10, fontWeight: 700, borderRadius: 3,
         border: 'none', cursor: 'pointer', fontFamily: 'inherit',
         background: disp ? '#2e7d32' : '#757575',
-        color: '#fff', whiteSpace: 'nowrap',
+        color: '#fff', whiteSpace: 'nowrap', minWidth: 76, textAlign: 'center',
       }}>
         {disp ? 'Disponibile' : 'Non disp.'}
       </button>
@@ -527,7 +530,7 @@ function TogglePreventivabileBtn({ art }: { art: Articolo }) {
         padding: '2px 8px', fontSize: 10, fontWeight: 700, borderRadius: 3,
         border: 'none', cursor: 'pointer', fontFamily: 'inherit',
         background: prev ? '#1565c0' : '#aaa',
-        color: '#fff', whiteSpace: 'nowrap',
+        color: '#fff', whiteSpace: 'nowrap', minWidth: 64, textAlign: 'center',
       }}>
         {prev ? 'Preventiv.' : 'No prev.'}
       </button>
@@ -548,7 +551,7 @@ function ToggleAcquistabileBtn({ art }: { art: Articolo }) {
         padding: '2px 8px', fontSize: 10, fontWeight: 700, borderRadius: 3,
         border: 'none', cursor: 'pointer', fontFamily: 'inherit',
         background: acq ? '#6a1b9a' : '#aaa',
-        color: '#fff', whiteSpace: 'nowrap',
+        color: '#fff', whiteSpace: 'nowrap', minWidth: 58, textAlign: 'center',
       }}>
         {acq ? 'Acquist.' : 'No acq.'}
       </button>
@@ -569,7 +572,7 @@ function TogglePrincipaleBtn({ art }: { art: Articolo }) {
         padding: '2px 8px', fontSize: 10, fontWeight: 700, borderRadius: 3,
         border: 'none', cursor: 'pointer', fontFamily: 'inherit',
         background: val ? '#1b5e20' : '#aaa',
-        color: '#fff', whiteSpace: 'nowrap',
+        color: '#fff', whiteSpace: 'nowrap', minWidth: 62, textAlign: 'center',
       }}>
         {val ? 'Princ.' : 'No princ.'}
       </button>
@@ -613,11 +616,37 @@ function ToggleCaratteristicaBtn({ art }: { art: Articolo }) {
         padding: '2px 8px', fontSize: 10, fontWeight: 700, borderRadius: 3,
         border: 'none', cursor: 'pointer', fontFamily: 'inherit',
         background: val ? '#4a148c' : '#aaa',
-        color: '#fff', whiteSpace: 'nowrap',
+        color: '#fff', whiteSpace: 'nowrap', minWidth: 62, textAlign: 'center',
       }}>
         {val ? 'Carat.' : 'No carat.'}
       </button>
     </form>
+  )
+}
+
+function ImgCell({ artId, url, tipo, alt }: { artId: number; url: string | null; tipo: 'schema' | 'foto'; alt: string }) {
+  const [, startT] = React.useTransition()
+  const router = useRouter()
+  return (
+    <div style={{ position: 'relative', width: '100%', height: 90 }}>
+      {url
+        ? <img src={url} alt={alt} style={{ display: 'block', width: '100%', height: 90, objectFit: 'contain', background: '#f5f5f5', borderRadius: 3 }} />
+        : <div style={{ width: '100%', height: 90, background: '#f5f5f5', borderRadius: 3 }} />
+      }
+      {url && (
+        <form style={{ position: 'absolute', top: 2, right: 2 }} action={async fd => {
+          startT(async () => { await clearImmagine(null, fd); router.refresh() })
+        }}>
+          <input type="hidden" name="id" value={artId} />
+          <input type="hidden" name="tipo" value={tipo} />
+          <button type="submit" title={`Rimuovi ${tipo}`} style={{
+            width: 18, height: 18, padding: 0, lineHeight: 1, fontSize: 11, fontWeight: 700,
+            background: 'rgba(180,30,30,0.85)', color: '#fff', border: 'none',
+            borderRadius: 3, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>×</button>
+        </form>
+      )}
+    </div>
   )
 }
 
@@ -643,21 +672,16 @@ function RigaNormale({ art, onEdit, onScheda, onDelete, pending }: {
       <td style={{ ...td, color: '#555' }}>{art.serie || '—'}</td>
       <td style={{ ...td, color: '#555' }}>{art.fornitore_nome || '—'}</td>
       <td style={{ ...td, padding: 4, width: 140, minWidth: 120 }}>
-        {art.schema_url
-          ? <img src={art.schema_url} alt="schema" style={{ display: 'block', width: '100%', height: 90, objectFit: 'contain', background: '#f5f5f5', borderRadius: 3 }} />
-          : <div style={{ width: '100%', height: 90, background: '#f5f5f5', borderRadius: 3 }} />
-        }
+        <ImgCell artId={art.id} url={art.schema_url} tipo="schema" alt="schema" />
       </td>
       <td style={{ ...td, padding: 4, width: 140, minWidth: 120 }}>
-        {art.foto_url
-          ? <img src={art.foto_url} alt={art.descrizione} style={{ display: 'block', width: '100%', height: 90, objectFit: 'contain', background: '#f5f5f5', borderRadius: 3 }} />
-          : <div style={{ width: '100%', height: 90, background: '#f5f5f5', borderRadius: 3 }} />
-        }
+        <ImgCell artId={art.id} url={art.foto_url} tipo="foto" alt={art.descrizione} />
       </td>
       <td style={{ ...td, fontWeight: 500, maxWidth: 300 }}>
         {art.descrizione}
       </td>
       <td style={{ ...td, textAlign: 'center', color: '#666' }}>{art.unita}</td>
+      <td style={{ ...td, textAlign: 'center', color: '#666' }}>{art.minimo ?? ''}</td>
       <td style={{ ...td, textAlign: 'right', color: '#1565c0', fontWeight: 600 }}>{fmt(art.prezzo_acquisto)}</td>
       <td style={{ ...td, textAlign: 'right', color: '#2e7d32', fontWeight: 600 }}>{fmt(art.prezzo_vendita)}</td>
       <td style={{ ...td, textAlign: 'right', color: '#aaa', fontSize: 11 }}>
@@ -691,8 +715,10 @@ function RigaNormale({ art, onEdit, onScheda, onDelete, pending }: {
       <td style={{ ...td, textAlign: 'center' }}><ToggleCheckbox id={art.id} colonna="richiede_piano"      valore={art.richiede_piano} /></td>
       <td style={{ ...td, textAlign: 'center' }}><ToggleCheckbox id={art.id} colonna="richiede_km"         valore={art.richiede_km} /></td>
       <td style={{ ...td, textAlign: 'center' }}><ToggleCheckbox id={art.id} colonna="richiede_peso"       valore={art.richiede_peso} /></td>
-      <td style={{ ...td, textAlign: 'center' }}><ToggleCheckbox id={art.id} colonna="richiede_tipo_colore" valore={art.richiede_tipo_colore} /></td>
-      <td style={{ ...td, textAlign: 'center' }}><ToggleCheckbox id={art.id} colonna="richiede_tipo_vetro"  valore={art.richiede_tipo_vetro} /></td>
+      <td style={{ ...td, textAlign: 'center' }}><ToggleCheckbox id={art.id} colonna="richiede_tipo_colore"     valore={art.richiede_tipo_colore} /></td>
+      <td style={{ ...td, textAlign: 'center' }}><ToggleCheckbox id={art.id} colonna="richiede_tipo_colore_acc" valore={art.richiede_tipo_colore_acc} /></td>
+      <td style={{ ...td, textAlign: 'center' }}><ToggleCheckbox id={art.id} colonna="richiede_tipo_vetro"      valore={art.richiede_tipo_vetro} /></td>
+      <td style={{ ...td, textAlign: 'center' }}><ToggleCheckbox id={art.id} colonna="richiede_tipo_montaggio" valore={art.richiede_tipo_montaggio} /></td>
       <td style={{ ...td, opacity: 1, whiteSpace: 'nowrap' }}>
         <div style={{ display: 'flex', gap: 4 }}>
           <ToggleDisponibileBtn art={art} />
@@ -781,6 +807,7 @@ function RigaEdit({ art, categorie, produttori, fornitori, onDone }: {
           </select>
         )}
       </td>
+      <td style={tde}><input name="minimo" type="number" step="0.0001" min="0" defaultValue={art.minimo ?? ''} style={{ ...inp, width: 70, textAlign: 'right' }} placeholder="—" /></td>
       <td style={tde}><input name="prezzo_acquisto" type="number" step="0.01" min="0" defaultValue={art.prezzo_acquisto} required style={{ ...inp, width: 80, textAlign: 'right' }} /></td>
       <td style={tde}><input name="prezzo_vendita" type="number" step="0.01" min="0" defaultValue={art.prezzo_vendita} required style={{ ...inp, width: 80, textAlign: 'right' }} /></td>
       <td style={tde}><input name="costante" type="number" step="0.0001" defaultValue={art.costante} style={{ ...inp, width: 80, textAlign: 'right' }} /></td>
@@ -794,7 +821,7 @@ function RigaEdit({ art, categorie, produttori, fornitori, onDone }: {
           placeholder="max" title="vuoto=illimitato, 0=esaurito" />
       </td>
       <td style={tde} /><td style={tde} /><td style={tde} /><td style={tde} />
-      <td style={tde} /><td style={tde} /><td style={tde} /><td style={tde} />
+      <td style={tde} /><td style={tde} /><td style={tde} /><td style={tde} /><td style={tde} /><td style={tde} />
       <td style={{ ...tde, whiteSpace: 'nowrap' }}>
         <div style={{ display: 'flex', gap: 4 }}>
           <button onClick={handleSubmit} className="btn-green" disabled={pending}
@@ -917,6 +944,7 @@ export default function ListiniClient({ articoli, fornitori }: { articoli: Artic
                 <th style={{ ...thS, width: 140 }}>Foto prodotto</th>
                 <th style={thS}>Descrizione</th>
                 <th style={{ ...thS, textAlign: 'center' }}>Unità</th>
+                <th style={{ ...thS, textAlign: 'center', color: '#b0bec5', fontSize: 10 }}>Minimo</th>
                 <th style={{ ...thS, textAlign: 'right', color: '#90caf9' }}>P. Acquisto €</th>
                 <th style={{ ...thS, textAlign: 'right', color: '#a5d6a7' }}>P. Vendita €</th>
                 <th style={{ ...thS, textAlign: 'right', color: '#b0bec5', fontSize: 10 }}>Costante</th>
@@ -931,7 +959,9 @@ export default function ListiniClient({ articoli, fornitori }: { articoli: Artic
                 <th style={{ ...thS, textAlign: 'center', color: '#80cbc4' }}>km</th>
                 <th style={{ ...thS, textAlign: 'center', color: '#80cbc4' }}>peso</th>
                 <th style={{ ...thS, textAlign: 'center', color: '#ce93d8' }}>tipo_colore</th>
+                <th style={{ ...thS, textAlign: 'center', color: '#ce93d8' }}>tipo_colore_acc</th>
                 <th style={{ ...thS, textAlign: 'center', color: '#ce93d8' }}>tipo_vetro</th>
+                <th style={{ ...thS, textAlign: 'center', color: '#ce93d8' }}>tipo_montaggio</th>
                 <th style={thS}>Azioni</th>
               </tr>
             </thead>

@@ -3,7 +3,7 @@
 import React, { useState, useTransition, useEffect } from 'react'
 import { useActionState } from 'react'
 import { useRouter } from 'next/navigation'
-import { addCategoria, deleteCategoria, addVoce, updateVoce, deleteVoce, updateListinoCategoria, type MutResult } from './actions'
+import { addCategoria, deleteCategoria, addVoce, updateVoce, deleteVoce, updateListinoCategoria, updateListinoVoce, type MutResult } from './actions'
 
 // ─── Tipi ─────────────────────────────────────────────────────────────────────
 
@@ -13,6 +13,8 @@ export type Voce = {
   serie: string
   pdf_filename: string
   pdf_label: string
+  descrizione: string
+  listino_categoria: string | null
 }
 
 export type Categoria = {
@@ -214,6 +216,16 @@ function VoceEditForm({ voce, onDone }: { voce: Voce; onDone: () => void }) {
           <input name="pdf_label" defaultValue={voce.pdf_label} style={inp} placeholder="Es. Catalogo 2025" />
         </div>
         <div style={{ gridColumn: '1 / -1' }}>
+          <label style={lbl}>Descrizione (opzionale)</label>
+          <textarea
+            name="descrizione"
+            defaultValue={voce.descrizione}
+            rows={7}
+            placeholder="Descrizione tecnica del prodotto, caratteristiche, specifiche…"
+            style={{ ...inp, resize: 'vertical', lineHeight: 1.6, fontSize: 12 }}
+          />
+        </div>
+        <div style={{ gridColumn: '1 / -1' }}>
           <label style={lbl}>Sostituisci PDF (opzionale — lascia vuoto per mantenere l&apos;attuale)</label>
           <input type="file" accept=".pdf"
             onChange={e => setPdfFile(e.target.files?.[0] ?? null)}
@@ -234,9 +246,50 @@ function VoceEditForm({ voce, onDone }: { voce: Voce; onDone: () => void }) {
   )
 }
 
+// ─── Listino per voce ────────────────────────────────────────────────────────
+
+function ListinoVoceForm({ voceId, current, listiniCategorie }: { voceId: number; current: string | null; listiniCategorie: string[] }) {
+  const [sel, setSel] = useState(current ?? '')
+  const [pending, startT] = useTransition()
+  const [saved, setSaved] = useState(false)
+  const [error, setError] = useState('')
+  const router = useRouter()
+
+  useEffect(() => { setSel(current ?? '') }, [current])
+
+  function handleSave() {
+    const fd = new FormData()
+    fd.set('id', String(voceId))
+    fd.set('listino_categoria', sel)
+    setSaved(false); setError('')
+    startT(async () => {
+      const res = await updateListinoVoce(null, fd)
+      if (res.ok) { setSaved(true); setTimeout(() => setSaved(false), 2000); router.refresh() }
+      else setError(res.ok === false ? res.error : '')
+    })
+  }
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginTop: 5 }}>
+      <label style={{ fontSize: 11, color: '#888', whiteSpace: 'nowrap' }}>Listino:</label>
+      <select value={sel} onChange={e => setSel(e.target.value)}
+        style={{ flex: 1, minWidth: 160, padding: '3px 6px', border: '1px solid #ccc', borderRadius: 4, fontSize: 12, fontFamily: 'inherit' }}>
+        <option value="">— nessuno —</option>
+        {listiniCategorie.map(c => <option key={c} value={c}>{c}</option>)}
+      </select>
+      <button type="button" onClick={handleSave} disabled={pending} className="btn-green"
+        style={{ padding: '3px 10px', fontSize: 11, fontWeight: 600 }}>
+        {pending ? '…' : 'Salva'}
+      </button>
+      {error && <span style={{ fontSize: 11, color: '#c00' }}>{error}</span>}
+      {saved && <span style={{ fontSize: 11, color: '#2e7d32' }}>✓</span>}
+    </div>
+  )
+}
+
 // ─── Riga voce ────────────────────────────────────────────────────────────────
 
-function VoceRow({ voce, isStaff }: { voce: Voce; isStaff: boolean }) {
+function VoceRow({ voce, isStaff, listiniCategorie }: { voce: Voce; isStaff: boolean; listiniCategorie: string[] }) {
   const [pending, startT] = useTransition()
   const [editing, setEditing] = useState(false)
   const router = useRouter()
@@ -247,48 +300,52 @@ function VoceRow({ voce, isStaff }: { voce: Voce; isStaff: boolean }) {
 
   return (
     <div style={{
-      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       padding: '10px 14px', borderBottom: '1px solid #f0f0f0',
       background: '#fff',
     }}>
-      <div>
-        <span style={{ fontWeight: 600, fontSize: 14 }}>{voce.nome}</span>
-        {voce.serie && (
-          <span style={{ fontSize: 12, color: '#555', marginLeft: 8 }}>— {voce.serie}</span>
-        )}
-        {voce.pdf_label && (
-          <span style={{ fontSize: 12, color: '#888', marginLeft: 8 }}>— {voce.pdf_label}</span>
-        )}
-      </div>
-      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-        <a
-          href={`/uploads/cataloghi/${voce.pdf_filename}`}
-          target="_blank"
-          rel="noreferrer"
-          className="btn-black"
-          style={{ padding: '4px 14px', fontSize: 12, fontWeight: 600, textDecoration: 'none', display: 'inline-block' }}
-        >
-          Sfoglia catalogo
-        </a>
-        {isStaff && (
-          <>
-            <button onClick={() => setEditing(true)} className="btn-gray"
-              style={{ padding: '4px 10px', fontSize: 12, fontWeight: 600 }}>
-              Modifica
-            </button>
-            <form action={async fd => {
-              startT(async () => { await deleteVoce(null, fd); router.refresh() })
-            }}>
-              <input type="hidden" name="id" value={voce.id} />
-              <button type="submit" disabled={pending} className="btn-red"
-                style={{ padding: '4px 10px', fontSize: 12 }}
-                onClick={e => { if (!confirm('Eliminare questa voce e il PDF allegato?')) e.preventDefault() }}>
-                Elimina
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+        <div>
+          <span style={{ fontWeight: 600, fontSize: 14 }}>{voce.nome}</span>
+          {voce.serie && (
+            <span style={{ fontSize: 12, color: '#555', marginLeft: 8 }}>— {voce.serie}</span>
+          )}
+          {voce.pdf_label && (
+            <span style={{ fontSize: 12, color: '#888', marginLeft: 8 }}>— {voce.pdf_label}</span>
+          )}
+        </div>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexShrink: 0 }}>
+          <a
+            href={`/uploads/cataloghi/${voce.pdf_filename}`}
+            target="_blank"
+            rel="noreferrer"
+            className="btn-black"
+            style={{ padding: '4px 14px', fontSize: 12, fontWeight: 600, textDecoration: 'none', display: 'inline-block' }}
+          >
+            Sfoglia catalogo
+          </a>
+          {isStaff && (
+            <>
+              <button onClick={() => setEditing(true)} className="btn-gray"
+                style={{ padding: '4px 10px', fontSize: 12, fontWeight: 600 }}>
+                Modifica
               </button>
-            </form>
-          </>
-        )}
+              <form action={async fd => {
+                startT(async () => { await deleteVoce(null, fd); router.refresh() })
+              }}>
+                <input type="hidden" name="id" value={voce.id} />
+                <button type="submit" disabled={pending} className="btn-red"
+                  style={{ padding: '4px 10px', fontSize: 12 }}
+                  onClick={e => { if (!confirm('Eliminare questa voce e il PDF allegato?')) e.preventDefault() }}>
+                  Elimina
+                </button>
+              </form>
+            </>
+          )}
+        </div>
       </div>
+      {isStaff && (
+        <ListinoVoceForm voceId={voce.id} current={voce.listino_categoria} listiniCategorie={listiniCategorie} />
+      )}
     </div>
   )
 }
@@ -360,7 +417,7 @@ function CategoriaAccordion({ cat, isStaff, listiniCategorie }: { cat: Categoria
               Nessun catalogo. {isStaff ? 'Aggiungi una voce con "+ Voce".' : ''}
             </div>
           ) : (
-            cat.voci.map(v => <VoceRow key={v.id} voce={v} isStaff={isStaff} />)
+            cat.voci.map(v => <VoceRow key={v.id} voce={v} isStaff={isStaff} listiniCategorie={listiniCategorie} />)
           )}
         </div>
       )}

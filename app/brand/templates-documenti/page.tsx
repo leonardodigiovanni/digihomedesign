@@ -1,4 +1,4 @@
-﻿import Link from 'next/link'
+import Link from 'next/link'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -9,21 +9,21 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <div className="fs-15" style={{ maxWidth: 860, margin: '48px auto', padding: '0 20px 64px', color: '#444', lineHeight: 1.8 }}>
+    <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
         <Link href="/brand" style={{ color: '#888', textDecoration: 'underline' }}>Brand</Link> / Documenti Legali
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 16 }}>Documenti Legali</h1>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 28 }}>
-        <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '24px 28px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 8 }}>
+        <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '24px 28px' }}>
           <p className="testo-articoli" style={{ margin: 0 }}>Raccolta dei modelli di documento ufficiali Digi Home Design: contratti di appalto, moduli di accettazione preventivo, dichiarazioni di conformità impianti, verbali di consegna lavori e liberatorie per accesso cantiere.</p>
         </div>
-        <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '24px 28px' }}>
+        <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '24px 28px' }}>
           <p className="testo-articoli" style={{ margin: 0 }}>I template sono disponibili in formato PDF, pronti per essere scaricati. Per modelli personalizzati o versioni aggiornate contatta il nostro ufficio amministrativo.</p>
         </div>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         {[
           { label: 'Privacy Policy',                        file: 'privacy-policy.pdf'                    },
           { label: 'Cookie Policy',                         file: 'cookie-policy.pdf'                     },
@@ -37,7 +37,7 @@ export default function Page() {
             style={{
               display: 'flex', alignItems: 'center', gap: 14,
               padding: '12px 16px',
-              background: '#fff', border: '2px solid #c8960c', borderRadius: 8,
+              background: '#fff', border: '1px solid #c8960c', borderRadius: 8,
               textDecoration: 'none', color: '#1a1a1a', fontWeight: 500,
             }}
           >
@@ -52,7 +52,8 @@ export default function Page() {
         ))}
       </div>
 
-      <Link href="/brand" className="fs-12" style={{ display: 'inline-block', marginTop: 32, color: '#1a1a1a', fontWeight: 600, textDecoration: 'underline' }}>← Torna a Brand</Link>
+      <Link href="/brand" className="btn-black fs-12" style={{ display: 'inline-flex', alignItems: 'center', marginTop: 32, height: 42, padding: '0 20px', borderRadius: 21, textDecoration: 'none', fontFamily: 'monospace' }}>← Torna a Brand</Link>
+      <p className="IsDebug fs-11" style={{ marginTop: 8 }}>trovare i pdf online e capire come vengono accettati dal cliente</p>
     </div>
   )
 }

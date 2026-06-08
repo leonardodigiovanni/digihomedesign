@@ -42,17 +42,17 @@ export default async function Page() {
   const role     = cookieStore.get('session_role')?.value ?? null
 
   return (
-    <div className="fs-15" style={{ maxWidth: 860, margin: '48px auto', padding: '0 20px 64px', color: '#444', lineHeight: 1.8 }}>
+    <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
         <Link href="/brand" style={{ color: '#888', textDecoration: 'underline' }}>Brand</Link> / Contatti
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 16 }}>Contatti</h1>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 0 }}>
-        <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '24px 28px' }}>
-          <p className="testo-articoli" style={{ margin: 0 }}>Siamo a disposizione per sopralluoghi gratuiti, preventivi e informazioni su tutti i nostri servizi. Contattaci telefonicamente, via email o compila il modulo — ti risponderemo entro 24 ore.</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 0 }}>
+        <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '24px 4px' }}>
+          <p className="testo-articoli" style={{ margin: 0, textAlign: 'justify' }}>Siamo a disposizione per sopralluoghi gratuiti, preventivi e informazioni su tutti i nostri servizi. Contattaci telefonicamente, via email o compila il modulo — ti risponderemo entro 24 ore.</p>
         </div>
-        <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '24px 28px' }}>
-          <p className="testo-articoli" style={{ margin: 0 }}>Operiamo direttamente a Palermo e in tutta la Provincia e nel resto della Sicilia. Potremmo affidarci alla nostra rete di selezionati e fidati collaboratori per gestire distanze maggiori.</p>
+        <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '24px 4px' }}>
+          <p className="testo-articoli" style={{ margin: 0, textAlign: 'justify' }}>Operiamo direttamente a Palermo e in tutta la Provincia e nel resto della Sicilia. Potremmo affidarci alla nostra rete di selezionati e fidati collaboratori per gestire distanze maggiori.</p>
         </div>
       </div>
 
@@ -60,7 +60,7 @@ export default async function Page() {
       <div style={{
         display: 'flex',
         flexWrap: 'wrap',
-        gap: 16,
+        gap: 8,
         margin: '32px 0 0',
       }}>
         {[
@@ -71,7 +71,7 @@ export default async function Page() {
           <div key={r.label} style={{
             flex: `${r.grow} 1 160px`,
             background: '#fff',
-            border: '2px solid #c8960c',
+            border: '1px solid #c8960c',
             borderRadius: 10,
             padding: '16px 18px',
             display: 'flex',
@@ -94,7 +94,8 @@ export default async function Page() {
 
       <ContattoForm username={username} role={role} />
 
-      <Link href="/brand" className="fs-12" style={{ display: 'inline-block', marginTop: 40, color: '#1a1a1a', fontWeight: 600, textDecoration: 'underline' }}>← Torna a Brand</Link>
+      <Link href="/brand" className="btn-black fs-12" style={{ display: 'inline-flex', alignItems: 'center', marginTop: 32, height: 42, padding: '0 20px', borderRadius: 21, textDecoration: 'none', fontFamily: 'monospace' }}>← Torna a Brand</Link>
+      <p className="IsDebug fs-11" style={{ marginTop: 8 }}>pagina revisionata</p>
     </div>
   )
 }

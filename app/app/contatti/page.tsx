@@ -1,4 +1,4 @@
-function IconPhone() {
+﻿function IconPhone() {
   return (
     <svg width="38" height="38" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <circle cx="12" cy="12" r="12" fill="#22c55e"/>
@@ -78,26 +78,30 @@ const rows: { label: string; sub: string; href: string; icon: React.ReactNode }[
   ...socials.map(s => ({ label: s.label, sub: s.account, href: s.href, icon: s.icon })),
 ]
 
+const BRUSHED = 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)'
+
 export default function AppContattiPage() {
   return (
-    <div>
-      <p className="app-section-title" style={{ marginBottom: 16 }}>Contatti</p>
-
-      <div className="app-card" style={{ padding: '0 16px' }}>
-        {rows.map(({ label, sub, href, icon }, i) => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginLeft: 3 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {rows.map(({ label, sub, href, icon }) => (
           <div
             key={label}
             style={{
+              background: BRUSHED,
+              border: '1px solid #222',
+              borderRadius: 8,
+              padding: '10px 14px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              height: ROW_H,
-              borderBottom: i < rows.length - 1 ? '1px solid #f0f0f0' : 'none',
+              gap: 10,
+              boxShadow: '0 2px 8px rgba(0,0,0,0.18),inset 0 1px 0 rgba(255,255,255,0.5)',
             }}
           >
             <div style={{ minWidth: 0 }}>
               <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: '#1a1a1a' }}>{label}</p>
-              <p style={{ margin: 0, fontSize: 12, color: '#888', wordBreak: 'break-all' }}>{sub}</p>
+              <p style={{ margin: 0, fontSize: 14, color: '#888', wordBreak: 'break-all' }}>{sub}</p>
             </div>
             <div style={{ width: 42, height: 42, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               {href ? (
@@ -114,3 +118,5 @@ export default function AppContattiPage() {
     </div>
   )
 }
+
+

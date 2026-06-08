@@ -129,49 +129,63 @@ export async function rimuoviDaCarrello(index: number): Promise<void> {
 export async function aggiornaArticoloCarrello(
   index: number,
   updates: { q?: number; ante?: number; l?: number; h?: number; colore?: string; note?: string; desc?: string }
-): Promise<void> {
+): Promise<CartResult> {
   const cs = await cookies()
   const cart = normalizeCart(cs.get('digi_cart')?.value ?? '')
-  if (index >= 0 && index < cart.length) {
-    const item = { ...cart[index] }
-    if (updates.q    != null) item.q      = updates.q
-    if (updates.ante != null) item.ante   = updates.ante
-    if (updates.l    != null) item.l      = updates.l
-    if (updates.h    != null) item.h      = updates.h
-    if (updates.colore != null) item.colore = updates.colore
-    if (updates.note   != null) item.note   = updates.note
-    if (updates.desc   != null) item.desc   = updates.desc
-    cart[index] = item
+  if (index < 0 || index >= cart.length) return { ok: false, error: 'Articolo non trovato.' }
+  const item = { ...cart[index] }
 
-    // Propaga l/h/q ai figli tipo_vetro che li hanno ereditati
-    const propagaL = updates.l != null
-    const propagaH = updates.h != null
-    const propagaQ = updates.q != null
-    if (item.uid != null && (propagaL || propagaH || propagaQ)) {
-      const figli = cart.filter(i => i.parent === item.uid && i.id && i.id !== 0)
-      if (figli.length > 0) {
-        const ids = figli.map(i => i.id!)
-        const db = await getConnection()
-        try {
-          const ph = ids.map(() => '?').join(',')
-          const [flagRows] = await db.query(
-            `SELECT id, richiede_tipo_vetro FROM listini WHERE id IN (${ph})`, ids
-          ) as [{ id: number; richiede_tipo_vetro: number }[], unknown]
-          const vetroIds = new Set(flagRows.filter(r => r.richiede_tipo_vetro === 1).map(r => r.id))
-          for (let i = 0; i < cart.length; i++) {
-            if (cart[i].parent === item.uid && vetroIds.has(cart[i].id!)) {
-              const figlio = { ...cart[i] }
-              if (propagaL) figlio.l = updates.l
-              if (propagaH) figlio.h = updates.h
-              if (propagaQ) figlio.q = updates.q!
-              cart[i] = figlio
-            }
+  if (updates.q != null && updates.q > 0 && updates.q !== item.q) {
+    const db = await getConnection()
+    try {
+      const [rows] = await db.query(
+        'SELECT max_acquistabile FROM listini WHERE id = ? LIMIT 1', [item.id]
+      ) as [{ max_acquistabile: number | null }[], unknown]
+      const max = rows[0]?.max_acquistabile ?? null
+      if (max === 0) return { ok: false, error: 'Articolo esaurito.' }
+      if (max !== null && updates.q > max)
+        return { ok: false, error: `Quantità non disponibile. Massimo acquistabile: ${max}.` }
+    } finally { await db.end() }
+  }
+
+  if (updates.q    != null) item.q      = updates.q
+  if (updates.ante != null) item.ante   = updates.ante
+  if (updates.l    != null) item.l      = updates.l
+  if (updates.h    != null) item.h      = updates.h
+  if (updates.colore != null) item.colore = updates.colore
+  if (updates.note   != null) item.note   = updates.note
+  if (updates.desc   != null) item.desc   = updates.desc
+  cart[index] = item
+
+  // Propaga l/h/q ai figli tipo_vetro che li hanno ereditati
+  const propagaL = updates.l != null
+  const propagaH = updates.h != null
+  const propagaQ = updates.q != null
+  if (item.uid != null && (propagaL || propagaH || propagaQ)) {
+    const figli = cart.filter(i => i.parent === item.uid && i.id && i.id !== 0)
+    if (figli.length > 0) {
+      const ids = figli.map(i => i.id!)
+      const db = await getConnection()
+      try {
+        const ph = ids.map(() => '?').join(',')
+        const [flagRows] = await db.query(
+          `SELECT id, richiede_tipo_vetro FROM listini WHERE id IN (${ph})`, ids
+        ) as [{ id: number; richiede_tipo_vetro: number }[], unknown]
+        const vetroIds = new Set(flagRows.filter(r => r.richiede_tipo_vetro === 1).map(r => r.id))
+        for (let i = 0; i < cart.length; i++) {
+          if (cart[i].parent === item.uid && vetroIds.has(cart[i].id!)) {
+            const figlio = { ...cart[i] }
+            if (propagaL) figlio.l = updates.l
+            if (propagaH) figlio.h = updates.h
+            if (propagaQ) figlio.q = updates.q!
+            cart[i] = figlio
           }
-        } catch {} finally { await db.end() }
-      }
+        }
+      } catch {} finally { await db.end() }
     }
   }
   saveCartCookie(cs, cart)
+  return { ok: true }
 }
 
 // ─── Applica caratteristica diretta a uno o più padri ────────────────────────
@@ -249,6 +263,19 @@ export async function aggiungiArticoloAlCarrello(
 
 // ─── Carrello Acquisti (cookie digi_cart_acquisti) ────────────────────────────
 
+function normalizeCartAcquisti(raw: string): CartItem[] {
+  const cart = decompressCart(raw)
+  let maxUid = 0
+  for (const i of cart) if ((i.uid ?? 0) > maxUid) maxUid = i.uid!
+  let nextUid = maxUid + 1
+  return cart.map(item => item.uid != null ? item : { ...item, uid: nextUid++, tipo: item.tipo ?? 'articolo' })
+}
+
+function saveCartAcquistiCookie(cs: Awaited<ReturnType<typeof cookies>>, cart: CartItem[]) {
+  if (cart.length === 0) cs.delete('digi_cart_acquisti')
+  else cs.set('digi_cart_acquisti', JSON.stringify(compressCart(cart)), { maxAge: 30 * 24 * 60 * 60, path: '/', sameSite: 'lax' })
+}
+
 export async function aggiungiAlCarrelloAcquisti(_: CartResult | null, fd: FormData): Promise<CartResult> {
   const listinoId = parseInt(fd.get('listino_id') as string)
   const quantita  = Math.max(1, parseInt(fd.get('quantita') as string) || 1)
@@ -273,10 +300,10 @@ export async function aggiungiAlCarrelloAcquisti(_: CartResult | null, fd: FormD
   }
 
   const cookieStore = await cookies()
-  const raw = cookieStore.get('digi_cart_acquisti')?.value
-  const cart: CartItem[] = raw ? JSON.parse(raw) : []
+  const cart = normalizeCartAcquisti(cookieStore.get('digi_cart_acquisti')?.value ?? '')
+  const nextUid = Math.max(0, ...cart.map(i => i.uid ?? 0)) + 1
 
-  const newItem: CartItem = { id: listinoId, q: quantita }
+  const newItem: CartItem = { id: listinoId, q: quantita, uid: nextUid, tipo: 'articolo' }
   if (ante !== 1) newItem.ante = ante
   if (larghezza > 0) newItem.l = larghezza
   if (altezza > 0) newItem.h = altezza
@@ -284,7 +311,7 @@ export async function aggiungiAlCarrelloAcquisti(_: CartResult | null, fd: FormD
   if (note) newItem.note = note
   cart.push(newItem)
 
-  cookieStore.set('digi_cart_acquisti', JSON.stringify(cart), { maxAge: 30 * 24 * 60 * 60, path: '/', sameSite: 'lax' })
+  saveCartAcquistiCookie(cookieStore, cart)
   return { ok: true }
 }
 
@@ -294,13 +321,108 @@ export async function svuotaCarrelloAcquisti(): Promise<void> {
 }
 
 export async function rimuoviDaCarrelloAcquisti(index: number): Promise<void> {
-  const cookieStore = await cookies()
-  const raw = cookieStore.get('digi_cart_acquisti')?.value ?? ''
-  let cart: CartItem[] = []
-  try { cart = raw ? JSON.parse(raw) : [] } catch {}
-  if (index >= 0 && index < cart.length) cart.splice(index, 1)
-  if (cart.length === 0) cookieStore.delete('digi_cart_acquisti')
-  else cookieStore.set('digi_cart_acquisti', JSON.stringify(cart), { maxAge: 30 * 24 * 60 * 60, path: '/', sameSite: 'lax' })
+  const cs = await cookies()
+  const cart = normalizeCartAcquisti(cs.get('digi_cart_acquisti')?.value ?? '')
+  if (index < 0 || index >= cart.length) return
+  const removedUid = cart[index].uid
+  const filtered = cart.filter((item, i) => i !== index && item.parent !== removedUid)
+  saveCartAcquistiCookie(cs, filtered)
+}
+
+export async function aggiornaArticoloCarrelloAcquisti(
+  index: number,
+  updates: { q?: number; l?: number; h?: number; colore?: string; note?: string }
+): Promise<CartResult> {
+  const cs = await cookies()
+  const cart = normalizeCartAcquisti(cs.get('digi_cart_acquisti')?.value ?? '')
+  if (index < 0 || index >= cart.length) return { ok: false, error: 'Articolo non trovato.' }
+  const item = { ...cart[index] }
+
+  if (updates.q != null && updates.q > 0 && updates.q !== item.q) {
+    const db = await getConnection()
+    try {
+      const [rows] = await db.query(
+        'SELECT max_acquistabile FROM listini WHERE id = ? LIMIT 1', [item.id]
+      ) as [{ max_acquistabile: number | null }[], unknown]
+      const max = rows[0]?.max_acquistabile ?? null
+      if (max === 0) return { ok: false, error: 'Articolo esaurito.' }
+      if (max !== null && updates.q > max)
+        return { ok: false, error: `Quantità non disponibile. Massimo acquistabile: ${max}.` }
+    } finally { await db.end() }
+    item.q = updates.q
+  }
+
+  if (updates.l != null) item.l = updates.l > 0 ? updates.l : undefined
+  if (updates.h != null) item.h = updates.h > 0 ? updates.h : undefined
+  if (updates.colore != null) item.colore = updates.colore || undefined
+  if (updates.note   != null) item.note   = updates.note   || undefined
+  cart[index] = item
+  saveCartAcquistiCookie(cs, cart)
+  return { ok: true }
+}
+
+export async function aggiungiArticoloAlCarrelloAcquisti(
+  listinoId: number,
+  updates: { q: number; l?: number; h?: number; colore?: string; note?: string }
+): Promise<CartResult> {
+  if (!listinoId) return { ok: false, error: 'Articolo non valido.' }
+  const db = await getConnection()
+  try {
+    const [rows] = await db.query(
+      'SELECT max_acquistabile FROM listini WHERE id = ? LIMIT 1', [listinoId]
+    ) as [{ max_acquistabile: number | null }[], unknown]
+    const max = rows[0]?.max_acquistabile ?? null
+    if (max === 0) return { ok: false, error: 'Articolo esaurito.' }
+    if (max !== null && updates.q > max)
+      return { ok: false, error: `Quantità non disponibile. Massimo acquistabile: ${max}.` }
+  } finally { await db.end() }
+  const cs = await cookies()
+  const cart = normalizeCartAcquisti(cs.get('digi_cart_acquisti')?.value ?? '')
+  const nextUid = Math.max(0, ...cart.map(i => i.uid ?? 0)) + 1
+  const newItem: CartItem = { id: listinoId, q: updates.q, uid: nextUid, tipo: 'articolo' }
+  if (updates.l) newItem.l = updates.l
+  if (updates.h) newItem.h = updates.h
+  if (updates.colore) newItem.colore = updates.colore
+  if (updates.note)   newItem.note   = updates.note
+  cart.push(newItem)
+  saveCartAcquistiCookie(cs, cart)
+  return { ok: true }
+}
+
+export async function applicaCaratteristicaAlCarrelloAcquisti(
+  parentUids: number[],
+  listinoId: number
+): Promise<CartResult> {
+  if (!listinoId || parentUids.length === 0) return { ok: false, error: 'Dati non validi.' }
+  const cs   = await cookies()
+  const cart = normalizeCartAcquisti(cs.get('digi_cart_acquisti')?.value ?? '')
+
+  const db = await getConnection()
+  try {
+    const [rows] = await db.query(
+      'SELECT id, richiede_tipo_vetro FROM listini WHERE id = ? LIMIT 1', [listinoId]
+    ) as [{ id: number; richiede_tipo_vetro: number }[], unknown]
+    if (!rows[0]) return { ok: false, error: 'Articolo non trovato.' }
+    const isVetro = rows[0].richiede_tipo_vetro === 1
+
+    let nextUid = Math.max(0, ...cart.map(i => i.uid ?? 0)) + 1
+    for (const parentUid of parentUids) {
+      const parentItem = cart.find(i => i.uid === parentUid)
+      if (!parentItem) continue
+      const newItem: CartItem = { id: listinoId, q: parentItem.q, uid: nextUid++, tipo: 'articolo', parent: parentUid }
+      if (isVetro) {
+        if (parentItem.l) newItem.l = parentItem.l
+        if (parentItem.h) newItem.h = parentItem.h
+        newItem.q = parentItem.q
+      }
+      const parentIdx = cart.findIndex(i => i.uid === parentUid)
+      let insertIdx = parentIdx + 1
+      while (insertIdx < cart.length && cart[insertIdx].parent === parentUid) insertIdx++
+      cart.splice(insertIdx, 0, newItem)
+    }
+    saveCartAcquistiCookie(cs, cart)
+    return { ok: true, newCart: JSON.stringify(compressCart(cart)) }
+  } finally { await db.end() }
 }
 
 // ─── Salva carrello come NUOVO preventivo ─────────────────────────────────────
@@ -386,9 +508,9 @@ export async function salvaCarrelloComePreventivo(): Promise<SaveResult> {
     for (const item of cart) {
       if (item.tipo === 'caratteristica' || item.id === 0) continue
       const [rows] = await db.query(
-        'SELECT id, categoria, produttore, descrizione, unita, prezzo_vendita, sconto_articolo, costante FROM listini WHERE id = ? LIMIT 1',
+        'SELECT id, categoria, produttore, descrizione, unita, prezzo_vendita, sconto_articolo, costante, minimo FROM listini WHERE id = ? LIMIT 1',
         [item.id]
-      ) as [{ id: number; categoria: string; produttore: string; descrizione: string; unita: string; prezzo_vendita: number; sconto_articolo: number; costante: number }[], unknown]
+      ) as [{ id: number; categoria: string; produttore: string; descrizione: string; unita: string; prezzo_vendita: number; sconto_articolo: number; costante: number; minimo: number | null }[], unknown]
       const art = rows[0]
       if (!art) continue
 
@@ -413,9 +535,15 @@ export async function salvaCarrelloComePreventivo(): Promise<SaveResult> {
           ? (costantiPerUid.get(item.parent!) || 1)
           : 1
         let prezzoLordo = 0
-        if (art.unita === 'm²')      prezzoLordo = pb * h * l * q * costante
-        else if (art.unita === 'ml') prezzoLordo = pb * l * q * costante
-        else                         prezzoLordo = pb * q * costante
+        if (art.unita === 'm²') {
+          const minimo = Number(art.minimo ?? 0)
+          const mqPerPezzo = parentDbId === null ? Math.max(h * l, minimo) : h * l
+          prezzoLordo = pb * mqPerPezzo * q * costante
+        } else if (art.unita === 'ml') {
+          prezzoLordo = pb * l * q * costante
+        } else {
+          prezzoLordo = pb * q
+        }
         prezzoPre = Math.round(prezzoLordo * 100) / 100
         prezzo    = Math.round(prezzoLordo * scontoFactor * 100) / 100
       }

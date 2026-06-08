@@ -55,10 +55,13 @@ async function ensureTable() {
   await db.execute(`ALTER TABLE listini ADD COLUMN richiede_km         TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
   await db.execute(`ALTER TABLE listini ADD COLUMN richiede_peso       TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
   // caratteristiche obbligatorie da abbinare all'articolo (una sola volta)
-  await db.execute(`ALTER TABLE listini ADD COLUMN richiede_tipo_colore TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
-  await db.execute(`ALTER TABLE listini ADD COLUMN richiede_tipo_vetro  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN richiede_tipo_colore     TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN richiede_tipo_colore_acc TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN richiede_tipo_vetro       TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
   await db.execute(`ALTER TABLE listini ADD COLUMN costante DECIMAL(10,4) NOT NULL DEFAULT 0`).catch(() => {})
   await db.execute(`ALTER TABLE listini ADD COLUMN abbr VARCHAR(50) NOT NULL DEFAULT ''`).catch(() => {})
+  await db.execute(`ALTER TABLE listini MODIFY COLUMN abbr VARCHAR(255) NOT NULL DEFAULT ''`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN minimo DECIMAL(10,4) NULL DEFAULT NULL`).catch(() => {})
   await db.end()
 }
 
@@ -83,6 +86,8 @@ export async function addArticolo(_: AddResult | null, fd: FormData): Promise<Ad
   const sconto_articolo = parseFloat((fd.get('sconto_articolo') as string) ?? '0') || 0
   const costante        = parseFloat((fd.get('costante')        as string) ?? '0') || 0
   const abbr            = ((fd.get('abbr') as string) ?? '').trim()
+  const minimoRaw       = (fd.get('minimo') as string)?.trim()
+  const minimo          = minimoRaw !== '' && minimoRaw != null ? parseFloat(minimoRaw) : null
 
   if (!categoria || !descrizione || !unita)
     return { ok: false, error: 'Categoria, descrizione e unità sono obbligatori.' }
@@ -91,8 +96,8 @@ export async function addArticolo(_: AddResult | null, fd: FormData): Promise<Ad
   const db = await getConnection()
   try {
     const [ins] = await db.execute(
-      'INSERT INTO listini (categoria, produttore, serie, descrizione, unita, prezzo_acquisto, prezzo_vendita, note, fornitore_id, max_acquistabile, sconto_articolo, costante, abbr) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)',
-      [categoria, produttore, serie, descrizione, unita, prezzo_acquisto, prezzo_vendita, note, fornitore_id, max_acquistabile, sconto_articolo, costante, abbr]
+      'INSERT INTO listini (categoria, produttore, serie, descrizione, unita, prezzo_acquisto, prezzo_vendita, note, fornitore_id, max_acquistabile, sconto_articolo, costante, abbr, minimo) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+      [categoria, produttore, serie, descrizione, unita, prezzo_acquisto, prezzo_vendita, note, fornitore_id, max_acquistabile, sconto_articolo, costante, abbr, minimo]
     ) as [{ insertId: number }, unknown]
     revalidatePath('/listini')
     return { ok: true, id: ins.insertId }
@@ -118,6 +123,8 @@ export async function updateArticolo(_: MutResult | null, fd: FormData): Promise
   const sconto_articolo = parseFloat((fd.get('sconto_articolo') as string) ?? '0') || 0
   const costante        = parseFloat((fd.get('costante')        as string) ?? '0') || 0
   const abbr            = ((fd.get('abbr') as string) ?? '').trim()
+  const minimoRaw2      = (fd.get('minimo') as string)?.trim()
+  const minimo          = minimoRaw2 !== '' && minimoRaw2 != null ? parseFloat(minimoRaw2) : null
 
   if (isNaN(id) || !categoria || !descrizione || !unita)
     return { ok: false, error: 'Dati non validi.' }
@@ -126,8 +133,8 @@ export async function updateArticolo(_: MutResult | null, fd: FormData): Promise
   const db = await getConnection()
   try {
     await db.execute(
-      'UPDATE listini SET categoria=?, produttore=?, serie=?, descrizione=?, unita=?, prezzo_acquisto=?, prezzo_vendita=?, note=?, fornitore_id=?, max_acquistabile=?, sconto_articolo=?, costante=?, abbr=? WHERE id=?',
-      [categoria, produttore, serie, descrizione, unita, prezzo_acquisto, prezzo_vendita, note, fornitore_id, max_acquistabile, sconto_articolo, costante, abbr, id]
+      'UPDATE listini SET categoria=?, produttore=?, serie=?, descrizione=?, unita=?, prezzo_acquisto=?, prezzo_vendita=?, note=?, fornitore_id=?, max_acquistabile=?, sconto_articolo=?, costante=?, abbr=?, minimo=? WHERE id=?',
+      [categoria, produttore, serie, descrizione, unita, prezzo_acquisto, prezzo_vendita, note, fornitore_id, max_acquistabile, sconto_articolo, costante, abbr, minimo, id]
     )
     revalidatePath('/listini')
     return { ok: true }
@@ -214,7 +221,7 @@ export async function toggleCaratteristica(_: MutResult | null, fd: FormData): P
   } finally { await db.end() }
 }
 
-const COLONNE_BOOL_ALLOWED = ['richiede_larghezza','richiede_altezza','richiede_quantita','richiede_piano','richiede_km','richiede_peso','richiede_tipo_colore','richiede_tipo_vetro']
+const COLONNE_BOOL_ALLOWED = ['richiede_larghezza','richiede_altezza','richiede_quantita','richiede_piano','richiede_km','richiede_peso','richiede_tipo_colore','richiede_tipo_colore_acc','richiede_tipo_vetro','richiede_tipo_montaggio']
 
 export async function toggleColonnaBooleana(_: MutResult | null, fd: FormData): Promise<MutResult> {
   await checkAccess()
@@ -226,6 +233,21 @@ export async function toggleColonnaBooleana(_: MutResult | null, fd: FormData): 
   const db = await getConnection()
   try {
     await db.execute(`UPDATE listini SET ${col} = 1 - ${col} WHERE id=?`, [id])
+    revalidatePath('/area-lavoro/listini')
+    return { ok: true }
+  } finally { await db.end() }
+}
+
+export async function clearImmagine(_: MutResult | null, fd: FormData): Promise<MutResult> {
+  await checkAccess()
+  const id   = parseInt(fd.get('id') as string)
+  const tipo = fd.get('tipo') as string
+  if (isNaN(id)) return { ok: false, error: 'ID non valido.' }
+  const col = tipo === 'schema' ? 'schema_url' : tipo === 'foto' ? 'foto_url' : null
+  if (!col) return { ok: false, error: 'Tipo non valido.' }
+  const db = await getConnection()
+  try {
+    await db.execute(`UPDATE listini SET ${col} = NULL WHERE id=?`, [id])
     revalidatePath('/area-lavoro/listini')
     return { ok: true }
   } finally { await db.end() }

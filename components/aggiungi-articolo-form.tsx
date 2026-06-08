@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo, useTransition } from 'react'
+import { useState, useEffect, useMemo, useTransition, useRef } from 'react'
 import { aggiungiAlCarrello, aggiungiAlPreventivoDaCatalogo, annullaParentPendente, type CartResult, type PreventivoDestOption } from '@/app/brand/cataloghi/actions'
 
 export type ArticoloListino = {
@@ -20,6 +20,9 @@ export type ArticoloListino = {
   richiede_peso?: number
   richiede_tipo_colore?: number
   richiede_tipo_vetro?: number
+  richiede_tipo_montaggio?: number
+  schema_url?: string | null
+  max_acquistabile?: number | null
 }
 
 
@@ -30,6 +33,9 @@ export default function AggiungiArticoloForm({
   preventiviBozza,
   cartNonVuoto = false,
   parentPendente,
+  carrelloHref = '/area-clienti/carrello-preventivo',
+  preventivoClienteBaseHref = '/area-clienti/preventivi',
+  submitLabel = 'Aggiungi al carrello',
 }: {
   articoli: ArticoloListino[]
   isStaff?: boolean
@@ -37,15 +43,20 @@ export default function AggiungiArticoloForm({
   preventiviBozza?: PreventivoDestOption[]
   cartNonVuoto?: boolean
   parentPendente?: { uid: number; desc: string }
+  carrelloHref?: string
+  preventivoClienteBaseHref?: string
+  submitLabel?: string
 }) {
   const [step, setStep] = useState<'select' | 'detail'>('select')
   const [produttoreFiltro, setProduttoreFiltro] = useState('')
   const [serieFiltro, setSerieFiltro] = useState('')
   const [ricerca, setRicerca] = useState('')
+  const [schemaFiltro, setSchemaFiltro] = useState<string | null>(null)
   const [selectedId, setSelectedId] = useState<number>(articoli[0]?.id ?? 0)
   const [result, setResult] = useState<CartResult | null>(null)
   const [isPending, startTransition] = useTransition()
   const [canSubmit, setCanSubmit] = useState(false)
+  const formRef = useRef<HTMLFormElement>(null)
 
   useEffect(() => {
     const sel = artFiltrati.find(a => a.id === selectedId) ?? artFiltrati[0]
@@ -54,7 +65,9 @@ export default function AggiungiArticoloForm({
       sel.richiede_quantita === 1  || sel.richiede_piano === 1   ||
       sel.richiede_km === 1        || sel.richiede_peso === 1
     ))
-    setCanSubmit(!hasRequired)
+    if (!hasRequired) { setCanSubmit(true); return }
+    const t = setTimeout(() => setCanSubmit(formRef.current?.checkValidity() ?? false), 0)
+    return () => clearTimeout(t)
   }, [selectedId, step])
 
   const mostraDestinazione = !cartNonVuoto && (preventiviBozza?.length ?? 0) > 0
@@ -72,10 +85,11 @@ export default function AggiungiArticoloForm({
     if (!mostraDestinazione || !preventiviBozza) return []
     const selPrev = preventiviBozza.find(p => String(p.id) === destId)
     const others  = preventiviBozza.filter(p => String(p.id) !== destId)
-    const cartOpt = { value: 'cart', label: 'Nuovo carrello' }
+    const cartOpt = { value: 'cart', label: 'Nuova simulazione' }
+    const prefixed = (p: { id: number; label: string }) => ({ value: String(p.id), label: `Prev. N° ${p.label}` })
     return selPrev
-      ? [{ value: String(selPrev.id), label: selPrev.label }, cartOpt, ...others.map(p => ({ value: String(p.id), label: p.label }))]
-      : [cartOpt, ...preventiviBozza.map(p => ({ value: String(p.id), label: p.label }))]
+      ? [prefixed(selPrev), cartOpt, ...others.map(prefixed)]
+      : [cartOpt, ...preventiviBozza.map(prefixed)]
   }, [mostraDestinazione, preventiviBozza, destId])
 
   const produttori = useMemo(
@@ -104,10 +118,13 @@ export default function AggiungiArticoloForm({
     else if (sc > 0 && isLoggedIn) parts.push(`sconto ${sc}%`)
     // costo fornitore solo per dipendente/admin
     if (isStaff && (a.prezzo_acquisto ?? 0) > 0) parts.push(`acq. €${Number(a.prezzo_acquisto).toFixed(2)}`)
-    return parts.join(' - ')
+    const label = parts.join(' - ')
+    if (a.max_acquistabile === 0) return label + ' [ESAURITO]'
+    if (a.max_acquistabile != null) return label + ` [Max ${a.max_acquistabile}]`
+    return label
   }
 
-  const artFiltrati = useMemo(() => {
+  const artBase = useMemo(() => {
     let lista = articoli
     if (produttoreFiltro) lista = lista.filter(a => a.produttore === produttoreFiltro)
     if (serieFiltro) lista = lista.filter(a => a.serie === serieFiltro)
@@ -117,6 +134,12 @@ export default function AggiungiArticoloForm({
         [a.descrizione, a.produttore, a.serie, a.unita].some(v => v?.toLowerCase().includes(q))
       )
     }
+    return lista
+  }, [articoli, produttoreFiltro, serieFiltro, ricerca])
+
+  const artFiltrati = useMemo(() => {
+    let lista = artBase
+    if (schemaFiltro) lista = lista.filter(a => a.schema_url === schemaFiltro)
     const seen = new Set<string>()
     return lista.filter(a => {
       const lbl = labelOf(a)
@@ -124,11 +147,28 @@ export default function AggiungiArticoloForm({
       seen.add(lbl)
       return true
     })
-  }, [articoli, produttoreFiltro, serieFiltro, ricerca])
+  }, [artBase, schemaFiltro])
+
+  const thumbnailsData = useMemo(() => {
+    const map = new Map<string, { arts: ArticoloListino[] }>()
+    for (const a of artBase) {
+      if (!a.schema_url) continue
+      const entry = map.get(a.schema_url) ?? { arts: [] }
+      entry.arts.push(a)
+      map.set(a.schema_url, entry)
+    }
+    return [...map.entries()]
+      .map(([url, { arts }]) => ({ url, count: arts.length, singleId: arts.length === 1 ? arts[0].id : null }))
+      .sort((a, b) => b.count - a.count)
+  }, [artBase])
+
+  useEffect(() => {
+    setSchemaFiltro(null)
+  }, [produttoreFiltro, serieFiltro, ricerca])
 
   useEffect(() => {
     setSelectedId(artFiltrati[0]?.id ?? 0)
-  }, [produttoreFiltro, serieFiltro, ricerca, artFiltrati])
+  }, [artFiltrati])
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -165,18 +205,18 @@ export default function AggiungiArticoloForm({
   }
 
   function handleAnnullaParent() {
-    annullaParentPendente().then(() => { window.location.href = '/area-clienti/carrello-preventivo' })
+    annullaParentPendente().then(() => { window.location.href = carrelloHref })
   }
 
   return (
     <div style={{
-      background: '#fdfcf8', border: '2px solid #c8960c', borderRadius: 10,
-      padding: '20px 24px', marginTop: 32,
+      background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 10,
+      padding: '20px 4px',
     }}>
       {parentPendente && (
         <div style={{
           background: '#fff8e1', border: '1px solid #f0b429', borderRadius: 7,
-          padding: '10px 14px', marginBottom: 16,
+          padding: '10px 14px', marginBottom: 8,
           display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap',
         }}>
           <span className="testo-articoli" style={{ flex: 1 }}>
@@ -192,27 +232,49 @@ export default function AggiungiArticoloForm({
           </button>
         </div>
       )}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14, flexWrap: 'wrap' }}>
+      <div style={{ marginBottom: 8 }}>
         <h2 className="testo-articoli" style={{ margin: 0 }}>
           {parentPendente ? 'Scegli la caratteristica da aggiungere' : 'Aggiungi articolo al preventivo da elenco'}
         </h2>
-        {mostraDestinazione && (
-          <select
-            value={destId}
-            onChange={e => setDestId(e.target.value)}
-            style={{ fontSize: 12, padding: '4px 8px', border: '1px solid #ccc', borderRadius: 4, fontFamily: 'inherit', cursor: 'pointer', flex: '1 1 0', minWidth: 0 }}
-          >
-            {destOptions.map(o => (
-              <option key={o.value} value={o.value}>{o.label}</option>
-            ))}
-          </select>
-        )}
       </div>
 
       {step === 'select' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {/* Griglia schema */}
+          {thumbnailsData.length > 0 && (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: 8 }}>
+              {thumbnailsData.map(({ url, count, singleId }) => {
+                const isSelected = schemaFiltro === url
+                return (
+                  <button
+                    key={url}
+                    type="button"
+                    onClick={() => {
+                      if (singleId !== null) {
+                        setSelectedId(singleId)
+                        setSchemaFiltro(null)
+                        setResult(null)
+                        setStep('detail')
+                      } else {
+                        setSchemaFiltro(isSelected ? null : url)
+                      }
+                    }}
+                    title={count > 1 ? `${count} articoli` : undefined}
+                    style={{
+                      padding: 0, background: '#fff', cursor: 'pointer',
+                      border: isSelected ? '2px solid #c8960c' : '1px solid #ddd',
+                      borderRadius: 6, overflow: 'hidden',
+                      boxShadow: isSelected ? '0 0 0 2px rgba(200,150,12,0.25)' : 'none',
+                    }}
+                  >
+                    <img src={url} alt="" style={{ display: 'block', width: '100%', height: 70, objectFit: 'contain', background: '#f9f9f9' }} />
+                  </button>
+                )
+              })}
+            </div>
+          )}
           {/* Filtri */}
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {produttori.length >= 2 && (
               <div style={{ flex: '1 1 150px' }}>
                 <label className="testo-articoli" style={{ display: 'block', marginBottom: 3 }}>Produttore</label>
@@ -243,7 +305,7 @@ export default function AggiungiArticoloForm({
             </div>
           </div>
           {/* Selezione articolo */}
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end' }}>
             <div style={{ flex: '2 1 260px' }}>
               <label className="testo-articoli" style={{ display: 'block', marginBottom: 3 }}>
                 Articolo{artFiltrati.length !== articoli.length ? ` (${artFiltrati.length} di ${articoli.length})` : ''}
@@ -263,21 +325,34 @@ export default function AggiungiArticoloForm({
               )}
             </div>
             {artFiltrati.length > 0 && (
-              <button
-                type="button"
-                onClick={() => { setResult(null); setStep('detail') }}
-                className="btn-green"
-                style={{ padding: '7px 22px', fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap', flexShrink: 0 }}
-              >
-                Aggiungi →
-              </button>
+              <div style={{ flex: '0 0 100%', display: 'flex', gap: 8, alignItems: 'center' }}>
+                <button
+                  type="button"
+                  onClick={() => { setResult(null); setStep('detail') }}
+                  className="btn-green"
+                  style={{ height: 42, padding: '0 22px', borderRadius: 21, fontSize: 13, fontWeight: 600, fontFamily: 'monospace', flexShrink: 0 }}
+                >
+                  {mostraDestinazione ? 'Aggiungi a:' : 'Aggiungi a simulazione'}
+                </button>
+                {mostraDestinazione && (
+                  <select
+                    value={destId}
+                    onChange={e => setDestId(e.target.value)}
+                    style={{ flex: 1, fontSize: 12, padding: '4px 8px', border: '1px solid #ccc', borderRadius: 4, fontFamily: 'inherit', cursor: 'pointer', minWidth: 0, height: 42 }}
+                  >
+                    {destOptions.map(o => (
+                      <option key={o.value} value={o.value}>{o.label}</option>
+                    ))}
+                  </select>
+                )}
+              </div>
             )}
           </div>
         </div>
       )}
 
       {step === 'detail' && selected && (
-        <form key={selected.id} onSubmit={handleSubmit} onChange={e => setCanSubmit((e.currentTarget as HTMLFormElement).checkValidity())} style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 460 }}>
+        <form key={selected.id} ref={formRef} onSubmit={handleSubmit} onChange={e => setCanSubmit((e.currentTarget as HTMLFormElement).checkValidity())} style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 460 }}>
           <input type="hidden" name="listino_id" value={selected.id} />
           <p className="testo-articoli" style={{ margin: 0 }}>
             {selected.descrizione}{' '}
@@ -321,24 +396,14 @@ export default function AggiungiArticoloForm({
                 <input name="peso" type="number" min={0} step="0.1" placeholder="es. 5" required style={inpStyle} />
               </label>
             )}
-            {selected.richiede_tipo_colore === 1 && (
-              <p className="testo-articoli" style={{ gridColumn: '1 / -1', margin: 0, background: '#fff8e1', border: '1px solid #f0b429', borderRadius: 5, padding: '7px 10px', WebkitTextFillColor: '#7a5800' }}>
-                Opzionare tra Colori standard o colori con maggiorazione di prezzo
-              </p>
-            )}
-            {selected.richiede_tipo_vetro === 1 && (
-              <p className="testo-articoli" style={{ gridColumn: '1 / -1', margin: 0, background: '#fff8e1', border: '1px solid #f0b429', borderRadius: 5, padding: '7px 10px', WebkitTextFillColor: '#7a5800' }}>
-                Opzionare se Fornitura senza vetri o il tipo di vetri
-              </p>
-            )}
           </div>
 
-          <div style={{ display: 'flex', gap: 10 }}>
+          <div style={{ display: 'flex', gap: 8 }}>
             <button
               type="button"
               onClick={() => setStep('select')}
               className="btn-red"
-              style={{ padding: '7px 16px', fontSize: 13, fontFamily: 'inherit' }}
+              style={{ flex: 1, height: 42, borderRadius: 21, fontSize: 13, fontFamily: 'monospace' }}
             >
               Annulla
             </button>
@@ -346,13 +411,13 @@ export default function AggiungiArticoloForm({
               type="submit"
               disabled={isPending || !canSubmit}
               className={canSubmit && !isPending ? 'btn-green' : 'btn-gray'}
-              style={{ padding: '7px 22px', fontSize: 13, fontWeight: 600 }}
+              style={{ flex: 1, height: 42, borderRadius: 21, fontSize: 13, fontWeight: 600, fontFamily: 'monospace' }}
             >
               {isPending
                 ? 'Aggiunta…'
                 : mostraDestinazione && destId !== 'cart'
                   ? 'Aggiungi al preventivo'
-                  : 'Aggiungi al carrello'}
+                  : submitLabel}
             </button>
           </div>
         </form>
@@ -360,16 +425,7 @@ export default function AggiungiArticoloForm({
 
       {result?.ok && (
         <p className="testo-articoli" style={{ marginTop: 10, marginBottom: 0 }}>
-          ✓ Articolo aggiunto.{' '}
-          {result.preventivoId ? (
-            <a href={isStaff ? `/clienti/preventivi/${result.preventivoId}` : `/area-clienti/preventivi/${result.preventivoId}`} style={{ color: '#2e7d32', fontWeight: 600 }}>
-              Vai al preventivo →
-            </a>
-          ) : (
-            <a href="/area-clienti/carrello-preventivo" style={{ color: '#2e7d32', fontWeight: 600 }}>
-              Vai al carrello →
-            </a>
-          )}
+          ✓ Articolo aggiunto.
         </p>
       )}
       {result && !result.ok && (

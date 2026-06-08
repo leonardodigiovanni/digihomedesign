@@ -1,5 +1,7 @@
-﻿import Link from 'next/link'
+import Link from 'next/link'
 import type { Metadata } from 'next'
+import CtaPreventivo from '@/components/cta-preventivo'
+import CtaCantiere from '@/components/cta-cantiere'
 
 export const metadata: Metadata = {
   title: 'Serramenti a Palermo — Infissi, Verande, Persiane e Molto Altro',
@@ -17,9 +19,9 @@ export const metadata: Metadata = {
 const subcategories = [
   { href: '/serramenti/infissi-in-alluminio',     label: 'Infissi in Alluminio',     desc: 'Finestre e porte-finestre in alluminio a taglio termico, eleganti e durevoli.' },
   { href: '/serramenti/infissi-in-pvc',           label: 'Infissi in PVC',           desc: 'Infissi in PVC multicamera ad alta efficienza termica e acustica.' },
-  { href: '/serramenti/verande-in-alluminio',      label: 'Verande in Alluminio',     desc: 'Verande in alluminio e vetro per vivere gli spazi esterni tutto l\'anno.' },
-  { href: '/serramenti/verande-in-pvc',            label: 'Verande in PVC',           desc: 'Verande in PVC multicamera ad alta efficienza termica e acustica.' },
-  { href: '/serramenti/persiane-in-alluminio',     label: 'Persiane',                 desc: 'Persiane in alluminio, PVC e legno per oscuramento e protezione solare.' },
+  { href: '/serramenti/verande-in-alluminio',     label: 'Verande in Alluminio',     desc: 'Verande in alluminio e vetro per vivere gli spazi esterni tutto l\'anno.' },
+  { href: '/serramenti/verande-in-pvc',           label: 'Verande in PVC',           desc: 'Verande in PVC multicamera ad alta efficienza termica e acustica.' },
+  { href: '/serramenti/persiane-in-alluminio',    label: 'Persiane',                 desc: 'Persiane in alluminio, PVC e legno per oscuramento e protezione solare.' },
   { href: '/serramenti/imbotti',                  label: 'Imbotti in Alluminio',     desc: 'Imbotti in alluminio e PVC per il rivestimento dei vani finestra.' },
   { href: '/serramenti/tapparelle-manuali',       label: 'Tapparelle Manuali',       desc: 'Tapparelle a manovella, cinghia o moschettone in PVC, alluminio e acciaio.' },
   { href: '/serramenti/tapparelle-motorizzate',   label: 'Tapparelle Motorizzate',   desc: 'Tapparelle motorizzate con telecomando, timer e integrazione domotica.' },
@@ -32,39 +34,31 @@ const subcategories = [
 
 export default function Page() {
   return (
-    <div className="fs-15" style={{ maxWidth: 860, margin: '48px auto', padding: '0 20px 64px', color: '#444', lineHeight: 1.8 }}>
+    <div className="fs-15" style={{ padding: '0 4px 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
         <Link href="/" style={{ color: '#888', textDecoration: 'underline' }}>Home</Link> / Serramenti
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 12 }}>
         Serramenti a Palermo
       </h1>
-      <p style={{ marginBottom: 36 }}>
+      <p className="testo-articoli" style={{ marginBottom: 16 }}>
         Forniamo e installiamo serramenti su misura a Palermo per ogni esigenza: dall&apos;infisso ad alta efficienza energetica alla veranda abitabile, dalla veneziana alla zanzariera. Materiali certificati, tecnici specializzati e garanzia su prodotto e posa.
       </p>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20 }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
         {subcategories.map(s => (
-          <Link
-            key={s.href}
-            href={s.href}
-            style={{
-              flex: '1 1 240px',
-              border: '2px solid #c8960c',
-              borderRadius: 10,
-              padding: '24px 20px',
-              textDecoration: 'none',
-              color: '#1a1a1a',
-              background: '#fafafa',
-            }}
-          >
-            <div className="fs-17" style={{ fontWeight: 700, marginBottom: 8 }}>{s.label}</div>
+          <Link key={s.href} href={s.href} style={{ flex: '1 1 240px', border: '1px solid #c8960c', borderRadius: 10, padding: '16px 14px', textDecoration: 'none', color: '#1a1a1a', background: '#fafafa' }}>
+            <div className="fs-17" style={{ fontWeight: 700, marginBottom: 6 }}>{s.label}</div>
             <div className="fs-14" style={{ color: '#555', lineHeight: 1.6 }}>{s.desc}</div>
           </Link>
         ))}
       </div>
-      <Link href="/" className="fs-12" style={{ display: 'inline-block', marginTop: 40, color: '#1a1a1a', fontWeight: 600, textDecoration: 'underline' }}>
-        ← Torna alla home
-      </Link>
+      <div style={{ display: 'flex', gap: 8 }}>
+        <Link href="/" className="btn-black fs-12" style={{ flex: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: 42, padding: '0 20px', borderRadius: 21, textDecoration: 'none', fontFamily: 'monospace' }}>← Home</Link>
+        <CtaPreventivo />
+        <CtaCantiere />
+        <Link href="/brand/contatti" className="btn-black fs-12" style={{ flex: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: 42, padding: '0 20px', borderRadius: 21, textDecoration: 'none', fontFamily: 'monospace' }}>Chiedi info</Link>
+      </div>
+      <p className="IsDebug fs-11" style={{ marginTop: 8 }}>tipo indice di categoria</p>
     </div>
   )
 }

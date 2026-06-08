@@ -50,17 +50,20 @@ async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[]
     await db.execute(`ALTER TABLE listini ADD COLUMN richiede_piano       TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE listini ADD COLUMN richiede_km          TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE listini ADD COLUMN richiede_peso        TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
-    await db.execute(`ALTER TABLE listini ADD COLUMN richiede_tipo_colore TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
-    await db.execute(`ALTER TABLE listini ADD COLUMN richiede_tipo_vetro  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN richiede_tipo_colore     TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN richiede_tipo_colore_acc TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN richiede_tipo_vetro       TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN richiede_tipo_montaggio TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE listini ADD COLUMN costante DECIMAL(10,4) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE listini ADD COLUMN abbr VARCHAR(50) NOT NULL DEFAULT ''`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN minimo DECIMAL(10,4) NULL DEFAULT NULL`).catch(() => {})
 
     const [rows] = await db.query(`
       SELECT l.id, l.categoria, l.produttore, l.descrizione, l.unita,
              l.prezzo_acquisto, l.prezzo_vendita, l.note, l.disponibile, l.preventivabile, l.acquistabile, l.max_acquistabile,
              l.sconto_articolo, l.serie, l.principale, l.caratteristica,
              l.richiede_larghezza, l.richiede_altezza, l.richiede_quantita, l.richiede_piano,
-             l.richiede_km, l.richiede_peso, l.richiede_tipo_colore, l.richiede_tipo_vetro, l.costante, l.abbr,
+             l.richiede_km, l.richiede_peso, l.richiede_tipo_colore, l.richiede_tipo_colore_acc, l.richiede_tipo_vetro, l.richiede_tipo_montaggio, l.costante, l.abbr, l.minimo,
              l.updated_at, l.foto_url, l.schema_url, l.profilo_frontale_mm, l.profilo_profondita_mm,
              l.trasmittanza_uw, l.fornitore_id,
              COALESCE(f.ragione_sociale, '') AS fornitore_nome
@@ -89,10 +92,13 @@ async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[]
       richiede_piano:        Number(r.richiede_piano      ?? 0),
       richiede_km:           Number(r.richiede_km         ?? 0),
       richiede_peso:         Number(r.richiede_peso       ?? 0),
-      richiede_tipo_colore:  Number(r.richiede_tipo_colore ?? 0),
-      richiede_tipo_vetro:   Number(r.richiede_tipo_vetro  ?? 0),
+      richiede_tipo_colore:     Number(r.richiede_tipo_colore     ?? 0),
+      richiede_tipo_colore_acc: Number(r.richiede_tipo_colore_acc ?? 0),
+      richiede_tipo_vetro:      Number(r.richiede_tipo_vetro      ?? 0),
+      richiede_tipo_montaggio:  Number(r.richiede_tipo_montaggio  ?? 0),
       costante:              parseFloat(String(r.costante ?? 0)),
       abbr:                  String(r.abbr ?? ''),
+      minimo:                r.minimo != null ? parseFloat(String(r.minimo)) : null,
       updated_at:            r.updated_at instanceof Date ? r.updated_at.toISOString() : String(r.updated_at ?? ''),
       foto_url:              r.foto_url   ? String(r.foto_url)   : null,
       schema_url:            r.schema_url ? String(r.schema_url) : null,

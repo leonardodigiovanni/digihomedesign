@@ -184,7 +184,7 @@ export const areaClientiPages: NavPage[] = [
   { id: 51, label: 'Cantieri',   href: '/area-clienti/cantieri'   },
   { id: 52, label: 'Preventivi', href: '/area-clienti/preventivi' },
   { id: 53, label: 'Documenti',  href: '/area-clienti/documenti'  },
-  { id: 54, label: 'Fatture',    href: '/area-clienti/fatture'    },
+  { id: 55, label: 'Avvisi',     href: '/area-clienti/avvisi'     },
 ]
 
 // Pagine Aiuto: sempre pubbliche
@@ -200,6 +200,7 @@ export const adminPages: NavPage[] = [
   { id: 20, label: 'Gestione Utenti',     href: '/amministrazione/gestione-utenti', roles: ['admin'] },
   { id: 62, label: 'Templates Carte Intestate', href: '/amministrazione/templates',       roles: ['admin'] },
   { id: 63, label: 'Editor Disegno',      href: '/disegno',                         roles: ['admin'] },
+  { id: 64, label: 'Database',            href: '/amministrazione/database',        roles: ['admin'] },
 ]
 
 // Pagine Fornitori: visibili solo a dipendenti e admin
@@ -217,12 +218,13 @@ export const clientiDipendentiPages: NavPage[] = [
   { id: 28, label: 'Cantieri',           href: '/area-lavoro/cantieri'             },
   { id: 60, label: 'Preventivi',         href: '/clienti/preventivi'               },
   { id: 61, label: 'Documenti',          href: '/clienti/documenti'                },
-  { id: 17, label: 'Fatture',            href: '/area-lavoro/fatture'              },
+  { id: 56, label: 'Avvisi',             href: '/area-clienti/avvisi'              },
 ]
 
 // Pagine area-lavoro: protette da matrice permessi
 export const internalPages: NavPage[] = [
   { id: 16, label: 'Magazzino',            href: '/area-lavoro/magazzino'            },
+  { id: 17, label: 'Fatture',              href: '/area-lavoro/fatture'              },
   { id: 18, label: 'Bilancio',             href: '/area-lavoro/bilancio'             },
   { id: 22, label: 'Adempimenti',          href: '/area-lavoro/adempimenti'          },
   { id: 27, label: 'Worklist',             href: '/area-lavoro/worklist'             },

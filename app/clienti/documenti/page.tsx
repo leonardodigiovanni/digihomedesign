@@ -2,6 +2,8 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import type { Metadata } from 'next'
+import { UploadDocumentoForm } from './upload-form'
+import { DocumentiFiltri } from './filtri'
 
 export const metadata: Metadata = { title: 'Documenti Clienti' }
 
@@ -17,12 +19,14 @@ type Documento = {
   created_at: string
 }
 
+type ClienteOption = { id: number; label: string }
+
 function dateToLocal(d: unknown): string {
   if (!(d instanceof Date)) return String(d ?? '')
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
 }
 
-async function getData(): Promise<Documento[]> {
+async function getData(): Promise<{ documenti: Documento[]; clienti: ClienteOption[] }> {
   const conn = await getConnection()
   try {
     await conn.execute(`
@@ -38,15 +42,20 @@ async function getData(): Promise<Documento[]> {
       )
     `)
     const [rows] = await conn.query(`
-      SELECT d.*, COALESCE(c.ragione_sociale, CONCAT(c.cognome, ' ', c.nome), '') AS cliente_nome
+      SELECT d.*, COALESCE(NULLIF(c.ragione_sociale, ''), CONCAT(c.cognome, ' ', c.nome), '') AS cliente_nome
       FROM documenti_cliente d LEFT JOIN clienti c ON c.id = d.cliente_id
       ORDER BY d.created_at DESC
     `)
-    return (rows as Record<string, unknown>[]).map(r => ({
-      ...r,
-      created_at: dateToLocal(r.created_at),
+    const [cr] = await conn.query(
+      `SELECT id, COALESCE(NULLIF(ragione_sociale, ''), CONCAT(cognome, ' ', nome)) AS label
+       FROM clienti ORDER BY label`
+    )
+    const documenti = (rows as Record<string, unknown>[]).map(r => ({
+      ...r, created_at: dateToLocal(r.created_at),
     })) as Documento[]
-  } catch { return [] }
+    const clienti = (cr as { id: number; label: string }[]).map(c => ({ id: c.id, label: c.label }))
+    return { documenti, clienti }
+  } catch { return { documenti: [], clienti: [] } }
   finally { await conn.end() }
 }
 
@@ -55,64 +64,22 @@ export default async function Page() {
   const role = cookieStore.get('session_role')?.value ?? ''
   if (role !== 'admin' && role !== 'dipendente') redirect('/')
 
-  const documenti = await getData()
-
-  const thStyle: React.CSSProperties = {
-    padding: '9px 14px', fontSize: 11, fontWeight: 600, color: '#888',
-    textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.06em',
-    background: '#fafafa', borderBottom: '1px solid #e8e8e8', whiteSpace: 'nowrap',
-  }
-  const tdStyle: React.CSSProperties = {
-    padding: '10px 14px', fontSize: 13, color: '#333',
-    borderBottom: '1px solid #f0f0f0', verticalAlign: 'middle',
-  }
+  const { documenti, clienti } = await getData()
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       <div>
         <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Documenti Clienti</h2>
         <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0' }}>Tutti i documenti caricati.</p>
       </div>
 
-      {documenti.length === 0 ? (
-        <p style={{ color: '#aaa', fontSize: 14 }}>Nessun documento disponibile.</p>
-      ) : (
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff', border: '1px solid #e8e8e8', borderRadius: 8 }}>
-            <thead>
-              <tr>
-                <th style={thStyle}>Cliente</th>
-                <th style={thStyle}>Titolo</th>
-                <th style={thStyle}>Tipo</th>
-                <th style={thStyle}>File</th>
-                <th style={thStyle}>Data</th>
-                <th style={{ ...thStyle, textAlign: 'center' }}>Visibile</th>
-              </tr>
-            </thead>
-            <tbody>
-              {documenti.map(d => (
-                <tr key={d.id}>
-                  <td style={tdStyle}>{d.cliente_nome || '—'}</td>
-                  <td style={tdStyle}>{d.titolo}</td>
-                  <td style={tdStyle}>{d.tipo}</td>
-                  <td style={tdStyle}>
-                    <a href={`/uploads/${d.filename}`} target="_blank" rel="noopener noreferrer"
-                       style={{ color: '#c8960c', textDecoration: 'underline' }}>
-                      {d.filename}
-                    </a>
-                  </td>
-                  <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>{d.created_at}</td>
-                  <td style={{ ...tdStyle, textAlign: 'center' }}>
-                    <span style={{ fontSize: 11, fontWeight: 600, color: d.visibile_cliente ? '#276749' : '#c00' }}>
-                      {d.visibile_cliente ? 'Sì' : 'No'}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      <UploadDocumentoForm clienti={clienti} />
+
+      {documenti.length === 0
+        ? <p style={{ color: '#aaa', fontSize: 14 }}>Nessun documento disponibile.</p>
+        : <DocumentiFiltri documenti={documenti} clienti={clienti} />
+      }
+      <div className="IsDebug fs-11" style={{marginTop:8}}>pagina revisionata</div>
     </div>
   )
 }

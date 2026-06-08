@@ -184,7 +184,7 @@ export default function Footer({
         {/* Dati aziendali */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 16 }}>
           {infoRows.map(({ label, value }) => (
-            <div key={label} className="testo-articoli" style={{ lineHeight: 1.5 }}>
+            <div key={label} className="testo-articoli" style={{ lineHeight: 1.5, fontFamily: 'monospace', fontSize: 11 }}>
               <span>{label}:</span> {value}
             </div>
           ))}
@@ -216,11 +216,11 @@ export default function Footer({
 
     {/* Ultima riga nera */}
     <div className="subfooter-bar" style={{ background: '#000', padding: '10px 24px' }}>
-      <p className="testo-indice" style={{ textAlign: 'center', margin: 0 }}>
+      <p className="testo-indice" style={{ textAlign: 'center', margin: 0, fontFamily: 'monospace', fontSize: 10 }}>
         © 2026  -  DIGI Home Design S.R.L.
       </p>
       <Image src="/images/footer/oooooo.png" alt="logo" width={34} height={22} id="subfooter-logo" unoptimized style={{ display: 'block' }} />
-      <p className="testo-indice" style={{ textAlign: 'center', margin: 0 }}>
+      <p className="testo-indice" style={{ textAlign: 'center', margin: 0, fontFamily: 'monospace', fontSize: 10 }}>
         Tutti i diritti sono riservati all&apos;autore
       </p>
     </div>

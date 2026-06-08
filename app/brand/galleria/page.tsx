@@ -22,7 +22,7 @@ export default function Page() {
           <p className="testo-articoli" style={{ margin: 0 }}>Ogni progetto racconta una storia diversa — materiali scelti insieme al cliente, soluzioni su misura per ogni spazio, risultati che durano nel tempo.</p>
         </div>
       </div>
-      <Link href="/brand" className="fs-12" style={{ display: 'inline-block', marginTop: 32, color: '#1a1a1a', fontWeight: 600, textDecoration: 'underline' }}>← Torna a Brand</Link>
+      <Link href="/brand" className="btn-black" style={{ display: 'inline-flex', alignItems: 'center', marginTop: 32, height: 42, padding: '0 20px', borderRadius: 21, textDecoration: 'none', fontSize: 14 }}>← Torna a Brand</Link>
     </div>
   )
 }

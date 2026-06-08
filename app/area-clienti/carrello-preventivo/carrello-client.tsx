@@ -1,7 +1,8 @@
-'use client'
+﻿'use client'
 
 import React, { useState, useTransition, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import PreviewInfisso from '@/components/preview-infisso'
 import {
   rimuoviDaCarrello, salvaCarrelloComePreventivo, svuotaCarrello,
   aggiornaArticoloCarrello, aggiungiArticoloAlCarrello, impostaParentPendente,
@@ -19,7 +20,9 @@ export type CaratteristicaListino = {
   prezzo_vendita: number
   sconto_articolo: number
   richiede_tipo_colore: number
+  richiede_tipo_colore_acc: number
   richiede_tipo_vetro: number
+  richiede_tipo_montaggio: number
 }
 
 export type ArticoloCarrello = {
@@ -46,7 +49,16 @@ export type ArticoloCarrello = {
   richiede_altezza?: number
   richiede_quantita?: number
   richiede_tipo_colore?: number
+  richiede_tipo_colore_acc?: number
   richiede_tipo_vetro?: number
+  richiede_tipo_montaggio?: number
+  serie?: string
+  minimo?: number | null
+  abbr?: string
+  profilo_mm?: number
+  foto_url?: string | null
+  bar_color?: string | null
+  bar_color_acc?: string | null
 }
 
 type ModalState =
@@ -57,7 +69,7 @@ type ModalState =
 
 type EditVals = { q: number; ante: number; l: number; h: number; colore: string; note: string; desc: string }
 
-function LoginBanner() {
+function LoginBanner({ hasLacune, cataloghiHref = '/brand/cataloghi' }: { hasLacune: boolean; cataloghiHref?: string }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
@@ -71,26 +83,59 @@ function LoginBanner() {
   }, [open])
 
   return (
-    <div style={{ background: '#fdfcf8', border: '2px solid #c8960c', borderRadius: 10, padding: '20px 24px' }}>
-      <p style={{ fontSize: 15, fontWeight: 700, margin: '0 0 6px', color: '#1a1a1a' }}>
-        Accedi per sbloccare gli sconti riservati ai nostri clienti
+    <div style={{ background: 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 10, padding: 12 }}>
+      {!hasLacune && (
+        <div style={{ background: '#e8e8e8', borderRadius: 6, overflow: 'hidden', marginBottom: 14 }}>
+          <div style={{ padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ flex: 1, height: 1, background: 'rgba(0,100,0,0.3)' }} />
+            <span style={{ fontSize: 14, fontWeight: 800, color: '#1e4d2b', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
+              Complimenti!
+            </span>
+            <div style={{ flex: 1, height: 1, background: 'rgba(0,100,0,0.3)' }} />
+          </div>
+          <p style={{ fontSize: 14, fontWeight: 800, color: '#1e4d2b', letterSpacing: '0.12em', textTransform: 'uppercase', textAlign: 'center', margin: '0 0 10px', lineHeight: 1.3, padding: '0 16px', fontFamily: 'monospace' }}>
+            I dati sono completi per procedere alla generazione del preventivo.
+          </p>
+          <div style={{ background: '#f0f0f0', padding: '10px 16px', display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <p style={{ fontSize: 14, fontWeight: 700, margin: '0 0 4px', color: '#1e4d2b', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'center', fontFamily: 'monospace' }}>
+              Alcuni preziosi consigli:
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+              {[
+                { label: 'Cliente?', text: 'Accedi per applicare gli sconti su articoli in promozione più lo sconto personalizzato sull\'importo totale proporzionale ai tuoi punti fedeltà accumulati.' },
+                { label: 'Nuovo?', text: 'Registrati per applicare gli sconti su articoli in promozione più uno sconto di benvenuto sull\'importo totale.' },
+                { label: 'Indeciso?', text: 'Salva il preventivo nella tua area personale per poterlo recuperare e modificare quando vuoi.' },
+              ].map((item, i, arr) => (
+                <div key={item.label}>
+                  <p style={{ fontSize: 14, fontWeight: 600, margin: 0, color: '#1e4d2b', textTransform: 'uppercase', textAlign: 'center', fontFamily: 'monospace' }}>
+                    <strong>{item.label}</strong><br/>{item.text}
+                  </p>
+                  {i < arr.length - 1 && <div style={{ height: 1, background: 'rgba(30,77,43,0.25)', margin: '6px 0' }} />}
+                </div>
+              ))}
+            </div>
+          </div>
+          <p style={{ fontSize: 14, fontWeight: 800, color: '#1e4d2b', letterSpacing: '0.12em', textTransform: 'uppercase', textAlign: 'center', margin: '10px 0 0', lineHeight: 1.3, padding: '0 16px', fontFamily: 'monospace' }}>
+            Grazie per aver utilizzato il nostro simulatore di preventivo online.
+          </p>
+        </div>
+      )}
+      <p style={{ fontSize: 14, color: '#1a1a1a', margin: '0 0 14px', lineHeight: 1.6, textAlign: 'justify', fontFamily: 'monospace' }}>
+        <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style={{ display: 'inline', verticalAlign: 'middle', marginRight: 6, flexShrink: 0 }}><path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z"/></svg>I clienti registrati ricevono uno sconto di benvenuto. Ad ogni ordine accumulano punti fedeltà che si convertono in sconti esclusivi, sempre maggiori, applicati automaticamente dal preventivatore online, su articoli in promozione e/o sul totale. Accedi o registrati, salva il carrello come preventivo e scopri il prezzo finale con i tuoi sconti.
       </p>
-      <p style={{ fontSize: 13, color: '#555', margin: '0 0 14px', lineHeight: 1.6 }}>
-        I clienti registrati ricevono sconti esclusivi applicati automaticamente sui preventivi — sia per articolo che sul totale. Accedi o registrati, salva il carrello come preventivo e scopri il prezzo finale con i tuoi sconti.
-      </p>
-      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'flex-start' }}>
+      <div className="btn-grid-4">
         <div ref={ref} style={{ position: 'relative' }}>
           <button
             onClick={() => setOpen(v => !v)}
             className={open ? 'btn-orange' : 'btn-black'}
-            style={{ padding: '8px 20px', fontSize: 13, fontWeight: 700, borderRadius: 6, fontFamily: 'inherit' }}
+            style={{ width: '100%', height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, borderRadius: 21, fontFamily: 'monospace' }}
           >
             {open ? 'Chiudi ▴' : 'Accedi ▾'}
           </button>
           {open && (
             <div style={{
               position: 'absolute', top: 'calc(100% + 8px)', left: 0,
-              background: '#fff', border: '2px solid #c8960c', borderRadius: 6,
+              background: 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 6,
               boxShadow: '0 4px 20px rgba(0,0,0,0.12)', minWidth: 210, zIndex: 200,
             }}>
               <DropdownLoginForm />
@@ -98,9 +143,17 @@ function LoginBanner() {
           )}
         </div>
         <a href="/registrazione" className="btn-black" style={{
-          padding: '8px 20px', fontSize: 13, fontWeight: 700, borderRadius: 6,
-          textDecoration: 'none', display: 'inline-flex', alignItems: 'center', fontFamily: 'inherit',
+          height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, borderRadius: 21,
+          textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'monospace',
         }}>Registrati →</a>
+        <a href={cataloghiHref} className="btn-black" style={{
+          height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, borderRadius: 21,
+          textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'monospace',
+        }}>Vai ai cataloghi →</a>
+        <a href="/aiuto/guida-preventivo" className="btn-black" style={{
+          height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, borderRadius: 21,
+          textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'monospace',
+        }}>Vai alla guida →</a>
       </div>
     </div>
   )
@@ -111,11 +164,17 @@ export default function CarrelloClient({
   isLoggedIn,
   scontoClientePct = 0,
   caratteristiche = [],
+  cataloghiHref = '/brand/cataloghi',
+  stampaHref = '/area-clienti/carrello-preventivo/stampa',
+  postSaveHref,
 }: {
   articoli: ArticoloCarrello[]
   isLoggedIn: boolean
   scontoClientePct?: number
   caratteristiche?: CaratteristicaListino[]
+  cataloghiHref?: string
+  stampaHref?: string
+  postSaveHref?: string
 }) {
   const router = useRouter()
   const [delPending,  startDel]   = useTransition()
@@ -123,13 +182,34 @@ export default function CarrelloClient({
   const [clearPending, startClear] = useTransition()
   const [actPending,  startAct]   = useTransition()
   const [saveError, setSaveError] = useState('')
+  const [editError, setEditError] = useState('')
   const [modal, setModal]         = useState<ModalState>(null)
   const [editVals, setEditVals]   = useState<EditVals>({ q: 1, ante: 1, l: 0, h: 0, colore: '', note: '', desc: '' })
   const [duplicaVals, setDuplicaVals] = useState<Omit<EditVals, 'desc'>>({ q: 1, ante: 1, l: 0, h: 0, colore: '', note: '' })
   const [lacunaFilter, setLacunaFilter]     = useState('')
   const [lacunaSelected, setLacunaSelected] = useState<number | null>(null)
+  const [previewArt, setPreviewArt] = useState<ArticoloCarrello | null>(null)
+  const [isTouch, setIsTouch] = useState(false)
+  useEffect(() => { setIsTouch(window.matchMedia('(pointer: coarse)').matches) }, [])
+  const [expandedUID, setExpandedUID] = useState<number | null>(null)
 
   // ── helpers ────────────────────────────────────────────────────────────────
+
+  function fmt(n: number): string {
+    const [int, dec] = n.toFixed(2).split('.')
+    return int.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ',' + dec
+  }
+
+  function renderPrezzo(value: number) {
+    const s = fmt(value)
+    const idx = s.lastIndexOf(',')
+    return (
+      <div style={{ display: 'flex', alignItems: 'baseline', fontFamily: 'monospace', fontSize: 14 }}>
+        <span style={{ flex: 1, textAlign: 'right' }}>{s.slice(0, idx)}</span>
+        <span>{s.slice(idx)}</span>
+      </div>
+    )
+  }
 
   function calcolaPrezzo(a: ArticoloCarrello, tutti: ArticoloCarrello[]): number {
     if (a.tipo === 'caratteristica') return 0
@@ -149,12 +229,19 @@ export default function CarrelloClient({
     const costante = a.parent != null
       ? (tutti.find(x => x.uid === a.parent)?.costante || 1)
       : 1
-    if (a.unita === 'm²') return Math.round(pb * h * l * q * costante * 100) / 100
-    if (a.unita === 'ml') return Math.round(pb * l * q * costante * 100) / 100
+    if (a.unita === 'm²') {
+      const mqPerPezzo = a.parent == null ? Math.max(h * l, a.minimo ?? 0) : h * l
+      return Math.round(pb * mqPerPezzo * q * costante * 100) / 100
+    }
+    if (a.unita === 'ml') {
+      const mlPerPezzo = a.parent == null ? Math.max(l, a.minimo ?? 0) : l
+      return Math.round(pb * mlPerPezzo * q * costante * 100) / 100
+    }
     return Math.round(pb * q * 100) / 100
   }
 
   const totale = articoli.reduce((s, a) => s + calcolaPrezzo(a, articoli), 0)
+  const totaleQuantita = articoli.filter(a => !a.parent && a.tipo !== 'caratteristica').reduce((s, a) => s + (Number(a.quantita) || 0), 0)
 
   const lastTopLevel = [...articoli].reverse().find(a => !a.parent && a.tipo !== 'caratteristica')
 
@@ -163,6 +250,7 @@ export default function CarrelloClient({
   // ── modal openers ──────────────────────────────────────────────────────────
 
   function openEdit(item: ArticoloCarrello) {
+    setEditError('')
     setEditVals({
       q:      item.quantita,
       ante:   item.ante ?? 1,
@@ -178,14 +266,16 @@ export default function CarrelloClient({
   function getLacuneAperte(a: ArticoloCarrello): string[] {
     const children = articoli.filter(x => x.parent === a.uid)
     const lacune: string[] = []
-    if (a.richiede_tipo_colore === 1 && !children.some(c => c.richiede_tipo_colore === 1)) lacune.push('tipo_colore')
-    if (a.richiede_tipo_vetro  === 1 && !children.some(c => c.richiede_tipo_vetro  === 1)) lacune.push('tipo_vetro')
+    if (a.richiede_tipo_colore     === 1 && !children.some(c => c.richiede_tipo_colore     === 1)) lacune.push('tipo_colore')
+    if (a.richiede_tipo_colore_acc === 1 && !children.some(c => c.richiede_tipo_colore_acc === 1)) lacune.push('tipo_colore_acc')
+    if (a.richiede_tipo_vetro      === 1 && !children.some(c => c.richiede_tipo_vetro      === 1)) lacune.push('tipo_vetro')
+    if (a.richiede_tipo_montaggio  === 1 && !children.some(c => c.richiede_tipo_montaggio  === 1)) lacune.push('tipo_montaggio')
     return lacune
   }
 
   async function handleAggiungiComeFiglio(a: ArticoloCarrello) {
     await impostaParentPendente(a.uid, a.descrizione, getLacuneAperte(a))
-    router.push('/brand/cataloghi')
+    router.push(cataloghiHref)
   }
 
   function handleAggiungiLacuna(a: ArticoloCarrello, lacuna: string) {
@@ -210,6 +300,7 @@ export default function CarrelloClient({
   // ── action handlers ────────────────────────────────────────────────────────
 
   function handleRimuovi(index: number) {
+    if (!confirm('Rimuovere l\'articolo dal carrello?')) return
     startDel(async () => { await rimuoviDaCarrello(index); router.refresh() })
   }
 
@@ -225,7 +316,7 @@ export default function CarrelloClient({
       sconto_articolo: a.sconto_articolo,
       tipo: a.tipo,
     }))).catch(() => {})
-    window.location.href = '/area-clienti/carrello-preventivo/stampa'
+    window.location.href = stampaHref
   }
 
   function handleSvuota() {
@@ -238,18 +329,20 @@ export default function CarrelloClient({
     startSave(async () => {
       const res = await salvaCarrelloComePreventivo()
       if (!res.ok) { setSaveError(res.error); return }
-      router.push(res.redirectUrl)
+      router.push(postSaveHref ?? res.redirectUrl)
     })
   }
 
   function handleEditSave() {
     if (modal?.type !== 'edit') return
     const item = modal.item
+    setEditError('')
     startAct(async () => {
+      let res
       if (item.tipo === 'caratteristica') {
-        await aggiornaArticoloCarrello(item.index, { desc: editVals.desc })
+        res = await aggiornaArticoloCarrello(item.index, { desc: editVals.desc })
       } else {
-        await aggiornaArticoloCarrello(item.index, {
+        res = await aggiornaArticoloCarrello(item.index, {
           q:      editVals.q,
           ante:   editVals.ante || undefined,
           l:      editVals.l   || undefined,
@@ -258,6 +351,7 @@ export default function CarrelloClient({
           note:   editVals.note   || undefined,
         })
       }
+      if (!res.ok) { setEditError(res.error); return }
       setModal(null)
       router.refresh()
     })
@@ -285,9 +379,12 @@ export default function CarrelloClient({
     const { target, lacuna } = modal
     let uids: number[]
     if (tuttiConStessaLacuna) {
-      const lacunaFlag = lacuna === 'tipo_colore' ? 'richiede_tipo_colore' : 'richiede_tipo_vetro'
+      const lacunaFlag = lacuna === 'tipo_colore' ? 'richiede_tipo_colore' : lacuna === 'tipo_colore_acc' ? 'richiede_tipo_colore_acc' : lacuna === 'tipo_vetro' ? 'richiede_tipo_vetro' : 'richiede_tipo_montaggio'
       uids = articoli
-        .filter(a => !a.parent && a.tipo !== 'caratteristica' && (a[lacunaFlag as keyof ArticoloCarrello] as number) === 1)
+        .filter(a => !a.parent && a.tipo !== 'caratteristica'
+          && (a[lacunaFlag as keyof ArticoloCarrello] as number) === 1
+          && a.categoria === target.categoria
+          && getLacuneAperte(a).includes(lacuna))
         .map(a => a.uid)
     } else {
       uids = [target.uid]
@@ -303,58 +400,61 @@ export default function CarrelloClient({
     })
   }
 
+  useEffect(() => {
+    if (previewArt) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => { document.body.style.overflow = '' }
+  }, [previewArt])
+
+  function toggleExpand(uid: number) {
+    setExpandedUID(prev => prev === uid ? null : uid)
+  }
+
   async function handleAggiungiCaratteristicaUltimo() {
     if (!lastTopLevel) return
     await impostaParentPendente(lastTopLevel.uid, lastTopLevel.descrizione, getLacuneAperte(lastTopLevel))
-    router.push('/brand/cataloghi')
+    router.push(cataloghiHref)
   }
 
   // ── stili ──────────────────────────────────────────────────────────────────
 
   const thS: React.CSSProperties = {
-    padding: '8px 8px', fontSize: 11, fontWeight: 600, color: '#888',
+    padding: '8px 8px', fontSize: 14, fontWeight: 700, color: '#1a1a1a',
     textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.06em',
-    background: '#fafafa', borderBottom: '1px solid #e8e8e8', whiteSpace: 'nowrap',
+    background: 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', borderBottom: '1px solid #222', whiteSpace: 'nowrap',
+    fontFamily: 'monospace',
   }
   const tdS: React.CSSProperties = {
-    padding: '2px 8px', fontSize: 13, color: '#333',
-    borderBottom: '1px solid #f0f0f0', verticalAlign: 'middle',
+    padding: '2px 8px', fontSize: 14, color: '#333',
+    borderBottom: '1px solid #333', verticalAlign: 'middle',
+    overflow: 'hidden', wordBreak: 'break-word',
+    fontFamily: 'monospace',
   }
 
   const inpS: React.CSSProperties = {
     width: '100%', padding: '7px 10px', border: '1px solid #ddd', borderRadius: 6,
-    fontSize: 13, fontFamily: 'inherit', boxSizing: 'border-box',
+    fontSize: 14, fontFamily: 'inherit', boxSizing: 'border-box',
   }
   const lblS: React.CSSProperties = {
-    fontSize: 12, fontWeight: 600, color: '#555', display: 'block', marginBottom: 4,
+    fontSize: 14, fontWeight: 600, color: '#1a1a1a', display: 'block', marginBottom: 4,
   }
   const fieldS: React.CSSProperties = { marginBottom: 12 }
-
-  // ── empty state ────────────────────────────────────────────────────────────
-
-  if (articoli.length === 0) {
-    return (
-      <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '40px 28px', textAlign: 'center', color: '#aaa' }}>
-        <p style={{ margin: '0 0 12px', fontSize: 15 }}>Il tuo carrello è vuoto.</p>
-        <a href="/brand/cataloghi" style={{ color: '#2b6cb0', fontWeight: 600, fontSize: 13 }}>
-          Sfoglia i cataloghi →
-        </a>
-      </div>
-    )
-  }
 
   // ── modal ──────────────────────────────────────────────────────────────────
 
   const renderModal = () => {
     if (!modal) return null
 
-    const onClose = () => setModal(null)
+    const onClose = () => { setModal(null); setEditError('') }
 
     // ── Modal lacuna ────────────────────────────────────────────────────────────
     if (modal.type === 'lacuna') {
       const { target, lacuna } = modal
-      const lacunaFlag = lacuna === 'tipo_colore' ? 'richiede_tipo_colore' : 'richiede_tipo_vetro'
-      const disponibili = caratteristiche.filter(c => c[lacunaFlag as keyof CaratteristicaListino] === 1)
+      const lacunaFlag = lacuna === 'tipo_colore' ? 'richiede_tipo_colore' : lacuna === 'tipo_colore_acc' ? 'richiede_tipo_colore_acc' : lacuna === 'tipo_vetro' ? 'richiede_tipo_vetro' : 'richiede_tipo_montaggio'
+      const disponibili = caratteristiche.filter(c => c[lacunaFlag as keyof CaratteristicaListino] === 1 && c.categoria === target.categoria)
       const filtrate = lacunaFilter.trim()
         ? disponibili.filter(c => {
             const q = lacunaFilter.toLowerCase()
@@ -366,6 +466,7 @@ export default function CarrelloClient({
         .filter(a => !a.parent && a.tipo !== 'caratteristica' && a.uid !== target.uid)
         .filter(a => (a[lacunaFlag as keyof ArticoloCarrello] as number) === 1)
         .filter(a => getLacuneAperte(a).includes(lacuna))
+        .filter(a => a.categoria === target.categoria)
       const hasAltri = altriConLacuna.length > 0
 
       return (
@@ -377,8 +478,8 @@ export default function CarrelloClient({
             onClick={e => e.stopPropagation()}
             style={{ background: '#fff', borderRadius: 12, padding: '24px 28px', maxWidth: 520, width: '100%', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}
           >
-            <h3 style={{ fontSize: 16, fontWeight: 700, margin: '0 0 6px', color: '#1a1a1a' }}>Aggiungi caratteristica</h3>
-            <p style={{ fontSize: 12, color: '#666', margin: '0 0 18px' }}>
+            <h3 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 6px', color: '#1a1a1a' }}>Aggiungi caratteristica</h3>
+            <p style={{ fontSize: 14, color: '#1a1a1a', margin: '0 0 18px' }}>
               Articolo selezionato: <strong>{target.produttore ? `${target.produttore} — ` : ''}{target.descrizione}</strong>
             </p>
 
@@ -393,7 +494,7 @@ export default function CarrelloClient({
               />
               <div style={{ border: '1px solid #ddd', borderRadius: 6, maxHeight: 260, overflowY: 'auto' }}>
                 {filtrate.length === 0 ? (
-                  <p style={{ fontSize: 12, color: '#aaa', margin: 0, padding: '12px 14px' }}>Nessun risultato.</p>
+                  <p style={{ fontSize: 14, color: '#1a1a1a', margin: 0, padding: '12px 14px' }}>Nessun risultato.</p>
                 ) : filtrate.map((c, i) => {
                   const isSel = lacunaSelected === c.id
                   const magg = c.sconto_articolo < 0 ? Math.abs(c.sconto_articolo) : null
@@ -413,12 +514,12 @@ export default function CarrelloClient({
                         userSelect: 'none',
                       }}
                     >
-                      <span style={{ fontSize: 13, fontWeight: isSel ? 700 : 400, color: '#1a1a1a', lineHeight: 1.4 }}>
+                      <span style={{ fontSize: 14, fontWeight: isSel ? 700 : 400, color: '#1a1a1a', lineHeight: 1.4 }}>
                         {c.produttore ? `${c.produttore} · ` : ''}{c.descrizione}
                         {magg && <span style={{ color: '#b45000', fontWeight: 600 }}> (Magg. del {magg}%)</span>}
-                        {c.prezzo_vendita > 0 && <span style={{ color: '#555' }}> — € {Number(c.prezzo_vendita).toFixed(2)}/{c.unita}</span>}
+                        {c.prezzo_vendita > 0 && <span style={{ color: '#555' }}> — € {fmt(Number(c.prezzo_vendita))}/{c.unita}</span>}
                       </span>
-                      {c.categoria && <span style={{ fontSize: 11, color: '#999', marginTop: 2 }}>{c.categoria}</span>}
+                      {c.categoria && <span style={{ fontSize: 14, color: '#1a1a1a', marginTop: 2 }}>{c.categoria}</span>}
                     </div>
                   )
                 })}
@@ -428,18 +529,18 @@ export default function CarrelloClient({
             <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 8, alignItems: 'center' }}>
               <button type="button" onClick={() => handleApplicaCaratteristica(false)} disabled={!lacunaSelected || actPending}
                 className={(!lacunaSelected || actPending) ? 'btn-gray' : 'btn-green'}
-                style={{ padding: '8px 18px', borderRadius: 6, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap' }}>
+                style={{ height: 42, borderRadius: 21, fontSize: 14, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingLeft: 16, paddingRight: 16 }}>
                 {actPending ? '…' : 'Applica'}
               </button>
               {hasAltri && (
                 <button type="button" onClick={() => handleApplicaCaratteristica(true)} disabled={!lacunaSelected || actPending}
                   className={(!lacunaSelected || actPending) ? 'btn-gray' : 'btn-green'}
-                  style={{ padding: '8px 16px', borderRadius: 6, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap' }}>
+                  style={{ height: 42, borderRadius: 21, fontSize: 14, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingLeft: 16, paddingRight: 16 }}>
                   {actPending ? '…' : 'Applica a tutti'}
                 </button>
               )}
               <button type="button" onClick={onClose} className="btn-orange"
-                style={{ padding: '8px 18px', borderRadius: 6, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap' }}>
+                style={{ height: 42, borderRadius: 21, fontSize: 14, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingLeft: 16, paddingRight: 16 }}>
                 Annulla
               </button>
             </div>
@@ -470,14 +571,14 @@ export default function CarrelloClient({
           onClick={e => e.stopPropagation()}
           style={{ background: '#fff', borderRadius: 12, padding: '24px 28px', maxWidth: 480, width: '100%', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}
         >
-          <h3 style={{ fontSize: 16, fontWeight: 700, margin: '0 0 18px', color: '#1a1a1a' }}>{title}</h3>
+          <h3 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 18px', color: '#1a1a1a' }}>{title}</h3>
 
           {(isEdit || isDuplica) && (() => {
             const ref = isEdit ? modal.item : modal.lastItem
             return (
               <>
                 {isDuplica && (
-                  <p style={{ fontSize: 12, color: '#888', margin: '0 0 14px' }}>
+                  <p style={{ fontSize: 14, color: '#1a1a1a', margin: '0 0 14px' }}>
                     Tipo: <strong>{modal.lastItem.produttore} — {modal.lastItem.descrizione}</strong>
                   </p>
                 )}
@@ -511,14 +612,17 @@ export default function CarrelloClient({
             )
           })()}
 
+          {isEdit && editError && (
+            <p style={{ fontSize: 14, color: '#c0392b', margin: '0 0 8px', fontFamily: 'monospace' }}>{editError}</p>
+          )}
           <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 4 }}>
             <button type="button" onClick={onClose}
-              style={{ padding: '8px 18px', borderRadius: 6, border: '1px solid #ddd', background: '#fff', color: '#555', fontSize: 13, cursor: 'pointer', fontFamily: 'inherit' }}>
+              style={{ padding: '8px 18px', borderRadius: 6, border: '1px solid #ddd', background: '#fff', color: '#1a1a1a', fontSize: 14, cursor: 'pointer', fontFamily: 'inherit' }}>
               Annulla
             </button>
             <button type="button" onClick={onSave} disabled={actPending}
               style={{
-                padding: '8px 20px', borderRadius: 6, border: 'none', fontSize: 13, fontWeight: 700,
+                padding: '8px 20px', borderRadius: 6, border: 'none', fontSize: 14, fontWeight: 700,
                 cursor: actPending ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
                 background: actPending
                   ? '#aaa'
@@ -537,49 +641,26 @@ export default function CarrelloClient({
   // ── rendering ──────────────────────────────────────────────────────────────
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
       {renderModal()}
 
-      {/* Barra azioni */}
-      <div style={{
-        background: '#fff', border: '2px solid #c8960c', borderRadius: 10,
-        padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 12,
-      }}>
-        <p style={{ fontSize: 13, color: '#888', margin: 0 }}>
-          {isLoggedIn
-            ? 'Se non procedi al trasferimento nella tua area personale, ti consigliamo di scaricare il pdf o stamparlo perché non verrà salvato nel nostro sistema.'
-            : 'Se non sei registrato, ti consigliamo di scaricare il pdf o stamparlo perché non verrà salvato nel nostro sistema.'}
-        </p>
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
-          {isLoggedIn && (
-            <button type="button" onClick={handleSalva} disabled={savePending || hasLacuneAperte} style={{
-              height: 38, padding: '0 22px', fontSize: 13, fontWeight: 700, borderRadius: 6,
-              background: (savePending || hasLacuneAperte) ? '#aaa' : 'repeating-linear-gradient(135deg,rgba(255,255,255,0.04) 0px,rgba(255,255,255,0.04) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#1b4d1b 0%,#266626 20%,#3a8f3a 45%,#266626 80%,#1b4d1b 100%)',
-              boxShadow: (savePending || hasLacuneAperte) ? 'none' : '0 2px 8px rgba(20,80,20,0.45),inset 0 1px 0 rgba(160,255,160,0.2)',
-              color: (savePending || hasLacuneAperte) ? '#fff' : '#d4f5d4', border: 'none', cursor: (savePending || hasLacuneAperte) ? 'not-allowed' : 'pointer',
-              whiteSpace: 'nowrap', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center',
-            }}>
-              {savePending ? 'Salvataggio…' : 'Salva come preventivo'}
+      {/* Bottoni aggiunta articoli */}
+      <div style={{ background: 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 10, padding: 12 }}>
+
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          <a href={cataloghiHref} className="btn-green" style={{
+            flex: 1, minWidth: 140, height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, fontFamily: 'monospace', borderRadius: 21,
+            textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', whiteSpace: 'nowrap',
+          }}>
+            + Aggiungi articolo
+          </a>
+          {lastTopLevel && (
+            <button type="button" onClick={openDuplica} disabled={actPending}
+              className={actPending ? 'btn-gray' : 'btn-green'}
+              style={{ flex: 1, minWidth: 140, height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, fontFamily: 'monospace', borderRadius: 21, whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+              + Ripeti articolo
             </button>
           )}
-          <button type="button" onClick={handleGeneraPDF} disabled={hasLacuneAperte} style={{
-            height: 38, padding: '0 22px', fontSize: 13, fontWeight: 700, borderRadius: 6,
-            background: hasLacuneAperte ? '#aaa' : 'repeating-linear-gradient(135deg,rgba(255,255,255,0.05) 0px,rgba(255,255,255,0.05) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#111 0%,#222 20%,#383838 45%,#222 80%,#111 100%)',
-            boxShadow: hasLacuneAperte ? 'none' : '0 4px 16px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.08)',
-            color: '#fff', border: 'none', cursor: hasLacuneAperte ? 'not-allowed' : 'pointer',
-            whiteSpace: 'nowrap', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center',
-          }}>
-            <span className={hasLacuneAperte ? undefined : 'animato'}>Genera PDF</span>
-          </button>
-          <button type="button" onClick={handleSvuota} disabled={clearPending} style={{
-            height: 38, padding: '0 22px', fontSize: 13, fontWeight: 700, borderRadius: 6,
-            background: clearPending ? '#aaa' : 'repeating-linear-gradient(135deg,rgba(255,255,255,0.04) 0px,rgba(255,255,255,0.04) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#5a0000 0%,#8b0000 20%,#a01010 45%,#8b0000 80%,#5a0000 100%)',
-            boxShadow: clearPending ? 'none' : '0 4px 14px rgba(100,0,0,0.45),inset 0 1px 0 rgba(255,255,255,0.07)',
-            color: '#fff', border: 'none', cursor: clearPending ? 'not-allowed' : 'pointer',
-            whiteSpace: 'nowrap', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center',
-          }}>
-            {clearPending ? 'Svuotamento…' : 'Svuota carrello'}
-          </button>
         </div>
       </div>
 
@@ -589,32 +670,16 @@ export default function CarrelloClient({
         </div>
       )}
 
-      {/* Messaggi sconto */}
-      {(() => {
-        const hasPromo = articoli.some(a => (a.sconto_articolo ?? 0) > 0)
-        const msgs: string[] = []
-        if (isLoggedIn && scontoClientePct > 5) {
-          msgs.push(`Complimenti! Hai diritto ad uno sconto personalizzato del ${scontoClientePct}% sul totale! Basta salvare il preventivo per ottenerlo.`)
-        } else {
-          msgs.push('Complimenti! Hai diritto ad uno sconto di benvenuto del 5% sul totale! Basta salvare il preventivo per ottenerlo.')
-        }
-        if (hasPromo) msgs.push('Complimenti! Hai selezionato degli articoli in promozione! Basta salvare il preventivo per attivarla.')
-        return msgs.map((msg, i) => (
-          <div key={i} style={{ background: '#f0fff4', border: '1px solid #9ae6b4', borderRadius: 10, padding: '14px 20px' }}>
-            <p style={{ fontSize: 14, fontWeight: 600, margin: 0, color: '#276749' }}>{msg}</p>
-          </div>
-        ))
-      })()}
-
-      {/* Avviso trasporto e montaggio */}
-      <div style={{ background: '#fff5f5', border: '1px solid #feb2b2', borderRadius: 10, padding: '14px 20px' }}>
-        <p style={{ fontSize: 14, fontWeight: 600, margin: 0, color: '#9b2c2c' }}>
-          Salvando il preventivo riceverai il prezzo scontato degli articoli ma è escluso trasporto e montaggio perché abbiamo bisogno di conoscere il luogo di destinazione. Contattaci per avere il preventivo ufficiale.
-        </p>
-      </div>
 
       {/* Articoli a card */}
       {(() => {
+        function childTypeOrder(c: ArticoloCarrello): number {
+          if (c.richiede_tipo_colore     === 1) return 0
+          if (c.richiede_tipo_colore_acc === 1) return 1
+          if (c.richiede_tipo_vetro      === 1) return 2
+          if (c.richiede_tipo_montaggio  === 1) return 3
+          return 4
+        }
         const groups: ArticoloCarrello[][] = []
         for (const a of articoli) {
           if (!a.parent) {
@@ -624,140 +689,222 @@ export default function CarrelloClient({
             if (g) g.push(a)
           }
         }
+        for (const g of groups) {
+          if (g.length > 1) g.splice(1, g.length - 1, ...g.slice(1).sort((a, b) => childTypeOrder(a) - childTypeOrder(b)))
+        }
+
+        const catGroups: { key: string; label: string; groups: ArticoloCarrello[][] }[] = []
+        for (const group of groups) {
+          const root = group[0]
+          const key = `${root.categoria}||${root.produttore}||${root.serie ?? ''}`
+          let cg = catGroups.find(c => c.key === key)
+          if (!cg) {
+            cg = { key, label: [root.categoria, root.produttore, root.serie].filter(Boolean).join(' · '), groups: [] }
+            catGroups.push(cg)
+          }
+          cg.groups.push(group)
+        }
+
         const renderColgroup = () => (
           <colgroup>
-            <col style={{ width: 40 }} />
-            <col style={{ width: 40 }} />
-            <col style={{ width: '16%' }} />
-            <col style={{ width: '13%' }} />
-            <col />
             <col style={{ width: 58 }} />
-            <col style={{ width: 105 }} />
             <col style={{ width: 52 }} />
-            <col style={{ width: 105 }} />
-            <col style={{ width: 76 }} />
+            <col />
+            <col style={{ width: 84 }} />
+            <col style={{ width: 58 }} />
           </colgroup>
         )
+
+        let globalIdx = 0
         return (
-          <div style={{ overflowX: 'auto' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, minWidth: 900 }}>
-            {/* Header */}
-            <div style={{ background: '#fafafa', border: '2px solid #c8960c', borderRadius: 8, overflow: 'hidden' }}>
-              <table style={{ width: '100%', minWidth: 900, borderCollapse: 'collapse', tableLayout: 'fixed' }}>
-                {renderColgroup()}
-                <thead>
-                  <tr>
-                    <th style={thS}>#</th>
-                    <th style={thS}></th>
-                    <th style={thS}>Tipo</th>
-                    <th style={thS}>Produttore</th>
-                    <th style={thS}>Articolo / Caratteristica</th>
-                    <th style={{ ...thS, textAlign: 'center' }}>Unità</th>
-                    <th style={{ ...thS, textAlign: 'right' }}>Prezzo unit.</th>
-                    <th style={{ ...thS, textAlign: 'center' }}>Qtà</th>
-                    <th style={{ ...thS, textAlign: 'right' }}>Subtotale</th>
-                    <th style={thS}></th>
-                  </tr>
-                </thead>
-              </table>
-            </div>
-
-            {/* Group cards */}
-            {groups.map((group, gi) => (
-              <div key={group[0].index} className="class_silver_D_safe" style={{ border: '2px solid #c8960c', borderRadius: 8, overflow: 'hidden' }}>
-                <table style={{ width: '100%', minWidth: 900, borderCollapse: 'collapse', tableLayout: 'fixed' }}>
+          <div className="carrello-overflow" style={{ overflowX: 'auto' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, width: '100%' }}>
+            {catGroups.map(cg => (
+              <div key={cg.key} className="class_silver_D_safe" style={{ background: 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 8, overflow: 'hidden', width: '100%', boxSizing: 'border-box' }}>
+                {/* Label gruppo */}
+                <div style={{ padding: '6px 14px', background: 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', borderBottom: '1px solid #222', fontSize: 14, fontWeight: 700, color: '#7a6000', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                  {cg.label}
+                </div>
+                <table className="carrello-table" style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
                   {renderColgroup()}
+                  <thead>
+                    <tr>
+                      <th style={{ ...thS, textAlign: 'center', width: 58 }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="10" cy="18" r="2" fill="currentColor" stroke="none"/></svg>
+                        </div>
+                      </th>
+                      <th style={{ ...thS, textAlign: 'center', width: 52 }}>Q.tà<br/>Rif.</th>
+                      <th style={thS}>Articolo</th>
+                      <th style={{ ...thS, textAlign: 'center', width: 84 }}>Prezzo<br/>€</th>
+                      <th style={{ ...thS, textAlign: 'center', padding: '8px 0', width: 58 }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                          <span style={{ fontSize: 14, display: 'inline-block', transform: 'rotate(135deg)', lineHeight: 1 }}>✏</span>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        </div>
+                      </th>
+                    </tr>
+                  </thead>
                   <tbody>
-                    {group.map(a => {
-                      const isChild = !!a.parent
-                      const num = isChild ? null : gi + 1
-
-                      const childrenOfA = !isChild ? articoli.filter(x => x.parent === a.uid) : []
-                      const showColore  = !isChild && a.richiede_tipo_colore === 1 && !childrenOfA.some(c => c.richiede_tipo_colore === 1)
-                      const showVetro   = !isChild && a.richiede_tipo_vetro  === 1 && !childrenOfA.some(c => c.richiede_tipo_vetro  === 1)
-                      const hasWarning  = showColore || showVetro
-                      const tdRow: React.CSSProperties = tdS
-
+                    {cg.groups.map((group, groupIdx) => {
+                      globalIdx++
+                      const gi = globalIdx - 1
+                      const root = group[0]
+                      const children = group.slice(1)
+                      const childrenOfRoot = articoli.filter(x => x.parent === root.uid)
+                      const showColore    = root.richiede_tipo_colore     === 1 && !childrenOfRoot.some(c => c.richiede_tipo_colore     === 1)
+                      const showColoreAcc = root.richiede_tipo_colore_acc === 1 && !childrenOfRoot.some(c => c.richiede_tipo_colore_acc === 1)
+                      const showVetro     = root.richiede_tipo_vetro      === 1 && !childrenOfRoot.some(c => c.richiede_tipo_vetro      === 1)
+                      const showMontaggio = root.richiede_tipo_montaggio  === 1 && !childrenOfRoot.some(c => c.richiede_tipo_montaggio  === 1)
+                      const hasLacune   = showColore || showColoreAcc || showVetro || showMontaggio
+                      const hasDetails  = children.length > 0 || hasLacune
+                      const isExpanded  = expandedUID === root.uid
+                      const expandBg     = isExpanded ? (hasLacune ? '#fdecea' : '#d6ecd6') : undefined
+                      const expandBgRoot = isExpanded ? (hasLacune ? '#f5b8b4' : '#b8d9b8') : undefined
                       return (
-                        <React.Fragment key={a.index}>
-                          <tr style={{ background: isChild ? 'rgba(0,0,0,0.04)' : 'transparent' }}>
-                            <td style={{ ...tdRow, color: '#aaa', paddingLeft: isChild ? 36 : 8, fontSize: isChild ? 15 : 13 }}>
-                              {isChild ? '↳' : num}
-                            </td>
-                            <td style={{ ...tdRow, whiteSpace: 'nowrap', padding: '2px 4px', width: 1 }}>
-                              {!isChild && (
-                                <button type="button" onClick={() => openEdit(a)} className="btn-black"
-                                  style={{ width: 32, padding: 0, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
-                                  <span style={{ position: 'relative', zIndex: 1, fontSize: 14, display: 'inline-block', transform: 'rotate(135deg)' }}>✏</span>
+                        <React.Fragment key={root.index}>
+                          {/* Riga articolo principale */}
+                          <tr style={{ background: expandBgRoot ?? 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', borderTop: groupIdx > 0 ? '1px solid #333' : undefined }}>
+                            <td style={{ ...tdS, textAlign: 'center', padding: '4px 0' }}>
+                              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                                <button type="button" onClick={() => setPreviewArt(root)} disabled={hasLacune} className={hasLacune ? 'btn-gray' : 'btn-black'} title="Anteprima infisso"
+                                  style={{ width: 42, height: 42, padding: 0, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%' }}>
+                                  <svg style={{ position: 'relative', zIndex: 1 }} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                                 </button>
-                              )}
+                                {hasDetails && (
+                                  <button type="button" onClick={() => toggleExpand(root.uid)}
+                                    className={hasLacune ? 'btn-red' : 'btn-black'}
+                                    style={{ width: 42, height: 42, padding: 0, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', gap: 2 }}>
+                                    <svg style={{ position: 'relative', zIndex: 1 }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="10" cy="18" r="2" fill="currentColor" stroke="none"/></svg>
+                                    <span style={{ position: 'relative', zIndex: 1, fontSize: 14 }}>{isExpanded ? '▴' : '▾'}</span>
+                                  </button>
+                                )}
+                              </div>
                             </td>
-                            <td style={{ ...tdRow, color: isChild ? '#999' : '#333' }}>
-                              {a.categoria}
+                            <td style={{ ...tdS, padding: 0, height: 1 }}>
+                              <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid #333', fontSize: 14, color: '#1a1a1a', padding: '0 4px' }}>
+                                  N°&nbsp;{root.quantita}
+                                </div>
+                                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, color: '#1a1a1a', padding: '0 4px' }}>
+                                  Rif#{String(gi + 1).padStart(3, '0')}
+                                </div>
+                              </div>
                             </td>
-                            <td style={{ ...tdRow, color: '#888' }}>
-                              {a.produttore}
-                            </td>
-                            <td style={{ ...tdRow, paddingLeft: isChild ? 20 : 16 }}>
-                              {a.descrizione}
+                            <td style={{ ...tdS, paddingLeft: 8 }}>
+                              {root.descrizione}
                               {(() => {
                                 const parts: string[] = []
-                                if (a.ante && a.ante > 1) parts.push(`${a.ante} ante`)
-                                if (a.larghezza_cm) parts.push(`L: ${a.larghezza_cm} cm`)
-                                if (a.altezza_cm)   parts.push(`H: ${a.altezza_cm} cm`)
-                                if (a.colore)        parts.push(a.colore)
-                                return parts.length > 0
-                                  ? <div style={{ fontSize: 11, color: '#999', marginTop: 2 }}>{parts.join(' · ')}</div>
-                                  : null
+                                if (root.ante && root.ante > 1) parts.push(`${root.ante} ante`)
+                                if (root.larghezza_cm) parts.push(`L:${root.larghezza_cm}`)
+                                if (root.altezza_cm)   parts.push(`H:${root.altezza_cm}`)
+                                if (root.colore)       parts.push(root.colore)
+                                parts.push(`€${fmt(Number(root.prezzo_vendita))}/${root.unita}`)
+                                return <div style={{ fontSize: 14, color: '#1a1a1a', marginTop: 1 }}>{parts.join(' · ')}</div>
                               })()}
-                              {a.note && <div style={{ fontSize: 11, color: '#aaa', marginTop: 1, fontStyle: 'italic' }}>{a.note}</div>}
+                              {root.note && <div style={{ fontSize: 14, color: '#1a1a1a', marginTop: 1, fontStyle: 'italic' }}>{root.note}</div>}
                             </td>
-                            <td style={{ ...tdRow, textAlign: 'center' }}>
-                              {a.unita}
+                            <td style={{ ...tdS, whiteSpace: 'nowrap', padding: '2px 0 2px 4px' }}>
+                              {renderPrezzo(isExpanded
+                                ? calcolaPrezzo(root, articoli)
+                                : calcolaPrezzo(root, articoli) + children.reduce((s, c) => s + calcolaPrezzo(c, articoli), 0)
+                              )}
                             </td>
-                            <td style={{ ...tdRow, textAlign: 'right', whiteSpace: 'nowrap' }}>
-                              € {Number(a.prezzo_vendita).toFixed(2)}
-                              <span style={{ fontSize: 10, color: '#aaa', marginLeft: 2 }}>/{a.unita}</span>
-                            </td>
-                            <td style={{ ...tdRow, textAlign: 'center', fontWeight: 600 }}>
-                              {a.quantita}
-                            </td>
-                            <td style={{ ...tdRow, textAlign: 'right', fontWeight: 600, whiteSpace: 'nowrap' }}>
-                              € {calcolaPrezzo(a, articoli).toFixed(2)}
-                            </td>
-                            <td style={{ ...tdRow, whiteSpace: 'nowrap', padding: '2px 4px' }}>
-                              <button type="button" onClick={() => handleRimuovi(a.index)} disabled={delPending} className="btn-red"
-                                style={{ width: 32, padding: 0, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
-                                <span style={{ position: 'relative', zIndex: 1, fontSize: 14 }}>✕</span>
-                              </button>
+                            <td style={{ ...tdS, padding: '4px 0', textAlign: 'center' }}>
+                              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                                <button type="button" onClick={() => openEdit(root)} className="btn-black"
+                                  style={{ width: 42, height: 42, padding: 0, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%' }}>
+                                  <span style={{ position: 'relative', zIndex: 1, fontSize: 14, display: 'inline-block', transform: 'rotate(135deg)' }}>✏</span>
+                                </button>
+                                <button type="button" onClick={() => handleRimuovi(root.index)} disabled={delPending} className="btn-red"
+                                  style={{ width: 42, height: 42, padding: 0, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%' }}>
+                                  <span style={{ position: 'relative', zIndex: 1, fontSize: 14 }}>✕</span>
+                                </button>
+                              </div>
                             </td>
                           </tr>
-                          {showColore && (
-                            <tr style={{ background: 'transparent' }}>
-                              <td style={{ padding: '2px 4px 4px', borderBottom: '1px solid #f0f0f0' }} />
-                              <td style={{ padding: '2px 4px 4px', borderBottom: '1px solid #f0f0f0' }}>
-                                <button type="button" onClick={() => handleAggiungiLacuna(a, 'tipo_colore')} title="Aggiungi colore" className="btn-green" style={{ width: 32, padding: 0, fontWeight: 700, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ position: 'relative', zIndex: 1, fontSize: 24, lineHeight: 1, fontWeight: 300 }}>+</span></button>
+                          {/* Righe caratteristiche figlie */}
+                          {isExpanded && children.map(child => (
+                            <tr key={child.index} style={{ background: expandBg ?? 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)' }}>
+                              <td style={{ ...tdS, padding: 4, textAlign: 'center' }}>
+                                {child.foto_url && (
+                                  // eslint-disable-next-line @next/next/no-img-element
+                                  <img
+                                    src={child.foto_url.startsWith('/') ? child.foto_url : `/${child.foto_url}`}
+                                    alt=""
+                                    style={{ width: 42, height: 42, objectFit: 'cover', borderRadius: 4, display: 'block', margin: '0 auto' }}
+                                  />
+                                )}
                               </td>
-                              <td colSpan={8} style={{ padding: '2px 8px 4px', borderBottom: '1px solid #f0f0f0' }}>
-                                <span style={{ fontSize: 11, color: '#8b0000', background: '#fff', border: '1px solid #e53e3e', borderRadius: 4, padding: '3px 8px', display: 'inline-block' }}>
-                                  Scegliere tra Colori standard (prezzo base) o Colori particolari (maggiorazione di prezzo)
-                                </span>
+                              <td style={{ ...tdS, textAlign: 'center', whiteSpace: 'nowrap', padding: '2px 4px' }}>
+                                {child.richiede_tipo_colore     === 1 ? 'Colore'
+                                : child.richiede_tipo_colore_acc === 1 ? 'Accessori'
+                                : child.richiede_tipo_vetro      === 1 ? 'Vetro'
+                                : child.richiede_tipo_montaggio  === 1 ? 'Montaggio'
+                                : ''}
+                              </td>
+                              <td style={{ ...tdS, paddingLeft: 8 }}>
+                                {child.descrizione}
+                                {(() => {
+                                  const parts: string[] = []
+                                  if (child.ante && child.ante > 1) parts.push(`${child.ante} ante`)
+                                  if (child.larghezza_cm) parts.push(`L:${child.larghezza_cm}`)
+                                  if (child.altezza_cm)   parts.push(`H:${child.altezza_cm}`)
+                                  if (child.colore)       parts.push(child.colore)
+                                  parts.push(`€${fmt(Number(child.prezzo_vendita))}/${child.unita}`)
+                                  return <div style={{ fontSize: 14, color: '#1a1a1a', marginTop: 1 }}>{parts.join(' · ')}</div>
+                                })()}
+                                {child.note && <div style={{ fontSize: 14, color: '#1a1a1a', marginTop: 1, fontStyle: 'italic' }}>{child.note}</div>}
+                              </td>
+                              <td style={{ ...tdS, whiteSpace: 'nowrap', padding: '2px 0 2px 4px' }}>
+                                {renderPrezzo(calcolaPrezzo(child, articoli))}
+                              </td>
+                              <td style={{ ...tdS, padding: '4px 0', textAlign: 'center' }}>
+                                <button type="button" onClick={() => handleRimuovi(child.index)} disabled={delPending} className="btn-red"
+                                  style={{ width: 42, height: 42, padding: 0, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%' }}>
+                                  <span style={{ position: 'relative', zIndex: 1, fontSize: 14 }}>✕</span>
+                                </button>
                               </td>
                             </tr>
-                          )}
-                          {showVetro && (
-                            <tr style={{ background: 'transparent' }}>
-                              <td style={{ padding: '2px 4px 4px', borderBottom: '1px solid #f0f0f0' }} />
-                              <td style={{ padding: '2px 4px 4px', borderBottom: '1px solid #f0f0f0' }}>
-                                <button type="button" onClick={() => handleAggiungiLacuna(a, 'tipo_vetro')} title="Aggiungi vetro" className="btn-green" style={{ width: 32, padding: 0, fontWeight: 700, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}><span style={{ position: 'relative', zIndex: 1, fontSize: 24, lineHeight: 1, fontWeight: 300 }}>+</span></button>
-                              </td>
-                              <td colSpan={8} style={{ padding: '2px 8px 4px', borderBottom: '1px solid #f0f0f0' }}>
-                                <span style={{ fontSize: 11, color: '#8b0000', background: '#fff', border: '1px solid #e53e3e', borderRadius: 4, padding: '3px 8px', display: 'inline-block' }}>
-                                  Scegliere la tipologia di Vetri o la fornitura Senza Vetri
-                                </span>
-                              </td>
-                            </tr>
-                          )}
+                          ))}
+                          {/* Riga bottoni lacune */}
+                          {isExpanded && hasLacune && (() => {
+                            const lacuneCount = [showColore, showColoreAcc, showVetro, showMontaggio].filter(Boolean).length
+                            const cols = lacuneCount <= 3 ? lacuneCount : 2
+                            return (
+                              <tr style={{ background: 'transparent' }}>
+                                <td colSpan={5} style={{ padding: 12, borderBottom: '1px solid #333', borderRight: 'none', textAlign: 'left', background: expandBg }}>
+                                  <div style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: 10 }}>
+                                    {showColore && (
+                                      <button type="button" onClick={() => handleAggiungiLacuna(root, 'tipo_colore')} className="btn-green"
+                                        style={{ height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, fontFamily: 'monospace', whiteSpace: 'nowrap', borderRadius: 21 }}>
+                                        + Colore
+                                      </button>
+                                    )}
+                                    {showColoreAcc && (
+                                      <button type="button" onClick={() => handleAggiungiLacuna(root, 'tipo_colore_acc')} className="btn-green"
+                                        style={{ height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, fontFamily: 'monospace', whiteSpace: 'nowrap', borderRadius: 21 }}>
+                                        + Accessori
+                                      </button>
+                                    )}
+                                    {showVetro && (
+                                      <button type="button" onClick={() => handleAggiungiLacuna(root, 'tipo_vetro')} className="btn-green"
+                                        style={{ height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, fontFamily: 'monospace', whiteSpace: 'nowrap', borderRadius: 21 }}>
+                                        + Vetro
+                                      </button>
+                                    )}
+                                    {showMontaggio && (
+                                      <button type="button" onClick={() => handleAggiungiLacuna(root, 'tipo_montaggio')} className="btn-green"
+                                        style={{ height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, fontFamily: 'monospace', whiteSpace: 'nowrap', borderRadius: 21 }}>
+                                        + Montaggio
+                                      </button>
+                                    )}
+                                  </div>
+                                </td>
+                              </tr>
+                            )
+                          })()}
                         </React.Fragment>
                       )
                     })}
@@ -767,92 +914,161 @@ export default function CarrelloClient({
             ))}
 
             {/* Totale */}
-            <div style={{ background: '#fafafa', border: '2px solid #c8960c', borderRadius: 8, overflow: 'hidden' }}>
-              <table style={{ width: '100%', minWidth: 900, borderCollapse: 'collapse', tableLayout: 'fixed' }}>
-                {renderColgroup()}
-                <tbody>
-                  <tr>
-                    <td colSpan={7} style={{ padding: '12px 16px', fontSize: 13, fontWeight: 700, textAlign: 'right', color: '#1a1a1a' }}>
-                      Totale indicativo
-                    </td>
-                    <td style={{ padding: '12px 16px', fontSize: 15, fontWeight: 700, textAlign: 'right', color: '#1a1a1a', whiteSpace: 'nowrap' }}>
-                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
-                        € {totale.toFixed(2)}
-                        {articoli.length > 0 && (
-                          <span style={{ fontSize: 12, fontWeight: 600, color: '#276749', background: '#f0fff4', border: '1px solid #9ae6b4', borderRadius: 8, padding: '3px 10px', whiteSpace: 'nowrap' }}>DA SCONTARE</span>
-                        )}
-                      </div>
-                    </td>
-                    <td style={{ padding: '12px 16px' }} />
-                  </tr>
-                </tbody>
-              </table>
+            <div style={{ background: 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 8, padding: '12px 20px 12px 20px', display: 'flex', flexDirection: 'column', gap: 4 }}>
+              <div style={{ display: 'flex', alignItems: 'center', paddingRight: 38 }}>
+                <div style={{ width: 37, flexShrink: 0 }} />
+                <div style={{ width: 72, flexShrink: 0, textAlign: 'center', fontFamily: 'monospace', fontWeight: 700, fontSize: 14, color: '#1a1a1a' }}>
+                  N°&nbsp;{totaleQuantita}
+                </div>
+                <span style={{ flex: 1, paddingLeft: 8, fontSize: 14, color: '#1a1a1a', fontFamily: 'monospace', fontWeight: 700 }}>Totale:</span>
+                <span style={{ fontSize: 14, fontWeight: 700, color: '#1a1a1a', fontFamily: 'monospace' }}>
+                  € {fmt(totale).slice(0, fmt(totale).lastIndexOf(','))}
+                  <span style={{ fontSize: 14, fontFamily: 'monospace', fontWeight: 700 }}>{fmt(totale).slice(fmt(totale).lastIndexOf(','))}</span>
+                </span>
+              </div>
             </div>
           </div>
           </div>
         )
       })()}
 
-      {/* Bottoni aggiunta articoli */}
-      <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '16px 20px' }}>
-        <p style={{ fontSize: 11, fontWeight: 600, color: '#aaa', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '0 0 12px' }}>
-          Aggiungi al carrello
+      {/* Barra azioni */}
+      <div style={{
+        background: 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 10,
+        padding: 12, display: 'flex', flexDirection: 'column', gap: 8,
+      }}>
+        {articoli.length === 0 ? (
+          <div style={{ background: '#e8e8e8', borderRadius: 6, overflow: 'hidden' }}>
+            <div style={{ padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ flex: 1, height: 1, background: 'rgba(150,0,0,0.3)' }} />
+              <span style={{ fontSize: 14, fontWeight: 800, color: '#9b1c1c', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
+                Carrello vuoto
+              </span>
+              <div style={{ flex: 1, height: 1, background: 'rgba(150,0,0,0.3)' }} />
+            </div>
+            <div style={{ background: '#f0f0f0', padding: '10px 16px', textAlign: 'center' }}>
+              <p style={{ fontSize: 14, fontWeight: 600, margin: '0 0 10px', color: '#9b1c1c', textTransform: 'uppercase', textAlign: 'center', fontFamily: 'monospace' }}>
+                Aggiungi articoli dal bottone qui sopra oppure sfoglia i cataloghi.
+              </p>
+              <a href={cataloghiHref} style={{ color: '#9b1c1c', fontWeight: 700, fontSize: 14, fontFamily: 'monospace' }}>
+                Vai ai cataloghi →
+              </a>
+            </div>
+          </div>
+        ) : hasLacuneAperte ? (
+          <div style={{ background: '#e8e8e8', borderRadius: 6, overflow: 'hidden' }}>
+            <div style={{ padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ flex: 1, height: 1, background: 'rgba(150,0,0,0.3)' }} />
+              <span style={{ fontSize: 14, fontWeight: 800, color: '#9b1c1c', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
+                Dati incompleti
+              </span>
+              <div style={{ flex: 1, height: 1, background: 'rgba(150,0,0,0.3)' }} />
+            </div>
+            <div style={{ background: '#f0f0f0', padding: '10px 16px' }}>
+              <p style={{ fontSize: 14, fontWeight: 600, margin: 0, color: '#9b1c1c', textTransform: 'uppercase', textAlign: 'justify', fontFamily: 'monospace' }}>
+                Alcuni articoli hanno caratteristiche mancanti. Completali prima di procedere con la stampa o il salvataggio del preventivo.
+              </p>
+            </div>
+          </div>
+        ) : null}
+        {articoli.length > 0 && !hasLacuneAperte && (
+          <div style={{ background: '#e8e8e8', borderRadius: 6, overflow: 'hidden' }}>
+            <div style={{ padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ flex: 1, height: 1, background: 'rgba(150,0,0,0.3)' }} />
+              <span style={{ fontSize: 14, fontWeight: 800, color: '#9b1c1c', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
+                Prezzo da scontare
+              </span>
+              <div style={{ flex: 1, height: 1, background: 'rgba(150,0,0,0.3)' }} />
+            </div>
+          </div>
+        )}
+        {articoli.length > 0 && !hasLacuneAperte && isLoggedIn && (
+          <div style={{ background: '#e8e8e8', borderRadius: 6, overflow: 'hidden' }}>
+            <div style={{ padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ flex: 1, height: 1, background: 'rgba(0,100,0,0.3)' }} />
+              <span style={{ fontSize: 14, fontWeight: 800, color: '#1e4d2b', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
+                Applica gli sconti
+              </span>
+              <div style={{ flex: 1, height: 1, background: 'rgba(0,100,0,0.3)' }} />
+            </div>
+            <div style={{ background: '#f0f0f0', padding: '10px 16px' }}>
+              <p style={{ fontSize: 14, fontWeight: 600, margin: 0, color: '#1e4d2b', textTransform: 'uppercase', textAlign: 'justify', fontFamily: 'monospace', letterSpacing: '0.04em' }}>
+                Salva il carrello del simulatore come preventivo e scopri il prezzo finale con i tuoi sconti.
+              </p>
+            </div>
+          </div>
+        )}
+        <p style={{ fontSize: 14, color: '#1a1a1a', margin: 0, fontFamily: 'monospace' }}>
+          {isLoggedIn
+            ? <><svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style={{ display: 'inline', verticalAlign: 'middle', marginRight: 6, flexShrink: 0 }}><path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z"/></svg>Se non procedi al trasferimento nella tua area personale, ti consigliamo di scaricare il pdf o stamparlo perché non verrà salvato nel nostro sistema.</>
+            : <><svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style={{ display: 'inline', verticalAlign: 'middle', marginRight: 6, flexShrink: 0 }}><path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z"/></svg>È sempre preferibile scaricare o stampare il PDF del preventivo che non si intende salvare perché non verrà mantenuto nel nostro sistema e pertanto non sarà recuperabile successivamente.</>}
         </p>
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-          {/* Aggiungi articolo → catalogo */}
-          <a href="/brand/cataloghi" className="btn-green" style={{
-            height: 36, padding: '0 18px', fontSize: 12, fontWeight: 700, borderRadius: 6,
-            textDecoration: 'none', display: 'inline-flex', alignItems: 'center', whiteSpace: 'nowrap',
-          }}>
-            + Aggiungi articolo
-          </a>
-
-          {/* Stesso tipo del precedente */}
-          {lastTopLevel && (
-            <button type="button" onClick={openDuplica} disabled={actPending}
-              className={actPending ? 'btn-gray' : 'btn-green'}
-              style={{ height: 36, padding: '0 18px', fontSize: 12, fontWeight: 700, borderRadius: 6, whiteSpace: 'nowrap', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center' }}>
-              + Aggiungi articolo del tipo precedente
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+          {isLoggedIn && (
+            <button type="button" onClick={handleSalva} disabled={savePending || hasLacuneAperte || articoli.length === 0}
+              className={(savePending || hasLacuneAperte || articoli.length === 0) ? 'btn-gray' : 'btn-green'}
+              style={{ flex: 1, minWidth: 140, height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, borderRadius: 21, whiteSpace: 'nowrap', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: (savePending || hasLacuneAperte || articoli.length === 0) ? 'not-allowed' : 'pointer' }}>
+              {savePending ? 'Salvataggio…' : 'Salva preventivo'}
             </button>
           )}
-
-          {/* Caratteristica dell'ultimo articolo */}
-          {lastTopLevel && (() => {
-            const lacune = getLacuneAperte(lastTopLevel)
-            const disab = actPending || lacune.length === 0
-            return (
-              <button type="button" onClick={handleAggiungiCaratteristicaUltimo} disabled={disab}
-                className={disab ? 'btn-gray' : 'btn-green'}
-                style={{ height: 36, padding: '0 18px', fontSize: 12, fontWeight: 700, borderRadius: 6, whiteSpace: 'nowrap', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center' }}>
-                + Aggiungi caratteristica dell&apos;ultimo articolo
-              </button>
-            )
-          })()}
+          <button type="button" onClick={handleGeneraPDF} disabled={hasLacuneAperte || articoli.length === 0}
+            className={(hasLacuneAperte || articoli.length === 0) ? 'btn-gray' : 'btn-black'}
+            style={{ flex: 1, minWidth: 140, height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, borderRadius: 21, whiteSpace: 'nowrap', fontFamily: 'monospace', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: (hasLacuneAperte || articoli.length === 0) ? 'not-allowed' : 'pointer' }}>
+            <span className={(hasLacuneAperte || articoli.length === 0) ? undefined : 'animato'}>Genera PDF</span>
+          </button>
+          <button type="button" onClick={handleSvuota} disabled={clearPending || articoli.length === 0}
+            className={(clearPending || articoli.length === 0) ? 'btn-gray' : 'btn-red'}
+            style={{ flex: 1, minWidth: 140, height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, borderRadius: 21, whiteSpace: 'nowrap', fontFamily: 'monospace', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: (clearPending || articoli.length === 0) ? 'not-allowed' : 'pointer' }}>
+            {clearPending ? 'Svuotamento…' : 'Svuota carrello'}
+          </button>
         </div>
       </div>
 
       {articoli.some(a => a.unita === 'mq' || a.unita === 'ml') && (
-        <p style={{ fontSize: 12, color: '#999', margin: 0 }}>
+        <p style={{ fontSize: 14, color: '#1a1a1a', margin: 0 }}>
           * Per articoli a m² o m lin. il subtotale è calcolato sul prezzo unitario di listino. Il prezzo finale dipenderà dalle dimensioni effettive.
         </p>
       )}
 
-      {!isLoggedIn && <LoginBanner />}
+      {!isLoggedIn && <LoginBanner hasLacune={hasLacuneAperte} cataloghiHref={cataloghiHref} />}
 
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-        <a href="/brand/cataloghi" style={{ fontSize: 12, fontWeight: 600, color: '#1a1a1a', textDecoration: 'underline' }}>
-          Vai ai cataloghi per preventivi →
-        </a>
-        {!isLoggedIn && (
-          <p style={{ margin: 0, fontSize: 12, color: '#555' }}>
-            Vuoi capire come funziona il servizio preventivi?{' '}
-            <a href="/aiuto/guida-preventivo" style={{ fontSize: 12, fontWeight: 600, color: '#1a1a1a', textDecoration: 'underline' }}>
-              Consulta la guida →
-            </a>
+
+      {previewArt && (
+        <div
+          onClick={() => setPreviewArt(null)}
+          onTouchStart={() => setPreviewArt(null)}
+          style={{ position: 'fixed', inset: 0, background: '#fff', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+        >
+          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}>
+            {previewArt.abbr ? (
+              <PreviewInfisso
+                larghezza_cm={previewArt.larghezza_cm ?? 100}
+                altezza_cm={previewArt.altezza_cm ?? 150}
+                colore={previewArt.colore ?? 'Bianco'}
+                descrizione={previewArt.descrizione}
+                tipo_prodotto={previewArt.categoria}
+                n_ante={previewArt.ante ?? 1}
+                abbr={previewArt.abbr}
+                profilo_mm={previewArt.profilo_mm}
+                bar_color={previewArt.bar_color ?? undefined}
+                bar_color_acc={previewArt.bar_color_acc ?? undefined}
+                maxHeight="100vh"
+              />
+            ) : previewArt.foto_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={previewArt.foto_url.startsWith('/') ? previewArt.foto_url : `/${previewArt.foto_url}`}
+                alt={previewArt.descrizione}
+                style={{ maxWidth: '100%', maxHeight: '100vh', objectFit: 'contain', display: 'block' }}
+              />
+            ) : null}
+          </div>
+          <p style={{ position: 'absolute', bottom: 16, left: 0, right: 0, textAlign: 'center', margin: 0, fontSize: 14, color: '#bbb', fontStyle: 'italic', pointerEvents: 'none' }}>
+            {isTouch ? 'Tocca per chiudere' : 'Clicca per chiudere'}
           </p>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   )
 }

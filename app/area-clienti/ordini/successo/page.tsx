@@ -49,6 +49,11 @@ export default async function Page({ searchParams }: Props) {
         'UPDATE ordini_acquisti SET status=? WHERE stripe_session_id=? AND status != ?',
         ['paid', session_id, 'paid']
       )
+      // Clona come ordine freezato
+      if (ordineId) {
+        const { clonaAcquistoComeOrdine } = await import('@/app/area-clienti/ordini/actions')
+        await clonaAcquistoComeOrdine(ordineId).catch(() => {})
+      }
     }
   } finally {
     await db.end()

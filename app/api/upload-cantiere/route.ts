@@ -4,18 +4,18 @@ import path from 'path'
 
 export async function POST(req: NextRequest) {
   try {
-    const formData    = await req.formData()
-    const file        = formData.get('file') as File | null
-    const cantiereId  = formData.get('cantiere_id') as string | null
+    const formData = await req.formData()
+    const file     = formData.get('file') as File | null
+    const taskId   = formData.get('task_id') as string | null
 
-    if (!file || !cantiereId) {
-      return NextResponse.json({ error: 'File o cantiere_id mancante.' }, { status: 400 })
+    if (!file || !taskId) {
+      return NextResponse.json({ error: 'File o task_id mancante.' }, { status: 400 })
     }
 
     const ext      = path.extname(file.name).toLowerCase()
     const safe     = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
     const filename = `${Date.now()}_${safe}`
-    const dir      = path.join(process.cwd(), 'public', 'uploads', 'cantieri', cantiereId)
+    const dir      = path.join(process.cwd(), 'public', 'uploads', 'cantieri', 'tasks', taskId)
 
     await mkdir(dir, { recursive: true })
     const buffer = Buffer.from(await file.arrayBuffer())

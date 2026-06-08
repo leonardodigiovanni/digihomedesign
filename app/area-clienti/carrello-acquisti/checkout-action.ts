@@ -4,6 +4,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import { getStripe } from '@/lib/stripe'
+import { decompressCart } from '@/lib/cart-cookie'
 
 type CartItem = { id: number; q: number; l?: number; h?: number; ante?: number; colore?: string; note?: string }
 
@@ -14,12 +15,15 @@ export type ArticoloSnapshot = {
   descrizione: string
   unita: string
   prezzo_vendita: number
+  sconto_articolo: number
   quantita: number
   larghezza_cm: number
   altezza_cm: number
   colore: string
   note: string
+  prezzo_pre_sconto: number
   subtotale: number
+  sconto_cliente_pct: number
 }
 
 function calcolaSubtotale(prezzo: number, unita: string, h: number, l: number, q: number): number {
@@ -53,8 +57,9 @@ export async function creaCheckoutSession(): Promise<void> {
 
   if (!username) redirect('/login')
 
-  let cart: CartItem[] = []
-  try { cart = cartRaw ? JSON.parse(cartRaw) : [] } catch {}
+  const cart: CartItem[] = decompressCart(cartRaw)
+    .filter(i => i.id > 0 && i.tipo !== 'caratteristica')
+    .map(i => ({ id: i.id, q: i.q, l: i.l, h: i.h, ante: i.ante, colore: i.colore, note: i.note }))
   if (cart.length === 0) redirect('/area-clienti/carrello-acquisti')
 
   const db = await getConnection()
@@ -67,41 +72,54 @@ export async function creaCheckoutSession(): Promise<void> {
     const ids = cart.map(i => i.id)
     const ph  = ids.map(() => '?').join(',')
     const [rows] = await db.query(
-      `SELECT id, categoria, produttore, descrizione, unita, prezzo_vendita FROM listini WHERE id IN (${ph})`,
+      `SELECT id, categoria, produttore, descrizione, unita, prezzo_vendita, sconto_articolo FROM listini WHERE id IN (${ph})`,
       ids
-    ) as [{ id: number; categoria: string; produttore: string; descrizione: string; unita: string; prezzo_vendita: number }[], unknown]
+    ) as [{ id: number; categoria: string; produttore: string; descrizione: string; unita: string; prezzo_vendita: number; sconto_articolo: number }[], unknown]
+
+    // Cerca cliente_id e sconto dalla email dell'utente
+    const [uRows] = await db.query('SELECT email, cliente_id FROM users WHERE username = ? LIMIT 1', [username]) as [{ email: string; cliente_id: number | null }[], unknown]
+    const email = uRows[0]?.email ?? ''
+    clienteId = uRows[0]?.cliente_id ?? null
+
+    let scontoClientePct = 0
+    if (clienteId) {
+      const [cRows] = await db.query('SELECT sconto_pct FROM clienti WHERE id = ? LIMIT 1', [clienteId]) as [{ sconto_pct: number }[], unknown]
+      scontoClientePct = Number(cRows[0]?.sconto_pct ?? 0)
+    }
+
+    const factorCliente = scontoClientePct > 0 ? (1 - scontoClientePct / 100) : 1
 
     articoli = cart.map(item => {
       const r = rows.find(x => x.id === item.id)
       if (!r) return null
-      const sub = calcolaSubtotale(Number(r.prezzo_vendita), r.unita, item.h ?? 0, item.l ?? 0, item.q)
+      const pv = Number(r.prezzo_vendita)
+      const sc = Number(r.sconto_articolo ?? 0)
+      const pvScontato = sc > 0 ? pv * (1 - sc / 100) : pv
+      const lordo   = calcolaSubtotale(pv,        r.unita, item.h ?? 0, item.l ?? 0, item.q)
+      const subArt  = calcolaSubtotale(pvScontato, r.unita, item.h ?? 0, item.l ?? 0, item.q)
+      const sub     = Math.round(subArt * factorCliente * 100) / 100
       return {
         listino_id: r.id,
         categoria: r.categoria,
         produttore: r.produttore,
         descrizione: r.descrizione,
         unita: r.unita,
-        prezzo_vendita: Number(r.prezzo_vendita),
+        prezzo_vendita: pv,
+        sconto_articolo: sc,
         quantita: item.q,
         larghezza_cm: item.l ?? 0,
         altezza_cm: item.h ?? 0,
         colore: item.colore ?? '',
         note: item.note ?? '',
+        prezzo_pre_sconto: lordo,
         subtotale: sub,
+        sconto_cliente_pct: scontoClientePct,
       } satisfies ArticoloSnapshot
     }).filter((x): x is ArticoloSnapshot => x !== null)
 
     if (articoli.length === 0) redirect('/area-clienti/carrello-acquisti')
 
     const totale = articoli.reduce((s, a) => s + a.subtotale, 0)
-
-    // Cerca cliente_id dalla email dell'utente
-    const [uRows] = await db.query('SELECT email FROM users WHERE username = ? LIMIT 1', [username]) as [{ email: string }[], unknown]
-    const email = uRows[0]?.email ?? ''
-    if (email) {
-      const [cRows] = await db.query('SELECT id FROM clienti WHERE email = ? LIMIT 1', [email]) as [{ id: number }[], unknown]
-      clienteId = cRows[0]?.id ?? null
-    }
 
     // Crea ordine pending
     const [res] = await db.execute(
@@ -113,7 +131,7 @@ export async function creaCheckoutSession(): Promise<void> {
     // Crea Stripe Checkout Session
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
 
-    // Per articoli con prezzo variabile (m², ml) il subtotale è già calcolato → passiamo come importo fisso con qty=1
+    // Per ogni articolo usiamo il subtotale già scontato (sconto articolo + sconto cliente)
     const lineItems = articoli.map(a => {
       const dimNote: string[] = []
       if (a.larghezza_cm) dimNote.push(`L: ${a.larghezza_cm} cm`)
@@ -121,7 +139,6 @@ export async function creaCheckoutSession(): Promise<void> {
       if (a.colore) dimNote.push(a.colore)
       const desc = dimNote.length > 0 ? dimNote.join(' · ') : undefined
 
-      const usaSubtotale = a.unita === 'm²' || a.unita === 'ml'
       return {
         price_data: {
           currency: 'eur',
@@ -129,9 +146,9 @@ export async function creaCheckoutSession(): Promise<void> {
             name: `${a.descrizione}${a.produttore ? ' — ' + a.produttore : ''}`,
             ...(desc ? { description: desc } : {}),
           },
-          unit_amount: Math.round((usaSubtotale ? a.subtotale : a.prezzo_vendita * a.quantita) * 100),
+          unit_amount: Math.round(a.subtotale * 100),
         },
-        quantity: usaSubtotale ? 1 : a.quantita,
+        quantity: 1,
       }
     })
 

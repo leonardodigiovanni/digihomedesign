@@ -1,11 +1,22 @@
 'use client'
 
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
-export default function StampaAcquistiClient({ pages }: { pages: string[] }) {
+export default function StampaAcquistiClient({ pages, tornaHref = '/area-clienti/carrello-acquisti' }: { pages: string[]; tornaHref?: string }) {
   const pageRefs   = useRef<(HTMLDivElement | null)[]>([])
   const [loadingPdf,   setLoadingPdf]   = useState(false)
   const [loadingPrint, setLoadingPrint] = useState(false)
+  const [pageZoom, setPageZoom] = useState(1)
+
+  useEffect(() => {
+    function calc() {
+      const vw = window.innerWidth
+      setPageZoom(vw < 842 ? (vw - 32) / 794 : 1)
+    }
+    calc()
+    window.addEventListener('resize', calc)
+    return () => window.removeEventListener('resize', calc)
+  }, [])
 
   async function buildPDF() {
     await document.fonts.ready
@@ -71,23 +82,25 @@ export default function StampaAcquistiClient({ pages }: { pages: string[] }) {
         display: 'flex', gap: 12, justifyContent: 'center',
         marginBottom: 28, flexWrap: 'wrap',
       }}>
-        <a href="/area-clienti/carrello-acquisti" style={{
-          padding: '9px 20px', fontSize: 13, fontWeight: 600, borderRadius: 6,
-          background: '#555', color: '#fff', textDecoration: 'none',
+        <a href={tornaHref} className="btn-black" style={{
+          height: 42, padding: '0 20px', fontSize: 13, fontWeight: 700, borderRadius: 21,
+          textDecoration: 'none', display: 'inline-flex', alignItems: 'center',
         }}>
           ← Torna al carrello
         </a>
-        <button onClick={handlePDF} disabled={busy} style={{
-          padding: '9px 22px', fontSize: 13, fontWeight: 700, borderRadius: 6,
-          background: busy ? '#aaa' : '#1a4a8a', color: '#fff',
+        <button onClick={handlePDF} disabled={busy} className="btn-black" style={{
+          height: 42, padding: '0 22px', fontSize: 13, fontWeight: 700, borderRadius: 21,
           border: 'none', cursor: busy ? 'not-allowed' : 'pointer',
+          display: 'inline-flex', alignItems: 'center', fontFamily: 'inherit',
+          opacity: busy ? 0.5 : 1,
         }}>
           {loadingPdf ? 'Generazione…' : '⬇ Scarica PDF'}
         </button>
-        <button onClick={handlePrint} disabled={busy} style={{
-          padding: '9px 20px', fontSize: 13, fontWeight: 600, borderRadius: 6,
-          background: busy ? '#aaa' : '#1a6e3b', color: '#fff',
+        <button onClick={handlePrint} disabled={busy} className="btn-black" style={{
+          height: 42, padding: '0 20px', fontSize: 13, fontWeight: 700, borderRadius: 21,
           border: 'none', cursor: busy ? 'not-allowed' : 'pointer',
+          display: 'inline-flex', alignItems: 'center', fontFamily: 'inherit',
+          opacity: busy ? 0.5 : 1,
         }}>
           {loadingPrint ? 'Generazione…' : '🖨 Stampa'}
         </button>
@@ -102,7 +115,7 @@ export default function StampaAcquistiClient({ pages }: { pages: string[] }) {
             key={i}
             ref={el => { pageRefs.current[i] = el }}
             dangerouslySetInnerHTML={{ __html: pageHtml }}
-            style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.22)' }}
+            style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.22)', zoom: pageZoom }}
           />
         ))}
       </div>

@@ -40,9 +40,21 @@ async function getData(): Promise<{ categorie: Categoria[]; listiniCategorie: st
       )
     `)
     await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN serie VARCHAR(200) NOT NULL DEFAULT ''`).catch(() => {})
+    const [descrCheck] = await db.query(
+      `SELECT COUNT(*) AS cnt FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'catalogo_voci' AND COLUMN_NAME = 'descrizione'`
+    ) as [{ cnt: number }[], unknown]
+    if ((descrCheck[0]?.cnt ?? 0) === 0) {
+      await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN descrizione TEXT NULL`)
+    }
+    const [listCatVoceCheck] = await db.query(
+      `SELECT COUNT(*) AS cnt FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'catalogo_voci' AND COLUMN_NAME = 'listino_categoria'`
+    ) as [{ cnt: number }[], unknown]
+    if ((listCatVoceCheck[0]?.cnt ?? 0) === 0) {
+      await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN listino_categoria VARCHAR(100) NULL DEFAULT NULL`)
+    }
 
     const [cats] = await db.query('SELECT id, nome, ordine, listino_categoria FROM catalogo_categorie ORDER BY ordine ASC, nome ASC')
-    const [voci] = await db.query('SELECT id, categoria_id, nome, pdf_filename, pdf_label, serie FROM catalogo_voci ORDER BY nome ASC')
+    const [voci] = await db.query('SELECT id, categoria_id, nome, pdf_filename, pdf_label, serie, descrizione, listino_categoria FROM catalogo_voci ORDER BY nome ASC')
 
     let listiniCategorie: string[] = []
     try {
@@ -51,9 +63,9 @@ async function getData(): Promise<{ categorie: Categoria[]; listiniCategorie: st
     } catch {}
 
     const voceMap: Record<number, Categoria['voci']> = {}
-    for (const v of voci as { id: number; categoria_id: number; nome: string; pdf_filename: string; pdf_label: string; serie: string }[]) {
+    for (const v of voci as { id: number; categoria_id: number; nome: string; pdf_filename: string; pdf_label: string; serie: string; descrizione: string; listino_categoria: string | null }[]) {
       if (!voceMap[v.categoria_id]) voceMap[v.categoria_id] = []
-      voceMap[v.categoria_id].push({ id: v.id, nome: v.nome, pdf_filename: v.pdf_filename, pdf_label: v.pdf_label, serie: v.serie ?? '' })
+      voceMap[v.categoria_id].push({ id: v.id, nome: v.nome, pdf_filename: v.pdf_filename, pdf_label: v.pdf_label, serie: v.serie ?? '', descrizione: v.descrizione ?? '', listino_categoria: v.listino_categoria ?? null })
     }
 
     const categorie = (cats as { id: number; nome: string; ordine: number; listino_categoria: string | null }[]).map(c => ({

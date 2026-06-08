@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { cookies } from 'next/headers'
 import { getConnection } from '@/lib/db'
 import type { Metadata } from 'next'
+import { CatalogoGrid } from './catalogo-grid'
 
 export const metadata: Metadata = {
   title: 'Cataloghi — Digi Home Design Palermo',
@@ -9,7 +10,15 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://www.digi-home-design.com/brand/cataloghi' },
 }
 
-type CategoriaCard = { id: number; nome: string; haPreventivi: boolean; haVendita: boolean }
+function toSlug(nome: string): string {
+  return nome
+    .toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+}
+
+export type CategoriaCard = { id: number; nome: string; slug: string }
 
 async function getCategorie(): Promise<CategoriaCard[]> {
   const db = await getConnection()
@@ -43,53 +52,14 @@ async function getCategorie(): Promise<CategoriaCard[]> {
     return (rows as { id: number; nome: string; listino_categoria: string | null; n_prev: number; n_vend: number }[]).map(r => ({
       id: r.id,
       nome: r.nome,
-      haPreventivi: Number(r.n_prev) > 0,
-      haVendita: Number(r.n_vend) > 0,
+      slug: toSlug(r.nome),
     }))
   } finally {
     await db.end()
   }
 }
 
-function CardLink({ c }: { c: CategoriaCard }) {
-  return (
-    <Link
-      href={`/brand/cataloghi/${c.id}`}
-      className="fs-16"
-      style={{
-        flex: '1 1 200px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: 100,
-        background: '#fff',
-        border: '2px solid #c8960c',
-        borderRadius: 10,
-        textDecoration: 'none',
-        color: '#1a1a1a',
-        fontWeight: 600,
-        textAlign: 'center',
-        padding: '20px 16px',
-        transition: 'box-shadow 0.2s, border-color 0.2s',
-      }}
-    >
-      {c.nome}
-    </Link>
-  )
-}
 
-function Zona({ titolo, categorie, nota }: { titolo: string; categorie: CategoriaCard[]; nota?: React.ReactNode }) {
-  if (categorie.length === 0) return null
-  return (
-    <div style={{ marginBottom: 40 }}>
-      <h2 className="effetto-3d fs-28" style={{ fontWeight: 700, margin: '0 0 6px' }}>{titolo}</h2>
-      {nota && <div style={{ marginBottom: 12 }}>{nota}</div>}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
-        {categorie.map(c => <CardLink key={c.id} c={c} />)}
-      </div>
-    </div>
-  )
-}
 
 export default async function Page() {
   const cookieStore = await cookies()
@@ -97,45 +67,35 @@ export default async function Page() {
 
   const categorie = await getCategorie()
 
-  const perPreventivi = categorie.filter(c => c.haPreventivi)
-  const perVendita    = categorie.filter(c => c.haVendita)
-  const altri         = categorie.filter(c => !c.haPreventivi && !c.haVendita)
-
   const vuoto = categorie.length === 0
 
   return (
-    <div className="fs-15" style={{ maxWidth: 860, margin: '48px auto', padding: '0 20px 64px', color: '#444', lineHeight: 1.8 }}>
+    <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
         <Link href="/brand" style={{ color: '#888', textDecoration: 'underline' }}>Brand</Link> / Cataloghi
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Cataloghi</h1>
-      <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '24px 28px', marginBottom: 32 }}>
+      <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '24px 28px', marginBottom: 8 }}>
         <p className="testo-articoli" style={{ margin: 0 }}>Consulta e scarica i cataloghi dei nostri prodotti, organizzati per categoria. Clicca su una categoria per vedere i depliant disponibili.</p>
       </div>
 
       {vuoto ? (
         <p className="fs-14" style={{ color: '#aaa' }}>Nessun catalogo disponibile al momento.</p>
       ) : (
-        <>
-          <Zona titolo="Cataloghi articoli con preventivo" categorie={perPreventivi} />
-          <Zona titolo="Cataloghi per vendita" categorie={perVendita} />
-          <Zona titolo="Altri cataloghi"       categorie={altri} />
-        </>
+        <CatalogoGrid categorie={categorie} />
       )}
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginTop: 8 }}>
-        <Link href="/brand" className="fs-12" style={{ fontWeight: 600, color: '#1a1a1a', textDecoration: 'underline' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
+        <Link href="/brand" className="btn-black fs-12" style={{ flex: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: 42, padding: '0 20px', borderRadius: 21, textDecoration: 'none', fontFamily: 'monospace' }}>
           ← Torna a Brand
         </Link>
         {!loggedIn && (
-          <p className="fs-12" style={{ margin: 0, color: '#555' }}>
-            Vuoi capire come funziona il servizio preventivi?{' '}
-            <Link href="/aiuto/guida-preventivo" className="fs-12" style={{ fontWeight: 600, color: '#1a1a1a', textDecoration: 'underline' }}>
-              Consulta la guida →
-            </Link>
-          </p>
+          <Link href="/aiuto/guida-preventivo" className="btn-black fs-12" style={{ flex: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: 42, padding: '0 20px', borderRadius: 21, textDecoration: 'none', fontFamily: 'monospace' }}>
+            Vai alla guida →
+          </Link>
         )}
       </div>
+      <p className="IsDebug fs-11" style={{ marginTop: 8 }}>pagina revisionata</p>
     </div>
   )
 }

@@ -38,7 +38,7 @@ export default function InactivityGuard({ inactivityMs, countdownSec }: Props) {
       secs -= 1
       if (secs <= 0) {
         clearInterval(countdownInterval.current)
-        logout()
+        logout(new FormData())
       } else {
         setCountdown(secs)
       }

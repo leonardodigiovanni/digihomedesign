@@ -46,14 +46,25 @@ export async function login(
   const cookieStore = await cookies()
   cookieStore.set('session_user', username, COOKIE_OPTS)
   cookieStore.set('session_role', role!, COOKIE_OPTS)
-  redirect('/')
+  const raw = formData.get('redirect_to') as string | null
+  const redirectTo = raw && raw.startsWith('/') ? raw : '/'
+  redirect(redirectTo)
 }
 
-export async function logout() {
+const PROTECTED_PREFIXES = ['/area-clienti', '/area-lavoro', '/amministrazione', '/clienti', '/disegno']
+
+function isProtectedPath(path: string): boolean {
+  return PROTECTED_PREFIXES.some(p => path === p || path.startsWith(p + '/')) ||
+    path === '/app' || path.startsWith('/app/')
+}
+
+export async function logout(formData: FormData) {
   const cookieStore = await cookies()
   cookieStore.delete('session_user')
   cookieStore.delete('session_role')
-  redirect('/')
+  const currentUrl = formData.get('current_url') as string | null
+  const safeUrl = currentUrl && currentUrl.startsWith('/') ? currentUrl : null
+  redirect(safeUrl && !isProtectedPath(safeUrl) ? safeUrl : '/')
 }
 
 export async function refreshSession() {

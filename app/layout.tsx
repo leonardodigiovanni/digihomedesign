@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from 'next'
-import { cookies } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 import Header from '@/components/header'
 import Navbar from '@/components/navbar'
 import Footer from '@/components/footer'
 import SitemapSection from '@/components/sitemap-section'
 import InactivityGuard from '@/components/inactivity-guard'
+import AvvisiNotifier from '@/components/avvisi-notifier'
 import { readSettings, type BgMode } from '@/lib/settings'
 import { rgbGradient, rgbGradientInv, rgbBrushedBackground, rgbBrushedBackgroundInv, rgbBrushedBackgroundDark, rgbBrushedBackgroundDarkInv, rgbBoxShadow } from '@/lib/bg-utils'
 import { getConnection } from '@/lib/db'
@@ -107,6 +108,22 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const heads = await headers()
+  const pathname = heads.get('x-pathname') ?? ''
+  const isAppRoute = pathname.startsWith('/app')
+
+  // Per le rotte /app/* restituiamo solo html+body con il children (app-shell)
+  if (isAppRoute) {
+    return (
+      <html lang="it">
+        <body>
+          <PwaRegister />
+          {children}
+        </body>
+      </html>
+    )
+  }
+
   const cookieStore = await cookies()
   const username = cookieStore.get('session_user')?.value ?? null
   const role     = cookieStore.get('session_role')?.value ?? null
@@ -145,8 +162,30 @@ export default async function RootLayout({
   const digiCartAcquistiRaw = cookieStore.get('digi_cart_acquisti')?.value ?? ''
   if (digiCartAcquistiRaw) {
     try {
-      const cartA = JSON.parse(digiCartAcquistiRaw) as Array<{ id: number; q: number }>
-      cartAcquistiCount = cartA.reduce((s, i) => s + Math.max(0, Number(i.q) || 0), 0)
+      const cartA = decompressCart(digiCartAcquistiRaw)
+      cartAcquistiCount = cartA.filter(i => !i.parent && i.tipo !== 'caratteristica').reduce((s, i) => s + Math.max(0, Number(i.q) || 0), 0)
+    } catch {}
+  }
+
+  // Conteggio avvisi non letti — solo per clienti
+  let unreadAvvisiCount = 0
+  if (role === 'cliente' && username) {
+    try {
+      const db = await getConnection()
+      const [uRows] = await db.query('SELECT email FROM users WHERE username = ? LIMIT 1', [username]) as [{ email: string }[], unknown]
+      const email = (uRows[0] as { email: string } | undefined)?.email ?? ''
+      if (email) {
+        const [cRows] = await db.query('SELECT id FROM clienti WHERE email = ? LIMIT 1', [email]) as [{ id: number }[], unknown]
+        const clienteId = (cRows[0] as { id: number } | undefined)?.id ?? null
+        if (clienteId) {
+          const [nRows] = await db.query(
+            'SELECT COUNT(*) as n FROM avvisi WHERE cliente_id = ? AND letto = 0 AND cestinato = 0',
+            [clienteId]
+          ) as [{ n: number }[], unknown]
+          unreadAvvisiCount = Number((nRows[0] as { n: number }).n) || 0
+        }
+      }
+      await db.end()
     } catch {}
   }
 
@@ -205,7 +244,7 @@ export default async function RootLayout({
         )}
 
         <div style={{ position: 'sticky', top: 0, zIndex: 100 }}>
-          <Header headerBg={settings.headerBg} headerBgMode={settings.headerBgMode} username={username} />
+          <Header headerBg={settings.headerBg} headerBgMode={settings.headerBgMode} username={username} registrazioniDisabilitate={settings.registrazioniDisabilitate} />
           {settings.bannerAbilitato && (
             <>
               <style>{`
@@ -242,10 +281,10 @@ export default async function RootLayout({
               </div>
             </>
           )}
-          {!inManutenzione && <Navbar role={role} disabledPages={settings.disabledPages} rolePermissions={rolePermissions} username={username} registrazioniDisabilitate={settings.registrazioniDisabilitate} bannerAbilitato={settings.bannerAbilitato} cartCount={cartCount} cartAcquistiCount={cartAcquistiCount} unreadEmailCount={unreadEmailCount} clienteAbilitato={clienteAbilitato} />}
+          {!inManutenzione && <Navbar role={role} disabledPages={settings.disabledPages} rolePermissions={rolePermissions} username={username} registrazioniDisabilitate={settings.registrazioniDisabilitate} bannerAbilitato={settings.bannerAbilitato} cartCount={cartCount} cartAcquistiCount={cartAcquistiCount} unreadEmailCount={unreadEmailCount} unreadAvvisiCount={unreadAvvisiCount} clienteAbilitato={clienteAbilitato} />}
         </div>
 
-        <main style={{ flex: 1, padding: '8px 8px' }}>
+        <main className="main-layout" style={{ flex: 1, padding: '8px 8px' }}>
           {inManutenzione ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '50vh', gap: 20, textAlign: 'center' }}>
               <Image src="/images/manutenzione/sito_manutenzione.png" alt="Manutenzione" width={108} height={108} priority style={{ objectFit: 'contain' }} />
@@ -262,6 +301,8 @@ export default async function RootLayout({
 
         <EmergencyLogin inManutenzione={inManutenzione} />
         <PwaRegister />
+
+        {role === 'cliente' && !inManutenzione && <AvvisiNotifier />}
 
         {username && !inManutenzione && (
           <InactivityGuard

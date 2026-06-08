@@ -2,17 +2,20 @@ import React from 'react'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
+import Link from 'next/link'
 import OrdiniRicevutiClient, { type OrdineRicevuto, type Nota, type Cliente } from '@/app/area-lavoro/ordini-ricevuti/client'
-import MieiOrdiniClient, { type OrdineCliente } from '@/app/area-lavoro/miei-ordini/client'
+import ApriOrdineBtn from './apri-btn'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Ordini' }
 
+// ─── Staff ────────────────────────────────────────────────────────────────────
+
 async function getDataStaff(): Promise<{ ordini: OrdineRicevuto[]; clienti: Cliente[] }> {
   const conn = await getConnection()
   try {
-    try { await conn.execute('ALTER TABLE ordini_ricevuti ADD COLUMN visibile_cliente TINYINT(1) NOT NULL DEFAULT 1') } catch { /* esiste già */ }
-    try { await conn.execute('ALTER TABLE ordini_ricevuti ADD COLUMN cliente_id INT NULL') } catch { /* esiste già */ }
+    try { await conn.execute('ALTER TABLE ordini_ricevuti ADD COLUMN visibile_cliente TINYINT(1) NOT NULL DEFAULT 1') } catch {}
+    try { await conn.execute('ALTER TABLE ordini_ricevuti ADD COLUMN cliente_id INT NULL') } catch {}
 
     const [ordiniRows] = await conn.execute(
       'SELECT id,numero_ordine,cliente,cliente_id,descrizione,stato,totale,data_ordine,created_at,visibile_cliente FROM ordini_ricevuti ORDER BY data_ordine DESC'
@@ -32,122 +35,48 @@ async function getDataStaff(): Promise<{ ordini: OrdineRicevuto[]; clienti: Clie
     try {
       const [cRows] = await conn.execute('SELECT id, nome, cognome, ragione_sociale, email FROM clienti ORDER BY cognome ASC, ragione_sociale ASC')
       clienti = cRows as Cliente[]
-    } catch { /* tabella non ancora creata */ }
+    } catch {}
 
     return { ordini: ordiniRows.map(o => ({ ...o, note: noteMap[o.id] ?? [] })), clienti }
   } finally { await conn.end() }
 }
 
-type OrdineAcquisto = {
-  id: number
-  status: string
-  totale: number
-  data: string
-  articoli_json: string
+// ─── Cliente ──────────────────────────────────────────────────────────────────
+
+type OrdineCliente = {
+  id: number; numero: string; tipo: 'preventivo' | 'acquisto'
+  data_ordine: string; importo_totale: number; created_at: string
 }
 
-async function getOrdiniAcquisti(username: string): Promise<OrdineAcquisto[]> {
+async function getOrdiniCliente(username: string): Promise<OrdineCliente[]> {
   const conn = await getConnection()
   try {
-    const [rows] = await conn.execute(
-      `SELECT id, status, totale, DATE_FORMAT(data,'%Y-%m-%d') AS data, articoli_json
-       FROM ordini_acquisti WHERE username = ? AND status = 'paid' ORDER BY data DESC`,
-      [username]
-    ) as [OrdineAcquisto[], unknown]
+    const [uRows] = await conn.query('SELECT cliente_id FROM users WHERE username = ? LIMIT 1', [username]) as [{ cliente_id: number | null }[], unknown]
+    const clienteId = uRows[0]?.cliente_id ?? null
+    if (!clienteId) return []
+
+    const [rows] = await conn.query(
+      `SELECT id, numero, tipo,
+              DATE_FORMAT(data_ordine,'%Y-%m-%d') AS data_ordine,
+              importo_totale,
+              DATE_FORMAT(created_at,'%Y-%m-%d') AS created_at
+       FROM ordini_clienti
+       WHERE cliente_id = ? AND visibile_cliente = 1
+       ORDER BY created_at DESC`,
+      [clienteId]
+    ) as [OrdineCliente[], unknown]
     return rows
   } catch { return [] }
   finally { await conn.end() }
 }
 
-async function getOrdiniAcquistiStaff(): Promise<(OrdineAcquisto & { username: string })[]> {
-  const conn = await getConnection()
-  try {
-    const [rows] = await conn.execute(
-      `SELECT id, username, status, totale, DATE_FORMAT(data,'%Y-%m-%d') AS data, articoli_json
-       FROM ordini_acquisti WHERE status = 'paid' ORDER BY data DESC`
-    ) as [(OrdineAcquisto & { username: string })[], unknown]
-    return rows
-  } catch { return [] }
-  finally { await conn.end() }
-}
-
-async function getDataCliente(username: string): Promise<OrdineCliente[]> {
-  const conn = await getConnection()
-  try {
-    const [userRows] = await conn.execute('SELECT email FROM users WHERE username = ? LIMIT 1', [username]) as [{ email: string }[], unknown]
-    const email = userRows[0]?.email ?? ''
-    if (!email) return []
-    const [rows] = await conn.execute(`
-      SELECT o.id, o.numero_ordine, o.cliente, o.descrizione, o.stato, o.totale, o.data_ordine, o.created_at
-      FROM ordini_ricevuti o
-      INNER JOIN clienti c ON c.id = o.cliente_id AND c.email = ?
-      WHERE o.visibile_cliente = 1
-      ORDER BY o.data_ordine DESC
-    `, [email]) as [OrdineCliente[], unknown]
-    return rows
-  } catch { return [] }
-  finally { await conn.end() }
-}
-
-function SezioneOrdiniAcquisti({ ordini, showUsername }: { ordini: (OrdineAcquisto & { username?: string })[]; showUsername?: boolean }) {
-  if (ordini.length === 0) return null
-  const th: React.CSSProperties = {
-    padding: '8px 14px', fontSize: 11, fontWeight: 600, color: '#888',
-    textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.06em',
-    background: '#fafafa', borderBottom: '1px solid #e8e8e8', whiteSpace: 'nowrap',
-  }
-  const td: React.CSSProperties = {
-    padding: '10px 14px', fontSize: 13, color: '#333',
-    borderBottom: '1px solid #f0f0f0', verticalAlign: 'middle',
-  }
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-      <div>
-        <h3 style={{ fontSize: 17, fontWeight: 700, margin: 0, color: '#4a0080' }}>Ordini acquisto online</h3>
-        <p style={{ fontSize: 13, color: '#888', margin: '2px 0 0' }}>Pagamenti completati tramite Stripe</p>
-      </div>
-      <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr>
-              <th style={th}>#</th>
-              {showUsername && <th style={th}>Utente</th>}
-              <th style={th}>Data</th>
-              <th style={{ ...th, textAlign: 'right' }}>Totale</th>
-              <th style={th}>Articoli</th>
-            </tr>
-          </thead>
-          <tbody>
-            {ordini.map(o => {
-              let arts: { descrizione: string; quantita: number; unita: string }[] = []
-              try { arts = JSON.parse(o.articoli_json) } catch {}
-              return (
-                <tr key={o.id}>
-                  <td style={{ ...td, color: '#aaa' }}>#{o.id}</td>
-                  {showUsername && <td style={{ ...td, color: '#555' }}>{(o as OrdineAcquisto & { username?: string }).username}</td>}
-                  <td style={td}>{o.data}</td>
-                  <td style={{ ...td, textAlign: 'right', fontWeight: 600, color: '#2e7d32' }}>€ {Number(o.totale).toFixed(2)}</td>
-                  <td style={{ ...td, color: '#666', fontSize: 12 }}>
-                    {arts.slice(0, 3).map((a, i) => <div key={i}>{a.descrizione} × {a.quantita} {a.unita}</div>)}
-                    {arts.length > 3 && <div style={{ color: '#aaa' }}>+ altri {arts.length - 3}</div>}
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  )
-}
+// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function Page() {
   const cookieStore = await cookies()
-  const role    = cookieStore.get('session_role')?.value ?? ''
+  const role     = cookieStore.get('session_role')?.value ?? ''
   const username = cookieStore.get('session_user')?.value ?? ''
   if (!role) redirect('/')
-
-  const isStaff = role === 'admin' || role === 'dipendente'
 
   if (role === 'cliente') {
     const db = await getConnection()
@@ -156,11 +85,10 @@ export default async function Page() {
     if ((uRows[0]?.is_active ?? 0) === 0) redirect('/area-clienti/preventivi')
   }
 
+  const isStaff = role === 'admin' || role === 'dipendente'
+
   if (isStaff) {
-    const [{ ordini, clienti }, ordiniAcquisti] = await Promise.all([
-      getDataStaff(),
-      getOrdiniAcquistiStaff(),
-    ])
+    const { ordini, clienti } = await getDataStaff()
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
         <div>
@@ -168,23 +96,79 @@ export default async function Page() {
           <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0' }}>Tutti gli ordini ricevuti dai clienti</p>
         </div>
         <OrdiniRicevutiClient ordini={ordini} clienti={clienti} role={role} />
-        <SezioneOrdiniAcquisti ordini={ordiniAcquisti} showUsername />
+        <div className="IsDebug fs-11" style={{ marginTop: 8 }}>pagina revisionata</div>
       </div>
     )
   }
 
-  const [ordini, ordiniAcquisti] = await Promise.all([
-    getDataCliente(username),
-    getOrdiniAcquisti(username),
-  ])
+  // ─── Vista cliente ─────────────────────────────────────────────────────────
+  const ordini = await getOrdiniCliente(username)
+
+  const thStyle: React.CSSProperties = {
+    padding: '9px 14px', fontSize: 12, fontWeight: 700, color: '#7a6000',
+    textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.06em',
+    background: '#fff', borderBottom: '1px solid #c8960c', whiteSpace: 'nowrap',
+  }
+  const tdStyle: React.CSSProperties = {
+    padding: '10px 14px', fontSize: 13, color: '#333',
+    borderBottom: '1px solid #c8960c', verticalAlign: 'middle',
+  }
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <div>
-        <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>I Miei Ordini</h2>
-        <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0' }}>Riepilogo degli ordini associati al tuo account</p>
+        <h2 className="effetto-3d" style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>I miei ordini</h2>
+        <p style={{ color: '#555', fontSize: 14, margin: '4px 0 0' }}>
+          Preventivi accettati e acquisti completati.
+        </p>
       </div>
-      <MieiOrdiniClient ordini={ordini} />
-      <SezioneOrdiniAcquisti ordini={ordiniAcquisti} />
+
+      {ordini.length === 0 ? (
+        <p style={{ color: '#aaa', fontSize: 14 }}>Nessun ordine presente.</p>
+      ) : (
+        <div style={{
+          overflowX: 'auto', overflowY: 'hidden', borderRadius: 8, border: '1px solid #c8960c',
+          boxShadow: '0 4px 24px rgba(200,150,12,0.18), inset 0 1px 0 rgba(255,250,200,0.5)',
+        }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff' }}>
+            <thead>
+              <tr>
+                <th style={thStyle}>N° Ordine</th>
+                <th style={thStyle}>Tipo</th>
+                <th style={thStyle}>Data</th>
+                <th style={{ ...thStyle, textAlign: 'right' }}>Importo</th>
+              </tr>
+            </thead>
+            <tbody>
+              {ordini.map((o, i) => {
+                const isLast = i === ordini.length - 1
+                const td = isLast ? { ...tdStyle, borderBottom: 'none' } : tdStyle
+                return (
+                  <tr key={o.id} style={{ height: 80 }}>
+                    <td style={td}>
+                      <ApriOrdineBtn id={o.id} numero={o.numero} />
+                    </td>
+                    <td style={td}>
+                      <span style={{
+                        background: o.tipo === 'preventivo' ? '#e3f2fd' : '#f0fff4',
+                        color:      o.tipo === 'preventivo' ? '#1565c0' : '#276749',
+                        padding: '2px 10px', borderRadius: 12, fontSize: 11, fontWeight: 600,
+                      }}>
+                        {o.tipo === 'preventivo' ? 'Preventivo' : 'Acquisto'}
+                      </span>
+                    </td>
+                    <td style={{ ...td, whiteSpace: 'nowrap' }}>{o.data_ordine}</td>
+                    <td style={{ ...td, textAlign: 'right', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                      €&nbsp;{Number(o.importo_totale).toFixed(2)}
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+      <div className="IsDebug fs-11" style={{ marginTop: 8 }}>pagina revisionata</div>
     </div>
   )
 }

@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import type { Metadata } from 'next'
 import StampaAcquistiClient from './stampa-client'
+import { decompressCart } from '@/lib/cart-cookie'
 
 export const metadata: Metadata = { title: 'Stampa Ordine Acquisto' }
 
@@ -177,8 +178,9 @@ export default async function Page() {
 
   if (!digiCartAcquisti) redirect('/area-clienti/carrello-acquisti')
 
-  let cart: Array<{ id: number; q: number; l?: number; h?: number; ante?: number; colore?: string; note?: string }> = []
-  try { cart = JSON.parse(digiCartAcquisti) } catch { redirect('/area-clienti/carrello-acquisti') }
+  const cart = decompressCart(digiCartAcquisti)
+    .filter(i => i.id > 0 && i.tipo !== 'caratteristica')
+    .map(i => ({ id: i.id, q: i.q, l: i.l, h: i.h, ante: i.ante, colore: i.colore, note: i.note }))
   if (cart.length === 0) redirect('/area-clienti/carrello-acquisti')
 
   const db = await getConnection()

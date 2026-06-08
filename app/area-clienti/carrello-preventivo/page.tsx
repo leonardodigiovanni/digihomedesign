@@ -5,6 +5,7 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 import CarrelloClient, { type ArticoloCarrello, type CaratteristicaListino } from './carrello-client'
 import { decompressCart } from '@/lib/cart-cookie'
+import { extractAvgColor } from '@/lib/extract-color'
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = { title: 'Carrello Preventivo' }
@@ -37,28 +38,30 @@ function normalizeCartItems(cart: CartItem[]): CartItem[] {
 async function getArticoliDaCookie(cart: CartItem[]) {
   if (cart.length === 0) return []
   const normalized = normalizeCartItems(cart)
-  const artItems = normalized.filter(i => i.tipo !== 'caratteristica' && i.id !== 0)
-  const ids = artItems.map(i => i.id)
+  // include tutti gli item con id > 0 (sia articoli principali che figli/caratteristiche)
+  const allValidIds = [...new Set(normalized.filter(i => (i.id ?? 0) > 0).map(i => i.id!))]
 
-  let rows: { id: number; categoria: string; produttore: string; descrizione: string; unita: string; prezzo_vendita: number; sconto_articolo: number; costante: number; richiede_larghezza: number; richiede_altezza: number; richiede_quantita: number; richiede_tipo_colore: number; richiede_tipo_vetro: number }[] = []
-  if (ids.length > 0) {
+  let rows: { id: number; categoria: string; produttore: string; serie: string; descrizione: string; unita: string; prezzo_vendita: number; sconto_articolo: number; costante: number; richiede_larghezza: number; richiede_altezza: number; richiede_quantita: number; richiede_tipo_colore: number; richiede_tipo_colore_acc: number; richiede_tipo_vetro: number; richiede_tipo_montaggio: number; minimo: number | null; abbr: string | null; profilo_frontale_mm: number | null; foto_url: string | null }[] = []
+
+  if (allValidIds.length > 0) {
     const db = await getConnection()
     try {
-      const ph = ids.map(() => '?').join(',')
+      const ph = allValidIds.map(() => '?').join(',')
       const [r] = await db.query(
-        `SELECT id, categoria, produttore, descrizione, unita, prezzo_vendita, sconto_articolo, costante, richiede_larghezza, richiede_altezza, richiede_quantita, richiede_tipo_colore, richiede_tipo_vetro FROM listini WHERE id IN (${ph})`,
-        ids
+        `SELECT id, categoria, produttore, serie, descrizione, unita, prezzo_vendita, sconto_articolo, costante, richiede_larghezza, richiede_altezza, richiede_quantita, richiede_tipo_colore, richiede_tipo_colore_acc, richiede_tipo_vetro, richiede_tipo_montaggio, minimo, abbr, profilo_frontale_mm, foto_url FROM listini WHERE id IN (${ph})`,
+        allValidIds
       ) as [typeof rows, unknown]
       rows = r
     } catch { return [] }
     finally { await db.end() }
   }
 
-  return normalized.map((item, index) => {
+  const result = normalized.map((item, index) => {
     if (item.tipo === 'caratteristica' || item.id === 0) {
+      const artCar = item.id > 0 ? rows.find(r => r.id === item.id) : null
       return {
         index,
-        listino_id: 0,
+        listino_id: item.id ?? 0,
         categoria: '',
         produttore: '',
         descrizione: item.desc ?? '',
@@ -69,6 +72,9 @@ async function getArticoliDaCookie(cart: CartItem[]) {
         parent: item.parent,
         tipo: 'caratteristica' as const,
         desc: item.desc,
+        foto_url: artCar?.foto_url ?? null,
+        bar_color: null as string | null,
+        bar_color_acc: null as string | null,
       }
     }
     const art = rows.find(r => r.id === item.id)
@@ -78,6 +84,7 @@ async function getArticoliDaCookie(cart: CartItem[]) {
       listino_id: art.id,
       categoria: art.categoria,
       produttore: art.produttore,
+      serie: art.serie,
       descrizione: art.descrizione,
       unita: art.unita,
       prezzo_vendita: Number(art.prezzo_vendita),
@@ -86,8 +93,11 @@ async function getArticoliDaCookie(cart: CartItem[]) {
       richiede_larghezza:   Number(art.richiede_larghezza   ?? 0),
       richiede_altezza:     Number(art.richiede_altezza     ?? 0),
       richiede_quantita:    Number(art.richiede_quantita    ?? 0),
-      richiede_tipo_colore: Number(art.richiede_tipo_colore ?? 0),
-      richiede_tipo_vetro:  Number(art.richiede_tipo_vetro  ?? 0),
+      richiede_tipo_colore:     Number(art.richiede_tipo_colore     ?? 0),
+      richiede_tipo_colore_acc: Number(art.richiede_tipo_colore_acc ?? 0),
+      richiede_tipo_vetro:      Number(art.richiede_tipo_vetro      ?? 0),
+      richiede_tipo_montaggio:  Number(art.richiede_tipo_montaggio  ?? 0),
+      minimo: art.minimo != null ? Number(art.minimo) : null,
       quantita: item.q,
       ante: item.ante,
       larghezza_cm: item.l,
@@ -97,8 +107,41 @@ async function getArticoliDaCookie(cart: CartItem[]) {
       uid: item.uid!,
       parent: item.parent,
       tipo: 'articolo' as const,
+      abbr: art.abbr ?? '',
+      profilo_mm: art.profilo_frontale_mm ?? 80,
+      foto_url: art.foto_url ?? null,
+      bar_color: null as string | null,
+      bar_color_acc: null as string | null,
     }
   }).filter(x => x !== null)
+
+  // Pre-calcola bar_color e bar_color_acc per articoli TC/TA
+  await Promise.all(result.map(async a => {
+    if (a.tipo !== 'articolo') return
+    const abbrUp = (a.abbr ?? '').trim().toUpperCase()
+    if (!abbrUp.startsWith('TC(') && !abbrUp.startsWith('TA(')) return
+    const isNotAcc = (c: typeof result[0]) => (rows.find(r => r.id === c.listino_id)?.richiede_tipo_colore_acc ?? 0) !== 1
+    const colorChild = result.find(c => c.parent === a.uid && (rows.find(r => r.id === c.listino_id)?.richiede_tipo_colore ?? 0) === 1)
+      ?? result.find(c => c.parent === a.uid && isNotAcc(c) && (/color/i.test(c.categoria) || /color/i.test(c.descrizione ?? '')))
+      ?? result.find(c => c.parent === a.uid && isNotAcc(c) && !!rows.find(r => r.id === c.listino_id)?.foto_url)
+    if (colorChild) {
+      const fotoRaw = rows.find(r => r.id === colorChild.listino_id)?.foto_url
+      if (fotoRaw) {
+        const fotoUrl = fotoRaw.startsWith('/') ? fotoRaw : `/${fotoRaw}`
+        a.bar_color = await extractAvgColor(fotoUrl)
+      }
+    }
+    const colorAccChild = result.find(c => c.parent === a.uid && (rows.find(r => r.id === c.listino_id)?.richiede_tipo_colore_acc ?? 0) === 1)
+    if (colorAccChild) {
+      const fotoRaw = rows.find(r => r.id === colorAccChild.listino_id)?.foto_url
+      if (fotoRaw) {
+        const fotoUrl = fotoRaw.startsWith('/') ? fotoRaw : `/${fotoRaw}`
+        a.bar_color_acc = await extractAvgColor(fotoUrl)
+      }
+    }
+  }))
+
+  return result
 }
 
 async function getCarrelliDB(): Promise<CarrelloDB[]> {
@@ -204,11 +247,6 @@ export default async function Page() {
 
   const isStaff = role === 'admin' || role === 'dipendente' || role === 'direttore'
 
-  // Cliente loggato senza cookie → già nei preventivi, niente da vedere qui
-  if (role === 'cliente' && !digiCart) {
-    redirect('/area-clienti/preventivi')
-  }
-
   const cart = decompressCart(digiCart)
 
   const articoli = await getArticoliDaCookie(cart)
@@ -221,9 +259,9 @@ export default async function Page() {
     try {
       const [cr] = await db2.query(
         `SELECT id, categoria, produttore, descrizione, unita, prezzo_vendita, sconto_articolo,
-                richiede_tipo_colore, richiede_tipo_vetro
+                richiede_tipo_colore, richiede_tipo_colore_acc, richiede_tipo_vetro, richiede_tipo_montaggio
          FROM listini
-         WHERE (richiede_tipo_colore = 1 OR richiede_tipo_vetro = 1)
+         WHERE (richiede_tipo_colore = 1 OR richiede_tipo_colore_acc = 1 OR richiede_tipo_vetro = 1 OR richiede_tipo_montaggio = 1)
            AND disponibile = 1
            AND principale = 0
          ORDER BY categoria ASC, descrizione ASC`
@@ -236,8 +274,10 @@ export default async function Page() {
         unita:               String(r.unita ?? 'pz'),
         prezzo_vendita:      Number(r.prezzo_vendita ?? 0),
         sconto_articolo:     Number(r.sconto_articolo ?? 0),
-        richiede_tipo_colore: Number(r.richiede_tipo_colore ?? 0),
-        richiede_tipo_vetro:  Number(r.richiede_tipo_vetro  ?? 0),
+        richiede_tipo_colore:     Number(r.richiede_tipo_colore     ?? 0),
+        richiede_tipo_colore_acc: Number(r.richiede_tipo_colore_acc ?? 0),
+        richiede_tipo_vetro:      Number(r.richiede_tipo_vetro      ?? 0),
+        richiede_tipo_montaggio:  Number(r.richiede_tipo_montaggio  ?? 0),
       }))
     } finally { await db2.end() }
   } catch {}
@@ -258,21 +298,16 @@ export default async function Page() {
   }
 
   return (
-    <div style={{ maxWidth: 980, margin: '48px auto', padding: '0 20px 64px', color: '#444', fontSize: 15, lineHeight: 1.8 }}>
-      <p style={{ fontSize: 12, color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/" style={{ color: '#888', textDecoration: 'underline' }}>Home</Link>
-        {' / '}Carrello preventivo
-      </p>
-      <h1 style={{ fontSize: 26, fontWeight: 700, marginBottom: 20 }}>
-        Il tuo carrello preventivo
-      </h1>
-      <CarrelloClient articoli={articoli} isLoggedIn={isLoggedIn} scontoClientePct={scontoClientePct} caratteristiche={caratteristiche} />
+    <div className="page-content-wrapper" style={{ margin: '8px 0', padding: '0 0 8px', color: '#444', fontSize: 15, lineHeight: 1.8 }}>
+
+<CarrelloClient articoli={articoli} isLoggedIn={isLoggedIn} scontoClientePct={scontoClientePct} caratteristiche={caratteristiche} />
 
       {isStaff && (
         <div style={{ marginTop: 56, borderTop: '2px solid #e8e8e8', paddingTop: 40 }}>
           <StaffView />
         </div>
       )}
+      <p className="IsDebug fs-11" style={{ marginTop: 8 }}>pagina revisionata</p>
     </div>
   )
 }

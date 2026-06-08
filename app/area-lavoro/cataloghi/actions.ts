@@ -46,6 +46,18 @@ async function ensureTables() {
     )
   `)
   await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN serie VARCHAR(200) NOT NULL DEFAULT ''`).catch(() => {})
+  const [descrCheck] = await db.query(
+    `SELECT COUNT(*) AS cnt FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'catalogo_voci' AND COLUMN_NAME = 'descrizione'`
+  ) as [{ cnt: number }[], unknown]
+  if ((descrCheck[0]?.cnt ?? 0) === 0) {
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN descrizione TEXT NULL`)
+  }
+  const [listCatCheck] = await db.query(
+    `SELECT COUNT(*) AS cnt FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'catalogo_voci' AND COLUMN_NAME = 'listino_categoria'`
+  ) as [{ cnt: number }[], unknown]
+  if ((listCatCheck[0]?.cnt ?? 0) === 0) {
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN listino_categoria VARCHAR(100) NULL DEFAULT NULL`)
+  }
   await db.end()
 }
 
@@ -101,11 +113,12 @@ export async function addVoce(_: MutResult | null, fd: FormData): Promise<MutRes
   const role = await checkAccess()
   if (!STAFF_ROLES.includes(role)) return { ok: false, error: 'Non autorizzato.' }
 
-  const categoria_id = parseInt(fd.get('categoria_id') as string)
-  const nome         = (fd.get('nome')         as string)?.trim()
-  const serie        = (fd.get('serie')        as string)?.trim() ?? ''
-  const pdf_filename = (fd.get('pdf_filename') as string)?.trim()
-  const pdf_label    = (fd.get('pdf_label')    as string)?.trim() ?? ''
+  const categoria_id      = parseInt(fd.get('categoria_id') as string)
+  const nome              = (fd.get('nome')              as string)?.trim()
+  const serie             = (fd.get('serie')             as string)?.trim() ?? ''
+  const pdf_filename      = (fd.get('pdf_filename')      as string)?.trim()
+  const pdf_label         = (fd.get('pdf_label')         as string)?.trim() ?? ''
+  const listino_categoria = (fd.get('listino_categoria') as string)?.trim() || null
 
   if (isNaN(categoria_id) || !nome || !pdf_filename)
     return { ok: false, error: 'Dati incompleti.' }
@@ -114,8 +127,8 @@ export async function addVoce(_: MutResult | null, fd: FormData): Promise<MutRes
   const db = await getConnection()
   try {
     await db.execute(
-      'INSERT INTO catalogo_voci (categoria_id, nome, pdf_filename, pdf_label, serie) VALUES (?,?,?,?,?)',
-      [categoria_id, nome, pdf_filename, pdf_label, serie]
+      'INSERT INTO catalogo_voci (categoria_id, nome, pdf_filename, pdf_label, serie, listino_categoria) VALUES (?,?,?,?,?,?)',
+      [categoria_id, nome, pdf_filename, pdf_label, serie, listino_categoria]
     )
     revalidatePath('/cataloghi')
     return { ok: true }
@@ -143,10 +156,11 @@ export async function updateVoce(_: MutResult | null, fd: FormData): Promise<Mut
   const role = await checkAccess()
   if (!STAFF_ROLES.includes(role)) return { ok: false, error: 'Non autorizzato.' }
 
-  const id              = parseInt(fd.get('id') as string)
-  const nome            = (fd.get('nome')            as string)?.trim()
-  const serie           = (fd.get('serie')           as string)?.trim() ?? ''
-  const pdf_label       = (fd.get('pdf_label')       as string)?.trim() ?? ''
+  const id               = parseInt(fd.get('id') as string)
+  const nome             = (fd.get('nome')             as string)?.trim()
+  const serie            = (fd.get('serie')            as string)?.trim() ?? ''
+  const pdf_label        = (fd.get('pdf_label')        as string)?.trim() ?? ''
+  const descrizione      = (fd.get('descrizione')      as string)?.trim() ?? ''
   const new_pdf_filename = (fd.get('new_pdf_filename') as string)?.trim() || null
 
   if (isNaN(id) || !nome) return { ok: false, error: 'Dati incompleti.' }
@@ -158,8 +172,8 @@ export async function updateVoce(_: MutResult | null, fd: FormData): Promise<Mut
       const [rows] = await db.query('SELECT pdf_filename FROM catalogo_voci WHERE id = ?', [id])
       const old = (rows as { pdf_filename: string }[])[0]
       await db.execute(
-        'UPDATE catalogo_voci SET nome=?, serie=?, pdf_label=?, pdf_filename=? WHERE id=?',
-        [nome, serie, pdf_label, new_pdf_filename, id]
+        'UPDATE catalogo_voci SET nome=?, serie=?, pdf_label=?, descrizione=?, pdf_filename=? WHERE id=?',
+        [nome, serie, pdf_label, descrizione, new_pdf_filename, id]
       )
       if (old) {
         const dir = path.join(process.cwd(), 'public', 'uploads', 'cataloghi')
@@ -167,11 +181,29 @@ export async function updateVoce(_: MutResult | null, fd: FormData): Promise<Mut
       }
     } else {
       await db.execute(
-        'UPDATE catalogo_voci SET nome=?, serie=?, pdf_label=? WHERE id=?',
-        [nome, serie, pdf_label, id]
+        'UPDATE catalogo_voci SET nome=?, serie=?, pdf_label=?, descrizione=? WHERE id=?',
+        [nome, serie, pdf_label, descrizione, id]
       )
     }
+    // listino_categoria gestita da updateListinoVoce
     revalidatePath('/cataloghi')
+    return { ok: true }
+  } finally { await db.end() }
+}
+
+export async function updateListinoVoce(_: MutResult | null, fd: FormData): Promise<MutResult> {
+  const role = await checkAccess()
+  if (!STAFF_ROLES.includes(role)) return { ok: false, error: 'Non autorizzato.' }
+
+  const id = parseInt(fd.get('id') as string)
+  const listino_categoria = (fd.get('listino_categoria') as string)?.trim() || null
+  if (isNaN(id)) return { ok: false, error: 'ID non valido.' }
+
+  await ensureTables()
+  const db = await getConnection()
+  try {
+    await db.execute('UPDATE catalogo_voci SET listino_categoria = ? WHERE id = ?', [listino_categoria, id])
+    revalidatePath('/area-lavoro/cataloghi')
     return { ok: true }
   } finally { await db.end() }
 }

@@ -2,11 +2,13 @@ import Image from 'next/image'
 import Link from 'next/link'
 import type { Rgba, BgMode } from '@/lib/settings'
 import { rgbGradient, rgbGradientInv, rgbBrushedBackground, rgbBrushedBackgroundInv, rgbBrushedBackgroundDark, rgbBrushedBackgroundDarkInv, rgbBoxShadow, rgbBorderColor } from '@/lib/bg-utils'
+import HeaderAuth from '@/components/header-auth'
 
 interface HeaderProps {
   headerBg?: Rgba
   headerBgMode?: BgMode
   username?: string | null
+  registrazioniDisabilitate?: boolean
 }
 
 const EFFECT_CLASS: Record<string, string> = {
@@ -87,6 +89,7 @@ export default function Header({
   headerBg = { r: 255, g: 255, b: 255, a: 100 },
   headerBgMode = 'rgb',
   username,
+  registrazioniDisabilitate,
 }: HeaderProps) {
   const isFixedEffect = headerBgMode in EFFECT_CLASS
   const isRgbEffect   = headerBgMode.startsWith('rgb_')
@@ -102,7 +105,7 @@ export default function Header({
         ...dynamicStyle,
         borderBottom: `1px solid ${borderColor}`,
         padding: '0 16px',
-        height: 122,
+        height: 92,
         overflow: 'visible',
         position: 'relative',
         ...(isRgbEffect ? { position: 'relative' } : {}),
@@ -115,20 +118,17 @@ export default function Header({
 
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', position: 'relative', zIndex: 1 }}>
         <Link href="/" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, textDecoration: 'none', color: 'inherit', outline: 'none', cursor: 'pointer' }}>
-          <Image src="/images/header/qqqqqqqqqqqqqqqqqqq-Photoroom.png" alt="Home Design" width={82} height={82} unoptimized style={{ objectFit: 'contain', display: 'block' }} />
-          <Image src="/images/volantino/nome_tr.png?v=2" alt="Home Design" width={110} height={37} unoptimized style={{ objectFit: 'contain', display: 'block', marginTop: -8 }} />
+          <Image src="/images/header/DIGIHOMEDESIGN.png" alt="Home Design" width={80} height={80} unoptimized style={{ objectFit: 'contain', display: 'block', marginTop: 8 }} />
         </Link>
       </div>
       {username && (
-        <span className="fs-9" style={{
-          position: 'absolute', top: 8, right: 8,
-          fontWeight: 500, color: '#fff',
-          whiteSpace: 'nowrap', zIndex: 2,
-          textShadow: '0 1px 3px rgba(0,0,0,0.4)',
-        }}>
+        <div style={{ position: 'absolute', top: 4, right: 8, zIndex: 2, fontSize: 10, color: '#fff', fontFamily: 'monospace', opacity: 0.75, pointerEvents: 'none', userSelect: 'none' }}>
           {username}
-        </span>
+        </div>
       )}
+      <div style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', zIndex: 2 }}>
+        <HeaderAuth username={username} registrazioniDisabilitate={registrazioniDisabilitate} forceDropdown />
+      </div>
     </header>
   )
 }

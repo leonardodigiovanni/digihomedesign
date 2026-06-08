@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import type { Metadata } from 'next'
 import { creaPreventivo } from '../../clienti/preventivi/actions'
+import ApriBtnPreventivo from './apri-btn'
+import { decompressCart } from '@/lib/cart-cookie'
 
 export const metadata: Metadata = { title: 'Preventivi' }
 
@@ -75,6 +77,7 @@ async function getData(role: string, username: string): Promise<{ preventivi: Pr
       const [r] = await conn.query(`
         SELECT p.*, '' AS cliente_nome FROM preventivi p
         WHERE p.visibile_cliente = 1
+          AND p.stato != 'da inviare'
           AND (
             (p.cliente_id = ?)
             OR (p.creato_da = ? AND p.cliente_id IS NULL)
@@ -84,7 +87,16 @@ async function getData(role: string, username: string): Promise<{ preventivi: Pr
       rows = r as Record<string, unknown>[]
     }
 
-    const preventivi = rows.map(r => ({ ...r, data: dateToLocal(r.data), created_at: dateToLocal(r.created_at) })) as Preventivo[]
+    const today = new Date(); today.setHours(0,0,0,0)
+    const preventivi = rows.map(r => {
+      let stato = String(r.stato ?? 'bozza')
+      if (!['accettato','rifiutato','annullato','scaduto'].includes(stato)) {
+        const exp = new Date(r.data as string)
+        exp.setDate(exp.getDate() + Number(r.validita_giorni ?? 5))
+        if (exp < today) stato = 'scaduto'
+      }
+      return { ...r, stato, data: dateToLocal(r.data), created_at: dateToLocal(r.created_at) }
+    }) as Preventivo[]
     return { preventivi, isStaff }
   } catch { return { preventivi: [], isStaff: false } }
   finally { await conn.end() }
@@ -98,47 +110,39 @@ export default async function Page() {
 
   const { preventivi, isStaff } = await getData(role, username)
 
-  const cartRaw = cookieStore.get('digi_cart')?.value
-  const cartNonVuoto = !!cartRaw && (() => { try { const c = JSON.parse(cartRaw); return Array.isArray(c) && c.length > 0 } catch { return false } })()
+  const cartRaw = cookieStore.get('digi_cart')?.value ?? ''
+  const cartNonVuoto = decompressCart(cartRaw).filter(i => i.parent == null).length > 0
 
   const thStyle: React.CSSProperties = {
-    padding: '9px 14px', fontSize: 11, fontWeight: 600, color: '#888',
+    padding: '9px 14px', fontSize: 12, fontWeight: 700, color: '#7a6000',
     textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.06em',
-    background: '#fafafa', borderBottom: '1px solid #e8e8e8', whiteSpace: 'nowrap',
+    background: '#fff', borderBottom: '1px solid #c8960c', whiteSpace: 'nowrap',
   }
   const tdStyle: React.CSSProperties = {
     padding: '10px 14px', fontSize: 13, color: '#333',
-    borderBottom: '1px solid #f0f0f0', verticalAlign: 'middle',
+    borderBottom: '1px solid #c8960c', verticalAlign: 'middle',
   }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
         <div>
-          <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Preventivi</h2>
+          <h2 className="effetto-3d" style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Preventivi</h2>
           <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0' }}>
             {isStaff ? 'Tutti i preventivi emessi.' : 'I preventivi associati al tuo account.'}
           </p>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
-          <form action={creaPreventivo}>
-            <button
-              type="submit"
-              disabled={cartNonVuoto}
-              className={cartNonVuoto ? 'btn-gray' : 'btn-green'}
-              style={{ padding: '9px 22px', fontSize: 13, fontWeight: 700, opacity: cartNonVuoto ? 0.5 : 1, cursor: cartNonVuoto ? 'not-allowed' : 'pointer' }}
-            >
-              + Nuovo preventivo
-            </button>
-          </form>
-          {cartNonVuoto && (
-            <p style={{ margin: 0, fontSize: 12, color: '#888' }}>
-              Hai articoli nel{' '}
-              <a href="/area-clienti/carrello-preventivo" style={{ color: '#2b6cb0', fontWeight: 600 }}>
-                carrello preventivi
-              </a>
-              .
-            </p>
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+          {cartNonVuoto ? (
+            <a href="/area-clienti/carrello-preventivo" className="btn-black"
+              style={{ display: 'inline-flex', alignItems: 'center', height: 42, padding: '0 20px', borderRadius: 21, textDecoration: 'none', fontSize: 13, fontWeight: 700 }}>
+              Vai alla simulazione →
+            </a>
+          ) : (
+            <a href="/area-clienti/carrello-preventivo" className="btn-green"
+              style={{ display: 'inline-flex', alignItems: 'center', height: 42, padding: '0 24px', borderRadius: 21, textDecoration: 'none', fontSize: 13, fontWeight: 700 }}>
+              + Simula preventivo
+            </a>
           )}
         </div>
       </div>
@@ -146,38 +150,37 @@ export default async function Page() {
       {preventivi.length === 0 ? (
         <p style={{ color: '#aaa', fontSize: 14 }}>Nessun preventivo trovato.</p>
       ) : (
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff', border: '1px solid #e8e8e8', borderRadius: 8 }}>
+        <div style={{
+          overflowX: 'auto', overflowY: 'hidden', borderRadius: 8, border: '1px solid #c8960c',
+          boxShadow: '0 4px 24px rgba(200,150,12,0.18), inset 0 1px 0 rgba(255,250,200,0.5)',
+        }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff' }}>
             <thead>
               <tr>
-                <th style={thStyle}>N°</th>
+                <th style={thStyle}>N° PREVENTIVO</th>
                 {isStaff && <th style={thStyle}>Cliente</th>}
                 <th style={thStyle}>Descrizione</th>
                 <th style={thStyle}>Data</th>
-                <th style={thStyle}>Importo</th>
+                <th style={{ ...thStyle, textAlign: 'right' }}>Importo</th>
                 <th style={thStyle}>Validità</th>
                 <th style={{ ...thStyle, textAlign: 'center' }}>Stato</th>
               </tr>
             </thead>
             <tbody>
-              {preventivi.map(p => {
+              {preventivi.map((p, i) => {
                 const [color, bg] = STATO_COLORS[p.stato] ?? ['#666', '#f5f5f5']
+                const td = i === preventivi.length - 1 ? { ...tdStyle, borderBottom: 'none' } : tdStyle
                 return (
-                  <tr key={p.id}>
-                    <td style={tdStyle}>
-                      <a
-                        href={isStaff ? `/clienti/preventivi/${p.id}` : `/area-clienti/preventivi/${p.id}`}
-                        style={{ color: '#2b6cb0', fontWeight: 600, textDecoration: 'none' }}
-                      >
-                        {p.numero || `#${p.id}`}
-                      </a>
+                  <tr key={p.id} style={{ height: 80 }}>
+                    <td style={td}>
+                      <ApriBtnPreventivo id={p.id} numero={p.numero} isStaff={isStaff} />
                     </td>
-                    {isStaff && <td style={tdStyle}>{p.cliente_nome || '—'}</td>}
-                    <td style={tdStyle}>{p.descrizione}</td>
-                    <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>{p.data}</td>
-                    <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>€ {Number(p.importo).toFixed(2)}</td>
-                    <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>{p.validita_giorni} gg</td>
-                    <td style={{ ...tdStyle, textAlign: 'center' }}>
+                    {isStaff && <td style={{ ...td, maxWidth: 120, whiteSpace: 'normal', wordBreak: 'break-word' }}>{p.cliente_nome || '—'}</td>}
+                    <td style={{ ...td, maxWidth: 180, whiteSpace: 'normal', wordBreak: 'break-word' }}>{p.descrizione}</td>
+                    <td style={{ ...td, whiteSpace: 'nowrap' }}>{p.data}</td>
+                    <td style={{ ...td, whiteSpace: 'nowrap', textAlign: 'right' }}>€ {Number(p.importo).toFixed(2)}</td>
+                    <td style={{ ...td, whiteSpace: 'nowrap' }}>{p.validita_giorni} gg</td>
+                    <td style={{ ...td, textAlign: 'center' }}>
                       <span style={{ background: bg, color, padding: '2px 10px', borderRadius: 12, fontSize: 11, fontWeight: 600 }}>
                         {p.stato}
                       </span>
@@ -189,6 +192,7 @@ export default async function Page() {
           </table>
         </div>
       )}
+      <div className="IsDebug fs-11" style={{ marginTop: 8 }}>pagina revisionata</div>
     </div>
   )
 }

@@ -143,7 +143,7 @@ export default async function AppDownloadPage() {
 
       {/* CTA apri app */}
       <div style={{ textAlign: 'center' }}>
-        <a href="/" className="btn-black" style={{ display: 'inline-block', padding: '13px 32px', borderRadius: 8, fontWeight: 600, fontSize: 15, textDecoration: 'none' }}>
+        <a href="/" className="btn-black fs-12" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: 42, padding: '0 28px', borderRadius: 21, textDecoration: 'none', fontFamily: 'monospace' }}>
           Vai al sito
         </a>
       </div>

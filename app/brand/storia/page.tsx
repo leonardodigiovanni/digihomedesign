@@ -10,40 +10,27 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <div className="fs-15" style={{ maxWidth: 1000, margin: '48px auto', padding: '0 20px 64px', color: '#444', lineHeight: 1.8 }}>
+    <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
         <Link href="/brand" style={{ color: '#888', textDecoration: 'underline' }}>Brand</Link> / Storia
       </p>
 
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 24, marginTop: 0 }}>La Nostra Storia</h1>
 
-      <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '24px 28px' }}>
+      <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: 4 }}>
 
-        {/* Card foto — dentro il riquadro, centrate in alto */}
-        <div style={{ display: 'flex', gap: 24, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 32 }}>
-
-          <div className="page-card storia-card-1" style={{ width: 280, boxShadow: '0 8px 28px rgba(0,0,0,0.25)' }}>
-            <div style={{ position: 'relative', width: 280, height: 300 }}>
-              <Image src="/images/storia/francesco.png" alt="Francesco" fill sizes="280px" style={{ objectFit: 'cover' }} />
-            </div>
-            <div style={{ padding: '10px 12px 14px' }}>
-              <span className="testo-articoli">Francesco</span>
-            </div>
+        {/* Foto 1 — Francesco */}
+        <div className="page-card storia-card-1" style={{ boxShadow: '0 8px 28px rgba(0,0,0,0.25)', marginBottom: 32, maxWidth: 480, marginLeft: 'auto', marginRight: 'auto' }}>
+          <div style={{ position: 'relative', width: '100%', aspectRatio: '1 / 1' }}>
+            <Image src="/images/storia/francesco.png" alt="Francesco" fill sizes="100vw" style={{ objectFit: 'cover' }} />
           </div>
-
-          <div className="page-card storia-card-2" style={{ width: 280, boxShadow: '0 6px 22px rgba(0,0,0,0.2)' }}>
-            <div style={{ position: 'relative', width: 280, height: 300 }}>
-              <Image src="/images/storia/pupi-carretto-siciliano.png" alt="Pupi e carretto siciliano" fill sizes="280px" style={{ objectFit: 'cover' }} />
-            </div>
-            <div style={{ padding: '10px 12px 14px' }}>
-              <span className="testo-articoli">I pupi stampati</span>
-            </div>
+          <div style={{ padding: '10px 12px 14px' }}>
+            <span className="testo-articoli">Francesco</span>
           </div>
-
         </div>
 
         {/* Testo — piena larghezza */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 28, marginBottom: 32 }}>
           <p className="testo-articoli" style={{ margin: 0 }}>La nostra storia nasce dalla vita di un grande lavoratore e grandissimo uomo.</p>
           <p className="testo-articoli" style={{ margin: 0 }}><strong>Francesco Di Giovanni</strong>, classe 1947.</p>
           <p className="testo-articoli" style={{ margin: 0 }}>Le sue innate e straordinarie doti manuali e intellettive lo hanno condotto ai vertici dell&apos;arte artigiana nella lavorazione dei metalli.</p>
@@ -59,15 +46,27 @@ export default function Page() {
           <p className="testo-articoli" style={{ margin: 0 }}>DIGI Home Design deve tutto a lui.</p>
           <p className="testo-articoli" style={{ margin: 0 }}>
             <strong>Grazie, Papà.</strong>{' '}
-            <span style={{ fontSize: 36, color: '#c0392b', WebkitTextFillColor: '#c0392b', verticalAlign: 'middle' }}>♥</span>
-            <span style={{ fontSize: 36, color: '#c0392b', WebkitTextFillColor: '#c0392b', verticalAlign: 'middle' }}>♥</span>
-            <span style={{ fontSize: 36, color: '#c0392b', WebkitTextFillColor: '#c0392b', verticalAlign: 'middle' }}>♥</span>
+            <span style={{ fontSize: 24, color: '#c0392b', WebkitTextFillColor: '#c0392b', verticalAlign: 'middle' }}>♥</span>
+            <span style={{ fontSize: 24, color: '#c0392b', WebkitTextFillColor: '#c0392b', verticalAlign: 'middle' }}>♥</span>
+            <span style={{ fontSize: 24, color: '#c0392b', WebkitTextFillColor: '#c0392b', verticalAlign: 'middle' }}>♥</span>
           </p>
+        </div>
+
+        {/* Foto 2 — I pupi stampati */}
+        <div className="page-card storia-card-2" style={{ boxShadow: '0 6px 22px rgba(0,0,0,0.2)', maxWidth: 480, marginLeft: 'auto', marginRight: 'auto' }}>
+          <div style={{ position: 'relative', width: '100%', aspectRatio: '1 / 1' }}>
+            <Image src="/images/storia/pupi-carretto-siciliano.png" alt="Pupi e carretto siciliano" fill sizes="100vw" style={{ objectFit: 'cover' }} />
+          </div>
+          <div style={{ padding: '10px 12px 14px' }}>
+            <span className="testo-articoli">I pupi stampati</span>
+          </div>
         </div>
 
       </div>
 
-      <Link href="/brand" className="fs-12" style={{ display: 'inline-block', marginTop: 40, color: '#1a1a1a', fontWeight: 600, textDecoration: 'underline' }}>← Torna a Brand</Link>
+      <Link href="/brand" className="btn-black fs-12" style={{ display: 'inline-flex', alignItems: 'center', marginTop: 40, height: 42, padding: '0 20px', borderRadius: 21, textDecoration: 'none', fontFamily: 'monospace' }}>← Torna a Brand</Link>
+
+      <p className="IsDebug fs-11" style={{ marginTop: 8 }}>pagina revisionata</p>
     </div>
   )
 }

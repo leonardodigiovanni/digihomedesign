@@ -72,7 +72,17 @@
       "Bash(sed -i 's/<label style={lbl}>/<label className=\"testo-articoli\" style={lbl}>/g' components/aggiungi-articolo-form.tsx)",
       "Bash(Get-Date *)",
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\User\\\\Desktop\\\\SITO\\\\sito-cursor\\\\app\\\\brand\" -Directory)",
-      "Bash(Select-Object Name)"
+      "Bash(Select-Object Name)",
+      "Bash(dir docs *)",
+      "Bash(Get-Item \"public/images/preview/casa-citta2.png\")",
+      "Bash(Select-Object LastWriteTime, Length)",
+      "PowerShell(Copy-Item *)",
+      "Bash(powershell *)",
+      "Bash(dir C:\\\\Users\\\\User\\\\Desktop\\\\SITO\\\\sito-cursor\\\\public\\\\docs\\\\ *)",
+      "Bash(grep -n \"idx\\\\|#\\\\${r\\\\|#\\\\${p\\\\|disegnoSVG\\\\|foto\\\\|trasmittanza\\\\|accettazione\\\\|Abbr\\\\|abbr\\\\|colonna\" \"app/area-clienti/preventivi/[id]/stampa/page.tsx\")",
+      "Bash(grep *)",
+      "Bash(git checkout *)",
+      "Bash(dir \"app\\\\brand\\\\cataloghi\" /s /b)"
     ]
   }
 }

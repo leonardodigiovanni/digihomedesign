@@ -21,7 +21,7 @@ export default function AccediDropdown() {
       <button
         onClick={() => setOpen(v => !v)}
         className={open ? 'btn-orange' : 'btn-black'}
-        style={{ padding: '0 22px', height: 38, fontWeight: 600, borderRadius: 7, fontFamily: 'inherit' }}
+        style={{ padding: '0 20px', height: 42, borderRadius: 21, fontFamily: 'monospace' }}
       >
         {open ? 'Chiudi ▴' : 'Accedi ▾'}
       </button>

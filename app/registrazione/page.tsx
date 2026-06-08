@@ -8,16 +8,19 @@ export const metadata: Metadata = {
   title: 'Registrazione',
 }
 
-export default async function RegistrazionePage() {
+export default async function RegistrazionePage({ searchParams }: { searchParams: Promise<{ from?: string }> }) {
   const cookieStore = await cookies()
   if (cookieStore.get('session_user')?.value) redirect('/')
 
   const { registrazioniDisabilitate } = await readSettings()
   if (registrazioniDisabilitate) redirect('/')
 
+  const { from } = await searchParams
+  const redirectTo = from && from.startsWith('/') ? from : undefined
+
   return (
     <div style={{ maxWidth: 560, margin: '0 auto', padding: '0 16px' }}>
-      <RegistrationFlow />
+      <RegistrationFlow redirectTo={redirectTo} />
     </div>
   )
 }

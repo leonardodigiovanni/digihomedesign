@@ -228,7 +228,7 @@ function Step2({ pendingId, onSuccess }: { pendingId: number; onSuccess: () => v
 
 // ─── Step 3: verifica cellulare ───────────────────────────────────────────────
 
-function Step3({ pendingId, onSuccess }: { pendingId: number; onSuccess: () => void }) {
+function Step3({ pendingId, onSuccess, redirectTo }: { pendingId: number; onSuccess: () => void; redirectTo?: string }) {
   const [code, setCode] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [resendMsg, setResendMsg] = useState<string | null>(null)
@@ -240,7 +240,7 @@ function Step3({ pendingId, onSuccess }: { pendingId: number; onSuccess: () => v
     startTransition(async () => {
       const res: VerifyResult = await verifyPhone(pendingId, code)
       if (res.ok) {
-        window.location.href = '/area-clienti/carrello-preventivo'
+        window.location.href = redirectTo ?? '/area-clienti/carrello-preventivo'
       } else {
         setError(res.error)
       }
@@ -291,7 +291,7 @@ function Step3({ pendingId, onSuccess }: { pendingId: number; onSuccess: () => v
 
 // ─── Componente principale ────────────────────────────────────────────────────
 
-export default function RegistrationFlow() {
+export default function RegistrationFlow({ redirectTo }: { redirectTo?: string }) {
   const [step, setStep] = useState(0)
   const [pendingId, setPendingId] = useState<number | null>(null)
 
@@ -307,13 +307,13 @@ export default function RegistrationFlow() {
             Riceverai una conferma quando potrai accedere.
           </p>
           <a
-            href="/"
+            href={redirectTo ?? '/'}
             style={{
               display: 'inline-block', padding: '10px 24px', fontSize: 14,
               background: '#1a1a1a', color: '#fff', borderRadius: 6, textDecoration: 'none',
             }}
           >
-            Torna alla home
+            {redirectTo ? 'Torna alla pagina' : 'Torna alla home'}
           </a>
         </div>
       </div>
@@ -337,7 +337,7 @@ export default function RegistrationFlow() {
         <Step2 pendingId={pendingId} onSuccess={() => setStep(2)} />
       )}
       {step === 2 && pendingId !== null && (
-        <Step3 pendingId={pendingId} onSuccess={() => setStep(3)} />
+        <Step3 pendingId={pendingId} onSuccess={() => setStep(3)} redirectTo={redirectTo} />
       )}
     </div>
   )
