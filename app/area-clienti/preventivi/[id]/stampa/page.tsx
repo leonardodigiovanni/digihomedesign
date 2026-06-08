@@ -1026,7 +1026,7 @@ async function buildStampaData(opts: {
 
 // ─── Caricamento dati ─────────────────────────────────────────────────────────
 
-export async function loadData(prevId: number, username: string, isStaff: boolean): Promise<StampaData | null> {
+async function loadData(prevId: number, username: string, isStaff: boolean): Promise<StampaData | null> {
   const db = await getConnection()
   try {
     const [pRows] = await db.query('SELECT * FROM preventivi WHERE id = ?', [prevId]) as [Record<string, unknown>[], unknown]

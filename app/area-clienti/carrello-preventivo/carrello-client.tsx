@@ -8,7 +8,6 @@ import {
   aggiornaArticoloCarrello, aggiungiArticoloAlCarrello, impostaParentPendente,
   applicaCaratteristicaAlCarrello,
 } from '@/app/brand/cataloghi/actions'
-import { logPdfRequest } from './actions'
 import { DropdownLoginForm } from '@/components/header-auth'
 
 export type CaratteristicaListino = {
@@ -306,16 +305,6 @@ export default function CarrelloClient({
 
   function handleGeneraPDF() {
     if (hasLacuneAperte) return
-    logPdfRequest(articoli.map(a => ({
-      categoria: a.categoria,
-      produttore: a.produttore,
-      descrizione: a.descrizione,
-      unita: a.unita,
-      prezzo_vendita: a.prezzo_vendita,
-      quantita: a.quantita,
-      sconto_articolo: a.sconto_articolo,
-      tipo: a.tipo,
-    }))).catch(() => {})
     window.location.href = stampaHref
   }
 
