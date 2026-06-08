@@ -91,16 +91,18 @@ export default async function Page() {
 
   if (arts.length === 0) redirect('/app/carrello-preventivo')
 
-  logPdfRequest(arts.map(a => ({
-    categoria: a.categoria,
-    produttore: a.produttore,
-    descrizione: a.descrizione,
-    unita: a.unita,
-    prezzo_vendita: a.prezzo_vendita,
-    quantita: a.quantita,
-    sconto_articolo: a.sconto_articolo,
-    tipo: a.parent_uid != null ? 'caratteristica' : 'articolo',
-  }))).catch(() => {})
+  try {
+    await logPdfRequest(arts.map(a => ({
+      categoria: a.categoria,
+      produttore: a.produttore,
+      descrizione: a.descrizione,
+      unita: a.unita,
+      prezzo_vendita: a.prezzo_vendita,
+      quantita: a.quantita,
+      sconto_articolo: a.sconto_articolo,
+      tipo: a.parent_uid != null ? 'caratteristica' : 'articolo',
+    })))
+  } catch {}
 
   const today  = new Date().toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' })
   const totale = arts.reduce((s, a) => s + calcolaPrezzo(a, arts), 0).toFixed(2)
