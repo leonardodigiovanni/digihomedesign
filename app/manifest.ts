@@ -13,13 +13,13 @@ export default function manifest(): MetadataRoute.Manifest {
     categories: ['business', 'shopping'],
     icons: [
       {
-        src: '/icons/DIGIHOMEDESIGN.png',
+        src: '/images/icons/DIGIHOMEDESIGN.png',
         sizes: '192x192',
         type: 'image/png',
         purpose: 'any',
       },
       {
-        src: '/icons/DIGIHOMEDESIGN.png',
+        src: '/images/icons/DIGIHOMEDESIGN.png',
         sizes: '512x512',
         type: 'image/png',
         purpose: 'maskable',
