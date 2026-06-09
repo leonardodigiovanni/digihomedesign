@@ -1259,14 +1259,16 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 42px;
-  min-width: 42px;
+  height: 64px;
+  min-width: 64px;
   padding: 0 20px;
-  border-radius: 21px;
+  border-radius: 32px;
   font-size: 13px;
   font-weight: 700;
   font-family: monospace;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: normal;
   text-decoration: none;
   box-sizing: border-box;
   position: relative;
@@ -1276,7 +1278,7 @@ body {
 }
 /* Bottone circolare — icona senza testo */
 .btn-icon {
-  width: 42px !important;
+  width: 64px !important;
   padding: 0 !important;
 }
 /* Verde — conferma / salva / login */

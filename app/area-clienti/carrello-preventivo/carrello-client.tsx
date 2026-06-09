@@ -127,7 +127,7 @@ function LoginBanner({ hasLacune, cataloghiHref = '/brand/cataloghi' }: { hasLac
           <button
             onClick={() => setOpen(v => !v)}
             className={open ? 'btn-orange' : 'btn-black'}
-            style={{ width: '100%', height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, borderRadius: 21, fontFamily: 'monospace' }}
+            style={{ width: '100%', padding: '0 8px', fontSize: 14, fontFamily: 'monospace' }}
           >
             {open ? 'Chiudi ▴' : 'Accedi ▾'}
           </button>
@@ -516,18 +516,18 @@ export default function CarrelloClient({
             <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 8, alignItems: 'center' }}>
               <button type="button" onClick={() => handleApplicaCaratteristica(false)} disabled={!lacunaSelected || actPending}
                 className={(!lacunaSelected || actPending) ? 'btn-gray' : 'btn-green'}
-                style={{ height: 42, borderRadius: 21, fontSize: 14, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingLeft: 16, paddingRight: 16 }}>
+                style={{ fontSize: 14, paddingLeft: 16, paddingRight: 16 }}>
                 {actPending ? '…' : 'Applica'}
               </button>
               {hasAltri && (
                 <button type="button" onClick={() => handleApplicaCaratteristica(true)} disabled={!lacunaSelected || actPending}
                   className={(!lacunaSelected || actPending) ? 'btn-gray' : 'btn-green'}
-                  style={{ height: 42, borderRadius: 21, fontSize: 14, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingLeft: 16, paddingRight: 16 }}>
+                  style={{ fontSize: 14, paddingLeft: 16, paddingRight: 16 }}>
                   {actPending ? '…' : 'Applica a tutti'}
                 </button>
               )}
               <button type="button" onClick={onClose} className="btn-orange"
-                style={{ height: 42, borderRadius: 21, fontSize: 14, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingLeft: 16, paddingRight: 16 }}>
+                style={{ fontSize: 14, paddingLeft: 16, paddingRight: 16 }}>
                 Annulla
               </button>
             </div>
@@ -757,14 +757,14 @@ export default function CarrelloClient({
                           <tr style={{ background: hasLacune ? ROSA : VERDE, borderTop: groupIdx > 0 ? '1px solid #333' : undefined }}>
                             <td style={{ ...tdS, textAlign: 'center', padding: '4px 0' }}>
                               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-                                <button type="button" onClick={() => setPreviewArt(root)} disabled={hasLacune} className={hasLacune ? 'btn-gray' : 'btn-black'} title="Anteprima infisso"
-                                  style={{ width: 42, height: 42, padding: 0, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%' }}>
+                                <button type="button" onClick={() => setPreviewArt(root)} disabled={hasLacune} className={hasLacune ? 'btn-gray btn-icon' : 'btn-black btn-icon'} title="Anteprima infisso"
+                                  style={{ fontFamily: 'inherit' }}>
                                   <svg style={{ position: 'relative', zIndex: 1 }} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                                 </button>
                                 {hasDetails && (
                                   <button type="button" onClick={() => toggleExpand(root.uid)}
-                                    className={hasLacune ? 'btn-red' : 'btn-black'}
-                                    style={{ width: 42, height: 42, padding: 0, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', gap: 2 }}>
+                                    className={hasLacune ? 'btn-red btn-icon' : 'btn-black btn-icon'}
+                                    style={{ fontFamily: 'inherit', gap: 2 }}>
                                     <svg style={{ position: 'relative', zIndex: 1 }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="10" cy="18" r="2" fill="currentColor" stroke="none"/></svg>
                                     <span style={{ position: 'relative', zIndex: 1, fontSize: 14 }}>{isExpanded ? '▴' : '▾'}</span>
                                   </button>
@@ -801,12 +801,12 @@ export default function CarrelloClient({
                             </td>
                             <td style={{ ...tdS, padding: '4px 0', textAlign: 'center' }}>
                               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-                                <button type="button" onClick={() => openEdit(root)} className="btn-black"
-                                  style={{ width: 42, height: 42, padding: 0, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%' }}>
+                                <button type="button" onClick={() => openEdit(root)} className="btn-black btn-icon"
+                                  style={{ fontFamily: 'inherit' }}>
                                   <span style={{ position: 'relative', zIndex: 1, fontSize: 14, display: 'inline-block', transform: 'rotate(135deg)' }}>✏</span>
                                 </button>
-                                <button type="button" onClick={() => handleRimuovi(root.index)} disabled={delPending} className="btn-red"
-                                  style={{ width: 42, height: 42, padding: 0, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%' }}>
+                                <button type="button" onClick={() => handleRimuovi(root.index)} disabled={delPending} className="btn-red btn-icon"
+                                  style={{ fontFamily: 'inherit' }}>
                                   <span style={{ position: 'relative', zIndex: 1, fontSize: 14 }}>✕</span>
                                 </button>
                               </div>
@@ -848,8 +848,8 @@ export default function CarrelloClient({
                                 {renderPrezzo(calcolaPrezzo(child, articoli))}
                               </td>
                               <td style={{ ...tdS, padding: '4px 0', textAlign: 'center' }}>
-                                <button type="button" onClick={() => handleRimuovi(child.index)} disabled={delPending} className="btn-red"
-                                  style={{ width: 42, height: 42, padding: 0, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%' }}>
+                                <button type="button" onClick={() => handleRimuovi(child.index)} disabled={delPending} className="btn-red btn-icon"
+                                  style={{ fontFamily: 'inherit' }}>
                                   <span style={{ position: 'relative', zIndex: 1, fontSize: 14 }}>✕</span>
                                 </button>
                               </td>
@@ -987,18 +987,18 @@ export default function CarrelloClient({
           {isLoggedIn && (
             <button type="button" onClick={handleSalva} disabled={savePending || hasLacuneAperte || articoli.length === 0}
               className={(savePending || hasLacuneAperte || articoli.length === 0) ? 'btn-gray' : 'btn-green'}
-              style={{ flex: 1, minWidth: 140, height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, borderRadius: 21, whiteSpace: 'nowrap', fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: (savePending || hasLacuneAperte || articoli.length === 0) ? 'not-allowed' : 'pointer' }}>
+              style={{ flex: 1, minWidth: 140, padding: '0 8px', fontSize: 14, fontFamily: 'inherit' }}>
               {savePending ? 'Salvataggio…' : 'Salva preventivo'}
             </button>
           )}
           <button type="button" onClick={handleGeneraPDF} disabled={hasLacuneAperte || articoli.length === 0}
             className={(hasLacuneAperte || articoli.length === 0) ? 'btn-gray' : 'btn-black'}
-            style={{ flex: 1, minWidth: 140, height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, borderRadius: 21, whiteSpace: 'nowrap', fontFamily: 'monospace', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: (hasLacuneAperte || articoli.length === 0) ? 'not-allowed' : 'pointer' }}>
+            style={{ flex: 1, minWidth: 140, padding: '0 8px', fontSize: 14, fontFamily: 'monospace' }}>
             <span className={(hasLacuneAperte || articoli.length === 0) ? undefined : 'animato'}>Genera PDF</span>
           </button>
           <button type="button" onClick={handleSvuota} disabled={clearPending || articoli.length === 0}
             className={(clearPending || articoli.length === 0) ? 'btn-gray' : 'btn-red'}
-            style={{ flex: 1, minWidth: 140, height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, borderRadius: 21, whiteSpace: 'nowrap', fontFamily: 'monospace', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: (clearPending || articoli.length === 0) ? 'not-allowed' : 'pointer' }}>
+            style={{ flex: 1, minWidth: 140, padding: '0 8px', fontSize: 14, fontFamily: 'monospace' }}>
             {clearPending ? 'Svuotamento…' : 'Svuota carrello'}
           </button>
         </div>

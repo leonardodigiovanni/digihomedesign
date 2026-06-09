@@ -222,7 +222,7 @@ function DatiPreventivo({ preventivo, readOnly = false, isStaff = false }: { pre
               onClick={handleSave}
               disabled={pending || !dirty}
               className="btn-green"
-              style={{ height: 42, padding: '0 18px', borderRadius: 21, fontSize: 13, fontWeight: 600, opacity: !dirty ? 0.4 : 1 }}
+              style={{ padding: '0 18px', fontSize: 13, opacity: !dirty ? 0.4 : 1 }}
             >
               {saved ? '✓ Salvato' : pending ? '…' : 'Salva'}
             </button>
@@ -281,7 +281,7 @@ function ClienteSelector({ preventivo_id, cliente_id, clienti }: {
         disabled={pending || sel === (cliente_id?.toString() ?? '')}
         className="btn-green"
         style={{
-          height: 42, padding: '0 16px', fontSize: 13, fontWeight: 600, borderRadius: 21,
+          padding: '0 16px', fontSize: 13,
           opacity: sel === (cliente_id?.toString() ?? '') ? 0.4 : 1,
         }}
       >
@@ -643,13 +643,13 @@ function ArticoloForm({
               {isCaratteristicaMode && altriParentIds.length > 0 && (
                 <button type="button" onClick={handleApplicaATutti} disabled={pending || !listinoId}
                   className={pending || !listinoId ? 'btn-gray' : 'btn-green'}
-                  style={{ height: 42, padding: '0 18px', fontSize: 13, fontWeight: 700, borderRadius: 21 }}>
+                  style={{ padding: '0 18px', fontSize: 13 }}>
                   {pending ? '…' : 'Applica a tutti'}
                 </button>
               )}
               <button type="submit" disabled={pending || (isCaratteristicaMode ? !listinoId : (!tipo || !marca || !listinoId))}
                 className={pending || (isCaratteristicaMode ? !listinoId : (!tipo || !marca || !listinoId)) ? 'btn-gray' : 'btn-green'}
-                style={{ height: 42, padding: '0 22px', fontSize: 13, fontWeight: 700, borderRadius: 21 }}>
+                style={{ padding: '0 22px', fontSize: 13 }}>
                 {pending ? '…' : isCaratteristicaMode ? 'Applica' : 'Aggiungi'}
               </button>
             </div>
@@ -695,7 +695,7 @@ function ScontoClienteEditor({ preventivoId, currentPct }: { preventivoId: numbe
         onClick={handleSave}
         disabled={pending || !dirty}
         className="btn-green"
-        style={{ height: 42, padding: '0 14px', fontSize: 12, borderRadius: 21, fontFamily: 'inherit', opacity: !dirty ? 0.4 : 1 }}
+        style={{ padding: '0 14px', fontSize: 12, fontFamily: 'inherit', opacity: !dirty ? 0.4 : 1 }}
       >
         {saved ? '✓' : pending ? '…' : 'Applica'}
       </button>
@@ -862,7 +862,7 @@ function ModificaArticoloModal({ articolo, parentArt, listini, onClose, isStaff 
             {error && <p style={{ color: '#c00', fontSize: 13, margin: 0, background: '#fff5f5', padding: '8px 12px', borderRadius: 5 }}>{error}</p>}
             <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', paddingTop: 4 }}>
               <button type="button" onClick={onClose} className="btn-red">Annulla</button>
-              <button type="submit" disabled={pending} className={pending ? 'btn-gray' : 'btn-green'} style={{ padding: '0 22px' }}>
+              <button type="submit" disabled={pending} className={pending ? 'btn-gray' : 'btn-green'} style={{ padding: '0 22px', fontSize: 13 }}>
                 {pending ? 'Salvataggio…' : 'Salva modifiche'}
               </button>
             </div>
@@ -951,7 +951,7 @@ function InoltraModal({
               </button>
               <button type="submit" disabled={pending}
                 className={pending ? 'btn-gray' : 'btn-green'}
-                style={{ height: 42, borderRadius: 21, fontSize: 13, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', paddingLeft: 22, paddingRight: 22 }}>
+                style={{ fontSize: 13, paddingLeft: 22, paddingRight: 22 }}>
                 {pending ? 'Inoltro…' : 'Inoltra'}
               </button>
             </div>
@@ -1204,7 +1204,7 @@ export default function PreventivoClient({
             <button
               onClick={openNuovo}
               className="btn-green"
-              style={{ flex: 1, minWidth: 'max-content', height: 42, padding: '0 20px', fontSize: 13, fontWeight: 700, whiteSpace: 'nowrap', borderRadius: 21 }}
+              style={{ flex: 1, minWidth: 'max-content', padding: '0 20px', fontSize: 13 }}
             >
               + Aggiungi articolo
             </button>
@@ -1213,7 +1213,7 @@ export default function PreventivoClient({
               <button
                 onClick={openTipoPrecedente}
                 className="btn-green"
-                style={{ flex: 1, minWidth: 'max-content', height: 42, padding: '0 20px', fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap', borderRadius: 21 }}
+                style={{ flex: 1, minWidth: 'max-content', padding: '0 20px', fontSize: 13 }}
               >
                 + Ripeti articolo
               </button>
@@ -1225,14 +1225,14 @@ export default function PreventivoClient({
           <a
             href={stampaHref ?? `/area-clienti/preventivi/${preventivo.id}/stampa`}
             className="btn-black"
-            style={{ flex: 1, minWidth: 'max-content', height: 42, padding: '0 20px', fontSize: 13, fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', whiteSpace: 'nowrap', borderRadius: 21 }}
+            style={{ flex: 1, minWidth: 'max-content', padding: '0 20px', fontSize: 13, textDecoration: 'none' }}
           >
             Stampa / PDF
           </a>
         ) : (
           <span
             className="btn-gray"
-            style={{ flex: 1, minWidth: 'max-content', height: 42, padding: '0 20px', fontSize: 13, fontWeight: 600, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'not-allowed', opacity: 0.5, whiteSpace: 'nowrap', borderRadius: 21 }}
+            style={{ flex: 1, minWidth: 'max-content', padding: '0 20px', fontSize: 13, cursor: 'not-allowed', opacity: 0.5 }}
             title="Completa tutte le caratteristiche prima di stampare"
           >
             Stampa / PDF
@@ -1244,7 +1244,7 @@ export default function PreventivoClient({
             onClick={() => setShowInoltra(true)}
             disabled={!tuttiSanati}
             className={!tuttiSanati ? 'btn-gray' : 'btn-black'}
-            style={{ flex: 1, minWidth: 'max-content', height: 42, padding: '0 22px', fontSize: 13, fontWeight: 700, fontFamily: 'inherit', opacity: !tuttiSanati ? 0.5 : 1, cursor: !tuttiSanati ? 'not-allowed' : 'pointer', whiteSpace: 'nowrap', borderRadius: 21 }}
+            style={{ flex: 1, minWidth: 'max-content', padding: '0 22px', fontSize: 13, fontFamily: 'inherit', opacity: !tuttiSanati ? 0.5 : 1 }}
             title={!tuttiSanati ? 'Completa tutte le caratteristiche prima di inviare' : undefined}
           >
             <span className={tuttiSanati ? 'animato' : ''}>Inoltra richiesta</span>
@@ -1256,7 +1256,7 @@ export default function PreventivoClient({
             onClick={handleModifica}
             disabled={modificaPending}
             className={modificaPending ? 'btn-gray' : 'btn-black'}
-            style={{ flex: 1, minWidth: 'max-content', height: 42, padding: '0 22px', fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', borderRadius: 21 }}
+            style={{ flex: 1, minWidth: 'max-content', padding: '0 22px', fontSize: 13, fontFamily: 'inherit' }}
           >
             {modificaPending ? 'Preparazione…' : 'Modifica'}
           </button>
@@ -1267,7 +1267,7 @@ export default function PreventivoClient({
             onClick={handleInvia}
             disabled={inviaPending || !tuttiSanati}
             className={inviaPending || !tuttiSanati ? 'btn-gray' : 'btn-green'}
-            style={{ flex: 1, minWidth: 'max-content', height: 42, padding: '0 22px', fontSize: 13, fontWeight: 700, fontFamily: 'inherit', opacity: !tuttiSanati ? 0.5 : 1, cursor: !tuttiSanati ? 'not-allowed' : 'pointer', whiteSpace: 'nowrap', borderRadius: 21 }}
+            style={{ flex: 1, minWidth: 'max-content', padding: '0 22px', fontSize: 13, fontFamily: 'inherit', opacity: !tuttiSanati ? 0.5 : 1 }}
             title={!tuttiSanati ? 'Completa tutte le caratteristiche prima di inviare' : undefined}
           >
             {inviaPending ? 'Invio…' : 'Invia al cliente'}
@@ -1280,7 +1280,7 @@ export default function PreventivoClient({
               onClick={handleAccetta}
               disabled={accettaPending}
               className={accettaPending ? 'btn-gray' : 'btn-green'}
-              style={{ flex: 1, minWidth: 'max-content', height: 42, padding: '0 22px', fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', borderRadius: 21 }}
+              style={{ flex: 1, minWidth: 'max-content', padding: '0 22px', fontSize: 13, fontFamily: 'inherit' }}
             >
               {accettaPending ? '…' : 'Accetta'}
             </button>
@@ -1288,7 +1288,7 @@ export default function PreventivoClient({
               onClick={handleRifiuta}
               disabled={rifiutaPending}
               className={rifiutaPending ? 'btn-gray' : 'btn-red'}
-              style={{ flex: 1, minWidth: 'max-content', height: 42, padding: '0 22px', fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', borderRadius: 21 }}
+              style={{ flex: 1, minWidth: 'max-content', padding: '0 22px', fontSize: 13, fontFamily: 'inherit' }}
             >
               {rifiutaPending ? '…' : 'Rifiuta'}
             </button>
@@ -1300,7 +1300,7 @@ export default function PreventivoClient({
             onClick={handleAnnulla}
             disabled={annullaPending}
             className={annullaPending ? 'btn-gray' : 'btn-red'}
-            style={{ flex: 1, minWidth: 'max-content', height: 42, padding: '0 22px', fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', borderRadius: 21 }}
+            style={{ flex: 1, minWidth: 'max-content', padding: '0 22px', fontSize: 13, fontFamily: 'inherit' }}
           >
             {annullaPending ? '…' : 'Annulla preventivo'}
           </button>
@@ -1482,14 +1482,14 @@ export default function PreventivoClient({
                             {/* Col 1: eye + expand */}
                             <td style={{ ...tdS, textAlign: 'center', padding: '4px 0' }}>
                               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-                                <button onClick={() => setPreviewArt(root)} disabled={hasLacune || (!root.abbr && !root.listino_foto_url)} className={(hasLacune || (!root.abbr && !root.listino_foto_url)) ? 'btn-gray' : 'btn-black'} title="Anteprima infisso"
-                                  style={{ width: 42, height: 42, padding: 0, borderRadius: 21, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <button onClick={() => setPreviewArt(root)} disabled={hasLacune || (!root.abbr && !root.listino_foto_url)} className={(hasLacune || (!root.abbr && !root.listino_foto_url)) ? 'btn-gray btn-icon' : 'btn-black btn-icon'} title="Anteprima infisso"
+                                  style={{ fontFamily: 'inherit' }}>
                                   <svg style={{ position: 'relative', zIndex: 1 }} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                                 </button>
                                 {hasDetails && (
                                   <button type="button" onClick={() => toggleExpand(root.id)}
-                                    className={hasLacune ? 'btn-red' : 'btn-black'}
-                                    style={{ width: 42, height: 42, padding: 0, borderRadius: 21, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
+                                    className={hasLacune ? 'btn-red btn-icon' : 'btn-black btn-icon'}
+                                    style={{ fontFamily: 'inherit', gap: 2 }}>
                                     <svg style={{ position: 'relative', zIndex: 1 }} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="10" cy="18" r="2" fill="currentColor" stroke="none"/></svg>
                                     <span style={{ position: 'relative', zIndex: 1, fontSize: 10 }}>{isExpanded ? '▴' : '▾'}</span>
                                   </button>
@@ -1556,14 +1556,14 @@ export default function PreventivoClient({
                             <td style={{ ...tdS, padding: '4px 0', textAlign: 'center' }}>
                               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
                                 {canEdit && (
-                                  <button onClick={() => setEditArticolo(root)} className="btn-black" title="Modifica"
-                                    style={{ width: 42, height: 42, padding: 0, borderRadius: 21, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                                  <button onClick={() => setEditArticolo(root)} className="btn-black btn-icon" title="Modifica"
+                                    style={{ fontFamily: 'inherit' }}>
                                     <span style={{ position: 'relative', zIndex: 1, fontSize: 13, display: 'inline-block', transform: 'rotate(135deg)' }}>✏</span>
                                   </button>
                                 )}
                                 {canEdit && (
-                                  <button onClick={() => handleElimina(root)} disabled={delPending} className="btn-red"
-                                    style={{ width: 42, height: 42, padding: 0, borderRadius: 21, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                                  <button onClick={() => handleElimina(root)} disabled={delPending} className="btn-red btn-icon"
+                                    style={{ fontFamily: 'inherit' }}>
                                     <span style={{ position: 'relative', zIndex: 1, fontSize: 13 }}>✕</span>
                                   </button>
                                 )}
@@ -1620,14 +1620,14 @@ export default function PreventivoClient({
                               <td style={{ ...tdS, padding: '4px 0', textAlign: 'center' }}>
                                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
                                   {isStaff && canEdit && (
-                                    <button onClick={() => setEditArticolo(child)} className="btn-black" title="Modifica"
-                                      style={{ width: 42, height: 42, padding: 0, borderRadius: 21, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <button onClick={() => setEditArticolo(child)} className="btn-black btn-icon" title="Modifica"
+                                      style={{ fontFamily: 'inherit' }}>
                                       <span style={{ position: 'relative', zIndex: 1, fontSize: 13, display: 'inline-block', transform: 'rotate(135deg)' }}>✏</span>
                                     </button>
                                   )}
                                   {canEdit && (
-                                    <button onClick={() => handleElimina(child)} disabled={delPending} className="btn-red"
-                                      style={{ width: 42, height: 42, padding: 0, borderRadius: 21, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <button onClick={() => handleElimina(child)} disabled={delPending} className="btn-red btn-icon"
+                                      style={{ fontFamily: 'inherit' }}>
                                       <span style={{ position: 'relative', zIndex: 1, fontSize: 13 }}>✕</span>
                                     </button>
                                   )}
@@ -1743,7 +1743,7 @@ export default function PreventivoClient({
         <a
           href={backHref ?? (isStaff ? '/clienti/preventivi' : '/area-clienti/preventivi')}
           className="btn-black"
-          style={{ height: 42, padding: '0 20px', fontSize: 13, fontWeight: 700, borderRadius: 21, textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
+          style={{ padding: '0 20px', fontSize: 13, textDecoration: 'none' }}
         >
           ← Preventivi
         </a>
