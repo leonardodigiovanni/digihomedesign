@@ -24,10 +24,10 @@ const headingStyle: React.CSSProperties = {
 const linkStyle: React.CSSProperties = {
   fontFamily: 'monospace',
   display: 'flex',
-  alignItems: 'baseline',
+  alignItems: 'center',
   gap: 4,
   textDecoration: 'none',
-  lineHeight: 1.7,
+  minHeight: 44,
   whiteSpace: 'nowrap',
 }
 
@@ -49,7 +49,7 @@ function renderColumns(heading: string, pages: SimpleLink[]) {
       </p>
       {group.map(p => (
         <Link key={p.href} href={p.href} className="testo-indice" style={linkStyle}>
-          <span style={{ color: '#777', flexShrink: 0 }}>•</span>
+          <span style={{ color: '#999', flexShrink: 0 }}>•</span>
           <span>{p.label}</span>
         </Link>
       ))}
@@ -76,7 +76,7 @@ export default function SitemapSection({ disabledPages }: { disabledPages: numbe
       background: '#1c1c1c',
     }}>
       <div style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.7)' }}>
-        <p className="fs-10" style={{ fontWeight: 700, fontFamily: 'monospace', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#777', marginBottom: 18 }}>
+        <p className="fs-10" style={{ fontWeight: 700, fontFamily: 'monospace', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#fff', marginBottom: 18, marginTop: 0 }}>
           Indice pagine
         </p>
 
@@ -114,7 +114,7 @@ export default function SitemapSection({ disabledPages }: { disabledPages: numbe
                   )}
                   {group.map(p => (
                     <Link key={p.id} href={p.href} className="testo-indice" style={linkStyle}>
-                      <span style={{ color: '#777', flexShrink: 0 }}>•</span>
+                      <span style={{ color: '#999', flexShrink: 0 }}>•</span>
                       <span>{p.label}</span>
                     </Link>
                   ))}
