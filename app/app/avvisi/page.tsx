@@ -64,7 +64,7 @@ export default async function AppAvvisiPage() {
     })() : []
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginLeft: 3 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginLeft: 3, marginRight: 3 }}>
         <AutoRefresh isStaff={isStaff} />
         {isStaff && <NuovoAvvisoForm clienti={clienti} />}
         {isStaff

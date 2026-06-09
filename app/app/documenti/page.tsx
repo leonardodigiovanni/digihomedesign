@@ -92,7 +92,7 @@ export default async function AppDocumentiPage() {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginLeft: 3 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginLeft: 3, marginRight: 3 }}>
       <div style={{ background: brushed, border: '1px solid #222', borderRadius: 12, padding: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.18),inset 0 1px 0 rgba(255,255,255,0.5)' }}>
         <p style={{ fontSize: 14, fontWeight: 700, color: '#1a1a1a', margin: '0 0 6px' }}>Documenti</p>
         <p style={{ fontSize: 14, color: '#555', lineHeight: 1.6, margin: 0 }}>

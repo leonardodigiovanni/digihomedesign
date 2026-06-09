@@ -155,7 +155,7 @@ export default async function Page() {
   }
 
   return (
-    <div style={{ padding: '0 0 80px', color: '#444', fontSize: 14, lineHeight: 1.8, marginLeft: 3 }}>
+    <div style={{ padding: '0 0 80px', color: '#444', fontSize: 14, lineHeight: 1.8, marginLeft: 3, marginRight: 3 }}>
       <CarrelloClient
         articoli={articoli}
         isLoggedIn={isLoggedIn}
