@@ -68,8 +68,37 @@ CREATE TABLE `app_settings` (
 
 LOCK TABLES `app_settings` WRITE;
 /*!40000 ALTER TABLE `app_settings` DISABLE KEYS */;
-INSERT INTO `app_settings` VALUES (1,'{\"pageBg\": {\"a\": 60, \"b\": 255, \"g\": 255, \"r\": 255}, \"footerBg\": {\"a\": 100, \"b\": 47, \"g\": 0, \"r\": 63}, \"headerBg\": {\"a\": 100, \"b\": 0, \"g\": 0, \"r\": 0}, \"pageBgMode\": \"rgb\", \"bannerTesto\": \"Esperienza che dura nel tempo_____Qualità che si vede_____Soluzioni su misura per te_____Più comfort, meno sprechi_____Innovazione al servizio della casa_____Affidabilità in ogni dettaglio_____Proteggiamo il valore della tua casa_____Design, sicurezza, durata_____La qualità parte dai dettagli_____Serramenti pensati per durare_____Comfort abitativo, ogni giorno_____Risparmio energetico concreto_____Eleganza e funzionalità_____Tradizione artigiana, visione moderna_____Cura artigianale, risultati moderni_____Materiali di qualità, risultati garantiti_____Ogni progetto prende forma_____La tua casa merita il meglio_____Più luce, più comfort_____Resistenza senza compromessi_____Bellezza che protegge_____Funzionalità che arreda_____Sicurezza e stile insieme_____Prestazioni che fanno la differenza_____Lavori fatti con precisione_____Costruiti per resistere_____Il dettaglio fa la qualità_____Il comfort inizia dagli infissi_____Soluzioni intelligenti per la tua casa_____Qualità, competenza, affidabilità_____Il partner giusto per la tua casa_____Tecnologia e artigianalità_____Protezione e design su misura_____Valore aggiunto ai tuoi spazi_____Più isolamento, più benessere_____La scelta giusta per abitare meglio_____Diamo forma ai tuoi spazi_____Esperienza, innovazione, risultati_____Ogni casa ha la sua soluzione_____ Comfort e qualità senza tempo_____Nessuna brutta sorpresa_____\\r\\n\\r\\nfare categoria Ristrutturazioni per linkarla da home e porta a form contatti (progettista Giovanni)\\r\\n\\r\\nnotifiche non email\\r\\ntogliere scritta design in pdf\\r\\nno storage perche vercel è serverless tutto db\\r\\n\\r\\nsuoneria notifica arrivata\\r\\n\\r\\ncookie gestione e avvisi a norma di legge\\r\\n\\r\\nmontaggio nel preventivo\\r\\n\\r\\nin aggiungi articolo  a carrello preventivo possiamo mostrare gli schemi infissi del listino?\\r\\n\\r\\nfare wizard a categoria->marca->serie\\r\\nesempio\\r\\ninfissi->alluminio->taglio termico->marcafabbrica->serie\\r\\n\\r\\npassare le immagini a webp?\\r\\nuna volta per tutte capire come assegnare i colori ai bottoni\\r\\nprovare possibile radius esasperato\\r\\nshimmering obliquo come la spazzolatura e nero\\r\\nmodelli legali per preventivo provvisorio\\r\\nmodelli legali per preventivo definitivo\\r\\nmodelli legali per preventivo accettato\\r\\nfoglio firmato di pugno o pdf firmato digitalmente o firma tramite OTP al cell. \\r\\nper spese di stoccaggio\\r\\ncalcolo iva per infissi\\r\\ncalcolo iva per prodotti a vendere\\r\\ni 4 sfondi rgb,gold,silver, uniformarli con poca luce al centro\\r\\nchiedere sclafani se possiamo inserirlo\\r\\nogni pagina deve avere l\'aggancio a catalogo e listino (come quadri)\\r\\n\\r\\nla cta preventivo nella home manda al preventivo. li c\'è link alla guida\\r\\ncta cantiere se sloggato -> guida, se loggato c\'è il link alla guida\\r\\ncta app-> manda ai QR li c\'è la guida all\'app\\r\\n\\r\\nchi prova preventivi generando/stampando pdf mi deve arrivare comunque assieme all\'ip. se abusa blocco.\\r\\n\\r\\ncapire adempimenti, fatture, archivio, etc...\\r\\n\\r\\nagganciare stripe appena ho il cc\\r\\n\\r\\nagganciare twilio per gli sms\\r\\n\\r\\nnotifiche nell\'app ai cambi stato prev per i clienti e a diversi eventi ai dipendenti (prev,email,ordini,pagamenti,etc)\\r\\n\\r\\nci sono action accedi registratio che non funzionano\\r\\n\\r\\nse registrazioni è disabilitato come fa un cliente nuovo a vedere sconto su carrello preventivo?\\r\\n\\r\\npossiamo fare bonifici con qualche integrazione da dentro il sito?\\r\\napi banca, api stripe, per interrogarli su cosa succede?\\r\\n\\r\\ndoc legali elettricita termodinamica edilizia allacci gas\\r\\n\\r\\navvisi che  foto video documenti preventivi sulle aree personali non sono eterni, periodicamente li rimuoviamo. quindi se li vogliono conservare se li scaricano o stampano\\r\\npotrei usare il banner personalizzato all\'occorrenza :-)\\r\\n\\r\\nliberatorie pubblicazione cataloghi\\r\\n\\r\\n\\r\\nmarchi e loghi fare bene la trasparenza e i link ai siti\\r\\n\\r\\n\\r\\n\\r\\n\\r\\n\\r\\n\\r\\n-----------\", \"footerBgMode\": \"silver_d\", \"headerBgMode\": \"rgb\", \"manutenzione\": false, \"disabledPages\": [], \"bannerAbilitato\": true, \"bannerCircolare\": true, \"rolePermissions\": {\"email\": [27, 32], \"cliente\": [50, 51, 52, 53, 54], \"operaio\": [27], \"direttore\": [27], \"magazzino\": [16, 27], \"marketing\": [27, 29], \"venditore\": [27, 24, 23, 25, 26], \"dipendente\": [27, 21, 35, 28, 60, 61, 17], \"ragioniere\": [27, 21], \"commercialista\": [18, 22, 27]}, \"countdownSeconds\": 10, \"inactivityMinutes\": 20, \"loginClientiDisabilitato\": false, \"registrazioniDisabilitate\": false, \"loginDipendentiDisabilitato\": false}');
+INSERT INTO `app_settings` VALUES (1,'{\"pageBg\": {\"a\": 60, \"b\": 234, \"g\": 234, \"r\": 234}, \"footerBg\": {\"a\": 100, \"b\": 47, \"g\": 0, \"r\": 63}, \"headerBg\": {\"a\": 100, \"b\": 0, \"g\": 0, \"r\": 0}, \"pageBgMode\": \"rgb\", \"bannerTesto\": \"Attenzione: Versione di TEST non funzionante *  *  *  *  * \\r\\nAttenzione: Versione di TEST non funzionante *  *  *  *  * \\r\\nAttenzione: Versione di TEST non funzionante *  *  *  *  * \\r\\nAttenzione: Versione di TEST non funzionante *  *  *  *  * \\r\\nAttenzione: Versione di TEST non funzionante *  *  *  *  * \\r\\nAttenzione: Versione di TEST non funzionante *  *  *  *  * \\r\\nAttenzione: Versione di TEST non funzionante *  *  *  *  * \\r\\nAttenzione: Versione di TEST non funzionante *  *  *  *  * \\r\\n\", \"footerBgMode\": \"silver_d\", \"headerBgMode\": \"rgb\", \"manutenzione\": false, \"disabledPages\": [2119, 212, 2120, 213, 214, 215, 216, 217, 2171, 218, 219, 2201, 2202, 2203, 221, 222, 2221, 2222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272], \"bannerAbilitato\": true, \"bannerCircolare\": true, \"rolePermissions\": {\"email\": [27, 32], \"cliente\": [50, 51, 52, 53, 55], \"operaio\": [27], \"direttore\": [27], \"magazzino\": [16, 27], \"marketing\": [27, 29], \"venditore\": [27, 24, 23, 25, 26], \"dipendente\": [17, 27, 21, 35, 28, 60, 61], \"ragioniere\": [27, 21], \"commercialista\": [18, 22, 27]}, \"countdownSeconds\": 10, \"inactivityMinutes\": 20, \"loginClientiDisabilitato\": false, \"registrazioniDisabilitate\": false, \"loginDipendentiDisabilitato\": false}');
 /*!40000 ALTER TABLE `app_settings` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `avvisi`
+--
+
+DROP TABLE IF EXISTS `avvisi`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `avvisi` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `cliente_id` int NOT NULL,
+  `testo` text NOT NULL,
+  `letto` tinyint(1) NOT NULL DEFAULT '0',
+  `cestinato` tinyint(1) NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `oggetto` varchar(200) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `avvisi`
+--
+
+LOCK TABLES `avvisi` WRITE;
+/*!40000 ALTER TABLE `avvisi` DISABLE KEYS */;
+INSERT INTO `avvisi` VALUES (39,1,'DIGI Home Design nasce da oltre 60 anni di esperienza nel settore della lavorazione del ferro e dell\'acciaio, avviata nei primi anni \'60 e proseguita, nei primi anni \'80, nel mondo dei serramenti.',1,0,'2026-06-07 20:49:27','test');
+/*!40000 ALTER TABLE `avvisi` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -91,6 +120,7 @@ CREATE TABLE `cantieri` (
   `note_interne` text,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `visibile_cliente` tinyint(1) NOT NULL DEFAULT '1',
+  `data_preventivo` date DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -101,7 +131,7 @@ CREATE TABLE `cantieri` (
 
 LOCK TABLES `cantieri` WRITE;
 /*!40000 ALTER TABLE `cantieri` DISABLE KEYS */;
-INSERT INTO `cantieri` VALUES (1,2,'bagno e cucina','via cazzalora 3 palermo','preventivo','2025-01-01',NULL,'ddddddddddddd','ccccccc','2026-04-10 21:50:22',1),(2,1,'fffffffffffffff','via cangelosi 48, 2','preventivo',NULL,NULL,'ttttttt','yyyyyy','2026-04-10 21:50:54',1);
+INSERT INTO `cantieri` VALUES (1,1,'bagno e cucina','via cazzalora 3 palermo','preventivo','2025-01-01',NULL,'ddddddddddddd','ccccccc','2026-04-10 21:50:22',1,NULL),(2,1,'fffffffffffffff','via cangelosi 48, 2','in_corso',NULL,NULL,'ttttttt','yyyyyy','2026-04-10 21:50:54',1,NULL);
 /*!40000 ALTER TABLE `cantieri` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -122,10 +152,15 @@ CREATE TABLE `cantieri_lavori` (
   `sconto_pct` decimal(5,2) NOT NULL DEFAULT '0.00',
   `totale` decimal(10,2) GENERATED ALWAYS AS (((`qta` * `prezzo_unit`) * (1 - (`sconto_pct` / 100)))) STORED,
   `visibile_cliente` tinyint(1) NOT NULL DEFAULT '1',
+  `data_inizio` date DEFAULT NULL,
+  `data_fine` date DEFAULT NULL,
+  `note` text,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `stato` enum('da_fare','in_corso','completato','sospeso') NOT NULL DEFAULT 'da_fare',
   PRIMARY KEY (`id`),
   KEY `cantiere_id` (`cantiere_id`),
   CONSTRAINT `cantieri_lavori_ibfk_1` FOREIGN KEY (`cantiere_id`) REFERENCES `cantieri` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -134,6 +169,7 @@ CREATE TABLE `cantieri_lavori` (
 
 LOCK TABLES `cantieri_lavori` WRITE;
 /*!40000 ALTER TABLE `cantieri_lavori` DISABLE KEYS */;
+INSERT INTO `cantieri_lavori` (`id`, `cantiere_id`, `descrizione`, `qta`, `unita`, `prezzo_unit`, `sconto_pct`, `visibile_cliente`, `data_inizio`, `data_fine`, `note`, `created_at`, `stato`) VALUES (2,2,'mazzetto',1.00,'cad',0.00,0.00,1,'2025-05-04',NULL,NULL,'2026-06-04 19:53:57','in_corso');
 /*!40000 ALTER TABLE `cantieri_lavori` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -146,16 +182,18 @@ DROP TABLE IF EXISTS `cantieri_media`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cantieri_media` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `cantiere_id` int NOT NULL,
+  `cantiere_id` int DEFAULT NULL,
   `tipo` enum('foto','video') NOT NULL DEFAULT 'foto',
   `filename` varchar(255) NOT NULL,
   `descrizione` varchar(200) DEFAULT NULL,
   `visibile_cliente` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `task_id` int DEFAULT NULL,
+  `visto` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `cantiere_id` (`cantiere_id`),
   CONSTRAINT `cantieri_media_ibfk_1` FOREIGN KEY (`cantiere_id`) REFERENCES `cantieri` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -164,7 +202,7 @@ CREATE TABLE `cantieri_media` (
 
 LOCK TABLES `cantieri_media` WRITE;
 /*!40000 ALTER TABLE `cantieri_media` DISABLE KEYS */;
-INSERT INTO `cantieri_media` VALUES (1,2,'foto','1776110747546_DSC00421.JPG','albano',1,'2026-04-13 20:05:47');
+INSERT INTO `cantieri_media` VALUES (1,2,'foto','1776110747546_DSC00421.JPG','albano',1,'2026-04-13 20:05:47',NULL,0),(2,2,'foto','1780595217004_Nuova_immagine_bitmap.bmp','nnnnnnnnnnnn',1,'2026-06-04 17:46:57',NULL,0),(3,NULL,'foto','1780602894113_DIGIHOMEDESIGN.png',NULL,1,'2026-06-04 19:54:54',2,1),(4,NULL,'foto','1780602909238_DIGIHOMEDESIGN2222222222.png',NULL,1,'2026-06-04 19:55:09',2,1),(5,NULL,'foto','1780602923294_diff_pdf.bmp',NULL,1,'2026-06-04 19:55:23',2,1),(6,NULL,'video','1780604562666_VID-20230329-WA0002.mp4',NULL,1,'2026-06-04 20:22:42',2,1);
 /*!40000 ALTER TABLE `cantieri_media` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -181,7 +219,7 @@ CREATE TABLE `catalogo_categorie` (
   `ordine` int NOT NULL DEFAULT '0',
   `listino_categoria` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -190,7 +228,7 @@ CREATE TABLE `catalogo_categorie` (
 
 LOCK TABLES `catalogo_categorie` WRITE;
 /*!40000 ALTER TABLE `catalogo_categorie` DISABLE KEYS */;
-INSERT INTO `catalogo_categorie` VALUES (6,'Infissi in alluminio',6,'Infissi in alluminio'),(8,'Infissi in PVC',7,'Infissi in PVC'),(9,'Verande in Alluminio',8,NULL),(10,'Persiane in Alluminio',9,NULL),(11,'Cassonetti',10,NULL),(12,'Zanzariere',11,NULL),(13,'Tapparelle',12,NULL);
+INSERT INTO `catalogo_categorie` VALUES (6,'Infissi in alluminio',6,NULL),(8,'Infissi in PVC',7,NULL),(9,'Verande in Alluminio',8,NULL),(10,'Persiane in Alluminio',9,NULL),(11,'Cassonetti',10,NULL),(12,'Zanzariere',11,NULL),(13,'Tapparelle',12,NULL),(14,'Porte corazzate',13,NULL),(15,'Quadri',14,NULL);
 /*!40000 ALTER TABLE `catalogo_categorie` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -209,10 +247,12 @@ CREATE TABLE `catalogo_voci` (
   `pdf_label` varchar(200) NOT NULL DEFAULT '',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `serie` varchar(200) NOT NULL DEFAULT '',
+  `descrizione` text,
+  `listino_categoria` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `categoria_id` (`categoria_id`),
   CONSTRAINT `catalogo_voci_ibfk_1` FOREIGN KEY (`categoria_id`) REFERENCES `catalogo_categorie` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -221,7 +261,7 @@ CREATE TABLE `catalogo_voci` (
 
 LOCK TABLES `catalogo_voci` WRITE;
 /*!40000 ALTER TABLE `catalogo_voci` DISABLE KEYS */;
-INSERT INTO `catalogo_voci` VALUES (12,6,'ALSistem','1777556466087_ALsistem-3G.pdf','2026','2026-04-30 13:41:06','3G SYSTEM REVOLUTION'),(13,8,'Generico','1778935568507_ALsistem-3G.pdf','Generico','2026-05-16 12:46:08','Generico');
+INSERT INTO `catalogo_voci` VALUES (12,6,'ALSistem','1777556466087_ALsistem-3G.pdf','2026','2026-04-30 13:41:06','3G SYSTEM REVOLUTION','3G è un sistema per serramenti a taglio termico con ridottissima mostra architettonica.\r\nL’innovativo sistema a tripla guarnizione conferisce un alto isolamento termico/acustico e dona una maggiore luminosità agli ambienti.\r\nGamma di profili che comprende le soluzioni: finestra, portafinestra, wasistas in versione fermavetro e vetro ad inflare\r\n\r\n- Serie battente a taglio termico marcata CE\r\n- Sezione telaio 62 mm\r\n- Sezione anta 69 mm\r\n- Mostra architettonica nodo laterale 75 mm\r\n- Mostra architettonica nodo centrale 97 mm\r\n- Sistema di tenuta a tripla battuta\r\n- Sistema di isolamento termico con barrette ThermAL di nuova generazione\r\n- Ferramenta originale certifcata fno a 170kg di portata\r\n- Alto isolamento termico e acustico\r\n- Design minimale','Infissi in alluminio'),(14,6,'due','1779339812555_Dipinti_a_mano.pdf','2026','2026-05-21 05:03:32','tre',NULL,'Infissi in alluminio BOBO'),(15,6,'tre','1779348587069_Dipinti_a_mano.pdf','ttt','2026-05-21 07:29:47','rrr',NULL,NULL),(16,14,'Pantaleo','1780111245799_Dipinti_a_mano.pdf','2026','2026-05-29 17:26:36','Lamiera piegata','',NULL),(17,15,'Monet','1780115658812_Dipinti_a_mano.pdf','Generico','2026-05-30 04:34:18','Generico',NULL,'Quadri');
 /*!40000 ALTER TABLE `catalogo_voci` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -247,8 +287,9 @@ CREATE TABLE `clienti` (
   `codice_fiscale` varchar(16) NOT NULL DEFAULT '',
   `partita_iva` varchar(11) NOT NULL DEFAULT '',
   `sconto_pct` decimal(5,2) NOT NULL DEFAULT '0.00',
+  `utente_id` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -257,7 +298,7 @@ CREATE TABLE `clienti` (
 
 LOCK TABLES `clienti` WRITE;
 /*!40000 ALTER TABLE `clienti` DISABLE KEYS */;
-INSERT INTO `clienti` VALUES (1,'fisica','leonardo','di giovanni','','via ernesto lugaro, 2','+3934765468185','leonardodigiovanni@tiscali.it','leonardodigiovanni@tiscali.it','httttt','2026-04-02 23:52:31','DGVLRD72T23G273I','',6.00),(2,'giuridica','','','palm inc srl','via Roberto Antiochia 3, 2','+393279991927','sd1927@libero.it','sd1927@libero.it','ghghgh','2026-04-02 23:53:01','','05555555555',10.00);
+INSERT INTO `clienti` VALUES (1,'fisica','leonardo','di giovanni','','via ernesto lugaro, 2','+3934765468185','leonardodigiovanni@tiscali.it','leonardodigiovanni@tiscali.it','httttt','2026-04-02 23:52:31','DGVLRD72T23G273I','',6.00,NULL),(2,'giuridica','','','palm inc srl','via Roberto Antiochia 3, 2','+393279991927','sd1927@libero.it','sd1927@libero.it','ghghgh','2026-04-02 23:53:01','','05555555555',10.00,NULL),(3,'fisica','cliente3','cliente3','','','3334444447','cliente3@libero.it','','','2026-05-17 09:46:13','','',5.00,18),(4,'fisica','cliente4','cliente4','','','3443333337','cliente4@libero.it','','','2026-05-17 09:59:27','','',5.00,19),(5,'fisica','aaa','aaa','','','3456789098','aaa@aaa.it','','','2026-05-18 07:11:25','','',5.00,20);
 /*!40000 ALTER TABLE `clienti` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -275,7 +316,7 @@ CREATE TABLE `contatto_otp` (
   `expires_at` datetime NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -284,7 +325,7 @@ CREATE TABLE `contatto_otp` (
 
 LOCK TABLES `contatto_otp` WRITE;
 /*!40000 ALTER TABLE `contatto_otp` DISABLE KEYS */;
-INSERT INTO `contatto_otp` VALUES (4,'3513322676','562999','2026-04-26 10:25:12','2026-04-26 08:15:12'),(5,'3476468185','501750','2026-05-15 05:39:32','2026-05-15 03:29:32');
+INSERT INTO `contatto_otp` VALUES (4,'3513322676','562999','2026-04-26 10:25:12','2026-04-26 08:15:12');
 /*!40000 ALTER TABLE `contatto_otp` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -305,7 +346,7 @@ CREATE TABLE `documenti_cliente` (
   `visibile_cliente` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -314,6 +355,7 @@ CREATE TABLE `documenti_cliente` (
 
 LOCK TABLES `documenti_cliente` WRITE;
 /*!40000 ALTER TABLE `documenti_cliente` DISABLE KEYS */;
+INSERT INTO `documenti_cliente` VALUES (1,1,'fffffffffffffff','generico','1780246509078_Dipinti_a_mano.pdf',NULL,1,'2026-05-31 16:55:09'),(2,1,'bagno','generico','1780247346426_chat-seo-trascrizione.pdf',NULL,1,'2026-05-31 17:09:06');
 /*!40000 ALTER TABLE `documenti_cliente` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -363,7 +405,7 @@ CREATE TABLE `email_inbox` (
   `letto` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=73 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=435 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -372,7 +414,6 @@ CREATE TABLE `email_inbox` (
 
 LOCK TABLES `email_inbox` WRITE;
 /*!40000 ALTER TABLE `email_inbox` DISABLE KEYS */;
-INSERT INTO `email_inbox` VALUES (1,'nuova_registrazione','Nuovo utente registrato: prova','<p><strong>Nuovo utente in attesa di attivazione</strong></p>\n      <table style=\"border-collapse:collapse;font-size:14px\">\n        <tr><td style=\"padding:4px 12px 4px 0;color:#888\">Username</td><td><strong>prova</strong></td></tr>\n        <tr><td style=\"padding:4px 12px 4px 0;color:#888\">Nome</td><td>provino provetta</td></tr>\n        <tr><td style=\"padding:4px 12px 4px 0;color:#888\">Email</td><td>prova@libero.it</td></tr>\n        <tr><td style=\"padding:4px 12px 4px 0;color:#888\">Cellulare</td><td>345999999</td></tr>\n        <tr><td style=\"padding:4px 12px 4px 0;color:#888\">Data registrazione</td><td>01/04/2026, 20:13:30</td></tr>\n      </table>\n      <p style=\"margin-top:16px\">Accedi a <strong>Gestione Utenti</strong> per attivare l\'account.</p>',1,'2026-04-01 20:13:30'),(2,'nuova_registrazione','Nuovo utente: zigfffff (Salvatore Di Giovanni)','<p><strong>Nuovo utente in attesa di attivazione</strong></p>\n      <table style=\"border-collapse:collapse;font-size:14px\">\n        <tr><td style=\"padding:4px 12px 4px 0;color:#888\">Username</td><td><strong>zigfffff</strong></td></tr>\n        <tr><td style=\"padding:4px 12px 4px 0;color:#888\">Nome</td><td>Salvatore Di Giovanni</td></tr>\n        <tr><td style=\"padding:4px 12px 4px 0;color:#888\">Email</td><td>sd1927@libero.it</td></tr>\n        <tr><td style=\"padding:4px 12px 4px 0;color:#888\">Cellulare</td><td>3555555555</td></tr>\n        <tr><td style=\"padding:4px 12px 4px 0;color:#888\">Data registrazione</td><td>03/04/2026, 23:07:52</td></tr>\n      </table>',1,'2026-04-03 23:07:52'),(3,'contatto','Richiesta contatto: Mario Marini (mario@libero.it)','\n    <p><strong>Nome:</strong> Mario Marini</p>\n    <p><strong>Email:</strong> mario@libero.it</p>\n    <p><strong>Telefono:</strong> 0918888888</p>\n    <p><strong>Messaggio:</strong></p>\n    <p style=\"white-space:pre-wrap\">questo è un test. richiamami</p>\n  ',1,'2026-04-16 23:25:31'),(4,'contatto','Richiesta contatto: Leonardo Di Giovanni (leonardodigiovanni@tiscali.it)','\n      <p><strong>Nome:</strong> Leonardo Di Giovanni</p>\n      <p><strong>Email:</strong> leonardodigiovanni@tiscali.it</p>\n      <p><strong>Cellulare:</strong> 3476468185</p>\n      <p><strong>Messaggio:</strong></p>\n      <p style=\"white-space:pre-wrap\">hkhgòkhgògò</p>\n    ',1,'2026-04-16 23:33:00'),(5,'partnership','Richiesta partnership: rrs — Salvatore Di Giovanni (salvodigiovanni2007@libero.it)','\n    <p><strong>Azienda:</strong> rrs</p>\n    <p><strong>Referente:</strong> Salvatore Di Giovanni</p>\n    <p><strong>Email:</strong> salvodigiovanni2007@libero.it</p>\n    <p><strong>Telefono:</strong> +393349760328</p>\n    <p><strong>Messaggio:</strong></p><p style=\"white-space:pre-wrap\">dddrrrrrrrrrr</p>\n  ',1,'2026-04-17 04:56:31'),(6,'contatto','Messaggio da cliente (formicus)','\n      <p><strong>Utente:</strong> formicus (cliente)</p>\n      <p><strong>Email di risposta:</strong> leonardodigiovanni@tiscali.it</p>\n      <p><strong>Messaggio:</strong></p>\n      <p style=\"white-space:pre-wrap\">ddddddddddd</p>\n    ',1,'2026-04-17 06:28:44'),(7,'ingegnere_edile','Richiesta Ingegnere Edile — leonardo di giovanni (leonardodigiovanni@tiscali.it)','\n    <p><strong>Nome:</strong> leonardo di giovanni</p>\n    <p><strong>Email:</strong> leonardodigiovanni@tiscali.it</p>\n    <p><strong>Telefono:</strong> 3476468185</p>\n    <p><strong>Messaggio:</strong></p><p style=\"white-space:pre-wrap\">mi serve progettare un villino a Trabia</p>\n  ',1,'2026-04-18 12:56:40'),(8,'contatto','Richiesta contatto: Leonardo Di Giovanni (leonardodigiovanni@tiscali.it)','\n      <p><strong>Nome:</strong> Leonardo Di Giovanni</p>\n      <p><strong>Email:</strong> leonardodigiovanni@tiscali.it</p>\n      <p><strong>Cellulare:</strong> 4444444444444</p>\n      <p><strong>Messaggio:</strong></p>\n      <p style=\"white-space:pre-wrap\">rgfhfdhhdhdh</p>\n    ',1,'2026-04-18 12:58:12'),(9,'partnership','Richiesta partnership: pollo alluminio — leuccio (leonardodigiovanni@tiscali.it)','\n    <p><strong>Azienda:</strong> pollo alluminio</p>\n    <p><strong>Referente:</strong> leuccio</p>\n    <p><strong>Email:</strong> leonardodigiovanni@tiscali.it</p>\n    <p><strong>Telefono:</strong> +393476468185</p>\n    <p><strong>Messaggio:</strong></p><p style=\"white-space:pre-wrap\">ci occupiamo di alluminio taglio termico marche jdbgjbng</p>\n  ',1,'2026-04-18 13:01:24'),(10,'partnership','Richiesta partnership: azienda — leo (leonardodigiovanni@tiscali.it)','\n    <p><strong>Azienda:</strong> azienda</p>\n    <p><strong>Referente:</strong> leo</p>\n    <p><strong>Email:</strong> leonardodigiovanni@tiscali.it</p>\n    <p><strong>Telefono:</strong> +393476468185</p>\n    <p><strong>Messaggio:</strong></p><p style=\"white-space:pre-wrap\">dfsdfdfdffd</p>\n  ',1,'2026-04-20 14:43:14'),(11,'partnership','Richiesta partnership: falegnameria terzo — leonardo di giovanni (leonardodigiovanni@tiscali.it)','\n    <p><strong>Azienda:</strong> falegnameria terzo</p>\n    <p><strong>Referente:</strong> leonardo di giovanni</p>\n    <p><strong>Email:</strong> leonardodigiovanni@tiscali.it</p>\n    <p><strong>Telefono:</strong> +393476468185</p>\n    <p><strong>Messaggio:</strong></p><p style=\"white-space:pre-wrap\">possiamo produrre mobili</p>\n  ',1,'2026-04-20 19:24:31'),(12,'contatto','Richiesta contatto: Leonardo (leonardodigiovanni@tiscali.it)','\n      <p><strong>Nome:</strong> Leonardo</p>\n      <p><strong>Email:</strong> leonardodigiovanni@tiscali.it</p>\n      <p><strong>Cellulare:</strong> 3476468185</p>\n      <p><strong>Messaggio:</strong></p>\n      <p style=\"white-space:pre-wrap\">asssssss</p>\n    ',1,'2026-04-26 01:10:23'),(13,'nuova_registrazione','Nuovo utente: polipo99_ (Salvatore Di Giovanni)','<p><strong>Nuovo utente in attesa di attivazione</strong></p>\n      <table style=\"border-collapse:collapse;font-size:14px\">\n        <tr><td style=\"padding:4px 12px 4px 0;color:#888\">Username</td><td><strong>polipo99_</strong></td></tr>\n        <tr><td style=\"padding:4px 12px 4px 0;color:#888\">Nome</td><td>Salvatore Di Giovanni</td></tr>\n        <tr><td style=\"padding:4px 12px 4px 0;color:#888\">Email</td><td>fd393@libero.it</td></tr>\n        <tr><td style=\"padding:4px 12px 4px 0;color:#888\">Cellulare</td><td>3279991927</td></tr>\n        <tr><td style=\"padding:4px 12px 4px 0;color:#888\">Data registrazione</td><td>28/04/2026, 00:59:01</td></tr>\n      </table>',1,'2026-04-28 00:59:01'),(14,'richiesta_preventivo','Richiesta preventivo N° 20260430-000025','<strong>Richiesta preventivo N° 20260430-000025</strong><br/><br/><strong>Note del cliente:</strong><br/>ok<br/><br/><strong>Contatti forniti:</strong><br/>Email: leonardodigiovanni@tiscali.it<br/>Cellulare: +3934765468185<br/><br/><a href=\"/clienti/preventivi/25\" style=\"color:#1a4a8a;font-weight:bold;\">Apri preventivo →</a>',1,'2026-04-30 11:01:00'),(15,'preventivo_inviato','Preventivo N° 20260430-000025 inviato a leonardo di giovanni','Preventivo inviato a <strong>leonardo di giovanni</strong> (leonardodigiovanni@tiscali.it).<br/><br/><a href=\"/clienti/preventivi/25\" style=\"color:#1a4a8a;font-weight:bold;\">Apri preventivo →</a>',1,'2026-04-30 11:46:55'),(16,'richiesta_preventivo','Richiesta preventivo N° 20260430-000027','<strong>Richiesta preventivo N° 20260430-000027</strong><br/><br/><strong>Contatti forniti:</strong><br/>Email: leonardodigiovanni@tiscali.it<br/>Cellulare: +3934765468185<br/><br/><a href=\"/clienti/preventivi/27\" style=\"color:#1a4a8a;font-weight:bold;\">Apri preventivo →</a>',1,'2026-04-30 11:51:07'),(17,'preventivo_inviato','Preventivo N° 20260430-000028 inviato a leonardo di giovanni','Preventivo inviato a <strong>leonardo di giovanni</strong> (leonardodigiovanni@tiscali.it).<br/><br/><a href=\"/clienti/preventivi/28\" style=\"color:#1a4a8a;font-weight:bold;\">Apri preventivo →</a>',1,'2026-04-30 14:49:30'),(18,'richiesta_preventivo','Richiesta preventivo N° 20260430-000029','<strong>Richiesta preventivo N° 20260430-000029</strong><br/><br/><strong>Note del cliente:</strong><br/>sono il nipote dell\'ing Sclafani<br/><br/><strong>Contatti forniti:</strong><br/>Email: leonardodigiovanni@tiscali.it<br/>Cellulare: +3934765468185<br/><br/><a href=\"/clienti/preventivi/29\" style=\"color:#1a4a8a;font-weight:bold;\">Apri preventivo →</a>',1,'2026-04-30 14:59:08'),(19,'preventivo_inviato','Preventivo N° 20260430-000030 inviato a leonardo di giovanni','Preventivo inviato a <strong>leonardo di giovanni</strong> (leonardodigiovanni@tiscali.it).<br/><br/><a href=\"/clienti/preventivi/30\" style=\"color:#1a4a8a;font-weight:bold;\">Apri preventivo →</a>',1,'2026-04-30 15:01:58'),(20,'preventivo_accettato','Preventivo N° 20260430-000030 accettato','Il cliente ha <strong>accettato</strong> il preventivo <strong>N° 20260430-000030</strong>.<br/><br/><a href=\"/clienti/preventivi/30\" style=\"color:#1a4a8a;font-weight:bold;\">Apri preventivo →</a>',1,'2026-04-30 15:03:18'),(21,'contatto','Messaggio da admin (admin1)','\n      <p><strong>Utente:</strong> admin1 (admin)</p>\n      <p><strong>Email di risposta:</strong> leonardodigiovanni@tiscali.it</p>\n      <p><strong>Messaggio:</strong></p>\n      <p style=\"white-space:pre-wrap\">test invio interno da admin1</p>\n    ',1,'2026-05-05 11:00:37'),(22,'partnership','Richiesta partnership: Azienda 3 — leonardo di giovanni (leonardodigiovanni@tiscali.it)','\n    <p><strong>Azienda:</strong> Azienda 3</p>\n    <p><strong>Referente:</strong> leonardo di giovanni</p>\n    <p><strong>Email:</strong> leonardodigiovanni@tiscali.it</p>\n    <p><strong>Telefono:</strong> +393476468185</p>\n    <p><strong>Messaggio:</strong></p><p style=\"white-space:pre-wrap\">Vendiamo sogni</p>\n  ',1,'2026-05-05 11:01:42'),(23,'partnership','Richiesta partnership: Azienda 3 — leonardo di giovanni (leonardodigiovanni@tiscali.it)','\n    <p><strong>Azienda:</strong> Azienda 3</p>\n    <p><strong>Referente:</strong> leonardo di giovanni</p>\n    <p><strong>Email:</strong> leonardodigiovanni@tiscali.it</p>\n    <p><strong>Telefono:</strong> +393476468185</p>\n    <p><strong>Messaggio:</strong></p><p style=\"white-space:pre-wrap\">Vendiamo speranze</p>\n  ',1,'2026-05-05 11:02:09');
 /*!40000 ALTER TABLE `email_inbox` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -480,9 +521,12 @@ CREATE TABLE `listini` (
   `richiede_tipo_colore` tinyint(1) NOT NULL DEFAULT '0',
   `richiede_tipo_vetro` tinyint(1) NOT NULL DEFAULT '0',
   `costante` decimal(10,4) NOT NULL DEFAULT '0.0000',
-  `abbr` varchar(50) NOT NULL DEFAULT '',
+  `abbr` varchar(255) NOT NULL DEFAULT '',
+  `richiede_tipo_montaggio` tinyint(1) NOT NULL DEFAULT '0',
+  `minimo` decimal(10,4) DEFAULT NULL,
+  `richiede_tipo_colore_acc` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -491,7 +535,7 @@ CREATE TABLE `listini` (
 
 LOCK TABLES `listini` WRITE;
 /*!40000 ALTER TABLE `listini` DISABLE KEYS */;
-INSERT INTO `listini` VALUES (13,'Trasporto','Generico','Trasporto gommato','pz',100.00,120.00,'','2026-04-30 09:33:16','2026-05-03 15:41:04',1,1,'/listini/13-foto-1777574599968.png',NULL,NULL,NULL,NULL,0,NULL,0.00,'/listini/13-schema-1777573686223.png','',1,0,0,0,1,0,0,0,0,0,0.0000,''),(14,'Trasporto','Generico','Supplemento Trasporto gommato fuori il comune di Palermo','Km',10.00,20.00,'','2026-04-30 09:35:22','2026-05-03 15:41:02',1,1,'/listini/14-foto-1777574605720.png',NULL,NULL,NULL,NULL,0,NULL,0.00,'/listini/14-schema-1777573682289.png','',1,0,0,0,1,0,1,0,0,0,0.0000,''),(15,'Trasporto','Generico','Supplemento Piano (senza ascensore)','Piano',5.00,10.00,'','2026-04-30 09:39:30','2026-05-03 15:40:59',1,1,'/listini/15-foto-1777574747410.png',NULL,NULL,NULL,NULL,0,NULL,0.00,'/listini/15-schema-1777573677547.png','',1,0,0,0,1,1,0,0,0,0,0.0000,''),(16,'Spedizione','Generico','Spedizione con corriere DHL','kg',2.00,3.00,'','2026-04-30 09:42:16','2026-05-03 15:40:52',1,1,'/listini/16-foto-1777562061298.png',NULL,NULL,NULL,NULL,0,NULL,0.00,'/listini/16-schema-1777573671868.png','',1,0,0,0,1,0,0,1,0,0,0.0000,''),(17,'Montaggio','Generico','Montaggio e siggillatura porta o finestra alluminio/PVC','pz',10.00,80.00,'','2026-04-30 13:18:31','2026-05-03 15:40:14',1,1,'/listini/17-foto-1777572933718.png',NULL,NULL,NULL,NULL,0,NULL,0.00,'/listini/17-schema-1777573622549.png','',1,0,0,0,1,0,0,0,0,0,0.0000,''),(18,'Montaggio','Generico','Montaggio Porta Blindata con falsotelaio','pz',200.00,300.00,'','2026-04-30 13:19:55','2026-05-03 15:40:18',1,1,'/listini/18-foto-1777573280604.png',NULL,NULL,NULL,NULL,0,NULL,0.00,'/listini/18-schema-1777573632282.png','',1,0,0,0,1,0,0,0,0,0,0.0000,''),(19,'Montaggio','Generico','Montaggio Porta Blindata senza falsotelaio','pz',10.00,100.00,'','2026-04-30 13:21:15','2026-05-03 15:40:19',1,1,'/listini/19-foto-1777573292348.png',NULL,NULL,NULL,NULL,0,NULL,10.00,'/listini/19-schema-1777573639474.png','',1,0,0,0,1,0,0,0,0,0,0.0000,''),(20,'Infissi in alluminio','ALSistem','fisso','m²',100.00,200.00,'dimensioni massime L= / H=','2026-04-30 13:50:57','2026-05-03 21:24:06',1,1,'/listini/20-foto-1777559024945.png',NULL,NULL,NULL,6,0,NULL,10.00,'/listini/20-schema-1777558932766.png','3G SYSTEM REVOLUTION',1,0,1,1,1,0,0,0,1,1,0.0000,'F'),(21,'Infissi in alluminio','ALSistem','finestra 1 anta ribalta','m²',100.00,200.00,'dimensioni massime L= / H=','2026-04-30 13:52:09','2026-05-03 21:22:20',1,1,'/listini/21-foto-1777558993079.png',NULL,NULL,NULL,6,0,NULL,10.00,'/listini/21-schema-1777559087308.png','3G SYSTEM REVOLUTION',1,0,1,1,1,0,0,0,1,1,0.8500,'R'),(22,'Infissi in alluminio','ALSistem','finestra 2 ante ribalta','m²',100.00,200.00,'dimensioni massime L= / H=','2026-04-30 13:54:11','2026-05-03 21:23:09',1,1,'/listini/22-foto-1777559012008.png',NULL,NULL,NULL,6,0,NULL,10.00,'/listini/22-schema-1777559252330.png','3G SYSTEM REVOLUTION',1,0,1,1,1,0,0,0,1,1,0.0000,'AR'),(23,'Infissi in alluminio','ALSistem','finestra 3 ante','m²',100.00,200.00,'dimensioni massime L= / H=','2026-04-30 13:54:56','2026-05-03 21:23:28',1,1,'/listini/23-foto-1777559014604.png',NULL,NULL,NULL,6,0,NULL,10.00,'/listini/23-schema-1777559279056.png','3G SYSTEM REVOLUTION',1,0,1,1,1,0,0,0,1,1,0.0000,'AAA'),(24,'Infissi in alluminio','ALSistem','finestra abbinata 1 anta + 2 ante ribalta','m²',100.00,200.00,'dimensioni massime L= / H=','2026-04-30 13:55:53','2026-05-03 21:23:55',1,1,'/listini/24-foto-1777559022197.png',NULL,NULL,NULL,6,0,NULL,10.00,'/listini/24-schema-1777559120249.png','3G SYSTEM REVOLUTION',1,0,1,1,1,0,0,0,1,1,0.0000,'RAA'),(25,'Infissi in alluminio','ALSistem','finestra 4 ante','m²',100.00,200.00,'dimensioni massime L= / H=','2026-04-30 13:56:54','2026-05-03 21:23:38',1,1,'/listini/25-foto-1777559019124.png',NULL,NULL,NULL,6,0,NULL,10.00,'/listini/25-schema-1777559239586.png','3G SYSTEM REVOLUTION',1,0,1,1,1,0,0,0,1,1,0.0000,'AAAA'),(26,'Infissi in alluminio','ALSistem','vasistas','m²',100.00,200.00,'dimensioni massime L= / H=','2026-04-30 13:57:45','2026-05-03 21:24:47',1,1,'/listini/26-foto-1777559039792.png',NULL,NULL,NULL,6,0,NULL,10.00,'/listini/26-schema-1777559318516.png','3G SYSTEM REVOLUTION',1,0,1,1,1,0,0,0,1,1,0.0000,'V'),(27,'Infissi in alluminio','ALSistem','finestra 1 anta ribalta + fisso laterale','m²',100.00,200.00,'dimensioni massime L= / H=','2026-04-30 13:58:11','2026-05-03 21:22:32',1,1,'/listini/27-foto-1777559001980.png',NULL,NULL,NULL,6,0,NULL,10.00,'/listini/27-schema-1777842826541.png','3G SYSTEM REVOLUTION',1,0,1,1,1,0,0,0,1,1,0.0000,'FR'),(28,'Infissi in alluminio','ALSistem','finestra 1 anta ribalta + fisso sopraluce','m²',100.00,200.00,'dimensioni massime L= / H=','2026-04-30 13:58:43','2026-05-03 21:22:46',1,1,'/listini/28-foto-1777559008013.png',NULL,NULL,NULL,6,0,NULL,10.00,'/listini/28-schema-1777842836969.png','3G SYSTEM REVOLUTION',1,0,1,1,1,0,0,0,1,1,0.0000,'SR'),(29,'Infissi in alluminio','ALSistem','porta finestra 1 anta ribalta','m²',100.00,200.00,'dimensioni massime L= / H=','2026-04-30 13:59:12','2026-05-03 21:24:21',1,1,'/listini/29-foto-1777559028666.png',NULL,NULL,NULL,6,0,NULL,10.00,'/listini/29-schema-1777559304133.png','3G SYSTEM REVOLUTION',1,0,1,1,1,0,0,0,1,1,0.0000,'P'),(30,'Infissi in alluminio','ALSistem','porta finestra 2 ante ribalta','m²',100.00,200.00,'dimensioni massime L= / H=','2026-04-30 13:59:54','2026-05-03 21:24:32',1,1,'/listini/30-foto-1777559032613.png',NULL,NULL,NULL,6,0,NULL,10.00,'/listini/30-schema-1777559177398.png','3G SYSTEM REVOLUTION',1,0,1,1,1,0,0,0,1,1,0.0000,'PP'),(31,'Infissi in alluminio','ALSistem','porta finestra 3 ante','m²',100.00,200.00,'dimensioni massime L= / H=','2026-04-30 14:00:22','2026-05-03 21:24:41',1,1,'/listini/31-foto-1777559036855.png',NULL,NULL,NULL,6,0,NULL,10.00,'/listini/31-schema-1777559200698.png','3G SYSTEM REVOLUTION',1,0,1,1,1,0,0,0,1,1,0.0000,'PPP'),(32,'Infissi in alluminio','ALSistem','Colore RAL 9010','--',0.00,0.00,'','2026-04-30 22:45:27','2026-05-03 19:29:09',1,1,'/listini/32-foto-1777597348594.png',NULL,NULL,NULL,6,0,NULL,-10.00,'/listini/32-schema-1777596966248.png','3G SYSTEM REVOLUTION',0,1,0,0,0,0,0,0,1,0,0.0000,''),(33,'Infissi in alluminio','ALSistem','Colore RAL 9001','--',0.00,0.00,'','2026-04-30 22:46:37','2026-05-03 21:11:43',1,1,'/listini/33-foto-1777597485180.png',NULL,NULL,NULL,6,0,NULL,0.00,'/listini/33-schema-1777596971068.png','3G SYSTEM REVOLUTION',0,1,0,0,0,0,0,0,1,0,0.0000,''),(34,'Infissi in alluminio','Vetro','Vetro 8-12-8 B.E.','m²',40.00,60.00,'','2026-04-30 22:48:40','2026-05-03 20:35:22',1,1,'/listini/34-foto-1777597256119.png',NULL,NULL,NULL,NULL,0,NULL,0.00,'/listini/34-schema-1777596935178.png','Vetro',0,1,0,0,0,0,0,0,0,1,0.0000,''),(35,'Infissi in alluminio','Vetro','Vetro 6-18 Argon -6','m²',45.00,66.00,'','2026-04-30 22:50:41','2026-05-03 20:35:20',1,1,'/listini/35-foto-1777597248325.png',NULL,NULL,NULL,NULL,0,NULL,0.00,'/listini/35-schema-1777596947861.png','Vetro',0,1,0,0,0,0,0,0,0,1,0.0000,''),(36,'Infissi in alluminio','Vetro','Nessun vetro','m²',0.00,0.00,'','2026-05-03 17:48:40','2026-05-03 18:10:16',1,1,'/listini/36-foto-1777830566750.png',NULL,NULL,NULL,NULL,0,NULL,0.00,'/listini/36-schema-1777830586309.png','Vetro',0,1,0,0,0,0,0,0,0,1,0.0000,''),(37,'Infissi in alluminio','ALSistem','Colore RAL 9070','--',0.00,0.00,'','2026-05-03 19:26:17','2026-05-03 21:14:06',1,1,'/listini/37-foto-1777842846567.png',NULL,NULL,NULL,6,0,NULL,-15.00,'/listini/37-schema-1777836533345.png','3G SYSTEM REVOLUTION',0,1,0,0,0,0,0,0,1,0,0.0000,''),(38,'Infissi in alluminio','ALSistem','Colore RAL 9002','--',0.00,0.00,'','2026-05-03 19:31:54','2026-05-03 19:34:03',1,1,'/listini/38-foto-1777836767971.png',NULL,NULL,NULL,6,0,NULL,0.00,'/listini/38-schema-1777836776725.png','3G SYSTEM REVOLUTION',0,1,0,0,0,0,0,0,1,0,0.0000,''),(39,'Infissi in PVC','Generico','Generico','m²',0.00,1.00,'','2026-05-16 12:43:56','2026-05-16 12:44:27',1,1,NULL,NULL,NULL,NULL,NULL,0,NULL,0.00,NULL,'Generico',1,1,0,0,0,0,0,0,0,0,0.0000,'');
+INSERT INTO `listini` VALUES (13,'Trasporto','Generico','Trasporto gommato','pz',100.00,120.00,'','2026-04-30 09:33:16','2026-05-25 23:33:32',1,1,'/listini/13-foto-1777574599968.png',NULL,NULL,NULL,NULL,0,NULL,0.00,NULL,'',1,0,0,0,1,0,0,0,0,0,0.0000,'',0,NULL,0),(14,'Trasporto','Generico','Supplemento Trasporto gommato fuori il comune di Palermo','Km',10.00,20.00,'','2026-04-30 09:35:22','2026-05-25 23:33:31',1,1,'/listini/14-foto-1777574605720.png',NULL,NULL,NULL,NULL,0,NULL,0.00,NULL,'',1,0,0,0,1,0,1,0,0,0,0.0000,'',0,NULL,0),(15,'Trasporto','Generico','Supplemento Piano (senza ascensore)','Piano',5.00,10.00,'','2026-04-30 09:39:30','2026-05-25 23:33:30',1,1,'/listini/15-foto-1777574747410.png',NULL,NULL,NULL,NULL,0,NULL,0.00,NULL,'',1,0,0,0,1,1,0,0,0,0,0.0000,'',0,NULL,0),(16,'Spedizione','Generico','Spedizione con corriere DHL','kg',2.00,3.00,'','2026-04-30 09:42:16','2026-05-30 05:50:32',1,1,'/listini/16-foto-1777562061298.png',NULL,NULL,NULL,NULL,0,NULL,0.00,NULL,'',1,0,0,0,1,0,0,1,0,0,0.0000,'',0,NULL,0),(17,'Montaggio','Generico','Montaggio e siggillatura porta o finestra alluminio/PVC','pz',10.00,80.00,'','2026-04-30 13:18:31','2026-05-25 23:33:26',1,1,'/listini/17-foto-1777572933718.png',NULL,NULL,NULL,NULL,0,NULL,0.00,NULL,'',1,0,0,0,1,0,0,0,0,0,0.0000,'',0,NULL,0),(18,'Montaggio','Generico','Montaggio Porta Blindata con falsotelaio','pz',200.00,300.00,'','2026-04-30 13:19:55','2026-05-25 23:33:27',1,1,'/listini/18-foto-1777573280604.png',NULL,NULL,NULL,NULL,0,NULL,0.00,NULL,'',1,0,0,0,1,0,0,0,0,0,0.0000,'',0,NULL,0),(19,'Montaggio','Generico','Montaggio Porta Blindata senza falsotelaio','pz',10.00,100.00,'','2026-04-30 13:21:15','2026-05-25 23:33:27',1,1,'/listini/19-foto-1777573292348.png',NULL,NULL,NULL,NULL,0,NULL,10.00,NULL,'',1,0,0,0,1,0,0,0,0,0,0.0000,'',0,NULL,0),(20,'Infissi in alluminio','ALSistem','fisso','m²',100.00,200.00,'dimensioni massime L= / H=','2026-04-30 13:50:57','2026-06-05 03:43:26',1,1,'/listini/20-foto-1777559024945.png',80.00,80.00,2.000,6,0,NULL,10.00,'/listini/20-schema-1777558932766.png','3G SYSTEM REVOLUTION',1,0,1,1,1,0,0,0,1,1,0.0000,'Tc(F())',1,2.0000,1),(21,'Infissi in alluminio','ALSistem','finestra 1 anta ribalta','m²',100.00,200.00,'dimensioni massime L= / H=','2026-04-30 13:52:09','2026-06-05 03:42:37',1,1,'/listini/21-foto-1777558993079.png',80.00,80.00,1.500,6,0,NULL,10.00,'/listini/21-schema-1777559087308.png','3G SYSTEM REVOLUTION',1,0,1,1,1,0,0,0,1,1,0.8500,'Tc(mAc(F()))',1,2.0000,1),(22,'Infissi in alluminio','ALSistem','finestra 2 ante ribalta','m²',100.00,200.00,'dimensioni massime L= / H=','2026-04-30 13:54:11','2026-06-05 03:42:58',1,1,'/listini/22-foto-1777559012008.png',80.00,80.00,1.500,6,0,NULL,10.00,'/listini/22-schema-1777559252330.png','3G SYSTEM REVOLUTION',1,0,1,1,1,0,0,0,1,1,0.8500,'Tc(cA(F())+mAc(F()))',1,2.0000,1),(23,'Infissi in alluminio','ALSistem','finestra 3 ante','m²',100.00,200.00,'dimensioni massime L= / H=','2026-04-30 13:54:56','2026-06-05 03:43:05',1,1,'/listini/23-foto-1777559014604.png',80.00,80.00,1.500,6,0,NULL,10.00,'/listini/23-schema-1777559279056.png','3G SYSTEM REVOLUTION',1,0,1,1,1,0,0,0,1,1,0.8500,'Tc(cA(F())+mAc(F())+Ac(F()))',1,2.0000,1),(24,'Infissi in alluminio','ALSistem','finestra abbinata 1 anta + 2 ante ribalta','m²',100.00,200.00,'dimensioni massime L= / H=','2026-04-30 13:55:53','2026-06-05 03:43:19',1,1,'/listini/24-foto-1777559022197.png',80.00,80.00,1.500,6,0,NULL,10.00,'/listini/24-schema-1777559120249.png','3G SYSTEM REVOLUTION',1,0,1,1,1,0,0,0,1,1,0.8500,'Tc(x(cAm(F()))+P+120(cA(F())+mAc(F())))',1,2.0000,1),(25,'Infissi in alluminio','ALSistem','finestra 4 ante','m²',100.00,200.00,'dimensioni massime L= / H=','2026-04-30 13:56:54','2026-06-05 03:43:12',1,1,'/listini/25-foto-1777559019124.png',80.00,80.00,2.000,6,0,NULL,10.00,'/listini/25-schema-1777559239586.png','3G SYSTEM REVOLUTION',1,0,1,1,1,0,0,0,1,1,0.8500,'Tc(cA(F())+cA(F())+mAc(F())+Ac(F()))',1,2.0000,1),(26,'Infissi in alluminio','ALSistem','vasistas','m²',100.00,200.00,'dimensioni massime L= / H=','2026-04-30 13:57:45','2026-06-05 03:43:54',1,1,'/listini/26-foto-1777559039792.png',80.00,80.00,2.000,6,0,NULL,10.00,'/listini/26-schema-1777559318516.png','3G SYSTEM REVOLUTION',1,0,1,1,1,0,0,0,1,1,0.8500,'Tc(V(F()))',1,2.0000,1),(27,'Infissi in alluminio','ALSistem','finestra 1 anta ribalta + fisso laterale','m²',100.00,200.00,'dimensioni massime L= / H=','2026-04-30 13:58:11','2026-06-05 03:42:45',1,1,'/listini/27-foto-1777559001980.png',80.00,80.00,1.500,6,0,NULL,10.00,'/listini/27-schema-1777842826541.png','3G SYSTEM REVOLUTION',1,0,1,1,1,0,0,0,1,1,0.8500,'Tc(X(F())+P+80(mAc(F())))',1,2.0000,1),(28,'Infissi in alluminio','ALSistem','finestra 1 anta ribalta + fisso sopraluce','m²',100.00,200.00,'dimensioni massime L= / H=','2026-04-30 13:58:43','2026-06-05 03:42:51',1,1,'/listini/28-foto-1777559008013.png',80.00,80.00,1.500,6,0,NULL,10.00,'/listini/28-schema-1777842836969.png','3G SYSTEM REVOLUTION',1,0,1,1,1,0,0,0,1,1,0.8500,'Tc(X(F())+T+120(mAc(F())))',1,2.0000,1),(29,'Infissi in alluminio','ALSistem','porta finestra 1 anta ribalta','m²',100.00,200.00,'dimensioni massime L= / H=','2026-04-30 13:59:12','2026-06-05 03:43:34',1,1,'/listini/29-foto-1777559028666.png',80.00,80.00,2.000,6,0,NULL,10.00,'/listini/29-schema-1777559304133.png','3G SYSTEM REVOLUTION',1,0,1,1,1,0,0,0,1,1,0.8500,'Tc(mAc(F()+T+70(F())))',1,2.0000,1),(30,'Infissi in alluminio','ALSistem','porta finestra 2 ante ribalta','m²',100.00,200.00,'dimensioni massime L= / H=','2026-04-30 13:59:54','2026-06-05 03:43:41',1,1,'/listini/30-foto-1777559032613.png',80.00,80.00,2.000,6,0,NULL,10.00,'/listini/30-schema-1777559177398.png','3G SYSTEM REVOLUTION',1,0,1,1,1,0,0,0,1,1,0.8500,'Tc(cA(F()+T+70(F()))+mAc(F()+T+70(F())))',1,2.0000,1),(31,'Infissi in alluminio','ALSistem','porta finestra 3 ante','m²',100.00,200.00,'dimensioni massime L= / H=','2026-04-30 14:00:22','2026-06-05 03:43:47',1,1,'/listini/31-foto-1777559036855.png',80.00,80.00,2.000,6,0,NULL,10.00,'/listini/31-schema-1777559200698.png','3G SYSTEM REVOLUTION',1,0,1,1,1,0,0,0,1,1,0.8500,'Tc(cA(F()+T+70(F()))+mAc(F()+T+70(F()))+Ac(F()+T+70(F())))',1,2.0000,1),(32,'Infissi in alluminio','ALSistem','Colore RAL 9010','--',0.00,0.00,'','2026-04-30 22:45:27','2026-05-25 23:33:11',1,1,'/listini/32-foto-1779710699897.png',NULL,NULL,NULL,6,0,NULL,-10.00,NULL,'3G SYSTEM REVOLUTION',0,1,0,0,0,0,0,0,1,0,0.0000,'',0,NULL,0),(33,'Infissi in alluminio','ALSistem','Colore RAL 9001','--',0.00,0.00,'','2026-04-30 22:46:37','2026-05-25 23:33:09',1,1,'/listini/33-foto-1779734722636.png',NULL,NULL,NULL,6,0,NULL,0.00,NULL,'3G SYSTEM REVOLUTION',0,1,0,0,0,0,0,0,1,0,0.0000,'',0,NULL,0),(34,'Infissi in alluminio','Vetro','Vetro 8-12-8 B.E.','m²',40.00,60.00,'','2026-04-30 22:48:40','2026-05-25 23:33:24',1,1,'/listini/34-foto-1779604282187.png',NULL,28.00,1.000,NULL,0,NULL,3.00,NULL,'Vetro',0,1,0,0,0,0,0,0,0,1,0.0000,'',0,NULL,0),(35,'Infissi in alluminio','Vetro','Vetro 6-18 Argon -6','m²',45.00,66.00,'','2026-04-30 22:50:41','2026-05-25 23:33:22',1,1,'/listini/35-foto-1779604275067.png',NULL,30.00,1.000,NULL,0,NULL,0.00,NULL,'Vetro',0,1,0,0,0,0,0,0,0,1,0.0000,'',0,NULL,0),(36,'Infissi in alluminio','Vetro','Nessun vetro','m²',0.00,0.00,'','2026-05-03 17:48:40','2026-05-25 23:33:21',1,1,'/listini/36-foto-1779604393718.png',NULL,NULL,NULL,NULL,0,NULL,0.00,NULL,'Vetro',0,1,0,0,0,0,0,0,0,1,0.0000,'',0,NULL,0),(37,'Infissi in alluminio','ALSistem','Colore RAL 9070','--',0.00,0.00,'','2026-05-03 19:26:17','2026-05-25 23:33:12',1,1,'/listini/37-foto-1779599360774.png',NULL,NULL,NULL,6,0,NULL,-15.00,NULL,'3G SYSTEM REVOLUTION',0,1,0,0,0,0,0,0,1,0,0.0000,'',0,NULL,0),(38,'Infissi in alluminio','ALSistem','Colore RAL 9002','--',0.00,0.00,'','2026-05-03 19:31:54','2026-05-25 23:33:10',1,1,'/listini/38-foto-1779734717401.png',NULL,NULL,NULL,6,0,NULL,0.00,NULL,'3G SYSTEM REVOLUTION',0,1,0,0,0,0,0,0,1,0,0.0000,'',0,NULL,0),(40,'Infissi in alluminio BOBO','BOBO','finestra 1 anta ribalta','m²',99.00,122.00,'','2026-05-20 20:50:03','2026-05-25 23:39:20',1,1,'/listini/40-foto-1779734578806.png',77.00,66.00,1.000,NULL,0,NULL,0.00,NULL,'AXS33',1,0,1,1,1,0,0,0,1,1,0.0000,'R',1,NULL,0),(41,'Infissi in alluminio','ALSistem','Nessun montaggio','pz',0.00,0.00,'','2026-05-21 18:22:30','2026-05-25 23:33:16',1,1,'/listini/41-foto-1779604340560.png',NULL,NULL,NULL,NULL,0,NULL,0.00,NULL,'3G SYSTEM REVOLUTION',0,1,0,0,0,0,0,0,0,0,0.0000,'',1,NULL,0),(42,'Infissi in alluminio','ALSistem','Montaggio e sigillatura','pz',3.00,50.00,'','2026-05-21 18:23:29','2026-05-25 23:33:15',1,1,'/listini/42-foto-1779387858862.png',NULL,NULL,NULL,NULL,0,NULL,0.00,NULL,'3G SYSTEM REVOLUTION',0,1,0,0,0,0,0,0,0,0,0.0000,'',1,NULL,0),(43,'Infissi in alluminio','ALSistem','Colore accessori NERO','m²',0.00,0.00,'','2026-05-24 05:47:00','2026-05-25 23:33:08',1,1,'/listini/43-foto-1779602167291.png',NULL,NULL,NULL,NULL,0,NULL,0.00,NULL,'3G SYSTEM REVOLUTION',0,1,0,0,0,0,0,0,0,0,0.0000,'',0,NULL,1),(44,'Infissi in alluminio','ALSistem','Colore accessori BIANCO','m²',0.00,0.00,'','2026-05-24 05:47:38','2026-05-25 23:33:07',1,1,'/listini/44-foto-1779602189764.png',NULL,NULL,NULL,NULL,0,NULL,0.00,NULL,'3G SYSTEM REVOLUTION',0,1,0,0,0,0,0,0,0,0,0.0000,'',0,NULL,1),(45,'Porte corazzate','Pantaleo','Porta con lamiera piegata','pz',1000.00,2000.00,'','2026-05-29 17:29:18','2026-05-30 03:38:10',1,1,'/listini/45-foto-1780112290690.png',NULL,NULL,NULL,NULL,0,NULL,0.00,NULL,'Generico',1,0,1,1,1,0,0,0,0,0,0.0000,'',1,NULL,0),(46,'Porte corazzate','Pantaleo','Montaggio con falsotelaio','pz',80.00,100.00,'','2026-05-30 03:22:48','2026-05-30 03:29:15',1,1,'/listini/46-foto-1780111755877.png',NULL,NULL,NULL,NULL,0,NULL,0.00,NULL,'Generico',0,1,0,0,0,0,0,0,0,0,0.0000,'',1,NULL,0),(47,'Quadri','Monet','L\'urlo','pz',100000.00,120000.00,'','2026-05-30 04:37:48','2026-05-30 13:12:54',1,1,'/listini/47-foto-1780116016319.png',NULL,NULL,NULL,NULL,1,2,0.00,NULL,'Monet',1,0,0,0,1,0,0,0,0,0,0.0000,'',1,NULL,0),(48,'Quadri','Monet','Cornice','pz',0.00,50.00,'','2026-05-30 12:45:26','2026-05-30 12:45:44',1,1,NULL,NULL,NULL,NULL,NULL,0,NULL,0.00,NULL,'Monet',0,1,0,0,0,0,0,0,0,0,0.0000,'',1,NULL,0);
 /*!40000 ALTER TABLE `listini` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -608,7 +652,7 @@ CREATE TABLE `ordini_acquisti` (
   `note` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_session` (`stripe_session_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -619,6 +663,86 @@ LOCK TABLES `ordini_acquisti` WRITE;
 /*!40000 ALTER TABLE `ordini_acquisti` DISABLE KEYS */;
 INSERT INTO `ordini_acquisti` VALUES (1,'','formicus',1,'pending',3914.00,'[{\"listino_id\":12,\"categoria\":\"Quadri\",\"produttore\":\"Artisti vari\",\"descrizione\":\"Ombre sul Mare\",\"unita\":\"pz\",\"prezzo_vendita\":3914,\"quantita\":1,\"larghezza_cm\":0,\"altezza_cm\":0,\"colore\":\"\",\"note\":\"\",\"subtotale\":3914}]','2026-04-30 02:15:32',NULL);
 /*!40000 ALTER TABLE `ordini_acquisti` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ordini_clienti`
+--
+
+DROP TABLE IF EXISTS `ordini_clienti`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `ordini_clienti` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `numero` varchar(50) NOT NULL DEFAULT '',
+  `tipo` enum('preventivo','acquisto') NOT NULL DEFAULT 'preventivo',
+  `cliente_id` int DEFAULT NULL,
+  `data_ordine` date NOT NULL,
+  `importo_totale` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `source_id` int DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `sconto_cli_pct` decimal(5,2) NOT NULL DEFAULT '0.00',
+  `visibile_cliente` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ordini_clienti`
+--
+
+LOCK TABLES `ordini_clienti` WRITE;
+/*!40000 ALTER TABLE `ordini_clienti` DISABLE KEYS */;
+INSERT INTO `ordini_clienti` VALUES (4,'20260605-000100','preventivo',1,'2026-06-04',450.37,100,'2026-06-05 06:28:59',6.00,1),(5,'20260605-000110','preventivo',1,'2026-06-04',1312.27,110,'2026-06-05 18:27:20',7.00,1);
+/*!40000 ALTER TABLE `ordini_clienti` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ordini_clienti_articoli`
+--
+
+DROP TABLE IF EXISTS `ordini_clienti_articoli`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `ordini_clienti_articoli` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `ordine_id` int NOT NULL,
+  `parent_id` int DEFAULT NULL,
+  `tipo_riga` enum('articolo','caratteristica') NOT NULL DEFAULT 'articolo',
+  `categoria` varchar(100) NOT NULL DEFAULT '',
+  `produttore` varchar(100) NOT NULL DEFAULT '',
+  `serie` varchar(100) NOT NULL DEFAULT '',
+  `descrizione` text NOT NULL,
+  `unita` varchar(30) NOT NULL DEFAULT 'pz',
+  `quantita` decimal(10,2) NOT NULL DEFAULT '1.00',
+  `larghezza_cm` decimal(7,2) NOT NULL DEFAULT '0.00',
+  `altezza_cm` decimal(7,2) NOT NULL DEFAULT '0.00',
+  `n_ante` int NOT NULL DEFAULT '1',
+  `colore` varchar(100) NOT NULL DEFAULT '',
+  `prezzo_unit` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `sconto_art_pct` decimal(5,2) NOT NULL DEFAULT '0.00',
+  `sconto_cli_pct` decimal(5,2) NOT NULL DEFAULT '0.00',
+  `totale` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `prezzo_lordo` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `abbr` varchar(30) NOT NULL DEFAULT '',
+  `profilo_mm` decimal(5,1) NOT NULL DEFAULT '0.0',
+  `foto_url` varchar(255) NOT NULL DEFAULT '',
+  `bar_color` varchar(20) DEFAULT NULL,
+  `bar_color_acc` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ordine_id` (`ordine_id`),
+  CONSTRAINT `ordini_clienti_articoli_ibfk_1` FOREIGN KEY (`ordine_id`) REFERENCES `ordini_clienti` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ordini_clienti_articoli`
+--
+
+LOCK TABLES `ordini_clienti_articoli` WRITE;
+/*!40000 ALTER TABLE `ordini_clienti_articoli` DISABLE KEYS */;
+INSERT INTO `ordini_clienti_articoli` VALUES (12,4,NULL,'articolo','Infissi in alluminio','ALSistem','','finestra 1 anta ribalta','m²',1.00,111.00,111.00,0,'',200.00,10.00,6.00,360.00,400.00,'Tc(mAc(F()))',80.0,'/listini/21-foto-1777558993079.png',NULL,NULL),(13,4,12,'caratteristica','Infissi in alluminio','ALSistem','','Colore RAL 9001','--',0.00,111.00,111.00,0,'',0.00,0.00,6.00,0.00,0.00,'',0.0,'/listini/33-foto-1779734722636.png',NULL,NULL),(14,4,12,'caratteristica','Infissi in alluminio','ALSistem','','Colore accessori NERO','m²',0.00,111.00,111.00,0,'',0.00,0.00,6.00,0.00,0.00,'',0.0,'/listini/43-foto-1779602167291.png',NULL,NULL),(15,4,12,'caratteristica','Infissi in alluminio','Vetro','','Vetro 6-18 Argon -6','m²',0.00,111.00,111.00,0,'',66.00,0.00,6.00,69.12,69.12,'',0.0,'/listini/35-foto-1779604275067.png',NULL,NULL),(16,4,12,'caratteristica','Infissi in alluminio','ALSistem','','Montaggio e sigillatura','pz',0.00,111.00,111.00,0,'',50.00,0.00,6.00,50.00,50.00,'',0.0,'/listini/42-foto-1779387858862.png',NULL,NULL),(17,5,NULL,'articolo','Infissi in alluminio','ALSistem','','finestra 1 anta ribalta','m²',1.00,200.00,140.00,0,'',200.00,10.00,7.00,504.00,560.00,'Tc(mAc(F()))',80.0,'/listini/21-foto-1777558993079.png',NULL,NULL),(18,5,NULL,'articolo','Infissi in alluminio','ALSistem','','finestra 1 anta ribalta','m²',1.00,200.00,140.00,1,'',200.00,10.00,7.00,504.00,560.00,'Tc(mAc(F()))',80.0,'/listini/21-foto-1777558993079.png',NULL,NULL),(19,5,17,'caratteristica','Infissi in alluminio','ALSistem','','Colore RAL 9070','--',1.00,0.00,0.00,1,'',0.00,-15.00,7.00,75.60,84.00,'',0.0,'/listini/37-foto-1779599360774.png',NULL,NULL),(20,5,17,'caratteristica','Infissi in alluminio','Vetro','','Vetro 8-12-8 B.E.','m²',1.00,200.00,140.00,1,'',60.00,3.00,7.00,138.52,142.80,'',0.0,'/listini/34-foto-1779604282187.png',NULL,NULL),(21,5,17,'caratteristica','Infissi in alluminio','ALSistem','','Nessun montaggio','pz',1.00,0.00,0.00,1,'',0.00,0.00,7.00,0.00,0.00,'',0.0,'/listini/41-foto-1779604340560.png',NULL,NULL),(22,5,17,'caratteristica','Infissi in alluminio','ALSistem','','Colore accessori NERO','m²',1.00,0.00,0.00,1,'',0.00,0.00,7.00,0.00,0.00,'',0.0,'/listini/43-foto-1779602167291.png',NULL,NULL),(23,5,18,'caratteristica','Infissi in alluminio','ALSistem','','Colore RAL 9010','--',1.00,0.00,0.00,1,'',0.00,-10.00,7.00,50.40,56.00,'',0.0,'/listini/32-foto-1779710699897.png',NULL,NULL),(24,5,18,'caratteristica','Infissi in alluminio','Vetro','','Vetro 8-12-8 B.E.','m²',1.00,200.00,140.00,1,'',60.00,3.00,7.00,138.52,142.80,'',0.0,'/listini/34-foto-1779604282187.png',NULL,NULL),(25,5,18,'caratteristica','Infissi in alluminio','ALSistem','','Colore accessori NERO','m²',1.00,0.00,0.00,1,'',0.00,0.00,7.00,0.00,0.00,'',0.0,'/listini/43-foto-1779602167291.png',NULL,NULL),(26,5,18,'caratteristica','Infissi in alluminio','ALSistem','','Nessun montaggio','pz',1.00,0.00,0.00,1,'',0.00,0.00,7.00,0.00,0.00,'',0.0,'/listini/41-foto-1779604340560.png',NULL,NULL);
+/*!40000 ALTER TABLE `ordini_clienti_articoli` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -720,7 +844,7 @@ CREATE TABLE `ordini_ricevuti` (
 
 LOCK TABLES `ordini_ricevuti` WRITE;
 /*!40000 ALTER TABLE `ordini_ricevuti` DISABLE KEYS */;
-INSERT INTO `ordini_ricevuti` VALUES (1,'44444','palm inc srl','telaio','nuovo',122.00,'2026-04-10','2026-04-11 00:46:43','2026-04-11 00:47:32',1,2),(2,'5555','di giovanni leonardo','hhhhh','nuovo',66.00,'2026-04-10','2026-04-11 00:48:32','2026-04-11 00:48:32',1,1);
+INSERT INTO `ordini_ricevuti` VALUES (1,'44444','palm inc srl','telaio','nuovo',122.00,'2026-04-10','2026-04-11 00:46:43','2026-05-30 06:17:38',1,2),(2,'5555','di giovanni leonardo','hhhhh','nuovo',66.00,'2026-04-10','2026-04-11 00:48:32','2026-04-11 00:48:32',1,1);
 /*!40000 ALTER TABLE `ordini_ricevuti` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -803,7 +927,7 @@ CREATE TABLE `pending_registrations` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `expires_at` timestamp NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -827,7 +951,7 @@ CREATE TABLE `preventivi` (
   `numero` varchar(50) NOT NULL DEFAULT '',
   `cliente_id` int DEFAULT NULL,
   `descrizione` text,
-  `stato` enum('bozza','richiesto','inviato','accettato','rifiutato','scaduto','annullato') NOT NULL DEFAULT 'bozza',
+  `stato` enum('bozza','richiesto','in preparazione','da inviare','inviato','accettato','rifiutato','scaduto','annullato') NOT NULL DEFAULT 'bozza',
   `importo` decimal(10,2) NOT NULL DEFAULT '0.00',
   `data` date NOT NULL,
   `validita_giorni` int NOT NULL DEFAULT '30',
@@ -836,8 +960,9 @@ CREATE TABLE `preventivi` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `creato_da` varchar(100) DEFAULT NULL,
   `sconto_cliente_pct` decimal(5,2) NOT NULL DEFAULT '0.00',
+  `cloned_from` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=114 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -846,7 +971,7 @@ CREATE TABLE `preventivi` (
 
 LOCK TABLES `preventivi` WRITE;
 /*!40000 ALTER TABLE `preventivi` DISABLE KEYS */;
-INSERT INTO `preventivi` VALUES (47,'20260505-000047',1,'Carrello','bozza',1893.12,'2026-05-05',30,NULL,1,'2026-05-05 15:35:16','formicus',6.00),(48,'20260505-000048',1,'Carrello','bozza',1893.12,'2026-05-05',30,NULL,1,'2026-05-05 15:43:40','formicus',6.00);
+INSERT INTO `preventivi` VALUES (113,'20260607-000113',1,'Carrello','bozza',418.74,'2026-06-07',5,NULL,1,'2026-06-07 06:36:04','formicus',6.00,NULL);
 /*!40000 ALTER TABLE `preventivi` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -878,8 +1003,10 @@ CREATE TABLE `preventivo_articoli` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `sconto_articolo_pct` decimal(5,2) NOT NULL DEFAULT '0.00',
   `parent_id` int DEFAULT NULL,
+  `prezzo_pre_sconto` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `prezzo_scontato` decimal(10,2) NOT NULL DEFAULT '0.00',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=143 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=551 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -888,7 +1015,7 @@ CREATE TABLE `preventivo_articoli` (
 
 LOCK TABLES `preventivo_articoli` WRITE;
 /*!40000 ALTER TABLE `preventivo_articoli` DISABLE KEYS */;
-INSERT INTO `preventivo_articoli` VALUES (125,47,'Infissi in alluminio','ALSistem','finestra 1 anta ribalta',21,200.00,'m²','','',NULL,211.00,122.00,0,1,463.36,NULL,'2026-05-05 15:35:16',10.00,NULL),(126,47,'Infissi in alluminio','ALSistem','Colore RAL 9001',33,0.00,'--','','',NULL,0.00,0.00,1,1,0.00,NULL,'2026-05-05 15:35:16',0.00,125),(127,47,'Infissi in alluminio','Vetro','Vetro 6-18 Argon -6',35,66.00,'m²','','',NULL,211.00,122.00,1,1,169.90,NULL,'2026-05-05 15:35:16',0.00,125),(128,47,'Infissi in alluminio','ALSistem','finestra 1 anta ribalta',21,200.00,'m²','','',NULL,211.00,133.00,1,2,1010.27,NULL,'2026-05-05 15:35:16',10.00,NULL),(129,47,'Infissi in alluminio','ALSistem','Colore RAL 9001',33,0.00,'--','','',NULL,0.00,0.00,1,2,0.00,NULL,'2026-05-05 15:35:16',0.00,128),(130,47,'Infissi in alluminio','Vetro','Vetro 6-18 Argon -6',35,66.00,'m²','','',NULL,211.00,133.00,1,2,370.43,NULL,'2026-05-05 15:35:16',0.00,128),(132,47,'Infissi in alluminio','ALSistem','Colore RAL 9002',38,0.00,'--','','',NULL,0.00,0.00,1,1,0.00,NULL,'2026-05-05 15:35:16',0.00,131),(133,47,'Infissi in alluminio','Vetro','Nessun vetro',36,0.00,'m²','','',NULL,44.00,44.00,1,1,0.00,NULL,'2026-05-05 15:35:16',0.00,131),(135,47,'Infissi in alluminio','ALSistem','Colore RAL 9002',38,0.00,'--','','',NULL,0.00,0.00,1,1,0.00,NULL,'2026-05-05 15:35:16',0.00,134),(136,47,'Infissi in alluminio','Vetro','Nessun vetro',36,0.00,'m²','','',NULL,122.00,44.00,1,1,0.00,NULL,'2026-05-05 15:35:16',0.00,134),(137,48,'Infissi in alluminio','ALSistem','finestra 1 anta ribalta',21,200.00,'m²','','',NULL,211.00,122.00,0,1,463.36,NULL,'2026-05-05 15:43:40',10.00,NULL),(138,48,'Infissi in alluminio','ALSistem','Colore RAL 9001',33,0.00,'--','','',NULL,0.00,0.00,1,1,0.00,NULL,'2026-05-05 15:43:40',0.00,137),(139,48,'Infissi in alluminio','Vetro','Vetro 6-18 Argon -6',35,66.00,'m²','','',NULL,211.00,122.00,1,1,169.90,NULL,'2026-05-05 15:43:40',0.00,137),(140,48,'Infissi in alluminio','ALSistem','finestra 1 anta ribalta',21,200.00,'m²','','',NULL,211.00,133.00,0,2,1010.27,NULL,'2026-05-05 15:43:40',10.00,NULL),(141,48,'Infissi in alluminio','ALSistem','Colore RAL 9001',33,0.00,'--','','',NULL,0.00,0.00,1,2,0.00,NULL,'2026-05-05 15:43:40',0.00,140),(142,48,'Infissi in alluminio','Vetro','Vetro 6-18 Argon -6',35,66.00,'m²','','',NULL,211.00,133.00,1,2,370.43,NULL,'2026-05-05 15:43:40',0.00,140);
+INSERT INTO `preventivo_articoli` VALUES (541,112,'Infissi in alluminio','ALSistem','finestra 1 anta ribalta',21,200.00,'m²','','',NULL,111.00,111.00,0,1,360.00,NULL,'2026-06-07 04:57:22',10.00,NULL,400.00,360.00),(542,112,'Infissi in alluminio','ALSistem','Colore RAL 9001',33,0.00,'--','','',NULL,0.00,0.00,1,1,0.00,NULL,'2026-06-07 04:57:22',0.00,541,0.00,0.00),(543,112,'Infissi in alluminio','Vetro','Vetro 6-18 Argon -6',35,66.00,'m²','','',NULL,111.00,111.00,1,1,69.12,NULL,'2026-06-07 04:57:22',0.00,541,69.12,69.12),(544,112,'Infissi in alluminio','ALSistem','Colore accessori NERO',43,0.00,'m²','','',NULL,0.00,0.00,1,1,0.00,NULL,'2026-06-07 04:57:22',0.00,541,0.00,0.00),(545,112,'Infissi in alluminio','ALSistem','Nessun montaggio',41,0.00,'pz','','',NULL,0.00,0.00,1,1,0.00,NULL,'2026-06-07 04:57:22',0.00,541,0.00,0.00),(546,113,'Infissi in alluminio','ALSistem','finestra 1 anta ribalta + fisso laterale',27,200.00,'m²','','',NULL,100.00,100.00,1,1,360.00,NULL,'2026-06-07 06:36:04',10.00,NULL,400.00,360.00),(547,113,'Infissi in alluminio','ALSistem','Colore RAL 9010',32,0.00,'--','','',NULL,100.00,100.00,1,1,36.00,NULL,'2026-06-07 06:36:04',-10.00,546,40.00,36.00),(548,113,'Infissi in alluminio','ALSistem','Colore accessori NERO',43,0.00,'m²','','',NULL,100.00,100.00,1,1,0.00,NULL,'2026-06-07 06:36:04',0.00,546,0.00,0.00),(549,113,'Infissi in alluminio','Vetro','Vetro 8-12-8 B.E.',34,60.00,'m²','','',NULL,100.00,100.00,1,1,49.47,NULL,'2026-06-07 06:36:04',3.00,546,51.00,49.47),(550,113,'Infissi in alluminio','ALSistem','Nessun montaggio',41,0.00,'pz','','',NULL,100.00,100.00,1,1,0.00,NULL,'2026-06-07 06:36:04',0.00,546,0.00,0.00);
 /*!40000 ALTER TABLE `preventivo_articoli` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -917,7 +1044,7 @@ CREATE TABLE `preventivo_templates` (
 
 LOCK TABLES `preventivo_templates` WRITE;
 /*!40000 ALTER TABLE `preventivo_templates` DISABLE KEYS */;
-INSERT INTO `preventivo_templates` VALUES (1,'Template preventivo','<div style=\"font-family:Arial,Helvetica,sans-serif;width:794px;min-height:1050px;padding:40px 50px 90px;position:relative;background:#fff;box-sizing:border-box;\">\r\n\r\n  <!-- HEADER -->\r\n  <table style=\"width:100%;margin-bottom:20px;border-collapse:collapse;\">\r\n    <tr>\r\n      <td style=\"vertical-align:top;width:50%;\">\r\n        <img src=\"/images/dg-t.png\" alt=\"Logo\" style=\"height:52px;margin-bottom:10px;display:block;\"/>\r\n        <div style=\"font-size:17px;font-weight:bold;color:#1a3a5c;\">Digi Home Design S.r.l.</div>\r\n        <div style=\"font-size:11px;color:#555;line-height:1.7;margin-top:4px;\">\r\n          Via Roberto Antiochia 3, 90121 Palermo (PA)<br/>\r\n          P.IVA: 07407080824<br/>\r\n          Tel: +39 351 871 6731<br/>\r\n          info@digi-home-design.com\r\n        </div>\r\n      </td>\r\n      <td style=\"vertical-align:top;text-align:right;width:50%;\">\r\n        <img src=\"/images/nome_tr.png\" alt=\"Logo 2\" style=\"height:52px;\"/>\r\n      </td>\r\n    </tr>\r\n  </table>\r\n\r\n  <hr style=\"border:none;border-top:2px solid #1a3a5c;margin:0 0 20px;\"/>\r\n\r\n  <!-- DESTINATARIO + META -->\r\n  <table style=\"width:100%;margin-bottom:22px;border-collapse:collapse;\">\r\n    <tr>\r\n      <td style=\"vertical-align:top;width:50%;\">\r\n        <div style=\"font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px;\">Data</div>\r\n        <div style=\"font-size:13px;font-weight:bold;\">{{data}}</div>\r\n        <div style=\"font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.07em;margin:8px 0 2px;\">Rif. N°</div>\r\n        <div style=\"font-size:13px;font-weight:bold;\">{{numero}}</div>\r\n      </td>\r\n      <td style=\"vertical-align:top;text-align:right;width:50%;\">\r\n        <div style=\"font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px;\">Spett.le</div>\r\n        <div style=\"font-size:15px;font-weight:bold;color:#1a3a5c;\">{{cliente_nome}}</div>\r\n        <div style=\"font-size:12px;color:#555;margin-top:4px;line-height:1.6;\">{{cliente_indirizzo}}</div>\r\n      </td>\r\n    </tr>\r\n  </table>\r\n\r\n  <!-- OGGETTO -->\r\n  <div style=\"font-size:13px;margin-bottom:10px;\">\r\n    <strong>Oggetto:</strong> Bozza di preventivo\r\n  </div>\r\n\r\n  <!-- CORPO -->\r\n  <div style=\"font-size:13px;margin-bottom:22px;line-height:1.7;\">\r\n    Gentile Cliente,<br/>\r\n    Vi rimettiamo la nostra offerta escluso IVA di:\r\n  </div>\r\n\r\n  <!-- ARTICOLI -->\r\n  {{articoli}}\r\n\r\n  <!-- TOTALE -->\r\n  <div style=\"text-align:right;margin-top:22px;padding:12px 16px;background:#f0f4fa;border-radius:4px;\">\r\n    <div style=\"font-size:11px;color:#555;margin-bottom:2px;\">Totale offerta (escluso IVA)</div>\r\n    <div style=\"font-size:22px;font-weight:bold;color:#1a3a5c;\">€ {{totale}}</div>\r\n  </div>\r\n\r\n  <!-- NOTE -->\r\n  {{note_block}}\r\n\r\n  <!-- FOOTER -->\r\n  <div style=\"position:absolute;bottom:24px;left:50px;right:50px;border-top:1px solid #ddd;padding-top:8px;font-size:9px;color:#888;text-align:center;line-height:1.6;\">\r\n    Digi Home Design S.r.l. — Via Roberto Antiochia 3, 90121 Palermo (PA) — P.IVA 07407080824 — Tel +39 351 871 6731 — info@digi-home-design.com — PEC digi_home_design_srl@namirialpec.it\r\n  </div>\r\n\r\n</div>',1,'2026-04-20 04:23:40','2026-04-28 19:34:07','preventivo'),(2,'Template Disegno Verticale','<div style=\"font-family:Arial,Helvetica,sans-serif;width:794px;height:1123px;padding:36px 44px 50px;box-sizing:border-box;overflow:hidden;position:relative;background:#fff;\"><div style=\"display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;\"><img src=\"/images/dg-t.png\" alt=\"Logo\" style=\"height:40px;display:block;\" /><img src=\"/images/nome_tr.png\" alt=\"\" style=\"height:40px;display:block;\" /></div><hr style=\"border:none;border-top:2px solid #1a3a5c;margin:0 0 10px;\" /><div style=\"text-align:right;font-size:10px;color:#666;margin-bottom:8px;\">{{data}}</div>{{titolo}}<div style=\"display:flex;justify-content:center;\">{{svg}}</div><div style=\"position:absolute;bottom:16px;left:44px;right:44px;border-top:1px solid #ddd;padding-top:5px;font-size:8px;color:#aaa;\">Digi Home Design S.r.l. — Via Roberto Antiochia 3, 90121 Palermo (PA) — P.IVA 07407080824 — Tel +39 351 871 6731 — info@digi-home-design.com</div></div>',1,'2026-04-23 11:14:47','2026-04-23 11:37:08','disegno_portrait'),(3,'Template Disegno Orizzontale','<div style=\"font-family:Arial,Helvetica,sans-serif;width:1123px;height:794px;padding:36px 44px 50px;box-sizing:border-box;overflow:hidden;position:relative;background:#fff;\"><div style=\"display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;\"><img src=\"/images/dg-t.png\" alt=\"Logo\" style=\"height:40px;display:block;\" /><img src=\"/images/nome_tr.png\" alt=\"\" style=\"height:40px;display:block;\" /></div><hr style=\"border:none;border-top:2px solid #1a3a5c;margin:0 0 10px;\" /><div style=\"text-align:right;font-size:10px;color:#666;margin-bottom:8px;\">{{data}}</div>{{titolo}}<div style=\"display:flex;justify-content:center;\">{{svg}}</div><div style=\"position:absolute;bottom:16px;left:44px;right:44px;border-top:1px solid #ddd;padding-top:5px;font-size:8px;color:#aaa;\">Digi Home Design S.r.l. — Via Roberto Antiochia 3, 90121 Palermo (PA) — P.IVA 07407080824 — Tel +39 351 871 6731 — info@digi-home-design.com</div></div>',1,'2026-04-23 11:14:47','2026-04-23 11:37:08','disegno_landscape'),(5,'Template Preventivo Provvisorio','<table style=\"width:100%;margin-bottom:14px;border-collapse:collapse;\"><tr><td style=\"vertical-align:top;width:50%;\"><img src=\"/images/dg-t.png\" alt=\"Logo\" style=\"height:46px;margin-bottom:7px;display:block;\"/><div style=\"font-size:15px;font-weight:bold;color:#1a3a5c;\">Digi Home Design S.r.l.</div><div style=\"font-size:10px;color:#555;line-height:1.55;margin-top:3px;\">Via Roberto Antiochia 3, 90121 Palermo (PA)<br/>P.IVA: 07407080824 &nbsp;|&nbsp; Tel: +39 351 871 6731<br/>info@digi-home-design.com</div></td><td style=\"vertical-align:top;text-align:right;width:50%;\"><img src=\"/images/nome_tr.png\" alt=\"Logo 2\" style=\"height:46px;\"/></td></tr></table><hr style=\"border:none;border-top:2px solid #3a3a5c;margin:0 0 12px;\"/><table style=\"width:100%;margin-bottom:12px;border-collapse:collapse;\"><tr><td style=\"vertical-align:top;width:50%;\"><div style=\"font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px;\">Data</div><div style=\"font-size:12px;font-weight:bold;\">{{data}}</div><div style=\"margin-top:10px;display:inline-block;background:#3a3a5c;color:#fff;font-size:10px;font-weight:bold;letter-spacing:.08em;padding:3px 10px;border-radius:3px;\">PREVENTIVO PROVVISORIO</div></td><td style=\"vertical-align:top;text-align:right;width:50%;\"><div style=\"font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px;\">Spett.le</div><div style=\"font-size:13px;font-weight:bold;color:#1a3a5c;\">{{cliente_nome}}</div></td></tr></table><div style=\"font-size:12px;margin-bottom:6px;\"><strong>Oggetto:</strong> Preventivo provvisorio</div><div style=\"font-size:11px;margin-bottom:8px;padding:8px 12px;background:#f5f5f0;border-left:3px solid #3a3a5c;line-height:1.5;color:#555;\">I prezzi indicati sono a listino e potrebbero variare in base alle dimensioni effettive e al sopralluogo tecnico. Il preventivo definitivo verrà emesso successivamente.</div><div style=\"font-size:12px;margin-bottom:14px;line-height:1.6;\">Vi rimettiamo la nostra stima indicativa dei seguenti articoli:</div>',1,'2026-04-26 21:00:58','2026-04-26 21:00:58','preventivo_provvisorio');
+INSERT INTO `preventivo_templates` VALUES (1,'Template preventivo','<div style=\"font-family:Arial,Helvetica,sans-serif;width:794px;min-height:1050px;padding:40px 50px 90px;position:relative;background:#fff;box-sizing:border-box;\">\r\n\r\n  <!-- HEADER -->\r\n  <table style=\"width:100%;margin-bottom:20px;border-collapse:collapse;\">\r\n    <tr>\r\n      <td style=\"vertical-align:top;width:50%;\">\r\n        <img src=\"/images/header/qqqqqqqqqqqqqqqqqqq-Photoroom.png\" alt=\"Logo\" style=\"height:52px;margin-bottom:10px;display:block;\"/>\r\n        <div style=\"font-size:17px;font-weight:bold;color:#1a3a5c;\">Digi Home Design S.r.l.</div>\r\n        <div style=\"font-size:11px;color:#555;line-height:1.7;margin-top:4px;\">\r\n          Via Roberto Antiochia 3, 90121 Palermo (PA)<br/>\r\n          P.IVA: 07407080824<br/>\r\n          Tel: +39 351 871 6731<br/>\r\n          info@digi-home-design.com\r\n        </div>\r\n      </td>\r\n    </tr>\r\n  </table>\r\n\r\n  <hr style=\"border:none;border-top:2px solid #1a3a5c;margin:0 0 20px;\"/>\r\n\r\n  <!-- DESTINATARIO + META -->\r\n  <table style=\"width:100%;margin-bottom:22px;border-collapse:collapse;\">\r\n    <tr>\r\n      <td style=\"vertical-align:top;width:50%;\">\r\n        <div style=\"font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px;\">Data</div>\r\n        <div style=\"font-size:13px;font-weight:bold;\">{{data}}</div>\r\n        <div style=\"font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.07em;margin:8px 0 2px;\">Rif. N°</div>\r\n        <div style=\"font-size:13px;font-weight:bold;\">{{numero}}</div>\r\n      </td>\r\n      <td style=\"vertical-align:top;text-align:right;width:50%;\">\r\n        <div style=\"font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px;\">Spett.le</div>\r\n        <div style=\"font-size:15px;font-weight:bold;color:#1a3a5c;\">{{cliente_nome}}</div>\r\n        <div style=\"font-size:12px;color:#555;margin-top:4px;line-height:1.6;\">{{cliente_indirizzo}}</div>\r\n      </td>\r\n    </tr>\r\n  </table>\r\n\r\n  <!-- OGGETTO -->\r\n  <div style=\"font-size:13px;margin-bottom:10px;\">\r\n    <strong>Oggetto:</strong> Preventivo Ufficiale\r\n  </div>\r\n\r\n  <!-- CORPO -->\r\n  <div style=\"font-size:13px;margin-bottom:22px;line-height:1.7;\">\r\n    Gentile Cliente,<br/>\r\n    Vi rimettiamo la nostra offerta escluso IVA di:\r\n  </div>\r\n\r\n  <!-- ARTICOLI -->\r\n  {{articoli}}\r\n\r\n  <!-- TOTALE -->\r\n  <div style=\"text-align:right;margin-top:12px;padding:12px 16px;background:#f0f4fa;border-radius:4px;\">\r\n    {{totale}}\r\n  </div>\r\n\r\n  <!-- NOTE -->\r\n  {{note_block}}\r\n\r\n  <!-- FOOTER -->\r\n  <div style=\"position:absolute;bottom:24px;left:50px;right:50px;border-top:1px solid #ddd;padding-top:8px;font-size:9px;color:#888;text-align:center;line-height:1.6;\">\r\n    Digi Home Design S.r.l. — Via Roberto Antiochia 3, 90121 Palermo (PA) — P.IVA 07407080824 — Tel +39 351 871 6731 — info@digi-home-design.com — PEC digi_home_design_srl@namirialpec.it\r\n  </div>\r\n\r\n</div>',1,'2026-04-20 04:23:40','2026-05-17 12:59:43','preventivo'),(2,'Template Disegno Verticale','<div style=\"font-family:Arial,Helvetica,sans-serif;width:794px;height:1123px;padding:36px 44px 50px;box-sizing:border-box;overflow:hidden;position:relative;background:#fff;\"><div style=\"display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;\"><img src=\"/images/dg-t.png\" alt=\"Logo\" style=\"height:40px;display:block;\" /><img src=\"/images/nome_tr.png\" alt=\"\" style=\"height:40px;display:block;\" /></div><hr style=\"border:none;border-top:2px solid #1a3a5c;margin:0 0 10px;\" /><div style=\"text-align:right;font-size:10px;color:#666;margin-bottom:8px;\">{{data}}</div>{{titolo}}<div style=\"display:flex;justify-content:center;\">{{svg}}</div><div style=\"position:absolute;bottom:16px;left:44px;right:44px;border-top:1px solid #ddd;padding-top:5px;font-size:8px;color:#aaa;\">Digi Home Design S.r.l. — Via Roberto Antiochia 3, 90121 Palermo (PA) — P.IVA 07407080824 — Tel +39 351 871 6731 — info@digi-home-design.com</div></div>',1,'2026-04-23 11:14:47','2026-04-23 11:37:08','disegno_portrait'),(3,'Template Disegno Orizzontale','<div style=\"font-family:Arial,Helvetica,sans-serif;width:1123px;height:794px;padding:36px 44px 50px;box-sizing:border-box;overflow:hidden;position:relative;background:#fff;\"><div style=\"display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;\"><img src=\"/images/dg-t.png\" alt=\"Logo\" style=\"height:40px;display:block;\" /><img src=\"/images/nome_tr.png\" alt=\"\" style=\"height:40px;display:block;\" /></div><hr style=\"border:none;border-top:2px solid #1a3a5c;margin:0 0 10px;\" /><div style=\"text-align:right;font-size:10px;color:#666;margin-bottom:8px;\">{{data}}</div>{{titolo}}<div style=\"display:flex;justify-content:center;\">{{svg}}</div><div style=\"position:absolute;bottom:16px;left:44px;right:44px;border-top:1px solid #ddd;padding-top:5px;font-size:8px;color:#aaa;\">Digi Home Design S.r.l. — Via Roberto Antiochia 3, 90121 Palermo (PA) — P.IVA 07407080824 — Tel +39 351 871 6731 — info@digi-home-design.com</div></div>',1,'2026-04-23 11:14:47','2026-04-23 11:37:08','disegno_landscape'),(5,'Template Preventivo Provvisorio','<div style=\"font-family:Arial,Helvetica,sans-serif;width:794px;min-height:1050px;padding:40px 50px 90px;position:relative;background:#fff;box-sizing:border-box;\">\r\n\r\n  <!-- HEADER -->\r\n  <table style=\"width:100%;margin-bottom:20px;border-collapse:collapse;\">\r\n    <tr>\r\n      <td style=\"vertical-align:top;width:50%;\">\r\n        <img src=\"/images/header/qqqqqqqqqqqqqqqqqqq-Photoroom.png\" alt=\"Logo\" style=\"height:52px;margin-bottom:10px;display:block;\"/>\r\n        <div style=\"font-size:17px;font-weight:bold;color:#1a3a5c;\">Digi Home Design S.r.l.</div>\r\n        <div style=\"font-size:11px;color:#555;line-height:1.7;margin-top:4px;\">\r\n          Via Roberto Antiochia 3, 90121 Palermo (PA)<br/>\r\n          P.IVA: 07407080824<br/>\r\n          Tel: +39 351 871 6731<br/>\r\n          info@digi-home-design.com\r\n        </div>\r\n      </td>\r\n    </tr>\r\n  </table>\r\n\r\n  <hr style=\"border:none;border-top:2px solid #1a3a5c;margin:0 0 20px;\"/>\r\n\r\n  <!-- DESTINATARIO + META -->\r\n  <table style=\"width:100%;margin-bottom:22px;border-collapse:collapse;\">\r\n    <tr>\r\n      <td style=\"vertical-align:top;width:50%;\">\r\n        <div style=\"font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px;\">Data</div>\r\n        <div style=\"font-size:13px;font-weight:bold;\">{{data}}</div>\r\n        <div style=\"font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.07em;margin:8px 0 2px;\">Rif. N°</div>\r\n        <div style=\"font-size:13px;font-weight:bold;\">{{numero}}</div>\r\n      </td>\r\n      <td style=\"vertical-align:top;text-align:right;width:50%;\">\r\n        <div style=\"font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px;\">Spett.le</div>\r\n        <div style=\"font-size:15px;font-weight:bold;color:#1a3a5c;\">{{cliente_nome}}</div>\r\n        <div style=\"font-size:12px;color:#555;margin-top:4px;line-height:1.6;\">{{cliente_indirizzo}}</div>\r\n      </td>\r\n    </tr>\r\n  </table>\r\n\r\n  <!-- OGGETTO -->\r\n  <div style=\"font-size:13px;margin-bottom:10px;\">\r\n    <strong>Oggetto:</strong> Preventivo Provvisorio\r\n  </div>\r\n\r\n  <!-- CORPO -->\r\n  <div style=\"font-size:13px;margin-bottom:22px;line-height:1.7;\">\r\n    Gentile Cliente,<br/>\r\n    Vi rimettiamo la nostra offerta escluso IVA di:\r\n  </div>\r\n\r\n  <!-- ARTICOLI -->\r\n  {{articoli}}\r\n\r\n  <!-- TOTALE -->\r\n  <div style=\"text-align:right;margin-top:2px;padding:2px 2px;background:#f0f4fa;border-radius:4px;\">\r\n    {{totale}}\r\n  </div>\r\n\r\n  <!-- NOTE -->\r\n  {{note_block}}\r\n\r\n  <!-- FOOTER -->\r\n  <div style=\"position:absolute;bottom:24px;left:50px;right:50px;border-top:1px solid #ddd;padding-top:8px;font-size:9px;color:#888;text-align:center;line-height:1.6;\">\r\n    Digi Home Design S.r.l. — Via Roberto Antiochia 3, 90121 Palermo (PA) — P.IVA 07407080824 — Tel +39 351 871 6731 — info@digi-home-design.com — PEC digi_home_design_srl@namirialpec.it\r\n  </div>\r\n\r\n</div>',1,'2026-04-26 21:00:58','2026-05-17 13:01:52','preventivo_provvisorio');
 /*!40000 ALTER TABLE `preventivo_templates` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -995,9 +1122,10 @@ CREATE TABLE `users` (
   `cellulare_verificato` tinyint(1) NOT NULL DEFAULT '0',
   `cantieri_visibili` tinyint(1) NOT NULL DEFAULT '1',
   `miei_ordini_visibili` tinyint(1) NOT NULL DEFAULT '1',
+  `cliente_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1006,7 +1134,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'admin1','aaa','admin',1,'Roberto','Admini','1980-02-03','bari','admin@mef.it',0,'+39 335 0000001',0,1,1),(2,'magazziniere','aaa','magazzino',1,'Enzo','Magazzini','1980-02-03','bari','magazzino@mef.it',0,'+39 335 0000002',0,1,1),(3,'ragioniere','aaa','ragioniere',1,'Carla','Ragionieri','1980-02-03','bari','ragioniere@mef.it',0,'+39 335 0000003',0,1,1),(4,'email','aaa','email',1,'Simonetta','Emaili','1980-02-03','bari','email@mef.it',0,'+39 335 0000004',0,1,1),(5,'mariorossi','aaa','ragioniere',0,'Mario','Rossi','1980-02-03','bari','mariorossi@libero.it',0,'+39 335 0000005',0,1,1),(6,'formicus','aaa','cliente',1,'leonardo','di giovanni','1972-12-23','palermo','leonardodigiovanni@tiscali.it',1,'3476468185',1,0,1),(7,'mario.rossi','aaa','ragioniere',1,'Mario','Rossi','1980-03-15','Roma','mario.rossi@digihomedesign.it',1,'+39 331 1234001',1,1,1),(8,'giulia.bianchi','aaa','cliente',1,'Giulia','Bianchi','1985-07-22','Milano','giulia.bianchi@digihomedesign.it',1,'+39 331 1234002',1,1,1),(9,'luca.verdi','aaa','venditore',1,'Luca','Verdi','1990-11-08','Napoli','luca.verdi@digihomedesign.it',1,'+39 331 1234003',1,1,1),(10,'andrea.neri','aaaa','admin',1,'Andrea','Neri','1988-05-30','Torino','andrea.neri@digihomedesign.it',1,'+39 331 1234004',1,1,1),(11,'sofia.russo','aaa','direttore',1,'Sofia','Russo','1975-09-12','Firenze','sofia.russo@digihomedesign.it',1,'+39 331 1234005',1,1,1),(12,'marco.ferrari','aaa','marketing',1,'Marco','Ferrari','1992-01-25','Bologna','marco.ferrari@digihomedesign.it',1,'+39 331 1234006',1,1,1),(13,'prova','aaa','dipendente',1,'provino','provetta','2000-01-01','palermo','prova@libero.it',1,'345999999',1,1,1),(14,'zigfffff','aaa','cliente',1,'Salvatore','Di Giovanni','2010-03-19','palermo','sd1927@libero.it',1,'3555555555',1,1,1),(15,'polipo99_','polipo99','cliente',1,'Salvatore','Di Giovanni','2026-04-13','palermo','fd393@libero.it',1,'3279991927',1,1,1);
+INSERT INTO `users` VALUES (1,'admin1','aaa','admin',1,'Roberto','Admini','1980-02-03','bari','admin@mef.it',0,'+39 335 0000001',0,1,1,NULL),(2,'magazziniere','aaa','magazzino',1,'Enzo','Magazzini','1980-02-03','bari','magazzino@mef.it',0,'+39 335 0000002',0,1,1,NULL),(3,'ragioniere','aaa','ragioniere',1,'Carla','Ragionieri','1980-02-03','bari','ragioniere@mef.it',0,'+39 335 0000003',0,1,1,NULL),(4,'email','aaa','email',1,'Simonetta','Emaili','1980-02-03','bari','email@mef.it',0,'+39 335 0000004',0,1,1,NULL),(5,'mariorossi','aaa','ragioniere',0,'Mario','Rossi','1980-02-03','bari','mariorossi@libero.it',0,'+39 335 0000005',0,1,1,NULL),(6,'formicus','aaa','cliente',1,'leonardo','di giovanni','1972-12-23','palermo','leonardodigiovanni@tiscali.it',1,'3476468185',1,0,1,1),(7,'mario.rossi','aaa','ragioniere',1,'Mario','Rossi','1980-03-15','Roma','mario.rossi@digihomedesign.it',1,'+39 331 1234001',1,1,1,NULL),(8,'giulia.bianchi','aaa','cliente',1,'Giulia','Bianchi','1985-07-22','Milano','giulia.bianchi@digihomedesign.it',1,'+39 331 1234002',1,1,1,NULL),(9,'luca.verdi','aaa','venditore',1,'Luca','Verdi','1990-11-08','Napoli','luca.verdi@digihomedesign.it',1,'+39 331 1234003',1,1,1,NULL),(10,'andrea.neri','aaaa','admin',1,'Andrea','Neri','1988-05-30','Torino','andrea.neri@digihomedesign.it',1,'+39 331 1234004',1,1,1,NULL),(11,'sofia.russo','aaa','direttore',1,'Sofia','Russo','1975-09-12','Firenze','sofia.russo@digihomedesign.it',1,'+39 331 1234005',1,1,1,NULL),(12,'marco.ferrari','aaa','marketing',1,'Marco','Ferrari','1992-01-25','Bologna','marco.ferrari@digihomedesign.it',1,'+39 331 1234006',1,1,1,NULL),(13,'prova','aaa','dipendente',1,'provino','provetta','2000-01-01','palermo','prova@libero.it',1,'345999999',1,1,1,NULL),(14,'zigfffff','aaa','cliente',1,'Salvatore','Di Giovanni','2010-03-19','palermo','sd1927@libero.it',1,'3555555555',1,1,1,NULL),(16,'cliente1','cliente1','cliente',1,'cliente','clienti','2010-10-10','palermo','fd393@libero.it',1,'3518716731',1,1,1,NULL),(17,'cliente2','cliente2','cliente',0,'cliente2','cliente2','2001-01-01','palermo','aledigio83@libero.it',1,'3331234567',1,1,1,NULL),(18,'cliente3','cliente3','cliente',0,'cliente3','cliente3','2001-01-01','palermo','cliente3@libero.it',1,'3334444447',1,1,1,3),(19,'cliente4','cliente4','cliente',1,'cliente4','cliente4','2001-01-01','palermo','cliente4@libero.it',1,'3443333337',1,1,1,4),(20,'aaaaaa','aaaaaaaa','cliente',1,'aaa','aaa','2001-01-01','aaa','aaa@aaa.it',1,'3456789098',1,1,1,5);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1028,7 +1156,7 @@ CREATE TABLE `worklist` (
   `data_scadenza` date DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1037,7 +1165,7 @@ CREATE TABLE `worklist` (
 
 LOCK TABLES `worklist` WRITE;
 /*!40000 ALTER TABLE `worklist` DISABLE KEYS */;
-INSERT INTO `worklist` VALUES (1,'bagno e cucina','piastrelle nere nel bagno secondario','prova','admin1','normale','in_corso','2026-04-12','2026-04-10 23:27:25'),(2,'bagno','entro mercoledi devi mettere la fuga.','giulia.bianchi','admin1','normale','da_fare','2026-04-15','2026-04-13 20:08:11');
+INSERT INTO `worklist` VALUES (1,'bagno e cucina','piastrelle nere nel bagno secondario','prova','admin1','normale','in_corso','2026-04-12','2026-04-10 23:27:25'),(2,'bagno','entro mercoledi devi mettere la fuga.','giulia.bianchi','admin1','normale','da_fare','2026-04-15','2026-04-13 20:08:11'),(3,'bagno','preventivo','admin1','admin1','normale','da_fare',NULL,'2026-05-30 04:15:35');
 /*!40000 ALTER TABLE `worklist` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -1050,4 +1178,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-05-16 17:38:04
+-- Dump completed on 2026-06-08 19:57:09
