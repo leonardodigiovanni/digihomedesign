@@ -80,7 +80,7 @@ export default function AppPage() {
           <p className="testo-articoli" style={{ margin: 0, lineHeight: 1.6 }}>
             Disponibile per Android e iPhone. Accedi con le tue credenziali DIGI Home Design.
           </p>
-          <Image src="/images/cta/digi-home-design-app.png" alt="QR code sito" width={140} height={140} style={{ display: 'block' }} />
+          <Image src="/images/cta/digi-home-design-srl-app.png" alt="QR code sito" width={140} height={140} style={{ display: 'block' }} />
         </div>
 
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>

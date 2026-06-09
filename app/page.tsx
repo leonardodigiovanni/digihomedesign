@@ -76,7 +76,7 @@ export default async function Page() {
             <span className="testo-cta"><span className="animato">Foto/Video dal tuo Cantiere Online</span></span>
           </Link>
           <Link href="/app-download" className="cta-home-btn cta-home-btn-app">
-            <Image src="/images/cta/digi-home-design-app.png" alt="App" width={70} height={70} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '60%', flexShrink: 1 }} unoptimized />
+            <Image src="/images/cta/digi-home-design-srl-app.png" alt="App" width={70} height={70} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '60%', flexShrink: 1 }} unoptimized />
             <span className="testo-cta"><span className="animato">Scarica la comoda DIGI-App</span> (Android/Apple)</span>
           </Link>
         </div>
