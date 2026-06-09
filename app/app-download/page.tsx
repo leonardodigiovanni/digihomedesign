@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
-const APP_URL = 'https://www.digi-home-design.com'
+const APP_URL = 'https://digi-home-design.com/app'
 
 const stepStyle: React.CSSProperties = {
   display: 'flex',
