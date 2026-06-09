@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { BookOpen } from 'lucide-react'
 
 const GOLD: React.CSSProperties = {
@@ -75,13 +76,28 @@ const DocumentiSvg = () => (
   </div>
 )
 
-const NotificheSvg = () => (
-  <div style={GOLD}>
-    <svg width="34" height="34" viewBox="0 0 24 24">
-      <path fill="#000000" d="M12 5a1 1 0 0 1 1 1v.28A4.5 4.5 0 0 1 16.5 10.5v2.25l1.3 1.95A.75.75 0 0 1 17.17 16H6.83a.75.75 0 0 1-.63-1.3l1.3-1.95V10.5A4.5 4.5 0 0 1 11 6.28V6a1 1 0 0 1 1-1Zm-1.5 12h3a1.5 1.5 0 0 1-3 0Z"/>
-    </svg>
-  </div>
-)
+function AvvisiIcon({ count }: { count: number }) {
+  return (
+    <div style={{ position: 'relative', width: 44, height: 44 }}>
+      <div style={GOLD}>
+        <svg width="34" height="34" viewBox="0 0 24 24">
+          <path fill="#000000" d="M12 5a1 1 0 0 1 1 1v.28A4.5 4.5 0 0 1 16.5 10.5v2.25l1.3 1.95A.75.75 0 0 1 17.17 16H6.83a.75.75 0 0 1-.63-1.3l1.3-1.95V10.5A4.5 4.5 0 0 1 11 6.28V6a1 1 0 0 1 1-1Zm-1.5 12h3a1.5 1.5 0 0 1-3 0Z"/>
+        </svg>
+      </div>
+      {count > 0 && (
+        <span style={{
+          position: 'absolute', top: 2, right: 0,
+          background: '#c00', color: '#fff', borderRadius: '50%',
+          minWidth: 18, height: 18, fontSize: 11, fontWeight: 700,
+          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+          padding: '0 4px', lineHeight: 1,
+        }}>
+          {count > 99 ? '99+' : count}
+        </span>
+      )}
+    </div>
+  )
+}
 
 const ContattiSvg = () => (
   <div style={GOLD}>
@@ -97,12 +113,23 @@ export default function AppBottomNav({
   username,
   preventivoCartCount = 0,
   acquistiCartCount = 0,
+  avvisiUnreadCount = 0,
 }: {
   username: string | null
   preventivoCartCount?: number
   acquistiCartCount?: number
+  avvisiUnreadCount?: number
 }) {
   const pathname = usePathname()
+  const [avvisiCount, setAvvisiCount] = useState(avvisiUnreadCount)
+
+  useEffect(() => {
+    function onUpdate(e: Event) {
+      setAvvisiCount((e as CustomEvent<{ count: number }>).detail.count)
+    }
+    window.addEventListener('avvisi-count-changed', onUpdate)
+    return () => window.removeEventListener('avvisi-count-changed', onUpdate)
+  }, [])
 
   if (!username && (pathname === '/app' || pathname === '/app/login')) return null
 
@@ -114,7 +141,7 @@ export default function AppBottomNav({
     { href: '/app/preventivo',        label: 'I miei preventivi', node: <div style={GOLD}><Image src="/images/cta/preventivo-online-t.png" alt="Preventivo" width={36} height={36} style={{ objectFit: 'contain' }} /></div> },
     { href: '/app/cantiere',          label: 'I miei cantieri', node: <div style={GOLD}><Image src="/images/cta/cantieri-online-t.png" alt="Cantiere" width={36} height={36} style={{ objectFit: 'contain' }} /></div> },
     { href: '/app/documenti',         label: 'Documenti',     node: <DocumentiSvg /> },
-    { href: '/app/avvisi',            label: 'Avvisi',        node: <NotificheSvg /> },
+    { href: '/app/avvisi',            label: 'Avvisi',        node: <AvvisiIcon count={avvisiCount} /> },
     { href: '/app/contatti',          label: 'Contatti',      node: <ContattiSvg /> },
   ]
 

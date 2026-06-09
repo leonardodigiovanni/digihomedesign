@@ -5,6 +5,7 @@ import AppBottomNav from './app-bottom-nav'
 import { appLogout } from './login/actions'
 import AvvisiNotifier from '@/components/avvisi-notifier'
 import { decompressCart } from '@/lib/cart-cookie'
+import { getConnection } from '@/lib/db'
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies()
@@ -12,6 +13,24 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const role     = cookieStore.get('session_role')?.value ?? ''
   const preventivoCartCount = decompressCart(cookieStore.get('digi_cart')?.value ?? '').filter(i => i.parent == null).length
   const acquistiCartCount   = decompressCart(cookieStore.get('digi_cart_acquisti')?.value ?? '').filter(i => i.parent == null).length
+
+  let avvisiUnreadCount = 0
+  if (username && role === 'cliente') {
+    const db = await getConnection()
+    try {
+      const [uRows] = await db.execute('SELECT email FROM users WHERE username = ? LIMIT 1', [username]) as [{ email: string }[], unknown]
+      const email = uRows[0]?.email ?? ''
+      if (email) {
+        const [cRows] = await db.execute('SELECT id FROM clienti WHERE email = ? LIMIT 1', [email]) as [{ id: number }[], unknown]
+        const clienteId = cRows[0]?.id
+        if (clienteId) {
+          const [cnt] = await db.execute('SELECT COUNT(*) AS n FROM avvisi WHERE cliente_id = ? AND letto = 0 AND cestinato = 0', [clienteId]) as [{ n: number }[], unknown]
+          avvisiUnreadCount = Number(cnt[0]?.n ?? 0)
+        }
+      }
+    } catch {}
+    finally { await db.end() }
+  }
 
   return (
     <div className="app-shell">
@@ -44,7 +63,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       </main>
 
       {role === 'cliente' && <AvvisiNotifier />}
-      <AppBottomNav username={username} preventivoCartCount={preventivoCartCount} acquistiCartCount={acquistiCartCount} />
+      <AppBottomNav username={username} preventivoCartCount={preventivoCartCount} acquistiCartCount={acquistiCartCount} avvisiUnreadCount={avvisiUnreadCount} />
 
     </div>
   )
