@@ -82,7 +82,7 @@ function LoginBanner({ hasLacune, cataloghiHref = '/brand/cataloghi' }: { hasLac
   }, [open])
 
   return (
-    <div style={{ background: 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 10, padding: 12 }}>
+    <div style={{ background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 10, padding: 12 }}>
       {!hasLacune && (
         <div style={{ background: '#e8e8e8', borderRadius: 6, overflow: 'hidden', marginBottom: 14 }}>
           <div style={{ padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -134,7 +134,7 @@ function LoginBanner({ hasLacune, cataloghiHref = '/brand/cataloghi' }: { hasLac
           {open && (
             <div style={{
               position: 'absolute', top: 'calc(100% + 8px)', left: 0,
-              background: 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 6,
+              background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 6,
               boxShadow: '0 4px 20px rgba(0,0,0,0.12)', minWidth: 210, zIndex: 200,
             }}>
               <DropdownLoginForm />
@@ -203,7 +203,7 @@ export default function CarrelloClient({
     const s = fmt(value)
     const idx = s.lastIndexOf(',')
     return (
-      <div style={{ display: 'flex', alignItems: 'baseline', fontFamily: 'monospace', fontSize: 14 }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', fontFamily: 'monospace', fontSize: 12 }}>
         <span style={{ flex: 1, textAlign: 'right' }}>{s.slice(0, idx)}</span>
         <span>{s.slice(idx)}</span>
       </div>
@@ -411,18 +411,20 @@ export default function CarrelloClient({
   // ── stili ──────────────────────────────────────────────────────────────────
 
   const thS: React.CSSProperties = {
-    padding: '8px 8px', fontSize: 14, fontWeight: 700, color: '#1a1a1a',
+    padding: '8px 8px', fontSize: 12, fontWeight: 700, color: '#1a1a1a',
     textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.06em',
-    background: 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', borderBottom: '1px solid #222', whiteSpace: 'nowrap',
+    borderBottom: '1px solid #222', whiteSpace: 'nowrap',
     fontFamily: 'monospace',
   }
   const tdS: React.CSSProperties = {
-    padding: '2px 8px', fontSize: 14, color: '#333',
+    padding: '2px 8px', fontSize: 12, color: '#1a1a1a',
     borderBottom: '1px solid #333', verticalAlign: 'middle',
     overflow: 'hidden', wordBreak: 'break-word',
     fontFamily: 'monospace',
   }
 
+  const VERDE = 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)'
+  const ROSA  = 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)'
   const inpS: React.CSSProperties = {
     width: '100%', padding: '7px 10px', border: '1px solid #ddd', borderRadius: 6,
     fontSize: 14, fontFamily: 'inherit', boxSizing: 'border-box',
@@ -506,7 +508,6 @@ export default function CarrelloClient({
                       <span style={{ fontSize: 14, fontWeight: isSel ? 700 : 400, color: '#1a1a1a', lineHeight: 1.4 }}>
                         {c.produttore ? `${c.produttore} · ` : ''}{c.descrizione}
                         {magg && <span style={{ color: '#b45000', fontWeight: 600 }}> (Magg. del {magg}%)</span>}
-                        {c.prezzo_vendita > 0 && <span style={{ color: '#555' }}> — € {fmt(Number(c.prezzo_vendita))}/{c.unita}</span>}
                       </span>
                       {c.categoria && <span style={{ fontSize: 14, color: '#1a1a1a', marginTop: 2 }}>{c.categoria}</span>}
                     </div>
@@ -634,7 +635,7 @@ export default function CarrelloClient({
       {renderModal()}
 
       {/* Bottoni aggiunta articoli */}
-      <div style={{ background: 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 10, padding: 12 }}>
+      <div style={{ background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 10, padding: 12 }}>
 
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <a href={cataloghiHref} className="btn-green" style={{
@@ -696,11 +697,11 @@ export default function CarrelloClient({
 
         const renderColgroup = () => (
           <colgroup>
-            <col style={{ width: 58 }} />
-            <col style={{ width: 52 }} />
+            <col style={{ width: 50 }} />
+            <col style={{ width: 54 }} />
             <col />
-            <col style={{ width: 84 }} />
-            <col style={{ width: 58 }} />
+            <col style={{ width: 70 }} />
+            <col style={{ width: 50 }} />
           </colgroup>
         )
 
@@ -708,26 +709,29 @@ export default function CarrelloClient({
         return (
           <div className="carrello-overflow" style={{ overflowX: 'auto' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12, width: '100%' }}>
-            {catGroups.map(cg => (
-              <div key={cg.key} className="class_silver_D_safe" style={{ background: 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 8, overflow: 'hidden', width: '100%', boxSizing: 'border-box' }}>
+            {catGroups.map(cg => {
+              const groupComplete = cg.groups.every(grp => getLacuneAperte(grp[0]).length === 0)
+              const groupBg = groupComplete ? VERDE : ROSA
+              return (
+              <div key={cg.key} style={{ background: groupBg, border: '1px solid #222', borderRadius: 8, overflow: 'hidden', width: '100%', boxSizing: 'border-box' }}>
                 {/* Label gruppo */}
-                <div style={{ padding: '6px 14px', background: 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', borderBottom: '1px solid #222', fontSize: 14, fontWeight: 700, color: '#7a6000', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                <div style={{ padding: '6px 14px', background: VERDE, borderBottom: '1px solid #222', fontSize: 12, fontWeight: 700, color: '#1a1a1a', fontFamily: 'monospace' }}>
                   {cg.label}
                 </div>
                 <table className="carrello-table" style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
                   {renderColgroup()}
                   <thead>
-                    <tr>
-                      <th style={{ ...thS, textAlign: 'center', width: 58 }}>
+                    <tr style={{ background: VERDE }}>
+                      <th style={{ ...thS, textAlign: 'center', width: 50 }}>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="10" cy="18" r="2" fill="currentColor" stroke="none"/></svg>
                         </div>
                       </th>
-                      <th style={{ ...thS, textAlign: 'center', width: 52 }}>Q.tà<br/>Rif.</th>
-                      <th style={thS}>Articolo</th>
-                      <th style={{ ...thS, textAlign: 'center', width: 84 }}>Prezzo<br/>€</th>
-                      <th style={{ ...thS, textAlign: 'center', padding: '8px 0', width: 58 }}>
+                      <th style={{ ...thS, textAlign: 'center', width: 54 }}>Q.tà<br/>Rif.</th>
+                      <th style={{ ...thS }}>Articolo</th>
+                      <th style={{ ...thS, textAlign: 'center', width: 70, textTransform: 'none', letterSpacing: 0 }}>Prezzo €</th>
+                      <th style={{ ...thS, textAlign: 'center', padding: '8px 0', width: 50 }}>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                           <span style={{ fontSize: 14, display: 'inline-block', transform: 'rotate(135deg)', lineHeight: 1 }}>✏</span>
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -754,7 +758,7 @@ export default function CarrelloClient({
                       return (
                         <React.Fragment key={root.index}>
                           {/* Riga articolo principale */}
-                          <tr style={{ background: expandBgRoot ?? 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', borderTop: groupIdx > 0 ? '1px solid #333' : undefined }}>
+                          <tr style={{ background: hasLacune ? ROSA : VERDE, borderTop: groupIdx > 0 ? '1px solid #333' : undefined }}>
                             <td style={{ ...tdS, textAlign: 'center', padding: '4px 0' }}>
                               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
                                 <button type="button" onClick={() => setPreviewArt(root)} disabled={hasLacune} className={hasLacune ? 'btn-gray' : 'btn-black'} title="Anteprima infisso"
@@ -773,11 +777,11 @@ export default function CarrelloClient({
                             </td>
                             <td style={{ ...tdS, padding: 0, height: 1 }}>
                               <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid #333', fontSize: 14, color: '#1a1a1a', padding: '0 4px' }}>
+                                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid #333', fontSize: 12, color: '#1a1a1a', padding: '0 4px' }}>
                                   N°&nbsp;{root.quantita}
                                 </div>
-                                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, color: '#1a1a1a', padding: '0 4px' }}>
-                                  Rif#{String(gi + 1).padStart(3, '0')}
+                                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, color: '#1a1a1a', padding: '0 4px' }}>
+                                  rif #{String(gi + 1).padStart(3, '0')}
                                 </div>
                               </div>
                             </td>
@@ -789,10 +793,9 @@ export default function CarrelloClient({
                                 if (root.larghezza_cm) parts.push(`L:${root.larghezza_cm}`)
                                 if (root.altezza_cm)   parts.push(`H:${root.altezza_cm}`)
                                 if (root.colore)       parts.push(root.colore)
-                                parts.push(`€${fmt(Number(root.prezzo_vendita))}/${root.unita}`)
-                                return <div style={{ fontSize: 14, color: '#1a1a1a', marginTop: 1 }}>{parts.join(' · ')}</div>
+                                return <div style={{ fontSize: 12, color: '#1a1a1a', marginTop: 1 }}>{parts.join(' · ')}</div>
                               })()}
-                              {root.note && <div style={{ fontSize: 14, color: '#1a1a1a', marginTop: 1, fontStyle: 'italic' }}>{root.note}</div>}
+                              {root.note && <div style={{ fontSize: 12, color: '#1a1a1a', marginTop: 1, fontStyle: 'italic' }}>{root.note}</div>}
                             </td>
                             <td style={{ ...tdS, whiteSpace: 'nowrap', padding: '2px 0 2px 4px' }}>
                               {renderPrezzo(isExpanded
@@ -815,7 +818,7 @@ export default function CarrelloClient({
                           </tr>
                           {/* Righe caratteristiche figlie */}
                           {isExpanded && children.map(child => (
-                            <tr key={child.index} style={{ background: expandBg ?? 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)' }}>
+                            <tr key={child.index} style={{ background: '#ffffff' }}>
                               <td style={{ ...tdS, padding: 4, textAlign: 'center' }}>
                                 {child.foto_url && (
                                   // eslint-disable-next-line @next/next/no-img-element
@@ -838,13 +841,12 @@ export default function CarrelloClient({
                                 {(() => {
                                   const parts: string[] = []
                                   if (child.ante && child.ante > 1) parts.push(`${child.ante} ante`)
-                                  if (child.larghezza_cm) parts.push(`L:${child.larghezza_cm}`)
-                                  if (child.altezza_cm)   parts.push(`H:${child.altezza_cm}`)
+                                  if (child.larghezza_cm && !child.richiede_tipo_vetro) parts.push(`L:${child.larghezza_cm}`)
+                                  if (child.altezza_cm   && !child.richiede_tipo_vetro) parts.push(`H:${child.altezza_cm}`)
                                   if (child.colore)       parts.push(child.colore)
-                                  parts.push(`€${fmt(Number(child.prezzo_vendita))}/${child.unita}`)
-                                  return <div style={{ fontSize: 14, color: '#1a1a1a', marginTop: 1 }}>{parts.join(' · ')}</div>
+                                  return <div style={{ fontSize: 12, color: '#1a1a1a', marginTop: 1 }}>{parts.join(' · ')}</div>
                                 })()}
-                                {child.note && <div style={{ fontSize: 14, color: '#1a1a1a', marginTop: 1, fontStyle: 'italic' }}>{child.note}</div>}
+                                {child.note && <div style={{ fontSize: 12, color: '#1a1a1a', marginTop: 1, fontStyle: 'italic' }}>{child.note}</div>}
                               </td>
                               <td style={{ ...tdS, whiteSpace: 'nowrap', padding: '2px 0 2px 4px' }}>
                                 {renderPrezzo(calcolaPrezzo(child, articoli))}
@@ -862,30 +864,30 @@ export default function CarrelloClient({
                             const lacuneCount = [showColore, showColoreAcc, showVetro, showMontaggio].filter(Boolean).length
                             const cols = lacuneCount <= 3 ? lacuneCount : 2
                             return (
-                              <tr style={{ background: 'transparent' }}>
-                                <td colSpan={5} style={{ padding: 12, borderBottom: '1px solid #333', borderRight: 'none', textAlign: 'left', background: expandBg }}>
+                              <tr style={{ background: '#ffffff' }}>
+                                <td colSpan={5} style={{ padding: 12, borderBottom: '1px solid #333', borderRight: 'none', textAlign: 'left', background: '#ffffff' }}>
                                   <div style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: 10 }}>
                                     {showColore && (
-                                      <button type="button" onClick={() => handleAggiungiLacuna(root, 'tipo_colore')} className="btn-green"
-                                        style={{ height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, fontFamily: 'monospace', whiteSpace: 'nowrap', borderRadius: 21 }}>
+                                      <button type="button" onClick={() => handleAggiungiLacuna(root, 'tipo_colore')}
+                                        style={{ height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, fontFamily: 'monospace', whiteSpace: 'nowrap', borderRadius: 21, border: '1px solid #000', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>
                                         + Colore
                                       </button>
                                     )}
                                     {showColoreAcc && (
-                                      <button type="button" onClick={() => handleAggiungiLacuna(root, 'tipo_colore_acc')} className="btn-green"
-                                        style={{ height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, fontFamily: 'monospace', whiteSpace: 'nowrap', borderRadius: 21 }}>
+                                      <button type="button" onClick={() => handleAggiungiLacuna(root, 'tipo_colore_acc')}
+                                        style={{ height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, fontFamily: 'monospace', whiteSpace: 'nowrap', borderRadius: 21, border: '1px solid #000', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>
                                         + Accessori
                                       </button>
                                     )}
                                     {showVetro && (
-                                      <button type="button" onClick={() => handleAggiungiLacuna(root, 'tipo_vetro')} className="btn-green"
-                                        style={{ height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, fontFamily: 'monospace', whiteSpace: 'nowrap', borderRadius: 21 }}>
+                                      <button type="button" onClick={() => handleAggiungiLacuna(root, 'tipo_vetro')}
+                                        style={{ height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, fontFamily: 'monospace', whiteSpace: 'nowrap', borderRadius: 21, border: '1px solid #000', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>
                                         + Vetro
                                       </button>
                                     )}
                                     {showMontaggio && (
-                                      <button type="button" onClick={() => handleAggiungiLacuna(root, 'tipo_montaggio')} className="btn-green"
-                                        style={{ height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, fontFamily: 'monospace', whiteSpace: 'nowrap', borderRadius: 21 }}>
+                                      <button type="button" onClick={() => handleAggiungiLacuna(root, 'tipo_montaggio')}
+                                        style={{ height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, fontFamily: 'monospace', whiteSpace: 'nowrap', borderRadius: 21, border: '1px solid #000', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>
                                         + Montaggio
                                       </button>
                                     )}
@@ -900,20 +902,13 @@ export default function CarrelloClient({
                   </tbody>
                 </table>
               </div>
-            ))}
+            )})}
 
             {/* Totale */}
-            <div style={{ background: 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 8, padding: '12px 20px 12px 20px', display: 'flex', flexDirection: 'column', gap: 4 }}>
-              <div style={{ display: 'flex', alignItems: 'center', paddingRight: 38 }}>
-                <div style={{ width: 37, flexShrink: 0 }} />
-                <div style={{ width: 72, flexShrink: 0, textAlign: 'center', fontFamily: 'monospace', fontWeight: 700, fontSize: 14, color: '#1a1a1a' }}>
-                  N°&nbsp;{totaleQuantita}
-                </div>
-                <span style={{ flex: 1, paddingLeft: 8, fontSize: 14, color: '#1a1a1a', fontFamily: 'monospace', fontWeight: 700 }}>Totale:</span>
-                <span style={{ fontSize: 14, fontWeight: 700, color: '#1a1a1a', fontFamily: 'monospace' }}>
-                  € {fmt(totale).slice(0, fmt(totale).lastIndexOf(','))}
-                  <span style={{ fontSize: 14, fontFamily: 'monospace', fontWeight: 700 }}>{fmt(totale).slice(fmt(totale).lastIndexOf(','))}</span>
-                </span>
+            <div style={{ background: VERDE, border: '1px solid #222', borderRadius: 8, padding: '12px 50px 12px 20px', display: 'flex', flexDirection: 'column', gap: 4, color: '#1a1a1a' }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <span style={{ flex: 1, fontSize: 12, color: '#1a1a1a', fontFamily: 'monospace', fontWeight: 700 }}>Listino (escluso IVA):</span>
+                <span style={{ fontSize: 12, fontWeight: 700, color: '#1a1a1a', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>{`€ ${fmt(totale)}`}</span>
               </div>
             </div>
           </div>
@@ -923,7 +918,7 @@ export default function CarrelloClient({
 
       {/* Barra azioni */}
       <div style={{
-        background: 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 10,
+        background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 10,
         padding: 12, display: 'flex', flexDirection: 'column', gap: 8,
       }}>
         {articoli.length === 0 ? (

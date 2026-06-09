@@ -160,7 +160,7 @@ function DatiPreventivo({ preventivo, readOnly = false, isStaff = false }: { pre
 
   if (readOnly) {
     return (
-      <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 8, padding: '10px 16px' }}>
+      <div style={{ background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 8, padding: '10px 16px' }}>
         {header}
         {open && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 10 }}>
@@ -183,7 +183,7 @@ function DatiPreventivo({ preventivo, readOnly = false, isStaff = false }: { pre
   }
 
   return (
-    <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 8, padding: '10px 16px' }}>
+    <div style={{ background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 8, padding: '10px 16px' }}>
       {header}
       {open && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 10 }}>
@@ -261,7 +261,7 @@ function ClienteSelector({ preventivo_id, cliente_id, clienti }: {
 
   return (
     <div style={{
-      background: '#fff', border: '1px solid #c8960c', borderRadius: 8,
+      background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 8,
       padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap',
     }}>
       <span style={{ fontSize: 13, color: '#555', fontWeight: 600, whiteSpace: 'nowrap' }}>Cliente:</span>
@@ -1141,16 +1141,19 @@ export default function PreventivoClient({
 
 
   const thS: React.CSSProperties = {
-    padding: '8px 8px', fontSize: 13, fontWeight: 700, color: '#1a1a1a',
+    padding: '8px 8px', fontSize: 12, fontWeight: 700, color: '#1a1a1a',
     textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.06em',
-    background: '#fff', borderBottom: '1px solid #c8960c', whiteSpace: 'nowrap',
+    borderBottom: '1px solid #222', whiteSpace: 'nowrap',
     fontFamily: 'monospace',
   }
   const tdS: React.CSSProperties = {
-    padding: '2px 8px', fontSize: 12, color: '#333',
-    borderBottom: '1px solid #c8960c', verticalAlign: 'middle',
+    padding: '2px 8px', fontSize: 12, color: '#1a1a1a',
+    borderBottom: '1px solid #222', verticalAlign: 'middle',
     overflow: 'hidden', wordBreak: 'break-word', fontFamily: 'monospace',
   }
+
+  const VERDE = 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)'
+  const ROSA  = 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)'
 
   function renderPrezzo(value: number) {
     const s = fmt(value)
@@ -1195,7 +1198,7 @@ export default function PreventivoClient({
       )}
 
       {/* Pulsanti azione */}
-      <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 8, padding: '12px 16px', display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+      <div style={{ background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 8, padding: '12px 16px', display: 'flex', gap: 10, flexWrap: 'wrap' }}>
         {(preventivo.stato === 'bozza' || (isStaff && preventivo.stato === 'da inviare')) && (
           <>
             <button
@@ -1346,25 +1349,45 @@ export default function PreventivoClient({
           cg.groups.push(group)
         }
 
+        const artHasLacune = (root: Articolo, childs: Articolo[]) => {
+          const rl = listini.find(l => l.id === root.listino_id)
+          const nC  = (rl?.richiede_tipo_colore     ?? 0) === 1
+          const nCA = (rl?.richiede_tipo_colore_acc ?? 0) === 1
+          const nV  = (rl?.richiede_tipo_vetro      ?? 0) === 1
+          const nM  = (rl?.richiede_tipo_montaggio  ?? 0) === 1
+          const tg  = nC || nCA || nV || nM
+          const cl  = childs.map(c => listini.find(l => l.id === c.listino_id))
+          return tg
+            ? ((nC  && !cl.some(l => (l?.richiede_tipo_colore     ?? 0) === 1)) ||
+               (nCA && !cl.some(l => (l?.richiede_tipo_colore_acc ?? 0) === 1)) ||
+               (nV  && !cl.some(l => (l?.richiede_tipo_vetro      ?? 0) === 1)) ||
+               (nM  && !cl.some(l => (l?.richiede_tipo_montaggio  ?? 0) === 1)))
+            : canEdit && [...new Set(listini.filter(l => l.caratteristica === 1 && l.categoria === root.tipo_prodotto && l.produttore).map(l => l.produttore))].some(p => !childs.some(c => c.marca === p))
+        }
+        const anyLacune = groups.some(grp => artHasLacune(grp[0], grp.slice(1)))
+
         let globalIdx = 0
         return (
           <div className="carrello-overflow" style={{ overflowX: 'auto' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8, width: '100%' }}>
-            {catGroups.map(cg => (
-              <div key={cg.key} className="class_silver_D_safe" style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 8, overflow: 'hidden', width: '100%', boxSizing: 'border-box' }}>
-                <div style={{ padding: '6px 14px', background: '#fff', borderBottom: '1px solid #c8960c', fontSize: 12, fontWeight: 700, color: '#7a6000', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+            {catGroups.map(cg => {
+              const groupComplete = cg.groups.every(grp => !artHasLacune(grp[0], grp.slice(1)))
+              const groupBg = groupComplete ? VERDE : ROSA
+              return (
+              <div key={cg.key} style={{ background: groupBg, border: '1px solid #222', borderRadius: 8, overflow: 'hidden', width: '100%', boxSizing: 'border-box' }}>
+                <div style={{ padding: '6px 14px', background: VERDE, borderBottom: '1px solid #222', fontSize: 12, fontWeight: 700, color: '#1a1a1a', fontFamily: 'monospace' }}>
                   {cg.label}
                 </div>
                 <table className="carrello-table" style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
                   <colgroup>
-                    <col style={{ width: 58 }} />
-                    <col style={{ width: 72 }} />
+                    <col style={{ width: 50 }} />
+                    <col style={{ width: 54 }} />
                     <col />
-                    <col style={{ width: 80 }} />
-                    <col style={{ width: 58 }} />
+                    <col style={{ width: 70 }} />
+                    <col style={{ width: 50 }} />
                   </colgroup>
                   <thead>
-                    <tr>
+                    <tr style={{ background: VERDE }}>
                       <th style={{ ...thS, textAlign: 'center' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -1372,8 +1395,8 @@ export default function PreventivoClient({
                         </div>
                       </th>
                       <th style={{ ...thS, textAlign: 'center' }}>Q.tà<br/>Rif.</th>
-                      <th style={thS}>Articolo</th>
-                      <th style={{ ...thS, textAlign: 'center' }}>Prezzo<br/>€</th>
+                      <th style={{ ...thS }}>Articolo</th>
+                      <th style={{ ...thS, textAlign: 'center', width: 70, textTransform: 'none', letterSpacing: 0 }}>Prezzo €</th>
                       <th style={{ ...thS, textAlign: 'center' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                           <span style={{ fontSize: 14, display: 'inline-block', transform: 'rotate(135deg)', lineHeight: 1 }}>✏</span>
@@ -1419,13 +1442,13 @@ export default function PreventivoClient({
                         const showV  = needsV  && !cl.some(l => (l?.richiede_tipo_vetro      ?? 0) === 1)
                         const showM  = needsM  && !cl.some(l => (l?.richiede_tipo_montaggio  ?? 0) === 1)
                         gapRows = (showC || showCA || showV || showM) ? (
-                          <tr style={{ background: expandBg ?? 'transparent' }}>
-                            <td colSpan={5} style={{ padding: 8, borderBottom: '1px solid #c8960c', borderRight: 'none', textAlign: 'left', background: expandBg }}>
+                          <tr style={{ background: '#ffffff' }}>
+                            <td colSpan={5} style={{ padding: 8, borderBottom: '1px solid #333', borderRight: 'none', textAlign: 'left', background: '#ffffff' }}>
                               <div style={{ display: 'flex', gap: 8 }}>
-                                {showC  && <button onClick={() => openCaratteristica(root.id, undefined, 'tipo_colore')}     className="btn-green" style={{ flex: 1, height: 42, padding: '0 10px', borderRadius: 21, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', border: 'none', cursor: 'pointer' }}>+ Colore</button>}
-                                {showCA && <button onClick={() => openCaratteristica(root.id, undefined, 'tipo_colore_acc')} className="btn-green" style={{ flex: 1, height: 42, padding: '0 10px', borderRadius: 21, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', border: 'none', cursor: 'pointer' }}>+ Accessori</button>}
-                                {showV  && <button onClick={() => openCaratteristica(root.id, undefined, 'tipo_vetro')}      className="btn-green" style={{ flex: 1, height: 42, padding: '0 10px', borderRadius: 21, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', border: 'none', cursor: 'pointer' }}>+ Vetro</button>}
-                                {showM  && <button onClick={() => openCaratteristica(root.id, undefined, 'tipo_montaggio')}  className="btn-green" style={{ flex: 1, height: 42, padding: '0 10px', borderRadius: 21, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', border: 'none', cursor: 'pointer' }}>+ Montaggio</button>}
+                                {showC  && <button onClick={() => openCaratteristica(root.id, undefined, 'tipo_colore')}     style={{ flex: 1, height: 42, padding: '0 10px', borderRadius: 21, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', border: '1px solid #000', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>+ Colore</button>}
+                                {showCA && <button onClick={() => openCaratteristica(root.id, undefined, 'tipo_colore_acc')} style={{ flex: 1, height: 42, padding: '0 10px', borderRadius: 21, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', border: '1px solid #000', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>+ Accessori</button>}
+                                {showV  && <button onClick={() => openCaratteristica(root.id, undefined, 'tipo_vetro')}      style={{ flex: 1, height: 42, padding: '0 10px', borderRadius: 21, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', border: '1px solid #000', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>+ Vetro</button>}
+                                {showM  && <button onClick={() => openCaratteristica(root.id, undefined, 'tipo_montaggio')}  style={{ flex: 1, height: 42, padding: '0 10px', borderRadius: 21, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', border: '1px solid #000', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>+ Montaggio</button>}
                               </div>
                             </td>
                           </tr>
@@ -1436,10 +1459,10 @@ export default function PreventivoClient({
                           ? ([...new Set(listini.filter(l => l.caratteristica === 1 && l.categoria === root.tipo_prodotto && l.produttore && !usedMarche.has(l.produttore)).map(l => l.produttore))] as string[])
                           : [] as string[]
                         gapRows = gapProduttori.map(prod => (
-                          <tr key={`gap-${root.id}-${prod}`} style={{ background: expandBg ?? 'transparent' }}>
+                          <tr key={`gap-${root.id}-${prod}`} style={{ background: '#ffffff' }}>
                             <td style={{ padding: '4px', textAlign: 'center', borderBottom: '1px solid #f0f0f0' }}>
-                              <button onClick={() => openCaratteristica(root.id, prod)} className="btn-green"
-                                style={{ width: 42, height: 42, padding: 0, borderRadius: 21, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                              <button onClick={() => openCaratteristica(root.id, prod)}
+                                style={{ width: 42, height: 42, padding: 0, borderRadius: 21, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #000', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>
                                 <span style={{ position: 'relative', zIndex: 1, fontSize: 22, lineHeight: 1, fontWeight: 300 }}>+</span>
                               </button>
                             </td>
@@ -1455,7 +1478,7 @@ export default function PreventivoClient({
                       return (
                         <React.Fragment key={root.id}>
                           {/* ── Riga articolo principale ── */}
-                          <tr style={{ background: expandBgRoot ?? '#fff', borderTop: groupIdx > 0 ? '1px solid #c8960c' : undefined }}>
+                          <tr style={{ background: hasLacune ? ROSA : VERDE, borderTop: groupIdx > 0 ? '1px solid #333' : undefined }}>
                             {/* Col 1: eye + expand */}
                             <td style={{ ...tdS, textAlign: 'center', padding: '4px 0' }}>
                               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
@@ -1476,11 +1499,11 @@ export default function PreventivoClient({
                             {/* Col 2: N°qty / Rif# */}
                             <td style={{ ...tdS, padding: 0, height: 1 }}>
                               <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid #c8960c', fontSize: 12, color: '#1a1a1a', padding: '0 4px' }}>
+                                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid #222', fontSize: 12, color: '#1a1a1a', padding: '0 4px' }}>
                                   N°&nbsp;{root.quantita}
                                 </div>
                                 <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, color: '#1a1a1a', padding: '0 4px' }}>
-                                  Rif#{String(gi + 1).padStart(3, '0')}
+                                  rif #{String(gi + 1).padStart(3, '0')}
                                 </div>
                               </div>
                             </td>
@@ -1489,13 +1512,13 @@ export default function PreventivoClient({
                               {root.modello || '—'}
                               {(() => {
                                 const parts: string[] = []
-                                if (root.altezza_cm > 0 && root.larghezza_cm > 0) parts.push(`${root.larghezza_cm}×${root.altezza_cm} cm`)
+                                if (root.larghezza_cm > 0) parts.push(`L:${root.larghezza_cm}`)
+                                if (root.altezza_cm > 0)   parts.push(`H:${root.altezza_cm}`)
                                 if (root.n_ante > 1) parts.push(`${root.n_ante} ante`)
                                 if (root.colore) parts.push(root.colore)
-                                parts.push(`€ ${fmt(Number(root.prezzo_base))}/${root.unita}`)
-                                return <div style={{ fontSize: 10, color: '#555', marginTop: 1 }}>{parts.join(' · ')}</div>
+                                return <div style={{ fontSize: 12, color: '#1a1a1a', marginTop: 1 }}>{parts.join(' · ')}</div>
                               })()}
-                              {root.note && <div style={{ fontSize: 10, color: '#555', marginTop: 1, fontStyle: 'italic' }}>{root.note}</div>}
+                              {root.note && <div style={{ fontSize: 12, color: '#555', marginTop: 1, fontStyle: 'italic' }}>{root.note}</div>}
                             </td>
                             {/* Col 4: Prezzo */}
                             <td style={{ ...tdS, whiteSpace: 'nowrap', padding: '2px 0 2px 4px' }}>
@@ -1504,9 +1527,9 @@ export default function PreventivoClient({
                                   {root.sconto_articolo_pct !== 0 && (
                                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0, fontFamily: 'monospace' }}>
                                       {root.prezzo_pre_sconto > 0 && (
-                                        <span style={{ color: '#aaa', fontSize: 10, textDecoration: 'line-through' }}>{fmt(root.prezzo_pre_sconto)}</span>
+                                        <span style={{ color: '#aaa', fontSize: 12, textDecoration: 'line-through' }}>{fmt(root.prezzo_pre_sconto)}</span>
                                       )}
-                                      <span style={{ fontSize: 10, color: root.sconto_articolo_pct < 0 ? '#1565c0' : '#e65100' }}>
+                                      <span style={{ fontSize: 12, color: root.sconto_articolo_pct < 0 ? '#1565c0' : '#e65100' }}>
                                         {root.sconto_articolo_pct < 0 ? `+${Math.abs(root.sconto_articolo_pct)}%` : `−${root.sconto_articolo_pct}%`}
                                       </span>
                                     </div>
@@ -1521,7 +1544,7 @@ export default function PreventivoClient({
                                   <>
                                     {hasDiff && (
                                       <div style={{ display: 'flex', justifyContent: 'flex-end', fontFamily: 'monospace' }}>
-                                        <span style={{ color: '#aaa', fontSize: 10, textDecoration: 'line-through' }}>{fmt(lordo)}</span>
+                                        <span style={{ color: '#aaa', fontSize: 12, textDecoration: 'line-through' }}>{fmt(lordo)}</span>
                                       </div>
                                     )}
                                     {renderPrezzo(netto)}
@@ -1550,7 +1573,7 @@ export default function PreventivoClient({
 
                           {/* ── Righe caratteristiche figlie (espanse) ── */}
                           {isExpanded && children.map(child => (
-                            <tr key={child.id} style={{ background: expandBg ?? 'rgba(0,0,0,0.04)' }}>
+                            <tr key={child.id} style={{ background: '#ffffff' }}>
                               {/* Col 1: foto */}
                               <td style={{ ...tdS, padding: 4, textAlign: 'center' }}>
                                 {child.listino_foto_url && (
@@ -1577,16 +1600,16 @@ export default function PreventivoClient({
                               <td style={{ ...tdS, paddingLeft: 12 }}>
                                 <span style={{ fontSize: 11, color: '#777' }}>↳</span>{' '}
                                 {child.modello || child.tipo_prodotto || '—'}
-                                {child.note && <div style={{ fontSize: 10, color: '#555', marginTop: 1, fontStyle: 'italic' }}>{child.note}</div>}
+                                {child.note && <div style={{ fontSize: 12, color: '#555', marginTop: 1, fontStyle: 'italic' }}>{child.note}</div>}
                               </td>
                               {/* Col 4: contributo prezzo */}
                               <td style={{ ...tdS, whiteSpace: 'nowrap', padding: '2px 0 2px 4px' }}>
                                 {child.sconto_articolo_pct !== 0 && (
                                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0, fontFamily: 'monospace' }}>
                                     {child.prezzo_pre_sconto !== 0 && (
-                                      <span style={{ color: '#aaa', fontSize: 10, textDecoration: 'line-through' }}>{fmt(Math.abs(child.prezzo_pre_sconto))}</span>
+                                      <span style={{ color: '#aaa', fontSize: 12, textDecoration: 'line-through' }}>{fmt(Math.abs(child.prezzo_pre_sconto))}</span>
                                     )}
-                                    <span style={{ fontSize: 10, color: child.sconto_articolo_pct < 0 ? '#1565c0' : '#e65100' }}>
+                                    <span style={{ fontSize: 12, color: child.sconto_articolo_pct < 0 ? '#1565c0' : '#e65100' }}>
                                       {child.sconto_articolo_pct < 0 ? `+${Math.abs(child.sconto_articolo_pct)}%` : `−${child.sconto_articolo_pct}%`}
                                     </span>
                                   </div>
@@ -1621,7 +1644,7 @@ export default function PreventivoClient({
                   </tbody>
                 </table>
               </div>
-            ))}
+            )})}
           </div>
           </div>
         )
@@ -1635,16 +1658,27 @@ export default function PreventivoClient({
         const scontoCliPct = preventivo.sconto_cliente_pct ?? 0
         const scontoCliAmt = Math.round(subtotale * scontoCliPct / 100 * 100) / 100
         const hasScontiPromo = scontiPromo >= 0.01
+        const anyLacune = articoli.filter(a => !a.parent_id).some(root => {
+          const rl = listini.find(l => l.id === root.listino_id)
+          const nC = (rl?.richiede_tipo_colore ?? 0) === 1, nCA = (rl?.richiede_tipo_colore_acc ?? 0) === 1
+          const nV = (rl?.richiede_tipo_vetro ?? 0) === 1, nM = (rl?.richiede_tipo_montaggio ?? 0) === 1
+          if (!(nC || nCA || nV || nM)) return false
+          const cl = articoli.filter(c => c.parent_id === root.id).map(c => listini.find(l => l.id === c.listino_id))
+          return (nC && !cl.some(l => (l?.richiede_tipo_colore ?? 0) === 1)) ||
+                 (nCA && !cl.some(l => (l?.richiede_tipo_colore_acc ?? 0) === 1)) ||
+                 (nV && !cl.some(l => (l?.richiede_tipo_vetro ?? 0) === 1)) ||
+                 (nM && !cl.some(l => (l?.richiede_tipo_montaggio ?? 0) === 1))
+        })
 
         const row = (label: string, value: string, opts?: { color?: string; bold?: boolean; separator?: boolean; large?: boolean }) => (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, ...(opts?.separator ? { borderTop: '1px solid #dde3ed', paddingTop: 6, marginTop: 2 } : {}) }}>
-            <span style={{ fontSize: 13, color: opts?.color ?? '#555', fontWeight: opts?.bold ? 600 : 400, fontFamily: 'monospace' }}>{label}</span>
-            <span style={{ fontSize: opts?.large ? 20 : 15, fontWeight: opts?.bold ? 700 : 400, color: opts?.color ?? '#444', minWidth: 110, textAlign: 'right', fontFamily: 'monospace' }}>{value}</span>
+          <div style={{ display: 'flex', alignItems: 'center', width: '100%', ...(opts?.separator ? { borderTop: '1px solid #333', paddingTop: 6, marginTop: 2 } : {}) }}>
+            <span style={{ flex: 1, fontSize: 12, fontWeight: 700, color: opts?.color ?? '#1a1a1a', fontFamily: 'monospace' }}>{label}</span>
+            <span style={{ fontSize: 12, fontWeight: 700, color: opts?.color ?? '#1a1a1a', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>{value}</span>
           </div>
         )
 
         return (
-          <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 8, padding: '12px 20px', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
+          <div style={{ background: VERDE, border: '1px solid #222', borderRadius: 8, padding: '12px 50px 12px 20px', display: 'flex', flexDirection: 'column', gap: 4, color: '#1a1a1a' }}>
             {hasScontiPromo && row('Listino (escluso IVA):', `€ ${fmt(lordo)}`)}
             {hasScontiPromo && row('Sconti promozionali:', `− € ${fmt(scontiPromo)}`, { color: '#e65100' })}
             {(hasScontiPromo || scontoCliPct > 0) && row('Subtotale:', `€ ${fmt(subtotale)}`, { separator: hasScontiPromo })}
