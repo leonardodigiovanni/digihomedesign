@@ -234,11 +234,11 @@ export default async function Page({ params }: Props) {
       )}
 
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
-        <Link href="/brand/cataloghi" className="btn-black fs-12" style={{ flex: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: 42, padding: '0 20px', borderRadius: 21, textDecoration: 'none', fontFamily: 'monospace' }}>
+        <Link href="/brand/cataloghi" className="btn-black fs-12" style={{ flex: 1 }}>
           ← Torna ai Cataloghi
         </Link>
         {cartNonVuoto && (
-          <Link href="/area-clienti/carrello-preventivo" className="btn-black fs-12" style={{ flex: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: 42, padding: '0 20px', borderRadius: 21, textDecoration: 'none', fontFamily: 'monospace' }}>
+          <Link href="/area-clienti/carrello-preventivo" className="btn-black fs-12" style={{ flex: 1 }}>
             Vai alla simulazione
           </Link>
         )}

@@ -1253,10 +1253,31 @@ body {
    .btn-green  → conferma / salva / login
    .btn-red    → annulla / logout / elimina
    .btn-gray   → stato disabilitato
+   .btn-icon   → modificatore bottone circolare (width=height, padding 0)
    ───────────────────────────────────────── */
 .btn-green, .btn-red, .btn-orange, .btn-rgb-c, .btn-blue, .btn-black, .btn-gray {
-  font-size: 13px !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 42px;
+  min-width: 42px;
+  padding: 0 20px;
+  border-radius: 21px;
+  font-size: 13px;
+  font-weight: 700;
   font-family: monospace;
+  white-space: nowrap;
+  text-decoration: none;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+/* Bottone circolare — icona senza testo */
+.btn-icon {
+  width: 42px !important;
+  padding: 0 !important;
 }
 /* Verde — conferma / salva / login */
 .btn-green {
@@ -1271,16 +1292,7 @@ body {
     ) !important;
   color: #d4f5d4 !important;
   border: none !important;
-  border-radius: 7px;
-  height: 33px;
-  box-sizing: border-box;
-  padding-top: 8px !important;
-  padding-bottom: 8px !important;
   box-shadow: 0 2px 8px rgba(20,80,20,0.45), inset 0 1px 0 rgba(160,255,160,0.2);
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-  transition: filter 0.15s;
 }
 .btn-green:hover:not(:disabled) {
   filter: brightness(1.14);
@@ -1298,16 +1310,7 @@ body {
     ) !important;
   color: #ffd8d8 !important;
   border: none !important;
-  border-radius: 7px;
-  height: 33px;
-  box-sizing: border-box;
-  padding-top: 8px !important;
-  padding-bottom: 8px !important;
   box-shadow: 0 2px 8px rgba(140,8,8,0.45), inset 0 1px 0 rgba(200,100,100,0.2);
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-  transition: filter 0.15s;
 }
 .btn-red:hover:not(:disabled) {
   filter: brightness(1.14);
@@ -1325,18 +1328,12 @@ body {
     ) !important;
   color: #ffe8cc !important;
   border: none !important;
-  padding-top: 8px !important;
-  padding-bottom: 8px !important;
   box-shadow: 0 2px 8px rgba(120,40,16,0.5), inset 0 1px 0 rgba(255,185,120,0.22);
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-  transition: filter 0.15s;
 }
 .btn-orange:hover:not(:disabled) {
   filter: brightness(1.14);
 }
-/* RGB-C rame — stesso stile btn-green/red ma con colore header rgb (r=145,g=85,b=85) */
+/* RGB-C rame */
 .btn-rgb-c {
   background:
     repeating-linear-gradient(
@@ -1349,13 +1346,7 @@ body {
     ) !important;
   color: #ffd8d8 !important;
   border: none !important;
-  padding-top: 8px !important;
-  padding-bottom: 8px !important;
   box-shadow: 0 2px 8px rgba(145,85,85,0.45), inset 0 1px 0 rgba(200,160,160,0.2);
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-  transition: filter 0.15s;
 }
 .btn-rgb-c:hover:not(:disabled) {
   filter: brightness(1.14);
@@ -1373,16 +1364,7 @@ body {
     ) !important;
   color: #d0e4ff !important;
   border: none !important;
-  border-radius: 7px;
-  height: 33px;
-  box-sizing: border-box;
-  padding-top: 8px !important;
-  padding-bottom: 8px !important;
   box-shadow: 0 2px 8px rgba(20,60,180,0.45), inset 0 1px 0 rgba(160,200,255,0.2);
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-  transition: filter 0.15s;
 }
 .btn-blue:hover:not(:disabled) {
   filter: brightness(1.18);
@@ -1400,16 +1382,7 @@ body {
     ) !important;
   color: #e0e0e0 !important;
   border: none !important;
-  border-radius: 7px;
-  height: 33px;
-  box-sizing: border-box;
-  padding-top: 8px !important;
-  padding-bottom: 8px !important;
   box-shadow: 0 2px 8px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.12);
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-  transition: filter 0.15s;
 }
 .btn-black:hover:not(:disabled) {
   filter: brightness(1.18);
@@ -1427,15 +1400,7 @@ body {
     ) !important;
   color: #333 !important;
   border: none !important;
-  border-radius: 7px;
-  height: 33px;
-  box-sizing: border-box;
-  padding-top: 8px !important;
-  padding-bottom: 8px !important;
   box-shadow: 0 2px 6px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.7);
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
 }
 .btn-gray:disabled {
   cursor: default !important;

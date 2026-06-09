@@ -41,12 +41,10 @@ function NuovaCategoriaForm({ onDone }: { onDone: () => void }) {
   return (
     <form action={action} style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 20 }}>
       <input name="nome" required placeholder="Nome categoria (es. Infissi)" style={inp} autoFocus />
-      <button type="submit" className="btn-green" disabled={pending}
-        style={{ padding: '6px 16px', fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap' }}>
+      <button type="submit" className="btn-green" disabled={pending}>
         {pending ? 'Salvataggio…' : 'Crea'}
       </button>
-      <button type="button" className="btn-gray" onClick={onDone}
-        style={{ padding: '6px 12px', fontSize: 13 }}>Annulla</button>
+      <button type="button" className="btn-gray" onClick={onDone}>Annulla</button>
       {result && !result.ok && (
         <span style={{ color: '#c00', fontSize: 12 }}>{result.error}</span>
       )}
@@ -122,12 +120,10 @@ function NuovaVoceForm({ categoriaId, onDone }: { categoriaId: number; onDone: (
       </div>
       {errore && <div style={{ color: '#c00', fontSize: 12, marginBottom: 8 }}>{errore}</div>}
       <div style={{ display: 'flex', gap: 8 }}>
-        <button type="submit" className="btn-green" disabled={uploading}
-          style={{ padding: '5px 14px', fontSize: 12, fontWeight: 600 }}>
+        <button type="submit" className="btn-green" disabled={uploading}>
           {uploading ? 'Upload…' : 'Aggiungi'}
         </button>
-        <button type="button" className="btn-gray" onClick={onDone}
-          style={{ padding: '5px 10px', fontSize: 12 }}>Annulla</button>
+        <button type="button" className="btn-gray" onClick={onDone}>Annulla</button>
       </div>
     </form>
   )
@@ -149,8 +145,7 @@ function ListinoCategoriaForm({ catId, current, listiniCategorie }: { catId: num
         <option value="">— nessuno —</option>
         {listiniCategorie.map(c => <option key={c} value={c}>{c}</option>)}
       </select>
-      <button type="submit" disabled={pending} className="btn-green"
-        style={{ padding: '4px 10px', fontSize: 11, fontWeight: 600 }}>
+      <button type="submit" disabled={pending} className="btn-green">
         {pending ? '…' : 'Salva'}
       </button>
       {result && !result.ok && <span style={{ fontSize: 11, color: '#c00' }}>{result.error}</span>}
@@ -235,12 +230,10 @@ function VoceEditForm({ voce, onDone }: { voce: Voce; onDone: () => void }) {
       </div>
       {errore && <div style={{ color: '#c00', fontSize: 12, marginBottom: 8 }}>{errore}</div>}
       <div style={{ display: 'flex', gap: 8 }}>
-        <button type="submit" className="btn-green" disabled={uploading}
-          style={{ padding: '5px 14px', fontSize: 12, fontWeight: 600 }}>
+        <button type="submit" className="btn-green" disabled={uploading}>
           {uploading ? 'Salvataggio…' : 'Salva'}
         </button>
-        <button type="button" className="btn-gray" onClick={onDone}
-          style={{ padding: '5px 10px', fontSize: 12 }}>Annulla</button>
+        <button type="button" className="btn-gray" onClick={onDone}>Annulla</button>
       </div>
     </form>
   )
@@ -277,8 +270,7 @@ function ListinoVoceForm({ voceId, current, listiniCategorie }: { voceId: number
         <option value="">— nessuno —</option>
         {listiniCategorie.map(c => <option key={c} value={c}>{c}</option>)}
       </select>
-      <button type="button" onClick={handleSave} disabled={pending} className="btn-green"
-        style={{ padding: '3px 10px', fontSize: 11, fontWeight: 600 }}>
+      <button type="button" onClick={handleSave} disabled={pending} className="btn-green">
         {pending ? '…' : 'Salva'}
       </button>
       {error && <span style={{ fontSize: 11, color: '#c00' }}>{error}</span>}
@@ -319,14 +311,12 @@ function VoceRow({ voce, isStaff, listiniCategorie }: { voce: Voce; isStaff: boo
             target="_blank"
             rel="noreferrer"
             className="btn-black"
-            style={{ padding: '4px 14px', fontSize: 12, fontWeight: 600, textDecoration: 'none', display: 'inline-block' }}
           >
             Sfoglia catalogo
           </a>
           {isStaff && (
             <>
-              <button onClick={() => setEditing(true)} className="btn-gray"
-                style={{ padding: '4px 10px', fontSize: 12, fontWeight: 600 }}>
+              <button onClick={() => setEditing(true)} className="btn-gray">
                 Modifica
               </button>
               <form action={async fd => {
@@ -334,7 +324,6 @@ function VoceRow({ voce, isStaff, listiniCategorie }: { voce: Voce; isStaff: boo
               }}>
                 <input type="hidden" name="id" value={voce.id} />
                 <button type="submit" disabled={pending} className="btn-red"
-                  style={{ padding: '4px 10px', fontSize: 12 }}
                   onClick={e => { if (!confirm('Eliminare questa voce e il PDF allegato?')) e.preventDefault() }}>
                   Elimina
                 </button>
@@ -377,7 +366,6 @@ function CategoriaAccordion({ cat, isStaff, listiniCategorie }: { cat: Categoria
               <button
                 className="btn-green"
                 onClick={() => { setOpen(true); setAddOpen(a => !a) }}
-                style={{ padding: '3px 10px', fontSize: 11, fontWeight: 600 }}
               >
                 + Voce
               </button>
@@ -386,7 +374,6 @@ function CategoriaAccordion({ cat, isStaff, listiniCategorie }: { cat: Categoria
               }}>
                 <input type="hidden" name="id" value={cat.id} />
                 <button type="submit" disabled={pending} className="btn-red"
-                  style={{ padding: '3px 8px', fontSize: 11 }}
                   onClick={e => { if (!confirm(`Eliminare la categoria "${cat.nome}" e tutti i suoi cataloghi?`)) e.preventDefault() }}>
                   Elimina cat.
                 </button>
@@ -437,8 +424,7 @@ export default function CataloghiClient({ categorie, isStaff, listiniCategorie }
           {nuovaCategoria ? (
             <NuovaCategoriaForm onDone={() => setNuovaCategoria(false)} />
           ) : (
-            <button className="btn-green" onClick={() => setNuovaCategoria(true)}
-              style={{ padding: '8px 20px', fontSize: 13, fontWeight: 600 }}>
+            <button className="btn-green" onClick={() => setNuovaCategoria(true)}>
               + Nuova categoria
             </button>
           )}

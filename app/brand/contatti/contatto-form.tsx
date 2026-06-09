@@ -80,11 +80,11 @@ function FormAnonimo() {
             autoComplete="one-time-code" placeholder="000000"
             className="fs-15" style={{ ...inputStyle, maxWidth: 110, letterSpacing: '0.15em', textAlign: 'center' }} />
           <button type="submit" form="form-invia" disabled={contattoPending} className="btn-black fs-14"
-            style={{ height: 42, padding: '0 28px', borderRadius: 21, fontFamily: 'inherit', opacity: contattoPending ? 0.6 : 1 }}>
+            style={{ padding: '0 28px', fontFamily: 'inherit', opacity: contattoPending ? 0.6 : 1 }}>
             {contattoPending ? 'Invio in corso…' : 'Invia messaggio'}
           </button>
           <button type="submit" form="form-reinvia" disabled={codicePending} className="btn-gray fs-13"
-            style={{ height: 42, padding: '0 20px', borderRadius: 21, fontFamily: 'inherit', opacity: codicePending ? 0.6 : 1 }}>
+            style={{ fontFamily: 'inherit', opacity: codicePending ? 0.6 : 1 }}>
             {codicePending ? 'Invio in corso…' : 'Reinvia codice'}
           </button>
         </div>
@@ -145,12 +145,12 @@ function FormAnonimo() {
           </p>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
             <button type="submit" disabled={codicePending || !isValid} className="btn-black fs-14"
-              style={{ height: 42, padding: '0 28px', borderRadius: 21, fontFamily: 'inherit', opacity: (codicePending || !isValid) ? 0.4 : 1, cursor: (codicePending || !isValid) ? 'not-allowed' : 'pointer' }}>
+              style={{ padding: '0 28px', fontFamily: 'inherit', opacity: (codicePending || !isValid) ? 0.4 : 1, cursor: (codicePending || !isValid) ? 'not-allowed' : 'pointer' }}>
               {codicePending ? 'Invio codice…' : 'Invia codice SMS'}
             </button>
             {isDirty && (
               <button type="button" className="btn-orange fs-14"
-                style={{ height: 42, padding: '0 22px', borderRadius: 21, fontFamily: 'inherit' }}
+                style={{ padding: '0 22px', fontFamily: 'inherit' }}
                 onClick={() => { formRef.current?.reset(); setIsDirty(false); setIsValid(false) }}>
                 Annulla
               </button>
@@ -212,12 +212,12 @@ function FormLoggato({ username, role }: { username: string; role: string }) {
         </div>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
           <button type="submit" disabled={pending} className="btn-black fs-14"
-            style={{ height: 42, padding: '0 28px', borderRadius: 21, fontFamily: 'inherit', opacity: pending ? 0.6 : 1 }}>
+            style={{ padding: '0 28px', fontFamily: 'inherit', opacity: pending ? 0.6 : 1 }}>
             {pending ? 'Invio in corso…' : 'Invia messaggio'}
           </button>
           {isDirty && (
             <button type="button" className="btn-orange fs-14"
-              style={{ height: 42, padding: '0 22px', borderRadius: 21, fontFamily: 'inherit' }}
+              style={{ padding: '0 22px', fontFamily: 'inherit' }}
               onClick={() => { formRef.current?.reset(); setIsDirty(false) }}>
               Annulla
             </button>

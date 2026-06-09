@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import Image from 'next/image'
 import type { Metadata } from 'next'
 
@@ -84,8 +84,8 @@ export default function AppPage() {
         </div>
 
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <Link href="/" className="btn-black fs-12" style={{ flex: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: 42, padding: '0 20px', borderRadius: 21, textDecoration: 'none', fontFamily: 'monospace' }}>← Home</Link>
-          <Link href="/app-download" className="btn-black fs-12" style={{ flex: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: 42, padding: '0 20px', borderRadius: 21, textDecoration: 'none', fontFamily: 'monospace' }}>Scarica l&apos;app →</Link>
+          <Link href="/" className="btn-black fs-12" style={{ flex: 1 }}>← Home</Link>
+          <Link href="/app-download" className="btn-black fs-12" style={{ flex: 1 }}>Scarica l&apos;app →</Link>
         </div>
 
       </div>

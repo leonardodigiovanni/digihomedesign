@@ -45,13 +45,13 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             <>
               <span style={{ fontSize: 10, color: '#fff', fontFamily: 'monospace', opacity: 0.75, pointerEvents: 'none', userSelect: 'none' }}>{username}</span>
               <form action={appLogout}>
-                <button type="submit" className="btn-orange" style={{ height: 42, padding: '0 16px', borderRadius: 21, fontSize: 13, fontFamily: 'monospace', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>Esci</button>
+                <button type="submit" className="btn-orange" style={{ padding: '0 16px' }}>Esci</button>
               </form>
             </>
           ) : (
             <>
               <span style={{ fontSize: 10, opacity: 0, pointerEvents: 'none', userSelect: 'none' }}>.</span>
-              <Link href="/app/login" className="btn-black" style={{ height: 42, padding: '0 20px', borderRadius: 21, fontSize: 13, fontFamily: 'monospace', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>Accedi</Link>
+              <Link href="/app/login" className="btn-black">Accedi</Link>
             </>
           )}
         </div>

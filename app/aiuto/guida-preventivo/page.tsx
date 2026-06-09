@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import Image from 'next/image'
 import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
@@ -92,7 +92,7 @@ export default async function GuidaPreventivo() {
           </p>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             <AccediDropdown />
-            <Link href={registrazioniDisabilitate ? '/brand/contatti' : '/registrazione'} className="btn-black fs-12" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 20px', height: 42, borderRadius: 21, textDecoration: 'none', fontFamily: 'monospace' }}>
+            <Link href={registrazioniDisabilitate ? '/brand/contatti' : '/registrazione'} className="btn-black fs-12">
               {registrazioniDisabilitate ? 'Richiedi registrazione' : 'Registrati'}
             </Link>
           </div>
@@ -102,10 +102,10 @@ export default async function GuidaPreventivo() {
         </div>
 
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <Link href="/" className="btn-black fs-12" style={{ flex: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: 42, padding: '0 20px', borderRadius: 21, textDecoration: 'none', fontFamily: 'monospace' }}>← Home</Link>
-          <Link href="/brand/cataloghi" className="btn-black fs-12" style={{ flex: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: 42, padding: '0 20px', borderRadius: 21, textDecoration: 'none', fontFamily: 'monospace' }}>Cataloghi →</Link>
+          <Link href="/" className="btn-black fs-12" style={{ flex: 1 }}>← Home</Link>
+          <Link href="/brand/cataloghi" className="btn-black fs-12" style={{ flex: 1 }}>Cataloghi →</Link>
           {cartNonVuoto && (
-            <Link href="/area-clienti/carrello-preventivo" className="btn-black fs-12" style={{ flex: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: 42, padding: '0 20px', borderRadius: 21, textDecoration: 'none', fontFamily: 'monospace' }}>Carrello preventivi →</Link>
+            <Link href="/area-clienti/carrello-preventivo" className="btn-black fs-12" style={{ flex: 1 }}>Carrello preventivi →</Link>
           )}
         </div>
 

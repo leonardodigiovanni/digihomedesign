@@ -155,7 +155,7 @@ function AddCantiereForm({ clienti }: { clienti: Cliente[] }) {
 
   if (!open) return (
     <button className="btn-green" onClick={() => setOpen(true)}
-      style={{ padding: '8px 20px', fontSize: 13, fontWeight: 600, marginBottom: 20 }}>
+      style={{ marginBottom: 20 }}>
       + Nuovo cantiere
     </button>
   )
@@ -199,12 +199,10 @@ function AddCantiereForm({ clienti }: { clienti: Cliente[] }) {
       </div>
       {error && <div style={{ color: '#c00', fontSize: 12, marginBottom: 8 }}>{error}</div>}
       <div style={{ display: 'flex', gap: 8 }}>
-        <button type="submit" className="btn-green" disabled={pending}
-          style={{ padding: '6px 16px', fontSize: 13, fontWeight: 600 }}>
+        <button type="submit" className="btn-green" disabled={pending}>
           {pending ? 'Salvataggio...' : 'Salva'}
         </button>
-        <button type="button" className="btn-gray" onClick={() => setOpen(false)}
-          style={{ padding: '6px 16px', fontSize: 13 }}>Annulla</button>
+        <button type="button" className="btn-gray" onClick={() => setOpen(false)}>Annulla</button>
       </div>
     </form>
   )
@@ -251,12 +249,10 @@ function AddTaskForm({ cantiereId, onDone }: { cantiereId: number; onDone: () =>
       </div>
       {error && <div style={{ color: '#c00', fontSize: 11, marginBottom: 6 }}>{error}</div>}
       <div style={{ display: 'flex', gap: 6 }}>
-        <button type="submit" className="btn-green" disabled={pending}
-          style={{ padding: '4px 12px', fontSize: 12, fontWeight: 600 }}>
+        <button type="submit" className="btn-green" disabled={pending}>
           {pending ? '...' : 'Salva task'}
         </button>
-        <button type="button" className="btn-gray" onClick={onDone}
-          style={{ padding: '4px 12px', fontSize: 12 }}>Annulla</button>
+        <button type="button" className="btn-gray" onClick={onDone}>Annulla</button>
       </div>
     </form>
   )
@@ -308,8 +304,7 @@ function UploadMediaForm({ taskId }: { taskId: number }) {
         <input ref={descRef} style={{ ...inpSm, width: 160 }} />
       </div>
       {error && <span style={{ fontSize: 11, color: '#c00' }}>{error}</span>}
-      <button onClick={handleUpload} disabled={uploading || pending} className="btn-green"
-        style={{ padding: '4px 14px', fontSize: 12, fontWeight: 600 }}>
+      <button onClick={handleUpload} disabled={uploading || pending} className="btn-green">
         {uploading ? 'Caricamento...' : 'Carica'}
       </button>
     </div>
@@ -380,7 +375,6 @@ function TaskItem({
         </div>
         <div style={{ display: 'flex', gap: 6 }} onClick={e => e.stopPropagation()}>
           <button type="button" className="btn-gray" disabled={pending}
-            style={{ padding: '2px 8px', fontSize: 11 }}
             onClick={e => { e.stopPropagation(); setEditing(v => !v); setExpanded(true) }}>
             {editing ? 'Annulla' : 'Modifica'}
           </button>
@@ -388,7 +382,6 @@ function TaskItem({
             onClick={e => e.stopPropagation()}>
             <input type="hidden" name="id" value={task.id} />
             <button type="submit" disabled={pending} className="btn-red"
-              style={{ padding: '2px 8px', fontSize: 11 }}
               onClick={e => { e.stopPropagation(); if (!confirm('Eliminare il task e tutti i suoi media?')) e.preventDefault() }}>
               Elimina
             </button>
@@ -429,12 +422,10 @@ function TaskItem({
               </div>
               {errEdit && <div style={{ color: '#c00', fontSize: 11, marginBottom: 6 }}>{errEdit}</div>}
               <div style={{ display: 'flex', gap: 6 }}>
-                <button type="submit" className="btn-green" disabled={pending}
-                  style={{ padding: '4px 12px', fontSize: 12, fontWeight: 600 }}>
+                <button type="submit" className="btn-green" disabled={pending}>
                   {pending ? '...' : 'Salva modifiche'}
                 </button>
-                <button type="button" className="btn-gray" onClick={() => setEditing(false)}
-                  style={{ padding: '4px 12px', fontSize: 12 }}>Annulla</button>
+                <button type="button" className="btn-gray" onClick={() => setEditing(false)}>Annulla</button>
               </div>
             </form>
           )}
@@ -470,7 +461,6 @@ function TaskItem({
                     <form action={async fd => { startT(async () => { await deleteMedia(null, fd) }) }}>
                       <input type="hidden" name="id" value={m.id} />
                       <button type="submit" disabled={pending} className="btn-red"
-                        style={{ padding: '1px 5px', fontSize: 10 }}
                         onClick={e => { if (!confirm('Eliminare?')) e.preventDefault() }}>✕</button>
                     </form>
                   </div>
@@ -548,12 +538,10 @@ function AssignClienteSection({
         ))}
       </select>
       {error && <span style={{ fontSize: 12, color: '#c00' }}>{error}</span>}
-      <button type="button" onClick={handleSave} disabled={saving} className="btn-green"
-        style={{ padding: '5px 14px', fontSize: 12, fontWeight: 600 }}>
+      <button type="button" onClick={handleSave} disabled={saving} className="btn-green">
         {saving ? '...' : 'Salva'}
       </button>
-      <button type="button" onClick={() => setOpen(false)} className="btn-gray"
-        style={{ padding: '5px 14px', fontSize: 12 }}>
+      <button type="button" onClick={() => setOpen(false)} className="btn-gray">
         Annulla
       </button>
     </div>
@@ -642,8 +630,7 @@ function DettaglioCantiere({
               Task ({mieiTask.length})
             </div>
             {isStaff && !addingTask && (
-              <button onClick={() => setAddingTask(true)} className="btn-green"
-                style={{ padding: '5px 14px', fontSize: 12, fontWeight: 600 }}>
+              <button onClick={() => setAddingTask(true)} className="btn-green">
                 + Aggiungi task
               </button>
             )}
@@ -725,7 +712,6 @@ function CardCantiere({
               <form action={async fd => { startT(async () => { await deleteCantiere(null, fd) }) }}>
                 <input type="hidden" name="id" value={cantiere.id} />
                 <button type="submit" disabled={pending} className="btn-red"
-                  style={{ padding: '4px 10px', fontSize: 12 }}
                   onClick={e => { if (!confirm('Eliminare cantiere e tutti i suoi dati?')) e.preventDefault() }}>
                   Elimina
                 </button>

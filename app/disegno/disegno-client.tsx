@@ -1609,48 +1609,48 @@ export default function DisegnoClient() {
 
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <div style={sectionTitle}>Costruzione</div>
-            <button onClick={() => openModal('area')} className="btn-black" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px', fontWeight: 'bold' }}>+ SottoArea</button>
-            <button onClick={() => openModal('ortogonale')} className="btn-black" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px', fontWeight: 'bold' }}>+ Area Ortogonale</button>
-            <button onClick={() => openModal('divisione')} className="btn-black" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px', fontWeight: 'bold' }}>&#247; Dividi in N SottoAree</button>
-            <button onClick={() => openModal('split')} className="btn-black" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px', fontWeight: 'bold' }}>&#247; Separa SottoArea</button>
-            <button onClick={() => openModal('rimuovi_area')} className="btn-black" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px', fontWeight: 'bold' }}>&#8722; Rimuovi Area</button>
-            <button onClick={() => openModal('unisci_aree')} className="btn-black" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px', fontWeight: 'bold' }}>+ Unisci Aree</button>
-            <button onClick={() => openModal('telaio')} className="btn-black" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px', fontWeight: 'bold' }}>+ Telaio</button>
-            <button onClick={() => openModal('pilastrino')} className="btn-black" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px', fontWeight: 'bold' }}>+ Pilastrino</button>
-            <button onClick={() => openModal('traversa')} className="btn-black" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px', fontWeight: 'bold' }}>+ Traversa</button>
+            <button onClick={() => openModal('area')} className="btn-black" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px' }}>+ SottoArea</button>
+            <button onClick={() => openModal('ortogonale')} className="btn-black" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px' }}>+ Area Ortogonale</button>
+            <button onClick={() => openModal('divisione')} className="btn-black" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px' }}>&#247; Dividi in N SottoAree</button>
+            <button onClick={() => openModal('split')} className="btn-black" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px' }}>&#247; Separa SottoArea</button>
+            <button onClick={() => openModal('rimuovi_area')} className="btn-black" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px' }}>&#8722; Rimuovi Area</button>
+            <button onClick={() => openModal('unisci_aree')} className="btn-black" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px' }}>+ Unisci Aree</button>
+            <button onClick={() => openModal('telaio')} className="btn-black" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px' }}>+ Telaio</button>
+            <button onClick={() => openModal('pilastrino')} className="btn-black" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px' }}>+ Pilastrino</button>
+            <button onClick={() => openModal('traversa')} className="btn-black" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px' }}>+ Traversa</button>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <div style={sectionTitle}>&nbsp;</div>
-            <button onClick={() => openModal('anta')} className="btn-black" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px', fontWeight: 'bold' }}>+ Anta Battente</button>
-            <button onClick={() => openModal('laterale_fisso')} className="btn-black" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px', fontWeight: 'bold' }}>+ Anta Fissa</button>
-            <button onClick={() => openModal('vasistas')} className="btn-black" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px', fontWeight: 'bold' }}>+ Vasistas</button>
-            <button onClick={() => openModal('vetro')} className="btn-black" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px', fontWeight: 'bold' }}>+ Vetro</button>
-            <button onClick={() => openModal('pannello')} className="btn-black" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px', fontWeight: 'bold' }}>+ Pannello</button>
+            <button onClick={() => openModal('anta')} className="btn-black" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px' }}>+ Anta Battente</button>
+            <button onClick={() => openModal('laterale_fisso')} className="btn-black" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px' }}>+ Anta Fissa</button>
+            <button onClick={() => openModal('vasistas')} className="btn-black" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px' }}>+ Vasistas</button>
+            <button onClick={() => openModal('vetro')} className="btn-black" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px' }}>+ Vetro</button>
+            <button onClick={() => openModal('pannello')} className="btn-black" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px' }}>+ Pannello</button>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <div style={sectionTitle}>Modifica</div>
-            <button onClick={handleUndo} className="btn-red" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px', fontWeight: 'bold', opacity: (elems.length || bulkUndo) ? 1 : 0.4 }} disabled={!elems.length && !bulkUndo}>
+            <button onClick={handleUndo} className="btn-red" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px', opacity: (elems.length || bulkUndo) ? 1 : 0.4 }} disabled={!elems.length && !bulkUndo}>
               &#8617; Annulla
             </button>
-            <button onClick={handleRedo} className="btn-green" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px', fontWeight: 'bold', opacity: redoStack.length ? 1 : 0.4 }} disabled={!redoStack.length}>
+            <button onClick={handleRedo} className="btn-green" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px', opacity: redoStack.length ? 1 : 0.4 }} disabled={!redoStack.length}>
               &#8618; Ripristina
             </button>
-            <button onClick={handleReset} className="btn-red" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px', fontWeight: 'bold' }}>
+            <button onClick={handleReset} className="btn-red" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px' }}>
               &#215; Reset
             </button>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <div style={sectionTitle}>Visualizza</div>
-            <button onClick={() => setViewMode(m => m === 'all' ? 'drawing' : m === 'drawing' ? 'zones' : 'all')} className="btn-blue" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px', fontWeight: 'bold' }}>
+            <button onClick={() => setViewMode(m => m === 'all' ? 'drawing' : m === 'drawing' ? 'zones' : 'all')} className="btn-blue" style={{ width: '100%', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px' }}>
               {viewMode === 'all' ? 'Disegno + Zone' : viewMode === 'drawing' ? 'Solo Disegno' : 'Solo Zone'}
             </button>
             <button
               onClick={() => changeOrientation(orientation === 'portrait' ? 'landscape' : 'portrait')}
               className="btn-blue"
-              style={{ minWidth: '160px', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px', fontWeight: 'bold' }}
+              style={{ minWidth: '160px', textAlign: 'left', marginBottom: '4px', padding: '7px 13px', fontSize: '12px' }}
             >
               {orientation === 'portrait' ? '↔ Passa a Orizzontale' : '↕ Passa a Verticale'}
             </button>
@@ -2086,11 +2086,11 @@ export default function DisegnoClient() {
             )}
 
             <div style={{ display: 'flex', gap: '8px', marginTop: '20px', justifyContent: 'flex-end' }}>
-              <button onClick={() => { setModal('none'); setError('') }} className="btn-red" style={{ padding: '7px 16px', fontSize: '12px', fontWeight: 'bold' }}>Annulla</button>
+              <button onClick={() => { setModal('none'); setError('') }} className="btn-red" style={{ padding: '7px 16px', fontSize: '12px' }}>Annulla</button>
               <button
                 onClick={modal === 'area' ? handleAddArea : modal === 'telaio' ? handleAddTelaio : modal === 'divisione' ? handleDivide : modal === 'split' ? handleSplit : modal === 'pilastrino' ? handleAddPilastrino : modal === 'traversa' ? handleAddTraversa : modal === 'vetro' ? handleAddVetro : modal === 'pannello' ? handleAddPannello : modal === 'anta' ? handleAddAnta : modal === 'vasistas' ? handleAddVasistas : modal === 'ortogonale' ? handleAddOrtogonale : modal === 'rimuovi_area' ? handleRimuoviArea : modal === 'unisci_aree' ? handleUnisciAree : handleAddFisso}
                 className="btn-green"
-                style={{ padding: '7px 16px', fontSize: '12px', fontWeight: 'bold' }}
+                style={{ padding: '7px 16px', fontSize: '12px' }}
               >{modal === 'rimuovi_area' ? 'Rimuovi' : modal === 'unisci_aree' ? 'Unisci' : 'Aggiungi'}</button>
             </div>
           </div>

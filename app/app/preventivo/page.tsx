@@ -131,19 +131,19 @@ export default async function AppPreventivoPage() {
         {isStaff && (
           <form action={creaPreventivo}>
             <button type="submit" className="btn-green"
-              style={{ height: 42, padding: '0 24px', borderRadius: 21, fontSize: 14, fontWeight: 700 }}>
+              style={{ padding: '0 24px', fontSize: 14 }}>
               + Nuovo preventivo
             </button>
           </form>
         )}
         {cartNonVuoto ? (
           <a href="/app/carrello-preventivo" className="btn-black"
-            style={{ display: 'inline-flex', alignItems: 'center', height: 42, padding: '0 20px', borderRadius: 21, textDecoration: 'none', fontSize: 14, fontWeight: 700 }}>
+            style={{ fontSize: 14 }}>
             Vai alla simulazione →
           </a>
         ) : (
           <a href="/app/carrello-preventivo" className="btn-green"
-            style={{ display: 'inline-flex', alignItems: 'center', height: 42, padding: '0 24px', borderRadius: 21, textDecoration: 'none', fontSize: 14, fontWeight: 700 }}>
+            style={{ padding: '0 24px', fontSize: 14 }}>
             + Simula preventivo
           </a>
         )}

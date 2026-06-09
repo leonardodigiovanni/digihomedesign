@@ -296,7 +296,7 @@ export default function VolantinoClient({
             onClick={handleShareWhatsApp}
             disabled={sharing}
             className={sharing ? 'btn-gray' : 'btn-green'}
-            style={{ padding: '8px 0', fontSize: 14, fontFamily: 'inherit', fontWeight: 600, borderRadius: 6, width: 150, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+            style={{ padding: '8px 0', fontSize: 14, fontFamily: 'inherit', fontWeight: 600, borderRadius: 6, width: 150, gap: 6 }}
           >
             {sharing ? 'Generazione...' : (
               <>

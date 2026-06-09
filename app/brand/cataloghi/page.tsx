@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { cookies } from 'next/headers'
 import { getConnection } from '@/lib/db'
 import type { Metadata } from 'next'
@@ -86,11 +86,11 @@ export default async function Page() {
       )}
 
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
-        <Link href="/brand" className="btn-black fs-12" style={{ flex: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: 42, padding: '0 20px', borderRadius: 21, textDecoration: 'none', fontFamily: 'monospace' }}>
+        <Link href="/brand" className="btn-black fs-12" style={{ flex: 1 }}>
           ← Torna a Brand
         </Link>
         {!loggedIn && (
-          <Link href="/aiuto/guida-preventivo" className="btn-black fs-12" style={{ flex: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: 42, padding: '0 20px', borderRadius: 21, textDecoration: 'none', fontFamily: 'monospace' }}>
+          <Link href="/aiuto/guida-preventivo" className="btn-black fs-12" style={{ flex: 1 }}>
             Vai alla guida →
           </Link>
         )}

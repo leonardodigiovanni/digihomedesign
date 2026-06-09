@@ -48,12 +48,8 @@ export default async function Page() {
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
           {testPages.map(({ label, href }) => (
             <Link key={href} href={href} className="btn-black" style={{
-              display: 'inline-flex',
-              alignItems: 'center',
               padding: '0 14px',
-              fontSize: 13,
               fontWeight: 600,
-              textDecoration: 'none',
             }}>
               {label}
             </Link>

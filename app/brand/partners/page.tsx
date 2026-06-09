@@ -26,7 +26,7 @@ export default function Page() {
       <div style={{ marginTop: 16 }}>
         <PartnersBlock />
       </div>
-      <Link href="/brand" className="btn-black" style={{ display: 'inline-flex', alignItems: 'center', marginTop: 32, height: 42, padding: '0 20px', borderRadius: 21, textDecoration: 'none', fontSize: 14 }}>← Torna a Brand</Link>
+      <Link href="/brand" className="btn-black" style={{ marginTop: 32, fontSize: 14 }}>← Torna a Brand</Link>
     </div>
   )
 }

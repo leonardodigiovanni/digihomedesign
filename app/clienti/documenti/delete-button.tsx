@@ -13,7 +13,7 @@ export function DeleteDocumentoButton({ id, filename, titolo }: { id: number; fi
       type="button"
       onClick={handleDelete}
       className="btn-red"
-      style={{ padding: '5px 14px', fontSize: 12, fontWeight: 600, borderRadius: 5, border: 'none', cursor: 'pointer' }}
+      style={{ padding: '5px 14px', fontSize: 12, fontWeight: 600, borderRadius: 5, border: 'none' }}
     >
       Elimina
     </button>

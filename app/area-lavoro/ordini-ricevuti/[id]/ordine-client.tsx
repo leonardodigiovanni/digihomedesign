@@ -153,15 +153,15 @@ export default function OrdineClient({ ordine, articoli }: { ordine: OrdineInfo;
                               <button
                                 onClick={() => hasPreview ? setPreviewArt(root) : undefined}
                                 disabled={!hasPreview}
-                                className={hasPreview ? 'btn-black' : 'btn-gray'}
+                                className={`${hasPreview ? 'btn-black' : 'btn-gray'} btn-icon`}
                                 title="Anteprima"
-                                style={{ width: 42, height: 42, padding: 0, borderRadius: 21, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                                style={{ fontFamily: 'inherit' }}>
                                 <svg style={{ position: 'relative', zIndex: 1 }} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                               </button>
                               {hasDetails && (
                                 <button type="button" onClick={() => toggleExpand(root.id)}
-                                  className="btn-black"
-                                  style={{ width: 42, height: 42, padding: 0, borderRadius: 21, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
+                                  className="btn-black btn-icon"
+                                  style={{ fontFamily: 'inherit', gap: 2 }}>
                                   <svg style={{ position: 'relative', zIndex: 1 }} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="10" cy="18" r="2" fill="currentColor" stroke="none"/></svg>
                                   <span style={{ position: 'relative', zIndex: 1, fontSize: 10 }}>{isExpanded ? '▴' : '▾'}</span>
                                 </button>
@@ -278,7 +278,7 @@ export default function OrdineClient({ ordine, articoli }: { ordine: OrdineInfo;
       {/* Torna */}
       <div>
         <Link href="/area-lavoro/ordini-ricevuti" className="btn-black"
-          style={{ display: 'inline-flex', alignItems: 'center', height: 42, padding: '0 28px', borderRadius: 21, textDecoration: 'none', fontSize: 13 }}>
+          style={{ padding: '0 28px' }}>
           ← Torna agli ordini
         </Link>
       </div>

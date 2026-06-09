@@ -422,7 +422,7 @@ export default function OrdiniForniClient({ ordini, role }: { ordini: OrdineForn
           <option value="1">Pagato</option>
           <option value="0">Non pagato</option>
         </select>
-        <button onClick={() => setShowModal(true)} className="btn-green" style={{ ...btnBase, whiteSpace: 'nowrap' }}>
+        <button onClick={() => setShowModal(true)} className="btn-green" style={btnBase}>
           + Nuovo ordine
         </button>
       </div>

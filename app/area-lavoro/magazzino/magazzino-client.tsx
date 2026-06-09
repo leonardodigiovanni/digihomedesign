@@ -455,7 +455,7 @@ export default function MagazzinoClient({ materiali, role }: { materiali: Materi
         <button
           onClick={() => setShowModal(true)}
           className="btn-green"
-          style={{ ...btnBase, whiteSpace: 'nowrap' }}
+          style={btnBase}
         >
           + Aggiungi materiale
         </button>

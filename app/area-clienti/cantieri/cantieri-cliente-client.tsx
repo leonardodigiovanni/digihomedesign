@@ -46,7 +46,7 @@ function TaskGrid({
         <p style={{ fontSize: 14, color: '#555', lineHeight: 1.6, margin: 0 }}>Seleziona un task per vedere le lavorazioni e i relativi documenti fotografici.</p>
       </div>
       <div style={{ background: BRUSHED, border: '1px solid #222', borderRadius: 10, padding: 12 }}>
-        <button onClick={onBack} className="btn-black" style={{ height: 42, padding: '0 24px', borderRadius: 21, fontSize: 14 }}>
+        <button onClick={onBack} className="btn-black" style={{ padding: '0 24px', fontSize: 14 }}>
           ← Torna ai cantieri
         </button>
       </div>

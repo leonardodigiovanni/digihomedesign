@@ -195,7 +195,7 @@ export default function AnagraficaForniClient({ fornitori, role }: { fornitori: 
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
         <input type="text" placeholder="Cerca ragione sociale, email, telefono…" value={search} onChange={e => setSearch(e.target.value)}
           style={{ flex: 1, minWidth: 200, padding: '8px 12px', fontSize: 14, border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit' }} />
-        <button onClick={() => setShowAdd(true)} className="btn-green" style={{ ...btnBase, whiteSpace: 'nowrap' }}>
+        <button onClick={() => setShowAdd(true)} className="btn-green" style={btnBase}>
           + Nuovo fornitore
         </button>
       </div>

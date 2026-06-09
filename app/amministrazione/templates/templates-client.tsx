@@ -97,8 +97,8 @@ function DisegnoTemplateEditor({ template, onClose }: { template: DisegnoTemplat
           </div>
           {error && <div style={{ background: '#fff5f5', color: '#c00', padding: '8px 12px', borderRadius: 5, fontSize: 13 }}>{error}</div>}
           <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', paddingTop: 4 }}>
-            <button onClick={onClose} className="btn-red" style={{ padding: '8px 20px', fontSize: 13, fontWeight: 600 }}>Annulla</button>
-            <button onClick={handleSave} disabled={pending} className={pending ? 'btn-gray' : 'btn-green'} style={{ padding: '8px 22px', fontSize: 13, fontWeight: 700 }}>
+            <button onClick={onClose} className="btn-red">Annulla</button>
+            <button onClick={handleSave} disabled={pending} className={pending ? 'btn-gray' : 'btn-green'} style={{ padding: '0 22px' }}>
               {pending ? 'Salvataggio…' : 'Salva'}
             </button>
           </div>
@@ -178,8 +178,8 @@ function ProvvisorioTemplateEditor({ template, onClose }: { template: Provvisori
           </div>
           {error && <div style={{ background: '#fff5f5', color: '#c00', padding: '8px 12px', borderRadius: 5, fontSize: 13 }}>{error}</div>}
           <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', paddingTop: 4 }}>
-            <button onClick={onClose} className="btn-red" style={{ padding: '8px 20px', fontSize: 13, fontWeight: 600 }}>Annulla</button>
-            <button onClick={handleSave} disabled={pending} className={pending ? 'btn-gray' : 'btn-green'} style={{ padding: '8px 22px', fontSize: 13, fontWeight: 700 }}>
+            <button onClick={onClose} className="btn-red">Annulla</button>
+            <button onClick={handleSave} disabled={pending} className={pending ? 'btn-gray' : 'btn-green'} style={{ padding: '0 22px' }}>
               {pending ? 'Salvataggio…' : 'Salva'}
             </button>
           </div>
@@ -291,8 +291,8 @@ function TemplateEditor({ template, onClose }: { template: Template | null; onCl
           )}
 
           <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', paddingTop: 4 }}>
-            <button onClick={onClose} className="btn-red" style={{ padding: '8px 20px', fontSize: 13, fontWeight: 600 }}>Annulla</button>
-            <button onClick={handleSave} disabled={pending} className={pending ? 'btn-gray' : 'btn-green'} style={{ padding: '8px 22px', fontSize: 13, fontWeight: 700 }}>
+            <button onClick={onClose} className="btn-red">Annulla</button>
+            <button onClick={handleSave} disabled={pending} className={pending ? 'btn-gray' : 'btn-green'} style={{ padding: '0 22px' }}>
               {pending ? 'Salvataggio…' : 'Salva'}
             </button>
           </div>
@@ -364,7 +364,7 @@ export default function TemplatesClient({ templates, disegnoTemplates, provvisor
                   <td style={{ ...tdS, color: '#888', fontSize: 12, whiteSpace: 'nowrap', width: 160 }}>{t.updated_at}</td>
                   <td style={{ ...tdS, textAlign: 'right', whiteSpace: 'nowrap' }}>
                     <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-                      <button onClick={() => setEditing(t)} className="btn-black" style={{ padding: '5px 14px', fontSize: 12, fontWeight: 600 }}>Modifica</button>
+                      <button onClick={() => setEditing(t)} className="btn-black">Modifica</button>
                     </div>
                   </td>
                 </tr>
@@ -395,7 +395,7 @@ export default function TemplatesClient({ templates, disegnoTemplates, provvisor
                 <td style={{ ...tdS, fontWeight: 600 }}>Template Preventivo Provvisorio</td>
                 <td style={{ ...tdS, color: '#888', fontSize: 12, whiteSpace: 'nowrap', width: 160 }}>{provvisorioTemplate.updated_at}</td>
                 <td style={{ ...tdS, textAlign: 'right' }}>
-                  <button onClick={() => setEditingProvvisorio(true)} className="btn-black" style={{ padding: '5px 14px', fontSize: 12, fontWeight: 600 }}>Modifica</button>
+                  <button onClick={() => setEditingProvvisorio(true)} className="btn-black">Modifica</button>
                 </td>
               </tr>
             </tbody>
@@ -423,7 +423,7 @@ export default function TemplatesClient({ templates, disegnoTemplates, provvisor
                   <td style={{ ...tdS, fontWeight: 600 }}>{t.label}</td>
                   <td style={{ ...tdS, color: '#888', fontSize: 12, whiteSpace: 'nowrap', width: 160 }}>{t.updated_at}</td>
                   <td style={{ ...tdS, textAlign: 'right' }}>
-                    <button onClick={() => setEditingDisegno(t)} className="btn-black" style={{ padding: '5px 14px', fontSize: 12, fontWeight: 600 }}>Modifica</button>
+                    <button onClick={() => setEditingDisegno(t)} className="btn-black">Modifica</button>
                   </td>
                 </tr>
               ))}

@@ -200,7 +200,7 @@ export default function FacsimiliClient({ documenti, role }: { documenti: Docume
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
         <input type="text" placeholder="Cerca facsimile…" value={search} onChange={e => setSearch(e.target.value)}
           style={{ flex: 1, minWidth: 200, maxWidth: 360, padding: '8px 12px', fontSize: 14, border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit' }} />
-        <button onClick={() => setShowModal(true)} className="btn-green" style={{ ...btnBase, whiteSpace: 'nowrap' }}>
+        <button onClick={() => setShowModal(true)} className="btn-green" style={btnBase}>
           + Carica facsimile
         </button>
       </div>

@@ -142,16 +142,13 @@ function LoginBanner({ hasLacune, cataloghiHref = '/brand/cataloghi' }: { hasLac
           )}
         </div>
         <a href="/registrazione" className="btn-black" style={{
-          height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, borderRadius: 21,
-          textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'monospace',
+          padding: '0 8px', fontSize: 14,
         }}>Registrati →</a>
         <a href={cataloghiHref} className="btn-black" style={{
-          height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, borderRadius: 21,
-          textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'monospace',
+          padding: '0 8px', fontSize: 14,
         }}>Vai ai cataloghi →</a>
         <a href="/aiuto/guida-preventivo" className="btn-black" style={{
-          height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, borderRadius: 21,
-          textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'monospace',
+          padding: '0 8px', fontSize: 14,
         }}>Vai alla guida →</a>
       </div>
     </div>
@@ -639,15 +636,14 @@ export default function CarrelloClient({
 
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <a href={cataloghiHref} className="btn-green" style={{
-            flex: 1, minWidth: 140, height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, fontFamily: 'monospace', borderRadius: 21,
-            textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', whiteSpace: 'nowrap',
+            flex: 1, minWidth: 140, padding: '0 8px', fontSize: 14,
           }}>
             + Aggiungi articolo
           </a>
           {lastTopLevel && (
             <button type="button" onClick={openDuplica} disabled={actPending}
               className={actPending ? 'btn-gray' : 'btn-green'}
-              style={{ flex: 1, minWidth: 140, height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, fontFamily: 'monospace', borderRadius: 21, whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+              style={{ flex: 1, minWidth: 140, padding: '0 8px', fontSize: 14 }}>
               + Ripeti articolo
             </button>
           )}

@@ -90,7 +90,7 @@ function AddFatturaForm({ defaultTipo }: { defaultTipo: 'attiva' | 'passiva' }) 
 
   if (!open) return (
     <button className="btn-green" onClick={() => setOpen(true)}
-      style={{ padding: '7px 18px', fontSize: 13, fontWeight: 600, marginBottom: 12 }}>
+      style={{ marginBottom: 12 }}>
       + Nuova fattura {defaultTipo === 'attiva' ? 'attiva' : 'passiva'}
     </button>
   )
@@ -135,12 +135,10 @@ function AddFatturaForm({ defaultTipo }: { defaultTipo: 'attiva' | 'passiva' }) 
       </div>
       {error && <div style={{ color: '#c00', fontSize: 12, marginBottom: 8 }}>{error}</div>}
       <div style={{ display: 'flex', gap: 8 }}>
-        <button type="submit" className="btn-green" disabled={pending}
-          style={{ padding: '6px 16px', fontSize: 13, fontWeight: 600 }}>
+        <button type="submit" className="btn-green" disabled={pending}>
           {pending ? 'Salvataggio...' : 'Salva'}
         </button>
-        <button type="button" className="btn-gray" onClick={() => setOpen(false)}
-          style={{ padding: '6px 16px', fontSize: 13 }}>
+        <button type="button" className="btn-gray" onClick={() => setOpen(false)}>
           Annulla
         </button>
       </div>
@@ -195,8 +193,7 @@ function AddPagamentoForm({ fatturaId, residuo, onDone }: { fatturaId: number; r
         <input name="note" style={{ ...inp, width: 160 }} />
       </div>
       {error && <span style={{ color: '#c00', fontSize: 11 }}>{error}</span>}
-      <button type="submit" className="btn-green" disabled={pending}
-        style={{ padding: '4px 12px', fontSize: 12, fontWeight: 600 }}>
+      <button type="submit" className="btn-green" disabled={pending}>
         {pending ? '...' : 'Aggiungi'}
       </button>
       {residuo > 0 && (
@@ -253,7 +250,6 @@ function PagamentiPanel({ fattura, pagamenti }: { fattura: Fattura; pagamenti: P
                     <input type="hidden" name="id" value={p.id} />
                     <input type="hidden" name="fattura_id" value={fattura.id} />
                     <button type="submit" disabled={pending} className="btn-red"
-                      style={{ padding: '2px 8px', fontSize: 11 }}
                       onClick={e => { if (!confirm('Eliminare questo pagamento?')) e.preventDefault() }}>
                       Elimina
                     </button>
@@ -426,7 +422,6 @@ function TabellaFatture({ fatture, pagamenti }: { fatture: Fattura[]; pagamenti:
                     <form action={async (fd) => { startT(async () => { await deleteFattura(null, fd) }) }}>
                       <input type="hidden" name="id" value={f.id} />
                       <button type="submit" disabled={pending} className="btn-red"
-                        style={{ padding: '3px 10px', fontSize: 12 }}
                         onClick={e => { if (!confirm('Eliminare questa fattura?')) e.preventDefault() }}>
                         Elimina
                       </button>

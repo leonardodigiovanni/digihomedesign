@@ -136,17 +136,17 @@ export default function OrdiniStaffClient({
                         <button
                           onClick={() => handleToggleVisibile(o.id, o.visibile_cliente)}
                           disabled={pending}
-                          className={isVisible ? 'btn-black' : 'btn-gray'}
+                          className={`${isVisible ? 'btn-black' : 'btn-gray'} btn-icon`}
                           title={isVisible ? 'Nascondi dal cliente' : 'Mostra al cliente'}
-                          style={{ width: 36, height: 36, padding: 0, borderRadius: 18, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 16 }}>
+                          style={{ fontSize: 16 }}>
                           {isVisible ? '👁' : '🚫'}
                         </button>
                         <button
                           onClick={() => handleElimina(o.id)}
                           disabled={pending}
-                          className="btn-red"
+                          className="btn-red btn-icon"
                           title="Elimina ordine"
-                          style={{ width: 36, height: 36, padding: 0, borderRadius: 18, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>
+                          style={{ fontSize: 14 }}>
                           ✕
                         </button>
                       </div>

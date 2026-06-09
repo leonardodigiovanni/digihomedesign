@@ -52,7 +52,7 @@ export default function DatabaseClient() {
           onClick={handleEsegui}
           disabled={loading || !sql.trim()}
           className="btn-green"
-          style={{ minWidth: 140, height: 42 }}
+          style={{ minWidth: 140 }}
         >
           {loading ? 'Esecuzione...' : 'Esegui'}
         </button>

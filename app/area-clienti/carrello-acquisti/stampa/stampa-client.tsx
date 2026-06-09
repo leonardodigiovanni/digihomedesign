@@ -82,25 +82,18 @@ export default function StampaAcquistiClient({ pages, tornaHref = '/area-clienti
         display: 'flex', gap: 12, justifyContent: 'center',
         marginBottom: 28, flexWrap: 'wrap',
       }}>
-        <a href={tornaHref} className="btn-black" style={{
-          height: 42, padding: '0 20px', fontSize: 13, fontWeight: 700, borderRadius: 21,
-          textDecoration: 'none', display: 'inline-flex', alignItems: 'center',
-        }}>
+        <a href={tornaHref} className="btn-black">
           ← Torna al carrello
         </a>
         <button onClick={handlePDF} disabled={busy} className="btn-black" style={{
-          height: 42, padding: '0 22px', fontSize: 13, fontWeight: 700, borderRadius: 21,
-          border: 'none', cursor: busy ? 'not-allowed' : 'pointer',
-          display: 'inline-flex', alignItems: 'center', fontFamily: 'inherit',
-          opacity: busy ? 0.5 : 1,
+          padding: '0 22px', cursor: busy ? 'not-allowed' : 'pointer',
+          fontFamily: 'inherit', opacity: busy ? 0.5 : 1,
         }}>
           {loadingPdf ? 'Generazione…' : '⬇ Scarica PDF'}
         </button>
         <button onClick={handlePrint} disabled={busy} className="btn-black" style={{
-          height: 42, padding: '0 20px', fontSize: 13, fontWeight: 700, borderRadius: 21,
-          border: 'none', cursor: busy ? 'not-allowed' : 'pointer',
-          display: 'inline-flex', alignItems: 'center', fontFamily: 'inherit',
-          opacity: busy ? 0.5 : 1,
+          cursor: busy ? 'not-allowed' : 'pointer',
+          fontFamily: 'inherit', opacity: busy ? 0.5 : 1,
         }}>
           {loadingPrint ? 'Generazione…' : '🖨 Stampa'}
         </button>

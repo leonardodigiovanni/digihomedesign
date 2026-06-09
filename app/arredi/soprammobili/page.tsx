@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import Image from 'next/image'
 import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
@@ -182,7 +182,7 @@ export default async function Page() {
         )}
 
         <div style={{ display: 'flex', gap: 8 }}>
-          <Link href="/arredi" className="btn-black fs-12" style={{ flex: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: 42, padding: '0 20px', borderRadius: 21, textDecoration: 'none', fontFamily: 'monospace' }}>← Torna ad Arredi</Link>
+          <Link href="/arredi" className="btn-black fs-12" style={{ flex: 1 }}>← Torna ad Arredi</Link>
           <CtaPreventivo />
           <CtaCantiere />
         </div>

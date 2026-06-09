@@ -103,7 +103,7 @@ function AddCompitoForm({ utenti, currentUser }: { utenti: Utente[]; currentUser
 
   if (!open) return (
     <button className="btn-green" onClick={() => setOpen(true)}
-      style={{ padding: '8px 20px', fontSize: 13, fontWeight: 600, marginBottom: 20 }}>
+      style={{ padding: '8px 20px', fontWeight: 600, marginBottom: 20 }}>
       + Nuovo compito
     </button>
   )
@@ -149,11 +149,11 @@ function AddCompitoForm({ utenti, currentUser }: { utenti: Utente[]; currentUser
       )}
       <div style={{ display: 'flex', gap: 8 }}>
         <button type="submit" className="btn-green" disabled={pending}
-          style={{ padding: '6px 16px', fontSize: 13, fontWeight: 600 }}>
+          style={{ padding: '6px 16px', fontWeight: 600 }}>
           {pending ? 'Salvataggio...' : 'Salva'}
         </button>
         <button type="button" className="btn-gray" onClick={() => setOpen(false)}
-          style={{ padding: '6px 16px', fontSize: 13 }}>Annulla</button>
+          style={{ padding: '6px 16px' }}>Annulla</button>
       </div>
     </form>
   )

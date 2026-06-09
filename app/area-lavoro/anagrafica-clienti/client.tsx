@@ -281,7 +281,7 @@ export default function AnagraficaClientiClient({ clienti, role }: { clienti: Cl
           <option value="fisica">Persona fisica</option>
           <option value="giuridica">Persona giuridica</option>
         </select>
-        <button onClick={() => setShowAdd(true)} className="btn-green" style={{ ...btnBase, whiteSpace: 'nowrap' }}>
+        <button onClick={() => setShowAdd(true)} className="btn-green" style={btnBase}>
           + Nuovo cliente
         </button>
       </div>

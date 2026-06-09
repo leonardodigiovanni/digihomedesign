@@ -134,13 +134,12 @@ export default async function Page() {
         </div>
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
           {cartNonVuoto ? (
-            <a href="/area-clienti/carrello-preventivo" className="btn-black"
-              style={{ display: 'inline-flex', alignItems: 'center', height: 42, padding: '0 20px', borderRadius: 21, textDecoration: 'none', fontSize: 13, fontWeight: 700 }}>
+            <a href="/area-clienti/carrello-preventivo" className="btn-black">
               Vai alla simulazione →
             </a>
           ) : (
             <a href="/area-clienti/carrello-preventivo" className="btn-green"
-              style={{ display: 'inline-flex', alignItems: 'center', height: 42, padding: '0 24px', borderRadius: 21, textDecoration: 'none', fontSize: 13, fontWeight: 700 }}>
+              style={{ padding: '0 24px' }}>
               + Simula preventivo
             </a>
           )}

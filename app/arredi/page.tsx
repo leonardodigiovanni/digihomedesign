@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import type { Metadata } from 'next'
 import CtaPreventivo from '@/components/cta-preventivo'
 import CtaCantiere from '@/components/cta-cantiere'
@@ -43,10 +43,10 @@ export default function Page() {
         ))}
       </div>
       <div style={{ display: 'flex', gap: 8 }}>
-        <Link href="/" className="btn-black fs-12" style={{ flex: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: 42, padding: '0 20px', borderRadius: 21, textDecoration: 'none', fontFamily: 'monospace' }}>← Home</Link>
+        <Link href="/" className="btn-black fs-12" style={{ flex: 1 }}>← Home</Link>
         <CtaPreventivo />
         <CtaCantiere />
-        <Link href="/brand/contatti" className="btn-black fs-12" style={{ flex: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: 42, padding: '0 20px', borderRadius: 21, textDecoration: 'none', fontFamily: 'monospace' }}>Chiedi info</Link>
+        <Link href="/brand/contatti" className="btn-black fs-12" style={{ flex: 1 }}>Chiedi info</Link>
       </div>
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>tipo indice di categoria</p>
     </div>

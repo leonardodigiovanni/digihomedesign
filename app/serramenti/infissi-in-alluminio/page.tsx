@@ -193,7 +193,7 @@ export default async function Page() {
         )}
 
         <div style={{ display: 'flex', gap: 8 }}>
-          <Link href="/serramenti" className="btn-black fs-12" style={{ flex: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: 42, padding: '0 20px', borderRadius: 21, textDecoration: 'none', fontFamily: 'monospace' }}>← Torna a Serramenti</Link>
+          <Link href="/serramenti" className="btn-black fs-12" style={{ flex: 1 }}>← Torna a Serramenti</Link>
           <CtaCantiere />
         </div>
 

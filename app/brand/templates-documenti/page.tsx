@@ -52,7 +52,7 @@ export default function Page() {
         ))}
       </div>
 
-      <Link href="/brand" className="btn-black fs-12" style={{ display: 'inline-flex', alignItems: 'center', marginTop: 32, height: 42, padding: '0 20px', borderRadius: 21, textDecoration: 'none', fontFamily: 'monospace' }}>← Torna a Brand</Link>
+      <Link href="/brand" className="btn-black fs-12" style={{ marginTop: 32 }}>← Torna a Brand</Link>
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>trovare i pdf online e capire come vengono accettati dal cliente</p>
     </div>
   )

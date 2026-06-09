@@ -65,7 +65,7 @@ function AddForm({ anno }: { anno: number }) {
 
   if (!open) return (
     <button className="btn-green" onClick={() => setOpen(true)}
-      style={{ padding: '7px 18px', fontSize: 13, fontWeight: 600, marginBottom: 16 }}>
+      style={{ padding: '7px 18px', fontWeight: 600, marginBottom: 16 }}>
       + Nuovo adempimento
     </button>
   )
@@ -112,11 +112,11 @@ function AddForm({ anno }: { anno: number }) {
       {error && <div style={{ color: '#c00', fontSize: 12, marginBottom: 8 }}>{error}</div>}
       <div style={{ display: 'flex', gap: 8 }}>
         <button type="submit" className="btn-green" disabled={pending}
-          style={{ padding: '6px 16px', fontSize: 13, fontWeight: 600 }}>
+          style={{ padding: '6px 16px', fontWeight: 600 }}>
           {pending ? 'Salvataggio...' : 'Salva'}
         </button>
         <button type="button" className="btn-gray" onClick={() => setOpen(false)}
-          style={{ padding: '6px 16px', fontSize: 13 }}>
+          style={{ padding: '6px 16px' }}>
           Annulla
         </button>
       </div>

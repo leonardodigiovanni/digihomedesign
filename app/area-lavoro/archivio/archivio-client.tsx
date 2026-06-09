@@ -192,7 +192,7 @@ export default function ArchivioClient({ documenti, role }: { documenti: Documen
             {CATEGORIE.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
-        <button onClick={() => setShowModal(true)} className="btn-green" style={{ ...btnBase, whiteSpace: 'nowrap' }}>
+        <button onClick={() => setShowModal(true)} className="btn-green" style={btnBase}>
           + Carica documento
         </button>
       </div>

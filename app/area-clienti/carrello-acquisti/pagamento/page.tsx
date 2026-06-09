@@ -121,12 +121,12 @@ export default async function Page() {
             <form action={creaCheckoutSession} style={{ flex: 1, minWidth: 140 }}>
               <button type="submit"
                 className="btn-green"
-                style={{ width: '100%', height: 42, padding: '0 8px', fontSize: 13, fontWeight: 700, borderRadius: 21, fontFamily: 'monospace', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', whiteSpace: 'nowrap' }}>
+                style={{ width: '100%', padding: '0 8px' }}>
                 Paga ora
               </button>
             </form>
             <a href="/area-clienti/carrello-acquisti" className="btn-black"
-              style={{ flex: 1, minWidth: 140, height: 42, padding: '0 8px', fontSize: 13, fontWeight: 700, borderRadius: 21, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
+              style={{ flex: 1, minWidth: 140, padding: '0 8px' }}>
               ← Torna al carrello
             </a>
           </div>

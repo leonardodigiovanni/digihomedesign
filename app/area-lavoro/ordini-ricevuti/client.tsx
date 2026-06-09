@@ -344,7 +344,7 @@ export default function OrdiniRicevutiClient({ ordini, clienti, role }: { ordini
           <option value="">Tutti gli stati</option>
           {STATI.map(s => <option key={s} value={s}>{s.replace('_',' ')}</option>)}
         </select>
-        <button onClick={() => setShowModal(true)} className="btn-green" style={{ ...btnBase, whiteSpace: 'nowrap' }}>
+        <button onClick={() => setShowModal(true)} className="btn-green" style={btnBase}>
           + Nuovo ordine
         </button>
       </div>

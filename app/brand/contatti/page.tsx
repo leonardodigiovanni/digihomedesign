@@ -94,7 +94,7 @@ export default async function Page() {
 
       <ContattoForm username={username} role={role} />
 
-      <Link href="/brand" className="btn-black fs-12" style={{ display: 'inline-flex', alignItems: 'center', marginTop: 32, height: 42, padding: '0 20px', borderRadius: 21, textDecoration: 'none', fontFamily: 'monospace' }}>← Torna a Brand</Link>
+      <Link href="/brand" className="btn-black fs-12" style={{ marginTop: 32 }}>← Torna a Brand</Link>
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>pagina revisionata</p>
     </div>
   )

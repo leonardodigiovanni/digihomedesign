@@ -36,14 +36,14 @@ export default function BannerPanel({ abilitato, circolare, testo }: BannerPanel
         <form action={toggleAction}>
           <button type="submit" disabled={togglePending}
             className={togglePending ? 'btn-gray' : abilitato ? 'btn-red' : 'btn-green'}
-            style={{ padding: '8px 20px', fontSize: 13, fontFamily: 'inherit', whiteSpace: 'nowrap' }}>
+            style={{ padding: '8px 20px', fontFamily: 'inherit' }}>
             {togglePending ? '…' : abilitato ? 'Disabilita' : 'Abilita'}
           </button>
         </form>
         <form action={circAction}>
           <button type="submit" disabled={circPending}
             className={circPending ? 'btn-gray' : circolare ? 'btn-green' : 'btn-gray'}
-            style={{ padding: '8px 20px', fontSize: 13, fontFamily: 'inherit', whiteSpace: 'nowrap' }}>
+            style={{ padding: '8px 20px', fontFamily: 'inherit' }}>
             {circPending ? '…' : circolare ? 'Circolare ON' : 'Circolare OFF'}
           </button>
         </form>
@@ -61,12 +61,12 @@ export default function BannerPanel({ abilitato, circolare, testo }: BannerPanel
         <div style={{ display: 'flex', gap: 10 }}>
           <button type="submit" disabled={!changed || savePending}
             className={changed && !savePending ? 'btn-green' : 'btn-gray'}
-            style={{ padding: '8px 20px', fontSize: 13, borderRadius: 7, fontFamily: 'inherit' }}>
+            style={{ padding: '8px 20px', borderRadius: 7, fontFamily: 'inherit' }}>
             {savePending ? '…' : 'Salva testo'}
           </button>
           <button type="reset" disabled={!changed || savePending}
             className={changed && !savePending ? 'btn-red' : 'btn-gray'}
-            style={{ padding: '8px 20px', fontSize: 13, borderRadius: 7, fontFamily: 'inherit' }}>
+            style={{ padding: '8px 20px', borderRadius: 7, fontFamily: 'inherit' }}>
             Annulla
           </button>
         </div>

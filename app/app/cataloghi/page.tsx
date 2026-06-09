@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 import { getConnection } from '@/lib/db'
 import { CatalogoGrid } from '@/app/brand/cataloghi/catalogo-grid'
 import type { CategoriaCard } from '@/app/brand/cataloghi/page'
@@ -46,7 +46,7 @@ export default async function AppCataloghiPage() {
       </div>
 
       <div style={{ background: 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 10, padding: '12px', marginBottom: 12, marginLeft: 3, marginRight: 3 }}>
-        <Link href="/app" className="btn-black fs-14" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: 42, padding: '0 20px', borderRadius: 21, textDecoration: 'none', fontFamily: 'monospace' }}>
+        <Link href="/app" className="btn-black fs-14">
           ← Torna alla home
         </Link>
       </div>

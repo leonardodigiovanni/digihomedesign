@@ -231,12 +231,10 @@ function NuovoArticoloForm({ categorie, produttori, fornitori, onDone }: {
       </div>
       {result && !result.ok && <div style={{ color: '#c00', fontSize: 12, marginBottom: 8 }}>{result.error}</div>}
       <div style={{ display: 'flex', gap: 8 }}>
-        <button type="submit" className="btn-green" disabled={pending}
-          style={{ padding: '6px 16px', fontSize: 13, fontWeight: 600 }}>
+        <button type="submit" className="btn-green" disabled={pending}>
           {pending ? 'Salvataggio…' : 'Salva'}
         </button>
-        <button type="button" className="btn-gray" onClick={onDone}
-          style={{ padding: '6px 12px', fontSize: 13 }}>Annulla</button>
+        <button type="button" className="btn-gray" onClick={onDone}>Annulla</button>
       </div>
     </form>
   )
@@ -738,8 +736,7 @@ function RigaNormale({ art, onEdit, onScheda, onDelete, pending }: {
             padding: '3px 10px', fontSize: 11, cursor: 'pointer', fontFamily: 'inherit',
             background: '#2a2a3e', color: '#c8960c', border: 'none', borderRadius: 3, fontWeight: 600,
           }}>Modifica</button>
-          <button onClick={onDelete} disabled={pending} className="btn-red"
-            style={{ padding: '3px 8px', fontSize: 11 }}>Elimina</button>
+          <button onClick={onDelete} disabled={pending} className="btn-red">Elimina</button>
         </div>
       </td>
     </tr>
@@ -824,12 +821,10 @@ function RigaEdit({ art, categorie, produttori, fornitori, onDone }: {
       <td style={tde} /><td style={tde} /><td style={tde} /><td style={tde} /><td style={tde} /><td style={tde} />
       <td style={{ ...tde, whiteSpace: 'nowrap' }}>
         <div style={{ display: 'flex', gap: 4 }}>
-          <button onClick={handleSubmit} className="btn-green" disabled={pending}
-            style={{ padding: '3px 10px', fontSize: 11, fontWeight: 700 }}>
+          <button onClick={handleSubmit} className="btn-green" disabled={pending}>
             {pending ? '…' : '✓'}
           </button>
-          <button className="btn-gray" onClick={onDone}
-            style={{ padding: '3px 8px', fontSize: 11 }}>✕</button>
+          <button className="btn-gray" onClick={onDone}>✕</button>
         </div>
         {error && <div style={{ color: '#c00', fontSize: 10, marginTop: 2 }}>{error}</div>}
       </td>
@@ -920,7 +915,7 @@ export default function ListiniClient({ articoli, fornitori }: { articoli: Artic
       {/* Pulsante nuovo */}
       {!nuovoOpen ? (
         <button className="btn-green" onClick={() => setNuovoOpen(true)}
-          style={{ padding: '8px 20px', fontSize: 13, fontWeight: 600, marginBottom: 16 }}>
+          style={{ marginBottom: 16 }}>
           + Nuovo articolo
         </button>
       ) : (

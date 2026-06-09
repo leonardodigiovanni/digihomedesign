@@ -105,18 +105,17 @@ export default async function Page() {
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
           <form action={creaPreventivo}>
             <button type="submit" className="btn-green"
-              style={{ height: 42, borderRadius: 21, padding: '0 24px', fontSize: 13, fontWeight: 600, fontFamily: 'monospace' }}>
+              style={{ padding: '0 24px', fontWeight: 600 }}>
               + Nuovo preventivo
             </button>
           </form>
           {cartNonVuoto ? (
-            <a href="/area-clienti/carrello-preventivo" className="btn-black"
-              style={{ display: 'inline-flex', alignItems: 'center', height: 42, padding: '0 20px', borderRadius: 21, textDecoration: 'none', fontSize: 13, fontWeight: 700, fontFamily: 'monospace' }}>
+            <a href="/area-clienti/carrello-preventivo" className="btn-black">
               Vai alla simulazione →
             </a>
           ) : (
             <a href="/area-clienti/carrello-preventivo" className="btn-green"
-              style={{ display: 'inline-flex', alignItems: 'center', height: 42, padding: '0 24px', borderRadius: 21, textDecoration: 'none', fontSize: 13, fontWeight: 700, fontFamily: 'monospace' }}>
+              style={{ padding: '0 24px' }}>
               + Simula preventivo
             </a>
           )}

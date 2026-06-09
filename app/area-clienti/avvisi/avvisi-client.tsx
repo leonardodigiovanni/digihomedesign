@@ -77,7 +77,7 @@ export function NuovoAvvisoForm({ clienti }: { clienti: ClienteOption[] }) {
       </div>
       <div>
         <button type="submit" disabled={pending} className="btn-green"
-          style={{ height: 42, padding: '0 24px', fontSize: 14, fontWeight: 600, borderRadius: 21, border: 'none', cursor: pending ? 'not-allowed' : 'pointer', opacity: pending ? 0.6 : 1 }}>
+          style={{ padding: '0 24px', fontSize: 14, fontWeight: 600, border: 'none', cursor: pending ? 'not-allowed' : 'pointer', opacity: pending ? 0.6 : 1 }}>
           {pending ? 'Invio…' : 'Invia avviso'}
         </button>
       </div>
@@ -161,7 +161,7 @@ export function AvvisiStaff({ avvisi, clienti }: { avvisi: Avviso[]; clienti: Cl
                   <td style={{ ...tdStyle, textAlign: 'center' }}>
                     <button onClick={() => { if (confirm('Eliminare questo avviso?')) eliminaAvviso(a.id) }}
                       className="btn-red"
-                      style={{ height: 42, padding: '0 14px', fontSize: 14, fontWeight: 600, borderRadius: 21, border: 'none', cursor: 'pointer' }}>
+                      style={{ padding: '0 14px', fontSize: 14, fontWeight: 600, border: 'none' }}>
                       Elimina
                     </button>
                   </td>
@@ -225,8 +225,8 @@ export function AvvisiCliente({ avvisi }: { avvisi: Avviso[] }) {
               <span style={{ fontSize: 14, color: isLetto ? '#777' : 'rgba(255,255,255,0.7)', whiteSpace: 'nowrap' }}>{a.created_at}</span>
               <button
                 onClick={e => { e.stopPropagation(); cestinaAvviso(a.id) }}
-                className="btn-red"
-                style={{ height: 42, width: 42, padding: 0, fontSize: 14, fontWeight: 600, borderRadius: 21, border: 'none', cursor: 'pointer', flexShrink: 0, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+                className="btn-red btn-icon"
+                style={{ fontSize: 14, fontWeight: 600, border: 'none', flexShrink: 0 }}
               >
                 ✕
               </button>

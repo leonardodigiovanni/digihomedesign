@@ -861,8 +861,8 @@ function ModificaArticoloModal({ articolo, parentArt, listini, onClose, isStaff 
             )}
             {error && <p style={{ color: '#c00', fontSize: 13, margin: 0, background: '#fff5f5', padding: '8px 12px', borderRadius: 5 }}>{error}</p>}
             <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', paddingTop: 4 }}>
-              <button type="button" onClick={onClose} className="btn-red" style={{ height: 42, padding: '0 20px', fontSize: 13, fontFamily: 'inherit', borderRadius: 21 }}>Annulla</button>
-              <button type="submit" disabled={pending} className={pending ? 'btn-gray' : 'btn-green'} style={{ height: 42, padding: '0 22px', fontSize: 13, fontWeight: 700, fontFamily: 'inherit', borderRadius: 21 }}>
+              <button type="button" onClick={onClose} className="btn-red">Annulla</button>
+              <button type="submit" disabled={pending} className={pending ? 'btn-gray' : 'btn-green'} style={{ padding: '0 22px' }}>
                 {pending ? 'Salvataggio…' : 'Salva modifiche'}
               </button>
             </div>

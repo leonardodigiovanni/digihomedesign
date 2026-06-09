@@ -562,9 +562,7 @@ export default function CarrelloAcquistiClient({
       <div style={{ background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 10, padding: 12 }}>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <a href={cataloghiHref} className="btn-green" style={{
-            flex: 1, minWidth: 140, height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700,
-            fontFamily: 'monospace', borderRadius: 21, textDecoration: 'none',
-            display: 'inline-flex', alignItems: 'center', justifyContent: 'center', whiteSpace: 'nowrap',
+            flex: 1, minWidth: 140, padding: '0 8px', fontSize: 14,
           }}>
             + Aggiungi articolo
           </a>
@@ -572,9 +570,7 @@ export default function CarrelloAcquistiClient({
             <button type="button" onClick={openDuplica} disabled={actPending}
               className={actPending ? 'btn-gray' : 'btn-green'}
               style={{
-                flex: 1, minWidth: 140, height: 42, padding: '0 8px', fontSize: 14,
-                fontWeight: 700, fontFamily: 'monospace', borderRadius: 21, whiteSpace: 'nowrap',
-                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                flex: 1, minWidth: 140, padding: '0 8px', fontSize: 14,
               }}>
               + Ripeti articolo
             </button>
