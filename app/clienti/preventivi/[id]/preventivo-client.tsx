@@ -1318,7 +1318,7 @@ export default function PreventivoClient({
       ) : (() => {
         const roots = articoli.filter(a => !a.parent_id)
         const childrenOf = (id: number) => articoli.filter(a => a.parent_id === id)
-        const canEdit = preventivo.stato === 'bozza' || preventivo.stato === 'richiesto'
+        const canEdit = preventivo.stato === 'bozza' || preventivo.stato === 'richiesto' || (isStaff && preventivo.stato === 'da inviare')
 
         function childTypeOrder(child: Articolo): number {
           const l = listini.find(li => li.id === child.listino_id)
