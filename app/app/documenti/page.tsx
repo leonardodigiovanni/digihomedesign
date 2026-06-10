@@ -125,7 +125,7 @@ export default async function AppDocumentiPage() {
                   <tr key={d.id} style={{ height: 84, background: brushed }}>
                     <td style={td}>
                       <a href={`/uploads/documenti/${d.filename}`} target="_blank" rel="noopener noreferrer"
-                         className="btn-gold" style={{ padding: '0 14px' }}>
+                         className="btn-gold" style={{ padding: '0 14px', width: '100%' }}>
                         {d.filename.replace(/^\d+_/, '')}
                       </a>
                     </td>

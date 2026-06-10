@@ -127,7 +127,7 @@ export default async function AppPreventivoPage() {
         <p style={{ fontSize: 14, fontWeight: 700, color: '#1a1a1a', margin: '0 0 6px' }}>Preventivi</p>
         <p style={{ fontSize: 14, color: '#555', lineHeight: 1.6, margin: 0 }}>{isStaff ? 'Tutti i preventivi emessi.' : 'I preventivi associati al tuo account.'}</p>
       </div>
-      <div style={{ background: 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 10, padding: 12, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+      <div style={{ background: 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 10, padding: 12, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, flexWrap: 'wrap' }}>
         {isStaff && (
           <form action={creaPreventivo}>
             <button type="submit" className="btn-green"
@@ -144,7 +144,7 @@ export default async function AppPreventivoPage() {
         ) : (
           <a href="/app/carrello-preventivo" className="btn-green"
             style={{ padding: '0 24px', fontSize: 14 }}>
-            + Simula preventivo
+            + Nuova simulazione preventivo
           </a>
         )}
       </div>

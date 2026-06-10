@@ -88,18 +88,17 @@ a:active, a:active img, a:focus img {
   .btn-grid-4 { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* ── Carrello table ── */
+/* ── Carrello table — 4 colonne: [btn] [Articolo] [Q.tà·Rif·Prezzo] [btn] ── */
 .carrello-table tbody tr:last-child td { border-bottom: none !important; }
 .carrello-table th:nth-child(1), .carrello-table td:nth-child(1),
 .carrello-table th:nth-child(2), .carrello-table td:nth-child(2),
-.carrello-table th:nth-child(3), .carrello-table td:nth-child(3),
-.carrello-table th:nth-child(4), .carrello-table td:nth-child(4) {
+.carrello-table th:nth-child(3), .carrello-table td:nth-child(3) {
   border-right: 1px solid #333;
 }
 .carrello-table th:nth-child(1), .carrello-table td:nth-child(1) { text-align: center !important; }
-.carrello-table th:nth-child(2), .carrello-table td:nth-child(2) { text-align: center !important; }
-.carrello-table td:nth-child(4) { text-align: right !important; }
-.carrello-table th:nth-child(5), .carrello-table td:nth-child(5) { text-align: center !important; }
+.carrello-table th:nth-child(2), .carrello-table td:nth-child(2) { text-align: left !important; }
+.carrello-table th:nth-child(3), .carrello-table td:nth-child(3) { text-align: center !important; }
+.carrello-table th:nth-child(4), .carrello-table td:nth-child(4) { text-align: center !important; }
 
 .carrello-gestisci-btns { display: flex; flex-direction: row; gap: 2px; justify-content: center; align-items: center; }
 
@@ -1412,7 +1411,7 @@ body {
 .btn-gray {
   background:
     repeating-linear-gradient(
-      60deg,
+      135deg,
       rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px,
       transparent 1px, transparent 6px
     ),

@@ -603,20 +603,13 @@ export default function CarrelloClient({
             <p style={{ fontSize: 14, color: '#c0392b', margin: '0 0 8px', fontFamily: 'monospace' }}>{editError}</p>
           )}
           <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 4 }}>
-            <button type="button" onClick={onClose}
-              style={{ padding: '8px 18px', borderRadius: 6, border: '1px solid #ddd', background: '#fff', color: '#1a1a1a', fontSize: 14, cursor: 'pointer', fontFamily: 'inherit' }}>
+            <button type="button" onClick={onClose} className="btn-orange"
+              style={{ padding: '0 18px' }}>
               Annulla
             </button>
             <button type="button" onClick={onSave} disabled={actPending}
-              style={{
-                padding: '8px 20px', borderRadius: 6, border: 'none', fontSize: 14, fontWeight: 700,
-                cursor: actPending ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
-                background: actPending
-                  ? '#aaa'
-                  : 'repeating-linear-gradient(135deg,rgba(255,255,255,0.04) 0px,rgba(255,255,255,0.04) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#1b4d1b 0%,#266626 20%,#3a8f3a 45%,#266626 80%,#1b4d1b 100%)',
-                boxShadow: actPending ? 'none' : '0 2px 8px rgba(20,80,20,0.45),inset 0 1px 0 rgba(160,255,160,0.2)',
-                color: '#d4f5d4',
-              }}>
+              className={actPending ? 'btn-gray' : 'btn-green'}
+              style={{ padding: '0 20px' }}>
               {actPending ? 'Salvataggio…' : isEdit ? 'Salva' : 'Aggiungi'}
             </button>
           </div>
@@ -694,9 +687,8 @@ export default function CarrelloClient({
         const renderColgroup = () => (
           <colgroup>
             <col style={{ width: 70 }} />
-            <col style={{ width: 54 }} />
             <col />
-            <col style={{ width: 70 }} />
+            <col style={{ width: 80 }} />
             <col style={{ width: 70 }} />
           </colgroup>
         )
@@ -718,16 +710,15 @@ export default function CarrelloClient({
                   {renderColgroup()}
                   <thead>
                     <tr style={{ background: VERDE }}>
-                      <th style={{ ...thS, textAlign: 'center', width: 50 }}>
+                      <th style={{ ...thS, textAlign: 'center', width: 70 }}>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="10" cy="18" r="2" fill="currentColor" stroke="none"/></svg>
                         </div>
                       </th>
-                      <th style={{ ...thS, textAlign: 'center', width: 54 }}>Q.tà<br/>Rif.</th>
                       <th style={{ ...thS }}>Articolo</th>
-                      <th style={{ ...thS, textAlign: 'center', width: 70, textTransform: 'none', letterSpacing: 0 }}>Prezzo €</th>
-                      <th style={{ ...thS, textAlign: 'center', padding: '8px 0', width: 50 }}>
+                      <th style={{ ...thS, textAlign: 'center', width: 80, textTransform: 'none', letterSpacing: 0 }}>Q.tà Rif<br/>Prezzo €</th>
+                      <th style={{ ...thS, textAlign: 'center', padding: '8px 0', width: 70 }}>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                           <span style={{ fontSize: 14, display: 'inline-block', transform: 'rotate(135deg)', lineHeight: 1 }}>✏</span>
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -771,17 +762,7 @@ export default function CarrelloClient({
                                 )}
                               </div>
                             </td>
-                            <td style={{ ...tdS, padding: 0, height: 1 }}>
-                              <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid #333', fontSize: 12, color: '#1a1a1a', padding: '0 4px' }}>
-                                  N°&nbsp;{root.quantita}
-                                </div>
-                                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, color: '#1a1a1a', padding: '0 4px' }}>
-                                  rif #{String(gi + 1).padStart(3, '0')}
-                                </div>
-                              </div>
-                            </td>
-                            <td style={{ ...tdS, paddingLeft: 8 }}>
+                            <td style={{ ...tdS, paddingLeft: 8, textAlign: 'left' }}>
                               {root.descrizione}
                               {(() => {
                                 const parts: string[] = []
@@ -789,15 +770,25 @@ export default function CarrelloClient({
                                 if (root.larghezza_cm) parts.push(`L:${root.larghezza_cm}`)
                                 if (root.altezza_cm)   parts.push(`H:${root.altezza_cm}`)
                                 if (root.colore)       parts.push(root.colore)
-                                return <div style={{ fontSize: 12, color: '#1a1a1a', marginTop: 1 }}>{parts.join(' · ')}</div>
+                                return <div style={{ fontSize: 12, color: '#1a1a1a', marginTop: 1, textAlign: 'left' }}>{parts.join(' · ')}</div>
                               })()}
-                              {root.note && <div style={{ fontSize: 12, color: '#1a1a1a', marginTop: 1, fontStyle: 'italic' }}>{root.note}</div>}
+                              {root.note && <div style={{ fontSize: 12, color: '#1a1a1a', marginTop: 1, fontStyle: 'italic', textAlign: 'left' }}>{root.note}</div>}
                             </td>
-                            <td style={{ ...tdS, whiteSpace: 'nowrap', padding: '2px 0 2px 4px' }}>
-                              {renderPrezzo(isExpanded
-                                ? calcolaPrezzo(root, articoli)
-                                : calcolaPrezzo(root, articoli) + children.reduce((s, c) => s + calcolaPrezzo(c, articoli), 0)
-                              )}
+                            <td style={{ ...tdS, padding: 0, height: 1, textAlign: 'center' }}>
+                              <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid #333', fontSize: 12, color: '#1a1a1a', padding: '0 4px' }}>
+                                  N°&nbsp;{root.quantita}
+                                </div>
+                                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid #333', fontSize: 12, color: '#1a1a1a', padding: '0 4px' }}>
+                                  rif #{String(gi + 1).padStart(3, '0')}
+                                </div>
+                                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px', whiteSpace: 'nowrap' }}>
+                                  {renderPrezzo(isExpanded
+                                    ? calcolaPrezzo(root, articoli)
+                                    : calcolaPrezzo(root, articoli) + children.reduce((s, c) => s + calcolaPrezzo(c, articoli), 0)
+                                  )}
+                                </div>
+                              </div>
                             </td>
                             <td style={{ ...tdS, padding: '4px 0', textAlign: 'center' }}>
                               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
@@ -825,14 +816,7 @@ export default function CarrelloClient({
                                   />
                                 )}
                               </td>
-                              <td style={{ ...tdS, textAlign: 'center', whiteSpace: 'nowrap', padding: '2px 4px' }}>
-                                {child.richiede_tipo_colore     === 1 ? 'Colore'
-                                : child.richiede_tipo_colore_acc === 1 ? 'Accessori'
-                                : child.richiede_tipo_vetro      === 1 ? 'Vetro'
-                                : child.richiede_tipo_montaggio  === 1 ? 'Montaggio'
-                                : ''}
-                              </td>
-                              <td style={{ ...tdS, paddingLeft: 8 }}>
+                              <td style={{ ...tdS, paddingLeft: 8, textAlign: 'left' }}>
                                 {child.descrizione}
                                 {(() => {
                                   const parts: string[] = []
@@ -840,12 +824,21 @@ export default function CarrelloClient({
                                   if (child.larghezza_cm && !child.richiede_tipo_vetro) parts.push(`L:${child.larghezza_cm}`)
                                   if (child.altezza_cm   && !child.richiede_tipo_vetro) parts.push(`H:${child.altezza_cm}`)
                                   if (child.colore)       parts.push(child.colore)
-                                  return <div style={{ fontSize: 12, color: '#1a1a1a', marginTop: 1 }}>{parts.join(' · ')}</div>
+                                  return <div style={{ fontSize: 12, color: '#1a1a1a', marginTop: 1, textAlign: 'left' }}>{parts.join(' · ')}</div>
                                 })()}
-                                {child.note && <div style={{ fontSize: 12, color: '#1a1a1a', marginTop: 1, fontStyle: 'italic' }}>{child.note}</div>}
+                                {child.note && <div style={{ fontSize: 12, color: '#1a1a1a', marginTop: 1, fontStyle: 'italic', textAlign: 'left' }}>{child.note}</div>}
                               </td>
-                              <td style={{ ...tdS, whiteSpace: 'nowrap', padding: '2px 0 2px 4px' }}>
-                                {renderPrezzo(calcolaPrezzo(child, articoli))}
+                              <td style={{ ...tdS, textAlign: 'center', padding: '4px' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'center' }}>
+                                  <div style={{ fontSize: 12, color: '#1a1a1a', whiteSpace: 'nowrap' }}>
+                                    {child.richiede_tipo_colore     === 1 ? 'Colore'
+                                    : child.richiede_tipo_colore_acc === 1 ? 'Accessori'
+                                    : child.richiede_tipo_vetro      === 1 ? 'Vetro'
+                                    : child.richiede_tipo_montaggio  === 1 ? 'Montaggio'
+                                    : ''}
+                                  </div>
+                                  <div style={{ whiteSpace: 'nowrap' }}>{renderPrezzo(calcolaPrezzo(child, articoli))}</div>
+                                </div>
                               </td>
                               <td style={{ ...tdS, padding: '4px 0', textAlign: 'center' }}>
                                 <button type="button" onClick={() => handleRimuovi(child.index)} disabled={delPending} className="btn-red btn-icon"
@@ -861,7 +854,7 @@ export default function CarrelloClient({
                             const cols = lacuneCount <= 3 ? lacuneCount : 2
                             return (
                               <tr style={{ background: '#ffffff' }}>
-                                <td colSpan={5} style={{ padding: 12, borderBottom: '1px solid #333', borderRight: 'none', textAlign: 'left', background: '#ffffff' }}>
+                                <td colSpan={4} style={{ padding: 12, borderBottom: '1px solid #333', borderRight: 'none', textAlign: 'left', background: '#ffffff' }}>
                                   <div style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: 10 }}>
                                     {showColore && (
                                       <button type="button" onClick={() => handleAggiungiLacuna(root, 'tipo_colore')}
@@ -901,7 +894,7 @@ export default function CarrelloClient({
             )})}
 
             {/* Totale */}
-            <div style={{ background: VERDE, border: '1px solid #222', borderRadius: 8, padding: '12px 50px 12px 20px', display: 'flex', flexDirection: 'column', gap: 4, color: '#1a1a1a' }}>
+            <div style={{ background: VERDE, border: '1px solid #222', borderRadius: 8, padding: '12px 20px', display: 'flex', flexDirection: 'column', gap: 4, color: '#1a1a1a' }}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <span style={{ flex: 1, fontSize: 12, color: '#1a1a1a', fontFamily: 'monospace', fontWeight: 700 }}>Listino (escluso IVA):</span>
                 <span style={{ fontSize: 12, fontWeight: 700, color: '#1a1a1a', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>{`€ ${fmt(totale)}`}</span>

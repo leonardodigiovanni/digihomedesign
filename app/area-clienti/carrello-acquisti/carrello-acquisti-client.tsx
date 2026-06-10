@@ -498,18 +498,13 @@ export default function CarrelloAcquistiClient({
             <p style={{ fontSize: 14, color: '#c0392b', margin: '0 0 8px', fontFamily: 'monospace' }}>{editError}</p>
           )}
           <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 4 }}>
-            <button type="button" onClick={onClose}
-              style={{ padding: '8px 18px', borderRadius: 6, border: '1px solid #ddd', background: '#fff', color: '#1a1a1a', fontSize: 14, cursor: 'pointer', fontFamily: 'inherit' }}>
+            <button type="button" onClick={onClose} className="btn-orange"
+              style={{ padding: '0 18px' }}>
               Annulla
             </button>
             <button type="button" onClick={onSave} disabled={actPending}
-              style={{
-                padding: '8px 20px', borderRadius: 6, border: 'none', fontSize: 14, fontWeight: 700,
-                cursor: actPending ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
-                background: actPending ? '#aaa' : 'repeating-linear-gradient(135deg,rgba(255,255,255,0.04) 0px,rgba(255,255,255,0.04) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#1b4d1b 0%,#266626 20%,#3a8f3a 45%,#266626 80%,#1b4d1b 100%)',
-                boxShadow: actPending ? 'none' : '0 2px 8px rgba(20,80,20,0.45),inset 0 1px 0 rgba(160,255,160,0.2)',
-                color: '#d4f5d4',
-              }}>
+              className={actPending ? 'btn-gray' : 'btn-green'}
+              style={{ padding: '0 20px' }}>
               {actPending ? 'Salvataggio…' : saveLabel}
             </button>
           </div>
@@ -593,9 +588,8 @@ export default function CarrelloAcquistiClient({
               <table className="carrello-table" style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
                 <colgroup>
                   <col style={{ width: 70 }} />
-                  <col style={{ width: 52 }} />
                   <col />
-                  <col style={{ width: 84 }} />
+                  <col style={{ width: 80 }} />
                   <col style={{ width: 70 }} />
                 </colgroup>
                 <thead>
@@ -606,9 +600,8 @@ export default function CarrelloAcquistiClient({
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="10" cy="18" r="2" fill="currentColor" stroke="none"/></svg>
                       </div>
                     </th>
-                    <th style={{ ...thS, textAlign: 'center', width: 52 }}>Q.tà<br/>Rif.</th>
                     <th style={{ ...thS }}>Articolo</th>
-                    <th style={{ ...thS, textAlign: 'center', width: 84, textTransform: 'none', letterSpacing: 0 }}>Prezzo €</th>
+                    <th style={{ ...thS, textAlign: 'center', width: 80, textTransform: 'none', letterSpacing: 0 }}>Q.tà Rif<br/>Prezzo €</th>
                     <th style={{ ...thS, textAlign: 'center', padding: '8px 0', width: 70 }}>
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                         <span style={{ fontSize: 14, display: 'inline-block', transform: 'rotate(135deg)', lineHeight: 1 }}>✏</span>
@@ -659,17 +652,7 @@ export default function CarrelloAcquistiClient({
                             )}
                           </div>
                         </td>
-                        <td style={{ ...tdS, padding: 0, height: 1 }}>
-                          <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid #222', fontSize: 12, color: '#1a1a1a', padding: '0 4px' }}>
-                              N°&nbsp;{root.quantita}
-                            </div>
-                            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, color: '#1a1a1a', padding: '0 4px' }}>
-                              rif #{String(gi + 1).padStart(3, '0')}
-                            </div>
-                          </div>
-                        </td>
-                        <td style={{ ...tdS, paddingLeft: 8 }}>
+                        <td style={{ ...tdS, paddingLeft: 8, textAlign: 'left' }}>
                           {root.descrizione}
                           {(() => {
                             const parts: string[] = []
@@ -679,13 +662,22 @@ export default function CarrelloAcquistiClient({
                             if (root.larghezza_cm) parts.push(`L:${root.larghezza_cm}`)
                             if (root.altezza_cm)   parts.push(`H:${root.altezza_cm}`)
                             if (root.colore)       parts.push(root.colore)
-                            if (root.prezzo_vendita > 0) parts.push(`€${fmt(Number(root.prezzo_vendita))}/${root.unita}`)
-                            return <div style={{ fontSize: 12, color: '#1a1a1a', marginTop: 1 }}>{parts.join(' · ')}</div>
+                            return <div style={{ fontSize: 12, color: '#1a1a1a', marginTop: 1, textAlign: 'left' }}>{parts.join(' · ')}</div>
                           })()}
-                          {root.note && <div style={{ fontSize: 12, color: '#1a1a1a', marginTop: 1, fontStyle: 'italic' }}>{root.note}</div>}
+                          {root.note && <div style={{ fontSize: 12, color: '#1a1a1a', marginTop: 1, fontStyle: 'italic', textAlign: 'left' }}>{root.note}</div>}
                         </td>
-                        <td style={{ ...tdS, whiteSpace: 'nowrap', padding: '2px 0 2px 4px' }}>
-                          {renderPrezzo(isExpanded ? rootPrezzo : totGruppo)}
+                        <td style={{ ...tdS, padding: 0, height: 1, textAlign: 'center' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid #222', fontSize: 12, color: '#1a1a1a', padding: '0 4px' }}>
+                              N°&nbsp;{root.quantita}
+                            </div>
+                            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid #222', fontSize: 12, color: '#1a1a1a', padding: '0 4px' }}>
+                              rif #{String(gi + 1).padStart(3, '0')}
+                            </div>
+                            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px', whiteSpace: 'nowrap' }}>
+                              {renderPrezzo(isExpanded ? rootPrezzo : totGruppo)}
+                            </div>
+                          </div>
                         </td>
                         <td style={{ ...tdS, padding: '4px 0', textAlign: 'center' }}>
                           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
@@ -716,27 +708,28 @@ export default function CarrelloAcquistiClient({
                               />
                             )}
                           </td>
-                          <td style={{ ...tdS, textAlign: 'center', whiteSpace: 'nowrap', padding: '2px 4px' }}>
-                            {child.richiede_tipo_colore     === 1 ? 'Colore'
-                            : child.richiede_tipo_colore_acc === 1 ? 'Accessori'
-                            : child.richiede_tipo_vetro      === 1 ? 'Vetro'
-                            : child.richiede_tipo_montaggio  === 1 ? 'Montaggio'
-                            : ''}
-                          </td>
-                          <td style={{ ...tdS, paddingLeft: 8 }}>
+                          <td style={{ ...tdS, paddingLeft: 8, textAlign: 'left' }}>
                             {child.descrizione}
                             {(() => {
                               const parts: string[] = []
                               if (child.larghezza_cm) parts.push(`L:${child.larghezza_cm}`)
                               if (child.altezza_cm)   parts.push(`H:${child.altezza_cm}`)
                               if (child.colore)       parts.push(child.colore)
-                              if (child.prezzo_vendita > 0) parts.push(`€${fmt(Number(child.prezzo_vendita))}/${child.unita}`)
-                              return parts.length > 0 ? <div style={{ fontSize: 12, color: '#1a1a1a', marginTop: 1 }}>{parts.join(' · ')}</div> : null
+                              return parts.length > 0 ? <div style={{ fontSize: 12, color: '#1a1a1a', marginTop: 1, textAlign: 'left' }}>{parts.join(' · ')}</div> : null
                             })()}
-                            {child.note && <div style={{ fontSize: 12, color: '#1a1a1a', marginTop: 1, fontStyle: 'italic' }}>{child.note}</div>}
+                            {child.note && <div style={{ fontSize: 12, color: '#1a1a1a', marginTop: 1, fontStyle: 'italic', textAlign: 'left' }}>{child.note}</div>}
                           </td>
-                          <td style={{ ...tdS, whiteSpace: 'nowrap', padding: '2px 0 2px 4px' }}>
-                            {renderPrezzo(calcolaPrezzo(child))}
+                          <td style={{ ...tdS, textAlign: 'center', padding: '4px' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'center' }}>
+                              <div style={{ fontSize: 12, color: '#1a1a1a', whiteSpace: 'nowrap' }}>
+                                {child.richiede_tipo_colore     === 1 ? 'Colore'
+                                : child.richiede_tipo_colore_acc === 1 ? 'Accessori'
+                                : child.richiede_tipo_vetro      === 1 ? 'Vetro'
+                                : child.richiede_tipo_montaggio  === 1 ? 'Montaggio'
+                                : ''}
+                              </div>
+                              <div style={{ whiteSpace: 'nowrap' }}>{renderPrezzo(calcolaPrezzo(child))}</div>
+                            </div>
                           </td>
                           <td style={{ ...tdS, padding: '4px 0', textAlign: 'center' }}>
                             <button type="button" onClick={() => handleRimuovi(child.index)} disabled={delPending} className="btn-red btn-icon"
@@ -753,7 +746,7 @@ export default function CarrelloAcquistiClient({
                         const cols = lacuneCount <= 3 ? lacuneCount : 2
                         return (
                           <tr style={{ background: '#ffffff' }}>
-                            <td colSpan={5} style={{ padding: 8, borderBottom: '1px solid #333', background: '#ffffff' }}>
+                            <td colSpan={4} style={{ padding: 8, borderBottom: '1px solid #333', background: '#ffffff' }}>
                               <div style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: 10 }}>
                                 {showColore && (
                                   <button type="button" onClick={() => handleAggiungiLacuna(root, 'tipo_colore')}
@@ -793,7 +786,7 @@ export default function CarrelloAcquistiClient({
           )})}
 
           {/* Totale */}
-          <div style={{ background: VERDE, border: '1px solid #222', borderRadius: 8, padding: '12px 58px 12px 20px', display: 'flex', flexDirection: 'column', gap: 4, color: '#1a1a1a' }}>
+          <div style={{ background: VERDE, border: '1px solid #222', borderRadius: 8, padding: '12px 20px', display: 'flex', flexDirection: 'column', gap: 4, color: '#1a1a1a' }}>
             {(() => {
               const hasScontiPromo = isLoggedIn && scontiPromo >= 0.01
               const hasScontoCliente = isLoggedIn && scontoCliAmt >= 0.01

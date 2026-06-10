@@ -45,7 +45,7 @@ export default async function AppCataloghiPage() {
         <p className="app-card-body">Sfoglia i nostri cataloghi, aggiungi gli articoli che ti interessano e scegli: acquistali subito oppure usali per simulare un preventivo personalizzato per i tuoi infissi, verande o ristrutturazioni.</p>
       </div>
 
-      <div style={{ background: 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 10, padding: '12px', marginBottom: 12, marginLeft: 3, marginRight: 3 }}>
+      <div style={{ background: 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 10, padding: '12px', marginBottom: 12, marginLeft: 3, marginRight: 3, display: 'flex', justifyContent: 'center' }}>
         <Link href="/app" className="btn-black fs-14">
           ← Torna alla home
         </Link>
