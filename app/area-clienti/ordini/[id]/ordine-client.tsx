@@ -14,10 +14,10 @@ function renderPrezzo(cents: number, opts?: { strike?: number; pct?: number }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', fontFamily: 'monospace', gap: 1 }}>
       {opts?.strike !== undefined && Math.abs(opts.strike - cents) >= 1 && (
-        <span style={{ color: '#aaa', fontSize: 10, textDecoration: 'line-through' }}>€&nbsp;{e(opts.strike)}</span>
+        <span style={{ color: '#aaa', fontSize: 14, textDecoration: 'line-through' }}>€&nbsp;{e(opts.strike)}</span>
       )}
       {opts?.pct !== undefined && opts.pct !== 0 && (
-        <span style={{ fontSize: 10, color: opts.pct < 0 ? '#1565c0' : '#e65100' }}>
+        <span style={{ fontSize: 14, color: opts.pct < 0 ? '#1565c0' : '#e65100' }}>
           {opts.pct < 0 ? `+${Math.abs(opts.pct)}%` : `−${opts.pct}%`}
         </span>
       )}
@@ -39,13 +39,13 @@ export default function OrdineClient({ ordine, articoli }: { ordine: OrdineInfo;
   }
 
   const thS: React.CSSProperties = {
-    padding: '8px 8px', fontSize: 13, fontWeight: 700, color: '#1a1a1a',
+    padding: '8px 8px', fontSize: 14, fontWeight: 700, color: '#1a1a1a',
     textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.06em',
     background: '#fff', borderBottom: '1px solid #c8960c', whiteSpace: 'nowrap',
     fontFamily: 'monospace',
   }
   const tdS: React.CSSProperties = {
-    padding: '2px 8px', fontSize: 12, color: '#333',
+    padding: '2px 8px', fontSize: 14, color: '#333',
     borderBottom: '1px solid #c8960c', verticalAlign: 'middle',
     overflow: 'hidden', wordBreak: 'break-word', fontFamily: 'monospace',
   }
@@ -102,9 +102,9 @@ export default function OrdineClient({ ordine, articoli }: { ordine: OrdineInfo;
               <div style={{ padding: '6px 14px', background: '#fff', borderBottom: '1px solid #c8960c', fontSize: 12, fontWeight: 700, color: '#7a6000', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                 {cg.label}
               </div>
-              <table className="carrello-table" style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
+              <table className="carrello-table ordine-table" style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
                 <colgroup>
-                  <col style={{ width: 58 }} />
+                  <col style={{ width: 70 }} />
                   <col style={{ width: 72 }} />
                   <col />
                   <col style={{ width: 80 }} />
@@ -190,7 +190,7 @@ export default function OrdineClient({ ordine, articoli }: { ordine: OrdineInfo;
                               if (root.n_ante > 1) parts.push(`${root.n_ante} ante`)
                               if (root.colore) parts.push(root.colore)
                               if (root.prezzo_unit > 0) parts.push(`€ ${fmt(root.prezzo_unit)}/${root.unita}`)
-                              return parts.length > 0 && <div style={{ fontSize: 10, color: '#555', marginTop: 1 }}>{parts.join(' · ')}</div>
+                              return parts.length > 0 && <div style={{ fontSize: 14, color: '#555', marginTop: 1 }}>{parts.join(' · ')}</div>
                             })()}
                           </td>
 
@@ -226,9 +226,8 @@ export default function OrdineClient({ ordine, articoli }: { ordine: OrdineInfo;
                                     alt="" style={{ width: 42, height: 42, objectFit: 'cover', borderRadius: 4, display: 'block', margin: '0 auto' }} />
                                 )}
                               </td>
-                              <td style={{ ...tdS, textAlign: 'center', fontSize: 11, color: '#555', padding: '2px 4px' }}>Caratt.</td>
+                              <td style={{ ...tdS, textAlign: 'center', fontSize: 14, color: '#555', padding: '2px 4px' }}>Caratt.</td>
                               <td style={{ ...tdS, paddingLeft: 12 }}>
-                                <span style={{ fontSize: 11, color: '#777' }}>↳</span>{' '}
                                 {child.descrizione || '—'}
                               </td>
                               <td style={{ ...tdS, whiteSpace: 'nowrap', padding: '2px 0 2px 4px' }}>
@@ -254,8 +253,8 @@ export default function OrdineClient({ ordine, articoli }: { ordine: OrdineInfo;
       {importoOrdineCents > 0 && (() => {
         const row = (label: string, value: string, opts?: { color?: string; bold?: boolean; separator?: boolean; large?: boolean }) => (
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, ...(opts?.separator ? { borderTop: '1px solid #dde3ed', paddingTop: 6, marginTop: 2 } : {}) }}>
-            <span style={{ fontSize: 13, color: opts?.color ?? '#555', fontWeight: opts?.bold ? 600 : 400, fontFamily: 'monospace' }}>{label}</span>
-            <span style={{ fontSize: opts?.large ? 20 : 15, fontWeight: opts?.bold ? 700 : 400, color: opts?.color ?? '#444', minWidth: 110, textAlign: 'right', fontFamily: 'monospace' }}>{value}</span>
+            <span style={{ fontSize: 14, color: opts?.color ?? '#555', fontWeight: opts?.bold ? 600 : 400, fontFamily: 'monospace' }}>{label}</span>
+            <span style={{ fontSize: 14, fontWeight: opts?.bold ? 700 : 400, color: opts?.color ?? '#444', minWidth: 110, textAlign: 'right', fontFamily: 'monospace' }}>{value}</span>
           </div>
         )
         const hasScontiArt = scontiArticoliCents >= 1

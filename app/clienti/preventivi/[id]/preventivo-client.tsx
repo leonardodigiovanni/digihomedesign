@@ -941,12 +941,8 @@ function InoltraModal({
               <p style={{ color: '#c00', fontSize: 13, margin: 0, background: '#fff5f5', padding: '8px 12px', borderRadius: 5 }}>{error}</p>
             )}
             <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', paddingTop: 4, alignItems: 'center' }}>
-              <button type="button" onClick={onClose} style={{
-                height: 42, borderRadius: 21, fontSize: 13, fontWeight: 600, border: 'none',
-                background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.04) 0px,rgba(255,255,255,0.04) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#5a0000 0%,#8c0808 20%,#a01212 45%,#8c0808 80%,#5a0000 100%)',
-                boxShadow: '0 4px 14px rgba(100,0,0,0.45),inset 0 1px 0 rgba(255,255,255,0.07)',
-                color: '#fff', cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingLeft: 20, paddingRight: 20,
-              }}>
+              <button type="button" onClick={onClose} className="btn-red"
+                style={{ padding: '0 20px' }}>
                 Annulla
               </button>
               <button type="submit" disabled={pending}
@@ -1321,7 +1317,7 @@ export default function PreventivoClient({
       ) : (() => {
         const roots = articoli.filter(a => !a.parent_id)
         const childrenOf = (id: number) => articoli.filter(a => a.parent_id === id)
-        const canEdit = preventivo.stato === 'bozza' || preventivo.stato === 'richiesto' || (isStaff && preventivo.stato === 'da inviare')
+        const canEdit = preventivo.stato === 'bozza' || (isStaff && (preventivo.stato === 'richiesto' || preventivo.stato === 'da inviare'))
 
         function childTypeOrder(child: Articolo): number {
           const l = listini.find(li => li.id === child.listino_id)
@@ -1378,12 +1374,12 @@ export default function PreventivoClient({
                 <div style={{ padding: '6px 14px', background: VERDE, borderBottom: '1px solid #222', fontSize: 12, fontWeight: 700, color: '#1a1a1a', fontFamily: 'monospace' }}>
                   {cg.label}
                 </div>
-                <table className="carrello-table" style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
+                <table className={`carrello-table${canEdit ? '' : ' no-edit-col'}`} style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
                   <colgroup>
                     <col style={{ width: 70 }} />
                     <col />
                     <col style={{ width: 80 }} />
-                    <col style={{ width: 70 }} />
+                    {canEdit && <col style={{ width: 70 }} />}
                   </colgroup>
                   <thead>
                     <tr style={{ background: VERDE }}>
@@ -1395,12 +1391,14 @@ export default function PreventivoClient({
                       </th>
                       <th style={{ ...thS }}>Articolo</th>
                       <th style={{ ...thS, textAlign: 'center', width: 80, textTransform: 'none', letterSpacing: 0 }}>Q.tà Rif<br/>Prezzo €</th>
-                      <th style={{ ...thS, textAlign: 'center' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-                          <span style={{ fontSize: 14, display: 'inline-block', transform: 'rotate(135deg)', lineHeight: 1 }}>✏</span>
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                        </div>
-                      </th>
+                      {canEdit && (
+                        <th style={{ ...thS, textAlign: 'center' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                            <span style={{ fontSize: 14, display: 'inline-block', transform: 'rotate(135deg)', lineHeight: 1 }}>✏</span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                          </div>
+                        </th>
+                      )}
                     </tr>
                   </thead>
                   <tbody>
@@ -1441,7 +1439,7 @@ export default function PreventivoClient({
                         const showM  = needsM  && !cl.some(l => (l?.richiede_tipo_montaggio  ?? 0) === 1)
                         gapRows = (showC || showCA || showV || showM) ? (
                           <tr style={{ background: '#ffffff' }}>
-                            <td colSpan={4} style={{ padding: 8, borderBottom: '1px solid #333', borderRight: 'none', textAlign: 'left', background: '#ffffff' }}>
+                            <td colSpan={canEdit ? 4 : 3} style={{ padding: 8, borderBottom: '1px solid #333', borderRight: 'none', textAlign: 'left', background: '#ffffff' }}>
                               <div style={{ display: 'flex', gap: 8 }}>
                                 {showC  && <button onClick={() => openCaratteristica(root.id, undefined, 'tipo_colore')}     style={{ flex: 1, height: 42, padding: '0 10px', borderRadius: 21, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', border: '1px solid #000', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>+ Colore</button>}
                                 {showCA && <button onClick={() => openCaratteristica(root.id, undefined, 'tipo_colore_acc')} style={{ flex: 1, height: 42, padding: '0 10px', borderRadius: 21, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', border: '1px solid #000', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>+ Accessori</button>}
@@ -1464,7 +1462,7 @@ export default function PreventivoClient({
                                 <span style={{ position: 'relative', zIndex: 1, fontSize: 22, lineHeight: 1, fontWeight: 300 }}>+</span>
                               </button>
                             </td>
-                            <td colSpan={3} style={{ padding: '4px 8px', borderBottom: '1px solid #f0f0f0' }}>
+                            <td colSpan={canEdit ? 3 : 2} style={{ padding: '4px 8px', borderBottom: '1px solid #f0f0f0' }}>
                               <span style={{ fontSize: 11, color: '#8b0000', background: '#fff', border: '1px solid #e53e3e', borderRadius: 4, padding: '3px 8px', display: 'inline-block' }}>
                                 {root.tipo_prodotto} — {prod}
                               </span>
@@ -1546,22 +1544,20 @@ export default function PreventivoClient({
                               </div>
                             </td>
                             {/* Col 5: ✏ ✕ */}
-                            <td style={{ ...tdS, padding: '4px 0', textAlign: 'center' }}>
-                              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-                                {canEdit && (
+                            {canEdit && (
+                              <td style={{ ...tdS, padding: '4px 0', textAlign: 'center' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
                                   <button onClick={() => setEditArticolo(root)} className="btn-black btn-icon" title="Modifica"
                                     style={{ fontFamily: 'inherit' }}>
                                     <span style={{ position: 'relative', zIndex: 1, fontSize: 13, display: 'inline-block', transform: 'rotate(135deg)' }}>✏</span>
                                   </button>
-                                )}
-                                {canEdit && (
                                   <button onClick={() => handleElimina(root)} disabled={delPending} className="btn-red btn-icon"
                                     style={{ fontFamily: 'inherit' }}>
                                     <span style={{ position: 'relative', zIndex: 1, fontSize: 13 }}>✕</span>
                                   </button>
-                                )}
-                              </div>
-                            </td>
+                                </div>
+                              </td>
+                            )}
                           </tr>
 
                           {/* ── Righe caratteristiche figlie (espanse) ── */}
@@ -1610,22 +1606,22 @@ export default function PreventivoClient({
                                 </div>
                               </td>
                               {/* Col 5: ✏ ✕ */}
-                              <td style={{ ...tdS, padding: '4px 0', textAlign: 'center' }}>
-                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-                                  {isStaff && canEdit && (
-                                    <button onClick={() => setEditArticolo(child)} className="btn-black btn-icon" title="Modifica"
-                                      style={{ fontFamily: 'inherit' }}>
-                                      <span style={{ position: 'relative', zIndex: 1, fontSize: 13, display: 'inline-block', transform: 'rotate(135deg)' }}>✏</span>
-                                    </button>
-                                  )}
-                                  {canEdit && (
+                              {canEdit && (
+                                <td style={{ ...tdS, padding: '4px 0', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                                    {isStaff && (
+                                      <button onClick={() => setEditArticolo(child)} className="btn-black btn-icon" title="Modifica"
+                                        style={{ fontFamily: 'inherit' }}>
+                                        <span style={{ position: 'relative', zIndex: 1, fontSize: 13, display: 'inline-block', transform: 'rotate(135deg)' }}>✏</span>
+                                      </button>
+                                    )}
                                     <button onClick={() => handleElimina(child)} disabled={delPending} className="btn-red btn-icon"
                                       style={{ fontFamily: 'inherit' }}>
                                       <span style={{ position: 'relative', zIndex: 1, fontSize: 13 }}>✕</span>
                                     </button>
-                                  )}
-                                </div>
-                              </td>
+                                  </div>
+                                </td>
+                              )}
                             </tr>
                           ))}
 

@@ -102,6 +102,14 @@ a:active, a:active img, a:focus img {
 
 .carrello-gestisci-btns { display: flex; flex-direction: row; gap: 2px; justify-content: center; align-items: center; }
 
+/* preventivo senza colonna edit: col 3 diventa ultima, rimuove border-right */
+.carrello-table.no-edit-col th:nth-child(3),
+.carrello-table.no-edit-col td:nth-child(3) { border-right: none !important; }
+
+/* ordine-table: col 3 = Articolo (left), col 2 = Q.tà/Rif (center) */
+.ordine-table th:nth-child(2), .ordine-table td:nth-child(2) { text-align: center !important; }
+.ordine-table th:nth-child(3), .ordine-table td:nth-child(3) { text-align: left !important; }
+
 @media (max-width: 640px) {
   .carrello-overflow { overflow-x: visible !important; }
   .carrello-gestisci-btns { flex-direction: column !important; gap: 3px; }
