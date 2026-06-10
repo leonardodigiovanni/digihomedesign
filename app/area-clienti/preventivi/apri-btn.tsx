@@ -10,7 +10,7 @@ export default function ApriBtnPreventivo({ id, numero, isStaff }: { id: number;
     <button
       type="button"
       onClick={() => router.push(href)}
-      className="btn-black"
+      className="btn-gold"
       style={{ padding: '0 24px', fontSize: 14 }}
     >
       {numero || `#${id}`}

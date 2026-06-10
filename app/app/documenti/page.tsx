@@ -125,7 +125,7 @@ export default async function AppDocumentiPage() {
                   <tr key={d.id} style={{ height: 84, background: brushed }}>
                     <td style={td}>
                       <a href={`/uploads/documenti/${d.filename}`} target="_blank" rel="noopener noreferrer"
-                         style={{ height: 36, padding: '0 14px', borderRadius: 18, fontSize: 14, fontWeight: 400, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', whiteSpace: 'nowrap', color: '#1a1a1a', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#7a5c00 0%,#c8960c 20%,#e8b94a 45%,#c8960c 80%,#7a5c00 100%)', boxShadow: '0 2px 8px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.25)' }}>
+                         className="btn-gold" style={{ padding: '0 14px' }}>
                         {d.filename.replace(/^\d+_/, '')}
                       </a>
                     </td>
