@@ -183,7 +183,7 @@ export default async function Page() {
         )}
 
         <div style={{ display: 'flex', gap: 8 }}>
-          <Link href="/serramenti" className="btn-black fs-12" style={{ flex: 1 }}>â† Torna a Serramenti</Link>
+          <Link href="/serramenti" className="btn-black fs-12" style={{ flex: 1 }}>← Torna a Serramenti</Link>
           <CtaPreventivo />
           <CtaCantiere />
         </div>

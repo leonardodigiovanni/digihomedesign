@@ -1255,7 +1255,7 @@ body {
    .btn-gray   → stato disabilitato
    .btn-icon   → modificatore bottone circolare (width=height, padding 0)
    ───────────────────────────────────────── */
-.btn-green, .btn-red, .btn-orange, .btn-rgb-c, .btn-blue, .btn-black, .btn-gray {
+.btn-green, .btn-red, .btn-orange, .btn-rgb-c, .btn-blue, .btn-black, .btn-gray, .btn-gold {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1388,6 +1388,24 @@ body {
 }
 .btn-black:hover:not(:disabled) {
   filter: brightness(1.18);
+}
+/* Oro spazzolato */
+.btn-gold {
+  background:
+    repeating-linear-gradient(
+      135deg,
+      rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px,
+      transparent 1px, transparent 6px
+    ),
+    linear-gradient(135deg,
+      #7a5c00 0%, #c8960c 20%, #e8b94a 45%, #c8960c 80%, #7a5c00 100%
+    );
+  color: #1a1a1a !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.25);
+}
+.btn-gold:hover:not(:disabled) {
+  filter: brightness(1.1);
 }
 /* Grigio — disabilitato */
 .btn-gray {

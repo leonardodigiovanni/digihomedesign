@@ -14,6 +14,7 @@ export const metadata: Metadata = {
 export default async function GuidaPreventivo() {
   const { registrazioniDisabilitate } = await readSettings()
   const cookieStore = await cookies()
+  const username = cookieStore.get('session_user')?.value ?? null
   const cartRaw = cookieStore.get('digi_cart')?.value
   const cartNonVuoto = !!cartRaw && (() => { try { const c = JSON.parse(cartRaw); return Array.isArray(c) && c.length > 0 } catch { return false } })()
   return (
@@ -82,24 +83,26 @@ export default async function GuidaPreventivo() {
           </p>
         </div>
 
-        {/* Banner accesso */}
-        <div style={{ background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 10, padding: '16px', display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'flex-start' }}>
-          <p className="testo-articoli" style={{ margin: 0 }}>
-            Per accedere al preventivo online <span style={{ textDecoration: 'underline' }}>NON</span> è necessario registrarsi.
-          </p>
-          <p className="testo-articoli" style={{ margin: 0, lineHeight: 1.6 }}>
-            La registrazione comunque è gratuita e richiede meno di un minuto. Una volta registrato avrai accesso a tutte le promozioni disponibili e, se diventi cliente, al servizio Cantiere-Online in tempo reale, alla cronologia degli ultimi sei mesi (**) dei tuoi ordini, preventivi, cantieri, fatture e molto altro.
-          </p>
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            <AccediDropdown />
-            <Link href={registrazioniDisabilitate ? '/brand/contatti' : '/registrazione'} className="btn-black fs-12">
-              {registrazioniDisabilitate ? 'Richiedi registrazione' : 'Registrati'}
-            </Link>
+        {/* Banner accesso — solo per utenti non loggati */}
+        {!username && (
+          <div style={{ background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 10, padding: '16px', display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'flex-start' }}>
+            <p className="testo-articoli" style={{ margin: 0 }}>
+              Per accedere al preventivo online <span style={{ textDecoration: 'underline' }}>NON</span> è necessario registrarsi.
+            </p>
+            <p className="testo-articoli" style={{ margin: 0, lineHeight: 1.6 }}>
+              La registrazione comunque è gratuita e richiede meno di un minuto. Una volta registrato avrai accesso a tutte le promozioni disponibili e, se diventi cliente, al servizio Cantiere-Online in tempo reale, alla cronologia degli ultimi sei mesi (**) dei tuoi ordini, preventivi, cantieri, fatture e molto altro.
+            </p>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              <AccediDropdown />
+              <Link href={registrazioniDisabilitate ? '/brand/contatti' : '/registrazione'} className="btn-black fs-12">
+                {registrazioniDisabilitate ? 'Richiedi registrazione' : 'Registrati'}
+              </Link>
+            </div>
+            <p className="testo-articoli" style={{ margin: 0 }}>
+              (**) Si consiglia di scaricare e conservare o stampare i documenti del proprio archivio durante questo sufficiente periodo di tempo perché, una volta trascorso, saranno eliminati dal sistema.
+            </p>
           </div>
-          <p className="testo-articoli" style={{ margin: 0 }}>
-            (**) Si consiglia di scaricare e conservare o stampare i documenti del proprio archivio durante questo sufficiente periodo di tempo perché, una volta trascorso, saranno eliminati dal sistema.
-          </p>
-        </div>
+        )}
 
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <Link href="/" className="btn-black fs-12" style={{ flex: 1 }}>← Home</Link>

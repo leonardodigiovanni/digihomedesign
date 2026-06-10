@@ -147,8 +147,8 @@ export default async function Page() {
                 <tr key={d.id} style={{ height: 60 }}>
                   <td style={td}>
                     <a href={`/uploads/documenti/${d.filename}`} target="_blank" rel="noopener noreferrer"
-                       className="btn-black"
-                       style={{ height: 36, padding: '0 14px', borderRadius: 18, fontSize: 12, fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
+                       className="btn-gold"
+                       style={{ padding: '0 14px' }}>
                       {d.filename.replace(/^\d+_/, '')}
                     </a>
                   </td>

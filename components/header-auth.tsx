@@ -54,7 +54,7 @@ function InlineLoginForm({ redirectTo }: { redirectTo?: string }) {
           type="submit"
           disabled={isPending}
           className={isPending ? 'btn-gray' : 'btn-green'}
-          style={{ padding: '0 12px', height: 42, fontSize: 13, borderRadius: 21, fontFamily: 'monospace' }}
+          style={{ padding: '0 12px' }}
         >
           {isPending ? '...' : 'Entra'}
         </button>
@@ -98,7 +98,7 @@ export function DropdownLoginForm({ registrazioniDisabilitate, redirectTo }: { r
         type="submit"
         disabled={isPending}
         className={isPending ? 'btn-gray' : 'btn-black'}
-        style={{ padding: '0 12px', height: 42, fontSize: 13, borderRadius: 21, fontFamily: 'monospace' }}
+        style={{ padding: '0 12px' }}
       >
         {isPending ? '...' : 'Accedi'}
       </button>
@@ -170,7 +170,7 @@ export default function HeaderAuth({ username, registrazioniDisabilitate, forceD
         <button
           type="submit"
           className="btn-orange"
-          style={{ height: 42, padding: '0 16px', fontSize: 13, borderRadius: 21, fontFamily: 'monospace', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+          style={{ padding: '0 16px' }}
         >
           Esci
         </button>
@@ -185,7 +185,7 @@ export default function HeaderAuth({ username, registrazioniDisabilitate, forceD
         <button
           onClick={() => setIsOpen(v => !v)}
           className={isOpen ? 'btn-orange' : 'btn-black'}
-          style={{ padding: '0 14px', height: 42, fontSize: 13, borderRadius: 21, whiteSpace: 'nowrap', width: 92, fontFamily: 'monospace', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+          style={{ padding: '0 14px' }}
         >
           {isOpen ? 'Chiudi ▴' : 'Accedi ▾'}
         </button>
