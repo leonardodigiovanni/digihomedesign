@@ -50,7 +50,7 @@ export default function CatalogoWrapper({ voci, articoliPerListino, isStaff, isL
       <CatalogoClient voci={voci} onSelect={setSelectedVoce} categorySlug={categorySlug} basePath={basePath} />
 
       {articoliVisibili.length > 0 && (
-        <>
+        <div style={{ marginTop: 12 }}>
           <AggiungiArticolo
             articoli={articoliVisibili}
             isStaff={isStaff}
@@ -62,7 +62,7 @@ export default function CatalogoWrapper({ voci, articoliPerListino, isStaff, isL
             preventivoClienteBaseHref={preventivoClienteBaseHref}
             submitLabel={submitLabel}
           />
-        </>
+        </div>
       )}
     </>
   )
