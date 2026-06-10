@@ -1380,11 +1380,11 @@ export default function PreventivoClient({
                 </div>
                 <table className="carrello-table" style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
                   <colgroup>
-                    <col style={{ width: 50 }} />
+                    <col style={{ width: 70 }} />
                     <col style={{ width: 54 }} />
                     <col />
                     <col style={{ width: 70 }} />
-                    <col style={{ width: 50 }} />
+                    <col style={{ width: 70 }} />
                   </colgroup>
                   <thead>
                     <tr style={{ background: VERDE }}>

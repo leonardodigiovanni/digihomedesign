@@ -330,7 +330,7 @@ export default function AggiungiArticoloForm({
                   type="button"
                   onClick={() => { setResult(null); setStep('detail') }}
                   className="btn-green"
-                  style={{ height: 42, padding: '0 22px', borderRadius: 21, fontSize: 13, fontWeight: 600, fontFamily: 'monospace', flexShrink: 0 }}
+                  style={{ padding: '0 22px', fontSize: 13, flexShrink: 0 }}
                 >
                   {mostraDestinazione ? 'Aggiungi a:' : 'Aggiungi a simulazione'}
                 </button>
@@ -403,7 +403,7 @@ export default function AggiungiArticoloForm({
               type="button"
               onClick={() => setStep('select')}
               className="btn-red"
-              style={{ flex: 1, height: 42, borderRadius: 21, fontSize: 13, fontFamily: 'monospace' }}
+              style={{ flex: 1, fontSize: 13 }}
             >
               Annulla
             </button>
@@ -411,7 +411,7 @@ export default function AggiungiArticoloForm({
               type="submit"
               disabled={isPending || !canSubmit}
               className={canSubmit && !isPending ? 'btn-green' : 'btn-gray'}
-              style={{ flex: 1, height: 42, borderRadius: 21, fontSize: 13, fontWeight: 600, fontFamily: 'monospace' }}
+              style={{ flex: 1, fontSize: 13 }}
             >
               {isPending
                 ? 'Aggiunta…'

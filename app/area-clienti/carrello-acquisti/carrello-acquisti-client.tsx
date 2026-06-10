@@ -592,15 +592,15 @@ export default function CarrelloAcquistiClient({
               </div>
               <table className="carrello-table" style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
                 <colgroup>
-                  <col style={{ width: 58 }} />
+                  <col style={{ width: 70 }} />
                   <col style={{ width: 52 }} />
                   <col />
                   <col style={{ width: 84 }} />
-                  <col style={{ width: 58 }} />
+                  <col style={{ width: 70 }} />
                 </colgroup>
                 <thead>
                   <tr style={{ background: VERDE }}>
-                    <th style={{ ...thS, textAlign: 'center', width: 58 }}>
+                    <th style={{ ...thS, textAlign: 'center', width: 70 }}>
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="10" cy="18" r="2" fill="currentColor" stroke="none"/></svg>
@@ -609,7 +609,7 @@ export default function CarrelloAcquistiClient({
                     <th style={{ ...thS, textAlign: 'center', width: 52 }}>Q.tà<br/>Rif.</th>
                     <th style={{ ...thS }}>Articolo</th>
                     <th style={{ ...thS, textAlign: 'center', width: 84, textTransform: 'none', letterSpacing: 0 }}>Prezzo €</th>
-                    <th style={{ ...thS, textAlign: 'center', padding: '8px 0', width: 58 }}>
+                    <th style={{ ...thS, textAlign: 'center', padding: '8px 0', width: 70 }}>
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                         <span style={{ fontSize: 14, display: 'inline-block', transform: 'rotate(135deg)', lineHeight: 1 }}>✏</span>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>

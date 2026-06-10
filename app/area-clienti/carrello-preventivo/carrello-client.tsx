@@ -693,11 +693,11 @@ export default function CarrelloClient({
 
         const renderColgroup = () => (
           <colgroup>
-            <col style={{ width: 50 }} />
+            <col style={{ width: 70 }} />
             <col style={{ width: 54 }} />
             <col />
             <col style={{ width: 70 }} />
-            <col style={{ width: 50 }} />
+            <col style={{ width: 70 }} />
           </colgroup>
         )
 
