@@ -173,7 +173,7 @@ export default function OrdineClient({ ordine, articoli }: { ordine: OrdineInfo;
                           <td style={{ ...tdS, padding: 0, height: 1 }}>
                             <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                               <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid #c8960c', fontSize: 12, color: '#1a1a1a', padding: '0 4px' }}>
-                                N°&nbsp;{root.quantita}
+                                N°&nbsp;{Number(root.quantita)}
                               </div>
                               <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, color: '#1a1a1a', padding: '0 4px' }}>
                                 Rif#{String(gi).padStart(3, '0')}
