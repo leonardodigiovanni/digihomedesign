@@ -174,8 +174,9 @@ export async function updateVoce(_: MutResult | null, fd: FormData): Promise<Mut
         'UPDATE catalogo_voci SET nome=?, serie=?, pdf_label=?, descrizione=?, pdf_filename=? WHERE id=?',
         [nome, serie, pdf_label, descrizione, new_pdf_filename, id]
       )
-      if (old?.pdf_filename?.startsWith('https://')) {
-        await del(old.pdf_filename).catch(() => {})
+      if (old?.pdf_filename?.startsWith('https://') && old.pdf_filename !== new_pdf_filename) {
+        const [refs] = await db.query('SELECT COUNT(*) AS cnt FROM catalogo_voci WHERE pdf_filename = ?', [old.pdf_filename]) as [{ cnt: number }[], unknown]
+        if ((refs[0]?.cnt ?? 0) === 0) await del(old.pdf_filename).catch(() => {})
       }
     } else {
       await db.execute(
@@ -222,7 +223,8 @@ export async function deleteVoce(_: MutResult | null, fd: FormData): Promise<Mut
     await db.execute('DELETE FROM catalogo_voci WHERE id = ?', [id])
 
     if (voce?.pdf_filename?.startsWith('https://')) {
-      await del(voce.pdf_filename).catch(() => {})
+      const [refs] = await db.query('SELECT COUNT(*) AS cnt FROM catalogo_voci WHERE pdf_filename = ?', [voce.pdf_filename]) as [{ cnt: number }[], unknown]
+      if ((refs[0]?.cnt ?? 0) === 0) await del(voce.pdf_filename).catch(() => {})
     }
 
     revalidatePath('/cataloghi')
