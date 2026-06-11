@@ -164,6 +164,10 @@ function VoceEditForm({ voce, onDone }: { voce: Voce; onDone: () => void }) {
   const [pdfFile, setPdfFile] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
   const [errore, setErrore] = useState('')
+  const [pdfMode, setPdfMode] = useState<'mantieni' | 'carica' | 'blob'>('mantieni')
+  const [blobList, setBlobList] = useState<{ url: string; nome: string }[]>([])
+  const [blobLoading, setBlobLoading] = useState(false)
+  const [blobScelto, setBlobScelto] = useState<string | null>(null)
   const router = useRouter()
 
   const inp: React.CSSProperties = {
@@ -171,6 +175,17 @@ function VoceEditForm({ voce, onDone }: { voce: Voce; onDone: () => void }) {
     fontSize: 13, fontFamily: 'inherit', width: '100%', boxSizing: 'border-box',
   }
   const lbl: React.CSSProperties = { fontSize: 11, color: '#666', display: 'block', marginBottom: 2 }
+
+  async function caricaBlob() {
+    setBlobLoading(true)
+    try {
+      const res = await fetch('/api/lista-blob-cataloghi')
+      const data = await res.json()
+      setBlobList(data.blobs ?? [])
+    } finally {
+      setBlobLoading(false)
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -180,13 +195,15 @@ function VoceEditForm({ voce, onDone }: { voce: Voce; onDone: () => void }) {
     try {
       const fd = new FormData(form)
       fd.set('id', String(voce.id))
-      if (pdfFile) {
+      if (pdfMode === 'carica' && pdfFile) {
         const uf = new FormData()
         uf.append('file', pdfFile)
         const res = await fetch('/api/upload-catalogo', { method: 'POST', body: uf })
         const data = await res.json()
         if (data.error) { setErrore(data.error); return }
         fd.set('new_pdf_filename', data.filename)
+      } else if (pdfMode === 'blob' && blobScelto) {
+        fd.set('new_pdf_filename', blobScelto)
       }
       const result = await updateVoce(null, fd)
       if (result.ok) { router.refresh(); onDone() }
@@ -226,7 +243,7 @@ function VoceEditForm({ voce, onDone }: { voce: Voce; onDone: () => void }) {
         </div>
         <div style={{ gridColumn: '1 / -1' }}>
           <label style={lbl}>PDF attuale</label>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
             <span style={{ fontSize: 12, color: '#333', fontFamily: 'monospace', wordBreak: 'break-all' }}>
               {decodeURIComponent(voce.pdf_filename.split('/').pop() ?? voce.pdf_filename)}
             </span>
@@ -234,11 +251,46 @@ function VoceEditForm({ voce, onDone }: { voce: Voce; onDone: () => void }) {
               Apri
             </a>
           </div>
-          <label style={lbl}>Sostituisci PDF (opzionale — lascia vuoto per mantenere l&apos;attuale)</label>
-          <input type="file" accept=".pdf"
-            onChange={e => setPdfFile(e.target.files?.[0] ?? null)}
-            style={{ fontSize: 12 }} />
-          {pdfFile && <span style={{ fontSize: 11, color: '#888', marginLeft: 8 }}>{pdfFile.name}</span>}
+
+          <label style={lbl}>Sostituisci PDF</label>
+          <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
+            {(['mantieni', 'carica', 'blob'] as const).map(m => (
+              <button key={m} type="button"
+                onClick={() => { setPdfMode(m); if (m === 'blob') caricaBlob() }}
+                className={pdfMode === m ? 'btn-black' : 'btn-gray'}
+                style={{ fontSize: 11, padding: '3px 10px' }}>
+                {m === 'mantieni' ? 'Mantieni attuale' : m === 'carica' ? 'Carica file' : 'Scegli da Blob'}
+              </button>
+            ))}
+          </div>
+
+          {pdfMode === 'carica' && (
+            <div>
+              <input type="file" accept=".pdf"
+                onChange={e => setPdfFile(e.target.files?.[0] ?? null)}
+                style={{ fontSize: 12 }} />
+              {pdfFile && <span style={{ fontSize: 11, color: '#888', marginLeft: 8 }}>{pdfFile.name}</span>}
+            </div>
+          )}
+
+          {pdfMode === 'blob' && (
+            <div style={{ border: '1px solid #ddd', borderRadius: 4, maxHeight: 200, overflowY: 'auto', background: '#fff' }}>
+              {blobLoading && <div style={{ padding: '8px 12px', fontSize: 12, color: '#888' }}>Caricamento…</div>}
+              {!blobLoading && blobList.length === 0 && <div style={{ padding: '8px 12px', fontSize: 12, color: '#888' }}>Nessun file su Vercel Blob.</div>}
+              {blobList.map(b => (
+                <div key={b.url}
+                  onClick={() => setBlobScelto(b.url)}
+                  style={{
+                    padding: '7px 12px', cursor: 'pointer', fontSize: 12, fontFamily: 'monospace',
+                    background: blobScelto === b.url ? '#fffbe6' : 'transparent',
+                    borderLeft: blobScelto === b.url ? '3px solid #c8960c' : '3px solid transparent',
+                    borderBottom: '1px solid #f0f0f0',
+                  }}>
+                  {b.nome}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
       {errore && <div style={{ color: '#c00', fontSize: 12, marginBottom: 8 }}>{errore}</div>}
