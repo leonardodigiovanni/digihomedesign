@@ -665,7 +665,7 @@ function ArticoloForm({
 
 // ─── Override sconto cliente (staff) ─────────────────────────────────────────
 
-function ScontoClienteEditor({ preventivoId, currentPct }: { preventivoId: number; currentPct: number }) {
+function ScontoClienteEditor({ preventivoId, currentPct, isApp }: { preventivoId: number; currentPct: number; isApp?: boolean }) {
   const router = useRouter()
   const [pending, startT] = useTransition()
   const [val, setVal] = useState(String(currentPct))
@@ -1684,7 +1684,7 @@ export default function PreventivoClient({
               { color: '#e65100' }
             )}
             {row('Importo preventivo:', `€ ${fmt(importo)}`, { bold: true, large: true, color: '#111', separator: true })}
-            {isStaff && <ScontoClienteEditor preventivoId={preventivo.id} currentPct={scontoCliPct} />}
+            {isStaff && <ScontoClienteEditor preventivoId={preventivo.id} currentPct={scontoCliPct} isApp={isApp} />}
           </div>
         )
       })()}
