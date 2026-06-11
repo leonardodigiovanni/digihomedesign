@@ -124,9 +124,10 @@ function AddCantiereForm({ clienti, isApp }: { clienti: ClienteOpt[]; isApp?: bo
 // ─── Upload button (solo dipendenti) ─────────────────────────────────────────
 
 function UploadBtn({ taskId }: { taskId: number }) {
-  const router      = useRouter()
-  const cameraRef   = useRef<HTMLInputElement>(null)
-  const galleryRef  = useRef<HTMLInputElement>(null)
+  const router     = useRouter()
+  const fotoRef    = useRef<HTMLInputElement>(null)
+  const videoRef   = useRef<HTMLInputElement>(null)
+  const galleryRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
   const [errore,    setErrore]    = useState('')
 
@@ -149,32 +150,42 @@ function UploadBtn({ taskId }: { taskId: number }) {
       await addMedia(null, fd)
       router.refresh()
     } catch { setErrore('Errore upload.') }
-    finally  {
+    finally {
       setUploading(false)
-      if (cameraRef.current)  cameraRef.current.value  = ''
+      if (fotoRef.current)    fotoRef.current.value    = ''
+      if (videoRef.current)   videoRef.current.value   = ''
       if (galleryRef.current) galleryRef.current.value = ''
     }
   }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-      {/* input fotocamera — capture apre direttamente la cam */}
-      <input ref={cameraRef}  type="file" accept="image/*,video/*" capture="environment"
+      {/* foto: solo image/*, capture → fotocamera in modalità foto */}
+      <input ref={fotoRef}    type="file" accept="image/*" capture="environment"
         style={{ display: 'none' }} onChange={handleFile} />
-      {/* input galleria — nessun capture, apre il file picker */}
+      {/* video: solo video/*, capture → fotocamera in modalità video */}
+      <input ref={videoRef}   type="file" accept="video/*" capture="environment"
+        style={{ display: 'none' }} onChange={handleFile} />
+      {/* galleria: nessun capture → file picker / rullino */}
       <input ref={galleryRef} type="file" accept="image/*,video/*"
         style={{ display: 'none' }} onChange={handleFile} />
 
       {uploading ? (
         <span style={{ fontSize: 13, color: '#888' }}>…</span>
       ) : (
-        <div style={{ display: 'flex', gap: 4 }}>
-          <button disabled={uploading} onClick={() => cameraRef.current?.click()}
-            className="btn-orange" style={{ padding: '0 10px', fontSize: 12, whiteSpace: 'nowrap' }}>
-            📷 Cam
-          </button>
-          <button disabled={uploading} onClick={() => galleryRef.current?.click()}
-            className="btn-gray" style={{ padding: '0 10px', fontSize: 12, whiteSpace: 'nowrap' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <div style={{ display: 'flex', gap: 3 }}>
+            <button onClick={() => fotoRef.current?.click()}
+              className="btn-orange" style={{ padding: '0 8px', fontSize: 11, whiteSpace: 'nowrap' }}>
+              📷 Foto
+            </button>
+            <button onClick={() => videoRef.current?.click()}
+              className="btn-orange" style={{ padding: '0 8px', fontSize: 11, whiteSpace: 'nowrap' }}>
+              🎬 Video
+            </button>
+          </div>
+          <button onClick={() => galleryRef.current?.click()}
+            className="btn-gray" style={{ padding: '0 8px', fontSize: 11, whiteSpace: 'nowrap' }}>
             🖼 Galleria
           </button>
         </div>
