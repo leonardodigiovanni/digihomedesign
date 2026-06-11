@@ -189,6 +189,15 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       }
     }
 
+    type ClienteOpt = { id: number; label: string }
+    let clienti: ClienteOpt[] = []
+    if (isStaff) {
+      const [cRows] = await db.query(
+        `SELECT id, COALESCE(NULLIF(ragione_sociale,''), CONCAT(TRIM(cognome),' ',TRIM(nome))) AS label FROM clienti ORDER BY label`
+      ) as [{ id: number; label: string }[], unknown]
+      clienti = cRows.map(c => ({ id: Number(c.id), label: String(c.label) }))
+    }
+
     return (
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <PreventivoActionsBar id={prevId} />
@@ -196,7 +205,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
           preventivo={preventivo}
           articoli={articoli}
           listini={listini}
-          clienti={[]}
+          clienti={clienti}
           isStaff={isStaff}
           clienteEmail={clienteEmail}
           clienteCellulare={clienteCellulare}
