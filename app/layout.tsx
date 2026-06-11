@@ -25,7 +25,7 @@ export const viewport: Viewport = {
 const BASE_URL = process.env.NODE_ENV === 'production'
   ? 'https://www.digi-home-design.com'
   : 'http://localhost:3000'
-const OG_IMAGE  = `${BASE_URL}/images/icons/DIGIHOMEDESIGN.png`
+const OG_IMAGE  = `${BASE_URL}/images/icons/DIGI-HOME-DESIGN-APP.png`
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
