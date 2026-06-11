@@ -6,7 +6,7 @@ import { getConnection } from '@/lib/db'
 import { revalidatePath } from 'next/cache'
 import { readSettings } from '@/lib/settings'
 import { hasPageAccess } from '@/lib/permissions'
-import { del } from '@vercel/blob'
+
 
 const STAFF_ROLES = ['admin', 'dipendente', 'direttore']
 
@@ -95,12 +95,6 @@ export async function deleteCategoria(_: MutResult | null, fd: FormData): Promis
     const [voci] = await db.query('SELECT pdf_filename FROM catalogo_voci WHERE categoria_id = ?', [id])
     await db.execute('DELETE FROM catalogo_categorie WHERE id = ?', [id])
 
-    if (process.env.NODE_ENV === 'production') {
-      for (const v of voci as { pdf_filename: string }[]) {
-        if (v.pdf_filename?.startsWith('https://')) await del(v.pdf_filename).catch(() => {})
-      }
-    }
-
     revalidatePath('/cataloghi')
     return { ok: true }
   } finally { await db.end() }
@@ -174,10 +168,6 @@ export async function updateVoce(_: MutResult | null, fd: FormData): Promise<Mut
         'UPDATE catalogo_voci SET nome=?, serie=?, pdf_label=?, descrizione=?, pdf_filename=? WHERE id=?',
         [nome, serie, pdf_label, descrizione, new_pdf_filename, id]
       )
-      if (process.env.NODE_ENV === 'production' && old?.pdf_filename?.startsWith('https://') && old.pdf_filename !== new_pdf_filename) {
-        const [refs] = await db.query('SELECT COUNT(*) AS cnt FROM catalogo_voci WHERE pdf_filename = ?', [old.pdf_filename]) as [{ cnt: number }[], unknown]
-        if ((refs[0]?.cnt ?? 0) === 0) await del(old.pdf_filename).catch(() => {})
-      }
     } else {
       await db.execute(
         'UPDATE catalogo_voci SET nome=?, serie=?, pdf_label=?, descrizione=? WHERE id=?',
@@ -221,11 +211,6 @@ export async function deleteVoce(_: MutResult | null, fd: FormData): Promise<Mut
     const voce = (rows as { pdf_filename: string }[])[0]
 
     await db.execute('DELETE FROM catalogo_voci WHERE id = ?', [id])
-
-    if (process.env.NODE_ENV === 'production' && voce?.pdf_filename?.startsWith('https://')) {
-      const [refs] = await db.query('SELECT COUNT(*) AS cnt FROM catalogo_voci WHERE pdf_filename = ?', [voce.pdf_filename]) as [{ cnt: number }[], unknown]
-      if ((refs[0]?.cnt ?? 0) === 0) await del(voce.pdf_filename).catch(() => {})
-    }
 
     revalidatePath('/cataloghi')
     return { ok: true }
