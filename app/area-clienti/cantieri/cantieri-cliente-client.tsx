@@ -63,10 +63,12 @@ function AddCantiereForm({ clienti, isApp }: { clienti: ClienteOpt[]; isApp?: bo
   }
 
   if (!aperto) return (
-    <button onClick={() => setAperto(true)} className={b('btn-green', isApp)}
-      style={{ padding: '0 20px', fontSize: 13 }}>
-      + Aggiungi cantiere
-    </button>
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <button onClick={() => setAperto(true)} className={b('btn-green', isApp)}
+        style={{ padding: '0 28px', fontSize: 13 }}>
+        + Aggiungi cantiere
+      </button>
+    </div>
   )
 
   return (
