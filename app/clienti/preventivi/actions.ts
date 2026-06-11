@@ -1002,3 +1002,26 @@ export async function toggleVisibilitaPreventivo(preventivo_id: number): Promise
     await db.end()
   }
 }
+
+export async function creaClienteRapido(_: unknown, fd: FormData): Promise<{ ok: boolean; id?: number; label?: string; error?: string }> {
+  await checkAccess()
+  const nome     = (fd.get('nome')     as string ?? '').trim()
+  const cognome  = (fd.get('cognome')  as string ?? '').trim()
+  const cellulare = (fd.get('cellulare') as string ?? '').trim()
+  if (!nome) return { ok: false, error: 'Il nome è obbligatorio.' }
+
+  const db = await getConnection()
+  try {
+    const [res] = await db.execute(
+      'INSERT INTO clienti (nome, cognome, cellulare) VALUES (?, ?, ?)',
+      [nome, cognome || null, cellulare || null]
+    ) as [{ insertId: number }, unknown]
+    const id = res.insertId
+    const label = cognome ? `${cognome} ${nome}` : nome
+    return { ok: true, id, label }
+  } catch (e: unknown) {
+    return { ok: false, error: String((e as Error).message ?? e) }
+  } finally {
+    await db.end()
+  }
+}

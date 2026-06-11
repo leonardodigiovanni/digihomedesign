@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useTransition, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { aggiungiArticolo, rimuoviArticolo, associaCliente, aggiornaDatiPreventivo, inoltroRichiesta, modificaArticolo, aggiornaSconto, modificaPreventivo, inviaAlCliente, accettaPreventivo, rifiutaPreventivo, annullaPreventivo } from '../actions'
+import { aggiungiArticolo, rimuoviArticolo, associaCliente, aggiornaDatiPreventivo, inoltroRichiesta, modificaArticolo, aggiornaSconto, modificaPreventivo, inviaAlCliente, accettaPreventivo, rifiutaPreventivo, annullaPreventivo, creaClienteRapido } from '../actions'
 import PreviewInfisso from '@/components/preview-infisso'
 import { b } from '@/lib/btn'
 
@@ -236,7 +236,7 @@ function DatiPreventivo({ preventivo, readOnly = false, isStaff = false, isApp }
 
 // ─── Selettore cliente ────────────────────────────────────────────────────────
 
-function ClienteSelector({ preventivo_id, cliente_id, clienti, isApp }: {
+function ClienteSelector({ preventivo_id, cliente_id, clienti: clientiInit, isApp }: {
   preventivo_id: number
   cliente_id: number | null
   clienti: ClienteOption[]
@@ -246,8 +246,15 @@ function ClienteSelector({ preventivo_id, cliente_id, clienti, isApp }: {
   const [pending, startT] = useTransition()
   const [sel, setSel] = useState(cliente_id?.toString() ?? '')
   const [saved, setSaved] = useState(false)
+  const [clienti, setClienti] = useState<ClienteOption[]>(clientiInit)
 
-  const current = clienti.find(c => c.id === cliente_id)
+  // form nuovo cliente
+  const [mostraForm, setMostraForm] = useState(false)
+  const [nome, setNome]       = useState('')
+  const [cognome, setCognome] = useState('')
+  const [cellulare, setCellulare] = useState('')
+  const [creaPending, setCreaP] = useState(false)
+  const [creaErr, setCreaErr]   = useState('')
 
   function handleSave() {
     const fd = new FormData()
@@ -261,34 +268,75 @@ function ClienteSelector({ preventivo_id, cliente_id, clienti, isApp }: {
     })
   }
 
+  async function handleCrea() {
+    if (!nome.trim()) { setCreaErr('Il nome è obbligatorio.'); return }
+    setCreaP(true); setCreaErr('')
+    const fd = new FormData()
+    fd.set('nome', nome.trim())
+    fd.set('cognome', cognome.trim())
+    fd.set('cellulare', cellulare.trim())
+    const res = await creaClienteRapido(null, fd)
+    setCreaP(false)
+    if (!res.ok || !res.id) { setCreaErr(res.error ?? 'Errore creazione.'); return }
+    const nuovoOpt: ClienteOption = { id: res.id, label: res.label! }
+    setClienti(prev => [...prev, nuovoOpt].sort((a, b) => a.label.localeCompare(b.label)))
+    setSel(String(res.id))
+    setNome(''); setCognome(''); setCellulare('')
+    setMostraForm(false)
+  }
+
+  const inp: React.CSSProperties = { padding: '5px 8px', border: '1px solid #ccc', borderRadius: 5, fontSize: 13, fontFamily: 'inherit' }
+
   return (
     <div style={{
       background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 8,
-      padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap',
+      padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 10,
     }}>
-      <span style={{ fontSize: 13, color: '#555', fontWeight: 600, whiteSpace: 'nowrap' }}>Cliente:</span>
-      <select
-        value={sel}
-        onChange={e => { setSel(e.target.value); setSaved(false) }}
-        style={{
-          padding: '5px 8px', border: '1px solid #ccc', borderRadius: 5,
-          fontSize: 13, fontFamily: 'inherit', minWidth: 220,
-        }}
-      >
-        <option value="">— Nessun cliente —</option>
-        {clienti.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
-      </select>
-      <button
-        onClick={handleSave}
-        disabled={pending || sel === (cliente_id?.toString() ?? '')}
-        className={b('btn-green', isApp)}
-        style={{
-          padding: '0 16px', fontSize: 13,
-          opacity: sel === (cliente_id?.toString() ?? '') ? 0.4 : 1,
-        }}
-      >
-        {saved ? '✓ Salvato' : pending ? '…' : 'Assegna'}
-      </button>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+        <span style={{ fontSize: 13, color: '#555', fontWeight: 600, whiteSpace: 'nowrap' }}>Cliente:</span>
+        <select
+          value={sel}
+          onChange={e => { setSel(e.target.value); setSaved(false) }}
+          style={{ ...inp, minWidth: 220 }}
+        >
+          <option value="">— Nessun cliente —</option>
+          {clienti.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
+        </select>
+        <button
+          onClick={handleSave}
+          disabled={pending || sel === (cliente_id?.toString() ?? '')}
+          className={b('btn-black', isApp)}
+          style={{ padding: '0 16px', fontSize: 13, opacity: sel === (cliente_id?.toString() ?? '') ? 0.4 : 1 }}
+        >
+          {saved ? '✓ Salvato' : pending ? '…' : 'Assegna'}
+        </button>
+        <button
+          onClick={() => { setMostraForm(f => !f); setCreaErr('') }}
+          className={b('btn-black', isApp)}
+          style={{ padding: '0 14px', fontSize: 13 }}
+        >
+          {mostraForm ? '✕' : '+ Nuovo cliente'}
+        </button>
+      </div>
+
+      {mostraForm && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, paddingTop: 4, borderTop: '1px solid #ccc' }}>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <input value={nome}      onChange={e => setNome(e.target.value)}      placeholder="Nome *"     style={{ ...inp, flex: '1 1 120px' }} />
+            <input value={cognome}   onChange={e => setCognome(e.target.value)}   placeholder="Cognome"    style={{ ...inp, flex: '1 1 120px' }} />
+            <input value={cellulare} onChange={e => setCellulare(e.target.value)} placeholder="Cellulare"  style={{ ...inp, flex: '1 1 120px' }} />
+          </div>
+          {creaErr && <span style={{ fontSize: 12, color: '#c00' }}>{creaErr}</span>}
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button onClick={handleCrea} disabled={creaPending} className={b('btn-black', isApp)} style={{ padding: '0 18px', fontSize: 13 }}>
+              {creaPending ? '…' : 'Crea'}
+            </button>
+            <button onClick={() => { setMostraForm(false); setCreaErr('') }} className={b('btn-gray', isApp)} style={{ padding: '0 14px', fontSize: 13 }}>
+              Annulla
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
@@ -697,7 +745,7 @@ function ScontoClienteEditor({ preventivoId, currentPct, isApp }: { preventivoId
       <button
         onClick={handleSave}
         disabled={pending || !dirty}
-        className={b('btn-green', isApp)}
+        className={b('btn-black', isApp)}
         style={{ padding: '0 14px', fontSize: 12, fontFamily: 'inherit', opacity: !dirty ? 0.4 : 1 }}
       >
         {saved ? '✓' : pending ? '…' : 'Applica'}
@@ -1269,7 +1317,7 @@ export default function PreventivoClient({
           <button
             onClick={handleInvia}
             disabled={inviaPending || !tuttiSanati}
-            className={inviaPending || !tuttiSanati ? b('btn-gray', isApp) : b('btn-green', isApp)}
+            className={inviaPending || !tuttiSanati ? b('btn-gray', isApp) : b('btn-black', isApp)}
             style={{ flex: 1, minWidth: 'max-content', padding: '0 22px', fontSize: 13, fontFamily: 'inherit', opacity: !tuttiSanati ? 0.5 : 1 }}
             title={!tuttiSanati ? 'Completa tutte le caratteristiche prima di inviare' : undefined}
           >
