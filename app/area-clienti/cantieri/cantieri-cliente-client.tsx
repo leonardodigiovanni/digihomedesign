@@ -303,7 +303,7 @@ function CantiereGrid({
             <thead>
               <tr style={{ background: BRUSHED }}>
                 <th style={TH_S}>Cantiere</th>
-                {isDipendente && <th style={TH_S}>Cliente</th>}
+                {isDipendente && <th style={{ ...TH_S, minWidth: 160 }}>Cliente</th>}
                 <th style={{ ...TH_S, textAlign: 'center' }}>Stato</th>
                 <th style={TH_S}>Inizio</th>
                 <th style={{ ...TH_S, textAlign: 'center' }}>Task</th>
@@ -318,7 +318,7 @@ function CantiereGrid({
                 return (
                   <tr key={c.id} style={{ height: 84, background: BRUSHED }}>
                     <td style={td}><ApriCantiereBtn cantiere={c} onSelect={onSelectCantiere} isApp={isApp} /></td>
-                    {isDipendente && <td style={{ ...td, fontSize: 13, color: '#555' }}>{(c.cliente_nome as string | null) || '—'}</td>}
+                    {isDipendente && <td style={{ ...td, minWidth: 160, fontSize: 13, color: '#555' }}>{(c.cliente_nome as string | null) || '—'}</td>}
                     <td style={{ ...td, textAlign: 'center', color: '#333' }}>{stato.label}</td>
                     <td style={{ ...td, whiteSpace: 'nowrap', color: '#777' }}>{c.inizio_lavori?.slice(0,10) || '—'}</td>
                     <td style={{ ...td, textAlign: 'center', color: '#888' }}>{mieiTask.length}</td>
