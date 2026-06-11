@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { uploadFacsimile, deleteFacsimile, type UploadResult, type DeleteResult } from './actions'
+import { documentoSrc } from '@/lib/media-src'
 
 export type Documento = {
   id: number
@@ -161,7 +162,7 @@ function CategoriaSection({ categoria, docs, role, search }: { categoria: string
               </div>
             </div>
             <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
-              <a href={`/uploads/documenti/${d.filename}`} download={d.nome}
+              <a href={documentoSrc(d.filename)} download={d.nome}
                 style={{ padding: '4px 12px', fontSize: 12, border: '1px solid #ccc', borderRadius: 4, background: '#f9f9f9', color: '#333', textDecoration: 'none', fontFamily: 'inherit', whiteSpace: 'nowrap' }}>
                 ↓ Scarica
               </a>

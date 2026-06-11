@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom'
 import { addRecord, deleteRecord, type MutResult } from './actions'
 import { useRouter } from 'next/navigation'
 import { useActionState } from 'react'
+import { marketingSrc } from '@/lib/media-src'
 
 // ─── Tipi ─────────────────────────────────────────────────────────────────────
 
@@ -76,7 +77,7 @@ function DettaglioModal({ rec, onClose }: { rec: Record_; onClose: () => void })
           <div style={{ marginBottom: 12 }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={`/uploads/marketing/${rec.immagine}`}
+              src={marketingSrc(rec.immagine!)}
               alt={rec.titolo}
               onLoad={e => {
                 const el = e.currentTarget
@@ -93,7 +94,7 @@ function DettaglioModal({ rec, onClose }: { rec: Record_; onClose: () => void })
             />
             <div style={{ textAlign: 'right', marginTop: 6 }}>
               <a
-                href={`/uploads/marketing/${rec.immagine}`}
+                href={marketingSrc(rec.immagine!)}
                 target="_blank"
                 rel="noreferrer"
                 style={{ fontSize: 12, color: '#888', textDecoration: 'underline', cursor: 'pointer' }}
@@ -107,7 +108,7 @@ function DettaglioModal({ rec, onClose }: { rec: Record_; onClose: () => void })
         {rec.video && (
           <div style={{ marginBottom: 20 }}>
             <video
-              src={`/uploads/marketing/${rec.video}`}
+              src={marketingSrc(rec.video!)}
               controls
               style={{ width: '100%', borderRadius: 8, border: '1px solid #eee', maxHeight: 420 }}
             />
@@ -277,7 +278,7 @@ function RecordRow({ rec, rowIndex }: { rec: Record_; rowIndex: number }) {
         <td style={{ ...td, textAlign: 'center' }}>
           {rec.immagine ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={`/uploads/marketing/${rec.immagine}`} alt=""
+            <img src={marketingSrc(rec.immagine!)} alt=""
               style={{ width: 56, height: 40, objectFit: 'cover', borderRadius: 4, border: '1px solid #ddd', cursor: 'pointer' }}
               onClick={() => setDettaglio(true)} />
           ) : <span style={{ color: '#ddd', fontSize: 12 }}>—</span>}

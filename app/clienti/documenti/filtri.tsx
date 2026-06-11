@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import { documentoSrc } from '@/lib/media-src'
 import { ClienteSelect } from './cliente-select'
 import { VisibileCheckbox } from './visibile-checkbox'
 import { DeleteDocumentoButton } from './delete-button'
@@ -121,7 +122,7 @@ export function DocumentiFiltri({ documenti, clienti }: { documenti: Documento[]
                   <td style={tdStyle}>{d.titolo}</td>
                   <td style={tdStyle}>{d.tipo}</td>
                   <td style={tdStyle}>
-                    <a href={`/uploads/documenti/${d.filename}`} target="_blank" rel="noopener noreferrer"
+                    <a href={documentoSrc(d.filename)} target="_blank" rel="noopener noreferrer"
                        style={{ color: '#c8960c', textDecoration: 'underline' }}>
                       {d.filename.replace(/^\d+_/, '')}
                     </a>

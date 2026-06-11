@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import type { Metadata } from 'next'
 import { DeleteDocumentoButton } from './delete-button'
+import { documentoSrc } from '@/lib/media-src'
 import { UploadDocumentoForm } from './upload-form'
 
 export const metadata: Metadata = { title: 'Documenti' }
@@ -146,7 +147,7 @@ export default async function Page() {
                 return (
                 <tr key={d.id} style={{ height: 60 }}>
                   <td style={td}>
-                    <a href={`/uploads/documenti/${d.filename}`} target="_blank" rel="noopener noreferrer"
+                    <a href={documentoSrc(d.filename)} target="_blank" rel="noopener noreferrer"
                        className="btn-gold"
                        style={{ padding: '0 14px' }}>
                       {d.filename.replace(/^\d+_/, '')}

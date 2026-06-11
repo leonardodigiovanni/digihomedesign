@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { markVisto } from '@/app/area-lavoro/cantieri/actions'
+import { cantiereSrc } from '@/lib/media-src'
 
 // ─── Immagine zoomabile con pinch + drag ──────────────────────────────────────
 
@@ -267,14 +268,14 @@ export default function TaskViewerClient({ task, media }: { task: Task; media: M
             {m.tipo === 'foto' ? (
               <ZoomableImage
                 key={imgKey}
-                src={`/uploads/cantieri/tasks/${m.task_id}/${m.filename}`}
+                src={cantiereSrc(m.task_id, m.filename)}
                 alt={m.descrizione ?? ''}
                 zoomLevel={zoomLevel}
                 onZoomChange={setZoomLevel}
               />
             ) : (
               <VideoPlayer
-                src={`/uploads/cantieri/tasks/${m.task_id}/${m.filename}`}
+                src={cantiereSrc(m.task_id, m.filename)}
                 onPlayed={() => { if (!markedRef.current.has(m.id)) { markedRef.current.add(m.id); markVisto(m.id) } }}
               />
             )}

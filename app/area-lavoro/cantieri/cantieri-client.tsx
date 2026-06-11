@@ -9,6 +9,7 @@ import {
   addTask, updateTask, deleteTask,
   addMedia, deleteMedia,
 } from './actions'
+import { cantiereSrc } from '@/lib/media-src'
 
 // ─── Tipi ─────────────────────────────────────────────────────────────────────
 
@@ -433,7 +434,7 @@ function TaskItem({
           {/* Media */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 10 }}>
             {taskMedia.map(m => {
-              const src = `/uploads/cantieri/tasks/${m.task_id}/${m.filename}`
+              const src = cantiereSrc(m.task_id, m.filename)
               return (
                 <div key={m.id} style={{ position: 'relative', width: 140 }}>
                   {m.tipo === 'foto' ? (

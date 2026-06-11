@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import { DeleteDocumentoButton } from '@/app/area-clienti/documenti/delete-button'
 import { UploadDocumentoForm } from '@/app/area-clienti/documenti/upload-form'
+import { documentoSrc } from '@/lib/media-src'
 
 type Documento = {
   id: number
@@ -124,7 +125,7 @@ export default async function AppDocumentiPage() {
                 return (
                   <tr key={d.id} style={{ height: 84, background: brushed }}>
                     <td style={td}>
-                      <a href={`/uploads/documenti/${d.filename}`} target="_blank" rel="noopener noreferrer"
+                      <a href={documentoSrc(d.filename)} target="_blank" rel="noopener noreferrer"
                          className="btn-gold-app" style={{ padding: '0 14px', width: '100%' }}>
                         {d.filename.replace(/^\d+_/, '')}
                       </a>

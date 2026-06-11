@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { uploadDocumento, deleteDocumento, type UploadResult, type DeleteResult } from './actions'
+import { documentoSrc } from '@/lib/media-src'
 
 export type Documento = {
   id: number
@@ -232,7 +233,7 @@ export default function ArchivioClient({ documenti, role }: { documenti: Documen
                   <td style={{ padding: '10px 14px', fontSize: 12, color: '#aaa', whiteSpace: 'nowrap' }}>{formatDate(d.created_at)}</td>
                   <td style={{ padding: '10px 14px' }}>
                     <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                      <a href={`/uploads/documenti/${d.filename}`} download={d.nome}
+                      <a href={documentoSrc(d.filename)} download={d.nome}
                         style={{ padding: '3px 10px', fontSize: 12, border: '1px solid #ccc', borderRadius: 4, background: '#f9f9f9', color: '#333', textDecoration: 'none', fontFamily: 'inherit' }}>
                         ↓ Scarica
                       </a>

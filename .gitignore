@@ -45,3 +45,6 @@ next-env.d.ts
 
 # impostazioni locali Claude Code
 /.claude/
+
+# local uploads (production files live on Vercel Blob)
+/public/uploads/
