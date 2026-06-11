@@ -23,9 +23,13 @@ async function getData(username: string, isStaff: boolean) {
     let cantieriRows: Record<string, unknown>[]
 
     if (isStaff) {
-      const [rows] = await db.query(
-        'SELECT *, NULL AS cliente_nome FROM cantieri ORDER BY id DESC'
-      )
+      const [rows] = await db.query(`
+        SELECT c.*,
+          NULLIF(TRIM(COALESCE(NULLIF(ak.ragione_sociale,''), CONCAT_WS(' ', ak.cognome, ak.nome))), '') AS cliente_nome
+        FROM cantieri c
+        LEFT JOIN clienti ak ON ak.id = c.cliente_id
+        ORDER BY c.id DESC
+      `)
       cantieriRows = rows as Record<string, unknown>[]
     } else {
       let clienteId: number | null = null
