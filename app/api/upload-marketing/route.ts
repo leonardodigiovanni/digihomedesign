@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { writeFile, mkdir } from 'fs/promises'
+import { put } from '@vercel/blob'
 import path from 'path'
-
 
 export async function POST(req: NextRequest) {
   try {
@@ -10,31 +9,18 @@ export async function POST(req: NextRequest) {
 
     if (!file) return NextResponse.json({ error: 'File mancante.' }, { status: 400 })
 
-    const ext  = path.extname(file.name).toLowerCase()
-    const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
+    const ext      = path.extname(file.name).toLowerCase()
+    const safe     = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
     const filename = `${Date.now()}_${safe}`
-    const dir = path.join(process.cwd(), 'public', 'uploads', 'marketing')
 
-    await mkdir(dir, { recursive: true })
+    console.log(`[upload-marketing] ${file.name}: ${file.size} bytes`)
 
-    // Leggi tramite stream per evitare troncamenti con arrayBuffer()
-    const chunks: Buffer[] = []
-    const reader = file.stream().getReader()
-    while (true) {
-      const { done, value } = await reader.read()
-      if (done) break
-      chunks.push(Buffer.from(value))
-    }
-    const buffer = Buffer.concat(chunks)
-
-    console.log(`[upload-marketing] ${file.name}: atteso=${file.size} bytes, ricevuto=${buffer.length} bytes`)
-
-    await writeFile(path.join(dir, filename), buffer)
+    const blob = await put(`marketing/${filename}`, file, { access: 'public' })
 
     const videoExts = ['.mp4', '.mov', '.avi', '.webm', '.mkv']
     const tipo = videoExts.includes(ext) ? 'video' : 'immagine'
 
-    return NextResponse.json({ filename, tipo })
+    return NextResponse.json({ filename: blob.url, tipo })
   } catch (e) {
     console.error(e)
     return NextResponse.json({ error: 'Errore upload.' }, { status: 500 })

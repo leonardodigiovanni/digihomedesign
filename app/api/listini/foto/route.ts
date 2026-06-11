@@ -3,8 +3,7 @@ import { cookies } from 'next/headers'
 import { getConnection } from '@/lib/db'
 import { readSettings } from '@/lib/settings'
 import { hasPageAccess } from '@/lib/permissions'
-import path from 'path'
-import fs from 'fs'
+import { put, del } from '@vercel/blob'
 
 export async function POST(req: NextRequest) {
   const cookieStore = await cookies()
@@ -32,35 +31,21 @@ export async function POST(req: NextRequest) {
   if (file.size > 5 * 1024 * 1024)
     return NextResponse.json({ ok: false, error: 'File troppo grande (max 5 MB).' })
 
-  const dir = path.join(process.cwd(), 'public', 'listini')
-  fs.mkdirSync(dir, { recursive: true })
-
   const db = await getConnection()
   try {
-    // Cancella vecchio file se presente
     const [rows] = await db.query(`SELECT ${col} AS url FROM listini WHERE id=? LIMIT 1`, [id]) as [Record<string, unknown>[], unknown]
     const oldUrl = rows[0]?.url as string | null
-    if (oldUrl) {
-      const oldPath = path.join(process.cwd(), 'public', oldUrl.replace(/^\//, ''))
-      try { fs.unlinkSync(oldPath) } catch { /* già assente */ }
-    }
 
-    // Stream read — obbligatorio in Next.js App Router per file binari
-    const reader = file.stream().getReader()
-    const chunks: Uint8Array[] = []
-    while (true) {
-      const { done, value } = await reader.read()
-      if (done) break
-      if (value) chunks.push(value)
+    if (oldUrl && oldUrl.startsWith('https://')) {
+      await del(oldUrl).catch(() => {})
     }
 
     const filename = `${id}-${tipo}-${Date.now()}.${ext}`
-    fs.writeFileSync(path.join(dir, filename), Buffer.concat(chunks))
-    const fileUrl = `/listini/${filename}`
+    const blob = await put(`listini/${filename}`, file, { access: 'public' })
 
-    await db.execute(`UPDATE listini SET ${col}=? WHERE id=?`, [fileUrl, id])
+    await db.execute(`UPDATE listini SET ${col}=? WHERE id=?`, [blob.url, id])
 
-    return NextResponse.json({ ok: true, [col]: fileUrl })
+    return NextResponse.json({ ok: true, [col]: blob.url })
   } finally {
     await db.end()
   }
