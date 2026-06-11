@@ -292,31 +292,36 @@ function ClienteSelector({ preventivo_id, cliente_id, clienti: clientiInit, isAp
       background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 8,
       padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 10,
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-        <span style={{ fontSize: 13, color: '#555', fontWeight: 600, whiteSpace: 'nowrap' }}>Cliente:</span>
-        <select
-          value={sel}
-          onChange={e => { setSel(e.target.value); setSaved(false) }}
-          style={{ ...inp, minWidth: 220 }}
-        >
-          <option value="">— Nessun cliente —</option>
-          {clienti.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
-        </select>
-        <button
-          onClick={handleSave}
-          disabled={pending || sel === (cliente_id?.toString() ?? '')}
-          className={b('btn-black', isApp)}
-          style={{ padding: '0 16px', fontSize: 13, opacity: sel === (cliente_id?.toString() ?? '') ? 0.4 : 1 }}
-        >
-          {saved ? '✓ Salvato' : pending ? '…' : 'Assegna'}
-        </button>
-        <button
-          onClick={() => { setMostraForm(f => !f); setCreaErr('') }}
-          className={b('btn-black', isApp)}
-          style={{ padding: '0 14px', fontSize: 13 }}
-        >
-          {mostraForm ? '✕' : '+ Nuovo cliente'}
-        </button>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
+          <span style={{ fontSize: 13, color: '#555', fontWeight: 600, whiteSpace: 'nowrap' }}>Cliente:</span>
+          <select
+            value={sel}
+            onChange={e => { setSel(e.target.value); setSaved(false) }}
+            style={{ ...inp, minWidth: 220 }}
+          >
+            <option value="">— Nessun cliente —</option>
+            {clienti.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
+          </select>
+        </div>
+        <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+          <button
+            onClick={() => { setMostraForm(f => !f); setCreaErr('') }}
+            disabled={sel !== ''}
+            className={b('btn-black', isApp)}
+            style={{ padding: '0 14px', fontSize: 13, opacity: sel !== '' ? 0.4 : 1 }}
+          >
+            {mostraForm ? '✕' : '+ Nuovo cliente'}
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={pending || sel === '' || sel === (cliente_id?.toString() ?? '')}
+            className={b('btn-black', isApp)}
+            style={{ padding: '0 16px', fontSize: 13, opacity: (sel === '' || sel === (cliente_id?.toString() ?? '')) ? 0.4 : 1 }}
+          >
+            {saved ? '✓ Salvato' : pending ? '…' : 'Assegna'}
+          </button>
+        </div>
       </div>
 
       {mostraForm && (
