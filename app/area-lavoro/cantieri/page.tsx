@@ -2,6 +2,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import CantieriClient, { type Cantiere, type Task, type Media, type Cliente } from './cantieri-client'
+import GestioneBlob from '@/components/gestione-blob'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Cantieri' }
@@ -92,6 +93,7 @@ export default async function Page() {
       <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 6 }}>Cantieri</h2>
       <p style={{ color: '#000', fontSize: 13, marginBottom: 24 }}>Tutti i cantieri — gestione completa.</p>
       <CantieriClient cantieri={cantieri} tasks={tasks} media={media} clienti={clienti} isStaff={true} />
+      <GestioneBlob prefix="cantieri/" label="Gestione Blob — Cantieri" />
       <div className="IsDebug fs-11" style={{ marginTop: 8 }}>pagina revisionata</div>
     </div>
   )
