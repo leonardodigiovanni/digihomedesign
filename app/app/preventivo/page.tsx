@@ -65,7 +65,7 @@ async function getData(role: string, username: string): Promise<{ preventivi: Pr
 
     if (isStaff) {
       const [r] = await conn.query(`
-        SELECT p.*, CASE WHEN c.id IS NULL THEN '' WHEN c.ragione_sociale != '' THEN c.ragione_sociale ELSE CONCAT(TRIM(c.cognome), ' ', TRIM(c.nome)) END AS cliente_nome
+        SELECT p.*, CASE WHEN c.id IS NULL THEN '' WHEN c.ragione_sociale != '' THEN c.ragione_sociale ELSE CONCAT(TRIM(c.cognome), '|', TRIM(c.nome)) END AS cliente_nome
         FROM preventivi p LEFT JOIN clienti c ON c.id = p.cliente_id
         ORDER BY p.data DESC, p.id DESC
       `)
@@ -172,7 +172,15 @@ export default async function AppPreventivoPage() {
                     <td style={td}>
                       <ApriBtnPreventivo id={p.id} numero={p.numero} />
                     </td>
-                    {isStaff && <td style={{ ...td, maxWidth: 120, whiteSpace: 'normal', wordBreak: 'break-word' }}>{p.cliente_nome || '—'}</td>}
+                    {isStaff && (
+                      <td style={{ ...td, minWidth: 160 }}>
+                        {p.cliente_nome
+                          ? p.cliente_nome.includes('|')
+                            ? <><div style={{ fontWeight: 600 }}>{p.cliente_nome.split('|')[0]}</div><div style={{ color: '#555', fontSize: 13 }}>{p.cliente_nome.split('|')[1]}</div></>
+                            : p.cliente_nome
+                          : '—'}
+                      </td>
+                    )}
                     <td style={{ ...td, maxWidth: 180, whiteSpace: 'normal', wordBreak: 'break-word' }}>{p.descrizione}</td>
                     <td style={{ ...td, whiteSpace: 'nowrap' }}>{p.data}</td>
                     <td style={{ ...td, whiteSpace: 'nowrap', textAlign: 'right' }}>€ {Number(p.importo).toFixed(2)}</td>
