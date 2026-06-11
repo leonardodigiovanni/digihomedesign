@@ -242,5 +242,5 @@ export default async function Page() {
   const totale = arts.reduce((s, a) => s + calcolaPrezzo(a), 0).toFixed(2)
   const pages  = buildPages(arts, clienteNome, today, totale)
 
-  return <StampaAcquistiClient pages={pages} tornaHref="/app/carrello-acquisti" />
+  return <StampaAcquistiClient pages={pages} tornaHref="/app/carrello-acquisti" isApp={true} />
 }

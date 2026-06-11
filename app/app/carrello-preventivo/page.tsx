@@ -1,9 +1,11 @@
+import Link from 'next/link'
 import { cookies } from 'next/headers'
 import { getConnection } from '@/lib/db'
 import type { Metadata } from 'next'
 import CarrelloClient, { type ArticoloCarrello, type CaratteristicaListino } from '@/app/area-clienti/carrello-preventivo/carrello-client'
 import { decompressCart } from '@/lib/cart-cookie'
 import { extractAvgColor } from '@/lib/extract-color'
+import SetActionBar from '@/app/app/set-action-bar'
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = { title: 'Carrello Preventivo' }
@@ -164,7 +166,16 @@ export default async function Page() {
         cataloghiHref="/app/cataloghi"
         stampaHref="/app/carrello-preventivo/stampa"
         postSaveHref="/app/carrello-preventivo"
+        isApp={true}
       />
+      <SetActionBar>
+        <Link href="/app/cataloghi" className="btn-black-app fs-12" style={{ flex: 1 }}>
+          Vai ai cataloghi →
+        </Link>
+        <Link href="/aiuto/guida-preventivo" className="btn-black-app fs-12" style={{ flex: 1 }}>
+          Vai alla guida →
+        </Link>
+      </SetActionBar>
     </div>
   )
 }

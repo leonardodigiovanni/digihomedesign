@@ -4,6 +4,7 @@ import React, { useState, useMemo, useTransition, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { aggiungiArticolo, rimuoviArticolo, associaCliente, aggiornaDatiPreventivo, inoltroRichiesta, modificaArticolo, aggiornaSconto, modificaPreventivo, inviaAlCliente, accettaPreventivo, rifiutaPreventivo, annullaPreventivo } from '../actions'
 import PreviewInfisso from '@/components/preview-infisso'
+import { b } from '@/lib/btn'
 
 // ─── Tipi ─────────────────────────────────────────────────────────────────────
 
@@ -122,7 +123,7 @@ const label: React.CSSProperties = {
 
 // ─── Dati preventivo (descrizione + note) ────────────────────────────────────
 
-function DatiPreventivo({ preventivo, readOnly = false, isStaff = false }: { preventivo: Preventivo; readOnly?: boolean; isStaff?: boolean }) {
+function DatiPreventivo({ preventivo, readOnly = false, isStaff = false, isApp }: { preventivo: Preventivo; readOnly?: boolean; isStaff?: boolean; isApp?: boolean }) {
   const router = useRouter()
   const [pending, startT] = useTransition()
   const [desc, setDesc]       = useState(preventivo.descrizione ?? '')
@@ -221,7 +222,7 @@ function DatiPreventivo({ preventivo, readOnly = false, isStaff = false }: { pre
             <button
               onClick={handleSave}
               disabled={pending || !dirty}
-              className="btn-green"
+              className={b('btn-green', isApp)}
               style={{ padding: '0 18px', fontSize: 13, opacity: !dirty ? 0.4 : 1 }}
             >
               {saved ? '✓ Salvato' : pending ? '…' : 'Salva'}
@@ -235,10 +236,11 @@ function DatiPreventivo({ preventivo, readOnly = false, isStaff = false }: { pre
 
 // ─── Selettore cliente ────────────────────────────────────────────────────────
 
-function ClienteSelector({ preventivo_id, cliente_id, clienti }: {
+function ClienteSelector({ preventivo_id, cliente_id, clienti, isApp }: {
   preventivo_id: number
   cliente_id: number | null
   clienti: ClienteOption[]
+  isApp?: boolean
 }) {
   const router = useRouter()
   const [pending, startT] = useTransition()
@@ -279,7 +281,7 @@ function ClienteSelector({ preventivo_id, cliente_id, clienti }: {
       <button
         onClick={handleSave}
         disabled={pending || sel === (cliente_id?.toString() ?? '')}
-        className="btn-green"
+        className={b('btn-green', isApp)}
         style={{
           padding: '0 16px', fontSize: 13,
           opacity: sel === (cliente_id?.toString() ?? '') ? 0.4 : 1,
@@ -294,7 +296,7 @@ function ClienteSelector({ preventivo_id, cliente_id, clienti }: {
 // ─── Form aggiunta articolo ───────────────────────────────────────────────────
 
 function ArticoloForm({
-  preventivo_id, listini, prefill, parentId = null, parentArt = null, existingChildTypes = [], gapTypeFilter = null, altriParentIds = [], onClose, isStaff = true,
+  preventivo_id, listini, prefill, parentId = null, parentArt = null, existingChildTypes = [], gapTypeFilter = null, altriParentIds = [], onClose, isStaff = true, isApp,
 }: {
   preventivo_id: number
   listini: ListinoItem[]
@@ -306,6 +308,7 @@ function ArticoloForm({
   altriParentIds?: number[]
   onClose: () => void
   isStaff?: boolean
+  isApp?: boolean
 }) {
   const router = useRouter()
   const [pending, startT] = useTransition()
@@ -642,13 +645,13 @@ function ArticoloForm({
               </button>
               {isCaratteristicaMode && altriParentIds.length > 0 && (
                 <button type="button" onClick={handleApplicaATutti} disabled={pending || !listinoId}
-                  className={pending || !listinoId ? 'btn-gray' : 'btn-green'}
+                  className={pending || !listinoId ? b('btn-gray', isApp) : b('btn-green', isApp)}
                   style={{ padding: '0 18px', fontSize: 13 }}>
                   {pending ? '…' : 'Applica a tutti'}
                 </button>
               )}
               <button type="submit" disabled={pending || (isCaratteristicaMode ? !listinoId : (!tipo || !marca || !listinoId))}
-                className={pending || (isCaratteristicaMode ? !listinoId : (!tipo || !marca || !listinoId)) ? 'btn-gray' : 'btn-green'}
+                className={pending || (isCaratteristicaMode ? !listinoId : (!tipo || !marca || !listinoId)) ? b('btn-gray', isApp) : b('btn-green', isApp)}
                 style={{ padding: '0 22px', fontSize: 13 }}>
                 {pending ? '…' : isCaratteristicaMode ? 'Applica' : 'Aggiungi'}
               </button>
@@ -694,7 +697,7 @@ function ScontoClienteEditor({ preventivoId, currentPct }: { preventivoId: numbe
       <button
         onClick={handleSave}
         disabled={pending || !dirty}
-        className="btn-green"
+        className={b('btn-green', isApp)}
         style={{ padding: '0 14px', fontSize: 12, fontFamily: 'inherit', opacity: !dirty ? 0.4 : 1 }}
       >
         {saved ? '✓' : pending ? '…' : 'Applica'}
@@ -705,12 +708,13 @@ function ScontoClienteEditor({ preventivoId, currentPct }: { preventivoId: numbe
 
 // ─── Modale Modifica Articolo (staff) ────────────────────────────────────────
 
-function ModificaArticoloModal({ articolo, parentArt, listini, onClose, isStaff = true }: {
+function ModificaArticoloModal({ articolo, parentArt, listini, onClose, isStaff = true, isApp }: {
   articolo: Articolo
   parentArt?: Articolo | null
   listini: ListinoItem[]
   onClose: () => void
   isStaff?: boolean
+  isApp?: boolean
 }) {
   const router = useRouter()
   const [pending, startT] = useTransition()
@@ -861,8 +865,8 @@ function ModificaArticoloModal({ articolo, parentArt, listini, onClose, isStaff 
             )}
             {error && <p style={{ color: '#c00', fontSize: 13, margin: 0, background: '#fff5f5', padding: '8px 12px', borderRadius: 5 }}>{error}</p>}
             <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', paddingTop: 4 }}>
-              <button type="button" onClick={onClose} className="btn-red">Annulla</button>
-              <button type="submit" disabled={pending} className={pending ? 'btn-gray' : 'btn-green'} style={{ padding: '0 22px', fontSize: 13 }}>
+              <button type="button" onClick={onClose} className={b('btn-red', isApp)}>Annulla</button>
+              <button type="submit" disabled={pending} className={pending ? b('btn-gray', isApp) : b('btn-green', isApp)} style={{ padding: '0 22px', fontSize: 13 }}>
                 {pending ? 'Salvataggio…' : 'Salva modifiche'}
               </button>
             </div>
@@ -876,12 +880,13 @@ function ModificaArticoloModal({ articolo, parentArt, listini, onClose, isStaff 
 // ─── Modale Inoltra Richiesta ─────────────────────────────────────────────────
 
 function InoltraModal({
-  preventivo, clienteEmail, clienteCellulare, onClose,
+  preventivo, clienteEmail, clienteCellulare, onClose, isApp,
 }: {
   preventivo: Preventivo
   clienteEmail: string
   clienteCellulare: string
   onClose: () => void
+  isApp?: boolean
 }) {
   const router = useRouter()
   const [pending, startT] = useTransition()
@@ -941,12 +946,12 @@ function InoltraModal({
               <p style={{ color: '#c00', fontSize: 13, margin: 0, background: '#fff5f5', padding: '8px 12px', borderRadius: 5 }}>{error}</p>
             )}
             <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', paddingTop: 4, alignItems: 'center' }}>
-              <button type="button" onClick={onClose} className="btn-red"
+              <button type="button" onClick={onClose} className={b('btn-red', isApp)}
                 style={{ padding: '0 20px' }}>
                 Annulla
               </button>
               <button type="submit" disabled={pending}
-                className={pending ? 'btn-gray' : 'btn-green'}
+                className={pending ? b('btn-gray', isApp) : b('btn-green', isApp)}
                 style={{ fontSize: 13, paddingLeft: 22, paddingRight: 22 }}>
                 {pending ? 'Inoltro…' : 'Inoltra'}
               </button>
@@ -962,7 +967,7 @@ function InoltraModal({
 
 export default function PreventivoClient({
   preventivo, articoli, listini, clienti, isStaff = true,
-  clienteEmail = '', clienteCellulare = '', backHref, stampaHref,
+  clienteEmail = '', clienteCellulare = '', backHref, stampaHref, isApp,
 }: {
   preventivo: Preventivo
   articoli: Articolo[]
@@ -973,6 +978,7 @@ export default function PreventivoClient({
   clienteCellulare?: string
   backHref?: string
   stampaHref?: string
+  isApp?: boolean
 }) {
   const router = useRouter()
   const [showForm, setShowForm]         = useState(false)
@@ -1182,7 +1188,7 @@ export default function PreventivoClient({
       </div>
 
       {/* Riferimento e note */}
-      <DatiPreventivo preventivo={preventivo} readOnly={!isStaff && preventivo.stato !== 'bozza'} isStaff={isStaff} />
+      <DatiPreventivo preventivo={preventivo} readOnly={!isStaff && preventivo.stato !== 'bozza'} isStaff={isStaff} isApp={isApp} />
 
       {/* Selettore cliente — solo staff */}
       {isStaff && (
@@ -1190,6 +1196,7 @@ export default function PreventivoClient({
           preventivo_id={preventivo.id}
           cliente_id={preventivo.cliente_id}
           clienti={clienti}
+          isApp={isApp}
         />
       )}
 
@@ -1199,7 +1206,7 @@ export default function PreventivoClient({
           <>
             <button
               onClick={openNuovo}
-              className="btn-green"
+              className={b('btn-green', isApp)}
               style={{ flex: 1, minWidth: 'max-content', padding: '0 20px', fontSize: 13 }}
             >
               + Aggiungi articolo
@@ -1208,7 +1215,7 @@ export default function PreventivoClient({
             {lastArticolo && (
               <button
                 onClick={openTipoPrecedente}
-                className="btn-green"
+                className={b('btn-green', isApp)}
                 style={{ flex: 1, minWidth: 'max-content', padding: '0 20px', fontSize: 13 }}
               >
                 + Ripeti articolo
@@ -1220,14 +1227,14 @@ export default function PreventivoClient({
         {tuttiSanati ? (
           <a
             href={stampaHref ?? `/area-clienti/preventivi/${preventivo.id}/stampa`}
-            className="btn-black"
+            className={b('btn-black', isApp)}
             style={{ flex: 1, minWidth: 'max-content', padding: '0 20px', fontSize: 13, textDecoration: 'none' }}
           >
             Stampa / PDF
           </a>
         ) : (
           <span
-            className="btn-gray"
+            className={b('btn-gray', isApp)}
             style={{ flex: 1, minWidth: 'max-content', padding: '0 20px', fontSize: 13, cursor: 'not-allowed', opacity: 0.5 }}
             title="Completa tutte le caratteristiche prima di stampare"
           >
@@ -1239,7 +1246,7 @@ export default function PreventivoClient({
           <button
             onClick={() => setShowInoltra(true)}
             disabled={!tuttiSanati}
-            className={!tuttiSanati ? 'btn-gray' : 'btn-black'}
+            className={!tuttiSanati ? b('btn-gray', isApp) : b('btn-black', isApp)}
             style={{ flex: 1, minWidth: 'max-content', padding: '0 22px', fontSize: 13, fontFamily: 'inherit', opacity: !tuttiSanati ? 0.5 : 1 }}
             title={!tuttiSanati ? 'Completa tutte le caratteristiche prima di inviare' : undefined}
           >
@@ -1251,7 +1258,7 @@ export default function PreventivoClient({
           <button
             onClick={handleModifica}
             disabled={modificaPending}
-            className={modificaPending ? 'btn-gray' : 'btn-black'}
+            className={modificaPending ? b('btn-gray', isApp) : b('btn-black', isApp)}
             style={{ flex: 1, minWidth: 'max-content', padding: '0 22px', fontSize: 13, fontFamily: 'inherit' }}
           >
             {modificaPending ? 'Preparazione…' : 'Modifica'}
@@ -1262,7 +1269,7 @@ export default function PreventivoClient({
           <button
             onClick={handleInvia}
             disabled={inviaPending || !tuttiSanati}
-            className={inviaPending || !tuttiSanati ? 'btn-gray' : 'btn-green'}
+            className={inviaPending || !tuttiSanati ? b('btn-gray', isApp) : b('btn-green', isApp)}
             style={{ flex: 1, minWidth: 'max-content', padding: '0 22px', fontSize: 13, fontFamily: 'inherit', opacity: !tuttiSanati ? 0.5 : 1 }}
             title={!tuttiSanati ? 'Completa tutte le caratteristiche prima di inviare' : undefined}
           >
@@ -1275,7 +1282,7 @@ export default function PreventivoClient({
             <button
               onClick={handleAccetta}
               disabled={accettaPending}
-              className={accettaPending ? 'btn-gray' : 'btn-green'}
+              className={accettaPending ? b('btn-gray', isApp) : b('btn-green', isApp)}
               style={{ flex: 1, minWidth: 'max-content', padding: '0 22px', fontSize: 13, fontFamily: 'inherit' }}
             >
               {accettaPending ? '…' : 'Accetta'}
@@ -1283,7 +1290,7 @@ export default function PreventivoClient({
             <button
               onClick={handleRifiuta}
               disabled={rifiutaPending}
-              className={rifiutaPending ? 'btn-gray' : 'btn-red'}
+              className={rifiutaPending ? b('btn-gray', isApp) : b('btn-red', isApp)}
               style={{ flex: 1, minWidth: 'max-content', padding: '0 22px', fontSize: 13, fontFamily: 'inherit' }}
             >
               {rifiutaPending ? '…' : 'Rifiuta'}
@@ -1295,7 +1302,7 @@ export default function PreventivoClient({
           <button
             onClick={handleAnnulla}
             disabled={annullaPending}
-            className={annullaPending ? 'btn-gray' : 'btn-red'}
+            className={annullaPending ? b('btn-gray', isApp) : b('btn-red', isApp)}
             style={{ flex: 1, minWidth: 'max-content', padding: '0 22px', fontSize: 13, fontFamily: 'inherit' }}
           >
             {annullaPending ? '…' : 'Annulla preventivo'}
@@ -1478,13 +1485,13 @@ export default function PreventivoClient({
                             {/* Col 1: eye + expand */}
                             <td style={{ ...tdS, textAlign: 'center', padding: '4px 0' }}>
                               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-                                <button onClick={() => setPreviewArt(root)} disabled={hasLacune || (!root.abbr && !root.listino_foto_url)} className={(hasLacune || (!root.abbr && !root.listino_foto_url)) ? 'btn-gray btn-icon' : 'btn-black btn-icon'} title="Anteprima infisso"
+                                <button onClick={() => setPreviewArt(root)} disabled={hasLacune || (!root.abbr && !root.listino_foto_url)} className={(hasLacune || (!root.abbr && !root.listino_foto_url)) ? `${b('btn-gray', isApp)} btn-icon` : `${b('btn-black', isApp)} btn-icon`} title="Anteprima infisso"
                                   style={{ fontFamily: 'inherit' }}>
                                   <svg style={{ position: 'relative', zIndex: 1 }} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                                 </button>
                                 {hasDetails && (
                                   <button type="button" onClick={() => toggleExpand(root.id)}
-                                    className={hasLacune ? 'btn-red btn-icon' : 'btn-black btn-icon'}
+                                    className={hasLacune ? `${b('btn-red', isApp)} btn-icon` : `${b('btn-black', isApp)} btn-icon`}
                                     style={{ fontFamily: 'inherit', gap: 2 }}>
                                     <svg style={{ position: 'relative', zIndex: 1 }} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="10" cy="18" r="2" fill="currentColor" stroke="none"/></svg>
                                     <span style={{ position: 'relative', zIndex: 1, fontSize: 10 }}>{isExpanded ? '▴' : '▾'}</span>
@@ -1547,11 +1554,11 @@ export default function PreventivoClient({
                             {canEdit && (
                               <td style={{ ...tdS, padding: '4px 0', textAlign: 'center' }}>
                                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-                                  <button onClick={() => setEditArticolo(root)} className="btn-black btn-icon" title="Modifica"
+                                  <button onClick={() => setEditArticolo(root)} className={`${b('btn-black', isApp)} btn-icon`} title="Modifica"
                                     style={{ fontFamily: 'inherit' }}>
                                     <span style={{ position: 'relative', zIndex: 1, fontSize: 13, display: 'inline-block', transform: 'rotate(135deg)' }}>✏</span>
                                   </button>
-                                  <button onClick={() => handleElimina(root)} disabled={delPending} className="btn-red btn-icon"
+                                  <button onClick={() => handleElimina(root)} disabled={delPending} className={`${b('btn-red', isApp)} btn-icon`}
                                     style={{ fontFamily: 'inherit' }}>
                                     <span style={{ position: 'relative', zIndex: 1, fontSize: 13 }}>✕</span>
                                   </button>
@@ -1610,12 +1617,12 @@ export default function PreventivoClient({
                                 <td style={{ ...tdS, padding: '4px 0', textAlign: 'center' }}>
                                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
                                     {isStaff && (
-                                      <button onClick={() => setEditArticolo(child)} className="btn-black btn-icon" title="Modifica"
+                                      <button onClick={() => setEditArticolo(child)} className={`${b('btn-black', isApp)} btn-icon`} title="Modifica"
                                         style={{ fontFamily: 'inherit' }}>
                                         <span style={{ position: 'relative', zIndex: 1, fontSize: 13, display: 'inline-block', transform: 'rotate(135deg)' }}>✏</span>
                                       </button>
                                     )}
-                                    <button onClick={() => handleElimina(child)} disabled={delPending} className="btn-red btn-icon"
+                                    <button onClick={() => handleElimina(child)} disabled={delPending} className={`${b('btn-red', isApp)} btn-icon`}
                                       style={{ fontFamily: 'inherit' }}>
                                       <span style={{ position: 'relative', zIndex: 1, fontSize: 13 }}>✕</span>
                                     </button>
@@ -1705,6 +1712,7 @@ export default function PreventivoClient({
           altriParentIds={altriParentIds}
           onClose={() => { setShowForm(false); setParentId(null); setParentArt(null); setGapType(null) }}
           isStaff={isStaff}
+          isApp={isApp}
         />
       )}
 
@@ -1714,6 +1722,7 @@ export default function PreventivoClient({
           clienteEmail={clienteEmail}
           clienteCellulare={clienteCellulare}
           onClose={() => setShowInoltra(false)}
+          isApp={isApp}
         />
       )}
 
@@ -1724,19 +1733,22 @@ export default function PreventivoClient({
           listini={listini}
           onClose={() => setEditArticolo(null)}
           isStaff={isStaff}
+          isApp={isApp}
         />
       )}
 
       {/* Bottone torna ai preventivi */}
-      <div>
-        <a
-          href={backHref ?? (isStaff ? '/clienti/preventivi' : '/area-clienti/preventivi')}
-          className="btn-black"
-          style={{ padding: '0 20px', fontSize: 13, textDecoration: 'none' }}
-        >
-          ← Preventivi
-        </a>
-      </div>
+      {!isApp && (
+        <div>
+          <a
+            href={backHref ?? (isStaff ? '/clienti/preventivi' : '/area-clienti/preventivi')}
+            className={b('btn-black', isApp)}
+            style={{ padding: '0 20px', fontSize: 13, textDecoration: 'none' }}
+          >
+            ← Preventivi
+          </a>
+        </div>
+      )}
 
       {previewArt && (
         <div

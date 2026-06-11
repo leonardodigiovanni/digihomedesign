@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import SetActionBar from '@/app/app/set-action-bar'
 import { cookies } from 'next/headers'
 import { getConnection } from '@/lib/db'
 import AggiungiArticoloAcquisto from '@/components/aggiungi-articolo-acquisto-form'
@@ -176,25 +177,26 @@ export default async function Page({ params }: Props) {
         carrelloHref="/app/carrello-preventivo"
         preventivoClienteBaseHref="/app/preventivo"
         submitLabel="Conferma"
+        isApp={true}
       />
 
       {articoliAcquisto.length > 0 && (
         <>
           <h2 className="fs-16" style={{ fontWeight: 700, margin: '8px 0 0', color: '#1a1a1a' }}>Articoli acquistabili</h2>
-          <div style={{ marginTop: 8 }}><AggiungiArticoloAcquisto articoli={articoliAcquisto} /></div>
+          <div style={{ marginTop: 8 }}><AggiungiArticoloAcquisto articoli={articoliAcquisto} isApp={true} /></div>
         </>
       )}
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
-        <Link href="/app/cataloghi" className="btn-black fs-12" style={{ flex: 1 }}>
+      <SetActionBar key={cartNonVuoto ? '1' : '0'}>
+        <Link href="/app/cataloghi" className="btn-black-app fs-12" style={cartNonVuoto ? { flex: 1 } : { margin: '0 auto' }}>
           ← Torna ai Cataloghi
         </Link>
         {cartNonVuoto && (
-          <Link href="/app/carrello-preventivo" className="btn-black fs-12" style={{ flex: 1 }}>
-            Vai alla simulazione
+          <Link href="/app/carrello-preventivo" className="btn-black-app fs-12" style={{ flex: 1 }}>
+            ← Torna a simulazione
           </Link>
         )}
-      </div>
+      </SetActionBar>
     </div>
   )
 }

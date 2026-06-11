@@ -2,6 +2,7 @@
 
 import { useActionState, useState, useEffect } from 'react'
 import { uploadDocumento } from './actions'
+import { b } from '@/lib/btn'
 
 type ClienteOption = { id: number; label: string }
 
@@ -14,7 +15,7 @@ const labelStyle: React.CSSProperties = {
   letterSpacing: '0.05em', display: 'block', marginBottom: 4,
 }
 
-export function UploadDocumentoForm({ clienti }: { clienti: ClienteOption[] }) {
+export function UploadDocumentoForm({ clienti, isApp }: { clienti: ClienteOption[]; isApp?: boolean }) {
   const [state, action, pending] = useActionState(uploadDocumento, {})
   const [resetKey, setResetKey] = useState(0)
 
@@ -77,7 +78,7 @@ export function UploadDocumentoForm({ clienti }: { clienti: ClienteOption[] }) {
         <button
           type="submit"
           disabled={pending}
-          className="btn-green"
+          className={b('btn-green', isApp)}
           style={{ padding: '9px 28px', fontSize: 13, fontWeight: 600, borderRadius: 6, border: 'none', cursor: pending ? 'not-allowed' : 'pointer', opacity: pending ? 0.6 : 1 }}
         >
           {pending ? 'Caricamento…' : 'Carica'}

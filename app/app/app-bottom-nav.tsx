@@ -5,6 +5,16 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { BookOpen } from 'lucide-react'
+import { appLogout } from './login/actions'
+
+const ORANGE_NAV: React.CSSProperties = {
+  width: 44, height: 44, borderRadius: '50%', flexShrink: 0,
+  display: 'flex', alignItems: 'center', justifyContent: 'center',
+  background: [
+    'repeating-linear-gradient(135deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 6px)',
+    'linear-gradient(135deg, #7a2810 0%, #bf5020 20%, #d97030 45%, #bf5020 80%, #7a2810 100%)',
+  ].join(', '),
+}
 
 const GOLD: React.CSSProperties = {
   width: 44, height: 44, borderRadius: '50%', flexShrink: 0,
@@ -158,6 +168,27 @@ export default function AppBottomNav({
           </Link>
         )
       })}
+      {username && (
+        <form action={appLogout}>
+          <button
+            type="submit"
+            onClick={e => { if (!window.confirm('Vuoi uscire?')) e.preventDefault() }}
+            className="app-nav-item"
+            style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 'inherit' }}
+          >
+            <div className="app-nav-icon-slot">
+              <div style={ORANGE_NAV}>
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                  <polyline points="16 17 21 12 16 7"/>
+                  <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+              </div>
+            </div>
+            <span className="app-nav-label">Esci</span>
+          </button>
+        </form>
+      )}
     </nav>
   )
 }

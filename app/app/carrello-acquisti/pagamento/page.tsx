@@ -1,4 +1,4 @@
-import { cookies } from 'next/headers'
+﻿import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import type { Metadata } from 'next'
@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic'
 export const metadata: Metadata = { title: 'Pagamento' }
 
 function calcolaSubtotale(prezzo: number, unita: string, h: number, l: number, q: number): number {
-  if (unita === 'm²') return Math.round(prezzo * (h / 100) * (l / 100) * q * 100) / 100
+  if (unita === 'mÂ²') return Math.round(prezzo * (h / 100) * (l / 100) * q * 100) / 100
   if (unita === 'ml') return Math.round(prezzo * (l / 100) * q * 100) / 100
   return Math.round(prezzo * q * 100) / 100
 }
@@ -90,15 +90,15 @@ export default async function Page() {
               <div key={i} style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, padding: '10px 16px', borderBottom: i < articoli.length - 1 ? '1px solid #f0e0a0' : 'none' }}>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 13, fontWeight: 600, fontFamily: 'monospace', color: '#1a1a1a' }}>
-                    {a.produttore ? `${a.produttore} — ` : ''}{a.descrizione}
+                    {a.produttore ? `${a.produttore} â€” ` : ''}{a.descrizione}
                   </div>
                   <div style={{ fontSize: 11, color: '#888', fontFamily: 'monospace', marginTop: 1 }}>
-                    {[`${a.quantita} ${a.unita}`, ...dims].join(' · ')}
+                    {[`${a.quantita} ${a.unita}`, ...dims].join(' Â· ')}
                   </div>
                   {a.note && <div style={{ fontSize: 11, color: '#aaa', fontFamily: 'monospace', fontStyle: 'italic' }}>{a.note}</div>}
                 </div>
                 <div style={{ fontFamily: 'monospace', fontSize: 14, fontWeight: 700, whiteSpace: 'nowrap', color: '#1a1a1a' }}>
-                  € {fmt(a.sub)}
+                  â‚¬ {fmt(a.sub)}
                 </div>
               </div>
             )
@@ -107,7 +107,7 @@ export default async function Page() {
 
         <div style={{ background: '#fff', border: '1px solid #c9a84c', borderRadius: 10, padding: '12px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
           <span style={{ fontSize: 15, fontWeight: 700, fontFamily: 'monospace', color: '#1a1a1a' }}>Totale</span>
-          <span style={{ fontSize: 20, fontWeight: 700, fontFamily: 'monospace', color: '#1a1a1a' }}>€ {fmt(totale)}</span>
+          <span style={{ fontSize: 20, fontWeight: 700, fontFamily: 'monospace', color: '#1a1a1a' }}>â‚¬ {fmt(totale)}</span>
         </div>
 
         <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -117,14 +117,14 @@ export default async function Page() {
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
             <form action={creaCheckoutSessionApp} style={{ flex: 1, minWidth: 140 }}>
               <button type="submit"
-                className="btn-green"
+                className="btn-green-app"
                 style={{ width: '100%', padding: '0 8px' }}>
                 Paga ora
               </button>
             </form>
-            <a href="/app/carrello-acquisti" className="btn-black"
+            <a href="/app/carrello-acquisti" className="btn-black-app"
               style={{ flex: 1, minWidth: 140, padding: '0 8px' }}>
-              ← Torna al carrello
+              â† Torna al carrello
             </a>
           </div>
         </div>
@@ -133,3 +133,4 @@ export default async function Page() {
     </div>
   )
 }
+

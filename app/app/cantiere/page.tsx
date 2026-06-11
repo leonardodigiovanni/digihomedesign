@@ -99,7 +99,7 @@ export default async function AppCantierePage() {
 
   return (
     <div>
-      <CantieriClienteClient cantieri={cantieri} tasks={tasks} media={media} />
+      <CantieriClienteClient cantieri={cantieri} tasks={tasks} media={media} isApp={true} />
     </div>
   )
 }

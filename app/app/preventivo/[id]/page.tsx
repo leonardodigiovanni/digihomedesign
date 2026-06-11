@@ -2,6 +2,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import PreventivoClient, { type Articolo, type ListinoItem, type Preventivo } from '../../../clienti/preventivi/[id]/preventivo-client'
+import PreventivoActionsBar from './actions-bar'
 import { extractAvgColor } from '@/lib/extract-color'
 
 function dateToLocal(d: unknown): string {
@@ -190,6 +191,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
     return (
       <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <PreventivoActionsBar id={prevId} />
         <PreventivoClient
           preventivo={preventivo}
           articoli={articoli}
@@ -198,8 +200,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
           isStaff={isStaff}
           clienteEmail={clienteEmail}
           clienteCellulare={clienteCellulare}
-          backHref="/app/preventivo"
-          stampaHref={`/app/preventivo/${prevId}/stampa`}
+          isApp={true}
         />
       </div>
     )

@@ -25,9 +25,10 @@ type Props = {
   carrelloHref?: string
   preventivoClienteBaseHref?: string
   submitLabel?: string
+  isApp?: boolean
 }
 
-export default function CatalogoWrapper({ voci, articoliPerListino, isStaff, isLoggedIn, preventiviBozza, cartNonVuoto, parentPendente, categorySlug, basePath, carrelloHref, preventivoClienteBaseHref, submitLabel }: Props) {
+export default function CatalogoWrapper({ voci, articoliPerListino, isStaff, isLoggedIn, preventiviBozza, cartNonVuoto, parentPendente, categorySlug, basePath, carrelloHref, preventivoClienteBaseHref, submitLabel, isApp }: Props) {
   const [selectedVoce, setSelectedVoce] = useState<Voce | null>(null)
 
   let articoliVisibili: ArticoloListino[]
@@ -47,7 +48,7 @@ export default function CatalogoWrapper({ voci, articoliPerListino, isStaff, isL
 
   return (
     <>
-      <CatalogoClient voci={voci} onSelect={setSelectedVoce} categorySlug={categorySlug} basePath={basePath} />
+      <CatalogoClient voci={voci} onSelect={setSelectedVoce} categorySlug={categorySlug} basePath={basePath} isApp={isApp} />
 
       {articoliVisibili.length > 0 && (
         <div style={{ marginTop: 12 }}>
@@ -61,6 +62,7 @@ export default function CatalogoWrapper({ voci, articoliPerListino, isStaff, isL
             carrelloHref={carrelloHref}
             preventivoClienteBaseHref={preventivoClienteBaseHref}
             submitLabel={submitLabel}
+            isApp={isApp}
           />
         </div>
       )}

@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo, useActionState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { creaAvviso, eliminaAvviso, cestinaAvviso, segnaLetti } from './actions'
+import { b } from '@/lib/btn'
 
 export type Avviso = {
   id: number
@@ -37,7 +38,7 @@ const tdStyle: React.CSSProperties = {
 
 // ── Form nuovo avviso (staff) ──────────────────────────────────────────────
 
-export function NuovoAvvisoForm({ clienti }: { clienti: ClienteOption[] }) {
+export function NuovoAvvisoForm({ clienti, isApp }: { clienti: ClienteOption[]; isApp?: boolean }) {
   const [state, action, pending] = useActionState(creaAvviso, {})
   const [resetKey, setResetKey] = useState(0)
 
@@ -76,7 +77,7 @@ export function NuovoAvvisoForm({ clienti }: { clienti: ClienteOption[] }) {
         </div>
       </div>
       <div>
-        <button type="submit" disabled={pending} className="btn-green"
+        <button type="submit" disabled={pending} className={b('btn-green', isApp)}
           style={{ padding: '0 24px', fontSize: 14, fontWeight: 600, border: 'none', cursor: pending ? 'not-allowed' : 'pointer', opacity: pending ? 0.6 : 1 }}>
           {pending ? 'Invio…' : 'Invia avviso'}
         </button>
@@ -87,7 +88,7 @@ export function NuovoAvvisoForm({ clienti }: { clienti: ClienteOption[] }) {
 
 // ── Tabella avvisi staff ───────────────────────────────────────────────────
 
-export function AvvisiStaff({ avvisi, clienti }: { avvisi: Avviso[]; clienti: ClienteOption[] }) {
+export function AvvisiStaff({ avvisi, clienti, isApp }: { avvisi: Avviso[]; clienti: ClienteOption[]; isApp?: boolean }) {
   const [filtroCliente, setFiltroCliente] = useState('')
   const router   = useRouter()
   const hashRef  = useRef<string | null>(null)
@@ -160,7 +161,7 @@ export function AvvisiStaff({ avvisi, clienti }: { avvisi: Avviso[]; clienti: Cl
                   </td>
                   <td style={{ ...tdStyle, textAlign: 'center' }}>
                     <button onClick={() => { if (confirm('Eliminare questo avviso?')) eliminaAvviso(a.id) }}
-                      className="btn-red"
+                      className={b('btn-red', isApp)}
                       style={{ padding: '0 14px', fontSize: 14, fontWeight: 600, border: 'none' }}>
                       Elimina
                     </button>
@@ -177,7 +178,7 @@ export function AvvisiStaff({ avvisi, clienti }: { avvisi: Avviso[]; clienti: Cl
 
 // ── Lista avvisi cliente ───────────────────────────────────────────────────
 
-export function AvvisiCliente({ avvisi }: { avvisi: Avviso[] }) {
+export function AvvisiCliente({ avvisi, isApp }: { avvisi: Avviso[]; isApp?: boolean }) {
   const [aperto, setAperto] = useState<Avviso | null>(null)
   const [letti, setLetti]   = useState<Set<number>>(() => new Set(avvisi.filter(a => a.letto).map(a => a.id)))
   const [isTouch, setIsTouch] = useState(false)
@@ -225,7 +226,7 @@ export function AvvisiCliente({ avvisi }: { avvisi: Avviso[] }) {
               <span style={{ fontSize: 14, color: isLetto ? '#777' : 'rgba(255,255,255,0.7)', whiteSpace: 'nowrap' }}>{a.created_at}</span>
               <button
                 onClick={e => { e.stopPropagation(); cestinaAvviso(a.id) }}
-                className="btn-red btn-icon"
+                className={`${b('btn-red', isApp)} btn-icon`}
                 style={{ fontSize: 14, fontWeight: 600, border: 'none', flexShrink: 0 }}
               >
                 ✕

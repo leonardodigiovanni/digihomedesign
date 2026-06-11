@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { Document, Page, pdfjs } from 'react-pdf'
+import { b } from '@/lib/btn'
 
 pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`
 
@@ -16,7 +17,7 @@ function toSlug(nome: string): string {
     .replace(/^-|-$/g, '')
 }
 
-function PdfViewer({ voce, onClose }: { voce: Voce; onClose: () => void }) {
+function PdfViewer({ voce, onClose, isApp }: { voce: Voce; onClose: () => void; isApp?: boolean }) {
   const [numPages, setNumPages] = useState(0)
   const [page, setPage] = useState(1)
   const [scale, setScale] = useState(1)
@@ -91,11 +92,11 @@ function PdfViewer({ voce, onClose }: { voce: Voce; onClose: () => void }) {
             <button style={arrowBtn(page >= numPages)} disabled={page >= numPages} onClick={() => setPage(p => p + 1)}>›</button>
           </div>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexShrink: 0 }}>
-            <a href={`/uploads/cataloghi/${voce.pdf_filename}`} download className="btn-black fs-13"
+            <a href={`/uploads/cataloghi/${voce.pdf_filename}`} download className={`${b('btn-black', isApp)} fs-13`}
               style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: 34, padding: '0 16px', borderRadius: 17, textDecoration: 'none', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
               Scarica
             </a>
-            <button onClick={onClose} title="Chiudi" className="btn-black fs-13"
+            <button onClick={onClose} title="Chiudi" className={`${b('btn-black', isApp)} fs-13`}
               style={{ width: 34, height: 34, borderRadius: 17, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, flexShrink: 0 }}>
               ✕
             </button>
@@ -157,11 +158,12 @@ function PdfThumbnail({ pdfFilename, width = 160 }: { pdfFilename: string; width
   )
 }
 
-export default function CatalogoClient({ voci, onSelect, categorySlug, basePath = '/brand/cataloghi' }: {
+export default function CatalogoClient({ voci, onSelect, categorySlug, basePath = '/brand/cataloghi', isApp }: {
   voci: Voce[]
   onSelect?: (v: Voce | null) => void
   categorySlug?: string
   basePath?: string
+  isApp?: boolean
 }) {
   const [selected, setSelected] = useState<Voce | null>(null)
   const [currentIdx, setCurrentIdx] = useState(0)
@@ -253,7 +255,7 @@ export default function CatalogoClient({ voci, onSelect, categorySlug, basePath 
       )}
 
       {!categorySlug && selected && (
-        <PdfViewer key={selected.id} voce={selected} onClose={() => handleSelect(null)} />
+        <PdfViewer key={selected.id} voce={selected} onClose={() => handleSelect(null)} isApp={isApp} />
       )}
     </div>
   )

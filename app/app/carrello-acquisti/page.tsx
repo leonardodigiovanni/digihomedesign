@@ -177,6 +177,7 @@ export default async function Page() {
         pagamentoHref="/app/carrello-acquisti/pagamento"
         stampaHref="/app/carrello-acquisti/stampa"
         loginRedirectHref="/app/carrello-acquisti"
+        isApp={true}
       />
     </div>
   )

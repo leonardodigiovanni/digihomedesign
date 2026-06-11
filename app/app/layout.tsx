@@ -1,8 +1,10 @@
-import { cookies } from 'next/headers'
+﻿import { cookies } from 'next/headers'
 import Image from 'next/image'
 import Link from 'next/link'
 import AppBottomNav from './app-bottom-nav'
-import { appLogout } from './login/actions'
+import AccediBtn from './accedi-btn'
+import { ActionBarProvider } from './action-bar-context'
+import AppActionBar from './app-action-bar'
 import AvvisiNotifier from '@/components/avvisi-notifier'
 import { decompressCart } from '@/lib/cart-cookie'
 import { getConnection } from '@/lib/db'
@@ -42,25 +44,20 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         </Link>
         <div className="app-topbar-user">
           {username ? (
-            <>
-              <span style={{ fontSize: 10, color: '#fff', fontFamily: 'monospace', opacity: 0.75, pointerEvents: 'none', userSelect: 'none' }}>{username}</span>
-              <form action={appLogout}>
-                <button type="submit" className="btn-orange" style={{ padding: '0 16px' }}>Esci</button>
-              </form>
-            </>
+            <span style={{ fontSize: 10, color: '#fff', fontFamily: 'monospace', opacity: 0.75, pointerEvents: 'none', userSelect: 'none' }}>{username}</span>
           ) : (
-            <>
-              <span style={{ fontSize: 10, opacity: 0, pointerEvents: 'none', userSelect: 'none' }}>.</span>
-              <Link href="/app/login" className="btn-black">Accedi</Link>
-            </>
+            <AccediBtn />
           )}
         </div>
       </header>
 
-      {/* Contenuto pagina */}
-      <main className="app-content">
-        {children}
-      </main>
+      {/* Contenuto pagina + action bar */}
+      <ActionBarProvider>
+        <main className="app-content">
+          {children}
+        </main>
+        <AppActionBar />
+      </ActionBarProvider>
 
       {role === 'cliente' && <AvvisiNotifier />}
       <AppBottomNav username={username} preventivoCartCount={preventivoCartCount} acquistiCartCount={acquistiCartCount} avvisiUnreadCount={avvisiUnreadCount} />
@@ -68,3 +65,4 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     </div>
   )
 }
+

@@ -66,10 +66,10 @@ export default async function AppAvvisiPage() {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginLeft: 3, marginRight: 3 }}>
         <AutoRefresh isStaff={isStaff} />
-        {isStaff && <NuovoAvvisoForm clienti={clienti} />}
+        {isStaff && <NuovoAvvisoForm clienti={clienti} isApp={true} />}
         {isStaff
-          ? <AvvisiStaff avvisi={avvisi} clienti={clienti} />
-          : <AvvisiCliente avvisi={avvisi} />
+          ? <AvvisiStaff avvisi={avvisi} clienti={clienti} isApp={true} />
+          : <AvvisiCliente avvisi={avvisi} isApp={true} />
         }
       </div>
     )

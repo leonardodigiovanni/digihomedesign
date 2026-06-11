@@ -1,4 +1,4 @@
-import { cookies } from 'next/headers'
+﻿import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import { DeleteDocumentoButton } from '@/app/area-clienti/documenti/delete-button'
@@ -100,7 +100,7 @@ export default async function AppDocumentiPage() {
         </p>
       </div>
 
-      {isStaff && <UploadDocumentoForm clienti={clienti} />}
+      {isStaff && <UploadDocumentoForm clienti={clienti} isApp={true} />}
 
       {documenti.length === 0 ? (
         <p style={{ color: '#aaa', fontSize: 14, fontFamily: 'monospace' }}>Nessun documento disponibile.</p>
@@ -125,24 +125,24 @@ export default async function AppDocumentiPage() {
                   <tr key={d.id} style={{ height: 84, background: brushed }}>
                     <td style={td}>
                       <a href={`/uploads/documenti/${d.filename}`} target="_blank" rel="noopener noreferrer"
-                         className="btn-gold" style={{ padding: '0 14px', width: '100%' }}>
+                         className="btn-gold-app" style={{ padding: '0 14px', width: '100%' }}>
                         {d.filename.replace(/^\d+_/, '')}
                       </a>
                     </td>
-                    {isStaff && <td style={td}>{d.cliente_nome || '—'}</td>}
+                    {isStaff && <td style={td}>{d.cliente_nome || 'â€”'}</td>}
                     <td style={td}>{d.titolo}</td>
                     <td style={td}>{d.tipo}</td>
                     <td style={{ ...td, whiteSpace: 'nowrap' }}>{d.created_at}</td>
                     {isStaff && (
                       <td style={{ ...td, textAlign: 'center' }}>
                         <span style={{ fontSize: 14, fontWeight: 600, color: d.visibile_cliente ? '#276749' : '#c00' }}>
-                          {d.visibile_cliente ? 'Sì' : 'No'}
+                          {d.visibile_cliente ? 'SÃ¬' : 'No'}
                         </span>
                       </td>
                     )}
                     {isStaff && (
                       <td style={{ ...td, textAlign: 'center' }}>
-                        <DeleteDocumentoButton id={d.id} filename={d.filename} titolo={d.titolo} />
+                        <DeleteDocumentoButton id={d.id} filename={d.filename} titolo={d.titolo} isApp={true} />
                       </td>
                     )}
                   </tr>
@@ -155,3 +155,4 @@ export default async function AppDocumentiPage() {
     </div>
   )
 }
+

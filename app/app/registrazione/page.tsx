@@ -1,0 +1,24 @@
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
+import { readSettings } from '@/lib/settings'
+import RegistrationFlow from '@/app/registrazione/registration-flow'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = { title: 'Registrazione' }
+
+export default async function Page({ searchParams }: { searchParams: Promise<{ from?: string }> }) {
+  const cookieStore = await cookies()
+  if (cookieStore.get('session_user')?.value) redirect('/app')
+
+  const { registrazioniDisabilitate } = await readSettings()
+  if (registrazioniDisabilitate) redirect('/app')
+
+  const { from } = await searchParams
+  const redirectTo = from && from.startsWith('/') ? from : '/app'
+
+  return (
+    <div style={{ maxWidth: 560, margin: '0 auto', padding: '0 16px' }}>
+      <RegistrationFlow redirectTo={redirectTo} isApp={true} />
+    </div>
+  )
+}

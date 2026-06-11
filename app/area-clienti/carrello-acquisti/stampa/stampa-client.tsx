@@ -1,8 +1,9 @@
 'use client'
 
 import React, { useEffect, useRef, useState } from 'react'
+import { b } from '@/lib/btn'
 
-export default function StampaAcquistiClient({ pages, tornaHref = '/area-clienti/carrello-acquisti' }: { pages: string[]; tornaHref?: string }) {
+export default function StampaAcquistiClient({ pages, tornaHref = '/area-clienti/carrello-acquisti', isApp }: { pages: string[]; tornaHref?: string; isApp?: boolean }) {
   const pageRefs   = useRef<(HTMLDivElement | null)[]>([])
   const [loadingPdf,   setLoadingPdf]   = useState(false)
   const [loadingPrint, setLoadingPrint] = useState(false)
@@ -82,16 +83,16 @@ export default function StampaAcquistiClient({ pages, tornaHref = '/area-clienti
         display: 'flex', gap: 12, justifyContent: 'center',
         marginBottom: 28, flexWrap: 'wrap',
       }}>
-        <a href={tornaHref} className="btn-black">
+        <a href={tornaHref} className={b('btn-black', isApp)}>
           ← Torna al carrello
         </a>
-        <button onClick={handlePDF} disabled={busy} className="btn-black" style={{
+        <button onClick={handlePDF} disabled={busy} className={b('btn-black', isApp)} style={{
           padding: '0 22px', cursor: busy ? 'not-allowed' : 'pointer',
           fontFamily: 'inherit', opacity: busy ? 0.5 : 1,
         }}>
           {loadingPdf ? 'Generazione…' : '⬇ Scarica PDF'}
         </button>
-        <button onClick={handlePrint} disabled={busy} className="btn-black" style={{
+        <button onClick={handlePrint} disabled={busy} className={b('btn-black', isApp)} style={{
           cursor: busy ? 'not-allowed' : 'pointer',
           fontFamily: 'inherit', opacity: busy ? 0.5 : 1,
         }}>

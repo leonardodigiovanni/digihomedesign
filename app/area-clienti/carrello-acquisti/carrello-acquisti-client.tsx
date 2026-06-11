@@ -2,6 +2,7 @@
 
 import React, { useState, useTransition, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import { b } from '@/lib/btn'
 import {
   rimuoviDaCarrelloAcquisti,
   svuotaCarrelloAcquisti,
@@ -75,6 +76,7 @@ export default function CarrelloAcquistiClient({
   pagamentoHref = '/area-clienti/carrello-acquisti/pagamento',
   stampaHref = '/area-clienti/carrello-acquisti/stampa',
   loginRedirectHref = '/area-clienti/carrello-acquisti',
+  isApp,
 }: {
   articoli: ArticoloCarrelloAcquisti[]
   isLoggedIn: boolean
@@ -85,6 +87,7 @@ export default function CarrelloAcquistiClient({
   pagamentoHref?: string
   stampaHref?: string
   loginRedirectHref?: string
+  isApp?: boolean
 }) {
   const router = useRouter()
   const [delPending,   startDel]   = useTransition()
@@ -418,18 +421,18 @@ export default function CarrelloAcquistiClient({
             </div>
             <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 8, alignItems: 'center' }}>
               <button type="button" onClick={() => handleApplicaCaratteristica(false)} disabled={!lacunaSelected || actPending}
-                className={(!lacunaSelected || actPending) ? 'btn-gray' : 'btn-green'}
+                className={(!lacunaSelected || actPending) ? b('btn-gray', isApp) : b('btn-green', isApp)}
                 style={{ padding: '0 18px', fontSize: 14 }}>
                 {actPending ? '…' : 'Applica'}
               </button>
               {hasAltri && (
                 <button type="button" onClick={() => handleApplicaCaratteristica(true)} disabled={!lacunaSelected || actPending}
-                  className={(!lacunaSelected || actPending) ? 'btn-gray' : 'btn-green'}
+                  className={(!lacunaSelected || actPending) ? b('btn-gray', isApp) : b('btn-green', isApp)}
                   style={{ padding: '0 16px', fontSize: 14 }}>
                   {actPending ? '…' : 'Applica a tutti'}
                 </button>
               )}
-              <button type="button" onClick={onClose} className="btn-orange"
+              <button type="button" onClick={onClose} className={b('btn-orange', isApp)}
                 style={{ padding: '0 18px', fontSize: 14 }}>
                 Annulla
               </button>
@@ -498,12 +501,12 @@ export default function CarrelloAcquistiClient({
             <p style={{ fontSize: 14, color: '#c0392b', margin: '0 0 8px', fontFamily: 'monospace' }}>{editError}</p>
           )}
           <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 4 }}>
-            <button type="button" onClick={onClose} className="btn-orange"
+            <button type="button" onClick={onClose} className={b('btn-orange', isApp)}
               style={{ padding: '0 18px' }}>
               Annulla
             </button>
             <button type="button" onClick={onSave} disabled={actPending}
-              className={actPending ? 'btn-gray' : 'btn-green'}
+              className={actPending ? b('btn-gray', isApp) : b('btn-green', isApp)}
               style={{ padding: '0 20px' }}>
               {actPending ? 'Salvataggio…' : saveLabel}
             </button>
@@ -556,14 +559,14 @@ export default function CarrelloAcquistiClient({
       {/* Bottoni aggiunta articoli */}
       <div style={{ background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 10, padding: 12 }}>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-          <a href={cataloghiHref} className="btn-green" style={{
+          <a href={cataloghiHref} className={b('btn-green', isApp)} style={{
             flex: 1, minWidth: 140, padding: '0 8px', fontSize: 14,
           }}>
             + Aggiungi articolo
           </a>
           {lastTopLevel && (
             <button type="button" onClick={openDuplica} disabled={actPending}
-              className={actPending ? 'btn-gray' : 'btn-green'}
+              className={actPending ? b('btn-gray', isApp) : b('btn-green', isApp)}
               style={{
                 flex: 1, minWidth: 140, padding: '0 8px', fontSize: 14,
               }}>
@@ -637,14 +640,14 @@ export default function CarrelloAcquistiClient({
                         <td style={{ ...tdS, textAlign: 'center', padding: '4px 0' }}>
                           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
                             {(root.abbr || root.foto_url) && (
-                              <button type="button" onClick={() => setPreviewItem(root)} className="btn-black btn-icon" title="Anteprima articolo"
+                              <button type="button" onClick={() => setPreviewItem(root)} className={`${b('btn-black', isApp)} btn-icon`} title="Anteprima articolo"
                                 style={{ fontFamily: 'inherit' }}>
                                 <svg style={{ position: 'relative', zIndex: 1 }} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                               </button>
                             )}
                             {hasDetails && (
                               <button type="button" onClick={() => toggleExpand(root.uid)}
-                                className={hasLacune ? 'btn-red btn-icon' : 'btn-black btn-icon'}
+                                className={hasLacune ? `${b('btn-red', isApp)} btn-icon` : `${b('btn-black', isApp)} btn-icon`}
                                 style={{ fontFamily: 'inherit', gap: 2 }}>
                                 <svg style={{ position: 'relative', zIndex: 1 }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="10" cy="18" r="2" fill="currentColor" stroke="none"/></svg>
                                 <span style={{ position: 'relative', zIndex: 1, fontSize: 14 }}>{isExpanded ? '▴' : '▾'}</span>
@@ -683,11 +686,11 @@ export default function CarrelloAcquistiClient({
                           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
                             <button type="button" onClick={() => canEdit && openEdit(root)}
                               disabled={!canEdit || actPending}
-                              className={!canEdit ? 'btn-gray btn-icon' : 'btn-black btn-icon'}
+                              className={!canEdit ? `${b('btn-gray', isApp)} btn-icon` : `${b('btn-black', isApp)} btn-icon`}
                               style={{ fontFamily: 'inherit', opacity: !canEdit ? 0.4 : 1 }}>
                               <span style={{ position: 'relative', zIndex: 1, fontSize: 14, display: 'inline-block', transform: 'rotate(135deg)' }}>✏</span>
                             </button>
-                            <button type="button" onClick={() => handleRimuovi(root.index)} disabled={delPending} className="btn-red btn-icon"
+                            <button type="button" onClick={() => handleRimuovi(root.index)} disabled={delPending} className={`${b('btn-red', isApp)} btn-icon`}
                               style={{ fontFamily: 'inherit' }}>
                               <span style={{ position: 'relative', zIndex: 1, fontSize: 14 }}>✕</span>
                             </button>
@@ -732,7 +735,7 @@ export default function CarrelloAcquistiClient({
                             </div>
                           </td>
                           <td style={{ ...tdS, padding: '4px 0', textAlign: 'center' }}>
-                            <button type="button" onClick={() => handleRimuovi(child.index)} disabled={delPending} className="btn-red btn-icon"
+                            <button type="button" onClick={() => handleRimuovi(child.index)} disabled={delPending} className={`${b('btn-red', isApp)} btn-icon`}
                               style={{ fontFamily: 'inherit' }}>
                               <span style={{ position: 'relative', zIndex: 1, fontSize: 14 }}>✕</span>
                             </button>
@@ -843,7 +846,7 @@ export default function CarrelloAcquistiClient({
                 ? () => router.push(pagamentoHref)
                 : toggleLoginPanel
               }
-              className={hasLacuneAperte ? 'btn-gray' : showLoginPanel ? 'btn-orange' : 'btn-green'}
+              className={hasLacuneAperte ? b('btn-gray', isApp) : showLoginPanel ? b('btn-orange', isApp) : b('btn-green', isApp)}
               style={{ width: '100%', padding: '0 8px', fontSize: 14, fontFamily: 'monospace' }}>
               {!isLoggedIn && showLoginPanel ? 'Chiudi ▴' : 'Paga ora'}
             </button>
@@ -860,12 +863,12 @@ export default function CarrelloAcquistiClient({
               </div>
             )}
           </div>
-          <a href={stampaHref} className="btn-black"
+          <a href={stampaHref} className={b('btn-black', isApp)}
             style={{ flex: 1, minWidth: 140, padding: '0 8px', fontSize: 14, textDecoration: 'none', fontFamily: 'monospace' }}>
             Stampa memo
           </a>
           <button type="button" onClick={handleSvuota} disabled={clearPending}
-            className={clearPending ? 'btn-gray' : 'btn-red'}
+            className={clearPending ? b('btn-gray', isApp) : b('btn-red', isApp)}
             style={{ flex: 1, minWidth: 140, padding: '0 8px', fontSize: 14, fontFamily: 'monospace' }}>
             {clearPending ? 'Svuotamento…' : 'Svuota carrello'}
           </button>
@@ -884,7 +887,7 @@ export default function CarrelloAcquistiClient({
             <div ref={accediPanelRef} style={{ flex: 1, minWidth: 140, position: 'relative' }}>
               <button type="button"
                 onClick={() => setShowAccediPanel(v => !v)}
-                className={showAccediPanel ? 'btn-orange' : 'btn-black'}
+                className={showAccediPanel ? b('btn-orange', isApp) : b('btn-black', isApp)}
                 style={{ width: '100%', padding: '0 8px', fontSize: 14, fontFamily: 'monospace' }}>
                 {showAccediPanel ? 'Chiudi ▴' : 'Accedi ▾'}
               </button>
@@ -901,7 +904,7 @@ export default function CarrelloAcquistiClient({
                 </div>
               )}
             </div>
-            <a href="/registrazione" className="btn-black"
+            <a href="/registrazione" className={b('btn-black', isApp)}
               style={{ flex: 1, minWidth: 140, padding: '0 8px', fontSize: 14, textDecoration: 'none', fontFamily: 'monospace' }}>
               Registrati
             </a>

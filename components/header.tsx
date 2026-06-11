@@ -121,11 +121,6 @@ export default function Header({
           <Image src="/images/header/DIGIHOMEDESIGN.png" alt="Home Design" width={80} height={80} unoptimized style={{ objectFit: 'contain', display: 'block', marginTop: 8 }} />
         </Link>
       </div>
-      {username && (
-        <div style={{ position: 'absolute', top: 4, right: 8, zIndex: 2, fontSize: 10, color: '#fff', fontFamily: 'monospace', opacity: 0.75, pointerEvents: 'none', userSelect: 'none' }}>
-          {username}
-        </div>
-      )}
       <div style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', zIndex: 2 }}>
         <HeaderAuth username={username} registrazioniDisabilitate={registrazioniDisabilitate} forceDropdown />
       </div>

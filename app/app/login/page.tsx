@@ -42,8 +42,8 @@ export default function AppLoginPage() {
         <button
           type="submit"
           disabled={pending}
-          className="app-btn"
-          style={{ marginTop: 8, opacity: pending ? 0.6 : 1 }}
+          className={pending ? 'btn-gray-app' : 'btn-black-app'}
+          style={{ width: '100%', marginTop: 20 }}
         >
           {pending ? 'Accesso in corso…' : 'Accedi'}
         </button>

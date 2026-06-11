@@ -1,6 +1,8 @@
 'use client'
+import { b } from '@/lib/btn'
 
 import { useState, useEffect, useMemo, useTransition, useRef } from 'react'
+import { useRouter } from 'next/navigation'
 import { aggiungiAlCarrello, aggiungiAlPreventivoDaCatalogo, annullaParentPendente, type CartResult, type PreventivoDestOption } from '@/app/brand/cataloghi/actions'
 
 export type ArticoloListino = {
@@ -36,6 +38,7 @@ export default function AggiungiArticoloForm({
   carrelloHref = '/area-clienti/carrello-preventivo',
   preventivoClienteBaseHref = '/area-clienti/preventivi',
   submitLabel = 'Aggiungi al carrello',
+  isApp,
 }: {
   articoli: ArticoloListino[]
   isStaff?: boolean
@@ -46,7 +49,9 @@ export default function AggiungiArticoloForm({
   carrelloHref?: string
   preventivoClienteBaseHref?: string
   submitLabel?: string
+  isApp?: boolean
 }) {
+  const router = useRouter()
   const [step, setStep] = useState<'select' | 'detail'>('select')
   const [produttoreFiltro, setProduttoreFiltro] = useState('')
   const [serieFiltro, setSerieFiltro] = useState('')
@@ -186,7 +191,7 @@ export default function AggiungiArticoloForm({
         res = await aggiungiAlPreventivoDaCatalogo(formData)
       }
       setResult(res)
-      if (res.ok) setStep('select')
+      if (res.ok) { setStep('select'); router.refresh() }
     })
   }
 
@@ -211,7 +216,7 @@ export default function AggiungiArticoloForm({
   return (
     <div style={{
       background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 10,
-      padding: '20px 4px',
+      padding: isApp ? '20px 4px 0' : '20px 4px',
     }}>
       {parentPendente && (
         <div style={{
@@ -325,14 +330,14 @@ export default function AggiungiArticoloForm({
               )}
             </div>
             {artFiltrati.length > 0 && (
-              <div style={{ flex: '0 0 100%', display: 'flex', gap: 8, alignItems: 'center' }}>
+              <div style={{ flex: '0 0 100%', display: 'flex', gap: 8, alignItems: 'center', justifyContent: isApp ? 'center' : undefined, marginTop: isApp ? 6 : undefined, marginBottom: isApp ? 14 : undefined }}>
                 <button
                   type="button"
                   onClick={() => { setResult(null); setStep('detail') }}
-                  className="btn-green"
+                  className={b('btn-green', isApp)}
                   style={{ padding: '0 22px', fontSize: 13, flexShrink: 0 }}
                 >
-                  {mostraDestinazione ? 'Aggiungi a:' : 'Aggiungi a simulazione'}
+                  {mostraDestinazione ? 'Aggiungi a:' : '+ Aggiungi a simulazione'}
                 </button>
                 {mostraDestinazione && (
                   <select
@@ -402,7 +407,7 @@ export default function AggiungiArticoloForm({
             <button
               type="button"
               onClick={() => setStep('select')}
-              className="btn-red"
+              className={b('btn-red', isApp)}
               style={{ flex: 1, fontSize: 13 }}
             >
               Annulla
@@ -410,7 +415,7 @@ export default function AggiungiArticoloForm({
             <button
               type="submit"
               disabled={isPending || !canSubmit}
-              className={canSubmit && !isPending ? 'btn-green' : 'btn-gray'}
+              className={canSubmit && !isPending ? b('btn-green', isApp) : b('btn-gray', isApp)}
               style={{ flex: 1, fontSize: 13 }}
             >
               {isPending

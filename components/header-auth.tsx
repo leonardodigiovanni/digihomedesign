@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useActionState } from 'react'
 import { usePathname } from 'next/navigation'
 import { login, logout } from '@/app/actions'
+import { b } from '@/lib/btn'
 
 interface HeaderAuthProps {
   username?: string | null
@@ -72,7 +73,7 @@ function InlineLoginForm({ redirectTo }: { redirectTo?: string }) {
   )
 }
 
-export function DropdownLoginForm({ registrazioniDisabilitate, redirectTo }: { registrazioniDisabilitate?: boolean; redirectTo?: string }) {
+export function DropdownLoginForm({ registrazioniDisabilitate, redirectTo, isApp }: { registrazioniDisabilitate?: boolean; redirectTo?: string; isApp?: boolean }) {
   const [error, formAction, isPending] = useActionState(login, null)
   const showError = useLoginFlash(error, isPending)
 
@@ -97,7 +98,7 @@ export function DropdownLoginForm({ registrazioniDisabilitate, redirectTo }: { r
       <button
         type="submit"
         disabled={isPending}
-        className={isPending ? 'btn-gray' : 'btn-black'}
+        className={isPending ? b('btn-gray', isApp) : b('btn-black', isApp)}
         style={{ padding: '0 12px' }}
       >
         {isPending ? '...' : 'Accedi'}
@@ -114,7 +115,7 @@ export function DropdownLoginForm({ registrazioniDisabilitate, redirectTo }: { r
         <>
           <hr style={{ border: 'none', borderTop: '1px solid #eee', margin: '2px 0' }} />
           <a
-            href={`/registrazione${redirectTo ? `?from=${encodeURIComponent(redirectTo)}` : ''}`}
+            href={`${isApp ? '/app/registrazione' : '/registrazione'}${redirectTo ? `?from=${encodeURIComponent(redirectTo)}` : ''}`}
             style={{ fontSize: 12, color: '#555', textDecoration: 'none', textAlign: 'center', fontFamily: 'monospace' }}
           >
             Non hai un account? <strong>Registrati</strong>
@@ -139,6 +140,9 @@ export default function HeaderAuth({ username, registrazioniDisabilitate, forceD
     return () => window.removeEventListener('resize', check)
   }, [])
 
+  // chiudi dropdown al cambio stato login/logout
+  useEffect(() => { setIsOpen(false) }, [username])
+
   // apri dropdown da evento esterno (es. bottone Acquista)
   useEffect(() => {
     const handle = (e: Event) => {
@@ -162,19 +166,25 @@ export default function HeaderAuth({ username, registrazioniDisabilitate, forceD
     return () => document.removeEventListener('mousedown', handle)
   }, [isOpen])
 
-  // utente loggato: logout stesso ingombro di "Accedi ▾"
+  // utente loggato: toggle nomeutente → dropdown con btn-orange Esci
   if (username) {
     return (
-      <form action={logout}>
-        <input type="hidden" name="current_url" value={pathname} />
-        <button
-          type="submit"
-          className="btn-orange"
-          style={{ padding: '0 16px' }}
+      <div ref={wrapperRef} style={{ position: 'relative' }}>
+        <span
+          onClick={() => setIsOpen(v => !v)}
+          style={{ fontSize: 10, color: '#fff', fontFamily: 'monospace', opacity: 0.75, cursor: 'pointer', userSelect: 'none', display: 'flex', alignItems: 'center', gap: 3 }}
         >
-          Esci
-        </button>
-      </form>
+          {username} {isOpen ? '▴' : '▾'}
+        </span>
+        {isOpen && (
+          <div style={{ position: 'absolute', top: 'calc(100% + 8px)', right: 0, background: '#fff', border: '1px solid #e0e0e0', borderRadius: 6, boxShadow: '0 4px 20px rgba(0,0,0,0.12)', zIndex: 200, padding: '10px 14px' }}>
+            <form action={logout}>
+              <input type="hidden" name="current_url" value={pathname} />
+              <button type="submit" className="btn-orange" style={{ padding: '0 16px' }} onClick={e => { if (!window.confirm('Vuoi uscire?')) e.preventDefault() }}>Esci</button>
+            </form>
+          </div>
+        )}
+      </div>
     )
   }
 

@@ -59,11 +59,11 @@ export default function InactivityGuard({ inactivityMs, countdownSec }: Props) {
   }
 
   useEffect(() => {
-    const events = ['mousemove', 'keydown', 'mousedown', 'touchstart', 'scroll']
-    events.forEach(e => window.addEventListener(e, handleActivity, { passive: true }))
+    const events = ['mousemove', 'keydown', 'mousedown', 'touchstart', 'touchmove', 'pointerdown', 'pointermove', 'click', 'scroll']
+    events.forEach(e => window.addEventListener(e, handleActivity, { passive: true, capture: true }))
     startInactivityTimer()
     return () => {
-      events.forEach(e => window.removeEventListener(e, handleActivity))
+      events.forEach(e => window.removeEventListener(e, handleActivity, { capture: true }))
       clearTimeout(inactivityTimer.current)
       clearInterval(countdownInterval.current)
     }

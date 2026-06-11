@@ -1,9 +1,11 @@
+﻿import Link from 'next/link'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import ApriBtnPreventivo from './apri-btn'
 import { creaPreventivo } from './actions'
 import { decompressCart } from '@/lib/cart-cookie'
+import SetActionBar from '@/app/app/set-action-bar'
 
 type Preventivo = {
   id: number
@@ -130,23 +132,16 @@ export default async function AppPreventivoPage() {
       <div style={{ background: 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 10, padding: 12, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, flexWrap: 'wrap' }}>
         {isStaff && (
           <form action={creaPreventivo}>
-            <button type="submit" className="btn-green"
+            <button type="submit" className="btn-green-app"
               style={{ padding: '0 24px', fontSize: 14 }}>
               + Nuovo preventivo
             </button>
           </form>
         )}
-        {cartNonVuoto ? (
-          <a href="/app/carrello-preventivo" className="btn-black"
-            style={{ fontSize: 14 }}>
-            Vai alla simulazione →
-          </a>
-        ) : (
-          <a href="/app/carrello-preventivo" className="btn-green"
-            style={{ padding: '0 24px', fontSize: 14 }}>
-            + Nuova simulazione preventivo
-          </a>
-        )}
+        <a href="/app/carrello-preventivo" className="btn-green-app"
+          style={{ padding: '0 24px', fontSize: 14 }}>
+          + Nuova simulazione preventivo
+        </a>
       </div>
 
       {preventivi.length === 0 ? (
@@ -194,7 +189,16 @@ export default async function AppPreventivoPage() {
           </table>
         </div>
       )}
+
+      <SetActionBar>
+        {cartNonVuoto && (
+          <Link href="/app/carrello-preventivo" className="btn-black-app fs-12" style={{ margin: '0 auto' }}>
+            Vai alla simulazione
+          </Link>
+        )}
+      </SetActionBar>
     </div>
   )
 }
+
 

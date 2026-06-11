@@ -10,6 +10,7 @@ import {
   type StartResult,
   type VerifyResult,
 } from './actions'
+import { b } from '@/lib/btn'
 
 // ─── Stili comuni ─────────────────────────────────────────────────────────────
 
@@ -91,7 +92,7 @@ function StepBar({ current }: { current: number }) {
 
 // ─── Step 1: dati personali ───────────────────────────────────────────────────
 
-function Step1({ onSuccess }: { onSuccess: (id: number) => void }) {
+function Step1({ onSuccess, isApp }: { onSuccess: (id: number) => void; isApp?: boolean }) {
   const [state, formAction, isPending] = useActionState<StartResult | null, FormData>(
     startRegistration,
     null
@@ -155,7 +156,7 @@ function Step1({ onSuccess }: { onSuccess: (id: number) => void }) {
 
         {state && !state.ok && <div style={errorBox}>{state.error}</div>}
 
-        <button type="submit" className={isPending ? 'btn-gray' : 'btn-black'} style={primaryBtn}>
+        <button type="submit" className={isPending ? b('btn-gray', isApp) : b('btn-black', isApp)} style={primaryBtn}>
           {isPending ? 'Invio codici...' : 'Continua →'}
         </button>
       </fieldset>
@@ -165,7 +166,7 @@ function Step1({ onSuccess }: { onSuccess: (id: number) => void }) {
 
 // ─── Step 2: verifica email ───────────────────────────────────────────────────
 
-function Step2({ pendingId, onSuccess }: { pendingId: number; onSuccess: () => void }) {
+function Step2({ pendingId, onSuccess, isApp }: { pendingId: number; onSuccess: () => void; isApp?: boolean }) {
   const [code, setCode] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [resendMsg, setResendMsg] = useState<string | null>(null)
@@ -211,7 +212,7 @@ function Step2({ pendingId, onSuccess }: { pendingId: number; onSuccess: () => v
       </label>
       {error && <div style={errorBox}>{error}</div>}
       {resendMsg && <div style={{ fontSize: 13, color: '#555' }}>{resendMsg}</div>}
-      <button type="submit" className={isPending ? 'btn-gray' : 'btn-black'} style={primaryBtn} disabled={isPending}>
+      <button type="submit" className={isPending ? b('btn-gray', isApp) : b('btn-black', isApp)} style={primaryBtn} disabled={isPending}>
         {isPending ? 'Verifica...' : 'Verifica email →'}
       </button>
       <button
@@ -228,7 +229,7 @@ function Step2({ pendingId, onSuccess }: { pendingId: number; onSuccess: () => v
 
 // ─── Step 3: verifica cellulare ───────────────────────────────────────────────
 
-function Step3({ pendingId, onSuccess, redirectTo }: { pendingId: number; onSuccess: () => void; redirectTo?: string }) {
+function Step3({ pendingId, onSuccess, redirectTo, isApp }: { pendingId: number; onSuccess: () => void; redirectTo?: string; isApp?: boolean }) {
   const [code, setCode] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [resendMsg, setResendMsg] = useState<string | null>(null)
@@ -274,7 +275,7 @@ function Step3({ pendingId, onSuccess, redirectTo }: { pendingId: number; onSucc
       </label>
       {error && <div style={errorBox}>{error}</div>}
       {resendMsg && <div style={{ fontSize: 13, color: '#555' }}>{resendMsg}</div>}
-      <button type="submit" className={isPending ? 'btn-gray' : 'btn-black'} style={primaryBtn} disabled={isPending}>
+      <button type="submit" className={isPending ? b('btn-gray', isApp) : b('btn-black', isApp)} style={primaryBtn} disabled={isPending}>
         {isPending ? 'Verifica...' : 'Completa registrazione →'}
       </button>
       <button
@@ -291,7 +292,7 @@ function Step3({ pendingId, onSuccess, redirectTo }: { pendingId: number; onSucc
 
 // ─── Componente principale ────────────────────────────────────────────────────
 
-export default function RegistrationFlow({ redirectTo }: { redirectTo?: string }) {
+export default function RegistrationFlow({ redirectTo, isApp }: { redirectTo?: string; isApp?: boolean }) {
   const [step, setStep] = useState(0)
   const [pendingId, setPendingId] = useState<number | null>(null)
 
@@ -308,9 +309,9 @@ export default function RegistrationFlow({ redirectTo }: { redirectTo?: string }
           </p>
           <a
             href={redirectTo ?? '/'}
+            className={b('btn-black', isApp)}
             style={{
-              display: 'inline-block', padding: '10px 24px', fontSize: 14,
-              background: '#1a1a1a', color: '#fff', borderRadius: 6, textDecoration: 'none',
+              display: 'inline-block', padding: '10px 24px', fontSize: 14, textDecoration: 'none',
             }}
           >
             {redirectTo ? 'Torna alla pagina' : 'Torna alla home'}
@@ -327,6 +328,7 @@ export default function RegistrationFlow({ redirectTo }: { redirectTo?: string }
 
       {step === 0 && (
         <Step1
+          isApp={isApp}
           onSuccess={(id) => {
             setPendingId(id)
             setStep(1)
@@ -334,10 +336,10 @@ export default function RegistrationFlow({ redirectTo }: { redirectTo?: string }
         />
       )}
       {step === 1 && pendingId !== null && (
-        <Step2 pendingId={pendingId} onSuccess={() => setStep(2)} />
+        <Step2 pendingId={pendingId} onSuccess={() => setStep(2)} isApp={isApp} />
       )}
       {step === 2 && pendingId !== null && (
-        <Step3 pendingId={pendingId} onSuccess={() => setStep(3)} redirectTo={redirectTo} />
+        <Step3 pendingId={pendingId} onSuccess={() => setStep(3)} redirectTo={redirectTo} isApp={isApp} />
       )}
     </div>
   )

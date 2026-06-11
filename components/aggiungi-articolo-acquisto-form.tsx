@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { aggiungiAlCarrelloAcquisti, type CartResult } from '@/app/brand/cataloghi/actions'
+import { b } from '@/lib/btn'
 
 export type ArticoloListinoAcquisto = {
   id: number
@@ -33,7 +34,7 @@ const lbl: React.CSSProperties = {
   display: 'flex', flexDirection: 'column', gap: 3,
 }
 
-export default function AggiungiArticoloAcquistoForm({ articoli }: { articoli: ArticoloListinoAcquisto[] }) {
+export default function AggiungiArticoloAcquistoForm({ articoli, isApp }: { articoli: ArticoloListinoAcquisto[]; isApp?: boolean }) {
   const [step, setStep] = useState<'select' | 'detail'>('select')
   const [selectedId, setSelectedId] = useState<number>(articoli[0]?.id ?? 0)
   const [result, setResult] = useState<CartResult | null>(null)
@@ -58,15 +59,15 @@ export default function AggiungiArticoloAcquistoForm({ articoli }: { articoli: A
   return (
     <div style={{
       background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 10,
-      padding: '20px 4px',
+      padding: isApp ? '20px 4px 0' : '20px 4px',
     }}>
       <p className="testo-articoli" style={{ margin: '0 0 8px' }}>
         Acquista articoli
       </p>
 
       {step === 'select' && (
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end' }}>
-          <div style={{ flex: '2 1 260px' }}>
+        <div style={{ display: 'flex', flexDirection: isApp ? 'column' : 'row', gap: 8, flexWrap: isApp ? undefined : 'wrap', alignItems: isApp ? 'stretch' : 'flex-end' }}>
+          <div style={isApp ? {} : { flex: '2 1 260px' }}>
             <label className="testo-articoli" style={{ display: 'block', marginBottom: 3 }}>Articolo</label>
             <select
               value={selectedId}
@@ -89,10 +90,10 @@ export default function AggiungiArticoloAcquistoForm({ articoli }: { articoli: A
             type="button"
             onClick={() => { if (!esaurito) setStep('detail') }}
             disabled={esaurito}
-            className="btn-green"
-            style={{ height: 42, padding: '0 22px', borderRadius: 21, fontSize: 13, fontWeight: 600, fontFamily: 'monospace', whiteSpace: 'nowrap', flexShrink: 0, opacity: esaurito ? 0.5 : 1 }}
+            className={b('btn-green', isApp)}
+            style={{ ...(isApp ? { alignSelf: 'center', marginTop: 6, marginBottom: 14 } : { height: 42, borderRadius: 21, flexShrink: 0 }), padding: '0 22px', fontSize: 13, fontWeight: 600, fontFamily: 'monospace', whiteSpace: 'nowrap', opacity: esaurito ? 0.5 : 1 }}
           >
-            {esaurito ? 'Esaurito' : 'Acquista →'}
+            {esaurito ? 'Esaurito' : '+ Aggiungi ad acquisti'}
           </button>
         </div>
       )}
@@ -170,12 +171,12 @@ export default function AggiungiArticoloAcquistoForm({ articoli }: { articoli: A
             <button
               type="button"
               onClick={() => setStep('select')}
-              className="btn-red"
-              style={{ flex: 1, height: 42, borderRadius: 21, fontSize: 13, fontFamily: 'monospace' }}
+              className={b('btn-red', isApp)}
+              style={{ flex: 1, ...(isApp ? {} : { height: 42, borderRadius: 21 }), fontSize: 13, fontFamily: 'monospace' }}
             >
               Annulla
             </button>
-            <button type="submit" disabled={isPending} className={isPending ? 'btn-gray' : 'btn-green'} style={{ flex: 1, height: 42, borderRadius: 21, fontSize: 13, fontWeight: 600, fontFamily: 'monospace' }}>
+            <button type="submit" disabled={isPending} className={isPending ? b('btn-gray', isApp) : b('btn-green', isApp)} style={{ flex: 1, ...(isApp ? {} : { height: 42, borderRadius: 21 }), fontSize: 13, fontWeight: 600, fontFamily: 'monospace' }}>
               {isPending ? 'Aggiunta…' : 'Acquista'}
             </button>
           </div>

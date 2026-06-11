@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import type { Cantiere, Task, Media } from '@/app/area-lavoro/cantieri/cantieri-client'
 import ApriCantiereBtn from './apri-btn'
 import ApriTaskBtn from './apri-task-btn'
+import { b } from '@/lib/btn'
 
 const STATI_TASK: Record<string, { label: string; color: string; bg: string }> = {
   da_fare:    { label: 'Da fare',    color: '#1565c0', bg: '#e3f2fd' },
@@ -32,10 +33,10 @@ const TD_S: React.CSSProperties = {
 }
 
 function TaskGrid({
-  cantiere, tasks, media, onBack,
+  cantiere, tasks, media, onBack, isApp,
 }: {
   cantiere: Cantiere; tasks: Task[]; media: Media[]
-  onBack: () => void
+  onBack: () => void; isApp?: boolean
 }) {
   const router = useRouter()
 
@@ -46,7 +47,7 @@ function TaskGrid({
         <p style={{ fontSize: 14, color: '#555', lineHeight: 1.6, margin: 0 }}>Seleziona un task per vedere le lavorazioni e i relativi documenti fotografici.</p>
       </div>
       <div style={{ background: BRUSHED, border: '1px solid #222', borderRadius: 10, padding: 12 }}>
-        <button onClick={onBack} className="btn-black" style={{ padding: '0 24px', fontSize: 14 }}>
+        <button onClick={onBack} className={b('btn-black', isApp)} style={{ padding: '0 24px', fontSize: 14 }}>
           ← Torna ai cantieri
         </button>
       </div>
@@ -72,7 +73,7 @@ function TaskGrid({
                 const statoStyle = STATI_TASK[t.stato] ?? STATI_TASK.da_fare
                 return (
                   <tr key={t.id} style={{ height: 84, background: BRUSHED }}>
-                    <td style={td}><ApriTaskBtn task={t} /></td>
+                    <td style={td}><ApriTaskBtn task={t} isApp={isApp} /></td>
                     <td style={{ ...td, whiteSpace: 'nowrap', color: '#777' }}>{t.data_inizio?.slice(0,10) || '—'}</td>
                     <td style={{ ...td, whiteSpace: 'nowrap', color: '#777' }}>{t.data_fine?.slice(0,10) || '—'}</td>
                     <td style={{ ...td, textAlign: 'center', color: '#777' }}>{tMedia.length > 0 ? tMedia.length : '—'}</td>
@@ -100,10 +101,10 @@ const STATI_CANTIERE: Record<string, { label: string; color: string; bg: string 
 }
 
 function CantiereGrid({
-  cantieri, tasks, media, onSelectCantiere,
+  cantieri, tasks, media, onSelectCantiere, isApp,
 }: {
   cantieri: Cantiere[]; tasks: Task[]; media: Media[]
-  onSelectCantiere: (c: Cantiere) => void
+  onSelectCantiere: (c: Cantiere) => void; isApp?: boolean
 }) {
   if (cantieri.length === 0) {
     return <p style={{ color: '#aaa', fontSize: 14 }}>Nessun cantiere attivo.</p>
@@ -128,7 +129,7 @@ function CantiereGrid({
             const td       = isLast ? { ...TD_S, borderBottom: 'none' } : TD_S
             return (
               <tr key={c.id} style={{ height: 84, background: BRUSHED }}>
-                <td style={td}><ApriCantiereBtn cantiere={c} onSelect={onSelectCantiere} /></td>
+                <td style={td}><ApriCantiereBtn cantiere={c} onSelect={onSelectCantiere} isApp={isApp} /></td>
                 <td style={{ ...td, textAlign: 'center', color: '#333' }}>{stato.label}</td>
                 <td style={{ ...td, whiteSpace: 'nowrap', color: '#777' }}>{c.inizio_lavori?.slice(0,10) || '—'}</td>
                 <td style={{ ...td, textAlign: 'center', color: '#888' }}>{mieiTask.length}</td>
@@ -144,9 +145,9 @@ function CantiereGrid({
 // ─── Componente principale ────────────────────────────────────────────────────
 
 export default function CantieriClienteClient({
-  cantieri, tasks, media,
+  cantieri, tasks, media, isApp,
 }: {
-  cantieri: Cantiere[]; tasks: Task[]; media: Media[]
+  cantieri: Cantiere[]; tasks: Task[]; media: Media[]; isApp?: boolean
 }) {
   const [selectedCantiere, setSelectedCantiere] = useState<Cantiere | null>(null)
 
@@ -158,6 +159,7 @@ export default function CantieriClienteClient({
         tasks={cantiereTask}
         media={media}
         onBack={() => setSelectedCantiere(null)}
+        isApp={isApp}
       />
     )
   }
@@ -173,6 +175,7 @@ export default function CantieriClienteClient({
         tasks={tasks}
         media={media}
         onSelectCantiere={c => setSelectedCantiere(c)}
+        isApp={isApp}
       />
     </div>
   )

@@ -3,9 +3,9 @@
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import type { CategoriaCard } from './page'
+import { b } from '@/lib/btn'
 
-
-export function CatalogoGrid({ categorie, basePath = '/brand/cataloghi' }: { categorie: CategoriaCard[]; basePath?: string }) {
+export function CatalogoGrid({ categorie, basePath = '/brand/cataloghi', isApp }: { categorie: CategoriaCard[]; basePath?: string; isApp?: boolean }) {
   const ref = useRef<HTMLDivElement>(null)
   const [cols, setCols] = useState(2)
 
@@ -33,7 +33,7 @@ export function CatalogoGrid({ categorie, basePath = '/brand/cataloghi' }: { cat
   return (
     <div ref={ref} style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: 12, marginBottom: 12, padding: '0 4px' }}>
       {categorie.map(c => (
-        <Link key={c.id} href={`${basePath}/${c.slug}`} className="btn-gold"
+        <Link key={c.id} href={`${basePath}/${c.slug}`} className={b('btn-gold', isApp)}
           style={{ display: 'flex' }}>
           {c.nome}
         </Link>
