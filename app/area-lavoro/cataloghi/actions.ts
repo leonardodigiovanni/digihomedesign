@@ -95,9 +95,9 @@ export async function deleteCategoria(_: MutResult | null, fd: FormData): Promis
     const [voci] = await db.query('SELECT pdf_filename FROM catalogo_voci WHERE categoria_id = ?', [id])
     await db.execute('DELETE FROM catalogo_categorie WHERE id = ?', [id])
 
-    for (const v of voci as { pdf_filename: string }[]) {
-      if (v.pdf_filename?.startsWith('https://')) {
-        await del(v.pdf_filename).catch(() => {})
+    if (process.env.NODE_ENV === 'production') {
+      for (const v of voci as { pdf_filename: string }[]) {
+        if (v.pdf_filename?.startsWith('https://')) await del(v.pdf_filename).catch(() => {})
       }
     }
 
@@ -174,7 +174,7 @@ export async function updateVoce(_: MutResult | null, fd: FormData): Promise<Mut
         'UPDATE catalogo_voci SET nome=?, serie=?, pdf_label=?, descrizione=?, pdf_filename=? WHERE id=?',
         [nome, serie, pdf_label, descrizione, new_pdf_filename, id]
       )
-      if (old?.pdf_filename?.startsWith('https://') && old.pdf_filename !== new_pdf_filename) {
+      if (process.env.NODE_ENV === 'production' && old?.pdf_filename?.startsWith('https://') && old.pdf_filename !== new_pdf_filename) {
         const [refs] = await db.query('SELECT COUNT(*) AS cnt FROM catalogo_voci WHERE pdf_filename = ?', [old.pdf_filename]) as [{ cnt: number }[], unknown]
         if ((refs[0]?.cnt ?? 0) === 0) await del(old.pdf_filename).catch(() => {})
       }
@@ -222,7 +222,7 @@ export async function deleteVoce(_: MutResult | null, fd: FormData): Promise<Mut
 
     await db.execute('DELETE FROM catalogo_voci WHERE id = ?', [id])
 
-    if (voce?.pdf_filename?.startsWith('https://')) {
+    if (process.env.NODE_ENV === 'production' && voce?.pdf_filename?.startsWith('https://')) {
       const [refs] = await db.query('SELECT COUNT(*) AS cnt FROM catalogo_voci WHERE pdf_filename = ?', [voce.pdf_filename]) as [{ cnt: number }[], unknown]
       if ((refs[0]?.cnt ?? 0) === 0) await del(voce.pdf_filename).catch(() => {})
     }
