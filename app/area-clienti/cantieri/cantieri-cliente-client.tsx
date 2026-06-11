@@ -232,10 +232,12 @@ function AddTaskForm({ cantiereId, isApp }: { cantiereId: number; isApp?: boolea
   }
 
   if (!aperto) return (
-    <button onClick={() => setAperto(true)} className={b('btn-green', isApp)}
-      style={{ padding: '0 20px', fontSize: 13 }}>
-      + Nuovo task
-    </button>
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <button onClick={() => setAperto(true)} className={b('btn-green', isApp)}
+        style={{ padding: '0 28px', fontSize: 13 }}>
+        + Nuovo task
+      </button>
+    </div>
   )
 
   return (
