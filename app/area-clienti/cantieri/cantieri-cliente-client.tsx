@@ -6,7 +6,8 @@ import type { Cantiere, Task, Media } from '@/app/area-lavoro/cantieri/cantieri-
 import ApriCantiereBtn from './apri-btn'
 import ApriTaskBtn from './apri-task-btn'
 import { b } from '@/lib/btn'
-import { addMedia, addTask } from '@/app/area-lavoro/cantieri/actions'
+import { addMedia, addTask, addCantiere } from '@/app/area-lavoro/cantieri/actions'
+import SetActionBar from '@/app/app/set-action-bar'
 
 const STATI_TASK: Record<string, { label: string; color: string; bg: string }> = {
   da_fare:    { label: 'Da fare',    color: '#1565c0', bg: '#e3f2fd' },
@@ -18,6 +19,107 @@ const STATI_TASK: Record<string, { label: string; color: string; bg: string }> =
 // ─── Viewer multimediale ──────────────────────────────────────────────────────
 
 
+
+// ─── Form nuovo cantiere (solo dipendenti) ───────────────────────────────────
+
+type ClienteOpt = { id: number; label: string }
+
+function AddCantiereForm({ clienti, isApp }: { clienti: ClienteOpt[]; isApp?: boolean }) {
+  const router = useRouter()
+  const [aperto,  setAperto]  = useState(false)
+  const [saving,  setSaving]  = useState(false)
+  const [errore,  setErrore]  = useState('')
+  const [titolo,  setTitolo]  = useState('')
+  const [clienteId, setClienteId] = useState('')
+  const [indirizzo, setIndirizzo] = useState('')
+  const [stato,   setStato]   = useState('in_corso')
+  const [inizio,  setInizio]  = useState('')
+  const [fine,    setFine]    = useState('')
+
+  async function salva() {
+    if (!titolo.trim()) { setErrore('Il titolo è obbligatorio.'); return }
+    setSaving(true); setErrore('')
+    try {
+      const fd = new FormData()
+      fd.append('titolo',    titolo.trim())
+      fd.append('stato',     stato)
+      fd.append('indirizzo', indirizzo)
+      if (clienteId) fd.append('cliente_id', clienteId)
+      if (inizio)    fd.append('inizio_lavori', inizio)
+      if (fine)      fd.append('fine_lavori',   fine)
+      const res = await addCantiere(null, fd)
+      if (res?.error) { setErrore(res.error); return }
+      setTitolo(''); setClienteId(''); setIndirizzo(''); setStato('in_corso')
+      setInizio(''); setFine(''); setAperto(false)
+      router.refresh()
+    } catch { setErrore('Errore salvataggio.') }
+    finally { setSaving(false) }
+  }
+
+  const inp: React.CSSProperties = {
+    padding: '7px 10px', border: '1px solid #555', borderRadius: 6,
+    fontSize: 13, fontFamily: 'inherit', background: '#f5f5f5',
+    boxSizing: 'border-box', width: '100%',
+  }
+
+  if (!aperto) return (
+    <button onClick={() => setAperto(true)} className={b('btn-green', isApp)}
+      style={{ padding: '0 20px', fontSize: 13 }}>
+      + Aggiungi cantiere
+    </button>
+  )
+
+  return (
+    <div style={{ background: BRUSHED, border: '1px solid #444', borderRadius: 8, padding: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <p style={{ fontSize: 13, fontWeight: 700, color: '#1a1a1a', margin: 0 }}>Nuovo cantiere</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <label style={{ fontSize: 12, color: '#555' }}>Titolo *</label>
+        <input style={inp} value={titolo} onChange={e => setTitolo(e.target.value)} placeholder="es. Ristrutturazione Rossi" />
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <label style={{ fontSize: 12, color: '#555' }}>Cliente</label>
+        <select style={inp} value={clienteId} onChange={e => setClienteId(e.target.value)}>
+          <option value="">— Nessun cliente —</option>
+          {clienti.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
+        </select>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <label style={{ fontSize: 12, color: '#555' }}>Indirizzo</label>
+        <input style={inp} value={indirizzo} onChange={e => setIndirizzo(e.target.value)} placeholder="Via..." />
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <label style={{ fontSize: 12, color: '#555' }}>Stato</label>
+        <select style={inp} value={stato} onChange={e => setStato(e.target.value)}>
+          <option value="preventivo">Preventivo</option>
+          <option value="in_corso">In corso</option>
+          <option value="completato">Completato</option>
+          <option value="sospeso">Sospeso</option>
+        </select>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <label style={{ fontSize: 12, color: '#555' }}>Inizio lavori</label>
+          <input type="date" style={inp} value={inizio} onChange={e => setInizio(e.target.value)} />
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <label style={{ fontSize: 12, color: '#555' }}>Fine lavori</label>
+          <input type="date" style={inp} value={fine} onChange={e => setFine(e.target.value)} />
+        </div>
+      </div>
+      {errore && <div style={{ fontSize: 12, color: '#c00' }}>{errore}</div>}
+      <div style={{ display: 'flex', gap: 8 }}>
+        <button onClick={salva} disabled={saving} className={b('btn-green', isApp)}
+          style={{ flex: 1, fontSize: 13 }}>
+          {saving ? '…' : 'Salva'}
+        </button>
+        <button onClick={() => { setAperto(false); setErrore('') }} className={b('btn-gray', isApp)}
+          style={{ flex: 1, fontSize: 13 }}>
+          Annulla
+        </button>
+      </div>
+    </div>
+  )
+}
 
 // ─── Upload button (solo dipendenti) ─────────────────────────────────────────
 
@@ -84,7 +186,7 @@ function UploadBtn({ taskId }: { taskId: number }) {
 
 // ─── Form nuovo task (solo dipendenti) ───────────────────────────────────────
 
-function AddTaskForm({ cantiereId }: { cantiereId: number }) {
+function AddTaskForm({ cantiereId, isApp }: { cantiereId: number; isApp?: boolean }) {
   const router = useRouter()
   const [aperto,   setAperto]   = useState(false)
   const [saving,   setSaving]   = useState(false)
@@ -119,12 +221,10 @@ function AddTaskForm({ cantiereId }: { cantiereId: number }) {
   }
 
   if (!aperto) return (
-    <div style={{ padding: '12px 14px' }}>
-      <button onClick={() => setAperto(true)} className="btn-green"
-        style={{ padding: '0 20px', fontSize: 13 }}>
-        + Nuovo task
-      </button>
-    </div>
+    <button onClick={() => setAperto(true)} className={b('btn-green', isApp)}
+      style={{ padding: '0 20px', fontSize: 13 }}>
+      + Nuovo task
+    </button>
   )
 
   return (
@@ -155,11 +255,11 @@ function AddTaskForm({ cantiereId }: { cantiereId: number }) {
       </div>
       {errore && <div style={{ fontSize: 12, color: '#c00' }}>{errore}</div>}
       <div style={{ display: 'flex', gap: 8 }}>
-        <button onClick={salva} disabled={saving} className="btn-green"
+        <button onClick={salva} disabled={saving} className={b('btn-green', isApp)}
           style={{ flex: 1, fontSize: 13 }}>
           {saving ? '…' : 'Salva'}
         </button>
-        <button onClick={() => { setAperto(false); setErrore('') }} className="btn-gray"
+        <button onClick={() => { setAperto(false); setErrore('') }} className={b('btn-gray', isApp)}
           style={{ flex: 1, fontSize: 13 }}>
           Annulla
         </button>
@@ -198,11 +298,28 @@ function TaskGrid({
             : 'Seleziona un task per vedere le lavorazioni e i relativi documenti fotografici.'}
         </p>
       </div>
-      <div style={{ background: BRUSHED, border: '1px solid #222', borderRadius: 10, padding: 12 }}>
-        <button onClick={onBack} className={b('btn-black', isApp)} style={{ padding: '0 24px', fontSize: 14 }}>
-          ← Torna ai cantieri
-        </button>
-      </div>
+
+      {/* Torna — posizione normale quando non-app */}
+      {!isApp && (
+        <div style={{ background: BRUSHED, border: '1px solid #222', borderRadius: 10, padding: 12 }}>
+          <button onClick={onBack} className="btn-black" style={{ padding: '0 24px', fontSize: 14 }}>
+            ← Torna ai cantieri
+          </button>
+        </div>
+      )}
+
+      {/* Torna — action bar fissa quando app */}
+      {isApp && (
+        <SetActionBar>
+          <button onClick={onBack} className="btn-black-app" style={{ margin: '0 auto', padding: '0 32px' }}>
+            ← Torna ai cantieri
+          </button>
+        </SetActionBar>
+      )}
+
+      {/* +Nuovo task in cima — solo dipendente */}
+      {isDipendente && <AddTaskForm cantiereId={cantiere.id} isApp={isApp} />}
+
       {tasks.length > 0 && (
         <div style={{ overflowX: 'auto', overflowY: 'hidden', borderRadius: 8, border: '1px solid #222', boxShadow: '0 2px 8px rgba(0,0,0,0.18)' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -246,7 +363,6 @@ function TaskGrid({
       {tasks.length === 0 && !isDipendente && (
         <p style={{ color: '#aaa', fontSize: 14 }}>Nessuna lavorazione presente.</p>
       )}
-      {isDipendente && <AddTaskForm cantiereId={cantiere.id} />}
     </div>
   )
 }
@@ -336,9 +452,10 @@ function CantiereGrid({
 // ─── Componente principale ────────────────────────────────────────────────────
 
 export default function CantieriClienteClient({
-  cantieri, tasks, media, isApp, isDipendente,
+  cantieri, tasks, media, isApp, isDipendente, clienti = [],
 }: {
-  cantieri: Cantiere[]; tasks: Task[]; media: Media[]; isApp?: boolean; isDipendente?: boolean
+  cantieri: Cantiere[]; tasks: Task[]; media: Media[]
+  isApp?: boolean; isDipendente?: boolean; clienti?: ClienteOpt[]
 }) {
   const [selectedCantiere, setSelectedCantiere] = useState<Cantiere | null>(null)
 
@@ -364,6 +481,7 @@ export default function CantieriClienteClient({
         </p>
         <p style={{ fontSize: 14, color: '#555', lineHeight: 1.6, margin: 0 }}>Seleziona un cantiere per vedere le lavorazioni e i relativi documenti fotografici.</p>
       </div>
+      {isDipendente && <AddCantiereForm clienti={clienti} isApp={isApp} />}
       <CantiereGrid
         cantieri={cantieri}
         tasks={tasks}

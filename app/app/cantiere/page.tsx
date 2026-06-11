@@ -98,8 +98,18 @@ async function getData(username: string, isStaff: boolean) {
     }
   } catch {}
 
+  let clienti: { id: number; label: string }[] = []
+  if (isStaff) {
+    try {
+      const [cRows] = await db.query(
+        `SELECT id, COALESCE(NULLIF(ragione_sociale,''), CONCAT(TRIM(cognome),' ',TRIM(nome))) AS label FROM clienti ORDER BY label`
+      ) as [{ id: number; label: string }[], unknown]
+      clienti = cRows.map(c => ({ id: Number(c.id), label: String(c.label) }))
+    } catch {}
+  }
+
   await db.end()
-  return { cantieri, tasks, media }
+  return { cantieri, tasks, media, clienti }
 }
 
 export default async function AppCantierePage() {
@@ -109,7 +119,7 @@ export default async function AppCantierePage() {
   if (!username) redirect('/app/login')
 
   const isStaff = role === 'admin' || role === 'dipendente'
-  const { cantieri, tasks, media } = await getData(username, isStaff)
+  const { cantieri, tasks, media, clienti } = await getData(username, isStaff)
 
   return (
     <div>
@@ -117,6 +127,7 @@ export default async function AppCantierePage() {
         cantieri={cantieri}
         tasks={tasks}
         media={media}
+        clienti={clienti}
         isApp={true}
         isDipendente={isStaff}
       />
