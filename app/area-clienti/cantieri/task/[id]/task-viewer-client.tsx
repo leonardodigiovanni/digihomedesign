@@ -345,7 +345,7 @@ export default function TaskViewerClient({ task, media }: { task: Task; media: M
             ))}
           </div>
         )}
-        <button onClick={() => router.back()} className="btn-orange"
+        <button onClick={() => router.back()} className="btn-orange-app"
           style={{ padding: '0 32px', marginTop: 4 }}>
           Chiudi
         </button>

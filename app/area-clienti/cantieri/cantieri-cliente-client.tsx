@@ -175,20 +175,18 @@ function UploadBtn({ taskId }: { taskId: number }) {
       {uploading ? (
         <span style={{ fontSize: 13, color: '#888' }}>…</span>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-          <div style={{ display: 'flex', gap: 3 }}>
-            <button onClick={() => fotoRef.current?.click()}
-              className="btn-orange" style={{ padding: '0 8px', fontSize: 11, whiteSpace: 'nowrap' }}>
-              📷 Foto
-            </button>
-            <button onClick={() => videoRef.current?.click()}
-              className="btn-orange" style={{ padding: '0 8px', fontSize: 11, whiteSpace: 'nowrap' }}>
-              🎬 Video
-            </button>
-          </div>
+        <div style={{ display: 'flex', flexDirection: 'row', gap: 6 }}>
+          <button onClick={() => fotoRef.current?.click()}
+            className="btn-green-app" style={{ padding: '0 10px', fontSize: 12, whiteSpace: 'nowrap' }}>
+            + Foto
+          </button>
+          <button onClick={() => videoRef.current?.click()}
+            className="btn-green-app" style={{ padding: '0 10px', fontSize: 12, whiteSpace: 'nowrap' }}>
+            + Video
+          </button>
           <button onClick={() => galleryRef.current?.click()}
-            className="btn-gray" style={{ padding: '0 8px', fontSize: 11, whiteSpace: 'nowrap' }}>
-            🖼 Galleria
+            className="btn-green-app" style={{ padding: '0 10px', fontSize: 12, whiteSpace: 'nowrap' }}>
+            + Galleria
           </button>
         </div>
       )}
@@ -237,14 +235,14 @@ function AddTaskForm({ cantiereId, isApp }: { cantiereId: number; isApp?: boolea
     <div style={{ display: 'flex', justifyContent: 'center' }}>
       <button onClick={() => setAperto(true)} className={b('btn-green', isApp)}
         style={{ padding: '0 28px', fontSize: 13 }}>
-        + Nuovo task
+        + Aggiungi task
       </button>
     </div>
   )
 
   return (
     <div style={{ background: BRUSHED, border: '1px solid #444', borderRadius: 8, padding: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
-      <p style={{ fontSize: 13, fontWeight: 700, color: '#1a1a1a', margin: 0 }}>Nuovo task</p>
+      <p style={{ fontSize: 13, fontWeight: 700, color: '#1a1a1a', margin: 0 }}>Aggiungi task</p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
         <label style={{ fontSize: 12, color: '#555' }}>Descrizione *</label>
         <input style={inp} value={descr} onChange={e => setDescr(e.target.value)} placeholder="es. Posa infissi piano terra" />
