@@ -22,8 +22,10 @@ export const viewport: Viewport = {
   themeColor: '#1c1c1c',
 }
 
-const BASE_URL = 'https://www.digi-home-design.com'
-const OG_IMAGE  = `${BASE_URL}/images/opengraph/big_digi_tr.png`
+const BASE_URL = process.env.NODE_ENV === 'production'
+  ? 'https://www.digi-home-design.com'
+  : 'http://localhost:3000'
+const OG_IMAGE  = `${BASE_URL}/images/icons/DIGIHOMEDESIGN.png`
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
@@ -36,7 +38,7 @@ export const metadata: Metadata = {
     siteName: 'DIGI Home Design',
     locale:   'it_IT',
     type:     'website',
-    images:   [{ url: OG_IMAGE, width: 1200, height: 630, alt: 'DIGI Home Design' }],
+    images:   [{ url: OG_IMAGE, alt: 'DIGI Home Design' }],
   },
   twitter: {
     card:   'summary_large_image',
@@ -55,9 +57,6 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: BASE_URL,
-  },
-  icons: {
-    icon: '/icon.png',
   },
 }
 

@@ -25,12 +25,5 @@ export default function manifest(): MetadataRoute.Manifest {
         purpose: 'maskable',
       },
     ],
-    screenshots: [
-      {
-        src: '/images/opengraph/big_digi_tr.png',
-        sizes: '1200x630',
-        type: 'image/png',
-      },
-    ],
   }
 }
