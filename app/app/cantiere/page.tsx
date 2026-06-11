@@ -12,7 +12,7 @@ function dateToStr(d: unknown): string | null {
   return String(d)
 }
 
-async function getData(username: string) {
+async function getData(username: string, isStaff: boolean) {
   const db = await getConnection()
 
   let cantieri: Cantiere[] = []
@@ -20,34 +20,42 @@ async function getData(username: string) {
   let media: Media[]       = []
 
   try {
-    let clienteId: number | null = null
-    try {
-      const [uRows] = await db.query('SELECT cliente_id FROM users WHERE username = ? LIMIT 1', [username])
-      clienteId = (uRows as { cliente_id: number | null }[])[0]?.cliente_id ?? null
-    } catch {
-      const [uRows] = await db.query('SELECT email FROM users WHERE username = ? LIMIT 1', [username])
-      const email   = (uRows as { email: string }[])[0]?.email ?? ''
-      if (email) {
-        const [cRows] = await db.query('SELECT id FROM clienti WHERE email = ? LIMIT 1', [email])
-        clienteId = (cRows as { id: number }[])[0]?.id ?? null
-      }
-    }
-
-    if (!clienteId) { await db.end(); return { cantieri, tasks, media } }
-
     let cantieriRows: Record<string, unknown>[]
-    try {
+
+    if (isStaff) {
       const [rows] = await db.query(
-        'SELECT *, NULL AS cliente_nome FROM cantieri WHERE cliente_id = ? AND visibile_cliente = 1 ORDER BY id DESC',
-        [clienteId]
+        'SELECT *, NULL AS cliente_nome FROM cantieri ORDER BY id DESC'
       )
       cantieriRows = rows as Record<string, unknown>[]
-    } catch {
-      const [rows] = await db.query(
-        'SELECT *, NULL AS cliente_nome FROM cantieri WHERE cliente_id = ? ORDER BY id DESC',
-        [clienteId]
-      )
-      cantieriRows = rows as Record<string, unknown>[]
+    } else {
+      let clienteId: number | null = null
+      try {
+        const [uRows] = await db.query('SELECT cliente_id FROM users WHERE username = ? LIMIT 1', [username])
+        clienteId = (uRows as { cliente_id: number | null }[])[0]?.cliente_id ?? null
+      } catch {
+        const [uRows] = await db.query('SELECT email FROM users WHERE username = ? LIMIT 1', [username])
+        const email   = (uRows as { email: string }[])[0]?.email ?? ''
+        if (email) {
+          const [cRows] = await db.query('SELECT id FROM clienti WHERE email = ? LIMIT 1', [email])
+          clienteId = (cRows as { id: number }[])[0]?.id ?? null
+        }
+      }
+
+      if (!clienteId) { await db.end(); return { cantieri, tasks, media } }
+
+      try {
+        const [rows] = await db.query(
+          'SELECT *, NULL AS cliente_nome FROM cantieri WHERE cliente_id = ? AND visibile_cliente = 1 ORDER BY id DESC',
+          [clienteId]
+        )
+        cantieriRows = rows as Record<string, unknown>[]
+      } catch {
+        const [rows] = await db.query(
+          'SELECT *, NULL AS cliente_nome FROM cantieri WHERE cliente_id = ? ORDER BY id DESC',
+          [clienteId]
+        )
+        cantieriRows = rows as Record<string, unknown>[]
+      }
     }
 
     cantieri = cantieriRows.map(r => ({
@@ -93,13 +101,21 @@ async function getData(username: string) {
 export default async function AppCantierePage() {
   const cookieStore = await cookies()
   const username = cookieStore.get('session_user')?.value ?? ''
+  const role     = cookieStore.get('session_role')?.value ?? ''
   if (!username) redirect('/app/login')
 
-  const { cantieri, tasks, media } = await getData(username)
+  const isStaff = role === 'admin' || role === 'dipendente'
+  const { cantieri, tasks, media } = await getData(username, isStaff)
 
   return (
     <div>
-      <CantieriClienteClient cantieri={cantieri} tasks={tasks} media={media} isApp={true} />
+      <CantieriClienteClient
+        cantieri={cantieri}
+        tasks={tasks}
+        media={media}
+        isApp={true}
+        isDipendente={isStaff}
+      />
     </div>
   )
 }

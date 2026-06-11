@@ -1,11 +1,12 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import type { Cantiere, Task, Media } from '@/app/area-lavoro/cantieri/cantieri-client'
 import ApriCantiereBtn from './apri-btn'
 import ApriTaskBtn from './apri-task-btn'
 import { b } from '@/lib/btn'
+import { addMedia } from '@/app/area-lavoro/cantieri/actions'
 
 const STATI_TASK: Record<string, { label: string; color: string; bg: string }> = {
   da_fare:    { label: 'Da fare',    color: '#1565c0', bg: '#e3f2fd' },
@@ -17,6 +18,53 @@ const STATI_TASK: Record<string, { label: string; color: string; bg: string }> =
 // ─── Viewer multimediale ──────────────────────────────────────────────────────
 
 
+
+// ─── Upload button (solo dipendenti) ─────────────────────────────────────────
+
+function UploadBtn({ taskId }: { taskId: number }) {
+  const router   = useRouter()
+  const inputRef = useRef<HTMLInputElement>(null)
+  const [uploading, setUploading] = useState(false)
+  const [errore,    setErrore]    = useState('')
+
+  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true); setErrore('')
+    try {
+      const uf = new FormData()
+      uf.append('file', file)
+      uf.append('task_id', String(taskId))
+      const res  = await fetch('/api/upload-cantiere', { method: 'POST', body: uf })
+      const data = await res.json()
+      if (data.error) { setErrore(data.error); return }
+      const fd = new FormData()
+      fd.append('task_id',    String(taskId))
+      fd.append('filename',   data.filename)
+      fd.append('tipo',       data.tipo)
+      fd.append('descrizione', '')
+      await addMedia(null, fd)
+      router.refresh()
+    } catch { setErrore('Errore upload.') }
+    finally  { setUploading(false); if (inputRef.current) inputRef.current.value = '' }
+  }
+
+  return (
+    <div>
+      <input ref={inputRef} type="file" accept="image/*,video/*"
+        style={{ display: 'none' }} onChange={handleFile} />
+      <button
+        disabled={uploading}
+        onClick={() => inputRef.current?.click()}
+        className="btn-orange"
+        style={{ padding: '0 14px', fontSize: 13, whiteSpace: 'nowrap' }}
+      >
+        {uploading ? '…' : '📷 Upload'}
+      </button>
+      {errore && <div style={{ fontSize: 11, color: '#c00', marginTop: 2 }}>{errore}</div>}
+    </div>
+  )
+}
 
 // ─── Griglia task ─────────────────────────────────────────────────────────────
 
@@ -33,18 +81,20 @@ const TD_S: React.CSSProperties = {
 }
 
 function TaskGrid({
-  cantiere, tasks, media, onBack, isApp,
+  cantiere, tasks, media, onBack, isApp, isDipendente,
 }: {
   cantiere: Cantiere; tasks: Task[]; media: Media[]
-  onBack: () => void; isApp?: boolean
+  onBack: () => void; isApp?: boolean; isDipendente?: boolean
 }) {
-  const router = useRouter()
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginLeft: 3 }}>
       <div style={{ background: BRUSHED, border: '1px solid #222', borderRadius: 12, padding: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.18),inset 0 1px 0 rgba(255,255,255,0.5)' }}>
         <p style={{ fontSize: 14, fontWeight: 700, color: '#1a1a1a', margin: '0 0 6px' }}>Task cantiere · {cantiere.titolo}</p>
-        <p style={{ fontSize: 14, color: '#555', lineHeight: 1.6, margin: 0 }}>Seleziona un task per vedere le lavorazioni e i relativi documenti fotografici.</p>
+        <p style={{ fontSize: 14, color: '#555', lineHeight: 1.6, margin: 0 }}>
+          {isDipendente
+            ? 'Seleziona un task per aprirlo oppure carica foto/video direttamente.'
+            : 'Seleziona un task per vedere le lavorazioni e i relativi documenti fotografici.'}
+        </p>
       </div>
       <div style={{ background: BRUSHED, border: '1px solid #222', borderRadius: 10, padding: 12 }}>
         <button onClick={onBack} className={b('btn-black', isApp)} style={{ padding: '0 24px', fontSize: 14 }}>
@@ -63,13 +113,14 @@ function TaskGrid({
                 <th style={TH_S}>Al</th>
                 <th style={{ ...TH_S, textAlign: 'center' }}>N° Files</th>
                 <th style={{ ...TH_S, textAlign: 'center' }}>Stato</th>
+                {isDipendente && <th style={{ ...TH_S, textAlign: 'center' }}></th>}
               </tr>
             </thead>
             <tbody>
               {tasks.map((t, i) => {
-                const tMedia  = media.filter(m => m.task_id === t.id)
-                const isLast  = i === tasks.length - 1
-                const td      = isLast ? { ...TD_S, borderBottom: 'none' } : TD_S
+                const tMedia     = media.filter(m => m.task_id === t.id)
+                const isLast     = i === tasks.length - 1
+                const td         = isLast ? { ...TD_S, borderBottom: 'none' } : TD_S
                 const statoStyle = STATI_TASK[t.stato] ?? STATI_TASK.da_fare
                 return (
                   <tr key={t.id} style={{ height: 84, background: BRUSHED }}>
@@ -80,6 +131,11 @@ function TaskGrid({
                     <td style={{ ...td, textAlign: 'center' }}>
                       <span style={{ background: statoStyle.bg, color: statoStyle.color, padding: '2px 10px', borderRadius: 12, fontSize: 14, fontWeight: 600, whiteSpace: 'nowrap' }}>{statoStyle.label}</span>
                     </td>
+                    {isDipendente && (
+                      <td style={{ ...td, textAlign: 'center' }}>
+                        <UploadBtn taskId={t.id} />
+                      </td>
+                    )}
                   </tr>
                 )
               })}
@@ -145,9 +201,9 @@ function CantiereGrid({
 // ─── Componente principale ────────────────────────────────────────────────────
 
 export default function CantieriClienteClient({
-  cantieri, tasks, media, isApp,
+  cantieri, tasks, media, isApp, isDipendente,
 }: {
-  cantieri: Cantiere[]; tasks: Task[]; media: Media[]; isApp?: boolean
+  cantieri: Cantiere[]; tasks: Task[]; media: Media[]; isApp?: boolean; isDipendente?: boolean
 }) {
   const [selectedCantiere, setSelectedCantiere] = useState<Cantiere | null>(null)
 
@@ -160,6 +216,7 @@ export default function CantieriClienteClient({
         media={media}
         onBack={() => setSelectedCantiere(null)}
         isApp={isApp}
+        isDipendente={isDipendente}
       />
     )
   }
@@ -167,7 +224,9 @@ export default function CantieriClienteClient({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginLeft: 3 }}>
       <div style={{ background: BRUSHED, border: '1px solid #222', borderRadius: 12, padding: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.18),inset 0 1px 0 rgba(255,255,255,0.5)' }}>
-        <p style={{ fontSize: 14, fontWeight: 700, color: '#1a1a1a', margin: '0 0 6px' }}>I miei cantieri</p>
+        <p style={{ fontSize: 14, fontWeight: 700, color: '#1a1a1a', margin: '0 0 6px' }}>
+          {isDipendente ? 'Tutti i cantieri' : 'I miei cantieri'}
+        </p>
         <p style={{ fontSize: 14, color: '#555', lineHeight: 1.6, margin: 0 }}>Seleziona un cantiere per vedere le lavorazioni e i relativi documenti fotografici.</p>
       </div>
       <CantiereGrid
