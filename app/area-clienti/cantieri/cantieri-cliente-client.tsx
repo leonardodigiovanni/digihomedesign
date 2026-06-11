@@ -22,8 +22,9 @@ const STATI_TASK: Record<string, { label: string; color: string; bg: string }> =
 // ─── Upload button (solo dipendenti) ─────────────────────────────────────────
 
 function UploadBtn({ taskId }: { taskId: number }) {
-  const router   = useRouter()
-  const inputRef = useRef<HTMLInputElement>(null)
+  const router      = useRouter()
+  const cameraRef   = useRef<HTMLInputElement>(null)
+  const galleryRef  = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
   const [errore,    setErrore]    = useState('')
 
@@ -39,29 +40,44 @@ function UploadBtn({ taskId }: { taskId: number }) {
       const data = await res.json()
       if (data.error) { setErrore(data.error); return }
       const fd = new FormData()
-      fd.append('task_id',    String(taskId))
-      fd.append('filename',   data.filename)
-      fd.append('tipo',       data.tipo)
+      fd.append('task_id',     String(taskId))
+      fd.append('filename',    data.filename)
+      fd.append('tipo',        data.tipo)
       fd.append('descrizione', '')
       await addMedia(null, fd)
       router.refresh()
     } catch { setErrore('Errore upload.') }
-    finally  { setUploading(false); if (inputRef.current) inputRef.current.value = '' }
+    finally  {
+      setUploading(false)
+      if (cameraRef.current)  cameraRef.current.value  = ''
+      if (galleryRef.current) galleryRef.current.value = ''
+    }
   }
 
   return (
-    <div>
-      <input ref={inputRef} type="file" accept="image/*,video/*"
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+      {/* input fotocamera — capture apre direttamente la cam */}
+      <input ref={cameraRef}  type="file" accept="image/*,video/*" capture="environment"
         style={{ display: 'none' }} onChange={handleFile} />
-      <button
-        disabled={uploading}
-        onClick={() => inputRef.current?.click()}
-        className="btn-orange"
-        style={{ padding: '0 14px', fontSize: 13, whiteSpace: 'nowrap' }}
-      >
-        {uploading ? '…' : '📷 Upload'}
-      </button>
-      {errore && <div style={{ fontSize: 11, color: '#c00', marginTop: 2 }}>{errore}</div>}
+      {/* input galleria — nessun capture, apre il file picker */}
+      <input ref={galleryRef} type="file" accept="image/*,video/*"
+        style={{ display: 'none' }} onChange={handleFile} />
+
+      {uploading ? (
+        <span style={{ fontSize: 13, color: '#888' }}>…</span>
+      ) : (
+        <div style={{ display: 'flex', gap: 4 }}>
+          <button disabled={uploading} onClick={() => cameraRef.current?.click()}
+            className="btn-orange" style={{ padding: '0 10px', fontSize: 12, whiteSpace: 'nowrap' }}>
+            📷 Cam
+          </button>
+          <button disabled={uploading} onClick={() => galleryRef.current?.click()}
+            className="btn-gray" style={{ padding: '0 10px', fontSize: 12, whiteSpace: 'nowrap' }}>
+            🖼 Galleria
+          </button>
+        </div>
+      )}
+      {errore && <div style={{ fontSize: 11, color: '#c00' }}>{errore}</div>}
     </div>
   )
 }
