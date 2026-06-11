@@ -4,6 +4,7 @@ import React, { useState, useTransition, useEffect } from 'react'
 import { useActionState } from 'react'
 import { useRouter } from 'next/navigation'
 import { addCategoria, deleteCategoria, addVoce, updateVoce, deleteVoce, updateListinoCategoria, updateListinoVoce, type MutResult } from './actions'
+import GestioneBlob from '@/components/gestione-blob'
 
 function pdfSrc(filename: string): string {
   return filename.startsWith('https://') ? filename : `/uploads/cataloghi/${filename}`
@@ -179,7 +180,7 @@ function VoceEditForm({ voce, onDone }: { voce: Voce; onDone: () => void }) {
   async function caricaBlob() {
     setBlobLoading(true)
     try {
-      const res = await fetch('/api/lista-blob-cataloghi')
+      const res = await fetch('/api/blob/lista?prefix=cataloghi/')
       const data = await res.json()
       setBlobList(data.blobs ?? [])
     } finally {
@@ -477,62 +478,6 @@ function CategoriaAccordion({ cat, isStaff, listiniCategorie }: { cat: Categoria
   )
 }
 
-// ─── Gestione Blob ────────────────────────────────────────────────────────────
-
-function GestioneBlob() {
-  const [aperto, setAperto] = useState(false)
-  const [blobs, setBlobs] = useState<{ url: string; nome: string }[]>([])
-  const [loading, setLoading] = useState(false)
-  const [pending, setPending] = useState<string | null>(null)
-  const [errore, setErrore] = useState('')
-
-  async function carica() {
-    setLoading(true)
-    try {
-      const res = await fetch('/api/lista-blob-cataloghi')
-      const data = await res.json()
-      setBlobs(data.blobs ?? [])
-    } finally { setLoading(false) }
-  }
-
-  async function elimina(url: string, nome: string) {
-    if (!confirm(`Eliminare "${nome}" da Vercel Blob?`)) return
-    setPending(url); setErrore('')
-    try {
-      const res = await fetch('/api/elimina-blob-catalogo', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url }) })
-      const data = await res.json()
-      if (data.ok) setBlobs(b => b.filter(x => x.url !== url))
-      else setErrore(data.error ?? 'Errore.')
-    } finally { setPending(null) }
-  }
-
-  return (
-    <div style={{ marginTop: 32, borderTop: '2px solid #e0e0e0', paddingTop: 16 }}>
-      <button className="btn-gray" style={{ fontSize: 12 }} onClick={() => { setAperto(o => !o); if (!aperto) carica() }}>
-        {aperto ? '▲ Chiudi gestione Blob' : '▼ Gestione Vercel Blob'}
-      </button>
-      {aperto && (
-        <div style={{ marginTop: 12 }}>
-          <button className="btn-gray" style={{ fontSize: 11, marginBottom: 8 }} onClick={carica}>↺ Aggiorna lista</button>
-          {errore && <div style={{ color: '#c00', fontSize: 12, marginBottom: 8 }}>{errore}</div>}
-          {loading && <div style={{ fontSize: 12, color: '#888' }}>Caricamento…</div>}
-          {!loading && blobs.length === 0 && <div style={{ fontSize: 12, color: '#888' }}>Nessun file su Vercel Blob.</div>}
-          {blobs.map(b => (
-            <div key={b.url} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', borderBottom: '1px solid #f0f0f0' }}>
-              <span style={{ flex: 1, fontSize: 12, fontFamily: 'monospace', wordBreak: 'break-all', color: '#333' }}>{b.nome}</span>
-              <a href={b.url} target="_blank" rel="noreferrer" className="btn-black" style={{ fontSize: 11, padding: '2px 8px', flexShrink: 0 }}>Apri</a>
-              <button className="btn-red" style={{ fontSize: 11, padding: '2px 8px', flexShrink: 0 }}
-                disabled={pending === b.url} onClick={() => elimina(b.url, b.nome)}>
-                {pending === b.url ? '…' : 'Elimina'}
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  )
-}
-
 // ─── Componente principale ────────────────────────────────────────────────────
 
 export default function CataloghiClient({ categorie, isStaff, listiniCategorie }: { categorie: Categoria[]; isStaff: boolean; listiniCategorie: string[] }) {
@@ -560,7 +505,7 @@ export default function CataloghiClient({ categorie, isStaff, listiniCategorie }
         categorie.map(c => <CategoriaAccordion key={c.id} cat={c} isStaff={isStaff} listiniCategorie={listiniCategorie} />)
       )}
 
-      {isStaff && <GestioneBlob />}
+      {isStaff && <GestioneBlob prefix="cataloghi/" label="Gestione Blob — Cataloghi" />}
     </div>
   )
 }
