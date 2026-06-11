@@ -111,7 +111,7 @@ export default async function AppDocumentiPage() {
             <thead>
               <tr style={{ background: brushed }}>
                 <th style={thStyle}>File</th>
-                {isStaff && <th style={thStyle}>Cliente</th>}
+                {isStaff && <th style={{ ...thStyle, minWidth: 160 }}>Cliente</th>}
                 <th style={thStyle}>Titolo</th>
                 <th style={thStyle}>Tipo</th>
                 <th style={thStyle}>Data</th>
@@ -130,7 +130,7 @@ export default async function AppDocumentiPage() {
                         {d.filename.replace(/^\d+_/, '')}
                       </a>
                     </td>
-                    {isStaff && <td style={td}>{d.cliente_nome || 'â€”'}</td>}
+                    {isStaff && <td style={{ ...td, minWidth: 160 }}>{d.cliente_nome || '—'}</td>}
                     <td style={td}>{d.titolo}</td>
                     <td style={td}>{d.tipo}</td>
                     <td style={{ ...td, whiteSpace: 'nowrap' }}>{d.created_at}</td>
