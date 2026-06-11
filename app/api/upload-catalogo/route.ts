@@ -13,9 +13,8 @@ export async function POST(req: NextRequest) {
     if (ext !== '.pdf') return NextResponse.json({ error: 'Solo file PDF.' }, { status: 400 })
 
     const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
-    const filename = `${Date.now()}_${safe}`
 
-    const blob = await put(`cataloghi/${filename}`, file, { access: 'public' })
+    const blob = await put(`cataloghi/${safe}`, file, { access: 'public', addRandomSuffix: false })
 
     return NextResponse.json({ filename: blob.url })
   } catch (e) {

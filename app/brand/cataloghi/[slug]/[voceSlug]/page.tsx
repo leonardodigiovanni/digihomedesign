@@ -35,8 +35,9 @@ async function getData(slug: string, voceSlug: string) {
       'SELECT id, nome, pdf_filename, pdf_label, listino_categoria FROM catalogo_voci WHERE categoria_id = ? ORDER BY nome ASC',
       [categoria.id]
     )
+    const voceId = parseInt(voceSlug)
     const voce = (voci as { id: number; nome: string; pdf_filename: string; pdf_label: string; listino_categoria: string | null }[])
-      .find(v => toSlug(v.nome) === voceSlug)
+      .find(v => isNaN(voceId) ? toSlug(v.nome) === voceSlug : v.id === voceId)
     if (!voce) return null
 
     return { categoria, voce }

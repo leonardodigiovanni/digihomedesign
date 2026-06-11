@@ -9,6 +9,10 @@ pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.vers
 
 type Voce = { id: number; nome: string; serie?: string; pdf_filename: string; pdf_label: string; listino_categoria: string | null; descrizione?: string | null }
 
+function pdfSrc(filename: string): string {
+  return filename.startsWith('https://') ? filename : `/uploads/cataloghi/${filename}`
+}
+
 function toSlug(nome: string): string {
   return nome
     .toLowerCase()
@@ -92,7 +96,7 @@ function PdfViewer({ voce, onClose, isApp }: { voce: Voce; onClose: () => void; 
             <button style={arrowBtn(page >= numPages)} disabled={page >= numPages} onClick={() => setPage(p => p + 1)}>›</button>
           </div>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexShrink: 0 }}>
-            <a href={`/uploads/cataloghi/${voce.pdf_filename}`} download className={`${b('btn-black', isApp)} fs-13`}
+            <a href={pdfSrc(voce.pdf_filename)} download className={`${b('btn-black', isApp)} fs-13`}
               style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: 34, padding: '0 16px', borderRadius: 17, textDecoration: 'none', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
               Scarica
             </a>
@@ -117,10 +121,10 @@ function PdfViewer({ voce, onClose, isApp }: { voce: Voce; onClose: () => void; 
       <div ref={containerRef} style={{ overflow: 'auto', background: '#666', padding: '16px 0', flex: 1 }}>
         <div style={{ display: 'flex', justifyContent: 'center', minWidth: 'max-content', padding: '0 16px' }}>
           <Document
-            file={`/uploads/cataloghi/${voce.pdf_filename}`}
+            file={pdfSrc(voce.pdf_filename)}
             onLoadSuccess={handleDocLoad}
             loading={<div className="fs-14" style={{ color: '#fff', padding: '40px 20px' }}>Caricamento PDF…</div>}
-            error={<div className="fs-14" style={{ color: '#fcc', padding: '40px 20px' }}>Impossibile caricare il PDF.{' '}<a href={`/uploads/cataloghi/${voce.pdf_filename}`} style={{ color: '#fdd', textDecoration: 'underline' }}>Apri direttamente</a></div>}
+            error={<div className="fs-14" style={{ color: '#fcc', padding: '40px 20px' }}>Impossibile caricare il PDF.{' '}<a href={pdfSrc(voce.pdf_filename)} style={{ color: '#fdd', textDecoration: 'underline' }}>Apri direttamente</a></div>}
           >
             <Page pageNumber={page} width={Math.max(300, containerWidth - 32) * scale} renderTextLayer={false} renderAnnotationLayer={false} />
           </Document>
@@ -146,7 +150,7 @@ function PdfThumbnail({ pdfFilename, width = 160 }: { pdfFilename: string; width
   return (
     <div style={{ width: '100%', overflow: 'hidden', borderRadius: 3, border: '1px solid #e8e8e8', background: '#f5f5f5', lineHeight: 0 }}>
       <Document
-        file={`/uploads/cataloghi/${pdfFilename}`}
+        file={pdfSrc(pdfFilename)}
         onLoadError={() => setError(true)}
         onSourceError={() => setError(true)}
         loading={<div style={{ height: 180, background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><span className="fs-11" style={{ color: '#bbb' }}>…</span></div>}
@@ -211,7 +215,7 @@ export default function CatalogoClient({ voci, onSelect, categorySlug, basePath 
       )}
 
       {categorySlug ? (
-        <Link href={`${basePath}/${categorySlug}/${toSlug(v.nome)}`} style={{ ...cardBase, border: '1px solid #c8960c', display: 'block', padding: '14px 16px' }}>
+        <Link href={`${basePath}/${categorySlug}/${v.id}`} style={{ ...cardBase, border: '1px solid #c8960c', display: 'block', padding: '14px 16px' }}>
           <div style={{ float: 'left', width: 80, marginRight: 14, marginBottom: 4, borderRadius: 3, overflow: 'hidden', border: '1px solid #e8e8e8', flexShrink: 0 }}>
             <PdfThumbnail pdfFilename={v.pdf_filename} width={80} />
           </div>

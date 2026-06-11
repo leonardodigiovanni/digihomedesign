@@ -5,6 +5,10 @@ import { useActionState } from 'react'
 import { useRouter } from 'next/navigation'
 import { addCategoria, deleteCategoria, addVoce, updateVoce, deleteVoce, updateListinoCategoria, updateListinoVoce, type MutResult } from './actions'
 
+function pdfSrc(filename: string): string {
+  return filename.startsWith('https://') ? filename : `/uploads/cataloghi/${filename}`
+}
+
 // ─── Tipi ─────────────────────────────────────────────────────────────────────
 
 export type Voce = {
@@ -221,6 +225,15 @@ function VoceEditForm({ voce, onDone }: { voce: Voce; onDone: () => void }) {
           />
         </div>
         <div style={{ gridColumn: '1 / -1' }}>
+          <label style={lbl}>PDF attuale</label>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+            <span style={{ fontSize: 12, color: '#333', fontFamily: 'monospace', wordBreak: 'break-all' }}>
+              {decodeURIComponent(voce.pdf_filename.split('/').pop() ?? voce.pdf_filename)}
+            </span>
+            <a href={pdfSrc(voce.pdf_filename)} target="_blank" rel="noreferrer" className="btn-black" style={{ fontSize: 11, padding: '2px 10px', height: 24, flexShrink: 0 }}>
+              Apri
+            </a>
+          </div>
           <label style={lbl}>Sostituisci PDF (opzionale — lascia vuoto per mantenere l&apos;attuale)</label>
           <input type="file" accept=".pdf"
             onChange={e => setPdfFile(e.target.files?.[0] ?? null)}
@@ -307,7 +320,7 @@ function VoceRow({ voce, isStaff, listiniCategorie }: { voce: Voce; isStaff: boo
         </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexShrink: 0 }}>
           <a
-            href={`/uploads/cataloghi/${voce.pdf_filename}`}
+            href={pdfSrc(voce.pdf_filename)}
             target="_blank"
             rel="noreferrer"
             className="btn-black"

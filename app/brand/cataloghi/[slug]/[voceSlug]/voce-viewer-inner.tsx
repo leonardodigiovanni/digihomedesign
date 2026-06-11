@@ -7,6 +7,10 @@ pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.vers
 
 type Voce = { nome: string; pdf_filename: string; pdf_label: string }
 
+function pdfSrc(filename: string): string {
+  return filename.startsWith('https://') ? filename : `/uploads/cataloghi/${filename}`
+}
+
 export default function VoceViewerInner({ voce }: { voce: Voce }) {
   const [numPages, setNumPages] = useState(0)
   const [page, setPage] = useState(1)
@@ -79,7 +83,7 @@ export default function VoceViewerInner({ voce }: { voce: Voce }) {
             <button style={btnStyle(page >= numPages)} disabled={page >= numPages} onClick={() => setPage(p => p + 1)}>›</button>
           </div>
           <a
-            href={`/uploads/cataloghi/${voce.pdf_filename}`}
+            href={pdfSrc(voce.pdf_filename)}
             download
             className="btn-black fs-13"
             style={{
@@ -122,13 +126,13 @@ export default function VoceViewerInner({ voce }: { voce: Voce }) {
       >
         <div style={{ display: 'flex', justifyContent: 'center', minWidth: 'max-content', padding: '0 16px' }}>
           <Document
-            file={`/uploads/cataloghi/${voce.pdf_filename}`}
+            file={pdfSrc(voce.pdf_filename)}
             onLoadSuccess={handleDocLoad}
             loading={<div className="fs-14" style={{ color: '#fff', padding: '40px 20px' }}>Caricamento PDF…</div>}
             error={
               <div className="fs-14" style={{ color: '#fcc', padding: '40px 20px' }}>
                 Impossibile caricare il PDF.{' '}
-                <a href={`/uploads/cataloghi/${voce.pdf_filename}`} style={{ color: '#fdd', textDecoration: 'underline' }}>Apri direttamente</a>
+                <a href={pdfSrc(voce.pdf_filename)} style={{ color: '#fdd', textDecoration: 'underline' }}>Apri direttamente</a>
               </div>
             }
           >
