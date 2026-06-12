@@ -194,7 +194,7 @@
 
 .app-nav-item.active {
   color: #fff;
-  margin: 2px 0;
+  margin: 1px 0 2px;
   background: #1a1a1a;
   box-shadow: inset 0 0 0 2px #fff;
   border-radius: 10px;
