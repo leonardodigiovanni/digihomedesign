@@ -177,15 +177,15 @@ function UploadBtn({ taskId }: { taskId: number }) {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'row', gap: 6 }}>
           <button onClick={() => fotoRef.current?.click()}
-            className="btn-green-app" style={{ padding: '0 10px', fontSize: 12, whiteSpace: 'nowrap' }}>
+            className="btn-green-app" style={{ flex: 1, fontSize: 12, whiteSpace: 'nowrap' }}>
             + Foto
           </button>
           <button onClick={() => videoRef.current?.click()}
-            className="btn-green-app" style={{ padding: '0 10px', fontSize: 12, whiteSpace: 'nowrap' }}>
+            className="btn-green-app" style={{ flex: 1, fontSize: 12, whiteSpace: 'nowrap' }}>
             + Video
           </button>
           <button onClick={() => galleryRef.current?.click()}
-            className="btn-green-app" style={{ padding: '0 10px', fontSize: 12, whiteSpace: 'nowrap' }}>
+            className="btn-green-app" style={{ flex: 1, fontSize: 12, whiteSpace: 'nowrap' }}>
             + Galleria
           </button>
         </div>

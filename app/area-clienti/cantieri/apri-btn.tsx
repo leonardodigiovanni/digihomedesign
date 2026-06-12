@@ -9,7 +9,7 @@ export default function ApriCantiereBtn({ cantiere, onSelect, isApp }: { cantier
       type="button"
       onClick={() => onSelect(cantiere)}
       className={b('btn-gold', isApp)}
-      style={{ padding: '0 24px' }}
+      style={{ padding: '0 24px', width: '100%' }}
     >
       {cantiere.titolo}
     </button>

@@ -12,7 +12,7 @@ export default function ApriTaskBtn({ task, isApp }: { task: Task; isApp?: boole
       type="button"
       onClick={() => router.push(`/area-clienti/cantieri/task/${task.id}`)}
       className={b('btn-gold', isApp)}
-      style={{ padding: '0 24px' }}
+      style={{ padding: '0 24px', width: '100%' }}
     >
       {task.descrizione}
     </button>
