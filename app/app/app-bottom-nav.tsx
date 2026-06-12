@@ -19,10 +19,7 @@ const ORANGE_NAV: React.CSSProperties = {
 const GOLD: React.CSSProperties = {
   width: 44, height: 44, borderRadius: '50%', flexShrink: 0,
   display: 'flex', alignItems: 'center', justifyContent: 'center',
-  background: [
-    'repeating-linear-gradient(135deg, rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px, transparent 1px, transparent 6px)',
-    'linear-gradient(135deg, #b89030 0%, #c8960c 18%, #f5d060 38%, #f0c840 50%, #f5d060 62%, #c8960c 82%, #b89030 100%)',
-  ].join(', '),
+  background: 'repeating-linear-gradient(135deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 1px, transparent 6px), #d4a010',
 }
 
 const HomeSvg = () => (

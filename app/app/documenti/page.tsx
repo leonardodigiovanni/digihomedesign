@@ -1,9 +1,7 @@
 ﻿import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
-import { DeleteDocumentoButton } from '@/app/area-clienti/documenti/delete-button'
-import { UploadDocumentoForm } from '@/app/area-clienti/documenti/upload-form'
-import { documentoSrc } from '@/lib/media-src'
+import DocumentiClient from './documenti-client'
 
 type Documento = {
   id: number
@@ -82,15 +80,6 @@ export default async function AppDocumentiPage() {
   const { documenti, isStaff, clienti } = await getData(role, username)
 
   const brushed = 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)'
-  const thStyle: React.CSSProperties = {
-    padding: '9px 14px', fontSize: 14, fontWeight: 700, color: '#1a1a1a',
-    textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.06em',
-    borderBottom: '1px solid #333', whiteSpace: 'nowrap', fontFamily: 'monospace',
-  }
-  const tdStyle: React.CSSProperties = {
-    padding: '10px 14px', fontSize: 14, color: '#333',
-    borderBottom: '1px solid #333', verticalAlign: 'middle', fontFamily: 'monospace',
-  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginLeft: 3, marginRight: 3 }}>
@@ -100,59 +89,7 @@ export default async function AppDocumentiPage() {
           {isStaff ? 'Tutti i documenti caricati.' : 'I documenti condivisi con te.'}
         </p>
       </div>
-
-      {isStaff && <UploadDocumentoForm clienti={clienti} isApp={true} />}
-
-      {documenti.length === 0 ? (
-        <p style={{ color: '#aaa', fontSize: 14, fontFamily: 'monospace' }}>Nessun documento disponibile.</p>
-      ) : (
-        <div style={{ overflowX: 'auto', overflowY: 'hidden', borderRadius: 8, border: '1px solid #222', boxShadow: '0 2px 8px rgba(0,0,0,0.18)' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ background: brushed }}>
-                <th style={thStyle}>File</th>
-                {isStaff && <th style={{ ...thStyle, minWidth: 160 }}>Cliente</th>}
-                <th style={thStyle}>Titolo</th>
-                <th style={thStyle}>Tipo</th>
-                <th style={thStyle}>Data</th>
-                {isStaff && <th style={{ ...thStyle, textAlign: 'center' }}>Visibile</th>}
-                {isStaff && <th style={{ ...thStyle, textAlign: 'center' }}></th>}
-              </tr>
-            </thead>
-            <tbody>
-              {documenti.map((d, idx) => {
-                const td = idx === documenti.length - 1 ? { ...tdStyle, borderBottom: 'none' } : tdStyle
-                return (
-                  <tr key={d.id} style={{ height: 84, background: brushed }}>
-                    <td style={td}>
-                      <a href={documentoSrc(d.filename)} target="_blank" rel="noopener noreferrer"
-                         className="btn-gold-app" style={{ padding: '0 14px', width: '100%' }}>
-                        {d.filename.replace(/^\d+_/, '')}
-                      </a>
-                    </td>
-                    {isStaff && <td style={{ ...td, minWidth: 160 }}>{d.cliente_nome || '—'}</td>}
-                    <td style={td}>{d.titolo}</td>
-                    <td style={td}>{d.tipo}</td>
-                    <td style={{ ...td, whiteSpace: 'nowrap' }}>{d.created_at}</td>
-                    {isStaff && (
-                      <td style={{ ...td, textAlign: 'center' }}>
-                        <span style={{ fontSize: 14, fontWeight: 600, color: d.visibile_cliente ? '#276749' : '#c00' }}>
-                          {d.visibile_cliente ? 'SÃ¬' : 'No'}
-                        </span>
-                      </td>
-                    )}
-                    {isStaff && (
-                      <td style={{ ...td, textAlign: 'center' }}>
-                        <DeleteDocumentoButton id={d.id} filename={d.filename} titolo={d.titolo} isApp={true} />
-                      </td>
-                    )}
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
+      <DocumentiClient documenti={documenti} isStaff={isStaff} />
     </div>
   )
 }

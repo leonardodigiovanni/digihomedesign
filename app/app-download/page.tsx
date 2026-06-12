@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
-const APP_URL = 'https://digi-home-design.com/app'
+const APP_URL = 'https://www.digi-home-design.com/app'
 
 const stepStyle: React.CSSProperties = {
   display: 'flex',
@@ -87,7 +87,9 @@ export default async function AppDownloadPage() {
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
         <div style={{ ...cardStyle, display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 10, flex: '0 0 auto', width: 'fit-content' }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={qrDataUrl} alt="QR Code DIGI App" width={180} height={180} style={{ display: 'block' }} />
+          <a href={APP_URL} target="_blank" rel="noopener noreferrer">
+            <img src={qrDataUrl} alt="QR Code DIGI App" width={180} height={180} style={{ display: 'block' }} />
+          </a>
           <p style={{ fontSize: 12, color: '#888', margin: 0, textAlign: 'center' }}>
             Inquadra con la fotocamera
           </p>
