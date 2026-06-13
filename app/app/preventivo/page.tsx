@@ -6,6 +6,7 @@ import { creaPreventivo } from './actions'
 import PreventiviTabella from './preventivi-tabella'
 import { decompressCart } from '@/lib/cart-cookie'
 import SetActionBar from '@/app/app/set-action-bar'
+import InfoCard from '@/app/app/info-card'
 
 type Preventivo = {
   id: number
@@ -107,11 +108,8 @@ export default async function AppPreventivoPage() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginLeft: 3, marginRight: 3 }}>
-      <div style={{ background: 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 12, padding: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.18),inset 0 1px 0 rgba(255,255,255,0.5)' }}>
-        <p style={{ fontSize: 14, fontWeight: 700, color: '#1a1a1a', margin: '0 0 6px' }}>Preventivi</p>
-        <p style={{ fontSize: 14, color: '#555', lineHeight: 1.6, margin: 0 }}>{isStaff ? 'Tutti i preventivi emessi.' : 'I preventivi associati al tuo account.'}</p>
-      </div>
-      <div style={{ background: 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 10, padding: 12, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, flexWrap: 'wrap' }}>
+      <InfoCard titolo="Preventivi" corpo="Consulta tutti i preventivi che hai salvato: riepilogo articoli, prezzi e stato di avanzamento." />
+      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, flexWrap: 'wrap' }}>
         {isStaff && (
           <form action={creaPreventivo}>
             <button type="submit" className="btn-green-app"

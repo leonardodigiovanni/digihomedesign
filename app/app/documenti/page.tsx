@@ -2,6 +2,7 @@
 import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import DocumentiClient from './documenti-client'
+import InfoCard from '@/app/app/info-card'
 
 type Documento = {
   id: number
@@ -79,16 +80,9 @@ export default async function AppDocumentiPage() {
 
   const { documenti, isStaff, clienti } = await getData(role, username)
 
-  const brushed = 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)'
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginLeft: 3, marginRight: 3 }}>
-      <div style={{ background: brushed, border: '1px solid #222', borderRadius: 12, padding: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.18),inset 0 1px 0 rgba(255,255,255,0.5)' }}>
-        <p style={{ fontSize: 14, fontWeight: 700, color: '#1a1a1a', margin: '0 0 6px' }}>Documenti</p>
-        <p style={{ fontSize: 14, color: '#555', lineHeight: 1.6, margin: 0 }}>
-          {isStaff ? 'Tutti i documenti caricati.' : 'I documenti condivisi con te.'}
-        </p>
-      </div>
+      <InfoCard titolo="Documenti" corpo="Consulta fatture, contratti e tutta la documentazione legata ai tuoi interventi." />
       <DocumentiClient documenti={documenti} isStaff={isStaff} />
     </div>
   )

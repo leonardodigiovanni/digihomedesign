@@ -627,22 +627,19 @@ export default function CarrelloClient({
       {renderModal()}
 
       {/* Bottoni aggiunta articoli */}
-      <div className="sfondo-riquadri-app" style={{ border: '1px solid #222', borderRadius: 10, padding: 12 }}>
-
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
-          <a href={cataloghiHref} className={b('btn-green', isApp)} style={{
-            minWidth: 200, padding: '0 8px', fontSize: 14,
-          }}>
-            + Aggiungi articolo
-          </a>
-          {lastTopLevel && (
-            <button type="button" onClick={openDuplica} disabled={actPending}
-              className={actPending ? b('btn-gray', isApp) : b('btn-green', isApp)}
-              style={{ minWidth: 200, padding: '0 8px', fontSize: 14 }}>
-              + Ripeti articolo
-            </button>
-          )}
-        </div>
+      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
+        <a href={cataloghiHref} className={b('btn-green', isApp)} style={{
+          minWidth: 200, padding: '0 8px', fontSize: 14,
+        }}>
+          + Aggiungi articolo
+        </a>
+        {lastTopLevel && (
+          <button type="button" onClick={openDuplica} disabled={actPending}
+            className={actPending ? b('btn-gray', isApp) : b('btn-green', isApp)}
+            style={{ minWidth: 200, padding: '0 8px', fontSize: 14 }}>
+            + Ripeti articolo
+          </button>
+        )}
       </div>
 
       {saveError && (

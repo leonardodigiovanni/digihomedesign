@@ -1148,7 +1148,7 @@ export default function PreventivoClient({
     startModifica(async () => {
       const res = await modificaPreventivo(null, fd)
       if (!res.ok) { alert('Errore: ' + res.error); return }
-      router.push(`/clienti/preventivi/${res.cloneId}`)
+      router.push(isApp ? `/app/preventivo/${res.cloneId}` : `/clienti/preventivi/${res.cloneId}`)
     })
   }
 
@@ -1160,7 +1160,7 @@ export default function PreventivoClient({
     startInvia(async () => {
       const res = await inviaAlCliente(null, fd)
       if (!res.ok) { setInviaError(res.error); return }
-      router.push(isStaff ? `/clienti/preventivi/${res.cloneId}` : `/area-clienti/preventivi/${res.cloneId}`)
+      router.push(isApp ? `/app/preventivo/${res.cloneId}` : isStaff ? `/clienti/preventivi/${res.cloneId}` : `/area-clienti/preventivi/${res.cloneId}`)
     })
   }
 

@@ -17,7 +17,7 @@ export interface StampaData {
   layout: { pageW: number; pageH: number; padTop: number; padSide: number; padBot: number }
 }
 
-export default function StampaClient({ data }: { data: StampaData }) {
+export default function StampaClient({ data, backHref }: { data: StampaData; backHref?: string }) {
   const [pages, setPages] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   const [pageZoom, setPageZoom] = useState(1)
@@ -292,7 +292,7 @@ ${pages.map(p => `<div class="page-break">${p}</div>`).join('\n')}
           display: 'flex', gap: 12, justifyContent: 'center',
           marginBottom: 28, flexWrap: 'wrap',
         }}>
-          <a href=".." style={{
+          <a href={backHref ?? '..'} style={{
             padding: '0 20px', height: 42, fontSize: 13, fontWeight: 700, borderRadius: 21, textDecoration: 'none',
             background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.04) 0px,rgba(255,255,255,0.04) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#111 0%,#222 20%,#383838 45%,#222 80%,#111 100%)',
             boxShadow: '0 4px 16px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.08)',

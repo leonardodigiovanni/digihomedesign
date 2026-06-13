@@ -126,7 +126,7 @@ export default async function Page() {
         <p style={{ color: '#aaa', fontSize: 14, fontFamily: 'monospace' }}>Nessun documento disponibile.</p>
       ) : (
         <div style={{
-          overflowX: 'auto', overflowY: 'hidden', borderRadius: 8, border: '1px solid #c8960c',
+          overflowX: 'auto', overflowY: 'hidden', borderRadius: '8px 8px 0 0', border: '1px solid #c8960c',
           boxShadow: '0 4px 24px rgba(200,150,12,0.18), inset 0 1px 0 rgba(255,250,200,0.5)',
         }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff' }}>

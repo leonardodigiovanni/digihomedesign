@@ -22,8 +22,6 @@ const STATO_COLORS: Record<string, [string, string]> = {
   scaduto:   ['#8a6d3b', '#fffbeb'],
 }
 
-const BRUSHED = 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)'
-
 const TH: React.CSSProperties = {
   padding: '9px 14px', fontSize: 14, fontWeight: 700, color: '#1a1a1a',
   textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.06em',
@@ -76,10 +74,10 @@ export default function PreventiviTabella({ preventivi, isStaff }: { preventivi:
       {visibili.length === 0 ? (
         <p style={{ color: '#aaa', fontSize: 14 }}>Nessun preventivo trovato.</p>
       ) : (
-        <div style={{ overflowX: 'auto', overflowY: 'hidden', borderRadius: 8, border: '1px solid #222', boxShadow: '0 2px 8px rgba(0,0,0,0.18)' }}>
+        <div style={{ overflowX: 'auto', overflowY: 'hidden', borderRadius: '8px 8px 0 0', border: '1px solid #222', boxShadow: '0 2px 8px rgba(0,0,0,0.18)' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr style={{ background: BRUSHED }}>
+              <tr className="sfondo-riquadri-app">
                 <th style={TH}>N° PREVENTIVO</th>
                 {isStaff && <th style={TH}>Cliente</th>}
                 <th style={TH}>Descrizione</th>
@@ -94,7 +92,7 @@ export default function PreventiviTabella({ preventivi, isStaff }: { preventivi:
                 const [color, bg] = STATO_COLORS[p.stato] ?? ['#666', '#f5f5f5']
                 const td = i === visibili.length - 1 ? { ...TD, borderBottom: 'none' } : TD
                 return (
-                  <tr key={p.id} style={{ height: 84, background: BRUSHED }}>
+                  <tr key={p.id} className="sfondo-riquadri-app" style={{ height: 84 }}>
                     <td style={td}><ApriBtnPreventivo id={p.id} numero={p.numero} /></td>
                     {isStaff && <td style={{ ...td, minWidth: 160 }}><CellaCliente nome={p.cliente_nome} /></td>}
                     <td style={{ ...td, maxWidth: 180, whiteSpace: 'normal', wordBreak: 'break-word' }}>{p.descrizione}</td>

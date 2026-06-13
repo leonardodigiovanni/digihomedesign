@@ -1,4 +1,6 @@
-﻿function IconPhone() {
+﻿import InfoCard from '@/app/app/info-card'
+
+function IconPhone() {
   return (
     <svg width="38" height="38" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <circle cx="12" cy="12" r="12" fill="#22c55e"/>
@@ -78,17 +80,16 @@ const rows: { label: string; sub: string; href: string; icon: React.ReactNode }[
   ...socials.map(s => ({ label: s.label, sub: s.account, href: s.href, icon: s.icon })),
 ]
 
-const BRUSHED = 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)'
-
 export default function AppContattiPage() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginLeft: 3, marginRight: 3 }}>
+      <InfoCard titolo="Contatti" corpo="Trova i nostri recapiti, scrivici o richiedi un appuntamento direttamente da qui." />
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         {rows.map(({ label, sub, href, icon }) => (
           <div
             key={label}
+            className="sfondo-riquadri-app"
             style={{
-              background: BRUSHED,
               border: '1px solid #222',
               borderRadius: 8,
               padding: '10px 14px',

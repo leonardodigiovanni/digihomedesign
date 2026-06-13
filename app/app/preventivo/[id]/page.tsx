@@ -210,6 +210,8 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
           clienteEmail={clienteEmail}
           clienteCellulare={clienteCellulare}
           isApp={true}
+          stampaHref={`/app/preventivo/${prevId}/stampa`}
+          backHref="/app/preventivo"
         />
       </div>
     )

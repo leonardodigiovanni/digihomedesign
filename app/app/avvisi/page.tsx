@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import { NuovoAvvisoForm, AvvisiStaff, AvvisiCliente, type Avviso } from '@/app/area-clienti/avvisi/avvisi-client'
 import AutoRefresh from './auto-refresh'
+import InfoCard from '@/app/app/info-card'
 
 function dateToLocal(d: unknown): string {
   if (!(d instanceof Date)) return String(d ?? '')
@@ -65,6 +66,7 @@ export default async function AppAvvisiPage() {
 
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginLeft: 3, marginRight: 3 }}>
+        <InfoCard titolo="Avvisi" corpo="Riceverai qui i nostri messaggi: aggiornamenti sui lavori, offerte riservate e comunicazioni importanti." />
         <AutoRefresh isStaff={isStaff} />
         {isStaff && <NuovoAvvisoForm clienti={clienti} isApp={true} />}
         {isStaff

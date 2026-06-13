@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, useMemo, useActionState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
@@ -33,7 +33,7 @@ const thStyle: React.CSSProperties = {
 }
 const tdStyle: React.CSSProperties = {
   padding: '10px 12px', fontSize: 14, color: '#333',
-  borderBottom: '1px solid #f0f0f0', verticalAlign: 'middle',
+  borderBottom: '1px solid #222', verticalAlign: 'middle',
 }
 
 // ── Form nuovo avviso (staff) ──────────────────────────────────────────────
@@ -47,8 +47,8 @@ export function NuovoAvvisoForm({ clienti, isApp }: { clienti: ClienteOption[]; 
   }, [pending, state])
 
   return (
-    <form key={resetKey} action={action} style={{
-      background: '#fafafa', border: '1px solid #e8e8e8', borderRadius: 10,
+    <form key={resetKey} action={action} className="sfondo-riquadri-app" style={{
+      border: '1px solid #222', borderRadius: 10,
       padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 12,
     }}>
       <div style={{ fontSize: 14, fontWeight: 700, color: '#222' }}>Nuovo avviso</div>
@@ -57,7 +57,7 @@ export function NuovoAvvisoForm({ clienti, isApp }: { clienti: ClienteOption[]; 
           {state.error}
         </div>
       )}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 2fr', gap: 12 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
         <div>
           <label style={labelStyle}>Cliente *</label>
           <select name="cliente_id" required style={inputStyle}>
@@ -70,13 +70,13 @@ export function NuovoAvvisoForm({ clienti, isApp }: { clienti: ClienteOption[]; 
           <label style={labelStyle}>Oggetto *</label>
           <input name="oggetto" required style={inputStyle} placeholder="Es. Preventivo pronto" />
         </div>
-        <div>
-          <label style={labelStyle}>Testo *</label>
-          <textarea name="testo" required rows={2} style={{ ...inputStyle, resize: 'vertical' }}
-            placeholder="Es. Le comunichiamo che il preventivo ufficiale è pronto." />
-        </div>
       </div>
       <div>
+        <label style={labelStyle}>Testo *</label>
+        <textarea name="testo" required rows={3} style={{ ...inputStyle, resize: 'vertical' }}
+          placeholder="Es. Le comunichiamo che il preventivo ufficiale è pronto." />
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
         <button type="submit" disabled={pending} className={b('btn-green', isApp)}
           style={{ padding: '0 24px', fontSize: 14, fontWeight: 600, border: 'none', cursor: pending ? 'not-allowed' : 'pointer', opacity: pending ? 0.6 : 1 }}>
           {pending ? 'Invio…' : 'Invia avviso'}
@@ -89,7 +89,7 @@ export function NuovoAvvisoForm({ clienti, isApp }: { clienti: ClienteOption[]; 
 // ── Tabella avvisi staff ───────────────────────────────────────────────────
 
 export function AvvisiStaff({ avvisi, clienti, isApp }: { avvisi: Avviso[]; clienti: ClienteOption[]; isApp?: boolean }) {
-  const [filtroCliente, setFiltroCliente] = useState('')
+  const [filtro, setFiltro] = useState('')
   const router   = useRouter()
   const hashRef  = useRef<string | null>(null)
 
@@ -109,49 +109,51 @@ export function AvvisiStaff({ avvisi, clienti, isApp }: { avvisi: Avviso[]; clie
     return () => clearInterval(id)
   }, [])
 
-  const filtered = useMemo(() =>
-    filtroCliente ? avvisi.filter(a => String(a.cliente_id) === filtroCliente) : avvisi
-  , [avvisi, filtroCliente])
+  const filtered = useMemo(() => {
+    const q = filtro.trim().toLowerCase()
+    return q ? avvisi.filter(a =>
+      a.cliente_nome.toLowerCase().includes(q) ||
+      a.oggetto.toLowerCase().includes(q) ||
+      a.testo.toLowerCase().includes(q)
+    ) : avvisi
+  }, [avvisi, filtro])
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-        <select value={filtroCliente} onChange={e => setFiltroCliente(e.target.value)}
-          style={{ ...inputStyle, width: 220 }}>
-          <option value="">Tutti i clienti</option>
-          {clienti.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
-        </select>
-        {filtroCliente && (
-          <button onClick={() => setFiltroCliente('')}
-            style={{ ...inputStyle, width: 'auto', padding: '7px 14px', cursor: 'pointer', background: '#f5f5f5', border: '1px solid #ccc' }}>
-            Azzera
-          </button>
-        )}
-        <span style={{ fontSize: 14, color: '#999' }}>{filtered.length} / {avvisi.length}</span>
-      </div>
+      <input
+        type="search"
+        placeholder="Cerca per cliente, oggetto o testo…"
+        value={filtro}
+        onChange={e => setFiltro(e.target.value)}
+        style={{
+          padding: '9px 12px', fontSize: 14, border: '1px solid #444',
+          borderRadius: 8, fontFamily: 'inherit', background: '#f5f5f5',
+          boxSizing: 'border-box', width: '100%',
+        }}
+      />
 
       {filtered.length === 0 ? (
         <p style={{ color: '#aaa', fontSize: 14 }}>Nessun avviso.</p>
       ) : (
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff', border: '1px solid #e8e8e8', borderRadius: 8 }}>
+        <div className="sfondo-riquadri-app" style={{ overflowX: 'auto', border: '1px solid #222', borderRadius: '10px 10px 0 0' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr>
-                <th style={thStyle}>Cliente</th>
-                <th style={thStyle}>Oggetto</th>
-                <th style={thStyle}>Testo</th>
-                <th style={thStyle}>Data</th>
+              <tr className="sfondo-riquadri-app">
+                <th style={{ ...thStyle, minWidth: 90 }}>Cliente</th>
+                <th style={{ ...thStyle, minWidth: 90 }}>Oggetto</th>
+                <th style={{ ...thStyle, minWidth: 220 }}>Testo</th>
+                <th style={{ ...thStyle, whiteSpace: 'nowrap' }}>Data</th>
                 <th style={{ ...thStyle, textAlign: 'center' }}>Letto</th>
                 <th style={{ ...thStyle, textAlign: 'center' }}>Cestinato</th>
                 <th style={{ ...thStyle, textAlign: 'center' }}></th>
               </tr>
             </thead>
             <tbody>
-              {filtered.map(a => (
-                <tr key={a.id}>
+              {filtered.map((a) => (
+                <tr key={a.id} className="sfondo-riquadri-app">
                   <td style={tdStyle}>{a.cliente_nome || '—'}</td>
                   <td style={{ ...tdStyle, fontWeight: 600 }}>{a.oggetto}</td>
-                  <td style={{ ...tdStyle, maxWidth: 280, whiteSpace: 'pre-wrap', fontSize: 14, color: '#555' }}>{a.testo}</td>
+                  <td style={{ ...tdStyle, whiteSpace: 'pre-wrap', fontSize: 14, color: '#555' }}>{a.testo}</td>
                   <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>{a.created_at}</td>
                   <td style={{ ...tdStyle, textAlign: 'center' }}>
                     <span style={{ fontSize: 14, fontWeight: 600, color: a.letto ? '#276749' : '#aaa' }}>{a.letto ? 'Sì' : 'No'}</span>
@@ -208,10 +210,9 @@ export function AvvisiCliente({ avvisi, isApp }: { avvisi: Avviso[]; isApp?: boo
             <div
               key={a.id}
               onClick={() => apriAvviso(a)}
+              className={isLetto ? 'sfondo-riquadri-app' : undefined}
               style={{
-                background: isLetto
-                  ? 'repeating-linear-gradient(90deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 3px),linear-gradient(160deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)'
-                  : 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#7a2810 0%,#bf5020 20%,#d97030 45%,#bf5020 80%,#7a2810 100%)',
+                background: isLetto ? undefined : 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#7a2810 0%,#bf5020 20%,#d97030 45%,#bf5020 80%,#7a2810 100%)',
                 boxShadow: isLetto ? '0 2px 8px rgba(0,0,0,0.18),inset 0 1px 0 rgba(255,255,255,0.5)' : '0 4px 16px rgba(0,0,0,0.25),inset 0 1px 0 rgba(255,255,255,0.2)',
                 border: isLetto ? '1px solid #222' : 'none',
                 borderRadius: 8, padding: '0 14px', minHeight: 84,

@@ -1026,7 +1026,7 @@ async function buildStampaData(opts: {
 
 // ─── Caricamento dati ─────────────────────────────────────────────────────────
 
-async function loadData(prevId: number, username: string, isStaff: boolean): Promise<StampaData | null> {
+export async function loadData(prevId: number, username: string, isStaff: boolean): Promise<StampaData | null> {
   const db = await getConnection()
   try {
     const [pRows] = await db.query('SELECT * FROM preventivi WHERE id = ?', [prevId]) as [Record<string, unknown>[], unknown]
@@ -1132,5 +1132,5 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   const stampaData = await loadData(prevId, username, isStaff)
   if (!stampaData) redirect('/area-clienti/preventivi')
 
-  return <StampaClient data={stampaData} />
+  return <StampaClient data={stampaData} backHref={`/area-clienti/preventivi/${prevId}`} />
 }
