@@ -646,6 +646,7 @@ body {
    ───────────────────────────────────────── */
 :root {
   --gold-shimmer-speed: 5s;
+  --orange-app: #f29878;
 }
 
 @keyframes gold-shimmer {
@@ -1286,8 +1287,10 @@ body {
 }
 /* Bottone circolare — icona senza testo */
 .btn-icon {
-  width: 64px !important;
+  aspect-ratio: 1 !important;
+  width: auto !important;
   padding: 0 !important;
+  border-radius: 50% !important;
 }
 /* Verde — conferma / salva / login */
 .btn-green {
@@ -1436,7 +1439,7 @@ body {
 }
 
 /* ── Varianti /app ── */
-.btn-green-app, .btn-red-app, .btn-orange-app, .btn-rgb-c-app, .btn-blue-app, .btn-black-app, .btn-gray-app, .btn-gold-app, .btn-pink-app {
+.btn-green-app, .btn-red-app, .btn-orange-app, .btn-rgb-c-app, .btn-blue-app, .btn-black-app, .btn-gray-app, .btn-gold-app {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1480,12 +1483,17 @@ body {
 .btn-orange-app {
   background:
     repeating-linear-gradient(135deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 6px),
-    #bf5020 !important;
-  color: #ffe8cc !important;
+    var(--orange-app) !important;
+  color: #000 !important;
   border: none !important;
-  box-shadow: 0 2px 8px rgba(120,40,16,0.5);
+  box-shadow: 0 2px 8px rgba(200,100,60,0.3), inset 0 1px 0 rgba(255,220,200,0.4);
 }
-.btn-orange-app:hover:not(:disabled) { filter: brightness(1.14); }
+.btn-orange-app:hover:not(:disabled) { filter: brightness(1.08); }
+.sfondo-orange-app {
+  background:
+    repeating-linear-gradient(135deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 6px),
+    var(--orange-app);
+}
 .btn-rgb-c-app {
   background:
     repeating-linear-gradient(135deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 6px),
@@ -1543,15 +1551,6 @@ body {
   box-shadow: 0 2px 8px rgba(200,100,60,0.3), inset 0 1px 0 rgba(255,220,200,0.4);
 }
 .btn-pink:hover:not(:disabled) { filter: brightness(1.08); }
-.btn-pink-app {
-  background:
-    repeating-linear-gradient(135deg, rgba(255,255,255,0.12) 0px, rgba(255,255,255,0.12) 1px, transparent 1px, transparent 6px),
-    #f5b898 !important;
-  color: #000 !important;
-  border: none !important;
-  box-shadow: 0 2px 8px rgba(200,100,60,0.3), inset 0 1px 0 rgba(255,220,200,0.4);
-}
-.btn-pink-app:hover:not(:disabled) { filter: brightness(1.08); }
 
 /* ── Registrazione ── */
 .reg-card {
@@ -1786,16 +1785,34 @@ body {
   padding: 20px 16px 24px;
 }
 
-/* Card generica */
-.app-card {
+/* Sfondo oro spazzolato — zona link/redirect fissa sopra il footer */
+.sfondo-redirect-app {
+  background:
+    repeating-linear-gradient(135deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 1px, transparent 6px),
+    #d4a010;
+}
+
+/* Sfondo spazzolato grigio — usato su riquadri, righe tabella, card interne */
+.sfondo-riquadri-app {
   background: repeating-linear-gradient(
-    90deg,
+    135deg,
     rgba(255,255,255,0.06) 0px,
     rgba(255,255,255,0.06) 1px,
     transparent 1px,
-    transparent 3px
+    transparent 6px
+  ), #e8f5e9;
+}
+
+/* Card generica */
+.app-card {
+  background: repeating-linear-gradient(
+    135deg,
+    rgba(255,255,255,0.06) 0px,
+    rgba(255,255,255,0.06) 1px,
+    transparent 1px,
+    transparent 6px
   ),
-  linear-gradient(160deg, #e8e8e8 0%, #d0d0d0 30%, #c4c4c4 50%, #d8d8d8 70%, #e4e4e4 100%);
+  #ebebeb;
   border-radius: 12px;
   border: 1px solid #222;
   padding: 12px;
@@ -1887,7 +1904,6 @@ body {
   flex-shrink: 0;
   border-top: 1px solid #333;
   padding: 10px 16px;
-  background: #ffffff;
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
@@ -1897,8 +1913,8 @@ body {
 .app-bottom-nav {
   display: flex;
   align-items: stretch;
-  padding-top: 0;
-  height: 68px;
+  padding-top: 1px;
+  height: 69px;
   background: #000;
   border-top: 1px solid #333;
   flex-shrink: 0;
@@ -1944,6 +1960,7 @@ body {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  margin-top: 1px;
 }
 
 /* Slot fisso per il testo */

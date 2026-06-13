@@ -61,16 +61,34 @@
   padding: 20px 16px 24px;
 }
 
-/* Card generica */
-.app-card {
+/* Sfondo oro spazzolato — zona link/redirect fissa sopra il footer */
+.sfondo-redirect-app {
+  background:
+    repeating-linear-gradient(135deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 1px, transparent 6px),
+    #d4a010;
+}
+
+/* Sfondo spazzolato grigio — usato su riquadri, righe tabella, card interne */
+.sfondo-riquadri-app {
   background: repeating-linear-gradient(
-    90deg,
+    135deg,
     rgba(255,255,255,0.06) 0px,
     rgba(255,255,255,0.06) 1px,
     transparent 1px,
-    transparent 3px
+    transparent 6px
+  ), #e8f5e9;
+}
+
+/* Card generica */
+.app-card {
+  background: repeating-linear-gradient(
+    135deg,
+    rgba(255,255,255,0.06) 0px,
+    rgba(255,255,255,0.06) 1px,
+    transparent 1px,
+    transparent 6px
   ),
-  linear-gradient(160deg, #e8e8e8 0%, #d0d0d0 30%, #c4c4c4 50%, #d8d8d8 70%, #e4e4e4 100%);
+  #ebebeb;
   border-radius: 12px;
   border: 1px solid gold;
   padding: 18px 16px;
@@ -161,8 +179,8 @@
 .app-bottom-nav {
   display: flex;
   align-items: stretch;
-  padding-top: 0;
-  height: 68px;
+  padding-top: 1px;
+  height: 69px;
   background: #1a1a1a;
   border-top: 1px solid #333;
   flex-shrink: 0;
@@ -208,6 +226,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  margin-top: 1px;
 }
 
 /* Slot fisso per il testo */

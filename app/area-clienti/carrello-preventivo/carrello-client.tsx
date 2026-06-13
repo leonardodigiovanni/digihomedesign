@@ -83,9 +83,9 @@ function LoginBanner({ hasLacune, cataloghiHref = '/brand/cataloghi', isApp }: {
   }, [open])
 
   return (
-    <div style={{ background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 10, padding: 12 }}>
+    <div className="sfondo-riquadri-app" style={{ border: '1px solid #222', borderRadius: 10, padding: 12 }}>
       {!hasLacune && (
-        <div style={{ background: '#e8e8e8', borderRadius: 6, overflow: 'hidden', marginBottom: 14 }}>
+        <div style={{ background: '#e8e8e8', borderRadius: 6, overflow: 'hidden', marginBottom: 14, border: '1px solid #1e4d2b' }}>
           <div style={{ padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ flex: 1, height: 1, background: 'rgba(0,100,0,0.3)' }} />
             <span style={{ fontSize: 14, fontWeight: 800, color: '#1e4d2b', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
@@ -123,7 +123,7 @@ function LoginBanner({ hasLacune, cataloghiHref = '/brand/cataloghi', isApp }: {
       <p style={{ fontSize: 14, color: '#1a1a1a', margin: '0 0 14px', lineHeight: 1.6, textAlign: 'justify', fontFamily: 'monospace' }}>
         <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style={{ display: 'inline', verticalAlign: 'middle', marginRight: 6, flexShrink: 0 }}><path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z"/></svg>I clienti registrati ricevono uno sconto di benvenuto. Ad ogni ordine accumulano punti fedeltà che si convertono in sconti esclusivi, sempre maggiori, applicati automaticamente dal preventivatore online, su articoli in promozione e/o sul totale. Accedi o registrati, salva il carrello come preventivo e scopri il prezzo finale con i tuoi sconti.
       </p>
-      <div className="btn-grid-4">
+      <div className={isApp ? undefined : 'btn-grid-4'} style={isApp ? { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, maxWidth: 360, margin: '0 auto' } : undefined}>
         <div ref={ref} style={{ position: 'relative' }}>
           <button
             onClick={() => setOpen(v => !v)}
@@ -424,9 +424,6 @@ export default function CarrelloClient({
   }
 
   const VERDE     = 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)'
-  const ROSA      = 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)'
-  const APP_ROSA  = 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),#f5b898'
-  const bgRosa    = isApp ? APP_ROSA : ROSA
   const inpS: React.CSSProperties = {
     width: '100%', padding: '7px 10px', border: '1px solid #ddd', borderRadius: 6,
     fontSize: 14, fontFamily: 'inherit', boxSizing: 'border-box',
@@ -518,23 +515,23 @@ export default function CarrelloClient({
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 8, alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginTop: 8, alignItems: 'center' }}>
+              <button type="button" onClick={onClose} className={b('btn-orange', isApp)}
+                style={{ fontSize: 14, paddingLeft: 24, paddingRight: 24 }}>
+                Annulla
+              </button>
               <button type="button" onClick={() => handleApplicaCaratteristica(false)} disabled={!lacunaSelected || actPending}
                 className={(!lacunaSelected || actPending) ? b('btn-gray', isApp) : b('btn-green', isApp)}
-                style={{ fontSize: 14, paddingLeft: 16, paddingRight: 16 }}>
+                style={{ fontSize: 14, paddingLeft: 24, paddingRight: 24 }}>
                 {actPending ? '…' : 'Applica'}
               </button>
               {hasAltri && (
                 <button type="button" onClick={() => handleApplicaCaratteristica(true)} disabled={!lacunaSelected || actPending}
                   className={(!lacunaSelected || actPending) ? b('btn-gray', isApp) : b('btn-green', isApp)}
-                  style={{ fontSize: 14, paddingLeft: 16, paddingRight: 16 }}>
+                  style={{ fontSize: 14, paddingLeft: 24, paddingRight: 24 }}>
                   {actPending ? '…' : 'Applica a tutti'}
                 </button>
               )}
-              <button type="button" onClick={onClose} className={b('btn-orange', isApp)}
-                style={{ fontSize: 14, paddingLeft: 16, paddingRight: 16 }}>
-                Annulla
-              </button>
             </div>
           </div>
         </div>
@@ -607,7 +604,7 @@ export default function CarrelloClient({
           {isEdit && editError && (
             <p style={{ fontSize: 14, color: '#c0392b', margin: '0 0 8px', fontFamily: 'monospace' }}>{editError}</p>
           )}
-          <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 4 }}>
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 4 }}>
             <button type="button" onClick={onClose} className={b('btn-orange', isApp)}
               style={{ padding: '0 18px' }}>
               Annulla
@@ -630,18 +627,18 @@ export default function CarrelloClient({
       {renderModal()}
 
       {/* Bottoni aggiunta articoli */}
-      <div style={{ background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 10, padding: 12 }}>
+      <div className="sfondo-riquadri-app" style={{ border: '1px solid #222', borderRadius: 10, padding: 12 }}>
 
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
           <a href={cataloghiHref} className={b('btn-green', isApp)} style={{
-            flex: 1, minWidth: 140, padding: '0 8px', fontSize: 14,
+            minWidth: 200, padding: '0 8px', fontSize: 14,
           }}>
             + Aggiungi articolo
           </a>
           {lastTopLevel && (
             <button type="button" onClick={openDuplica} disabled={actPending}
               className={actPending ? b('btn-gray', isApp) : b('btn-green', isApp)}
-              style={{ flex: 1, minWidth: 140, padding: '0 8px', fontSize: 14 }}>
+              style={{ minWidth: 200, padding: '0 8px', fontSize: 14 }}>
               + Ripeti articolo
             </button>
           )}
@@ -704,17 +701,16 @@ export default function CarrelloClient({
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12, width: '100%' }}>
             {catGroups.map(cg => {
               const groupComplete = cg.groups.every(grp => getLacuneAperte(grp[0]).length === 0)
-              const groupBg = groupComplete ? VERDE : bgRosa
               return (
-              <div key={cg.key} style={{ background: groupBg, border: '1px solid #222', borderRadius: 8, overflow: 'hidden', width: '100%', boxSizing: 'border-box' }}>
+              <div key={cg.key} className={groupComplete ? 'sfondo-riquadri-app' : 'sfondo-orange-app'} style={{ border: '1px solid #222', borderRadius: 8, overflow: 'hidden', width: '100%', boxSizing: 'border-box' }}>
                 {/* Label gruppo */}
-                <div style={{ padding: '6px 14px', background: VERDE, borderBottom: '1px solid #222', fontSize: 12, fontWeight: 700, color: '#1a1a1a', fontFamily: 'monospace' }}>
+                <div className="sfondo-riquadri-app" style={{ padding: '6px 14px', borderBottom: '1px solid #222', fontSize: 12, fontWeight: 700, color: '#1a1a1a', fontFamily: 'monospace' }}>
                   {cg.label}
                 </div>
                 <table className="carrello-table" style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
                   {renderColgroup()}
                   <thead>
-                    <tr style={{ background: VERDE }}>
+                    <tr className="sfondo-riquadri-app">
                       <th style={{ ...thS, textAlign: 'center', width: 70 }}>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -750,7 +746,7 @@ export default function CarrelloClient({
                       return (
                         <React.Fragment key={root.index}>
                           {/* Riga articolo principale */}
-                          <tr style={{ background: hasLacune ? bgRosa : VERDE, borderTop: groupIdx > 0 ? '1px solid #333' : undefined }}>
+                          <tr className={hasLacune ? 'sfondo-orange-app' : 'sfondo-riquadri-app'} style={{ borderTop: groupIdx > 0 ? '1px solid #333' : undefined }}>
                             <td style={{ ...tdS, textAlign: 'center', padding: '4px 0' }}>
                               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
                                 <button type="button" onClick={() => setPreviewArt(root)} disabled={hasLacune} className={hasLacune ? `${b('btn-gray', isApp)} btn-icon` : `${b('btn-black', isApp)} btn-icon`} title="Anteprima infisso"
@@ -860,24 +856,24 @@ export default function CarrelloClient({
                             return (
                               <tr style={{ background: '#ffffff' }}>
                                 <td colSpan={4} style={{ padding: 12, borderBottom: '1px solid #333', borderRight: 'none', textAlign: 'left', background: '#ffffff' }}>
-                                  <div style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: 10 }}>
+                                  <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
                                     {showColore && (
-                                      <button type="button" onClick={() => handleAggiungiLacuna(root, 'tipo_colore')} className={b('btn-pink', isApp)}>
+                                      <button type="button" onClick={() => handleAggiungiLacuna(root, 'tipo_colore')} className={b('btn-orange', isApp)} style={{ minWidth: 140 }}>
                                         + Colore
                                       </button>
                                     )}
                                     {showColoreAcc && (
-                                      <button type="button" onClick={() => handleAggiungiLacuna(root, 'tipo_colore_acc')} className={b('btn-pink', isApp)}>
+                                      <button type="button" onClick={() => handleAggiungiLacuna(root, 'tipo_colore_acc')} className={b('btn-orange', isApp)} style={{ minWidth: 140 }}>
                                         + Accessori
                                       </button>
                                     )}
                                     {showVetro && (
-                                      <button type="button" onClick={() => handleAggiungiLacuna(root, 'tipo_vetro')} className={b('btn-pink', isApp)}>
+                                      <button type="button" onClick={() => handleAggiungiLacuna(root, 'tipo_vetro')} className={b('btn-orange', isApp)} style={{ minWidth: 140 }}>
                                         + Vetro
                                       </button>
                                     )}
                                     {showMontaggio && (
-                                      <button type="button" onClick={() => handleAggiungiLacuna(root, 'tipo_montaggio')} className={b('btn-pink', isApp)}>
+                                      <button type="button" onClick={() => handleAggiungiLacuna(root, 'tipo_montaggio')} className={b('btn-orange', isApp)} style={{ minWidth: 140 }}>
                                         + Montaggio
                                       </button>
                                     )}
@@ -895,7 +891,7 @@ export default function CarrelloClient({
             )})}
 
             {/* Totale */}
-            <div style={{ background: VERDE, border: '1px solid #222', borderRadius: 8, padding: '12px 20px', display: 'flex', flexDirection: 'column', gap: 4, color: '#1a1a1a' }}>
+            <div className="sfondo-riquadri-app" style={{ border: '1px solid #222', borderRadius: 8, padding: '12px 20px', display: 'flex', flexDirection: 'column', gap: 4, color: '#1a1a1a' }}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <span style={{ flex: 1, fontSize: 12, color: '#1a1a1a', fontFamily: 'monospace', fontWeight: 700 }}>Listino (escluso IVA):</span>
                 <span style={{ fontSize: 12, fontWeight: 700, color: '#1a1a1a', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>{`€ ${fmt(totale)}`}</span>
@@ -907,12 +903,9 @@ export default function CarrelloClient({
       })()}
 
       {/* Barra azioni */}
-      <div style={{
-        background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 10,
-        padding: 12, display: 'flex', flexDirection: 'column', gap: 8,
-      }}>
+      <div className="sfondo-riquadri-app" style={{ border: '1px solid #222', borderRadius: 10, padding: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
         {articoli.length === 0 ? (
-          <div style={{ background: '#e8e8e8', borderRadius: 6, overflow: 'hidden' }}>
+          <div style={{ background: '#e8e8e8', borderRadius: 6, overflow: 'hidden', border: '1px solid #9b1c1c' }}>
             <div style={{ padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
               <div style={{ flex: 1, height: 1, background: 'rgba(150,0,0,0.3)' }} />
               <span style={{ fontSize: 14, fontWeight: 800, color: '#9b1c1c', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
@@ -946,7 +939,7 @@ export default function CarrelloClient({
           </div>
         ) : null}
         {articoli.length > 0 && !hasLacuneAperte && (
-          <div style={{ background: '#e8e8e8', borderRadius: 6, overflow: 'hidden' }}>
+          <div style={{ background: '#e8e8e8', borderRadius: 6, overflow: 'hidden', border: '1px solid #9b1c1c' }}>
             <div style={{ padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
               <div style={{ flex: 1, height: 1, background: 'rgba(150,0,0,0.3)' }} />
               <span style={{ fontSize: 14, fontWeight: 800, color: '#9b1c1c', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
@@ -957,7 +950,7 @@ export default function CarrelloClient({
           </div>
         )}
         {articoli.length > 0 && !hasLacuneAperte && isLoggedIn && (
-          <div style={{ background: '#e8e8e8', borderRadius: 6, overflow: 'hidden' }}>
+          <div style={{ background: '#e8e8e8', borderRadius: 6, overflow: 'hidden', border: '1px solid #1e4d2b' }}>
             <div style={{ padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
               <div style={{ flex: 1, height: 1, background: 'rgba(0,100,0,0.3)' }} />
               <span style={{ fontSize: 14, fontWeight: 800, color: '#1e4d2b', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
@@ -981,18 +974,18 @@ export default function CarrelloClient({
           {isLoggedIn && (
             <button type="button" onClick={handleSalva} disabled={savePending || hasLacuneAperte || articoli.length === 0}
               className={(savePending || hasLacuneAperte || articoli.length === 0) ? b('btn-gray', isApp) : b('btn-green', isApp)}
-              style={{ flex: 1, minWidth: 140, padding: '0 8px', fontSize: 14, fontFamily: 'inherit' }}>
+              style={{ flex: 1, minWidth: 200, padding: '0 8px', fontSize: 14, fontFamily: 'inherit' }}>
               {savePending ? 'Salvataggio…' : 'Salva preventivo'}
             </button>
           )}
           <button type="button" onClick={handleGeneraPDF} disabled={hasLacuneAperte || articoli.length === 0}
             className={(hasLacuneAperte || articoli.length === 0) ? b('btn-gray', isApp) : b('btn-black', isApp)}
-            style={{ flex: 1, minWidth: 140, padding: '0 8px', fontSize: 14, fontFamily: 'monospace' }}>
+            style={{ flex: 1, minWidth: 200, padding: '0 8px', fontSize: 14, fontFamily: 'monospace' }}>
             <span className={(hasLacuneAperte || articoli.length === 0) ? undefined : 'animato'}>Genera PDF</span>
           </button>
           <button type="button" onClick={handleSvuota} disabled={clearPending || articoli.length === 0}
             className={(clearPending || articoli.length === 0) ? b('btn-gray', isApp) : b('btn-red', isApp)}
-            style={{ flex: 1, minWidth: 140, padding: '0 8px', fontSize: 14, fontFamily: 'monospace' }}>
+            style={{ flex: 1, minWidth: 200, padding: '0 8px', fontSize: 14, fontFamily: 'monospace' }}>
             {clearPending ? 'Svuotamento…' : 'Svuota carrello'}
           </button>
         </div>

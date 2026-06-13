@@ -368,13 +368,13 @@ export default function AggiungiArticoloForm({
             {selected.richiede_larghezza === 1 && (
               <label className="testo-articoli" style={{ ...lbl, gridColumn: '1 / -1' }}>
                 Larghezza (cm) *
-                <input name="larghezza" type="number" min={0} step="0.1" placeholder="es. 120" required style={inpStyle} />
+                <input name="larghezza" type="number" min={0} step="0.1" required style={inpStyle} />
               </label>
             )}
             {selected.richiede_altezza === 1 && (
               <label className="testo-articoli" style={{ ...lbl, gridColumn: '1 / -1' }}>
                 Altezza (cm) *
-                <input name="altezza" type="number" min={0} step="0.1" placeholder="es. 210" required style={inpStyle} />
+                <input name="altezza" type="number" min={0} step="0.1" required style={inpStyle} />
               </label>
             )}
             {selected.richiede_quantita === 1 && (
@@ -403,12 +403,12 @@ export default function AggiungiArticoloForm({
             )}
           </div>
 
-          <div style={{ display: 'flex', gap: 8 }}>
+          <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginTop: 8, marginBottom: 8 }}>
             <button
               type="button"
               onClick={() => setStep('select')}
               className={b('btn-red', isApp)}
-              style={{ flex: 1, fontSize: 13 }}
+              style={{ minWidth: 120, fontSize: 13 }}
             >
               Annulla
             </button>
@@ -416,7 +416,7 @@ export default function AggiungiArticoloForm({
               type="submit"
               disabled={isPending || !canSubmit}
               className={canSubmit && !isPending ? b('btn-green', isApp) : b('btn-gray', isApp)}
-              style={{ flex: 1, fontSize: 13 }}
+              style={{ minWidth: 120, fontSize: 13 }}
             >
               {isPending
                 ? 'Aggiunta…'

@@ -10,10 +10,7 @@ import { appLogout } from './login/actions'
 const ORANGE_NAV: React.CSSProperties = {
   width: 44, height: 44, borderRadius: '50%', flexShrink: 0,
   display: 'flex', alignItems: 'center', justifyContent: 'center',
-  background: [
-    'repeating-linear-gradient(135deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 6px)',
-    'linear-gradient(135deg, #7a2810 0%, #bf5020 20%, #d97030 45%, #bf5020 80%, #7a2810 100%)',
-  ].join(', '),
+  background: 'repeating-linear-gradient(135deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 6px), var(--orange-app)',
 }
 
 const GOLD: React.CSSProperties = {
@@ -138,18 +135,23 @@ export default function AppBottomNav({
     return () => window.removeEventListener('avvisi-count-changed', onUpdate)
   }, [])
 
-  if (!username && (pathname === '/app' || pathname === '/app/login')) return null
+  if (pathname === '/app/login') return null
 
-  const items: NavItem[] = [
-    { href: '/app',                   label: 'Home',          node: <HomeSvg /> },
-    { href: '/app/cataloghi',         label: 'Cataloghi',     node: <CataloghiSvg /> },
-    ...(acquistiCartCount   > 0 ? [{ href: '/app/carrello-acquisti',   label: 'Carrello acquisti',       node: <CarrelloIcon count={acquistiCartCount} /> }] : []),
-    ...(preventivoCartCount > 0 ? [{ href: '/app/carrello-preventivo', label: 'Simula preventivo', node: <PreventivatoreIcon count={preventivoCartCount} /> }] : []),
-    { href: '/app/preventivo',        label: 'Preventivi', node: <div style={GOLD}><Image src="/images/cta/preventivo-online-t.png" alt="Preventivo" width={36} height={36} style={{ objectFit: 'contain' }} /></div> },
-    { href: '/app/cantiere',          label: 'Cantieri', node: <div style={GOLD}><Image src="/images/cta/cantieri-online-t.png" alt="Cantiere" width={36} height={36} style={{ objectFit: 'contain' }} /></div> },
-    { href: '/app/documenti',         label: 'Documenti',     node: <DocumentiSvg /> },
-    { href: '/app/avvisi',            label: 'Avvisi',        node: <AvvisiIcon count={avvisiCount} /> },
-    { href: '/app/contatti',          label: 'Contatti',      node: <ContattiSvg /> },
+  const items: NavItem[] = username ? [
+    { href: '/app',                   label: 'Home',             node: <HomeSvg /> },
+    { href: '/app/cataloghi',         label: 'Cataloghi',        node: <CataloghiSvg /> },
+    ...(acquistiCartCount   > 0 ? [{ href: '/app/carrello-acquisti',   label: 'Carrello acquisti',  node: <CarrelloIcon count={acquistiCartCount} /> }] : []),
+    ...(preventivoCartCount > 0 ? [{ href: '/app/carrello-preventivo', label: 'Simulazione',  node: <PreventivatoreIcon count={preventivoCartCount} /> }] : []),
+    { href: '/app/preventivo',        label: 'Preventivi',       node: <div style={GOLD}><Image src="/images/cta/preventivo-online-t.png" alt="Preventivo" width={36} height={36} style={{ objectFit: 'contain' }} /></div> },
+    { href: '/app/cantiere',          label: 'Cantieri',         node: <div style={GOLD}><Image src="/images/cta/cantieri-online-t.png" alt="Cantiere" width={36} height={36} style={{ objectFit: 'contain' }} /></div> },
+    { href: '/app/documenti',         label: 'Documenti',        node: <DocumentiSvg /> },
+    { href: '/app/avvisi',            label: 'Avvisi',           node: <AvvisiIcon count={avvisiCount} /> },
+    { href: '/app/contatti',          label: 'Contatti',         node: <ContattiSvg /> },
+  ] : [
+    { href: '/app',                   label: 'Home',             node: <HomeSvg /> },
+    { href: '/app/cataloghi',         label: 'Cataloghi',        node: <CataloghiSvg /> },
+    ...(preventivoCartCount > 0 ? [{ href: '/app/carrello-preventivo', label: 'Simulazione',  node: <PreventivatoreIcon count={preventivoCartCount} /> }] : []),
+    { href: '/app/contatti',          label: 'Contatti',         node: <ContattiSvg /> },
   ]
 
   return (
