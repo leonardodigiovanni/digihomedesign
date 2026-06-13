@@ -1292,6 +1292,9 @@ body {
   padding: 0 !important;
   border-radius: 50% !important;
 }
+.btn-icon:disabled {
+  opacity: 1 !important;
+}
 /* Verde — conferma / salva / login */
 .btn-green {
   background:
@@ -1800,7 +1803,7 @@ body {
     rgba(255,255,255,0.06) 1px,
     transparent 1px,
     transparent 6px
-  ), #e8f5e9;
+  ), #f0f7f1;
 }
 
 /* Card generica */
