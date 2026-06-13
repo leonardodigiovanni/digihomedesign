@@ -5,7 +5,7 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 import CarrelloClient, { type ArticoloCarrello, type CaratteristicaListino } from './carrello-client'
 import { decompressCart } from '@/lib/cart-cookie'
-import { extractAvgColor } from '@/lib/extract-color'
+import { extractAvgColor, colorFromDesc } from '@/lib/extract-color'
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = { title: 'Carrello Preventivo' }
@@ -130,6 +130,7 @@ async function getArticoliDaCookie(cart: CartItem[]) {
         const fotoUrl = fotoRaw.startsWith('/') ? fotoRaw : `/${fotoRaw}`
         a.bar_color = await extractAvgColor(fotoUrl)
       }
+      if (!a.bar_color) a.bar_color = colorFromDesc(colorChild.descrizione ?? '')
     }
     const colorAccChild = result.find(c => c.parent === a.uid && (rows.find(r => r.id === c.listino_id)?.richiede_tipo_colore_acc ?? 0) === 1)
     if (colorAccChild) {
@@ -138,6 +139,7 @@ async function getArticoliDaCookie(cart: CartItem[]) {
         const fotoUrl = fotoRaw.startsWith('/') ? fotoRaw : `/${fotoRaw}`
         a.bar_color_acc = await extractAvgColor(fotoUrl)
       }
+      if (!a.bar_color_acc) a.bar_color_acc = colorFromDesc(colorAccChild.descrizione ?? '')
     }
   }))
 

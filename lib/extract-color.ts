@@ -1,6 +1,20 @@
 import fs from 'fs/promises'
 import path from 'path'
 
+export function colorFromDesc(desc: string): string | null {
+  const d = (desc ?? '').toLowerCase()
+  if (d.includes('nero') || d.includes('9005'))                               return '#1c1c1c'
+  if (d.includes('antracite') || d.includes('7016') || d.includes('grafite')) return '#3e3e3e'
+  if (d.includes('grigio') || d.includes('7015') || d.includes('7040'))       return '#5a5c60'
+  if (d.includes('noce') || d.includes('rovere') || d.includes('legno') || d.includes('wood')) return '#7b4f2e'
+  if (d.includes('bronzo'))                                                    return '#8a6424'
+  if (d.includes('oro') || d.includes('champagne'))                           return '#c0a040'
+  if (d.includes('blu'))                                                       return '#2a4a8c'
+  if (d.includes('verde'))                                                     return '#2a6a3a'
+  if (d.includes('bianco') || d.includes('9010') || d.includes('9016'))       return '#d0ccc4'
+  return null
+}
+
 export async function extractAvgColor(fotoUrl: string): Promise<string | null> {
   if (!fotoUrl) return null
   try {
