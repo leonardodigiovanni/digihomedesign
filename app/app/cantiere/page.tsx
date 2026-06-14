@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
@@ -123,14 +124,16 @@ export default async function AppCantierePage() {
 
   return (
     <div>
-      <CantieriClienteClient
-        cantieri={cantieri}
-        tasks={tasks}
-        media={media}
-        clienti={clienti}
-        isApp={true}
-        isDipendente={isStaff}
-      />
+      <Suspense>
+        <CantieriClienteClient
+          cantieri={cantieri}
+          tasks={tasks}
+          media={media}
+          clienti={clienti}
+          isApp={true}
+          isDipendente={isStaff}
+        />
+      </Suspense>
     </div>
   )
 }

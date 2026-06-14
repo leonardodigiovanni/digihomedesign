@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import type { Cantiere, Task, Media } from '@/app/area-lavoro/cantieri/cantieri-client'
 import ApriCantiereBtn from './apri-btn'
 import ApriTaskBtn from './apri-task-btn'
@@ -469,7 +469,24 @@ export default function CantieriClienteClient({
   cantieri: Cantiere[]; tasks: Task[]; media: Media[]
   isApp?: boolean; isDipendente?: boolean; clienti?: ClienteOpt[]
 }) {
-  const [selectedCantiere, setSelectedCantiere] = useState<Cantiere | null>(null)
+  const router       = useRouter()
+  const pathname     = usePathname()
+  const searchParams = useSearchParams()
+
+  const [selectedCantiere, setSelectedCantiere] = useState<Cantiere | null>(() => {
+    const id = Number(searchParams.get('cantiere'))
+    return cantieri.find(c => c.id === id) ?? null
+  })
+
+  function selectCantiere(c: Cantiere) {
+    setSelectedCantiere(c)
+    router.replace(`${pathname}?cantiere=${c.id}`)
+  }
+
+  function deselect() {
+    setSelectedCantiere(null)
+    router.replace(pathname)
+  }
 
   if (selectedCantiere) {
     const cantiereTask = tasks.filter(t => t.cantiere_id === selectedCantiere.id)
@@ -478,7 +495,7 @@ export default function CantieriClienteClient({
         cantiere={selectedCantiere}
         tasks={cantiereTask}
         media={media}
-        onBack={() => setSelectedCantiere(null)}
+        onBack={deselect}
         isApp={isApp}
         isDipendente={isDipendente}
       />
@@ -495,7 +512,7 @@ export default function CantieriClienteClient({
       <CantiereGrid
         cantieri={cantieri}
         tasks={tasks}
-        onSelectCantiere={c => setSelectedCantiere(c)}
+        onSelectCantiere={selectCantiere}
         isApp={isApp}
         isDipendente={isDipendente}
       />
