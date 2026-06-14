@@ -35,6 +35,10 @@ export default function InstallBtn() {
         setDeferredPrompt(null)
       }}
       style={{
+        position: 'absolute',
+        left: 12,
+        top: '50%',
+        transform: 'translateY(-50%)',
         background: 'none',
         border: '1px solid rgba(255,255,255,0.4)',
         borderRadius: 20,
