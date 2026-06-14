@@ -12,7 +12,7 @@ export default function InfoCard({ titolo, corpo }: { titolo: string; corpo: str
   const [aperto, setAperto] = useState(false)
 
   return (
-    <div className="sfondo-riquadri-app" style={{ marginLeft: 3, marginRight: 3, border: '1px solid #222', borderRadius: 10, padding: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.18),inset 0 1px 0 rgba(255,255,255,0.5)' }}>
+    <div className="sfondo-riquadri-app" style={{ border: '1px solid #222', borderRadius: 10, padding: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.18),inset 0 1px 0 rgba(255,255,255,0.5)' }}>
       <button
         onClick={() => setAperto(a => !a)}
         style={{
