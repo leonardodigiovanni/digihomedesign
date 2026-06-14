@@ -933,7 +933,7 @@ export default function CarrelloClient({
             <span style={{ fontSize: 9, fontWeight: 800, color: '#1e4d2b', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>Complimenti!</span>
             <div style={{ flex: 1, height: 1, background: 'rgba(0,100,0,0.3)' }} />
           </div>
-          <p style={{ fontSize: 9, fontWeight: 800, color: '#1e4d2b', letterSpacing: '0.12em', textTransform: 'uppercase', textAlign: 'center', margin: '2px 0', lineHeight: 1.2, fontFamily: 'monospace' }}>I dati del preventivo sono completi.</p>
+          <p style={{ fontSize: 9, fontWeight: 400, color: '#1e4d2b', letterSpacing: '0.12em', textTransform: 'uppercase', textAlign: 'center', margin: '2px 0', lineHeight: 1.2, fontFamily: 'monospace' }}>I dati del preventivo sono completi.</p>
           <p style={{ fontSize: 9, fontWeight: 600, margin: '2px 0', color: '#1e4d2b', textTransform: 'uppercase', textAlign: 'center', fontFamily: 'monospace', lineHeight: 1.2 }}>Accedi per applicare gli sconti.</p>
           <p style={{ fontSize: 9, fontWeight: 600, margin: '2px 0', color: '#1e4d2b', textTransform: 'uppercase', textAlign: 'center', fontFamily: 'monospace', lineHeight: 1.2 }}>Salva il preventivo e recuperalo quando vuoi.</p>
         </div>

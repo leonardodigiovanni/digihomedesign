@@ -58,7 +58,7 @@
   flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding: 20px 16px 24px;
+  padding: 20px 3px 24px;
 }
 
 /* Sfondo oro spazzolato — zona link/redirect fissa sopra il footer */
@@ -76,7 +76,7 @@
     rgba(255,255,255,0.06) 1px,
     transparent 1px,
     transparent 6px
-  ), #f0f0f0;
+  ), #d8d8d8;
 }
 
 /* Card generica */
