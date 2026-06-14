@@ -8,6 +8,7 @@ import AppActionBar from './app-action-bar'
 import AvvisiNotifier from '@/components/avvisi-notifier'
 import { decompressCart } from '@/lib/cart-cookie'
 import { getConnection } from '@/lib/db'
+import { readSettings } from '@/lib/settings'
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies()
@@ -15,6 +16,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const role     = cookieStore.get('session_role')?.value ?? ''
   const preventivoCartCount = decompressCart(cookieStore.get('digi_cart')?.value ?? '').filter(i => i.parent == null).length
   const acquistiCartCount   = decompressCart(cookieStore.get('digi_cart_acquisti')?.value ?? '').filter(i => i.parent == null).length
+
+  const { manutenzione } = await readSettings()
 
   let avvisiUnreadCount = 0
   if (username && role === 'cliente') {
@@ -60,7 +63,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       </ActionBarProvider>
 
       {role === 'cliente' && <AvvisiNotifier />}
-      <AppBottomNav username={username} preventivoCartCount={preventivoCartCount} acquistiCartCount={acquistiCartCount} avvisiUnreadCount={avvisiUnreadCount} />
+      <AppBottomNav username={username} preventivoCartCount={preventivoCartCount} acquistiCartCount={acquistiCartCount} avvisiUnreadCount={avvisiUnreadCount} manutenzione={manutenzione} />
 
     </div>
   )

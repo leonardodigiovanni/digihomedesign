@@ -52,8 +52,9 @@ function Card({ titolo, corpo, defaultAperto, loggedIn, protetto }: { titolo: st
   )
 }
 
-function CardSimulazione() {
-  const [aperto, setAperto] = useState(true)
+function CardSimulazione({ manutenzione, loggedIn }: { manutenzione: boolean; loggedIn: boolean }) {
+  const [aperto, setAperto] = useState(!manutenzione || loggedIn)
+  const mostraBottone = !(manutenzione && !loggedIn)
 
   return (
     <div className="sfondo-riquadri-app" style={{ borderRadius: 12, border: '1px solid #222', padding: '18px 16px', marginBottom: 14, boxShadow: '0 2px 8px rgba(0,0,0,0.18),inset 0 1px 0 rgba(255,255,255,0.5)', cursor: 'default' }}>
@@ -80,21 +81,23 @@ function CardSimulazione() {
           <p className="app-card-body" style={{ margin: 0 }}>
             Calcola subito il costo dei tuoi infissi, verande o ristrutturazioni — senza registrarti. Aggiungi gli articoli dai cataloghi e ottieni una stima in tempo reale.
           </p>
-          <a href="/app/carrello-preventivo" className="btn-green-app"
-            style={{ padding: '0 24px', fontSize: 14, alignSelf: 'center' }}>
-            + Nuova simulazione preventivo
-          </a>
+          {mostraBottone && (
+            <a href="/app/carrello-preventivo" className="btn-green-app"
+              style={{ padding: '0 24px', fontSize: 14, alignSelf: 'center' }}>
+              + Nuova simulazione preventivo
+            </a>
+          )}
         </div>
       )}
     </div>
   )
 }
 
-export default function HomeCards({ loggedIn }: { loggedIn: boolean }) {
+export default function HomeCards({ loggedIn, manutenzione }: { loggedIn: boolean; manutenzione: boolean }) {
   return (
     <>
       <Card titolo="Cataloghi" corpo={SEZIONI[0].corpo} protetto={false} loggedIn={loggedIn} />
-      <CardSimulazione />
+      <CardSimulazione manutenzione={manutenzione} loggedIn={loggedIn} />
       {SEZIONI.slice(1).map(s => <Card key={s.titolo} titolo={s.titolo} corpo={s.corpo} protetto={s.protetto} loggedIn={loggedIn} />)}
     </>
   )

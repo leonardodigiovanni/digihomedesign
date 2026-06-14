@@ -7,6 +7,7 @@ import PreventiviTabella from './preventivi-tabella'
 import { decompressCart } from '@/lib/cart-cookie'
 import SetActionBar from '@/app/app/set-action-bar'
 import InfoCard from '@/app/app/info-card'
+import { readSettings } from '@/lib/settings'
 
 type Preventivo = {
   id: number
@@ -102,6 +103,7 @@ export default async function AppPreventivoPage() {
   if (!username) redirect('/app/login')
 
   const { preventivi, isStaff } = await getData(role, username)
+  const { manutenzione } = await readSettings()
 
   const cartRaw = cookieStore.get('digi_cart')?.value ?? ''
   const cartNonVuoto = decompressCart(cartRaw).filter(i => i.parent == null).length > 0
@@ -118,10 +120,12 @@ export default async function AppPreventivoPage() {
             </button>
           </form>
         )}
-        <a href="/app/carrello-preventivo" className="btn-green-app"
-          style={{ padding: '0 24px', fontSize: 14 }}>
-          + Nuova simulazione preventivo
-        </a>
+        {!(manutenzione && !username) && (
+          <a href="/app/carrello-preventivo" className="btn-green-app"
+            style={{ padding: '0 24px', fontSize: 14 }}>
+            + Nuova simulazione preventivo
+          </a>
+        )}
       </div>
 
       <PreventiviTabella preventivi={preventivi} isStaff={isStaff} />

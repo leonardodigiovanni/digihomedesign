@@ -118,11 +118,13 @@ export default function AppBottomNav({
   preventivoCartCount = 0,
   acquistiCartCount = 0,
   avvisiUnreadCount = 0,
+  manutenzione = false,
 }: {
   username: string | null
   preventivoCartCount?: number
   acquistiCartCount?: number
   avvisiUnreadCount?: number
+  manutenzione?: boolean
 }) {
   const pathname = usePathname()
   const [avvisiCount, setAvvisiCount] = useState(avvisiUnreadCount)
@@ -136,6 +138,7 @@ export default function AppBottomNav({
   }, [])
 
   if (pathname === '/app/login') return null
+  if (manutenzione && !username) return null
 
   const items: NavItem[] = username ? [
     { href: '/app',                   label: 'Home',             node: <HomeSvg /> },
