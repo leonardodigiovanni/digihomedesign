@@ -41,7 +41,7 @@ export default async function AppCataloghiPage() {
   const categorie = await getCategorie()
 
   return (
-    <div className="fs-14" style={{ padding: '0 0 80px', color: '#444', lineHeight: 1.8 }}>
+    <div className="fs-14" style={{ padding: '0 0 80px', color: '#444', lineHeight: 1.8, marginLeft: 3, marginRight: 3 }}>
       <InfoCard titolo="Cataloghi" corpo="Sfoglia i nostri cataloghi, aggiungi gli articoli che ti interessano e scegli: acquistali subito oppure usali per simulare un preventivo personalizzato per i tuoi infissi, verande o ristrutturazioni." />
 
       {categorie.length === 0 ? (
