@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import AppBottomNav from './app-bottom-nav'
 import AccediBtn from './accedi-btn'
+import InstallBtn from './install-btn'
 import { ActionBarProvider } from './action-bar-context'
 import AppActionBar from './app-action-bar'
 import AvvisiNotifier from '@/components/avvisi-notifier'
@@ -45,6 +46,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <Link href="/app" style={{ display: 'flex', justifyContent: 'center', textDecoration: 'none' }}>
           <Image src="/images/header/DIGIHOMEDESIGN.png" alt="DIGI Home Design" width={80} height={80} unoptimized style={{ objectFit: 'contain', display: 'block' }} />
         </Link>
+        <InstallBtn />
         <div className="app-topbar-user">
           {username ? (
             <span style={{ fontSize: 10, color: '#fff', fontFamily: 'monospace', opacity: 0.75, pointerEvents: 'none', userSelect: 'none' }}>{username}</span>
