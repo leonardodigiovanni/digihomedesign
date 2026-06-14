@@ -174,9 +174,6 @@ export default async function Page() {
         <Link href="/app/cataloghi" className="btn-black-app fs-12" style={{ flex: 1 }}>
           Vai ai cataloghi →
         </Link>
-        <Link href="/aiuto/guida-preventivo" className="btn-black-app fs-12" style={{ flex: 1 }}>
-          Vai alla guida →
-        </Link>
       </SetActionBar>
     </div>
   )

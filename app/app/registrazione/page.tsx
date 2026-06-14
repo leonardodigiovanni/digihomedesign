@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { readSettings } from '@/lib/settings'
-import RegistrationFlow from '@/app/registrazione/registration-flow'
+import AppRegistrationFlow from './app-registration-flow'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Registrazione' }
@@ -17,8 +17,8 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ f
   const redirectTo = from && from.startsWith('/') ? from : '/app'
 
   return (
-    <div style={{ maxWidth: 560, margin: '0 auto', padding: '0 16px' }}>
-      <RegistrationFlow redirectTo={redirectTo} isApp={true} />
+    <div style={{ marginLeft: 3, marginRight: 3, paddingBottom: 80 }}>
+      <AppRegistrationFlow redirectTo={redirectTo} />
     </div>
   )
 }

@@ -1013,7 +1013,7 @@ export async function creaClienteRapido(_: unknown, fd: FormData): Promise<{ ok:
   const db = await getConnection()
   try {
     const [res] = await db.execute(
-      'INSERT INTO clienti (nome, cognome, cellulare) VALUES (?, ?, ?)',
+      'INSERT INTO clienti (nome, cognome, telefono) VALUES (?, ?, ?)',
       [nome, cognome || null, cellulare || null]
     ) as [{ insertId: number }, unknown]
     const id = res.insertId

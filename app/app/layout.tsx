@@ -24,7 +24,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   if (username && role === 'cliente') {
     const db = await getConnection()
     try {
-      const [uRows] = await db.execute('SELECT email FROM users WHERE username = ? LIMIT 1', [username]) as [{ email: string }[], unknown]
+      const [uRows] = await db.execute(
+        'SELECT email FROM users WHERE username = ? LIMIT 1', [username]
+      ) as [{ email: string }[], unknown]
       const email = uRows[0]?.email ?? ''
       if (email) {
         const [cRows] = await db.execute('SELECT id FROM clienti WHERE email = ? LIMIT 1', [email]) as [{ id: number }[], unknown]
@@ -44,7 +46,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       {/* Top bar */}
       <header className="app-topbar">
         <Link href="/app" style={{ display: 'flex', justifyContent: 'center', textDecoration: 'none' }}>
-          <Image src="/images/header/DIGIHOMEDESIGN.png" alt="DIGI Home Design" width={80} height={80} unoptimized style={{ objectFit: 'contain', display: 'block' }} />
+          <Image src="/images/header/DIGIHOMEDESIGN.png" alt="DIGI Home Design" width={80} height={80} unoptimized loading="eager" style={{ objectFit: 'contain', display: 'block' }} />
         </Link>
         <InstallBtn />
         <div className="app-topbar-user">
