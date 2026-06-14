@@ -58,7 +58,7 @@
   flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding: 20px 3px 24px;
+  padding: 20px 0 24px;
 }
 
 /* Sfondo oro spazzolato — zona link/redirect fissa sopra il footer */
