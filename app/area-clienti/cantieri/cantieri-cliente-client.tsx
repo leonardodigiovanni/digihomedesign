@@ -10,6 +10,12 @@ import { addMedia, addTask, addCantiere } from '@/app/area-lavoro/cantieri/actio
 import SetActionBar from '@/app/app/set-action-bar'
 import InfoCard from '@/app/app/info-card'
 
+const PuntinaSvg = () => (
+  <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style={{ flexShrink: 0 }}>
+    <path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z"/>
+  </svg>
+)
+
 const STATI_TASK: Record<string, { label: string; color: string; bg: string }> = {
   da_fare:    { label: 'Da fare',    color: '#1565c0', bg: '#e3f2fd' },
   in_corso:   { label: 'In corso',   color: '#e65100', bg: '#fff3e0' },
@@ -236,14 +242,14 @@ function AddTaskForm({ cantiereId, isApp }: { cantiereId: number; isApp?: boolea
     <div style={{ display: 'flex', justifyContent: 'center' }}>
       <button onClick={() => setAperto(true)} className={b('btn-green', isApp)}
         style={{ padding: '0 28px', fontSize: 13 }}>
-        + Aggiungi task
+        + Aggiungi lavoro
       </button>
     </div>
   )
 
   return (
     <div className="sfondo-riquadri-app" style={{ border: '1px solid #444', borderRadius: 8, padding: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
-      <p style={{ fontSize: 13, fontWeight: 700, color: '#1a1a1a', margin: 0 }}>Aggiungi task</p>
+      <p style={{ fontSize: 13, fontWeight: 700, color: '#1a1a1a', margin: 0 }}>Aggiungi lavoro</p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
         <label style={{ fontSize: 12, color: '#555' }}>Descrizione *</label>
         <input style={inp} value={descr} onChange={e => setDescr(e.target.value)} placeholder="es. Posa infissi piano terra" />
@@ -300,15 +306,27 @@ function TaskGrid({
   cantiere: Cantiere; tasks: Task[]; media: Media[]
   onBack: () => void; isApp?: boolean; isDipendente?: boolean
 }) {
+  const [aperto, setAperto] = useState(false)
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginLeft: 3, marginRight: 3 }}>
       <div className="sfondo-riquadri-app" style={{ border: '1px solid #222', borderRadius: 12, padding: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.18),inset 0 1px 0 rgba(255,255,255,0.5)' }}>
-        <p style={{ fontSize: 14, fontWeight: 700, color: '#1a1a1a', margin: '0 0 6px' }}>Task cantiere · {cantiere.titolo}</p>
-        <p style={{ fontSize: 14, color: '#555', lineHeight: 1.6, margin: 0 }}>
-          {isDipendente
-            ? 'Seleziona un task per aprirlo oppure carica foto/video direttamente.'
-            : 'Seleziona un task per vedere le lavorazioni e i relativi documenti fotografici.'}
-        </p>
+        <button
+          onClick={() => setAperto(a => !a)}
+          style={{ display: 'flex', alignItems: 'center', gap: 6, width: '100%', background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left' }}
+        >
+          <span style={{ fontSize: 14, fontWeight: 700, color: '#1a1a1a', flex: 1, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <PuntinaSvg /> Lavori del cantiere {cantiere.titolo}
+          </span>
+          <span style={{ fontSize: 16, color: '#888', transition: 'transform 0.2s', transform: aperto ? 'rotate(180deg)' : 'rotate(0deg)', display: 'inline-block' }}>▾</span>
+        </button>
+        {aperto && (
+          <p style={{ fontSize: 14, color: '#555', lineHeight: 1.6, margin: '8px 0 0' }}>
+            {isDipendente
+              ? 'Seleziona un lavoro per aprirlo oppure carica foto/video direttamente.'
+              : 'Seleziona un lavoro per vedere i relativi documenti fotografici.'}
+          </p>
+        )}
       </div>
 
       {/* Torna — posizione normale quando non-app */}
@@ -329,7 +347,6 @@ function TaskGrid({
         </SetActionBar>
       )}
 
-      {/* +Nuovo task in cima — solo dipendente */}
       {isDipendente && <AddTaskForm cantiereId={cantiere.id} isApp={isApp} />}
 
       {tasks.length > 0 && (
@@ -337,7 +354,7 @@ function TaskGrid({
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr className="sfondo-riquadri-app">
-                <th style={TH_S}>Lavorazione</th>
+                <th style={TH_S}>Lavoro</th>
                 <th style={TH_S}>Dal</th>
                 <th style={TH_S}>Al</th>
                 <th style={{ ...TH_S, textAlign: 'center' }}>N° Files</th>
@@ -373,7 +390,7 @@ function TaskGrid({
         </div>
       )}
       {tasks.length === 0 && !isDipendente && (
-        <p style={{ color: '#aaa', fontSize: 14 }}>Nessuna lavorazione presente.</p>
+        <p style={{ color: '#aaa', fontSize: 14 }}>Nessun lavoro presente.</p>
       )}
     </div>
   )
@@ -434,7 +451,7 @@ function CantiereGrid({
                 {isDipendente && <th style={{ ...TH_S, minWidth: 160 }}>Cliente</th>}
                 <th style={{ ...TH_S, textAlign: 'center' }}>Stato</th>
                 <th style={TH_S}>Inizio</th>
-                <th style={{ ...TH_S, textAlign: 'center' }}>Task</th>
+                <th style={{ ...TH_S, textAlign: 'center' }}>Lavori</th>
               </tr>
             </thead>
             <tbody>

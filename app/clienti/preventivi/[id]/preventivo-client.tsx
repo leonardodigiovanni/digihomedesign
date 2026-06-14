@@ -633,11 +633,11 @@ function ArticoloForm({
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
                       <div>
                         <span style={label}>Larghezza (cm) *</span>
-                        <input type="number" name="larghezza_cm" min={0} step="0.1" defaultValue={prefill?.larghezza_cm || ''} style={inp} placeholder="es. 120" required />
+                        <input type="number" name="larghezza_cm" min={0} step="0.1" defaultValue={prefill?.larghezza_cm || ''} style={inp} required />
                       </div>
                       <div>
                         <span style={label}>Altezza (cm) *</span>
-                        <input type="number" name="altezza_cm" min={0} step="0.1" defaultValue={prefill?.altezza_cm || ''} style={inp} placeholder="es. 210" required />
+                        <input type="number" name="altezza_cm" min={0} step="0.1" defaultValue={prefill?.altezza_cm || ''} style={inp} required />
                       </div>
                       <div>
                         <span style={label}>Quantità *</span>
@@ -690,10 +690,8 @@ function ArticoloForm({
             )}
 
             <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', paddingTop: 4 }}>
-              <button type="button" onClick={onClose} style={{
-                height: 42, padding: '0 20px', fontSize: 13, fontWeight: 600,
-                border: '1px solid #ccc', borderRadius: 21, background: '#f5f5f5', cursor: 'pointer',
-              }}>
+              <button type="button" onClick={onClose} className={b('btn-gray', isApp)}
+                style={{ padding: '0 20px', fontSize: 13 }}>
                 Annulla
               </button>
               {isCaratteristicaMode && altriParentIds.length > 0 && (

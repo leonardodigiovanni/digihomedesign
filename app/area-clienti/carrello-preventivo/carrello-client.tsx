@@ -84,44 +84,8 @@ function LoginBanner({ hasLacune, cataloghiHref = '/brand/cataloghi', isApp }: {
 
   return (
     <div className="sfondo-riquadri-app" style={{ border: '1px solid #222', borderRadius: 10, padding: 12 }}>
-      {!hasLacune && (
-        <div style={{ background: '#e8e8e8', borderRadius: 6, overflow: 'hidden', marginBottom: 14, border: '1px solid #1e4d2b' }}>
-          <div style={{ padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{ flex: 1, height: 1, background: 'rgba(0,100,0,0.3)' }} />
-            <span style={{ fontSize: 14, fontWeight: 800, color: '#1e4d2b', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
-              Complimenti!
-            </span>
-            <div style={{ flex: 1, height: 1, background: 'rgba(0,100,0,0.3)' }} />
-          </div>
-          <p style={{ fontSize: 14, fontWeight: 800, color: '#1e4d2b', letterSpacing: '0.12em', textTransform: 'uppercase', textAlign: 'center', margin: '0 0 10px', lineHeight: 1.3, padding: '0 16px', fontFamily: 'monospace' }}>
-            I dati sono completi per procedere alla generazione del preventivo.
-          </p>
-          <div style={{ background: '#f0f0f0', padding: '10px 16px', display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <p style={{ fontSize: 14, fontWeight: 700, margin: '0 0 4px', color: '#1e4d2b', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'center', fontFamily: 'monospace' }}>
-              Alcuni preziosi consigli:
-            </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-              {[
-                { label: 'Cliente?', text: 'Accedi per applicare gli sconti su articoli in promozione più lo sconto personalizzato sull\'importo totale proporzionale ai tuoi punti fedeltà accumulati.' },
-                { label: 'Nuovo?', text: 'Registrati per applicare gli sconti su articoli in promozione più uno sconto di benvenuto sull\'importo totale.' },
-                { label: 'Indeciso?', text: 'Salva il preventivo nella tua area personale per poterlo recuperare e modificare quando vuoi.' },
-              ].map((item, i, arr) => (
-                <div key={item.label}>
-                  <p style={{ fontSize: 14, fontWeight: 600, margin: 0, color: '#1e4d2b', textTransform: 'uppercase', textAlign: 'center', fontFamily: 'monospace' }}>
-                    <strong>{item.label}</strong><br/>{item.text}
-                  </p>
-                  {i < arr.length - 1 && <div style={{ height: 1, background: 'rgba(30,77,43,0.25)', margin: '6px 0' }} />}
-                </div>
-              ))}
-            </div>
-          </div>
-          <p style={{ fontSize: 14, fontWeight: 800, color: '#1e4d2b', letterSpacing: '0.12em', textTransform: 'uppercase', textAlign: 'center', margin: '10px 0 0', lineHeight: 1.3, padding: '0 16px', fontFamily: 'monospace' }}>
-            Grazie per aver utilizzato il nostro simulatore di preventivo online.
-          </p>
-        </div>
-      )}
       <p style={{ fontSize: 14, color: '#1a1a1a', margin: '0 0 14px', lineHeight: 1.6, textAlign: 'justify', fontFamily: 'monospace' }}>
-        <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style={{ display: 'inline', verticalAlign: 'middle', marginRight: 6, flexShrink: 0 }}><path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z"/></svg>I clienti registrati ricevono uno sconto di benvenuto. Ad ogni ordine accumulano punti fedeltà che si convertono in sconti esclusivi, sempre maggiori, applicati automaticamente dal preventivatore online, su articoli in promozione e/o sul totale. Accedi o registrati, salva il carrello come preventivo e scopri il prezzo finale con i tuoi sconti.
+        <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style={{ display: 'inline', verticalAlign: 'middle', marginRight: 6, flexShrink: 0 }}><path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z"/></svg>I clienti registrati ricevono sempre degli sconti. Accedi o registrati, salva il carrello come preventivo e scopri il prezzo finale con i tuoi sconti.
       </p>
       <div className={isApp ? undefined : 'btn-grid-4'} style={isApp ? { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, maxWidth: 360, margin: '0 auto' } : undefined}>
         <div ref={ref} style={{ position: 'relative' }}>
@@ -899,73 +863,88 @@ export default function CarrelloClient({
         )
       })()}
 
+      {/* Messaggi stato — fuori dal riquadro bottoni */}
+      {articoli.length === 0 ? (
+        <div style={{ background: '#e8e8e8', borderRadius: 6, overflow: 'hidden', border: '1px solid #9b1c1c' }}>
+          <div style={{ padding: '5px 10px', display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ flex: 1, height: 1, background: 'rgba(150,0,0,0.3)' }} />
+            <span style={{ fontSize: 10, fontWeight: 800, color: '#9b1c1c', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
+              Carrello vuoto
+            </span>
+            <div style={{ flex: 1, height: 1, background: 'rgba(150,0,0,0.3)' }} />
+          </div>
+          <div style={{ background: '#f0f0f0', padding: '5px 10px', textAlign: 'center' }}>
+            <p style={{ fontSize: 10, fontWeight: 600, margin: 0, color: '#9b1c1c', textTransform: 'uppercase', textAlign: 'center', fontFamily: 'monospace' }}>
+              Aggiungi articoli dal bottone qui sopra oppure sfoglia i cataloghi.
+            </p>
+            {!isApp && <a href={cataloghiHref} style={{ color: '#9b1c1c', fontWeight: 700, fontSize: 10, fontFamily: 'monospace' }}>
+              Vai ai cataloghi →
+            </a>}
+          </div>
+        </div>
+      ) : hasLacuneAperte ? (
+        <div style={{ background: '#e8e8e8', borderRadius: 6, overflow: 'hidden', border: '1px solid #9b1c1c' }}>
+          <div style={{ padding: '5px 10px', display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ flex: 1, height: 1, background: 'rgba(150,0,0,0.3)' }} />
+            <span style={{ fontSize: 10, fontWeight: 800, color: '#9b1c1c', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
+              Dati incompleti
+            </span>
+            <div style={{ flex: 1, height: 1, background: 'rgba(150,0,0,0.3)' }} />
+          </div>
+          <div style={{ background: '#f0f0f0', padding: '5px 10px' }}>
+            <p style={{ fontSize: 10, fontWeight: 600, margin: 0, color: '#9b1c1c', textTransform: 'uppercase', textAlign: 'justify', fontFamily: 'monospace' }}>
+              Alcuni articoli hanno caratteristiche mancanti. Completali prima di procedere con la stampa o il salvataggio del preventivo.
+            </p>
+          </div>
+        </div>
+      ) : null}
+      {articoli.length > 0 && !hasLacuneAperte && (
+        <div style={{ background: '#e8e8e8', borderRadius: 6, overflow: 'hidden', border: '1px solid #9b1c1c' }}>
+          <div style={{ padding: '5px 10px', display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ flex: 1, height: 1, background: 'rgba(150,0,0,0.3)' }} />
+            <span style={{ fontSize: 9, fontWeight: 800, color: '#9b1c1c', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
+              Prezzo da scontare
+            </span>
+            <div style={{ flex: 1, height: 1, background: 'rgba(150,0,0,0.3)' }} />
+          </div>
+        </div>
+      )}
+      {articoli.length > 0 && !hasLacuneAperte && isLoggedIn && (
+        <div style={{ background: '#e8e8e8', borderRadius: 6, overflow: 'hidden', border: '1px solid #1e4d2b' }}>
+          <div style={{ padding: '5px 10px', display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ flex: 1, height: 1, background: 'rgba(0,100,0,0.3)' }} />
+            <span style={{ fontSize: 9, fontWeight: 800, color: '#1e4d2b', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
+              Applica gli sconti
+            </span>
+            <div style={{ flex: 1, height: 1, background: 'rgba(0,100,0,0.3)' }} />
+          </div>
+          <div style={{ background: '#f0f0f0', padding: '5px 10px' }}>
+            <p style={{ fontSize: 9, fontWeight: 600, margin: 0, color: '#1e4d2b', textTransform: 'uppercase', textAlign: 'center', fontFamily: 'monospace', letterSpacing: '0.04em' }}>
+              Salva il carrello del simulatore come preventivo e scopri il prezzo finale con i tuoi sconti.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {!isLoggedIn && !hasLacuneAperte && articoli.length > 0 && (
+        <div style={{ background: '#e8e8e8', borderRadius: 6, overflow: 'hidden', border: '1px solid #1e4d2b', padding: '3px 10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ flex: 1, height: 1, background: 'rgba(0,100,0,0.3)' }} />
+            <span style={{ fontSize: 9, fontWeight: 800, color: '#1e4d2b', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>Complimenti!</span>
+            <div style={{ flex: 1, height: 1, background: 'rgba(0,100,0,0.3)' }} />
+          </div>
+          <p style={{ fontSize: 9, fontWeight: 800, color: '#1e4d2b', letterSpacing: '0.12em', textTransform: 'uppercase', textAlign: 'center', margin: '2px 0', lineHeight: 1.2, fontFamily: 'monospace' }}>I dati del preventivo sono completi.</p>
+          <p style={{ fontSize: 9, fontWeight: 600, margin: '2px 0', color: '#1e4d2b', textTransform: 'uppercase', textAlign: 'center', fontFamily: 'monospace', lineHeight: 1.2 }}>Accedi per applicare gli sconti.</p>
+          <p style={{ fontSize: 9, fontWeight: 600, margin: '2px 0', color: '#1e4d2b', textTransform: 'uppercase', textAlign: 'center', fontFamily: 'monospace', lineHeight: 1.2 }}>Salva il preventivo e recuperalo quando vuoi.</p>
+        </div>
+      )}
+
       {/* Barra azioni */}
       <div className="sfondo-riquadri-app" style={{ border: '1px solid #222', borderRadius: 10, padding: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
-        {articoli.length === 0 ? (
-          <div style={{ background: '#e8e8e8', borderRadius: 6, overflow: 'hidden', border: '1px solid #9b1c1c' }}>
-            <div style={{ padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ flex: 1, height: 1, background: 'rgba(150,0,0,0.3)' }} />
-              <span style={{ fontSize: 14, fontWeight: 800, color: '#9b1c1c', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
-                Carrello vuoto
-              </span>
-              <div style={{ flex: 1, height: 1, background: 'rgba(150,0,0,0.3)' }} />
-            </div>
-            <div style={{ background: '#f0f0f0', padding: '10px 16px', textAlign: 'center' }}>
-              <p style={{ fontSize: 14, fontWeight: 600, margin: '0 0 10px', color: '#9b1c1c', textTransform: 'uppercase', textAlign: 'center', fontFamily: 'monospace' }}>
-                Aggiungi articoli dal bottone qui sopra oppure sfoglia i cataloghi.
-              </p>
-              {!isApp && <a href={cataloghiHref} style={{ color: '#9b1c1c', fontWeight: 700, fontSize: 14, fontFamily: 'monospace' }}>
-                Vai ai cataloghi →
-              </a>}
-            </div>
-          </div>
-        ) : hasLacuneAperte ? (
-          <div style={{ background: '#e8e8e8', borderRadius: 6, overflow: 'hidden' }}>
-            <div style={{ padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ flex: 1, height: 1, background: 'rgba(150,0,0,0.3)' }} />
-              <span style={{ fontSize: 14, fontWeight: 800, color: '#9b1c1c', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
-                Dati incompleti
-              </span>
-              <div style={{ flex: 1, height: 1, background: 'rgba(150,0,0,0.3)' }} />
-            </div>
-            <div style={{ background: '#f0f0f0', padding: '10px 16px' }}>
-              <p style={{ fontSize: 14, fontWeight: 600, margin: 0, color: '#9b1c1c', textTransform: 'uppercase', textAlign: 'justify', fontFamily: 'monospace' }}>
-                Alcuni articoli hanno caratteristiche mancanti. Completali prima di procedere con la stampa o il salvataggio del preventivo.
-              </p>
-            </div>
-          </div>
-        ) : null}
-        {articoli.length > 0 && !hasLacuneAperte && (
-          <div style={{ background: '#e8e8e8', borderRadius: 6, overflow: 'hidden', border: '1px solid #9b1c1c' }}>
-            <div style={{ padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ flex: 1, height: 1, background: 'rgba(150,0,0,0.3)' }} />
-              <span style={{ fontSize: 14, fontWeight: 800, color: '#9b1c1c', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
-                Prezzo da scontare
-              </span>
-              <div style={{ flex: 1, height: 1, background: 'rgba(150,0,0,0.3)' }} />
-            </div>
-          </div>
-        )}
-        {articoli.length > 0 && !hasLacuneAperte && isLoggedIn && (
-          <div style={{ background: '#e8e8e8', borderRadius: 6, overflow: 'hidden', border: '1px solid #1e4d2b' }}>
-            <div style={{ padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ flex: 1, height: 1, background: 'rgba(0,100,0,0.3)' }} />
-              <span style={{ fontSize: 14, fontWeight: 800, color: '#1e4d2b', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
-                Applica gli sconti
-              </span>
-              <div style={{ flex: 1, height: 1, background: 'rgba(0,100,0,0.3)' }} />
-            </div>
-            <div style={{ background: '#f0f0f0', padding: '10px 16px' }}>
-              <p style={{ fontSize: 14, fontWeight: 600, margin: 0, color: '#1e4d2b', textTransform: 'uppercase', textAlign: 'justify', fontFamily: 'monospace', letterSpacing: '0.04em' }}>
-                Salva il carrello del simulatore come preventivo e scopri il prezzo finale con i tuoi sconti.
-              </p>
-            </div>
-          </div>
-        )}
         <p style={{ fontSize: 14, color: '#1a1a1a', margin: 0, fontFamily: 'monospace' }}>
           {isLoggedIn
             ? <><svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style={{ display: 'inline', verticalAlign: 'middle', marginRight: 6, flexShrink: 0 }}><path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z"/></svg>Se non procedi al trasferimento nella tua area personale, ti consigliamo di scaricare il pdf o stamparlo perché non verrà salvato nel nostro sistema.</>
-            : <><svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style={{ display: 'inline', verticalAlign: 'middle', marginRight: 6, flexShrink: 0 }}><path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z"/></svg>È sempre preferibile scaricare o stampare il PDF del preventivo che non si intende salvare perché non verrà mantenuto nel nostro sistema e pertanto non sarà recuperabile successivamente.</>}
+            : <><svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style={{ display: 'inline', verticalAlign: 'middle', marginRight: 6, flexShrink: 0 }}><path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z"/></svg>Genera il PDF del preventivo perché, se non lo salvi, non sarà recuperabile successivamente.</>}
         </p>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
           {isLoggedIn && (
@@ -988,15 +967,13 @@ export default function CarrelloClient({
         </div>
       </div>
 
+      {!isLoggedIn && <LoginBanner hasLacune={hasLacuneAperte || articoli.length === 0} cataloghiHref={cataloghiHref} isApp={isApp} />}
+
       {articoli.some(a => a.unita === 'mq' || a.unita === 'ml') && (
         <p style={{ fontSize: 14, color: '#1a1a1a', margin: 0 }}>
           * Per articoli a m² o m lin. il subtotale è calcolato sul prezzo unitario di listino. Il prezzo finale dipenderà dalle dimensioni effettive.
         </p>
       )}
-
-      {!isLoggedIn && <LoginBanner hasLacune={hasLacuneAperte} cataloghiHref={cataloghiHref} isApp={isApp} />}
-
-
 
       {previewArt && (
         <div

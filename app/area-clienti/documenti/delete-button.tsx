@@ -14,7 +14,6 @@ export function DeleteDocumentoButton({ id, filename, titolo, isApp }: { id: num
       type="button"
       onClick={handleDelete}
       className={b('btn-red', isApp)}
-      style={{ padding: '5px 14px', fontSize: 12, fontWeight: 600, borderRadius: 5, border: 'none', cursor: 'pointer' }}
     >
       Elimina
     </button>
