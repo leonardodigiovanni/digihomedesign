@@ -5,6 +5,7 @@ import { getConnection } from '@/lib/db'
 import { sendSms } from '@/lib/sms'
 import { sendEmail } from '@/lib/email'
 import { readSettings } from '@/lib/settings'
+import { validatePassword } from '@/lib/password'
 
 function randomCode(): string {
   return String(Math.floor(100000 + Math.random() * 900000))
@@ -44,9 +45,8 @@ export async function startAppRegistration(
   if (password !== password2) {
     return { ok: false, error: 'Le password non coincidono.' }
   }
-  if (password.length < 8) {
-    return { ok: false, error: 'La password deve essere di almeno 8 caratteri.' }
-  }
+  const pwErr = validatePassword(password)
+  if (pwErr) return { ok: false, error: pwErr }
   if (!/^\+?[\d\s\-]{8,15}$/.test(cellulare)) {
     return { ok: false, error: 'Numero di cellulare non valido.' }
   }

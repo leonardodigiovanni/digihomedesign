@@ -4,6 +4,7 @@ import { useState, useActionState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { startAppRegistration, verifyAppPhone, resendAppPhoneCode } from './actions'
 import type { StartResult, VerifyResult } from './actions'
+import { validatePassword } from '@/lib/password'
 
 const inp: React.CSSProperties = {
   width: '100%', boxSizing: 'border-box',
@@ -135,12 +136,18 @@ export default function AppRegistrationFlow({ redirectTo }: { redirectTo: string
               Password *
             </label>
             <input name="password" type="password" required autoComplete="new-password" style={inp} value={password} onChange={e => setPassword(e.target.value)} />
+            {password && validatePassword(password) && (
+              <p style={{ margin: '4px 0 0', fontSize: 11, color: '#c00', fontFamily: 'monospace' }}>{validatePassword(password)}</p>
+            )}
           </div>
           <div>
             <label style={{ fontSize: 11, fontWeight: 600, color: '#666', fontFamily: 'monospace', textTransform: 'uppercase', display: 'block', marginBottom: 4 }}>
               Conferma password *
             </label>
             <input name="password2" type="password" required autoComplete="new-password" style={inp} value={password2} onChange={e => setPassword2(e.target.value)} />
+            {password2 && password !== password2 && (
+              <p style={{ margin: '4px 0 0', fontSize: 11, color: '#c00', fontFamily: 'monospace' }}>Le password non coincidono.</p>
+            )}
           </div>
           {startResult && !startResult.ok && (
             <p style={{ margin: 0, fontSize: 12, color: '#c00', fontFamily: 'monospace' }}>{startResult.error}</p>

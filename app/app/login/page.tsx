@@ -56,6 +56,12 @@ export default function AppLoginPage() {
           Registrati
         </Link>
       </p>
+      <p style={{ textAlign: 'center', marginTop: 10, fontSize: 13, fontFamily: 'monospace', color: '#555' }}>
+        Non ricordi le credenziali?{' '}
+        <Link href="/app/recupero-password" style={{ color: '#333', fontWeight: 700, textDecoration: 'underline' }}>
+          Recuperale
+        </Link>
+      </p>
     </div>
   )
 }
