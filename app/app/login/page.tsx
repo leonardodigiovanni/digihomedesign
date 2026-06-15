@@ -1,32 +1,42 @@
 'use client'
 
-import { useActionState, useEffect, useState } from 'react'
+import { useActionState, useCallback, useEffect, useRef, useState } from 'react'
 import { appLogin } from './actions'
 import Link from 'next/link'
 import WebAuthnLoginBtn from '../webauthn/login-btn'
 
 export default function AppLoginPage() {
   const [error, action, pending] = useActionState<string | null, FormData>(appLogin, null)
+  const [toastMsg, setToastMsg]       = useState<string | null>(null)
   const [toastVisible, setToastVisible] = useState(false)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const showToast = useCallback((msg: string) => {
+    setToastMsg(msg)
+    setToastVisible(true)
+    if (timerRef.current) clearTimeout(timerRef.current)
+    timerRef.current = setTimeout(() => setToastVisible(false), 1500)
+  }, [])
 
   useEffect(() => {
     if (!error || pending) return
-    setToastVisible(true)
-    const t = setTimeout(() => setToastVisible(false), 1000)
-    return () => clearTimeout(t)
-  }, [error, pending])
+    showToast(error)
+  }, [error, pending, showToast])
 
   return (
     <div style={{ maxWidth: 360, margin: '32px auto 0', padding: '0 8px' }}>
       <div style={{
-        position: 'fixed', top: 20, left: '50%', transform: 'translateX(-50%)',
-        background: '#c00', color: '#fff', borderRadius: 8, padding: '10px 20px',
-        fontSize: 13, fontFamily: 'monospace', zIndex: 9999, whiteSpace: 'nowrap',
-        pointerEvents: 'none',
+        position: 'fixed', top: '50%', left: '50%',
+        transform: `translate(-50%, -50%) scale(${toastVisible ? 1 : 0.92})`,
+        background: '#b00000', color: '#fff', borderRadius: 12,
+        padding: '20px 28px', fontSize: 14, fontFamily: 'monospace',
+        zIndex: 9999, pointerEvents: 'none', textAlign: 'center',
+        maxWidth: '80vw', lineHeight: 1.5,
+        boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
         opacity: toastVisible ? 1 : 0,
-        transition: 'opacity 0.4s ease',
+        transition: 'opacity 0.3s ease, transform 0.3s ease',
       }}>
-        {error}
+        {toastMsg}
       </div>
 
       <h1 className="app-welcome-title" style={{ marginBottom: 4 }}>Accedi</h1>
@@ -76,7 +86,7 @@ export default function AppLoginPage() {
         </Link>
       </p>
 
-      <WebAuthnLoginBtn />
+      <WebAuthnLoginBtn onError={showToast} />
     </div>
   )
 }
