@@ -48,3 +48,5 @@ next-env.d.ts
 
 # local uploads (production files live on Vercel Blob)
 /public/uploads/
+
+certificates

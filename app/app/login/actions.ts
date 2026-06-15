@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import { readSettings } from '@/lib/settings'
 
-const COOKIE_OPTS = { httpOnly: true, path: '/' } as const
+const COOKIE_OPTS = { httpOnly: true, path: '/', maxAge: 30 * 24 * 60 * 60, sameSite: 'lax' } as const
 
 export async function appLogin(
   _prevState: string | null,

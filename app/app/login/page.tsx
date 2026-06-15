@@ -2,8 +2,8 @@
 
 import { useActionState } from 'react'
 import { appLogin } from './actions'
-import Image from 'next/image'
 import Link from 'next/link'
+import WebAuthnLoginBtn from '../webauthn/login-btn'
 
 export default function AppLoginPage() {
   const [error, action, pending] = useActionState<string | null, FormData>(appLogin, null)
@@ -62,6 +62,8 @@ export default function AppLoginPage() {
           Recuperale
         </Link>
       </p>
+
+      <WebAuthnLoginBtn />
     </div>
   )
 }

@@ -154,8 +154,8 @@ export async function verifyAppPhone(
       await conn.commit()
 
       const cookieStore = await cookies()
-      cookieStore.set('session_user', row.username, { httpOnly: true, path: '/' })
-      cookieStore.set('session_role', 'cliente',    { httpOnly: true, path: '/' })
+      cookieStore.set('session_user', row.username, { httpOnly: true, path: '/', maxAge: 30 * 24 * 60 * 60, sameSite: 'lax' })
+      cookieStore.set('session_role', 'cliente',    { httpOnly: true, path: '/', maxAge: 30 * 24 * 60 * 60, sameSite: 'lax' })
       cookieStore.set('profilo_incompleto', '1',    { httpOnly: true, path: '/', sameSite: 'lax' })
     } catch (err) {
       await conn.rollback()

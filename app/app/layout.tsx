@@ -1,6 +1,7 @@
 ﻿import { cookies } from 'next/headers'
 import Image from 'next/image'
 import Link from 'next/link'
+import Script from 'next/script'
 import AppBottomNav from './app-bottom-nav'
 import AccediBtn from './accedi-btn'
 import InstallBtn from './install-btn'
@@ -68,7 +69,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
       {role === 'cliente' && <AvvisiNotifier />}
 
-      {manutenzione ? (
+      {manutenzione && role !== 'admin' ? (
         <div style={{
           position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 200,
           background: 'repeating-linear-gradient(135deg, rgba(0,0,0,0.08) 0px, rgba(0,0,0,0.08) 1px, transparent 1px, transparent 6px), #f5a623',
@@ -85,6 +86,12 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       ) : (
         <AppBottomNav username={username} preventivoCartCount={preventivoCartCount} acquistiCartCount={acquistiCartCount} avvisiUnreadCount={avvisiUnreadCount} manutenzione={manutenzione} />
       )}
+
+      <Script id="sw-register" strategy="afterInteractive">{`
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('/sw.js')
+        }
+      `}</Script>
 
     </div>
   )
