@@ -26,25 +26,36 @@ export default function WebAuthnLoginBtn({ onError }: Props) {
 
   if (!supported) return null
 
+  async function doAuth() {
+    const res = await getWebAuthnAuthOptions()
+    if (!res.ok) throw new Error(res.error)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const authResponse = await startAuthentication({ optionsJSON: res.options as any })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const verify = await verifyWebAuthnAuth(authResponse as any, res.challengeKey)
+    if (!verify.ok) throw new Error(verify.error)
+  }
+
   async function handleClick() {
     setLoading(true)
     try {
-      const res = await getWebAuthnAuthOptions()
-      if (!res.ok) { onError?.(res.error); return }
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const authResponse = await startAuthentication({ optionsJSON: res.options as any })
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const verify = await verifyWebAuthnAuth(authResponse as any, res.challengeKey)
-      if (!verify.ok) { onError?.(verify.error); return }
-
+      try {
+        await doAuth()
+      } catch (e: unknown) {
+        if (e instanceof Error && e.name === 'NotAllowedError') {
+          onError?.('Autenticazione annullata.')
+          return
+        }
+        // Errore transitorio (cold start FIDO2) — riprova silenziosamente
+        await doAuth()
+      }
       router.push('/app')
       router.refresh()
     } catch (e: unknown) {
       if (e instanceof Error && e.name === 'NotAllowedError') {
         onError?.('Autenticazione annullata.')
       } else {
-        onError?.('Impronta non riconosciuta o non registrata.')
+        onError?.(e instanceof Error ? e.message : 'Errore, riprova.')
       }
     } finally {
       setLoading(false)
