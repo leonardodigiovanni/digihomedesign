@@ -67,7 +67,24 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       </ActionBarProvider>
 
       {role === 'cliente' && <AvvisiNotifier />}
-      <AppBottomNav username={username} preventivoCartCount={preventivoCartCount} acquistiCartCount={acquistiCartCount} avvisiUnreadCount={avvisiUnreadCount} manutenzione={manutenzione} />
+
+      {manutenzione ? (
+        <div style={{
+          position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 200,
+          background: 'repeating-linear-gradient(135deg, rgba(0,0,0,0.08) 0px, rgba(0,0,0,0.08) 1px, transparent 1px, transparent 6px), #f5a623',
+          padding: '12px 16px',
+          textAlign: 'center',
+          fontSize: 12,
+          fontFamily: 'monospace',
+          fontWeight: 600,
+          color: '#3a1f00',
+          letterSpacing: '0.02em',
+        }}>
+          Sito in manutenzione — torna più tardi.<br />Ci scusiamo per il disagio.
+        </div>
+      ) : (
+        <AppBottomNav username={username} preventivoCartCount={preventivoCartCount} acquistiCartCount={acquistiCartCount} avvisiUnreadCount={avvisiUnreadCount} manutenzione={manutenzione} />
+      )}
 
     </div>
   )

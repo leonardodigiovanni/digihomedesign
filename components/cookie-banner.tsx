@@ -53,7 +53,7 @@ export default function CookieBanner() {
         flex: '1 1 260px', margin: 0,
         fontSize: 12, fontFamily: 'monospace', color: '#ccc', lineHeight: 1.6,
       }}>
-        Utilizziamo cookie tecnici (necessari al funzionamento) e, con il tuo consenso, cookie analitici per migliorare l&apos;esperienza.{' '}
+        I cookie tecnici sono sempre attivi perché necessari al funzionamento del sito (login, carrello, sessione). Con il tuo consenso attiviamo anche cookie analitici per migliorare l&apos;esperienza. &ldquo;Rifiuta tutto&rdquo; disattiva solo quelli opzionali.{' '}
         <Link href="/privacy-policy" style={{ color: '#c8960c', textDecoration: 'underline' }}>
           Scopri di più
         </Link>
