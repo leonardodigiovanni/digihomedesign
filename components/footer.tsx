@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import type { Rgba, BgMode } from '@/lib/settings'
+import CookiePrefsLink from './cookie-prefs-link'
 import { rgbGradient, rgbGradientInv, rgbBrushedBackground, rgbBrushedBackgroundInv, rgbBrushedBackgroundDark, rgbBrushedBackgroundDarkInv, rgbBoxShadow, rgbBorderColor, rgbTextColors } from '@/lib/bg-utils'
 
 interface FooterProps {
@@ -223,6 +224,12 @@ export default function Footer({
       <p className="testo-indice" style={{ textAlign: 'center', margin: 0, fontFamily: 'monospace', fontSize: 10 }}>
         Tutti i diritti sono riservati all&apos;autore
       </p>
+    </div>
+    <div style={{ background: '#000', borderTop: '1px solid #222', padding: '8px 24px', display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
+      <a href="/privacy-policy" style={{ fontSize: 10, fontFamily: 'monospace', color: '#666', textDecoration: 'underline' }}>
+        Privacy Policy &amp; Cookie Policy
+      </a>
+      <CookiePrefsLink />
     </div>
     </>
   )

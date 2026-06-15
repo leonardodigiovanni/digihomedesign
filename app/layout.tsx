@@ -13,6 +13,7 @@ import { decompressCart } from '@/lib/cart-cookie'
 import Image from 'next/image'
 import EmergencyLogin from '@/components/emergency-login'
 import PwaRegister from '@/components/pwa-register'
+import CookieBanner from '@/components/cookie-banner'
 import './globals.css'
 
 export const viewport: Viewport = {
@@ -298,6 +299,7 @@ export default async function RootLayout({
         {!inManutenzione && <SitemapSection disabledPages={settings.disabledPages} />}
         <Footer footerBg={settings.footerBg} footerBgMode={settings.footerBgMode} />
 
+        <CookieBanner />
         <EmergencyLogin inManutenzione={inManutenzione} />
         <PwaRegister />
 

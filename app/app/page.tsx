@@ -7,8 +7,13 @@ export default async function AppHomePage() {
   const username = cookieStore.get('session_user')?.value ?? null
   const { manutenzione } = await readSettings()
   return (
-    <div style={{ marginLeft: 3, marginRight: 3 }}>
+    <div style={{ marginLeft: 3, marginRight: 3, paddingBottom: 8 }}>
       <HomeCards loggedIn={!!username} manutenzione={manutenzione} />
+      <p style={{ textAlign: 'center', marginTop: 24, paddingBottom: 8 }}>
+        <a href="/app/privacy-policy" style={{ fontSize: 10, fontFamily: 'monospace', color: '#888', textDecoration: 'underline' }}>
+          Privacy Policy &amp; Cookie Policy
+        </a>
+      </p>
     </div>
   )
 }
