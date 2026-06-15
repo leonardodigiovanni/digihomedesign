@@ -3,6 +3,7 @@
 import { useActionState } from 'react'
 import { appLogin } from './actions'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export default function AppLoginPage() {
   const [error, action, pending] = useActionState<string | null, FormData>(appLogin, null)
@@ -48,6 +49,13 @@ export default function AppLoginPage() {
           {pending ? 'Accesso in corso…' : 'Accedi'}
         </button>
       </form>
+
+      <p style={{ textAlign: 'center', marginTop: 24, fontSize: 13, fontFamily: 'monospace', color: '#555' }}>
+        Non hai un account?{' '}
+        <Link href="/app/registrazione" style={{ color: '#333', fontWeight: 700, textDecoration: 'underline' }}>
+          Registrati
+        </Link>
+      </p>
     </div>
   )
 }

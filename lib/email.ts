@@ -14,7 +14,7 @@ function createTransport() {
 
 export async function sendEmail(to: string, subject: string, html: string, cc?: string) {
   if (!process.env.SMTP_HOST) {
-    console.log(`\n📧 EMAIL a ${to}${cc ? ` (CC: ${cc})` : ''}\nOggetto: ${subject}\n${html}\n`)
+    console.log(`\n📧 EMAIL (no SMTP config) a ${to}\nOggetto: ${subject}\n${html}\n`)
     return
   }
   const transporter = createTransport()

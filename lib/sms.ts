@@ -2,8 +2,7 @@ export async function sendSms(to: string, message: string) {
   const { TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_FROM } = process.env
 
   if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_FROM) {
-    // Sviluppo: stampa in console
-    console.log(`\n📱 SMS a ${to}\n${message}\n`)
+    console.log(`\n📱 SMS (no Twilio config) a ${to}\n${message}\n`)
     return
   }
 
