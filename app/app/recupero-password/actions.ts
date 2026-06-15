@@ -25,7 +25,7 @@ export type AvviaResult =
   | { ok: true; pendingId: number }
   | { ok: false; error: string }
 
-export type VerificaResult = { ok: true } | { ok: false; error: string }
+export type VerificaResult = { ok: true; username?: string } | { ok: false; error: string }
 
 // ─── Step 1: cerca utente per cellulare, invia OTP ───────────────────────────
 
@@ -73,12 +73,12 @@ export async function verificaRecupero(pendingId: number, code: string): Promise
   try {
     await ensureTable(conn)
     const [rows] = await conn.execute(
-      'SELECT phone_code, expires_at FROM recupero_password WHERE id = ?', [pendingId]
-    ) as [{ phone_code: string; expires_at: Date }[], unknown]
+      'SELECT username, phone_code, expires_at FROM recupero_password WHERE id = ?', [pendingId]
+    ) as [{ username: string; phone_code: string; expires_at: Date }[], unknown]
     if (rows.length === 0) return { ok: false, error: 'Sessione non trovata.' }
     if (new Date() > new Date(rows[0].expires_at)) return { ok: false, error: 'Codice scaduto.' }
     if (rows[0].phone_code !== code.trim()) return { ok: false, error: 'Codice non corretto.' }
-    return { ok: true }
+    return { ok: true, username: rows[0].username }
   } finally {
     await conn.end()
   }

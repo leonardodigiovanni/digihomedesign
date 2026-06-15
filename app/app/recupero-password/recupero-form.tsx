@@ -23,6 +23,7 @@ export default function RecuperoForm() {
   const router = useRouter()
   const [phase, setPhase] = useState<Phase>('cellulare')
   const [pendingId, setPendingId] = useState<number | null>(null)
+  const [username, setUsername] = useState('')
 
   const [celInput, setCelInput] = useState('')
 
@@ -57,6 +58,7 @@ export default function RecuperoForm() {
     startOtpT(async () => {
       const res = await verificaRecupero(pendingId, otpCode)
       if (res.ok) {
+        if (res.username) setUsername(res.username)
         setPhase('password')
       } else {
         setOtpError(res.error)
@@ -107,6 +109,12 @@ export default function RecuperoForm() {
           Scegli una password con almeno 8 caratteri, una maiuscola, una minuscola, un numero e un simbolo.
         </p>
         <form onSubmit={handlePassword} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {username && (
+            <div>
+              <label style={lbl}>Username</label>
+              <input type="text" value={username} disabled style={{ ...inp, background: '#f0f0f0', color: '#888', cursor: 'not-allowed' }} />
+            </div>
+          )}
           <div>
             <label style={lbl}>Nuova password *</label>
             <input
