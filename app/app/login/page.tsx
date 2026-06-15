@@ -1,23 +1,38 @@
 'use client'
 
-import { useActionState } from 'react'
+import { useActionState, useEffect, useRef, useState } from 'react'
 import { appLogin } from './actions'
 import Link from 'next/link'
 import WebAuthnLoginBtn from '../webauthn/login-btn'
 
 export default function AppLoginPage() {
   const [error, action, pending] = useActionState<string | null, FormData>(appLogin, null)
+  const [toastVisible, setToastVisible] = useState(false)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    if (!error) return
+    setToastVisible(true)
+    if (timerRef.current) clearTimeout(timerRef.current)
+    timerRef.current = setTimeout(() => setToastVisible(false), 1000)
+    return () => { if (timerRef.current) clearTimeout(timerRef.current) }
+  }, [error])
 
   return (
     <div style={{ maxWidth: 360, margin: '32px auto 0', padding: '0 8px' }}>
+      <div style={{
+        position: 'fixed', top: 20, left: '50%', transform: 'translateX(-50%)',
+        background: '#c00', color: '#fff', borderRadius: 8, padding: '10px 20px',
+        fontSize: 13, fontFamily: 'monospace', zIndex: 9999, whiteSpace: 'nowrap',
+        pointerEvents: 'none',
+        opacity: toastVisible ? 1 : 0,
+        transition: 'opacity 0.4s ease',
+      }}>
+        {error}
+      </div>
+
       <h1 className="app-welcome-title" style={{ marginBottom: 4 }}>Accedi</h1>
       <p className="app-welcome-sub" style={{ marginBottom: 28 }}>Inserisci le tue credenziali per continuare.</p>
-
-      {error && (
-        <div className="app-card" style={{ background: '#fff0f0', border: '1px solid #f5c6c6', marginBottom: 16 }}>
-          <p className="app-card-body" style={{ color: '#c00', margin: 0 }}>{error}</p>
-        </div>
-      )}
 
       <form action={action} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
         <div>
