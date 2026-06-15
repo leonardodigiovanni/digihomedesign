@@ -11,6 +11,7 @@ import type { RegistrationResponseJSON, AuthenticationResponseJSON } from '@simp
 type OptionsJSON = Record<string, any>
 import { getConnection } from '@/lib/db'
 import { cookies } from 'next/headers'
+import { readSettings } from '@/lib/settings'
 import crypto from 'crypto'
 
 const IS_PROD = process.env.NODE_ENV === 'production'
@@ -225,9 +226,17 @@ export async function verifyWebAuthnAuth(
     ) as [{ role: string }[], unknown]
     if (userRows.length === 0) return { ok: false, error: 'Utente non trovato.' }
 
+    const role = userRows[0].role
+    if (role !== 'admin') {
+      const { manutenzione, loginClientiDisabilitato, loginDipendentiDisabilitato } = await readSettings()
+      if (manutenzione) return { ok: false, error: 'Sito in manutenzione — accesso riservato agli amministratori.' }
+      if (role === 'cliente' && loginClientiDisabilitato) return { ok: false, error: 'Il login per i clienti è temporaneamente disabilitato.' }
+      if (role !== 'cliente' && loginDipendentiDisabilitato) return { ok: false, error: 'Il login per i dipendenti è temporaneamente disabilitato.' }
+    }
+
     const cookieStore = await cookies()
     cookieStore.set('session_user', stored.username, SESSION_OPTS)
-    cookieStore.set('session_role', userRows[0].role, SESSION_OPTS)
+    cookieStore.set('session_role', role, SESSION_OPTS)
 
     return { ok: true }
   } catch (e) {
