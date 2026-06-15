@@ -28,7 +28,6 @@ export default function WebAuthnLoginBtn({ onError }: Props) {
 
   async function handleClick() {
     setLoading(true)
-    setError(null)
     try {
       const res = await getWebAuthnAuthOptions()
       if (!res.ok) { onError?.(res.error); return }
