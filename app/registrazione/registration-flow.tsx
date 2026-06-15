@@ -1,6 +1,7 @@
 'use client'
 
 import { useActionState, useTransition, useState, useEffect } from 'react'
+import { validatePassword } from '@/lib/password'
 import {
   startRegistration,
   verifyEmail,
@@ -145,13 +146,18 @@ function Step1({ onSuccess, isApp }: { onSuccess: (id: number) => void; isApp?: 
           <input name="cellulare" type="tel" required placeholder="+39 333 1234567" style={input} />
         </label>
         <label style={label}>
-          Password *{' '}
-          <span style={{ fontWeight: 400, color: '#888' }}>(min. 8 caratteri)</span>
-          <input name="password" type="password" required minLength={8} style={input} autoComplete="new-password" />
+          Password *
+          <input name="password" type="password" required style={input} autoComplete="new-password"
+            onChange={e => {
+              const el = e.currentTarget.parentElement?.querySelector('.pw-hint') as HTMLElement | null
+              if (el) el.textContent = validatePassword(e.target.value) ?? ''
+            }}
+          />
+          <span className="pw-hint" style={{ fontSize: 11, color: '#c00', marginTop: 2, display: 'block', minHeight: 16 }}></span>
         </label>
         <label style={label}>
           Conferma password *
-          <input name="password2" type="password" required minLength={8} style={input} autoComplete="new-password" />
+          <input name="password2" type="password" required style={input} autoComplete="new-password" />
         </label>
 
         {state && !state.ok && <div style={errorBox}>{state.error}</div>}

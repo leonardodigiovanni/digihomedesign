@@ -5,6 +5,7 @@ import { getConnection } from '@/lib/db'
 import { sendEmail } from '@/lib/email'
 import { sendSms } from '@/lib/sms'
 import { readSettings } from '@/lib/settings'
+import { validatePassword } from '@/lib/password'
 
 function randomCode(): string {
   return String(Math.floor(100000 + Math.random() * 900000))
@@ -47,9 +48,8 @@ export async function startRegistration(
   if (password !== password2) {
     return { ok: false, error: 'Le password non coincidono.' }
   }
-  if (password.length < 8) {
-    return { ok: false, error: 'La password deve essere di almeno 8 caratteri.' }
-  }
+  const pwErr = validatePassword(password)
+  if (pwErr) return { ok: false, error: pwErr }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return { ok: false, error: 'Indirizzo email non valido.' }
   }
