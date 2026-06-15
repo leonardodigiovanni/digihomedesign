@@ -17,7 +17,7 @@ export default function WebAuthnLoginBtn() {
     setSupported(
       typeof window !== 'undefined' &&
       typeof window.PublicKeyCredential !== 'undefined' &&
-      localStorage.getItem('wa_registered') === '1'
+      Object.keys(localStorage).some(k => k.startsWith('wa_registered_'))
     )
   }, [])
 
@@ -61,15 +61,12 @@ export default function WebAuthnLoginBtn() {
         onClick={handleClick}
         disabled={loading}
         className={loading ? 'btn-gray-app' : 'btn-green-app'}
-        style={{ gap: 10, color: '#fff', alignSelf: 'center' }}
+        style={{ gap: 10, color: '#fff', width: '100%' }}
       >
         {loading ? 'Verifica in corso…' : 'Accedi con biometrico'}
         <FingerprintIcon size={26} color="#fff" />
         <FaceIcon size={26} color="#fff" />
       </button>
-      <p style={{ textAlign: 'center', fontSize: 11, color: '#aaa', fontFamily: 'monospace', marginTop: 6 }}>
-        Usa il biometrico del tuo dispositivo
-      </p>
     </div>
   )
 }

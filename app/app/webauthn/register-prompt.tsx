@@ -26,6 +26,13 @@ export default function WebAuthnRegisterPrompt({ username, hasCredential }: Prop
     )
   }, [])
 
+  // Ripristina il flag localStorage dopo una reinstallazione dell'app
+  useEffect(() => {
+    if (supported && hasCredential) {
+      localStorage.setItem('wa_registered_' + username, '1')
+    }
+  }, [supported, hasCredential, username])
+
   // Sparisce su qualsiasi interazione fuori dal banner (scroll, tap, click)
   useEffect(() => {
     if (!supported || hasCredential || dismissed || done) return
@@ -67,7 +74,7 @@ export default function WebAuthnRegisterPrompt({ username, hasCredential }: Prop
       const verify = await verifyWebAuthnReg(regResponse as any, res.challengeKey)
       if (!verify.ok) { setError(verify.error); return }
 
-      localStorage.setItem('wa_registered', '1')
+      localStorage.setItem('wa_registered_' + username, '1')
       setDone(true)
     } catch (e: unknown) {
       if (e instanceof Error && e.name === 'NotAllowedError') {
