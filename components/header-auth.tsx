@@ -122,6 +122,13 @@ export function DropdownLoginForm({ registrazioniDisabilitate, redirectTo, isApp
           </a>
         </>
       )}
+      <hr style={{ border: 'none', borderTop: '1px solid #eee', margin: '2px 0' }} />
+      <a
+        href={isApp ? '/app/recupero-password' : '/recupero-password'}
+        style={{ fontSize: 12, color: '#555', textDecoration: 'none', textAlign: 'center', fontFamily: 'monospace' }}
+      >
+        Non ricordi le credenziali? <strong>Recuperale</strong>
+      </a>
     </form>
   )
 }
