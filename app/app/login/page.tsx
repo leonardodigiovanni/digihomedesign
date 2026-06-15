@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState, useEffect, useRef, useState } from 'react'
+import { useActionState, useEffect, useState } from 'react'
 import { appLogin } from './actions'
 import Link from 'next/link'
 import WebAuthnLoginBtn from '../webauthn/login-btn'
@@ -8,15 +8,13 @@ import WebAuthnLoginBtn from '../webauthn/login-btn'
 export default function AppLoginPage() {
   const [error, action, pending] = useActionState<string | null, FormData>(appLogin, null)
   const [toastVisible, setToastVisible] = useState(false)
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
-    if (!error) return
+    if (!error || pending) return
     setToastVisible(true)
-    if (timerRef.current) clearTimeout(timerRef.current)
-    timerRef.current = setTimeout(() => setToastVisible(false), 1000)
-    return () => { if (timerRef.current) clearTimeout(timerRef.current) }
-  }, [error])
+    const t = setTimeout(() => setToastVisible(false), 1000)
+    return () => clearTimeout(t)
+  }, [error, pending])
 
   return (
     <div style={{ maxWidth: 360, margin: '32px auto 0', padding: '0 8px' }}>
