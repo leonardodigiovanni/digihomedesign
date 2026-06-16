@@ -11,9 +11,9 @@ export default function ManutenzioneWatcher({ manutenzione: initial, role }: { m
         const res = await fetch('/api/manutenzione/status', { cache: 'no-store' })
         const { manutenzione } = await res.json() as { manutenzione: boolean }
 
-        // Manutenzione appena attivata → forza logout e redirect a home
+        // Manutenzione appena attivata → logout via route handler (cancella cookie) poi home
         if (manutenzione && role && role !== 'admin') {
-          window.location.href = '/'
+          window.location.href = '/api/manutenzione/logout'
           return
         }
 
