@@ -306,7 +306,7 @@ export default async function RootLayout({
         <Footer footerBg={settings.footerBg} footerBgMode={settings.footerBgMode} />
 
         <CookieBanner />
-        <ManutenzioneWatcher manutenzione={settings.manutenzione} role={role} />
+        <ManutenzioneWatcher manutenzione={settings.manutenzione} role={role ?? ''} />
         <EmergencyLogin inManutenzione={inManutenzione} />
         <PwaRegister />
 
