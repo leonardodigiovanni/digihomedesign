@@ -222,6 +222,11 @@ export default async function RootLayout({
 
   const inManutenzione = settings.manutenzione && role !== 'admin'
 
+  if (inManutenzione && role) {
+    cookieStore.delete('session_user')
+    cookieStore.delete('session_role')
+  }
+
   const bannerDur      = Math.max(26, Math.round(settings.bannerTesto.length * 0.23))
   const bannerPausePct = Math.round((1 - 1 / bannerDur) * 100)
   const bannerCircolare = settings.bannerCircolare
