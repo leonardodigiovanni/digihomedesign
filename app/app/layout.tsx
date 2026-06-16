@@ -11,6 +11,7 @@ import AvvisiNotifier from '@/components/avvisi-notifier'
 import { decompressCart } from '@/lib/cart-cookie'
 import { getConnection } from '@/lib/db'
 import { readSettings } from '@/lib/settings'
+import ManutenzioneWatcher from '@/components/manutenzione-watcher'
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies()
@@ -26,16 +27,12 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     const db = await getConnection()
     try {
       const [uRows] = await db.execute(
-        'SELECT email FROM users WHERE username = ? LIMIT 1', [username]
-      ) as [{ email: string }[], unknown]
-      const email = uRows[0]?.email ?? ''
-      if (email) {
-        const [cRows] = await db.execute('SELECT id FROM clienti WHERE email = ? LIMIT 1', [email]) as [{ id: number }[], unknown]
-        const clienteId = cRows[0]?.id
-        if (clienteId) {
-          const [cnt] = await db.execute('SELECT COUNT(*) AS n FROM avvisi WHERE cliente_id = ? AND letto = 0 AND cestinato = 0', [clienteId]) as [{ n: number }[], unknown]
-          avvisiUnreadCount = Number(cnt[0]?.n ?? 0)
-        }
+        'SELECT cliente_id FROM users WHERE username = ? LIMIT 1', [username]
+      ) as [{ cliente_id: number | null }[], unknown]
+      const clienteId = uRows[0]?.cliente_id ?? null
+      if (clienteId) {
+        const [cnt] = await db.execute('SELECT COUNT(*) AS n FROM avvisi WHERE cliente_id = ? AND letto = 0 AND cestinato = 0', [clienteId]) as [{ n: number }[], unknown]
+        avvisiUnreadCount = Number(cnt[0]?.n ?? 0)
       }
     } catch {}
     finally { await db.end() }
@@ -68,6 +65,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       </ActionBarProvider>
 
       {role === 'cliente' && <AvvisiNotifier />}
+      <ManutenzioneWatcher manutenzione={manutenzione} role={role} />
 
       {manutenzione && role !== 'admin' ? (
         <div style={{

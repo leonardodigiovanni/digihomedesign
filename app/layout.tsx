@@ -14,6 +14,7 @@ import Image from 'next/image'
 import EmergencyLogin from '@/components/emergency-login'
 import PwaRegister from '@/components/pwa-register'
 import CookieBanner from '@/components/cookie-banner'
+import ManutenzioneWatcher from '@/components/manutenzione-watcher'
 import './globals.css'
 
 export const viewport: Viewport = {
@@ -305,6 +306,7 @@ export default async function RootLayout({
         <Footer footerBg={settings.footerBg} footerBgMode={settings.footerBgMode} />
 
         <CookieBanner />
+        <ManutenzioneWatcher manutenzione={settings.manutenzione} role={role} />
         <EmergencyLogin inManutenzione={inManutenzione} />
         <PwaRegister />
 
