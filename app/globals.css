@@ -1788,11 +1788,11 @@ body {
   padding: 20px 0 24px;
 }
 
-/* Sfondo oro spazzolato — zona link/redirect fissa sopra il footer */
+/* Sfondo grigio — zona link/redirect fissa sopra il footer */
 .sfondo-redirect-app {
   background:
     repeating-linear-gradient(135deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 1px, transparent 6px),
-    #fef3b0;
+    #e0e0e0;
 }
 
 /* Sfondo spazzolato grigio — usato su riquadri, righe tabella, card interne */
