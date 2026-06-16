@@ -10,11 +10,8 @@ export async function GET() {
 
   const db = await getConnection()
   try {
-    const [uRows] = await db.query('SELECT email FROM users WHERE username = ? LIMIT 1', [username]) as [{ email: string }[], unknown]
-    const email = uRows[0]?.email ?? ''
-    if (!email) return NextResponse.json({ avviso: null })
-    const [cRows] = await db.query('SELECT id FROM clienti WHERE email = ? LIMIT 1', [email]) as [{ id: number }[], unknown]
-    const clienteId = cRows[0]?.id ?? null
+    const [uRows] = await db.query('SELECT cliente_id FROM users WHERE username = ? LIMIT 1', [username]) as [{ cliente_id: number | null }[], unknown]
+    const clienteId = uRows[0]?.cliente_id ?? null
     if (!clienteId) return NextResponse.json({ avviso: null })
     const [rows] = await db.query(
       'SELECT id, oggetto, testo FROM avvisi WHERE cliente_id = ? AND letto = 0 AND cestinato = 0 ORDER BY created_at DESC LIMIT 1',

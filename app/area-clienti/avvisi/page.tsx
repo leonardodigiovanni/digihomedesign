@@ -44,11 +44,8 @@ export default async function Page() {
       `) as [Record<string, unknown>[], unknown]
       avvisi = (rows as Record<string, unknown>[]).map(r => ({ ...r, created_at: dateToLocal(r.created_at) })) as Avviso[]
     } else {
-      const [uRows] = await db.execute('SELECT email FROM users WHERE username = ? LIMIT 1', [username]) as [{ email: string }[], unknown]
-      const email = uRows[0]?.email ?? ''
-      if (!email) return <p>Utente non trovato.</p>
-      const [cRows] = await db.execute('SELECT id FROM clienti WHERE email = ? LIMIT 1', [email]) as [{ id: number }[], unknown]
-      const clienteId = cRows[0]?.id ?? null
+      const [uRows] = await db.execute('SELECT cliente_id FROM users WHERE username = ? LIMIT 1', [username]) as [{ cliente_id: number | null }[], unknown]
+      const clienteId = uRows[0]?.cliente_id ?? null
       if (clienteId) {
         const [rows] = await db.query(
           `SELECT a.*, '' AS cliente_nome FROM avvisi a WHERE a.cliente_id = ? AND a.cestinato = 0 ORDER BY a.created_at DESC`,
