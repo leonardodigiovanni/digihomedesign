@@ -5,5 +5,7 @@ export async function GET(request: Request) {
   const cookieStore = await cookies()
   cookieStore.delete('session_user')
   cookieStore.delete('session_role')
-  return NextResponse.redirect(new URL('/', request.url))
+  const { searchParams } = new URL(request.url)
+  const dest = searchParams.get('dest') ?? '/'
+  return NextResponse.redirect(new URL(dest, request.url))
 }

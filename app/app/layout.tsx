@@ -65,7 +65,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       </ActionBarProvider>
 
       {role === 'cliente' && <AvvisiNotifier />}
-      <ManutenzioneWatcher manutenzione={manutenzione} role={role} />
+      <ManutenzioneWatcher manutenzione={manutenzione} role={role} dest="/app" />
 
       {manutenzione && role !== 'admin' ? (
         <div style={{

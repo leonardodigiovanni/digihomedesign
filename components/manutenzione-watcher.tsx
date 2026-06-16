@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 
-export default function ManutenzioneWatcher({ manutenzione: initial, role }: { manutenzione: boolean; role: string }) {
+export default function ManutenzioneWatcher({ manutenzione: initial, role, dest = '/' }: { manutenzione: boolean; role: string; dest?: string }) {
   const lastSeen = useRef(initial)
 
   useEffect(() => {
@@ -13,7 +13,7 @@ export default function ManutenzioneWatcher({ manutenzione: initial, role }: { m
 
         // Manutenzione appena attivata → logout via route handler (cancella cookie) poi home
         if (manutenzione && role && role !== 'admin') {
-          window.location.href = '/api/manutenzione/logout'
+          window.location.href = `/api/manutenzione/logout?dest=${encodeURIComponent(dest)}`
           return
         }
 
