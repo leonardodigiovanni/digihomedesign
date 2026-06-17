@@ -49,21 +49,21 @@ export default async function AppPage() {
             </div>
           </div>
           <div className="page-card app-foto-card" style={{ boxShadow: '0 6px 22px rgba(0,0,0,0.2)' }}>
+            <Image src="/images/app/lavori-cantiere.jpg" alt="Lista cantieri" width={280} height={600} style={{ width: '100%', height: 'auto', display: 'block' }} />
+            <div style={{ padding: '8px 12px 10px' }}>
+              <span className="testo-articoli">Lista cantieri</span>
+            </div>
+          </div>
+          <div className="page-card app-foto-card" style={{ boxShadow: '0 8px 28px rgba(0,0,0,0.25)' }}>
             <Image src="/images/app/foto-cantiere.jpg" alt="Cantiere in tempo reale" width={280} height={600} style={{ width: '100%', height: 'auto', display: 'block' }} />
             <div style={{ padding: '8px 12px 10px' }}>
               <span className="testo-articoli">Cantiere in tempo reale</span>
             </div>
           </div>
-          <div className="page-card app-foto-card" style={{ boxShadow: '0 8px 28px rgba(0,0,0,0.25)' }}>
+          <div className="page-card app-foto-card" style={{ boxShadow: '0 6px 22px rgba(0,0,0,0.2)' }}>
             <Image src="/images/app/avvisi.jpg" alt="Avvisi e notifiche" width={280} height={600} style={{ width: '100%', height: 'auto', display: 'block' }} />
             <div style={{ padding: '8px 12px 10px' }}>
               <span className="testo-articoli">Avvisi e notifiche</span>
-            </div>
-          </div>
-          <div className="page-card app-foto-card" style={{ boxShadow: '0 6px 22px rgba(0,0,0,0.2)' }}>
-            <Image src="/images/app/lavori-cantiere.jpg" alt="Lavori in cantiere" width={280} height={600} style={{ width: '100%', height: 'auto', display: 'block' }} />
-            <div style={{ padding: '8px 12px 10px' }}>
-              <span className="testo-articoli">Lavori in cantiere</span>
             </div>
           </div>
         </div>
