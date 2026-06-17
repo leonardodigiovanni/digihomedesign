@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import type { Metadata } from 'next'
 import StampaClient, { type StampaData, type StampaBlock } from './stampa-client'
+import { readSettings, type AppSettings } from '@/lib/settings'
+import { rgbGradient, rgbGradientInv, rgbBrushedBackground, rgbBrushedBackgroundInv, rgbGradientDark, rgbGradientDarkInv } from '@/lib/bg-utils'
 import { extractAvgColor } from '@/lib/extract-color'
 import { COND_PREV_OUTER_STYLE, COND_PREV_TITLE_HTML, condizioniPreventivoArticles } from '@/lib/templates/condizioni-preventivo'
 import { COND_VEND_OUTER_STYLE, COND_VEND_TITLE_HTML, condizioniVenditaArticles } from '@/lib/templates/condizioni-vendita'
@@ -772,6 +774,274 @@ function caratteristicheWrapperHTML(children: Record<string, unknown>[], parentP
 </div>`
 }
 
+// ─── Cover pages (stampa con pubblicità) ─────────────────────────────────────
+
+function _h2(n: number): string { return Math.max(0, Math.min(255, Math.round(n))).toString(16).padStart(2, '0') }
+
+function bgInlineCss(mode: string, bg: { r: number; g: number; b: number; a: number }): string {
+  const { r, g, b, a } = bg
+  switch (mode) {
+    case 'rgb':              return `rgba(${r},${g},${b},${a/100})`
+    case 'rgb_a': case 'rgb_b': return rgbGradient(r, g, b)
+    case 'rgb_a_inv': case 'rgb_b_inv': return rgbGradientInv(r, g, b)
+    case 'rgb_c':            return rgbBrushedBackground(r, g, b)
+    case 'rgb_c_inv':        return rgbBrushedBackgroundInv(r, g, b)
+    case 'rgb_d':            return rgbGradientDark(r, g, b)
+    case 'rgb_d_inv':        return rgbGradientDarkInv(r, g, b)
+    case 'gold_a': case 'gold_b': case 'gold_c': case 'gold_d':
+      return 'linear-gradient(135deg,#b89030 0%,#c8960c 18%,#f5d060 38%,#f0c840 50%,#f5d060 62%,#c8960c 82%,#b89030 100%)'
+    case 'gold_a_inv': case 'gold_b_inv': case 'gold_c_inv': case 'gold_d_inv':
+      return 'linear-gradient(135deg,#f5d060 0%,#c8960c 18%,#b89030 38%,#b89030 62%,#c8960c 82%,#f5d060 100%)'
+    case 'silver_a': case 'silver_b': case 'silver_c': case 'silver_d':
+      return 'linear-gradient(135deg,#787878 0%,#8a8a8a 18%,#cccccc 38%,#c8c8c8 50%,#cccccc 62%,#8a8a8a 82%,#787878 100%)'
+    case 'silver_a_inv': case 'silver_b_inv': case 'silver_c_inv': case 'silver_d_inv':
+      return 'linear-gradient(135deg,#cccccc 0%,#8a8a8a 18%,#787878 38%,#787878 62%,#8a8a8a 82%,#cccccc 100%)'
+    default: return `rgba(${r},${g},${b},${a/100})`
+  }
+}
+
+function bgTextColor(mode: string, bg: { r: number; g: number; b: number }): string {
+  const { r, g, b } = bg
+  if (mode.startsWith('rgb')) {
+    const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+    return lum > 0.5 ? '#1a1a1a' : '#ffffff'
+  }
+  return '#1a1a1a'
+}
+
+function volantinoSubBg(): string {
+  const r = 90, g = 0, b = 25
+  const dark  = `#${_h2(r*0.35)}${_h2(g*0.35)}${_h2(b*0.35)}`
+  const mid   = `#${_h2(r*0.65)}${_h2(g*0.65)}${_h2(b*0.65)}`
+  const base  = `#${_h2(r)}${_h2(g)}${_h2(b)}`
+  const light = `#${_h2(r+(255-r)*0.22)}${_h2(g+(255-g)*0.22)}${_h2(b+(255-b)*0.22)}`
+  return [
+    'repeating-linear-gradient(60deg,rgba(0,0,0,0.05) 0px,rgba(0,0,0,0.05) 1px,transparent 1px,transparent 6px)',
+    `linear-gradient(135deg,${dark} 0%,${mid} 18%,${base} 35%,${light} 45%,${light} 55%,${base} 65%,${mid} 82%,${dark} 100%)`,
+  ].join(',')
+}
+
+function buildVolantinoCoverHtml(settings: AppSettings): string {
+  const AH = 1123
+  const HH = Math.round(10  / 29.7 * AH)  // 378
+  const HS = Math.round(3   / 29.7 * AH)  // 113
+  const HP = Math.round(8   / 29.7 * AH)  // 302
+  const HF = Math.round(6.3 / 29.7 * AH)  // 238
+  const HZ = AH - HH - HS - HP - HF       // 92
+
+  const pageBgCss   = bgInlineCss(settings.pageBgMode,   settings.pageBg)
+  const footerBgCss = bgInlineCss(settings.footerBgMode, settings.footerBg)
+  const pageText    = bgTextColor(settings.pageBgMode,   settings.pageBg)
+  const footerText  = bgTextColor(settings.footerBgMode, settings.footerBg)
+
+  const col1 = ['PROGETTO - ADEMPIMENTI','DEMOLIZIONI - OPERE MURARIE','TRAMEZZATURE - INTONACI','MASSETTI - TRACCE','ISOLAMENTI TERMICI','ISOLAMENTI ACUSTICI','PAVIMENTI - PIASTRELLE','SANITARI - BOX DOCCIA','TETTI - IMPERMEABILIZZAZIONI','TINTEGGIATURA - ANTIMUFFA','SMALTIMENTO CALCINACCI','IMPIANTI IDRAULICI','IRRIGAZIONE - ALLACCI','IMPIANTI ELETTRICI']
+  const col2 = ['ILLUMINAZIONE','PORTE CORAZZATE RIV.LEGNO','PORTE CORAZZATE RIV.ALLUMINIO','ARMADI BLINDATI - CASSEFORTI','INFISSI ALLUMINIO-PVC-LEGNO','PORTE INTERNE - A SCOMPARSA','PERSIANE - SCURETTI','VENEZIANE - IMBOTTI','AVVOLGIBILI (MOTORIZZATI)','VETRATE - LUCERNAI','CANCELLI - RECINZIONI','BALCONI - STRUTTURE METALLICHE','SARACINESCHE (MOTORIZZATE)','PITTURAZIONI - INDORATURA']
+  const col3 = ['VERANDE - TETTOIE','ZANZARIERE','CLIMATIZZAZIONE','CALDAIE - POMPE DI CALORE','PANNELLI SOLARI','DOMOTICA - VIDEOSORVEGLIANZA','CUCINE - ELETTRODOMESTICI','MOBILI - DIVANI - QUADRI','COMPLEMENTI - DECORAZIONI','MONTAGGIO - RIPARAZIONI','MANUTENZIONE PERIODICA','TENDAGGI - DECORAZIONI','PISCINE - SOLARIUM','PULIZIA FINALE/PERIODICA']
+
+  const col = (items: string[]) => items.map(it =>
+    `<div style="font-size:13px;font-weight:700;letter-spacing:0.03em;color:${pageText};line-height:1.3;text-align:center;">${it}</div>`
+  ).join('')
+
+  return (
+    `<div style="width:794px;height:1123px;position:relative;overflow:hidden;font-family:'Times New Roman',Times,serif;box-sizing:border-box;">` +
+    `<div style="width:100%;height:${HH}px;position:relative;overflow:hidden;">` +
+      `<img src="/images/volantino/chiave.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"/>` +
+      `<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:${Math.round(HH*0.04)}px;gap:1px;">` +
+        `<img src="/images/icons/DIGI-HOME-DESIGN-APP.png" alt="logo" style="height:${Math.round(HH*0.30)}px;width:auto;"/>` +
+        `<img src="/images/volantino/nome_tr.png" alt="" style="height:${Math.round(HH*0.07)}px;width:auto;"/>` +
+      `</div>` +
+    `</div>` +
+    `<div style="width:100%;height:${HS}px;background:${volantinoSubBg()};display:flex;align-items:center;justify-content:center;padding:12px 24px;box-sizing:border-box;">` +
+      `<div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px;">` +
+        `<div style="font-size:22px;font-weight:900;letter-spacing:0.06em;color:#fff;text-transform:uppercase;line-height:1;text-shadow:2px 2px 6px rgba(0,0,0,0.6);">COSTRUZIONI E RISTRUTTURAZIONI COMPLETE</div>` +
+        `<div style="font-size:38px;font-weight:900;letter-spacing:0.12em;color:#fff;text-transform:uppercase;text-shadow:2px 2px 0 rgba(0,0,0,0.35);line-height:1;">CHIAVI IN MANO</div>` +
+        `<div style="font-size:22px;font-weight:700;font-style:italic;color:#fff;text-shadow:1px 1px 5px rgba(0,0,0,0.5);">Un solo referente che può occuparsi di tutto al posto tuo...</div>` +
+      `</div>` +
+    `</div>` +
+    `<div style="width:100%;height:${HP}px;background:${pageBgCss};box-sizing:border-box;display:flex;">` +
+      `<div style="flex:1;display:flex;flex-direction:column;justify-content:space-evenly;padding:2px 8px;">${col(col1)}</div>` +
+      `<div style="width:1px;background:rgba(0,0,0,0.15);margin:10px 0;"></div>` +
+      `<div style="flex:1;display:flex;flex-direction:column;justify-content:space-evenly;padding:2px 8px;">${col(col2)}</div>` +
+      `<div style="width:1px;background:rgba(0,0,0,0.15);margin:10px 0;"></div>` +
+      `<div style="flex:1;display:flex;flex-direction:column;justify-content:space-evenly;padding:2px 8px;">${col(col3)}</div>` +
+    `</div>` +
+    `<div style="width:100%;height:${HF}px;background:${footerBgCss};position:relative;">` +
+      `<div style="position:absolute;top:10px;left:0;right:0;text-align:center;font-size:20px;font-weight:900;color:${footerText};letter-spacing:0.08em;text-transform:uppercase;line-height:1.25;text-shadow:1px 1px 3px rgba(0,0,0,0.2);">Servizi Gratuiti Pensati Per Te<br/>Disponibili su Sito e App</div>` +
+      `<div style="position:absolute;top:80px;bottom:10px;left:50%;transform:translateX(-50%);width:2px;background:rgba(0,0,0,0.25);border-radius:1px;"></div>` +
+      `<div style="position:absolute;top:70px;left:28%;right:51%;text-align:center;font-size:13px;font-weight:700;color:${footerText};letter-spacing:0.04em;text-transform:uppercase;line-height:1.6;">Calcola il tuo preventivo in autonomia per l&apos;acquisto di serramenti. Basta scegliere modello, colore, misure</div>` +
+      `<img src="/images/volantino/mano-t.png" alt="" style="position:absolute;left:0;bottom:-4px;height:${Math.round(HF*1.05)}px;width:auto;"/>` +
+      `<div style="position:absolute;top:70px;left:51%;right:26%;text-align:center;font-size:13px;font-weight:700;color:${footerText};letter-spacing:0.04em;text-transform:uppercase;line-height:1.6;">Segui i lavori nel tuo cantiere da remoto. Accedendo alla tua area personale troverai video e foto aggiornati dai nostri addetti in tempo reale</div>` +
+      `<img src="/images/volantino/app.png" alt="" style="position:absolute;right:12px;top:12px;height:${HF-24}px;width:auto;"/>` +
+    `</div>` +
+    `<div style="width:100%;height:${HZ}px;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px 20px;box-sizing:border-box;">` +
+      `<div style="font-size:17px;font-weight:700;color:#fff;letter-spacing:0.05em;text-align:center;text-transform:uppercase;">Approfitta della scontistica per il lancio del marchio</div>` +
+      `<div style="font-size:24px;font-weight:900;color:#fff;letter-spacing:0.1em;text-transform:uppercase;">Contattaci subito</div>` +
+      `<div style="display:flex;gap:40px;align-items:center;justify-content:center;flex-wrap:wrap;">` +
+        `<span style="font-size:17px;font-weight:500;color:#fff;letter-spacing:0.03em;">www.digihomedesign.com</span>` +
+        `<span style="font-size:17px;font-weight:500;color:#fff;letter-spacing:0.03em;">(+39) 3518716731</span>` +
+        `<span style="font-size:17px;font-weight:500;color:#fff;letter-spacing:0.03em;">info@digi-home-design.com</span>` +
+      `</div>` +
+    `</div>` +
+    `</div>`
+  )
+}
+
+function buildAppCoverHtml(): string {
+  // Altezze zona (totale 1123px):
+  // Header 110 + Screenshots 313 + Funzionalità 210 + Pagamenti 162 + Riconoscenza 88 + Qualità 50 + Prossimamente 120 + Social 70
+  const H_HEADER = 110, H_SCREEN = 313, H_FEAT = 210, H_PAY = 162, H_FED = 88, H_QUAL = 50, H_SOON = 120, H_SOCIAL = 70
+
+  const screenshots = [
+    { src: '/images/app/preventivo.jpg',     label: 'PREVENTIVI' },
+    { src: '/images/app/lavori-cantiere.jpg', label: 'CANTIERI' },
+    { src: '/images/app/foto-cantiere.jpg',   label: 'FOTO CANTIERE' },
+    { src: '/images/app/avvisi.jpg',           label: 'AVVISI' },
+    { src: '/images/app/preview-infisso.jpg', label: 'PREVIEW INFISSO' },
+  ]
+  const features = [
+    { title: 'Preventivi online',       desc: 'Configura serramenti e richiedi preventivi ufficiali direttamente dallo smartphone.' },
+    { title: 'Cantiere in tempo reale', desc: 'Foto e video aggiornati dagli addetti: segui i lavori ovunque tu sia.' },
+    { title: 'Messaggi diretti',        desc: 'Comunica con il tuo referente senza telefonate.' },
+    { title: 'Avvisi tempestivi',        desc: 'Avvisi immediati su ogni aggiornamento dello stato dei preventivi e su nuovi caricamenti dal tuo cantiere.' },
+    { title: 'Documenti e fatture',     desc: 'Accedi a tutta la documentazione dal tuo smartphone in qualsiasi momento.' },
+    { title: 'Accesso esclusivo',       desc: 'Codice referral personale, sconti fedeltà e offerte promozionali dedicate.' },
+    { title: 'Anteprima infisso',         desc: 'Anteprima grafica dell\'infisso configurato: vedi come risulterà il serramento prima di acquistarlo.' },
+  ]
+  const payments = [
+    // 'Possibilità di finanziare i tuoi acquisti.',
+    '<strong>FORMULA RISTRUTTURAZIONI SENZA SORPRESE</strong><br/>Acconto iniziale e poi il resto suddiviso in pagamenti settimanali fino alla consegna delle chiavi.',
+    '<strong>CARTA DI CREDITO</strong> e <strong>PAYPAL</strong><br/>Vuoi acquistare direttamente da App o sito?<br/>Paga in tutta sicurezza.<br/>Vuoi la libertà di scegliere se pagare anche le fatture da App o sito?<br/>Tranne i casi di Bonifico Parlante Obbligatorio ti abiliteremo gli stessi metodi di pagamento.',
+  ]
+
+  // 5 card + 4 gap×10px in 762px disponibili (794-32px padding)
+  const cardW   = Math.floor((762 - 4 * 10) / 5)
+  const phoneW  = 126
+  const phoneH  = H_SCREEN - 20 - 10 - 26  // padding top/bottom + label
+  const scrPadT = 8, scrPadB = 6, scrPadS = 2
+  const screenshots_html = screenshots.map(({ src, label }) =>
+    `<div style="width:${cardW}px;display:flex;flex-direction:column;align-items:center;flex-shrink:0;">` +
+      `<div style="width:${phoneW}px;height:${phoneH}px;background:#111;border-radius:14px;border:2.5px solid #3a3a3a;position:relative;box-sizing:border-box;box-shadow:0 6px 18px rgba(0,0,0,0.45);">` +
+        `<div style="position:absolute;top:0px;left:50%;transform:translateX(-50%);width:8px;height:8px;background:#0a0a0a;border-radius:50%;border:1.5px solid #444;box-shadow:0 0 0 1px #222 inset;"></div>` +
+        `<div style="position:absolute;top:${scrPadT}px;left:${scrPadS}px;right:${scrPadS}px;bottom:${scrPadB}px;overflow:hidden;border-radius:12px;background:#000;clip-path:inset(0 round 12px);">` +
+          `<img src="${src}" alt="${label}" style="width:100%;height:100%;object-fit:cover;object-position:top;display:block;"/>` +
+        `</div>` +
+        `<div style="position:absolute;bottom:1px;left:50%;transform:translateX(-50%);width:24px;height:3px;background:#3a3a3a;border-radius:2px;"></div>` +
+      `</div>` +
+      `<div style="padding:5px 4px;text-align:center;font-size:10px;font-weight:700;color:#c8960c;letter-spacing:0.05em;">${label}</div>` +
+    `</div>`
+  ).join('')
+
+  const half = Math.ceil(features.length / 2)
+  const feat_col = (items: typeof features) => items.map(f =>
+    `<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;">` +
+      `<span style="color:#c8960c;font-size:11px;flex-shrink:0;margin-top:2px;line-height:1;">&#9670;</span>` +
+      `<div>` +
+        `<div style="font-size:11px;font-weight:700;color:#111;line-height:1.3;margin-bottom:1px;">${f.title}</div>` +
+        `<div style="font-size:9.5px;color:#555;line-height:1.4;">${f.desc}</div>` +
+      `</div>` +
+    `</div>`
+  ).join('')
+
+  const pay_items = payments.map(t =>
+    `<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;">` +
+      `<span style="color:#c8960c;font-size:11px;flex-shrink:0;margin-top:2px;line-height:1;">&#9670;</span>` +
+      `<div style="font-size:11px;color:#222;line-height:1.4;">${t}</div>` +
+    `</div>`
+  ).join('')
+
+  return (
+    `<div style="width:794px;height:1123px;position:relative;overflow:hidden;font-family:'Times New Roman',Times,serif;box-sizing:border-box;background:#fff;">` +
+
+    `<div style="width:100%;height:${H_HEADER}px;background:#fff;display:flex;align-items:flex-end;padding:0 32px 0;gap:24px;box-sizing:border-box;">` +
+      `<img src="/images/icons/DIGI-HOME-DESIGN-APP.png" alt="logo" style="height:72px;width:auto;flex-shrink:0;border-radius:16px;background:#000;padding:2px 5px;"/>` +
+      `<div style="flex:1;">` +
+        `<div style="font-size:34px;font-weight:900;color:#c8960c;letter-spacing:0.18em;margin-bottom:6px;">DIGI App</div>` +
+        `<div style="font-size:24px;font-weight:900;color:#1a1a1a;line-height:1.2;letter-spacing:0.06em;">Tutto quello che ti serve sempre a portata di mano.</div>` +
+      `</div>` +
+    `</div>` +
+
+    `<div style="width:100%;height:${H_SCREEN}px;background:#fff;display:flex;align-items:center;justify-content:center;gap:10px;padding:20px 16px 10px;box-sizing:border-box;">` +
+      screenshots_html +
+    `</div>` +
+
+    `<div style="width:100%;height:${H_FEAT}px;background:#fffdf5;padding:12px 32px 4px;box-sizing:border-box;overflow:hidden;border-top:2px solid #c8960c;">` +
+      `<div style="font-size:14px;font-weight:800;color:#c8960c;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:10px;">Funzionalità Esclusive</div>` +
+      `<div style="display:flex;gap:24px;">` +
+        `<div style="flex:1;">${feat_col(features.slice(0, half))}</div>` +
+        `<div style="flex:1;">${feat_col(features.slice(half))}</div>` +
+      `</div>` +
+    `</div>` +
+
+    `<div style="width:100%;height:${H_PAY}px;background:#fffdf5;padding:12px 32px 4px;box-sizing:border-box;overflow:hidden;border-top:2px solid #c8960c;">` +
+      `<div style="font-size:14px;font-weight:800;color:#c8960c;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:10px;">Comodità nei Pagamenti</div>` +
+      pay_items +
+    `</div>` +
+
+    `<div style="width:100%;height:${H_FED}px;background:#fffdf5;padding:10px 32px 4px;box-sizing:border-box;overflow:hidden;border-top:2px solid #c8960c;">` +
+      `<div style="font-size:14px;font-weight:800;color:#c8960c;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:8px;">SCONTI e PREMI: SAPPIAMO COME RICAMBIARE IL TUO AFFETTO</div>` +
+      `<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;">` +
+        `<span style="color:#c8960c;font-size:13px;flex-shrink:0;margin-top:2px;line-height:1;">&#9670;</span>` +
+        `<div style="font-size:11px;color:#222;line-height:1.6;">Una volta assegnato il tuo numero Referral, lo sconto personalizzato si applicherà su tutti i tuoi lavori e acquisti futuri.</div>` +
+      `</div>` +
+      `<div style="display:flex;gap:8px;align-items:flex-start;">` +
+        `<span style="color:#c8960c;font-size:13px;flex-shrink:0;margin-top:2px;line-height:1;">&#9670;</span>` +
+        `<div style="font-size:11px;color:#222;line-height:1.6;">Porti un amico? Ricevi fantastici premi in regalo.</div>` +
+      `</div>` +
+    `</div>` +
+
+    `<div style="width:100%;height:${H_QUAL}px;background:#fff;border-top:2px solid #c8960c;border-bottom:2px solid #c8960c;display:flex;align-items:center;justify-content:center;box-sizing:border-box;">` +
+      `<div style="text-align:center;">` +
+        `<div style="font-size:22px;font-weight:900;color:#1a1a1a;letter-spacing:0.1em;text-transform:uppercase;text-shadow:1px 1px 0 rgba(0,0,0,0.1);line-height:1.2;">QUALIT&#192; <span style="font-size:10px;vertical-align:middle;">&#9679;</span> COMPETENZA <span style="font-size:10px;vertical-align:middle;">&#9679;</span> PROFESSIONALIT&#192;</div>` +
+      `</div>` +
+    `</div>` +
+
+    `<div style="width:100%;height:${H_SOON}px;background:#111;padding:16px 32px;box-sizing:border-box;overflow:hidden;display:flex;flex-direction:column;gap:6px;">` +
+      `<div style="font-size:26px;font-weight:900;letter-spacing:0.12em;color:#c8960c;text-transform:uppercase;text-shadow:2px 2px 0 rgba(0,0,0,0.35);line-height:1;flex-shrink:0;text-align:center;">Prossimamente...</div>` +
+      `<div style="width:100%;height:1px;background:rgba(200,150,12,0.4);flex-shrink:0;"></div>` +
+      `<div style="display:flex;align-items:center;gap:16px;flex:1;min-height:0;">` +
+        `<div style="flex:1;text-align:center;">` +
+          `<div style="font-size:16px;font-weight:900;letter-spacing:0.04em;color:#fff;line-height:1.3;font-style:italic;text-shadow:1px 1px 0 rgba(0,0,0,0.35);">Come promesso,<br/><span style="color:#c8960c;">un unico referente per tutto!</span></div>` +
+        `</div>` +
+        `<div style="width:1px;background:rgba(200,150,12,0.4);align-self:stretch;"></div>` +
+        `<div style="flex:1;font-size:11.5px;color:#ddd;line-height:1.7;">` +
+          `<span style="font-weight:700;color:#fff;">DIGI si occuperà anche di:</span><br/>` +
+          `Arredo, divani, tende, tappeti, quadri, lampadari e tanto altro...<br/>` +
+          `Acquisterai direttamente dal sito e lo porteremo a casa tua...` +
+        `</div>` +
+      `</div>` +
+    `</div>` +
+
+    `<div style="width:100%;height:${H_SOCIAL}px;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:0 16px;box-sizing:border-box;border-top:1px solid rgba(200,150,12,0.3);">` +
+      `<div style="font-size:14px;color:#ccc;font-style:italic;font-weight:500;">Se vuoi aiutarci a crescere, segui e condividi. Grazie di <span style="color:#e00;font-size:14px;vertical-align:middle;position:relative;top:-2px;">&#10084;</span></div>` +
+      `<div style="display:flex;gap:20px;align-items:center;">` +
+        `<a href="https://wa.me/393518716731" style="display:flex;align-items:center;gap:6px;text-decoration:none;">` +
+          `<svg width="22" height="22" viewBox="0 0 24 24" fill="#25D366" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.523 3.656 1.432 5.168L2 22l4.98-1.404A9.953 9.953 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2Zm0 18a7.953 7.953 0 0 1-4.078-1.117l-.292-.174-3.057.862.822-3.001-.19-.308A7.953 7.953 0 0 1 4 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8Zm4.362-5.996c-.238-.119-1.407-.694-1.625-.773-.218-.079-.376-.119-.535.119-.158.238-.614.773-.752.931-.139.158-.277.178-.515.059-.238-.119-1.005-.371-1.914-1.181-.707-.631-1.185-1.411-1.323-1.649-.139-.238-.015-.366.104-.485.107-.107.238-.277.357-.416.119-.139.158-.238.238-.396.079-.158.04-.297-.02-.416-.059-.119-.535-1.29-.733-1.766-.193-.464-.389-.401-.535-.409l-.456-.008c-.158 0-.416.059-.634.297-.218.238-.832.813-.832 1.983s.852 2.3.97 2.459c.119.158 1.677 2.561 4.063 3.591.568.245 1.011.391 1.357.5.57.181 1.089.156 1.499.095.457-.068 1.407-.575 1.606-1.131.198-.556.198-1.033.139-1.131-.059-.099-.218-.158-.456-.277Z"/></svg>` +
+          `<span style="font-size:13px;color:#fff;font-weight:400;">wa.me/393518716731</span>` +
+        `</a>` +
+        `<a href="https://t.me/digihomedesign" style="display:flex;align-items:center;gap:6px;text-decoration:none;">` +
+          `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 2L11 13" stroke="#229ED9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="#229ED9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>` +
+          `<span style="font-size:13px;color:#fff;font-weight:400;">t.me/digihomedesign</span>` +
+        `</a>` +
+        // Instagram commentato temporaneamente
+        /* `<a href="https://www.instagram.com/digihomedesign" style="display:flex;align-items:center;gap:6px;text-decoration:none;">` +
+          `<svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="ig2" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#f09433"/><stop offset="25%" stop-color="#e6683c"/><stop offset="50%" stop-color="#dc2743"/><stop offset="75%" stop-color="#cc2366"/><stop offset="100%" stop-color="#bc1888"/></linearGradient></defs><path fill="url(#ig2)" d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.336 3.608 1.311.975.975 1.249 2.242 1.311 3.608.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.062 1.366-.336 2.633-1.311 3.608-.975.975-2.242 1.249-3.608 1.311-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.062-2.633-.336-3.608-1.311-.975-.975-1.249-2.242-1.311-3.608C2.175 15.584 2.163 15.204 2.163 12s.012-3.584.07-4.85c.062-1.366.336-2.633 1.311-3.608.975-.975 2.242-1.249 3.608-1.311C8.416 2.175 8.796 2.163 12 2.163Zm0-2.163C8.741 0 8.333.014 7.053.072 5.197.157 3.355.673 2.014 2.014.673 3.355.157 5.197.072 7.053.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.085 1.856.601 3.698 1.942 5.039 1.341 1.341 3.183 1.857 5.039 1.942C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 1.856-.085 3.698-.601 5.039-1.942 1.341-1.341 1.857-3.183 1.942-5.039.058-1.28.072-1.689.072-4.948 0-3.259-.014-3.667-.072-4.947-.085-1.856-.601-3.698-1.942-5.039C20.646.673 18.804.157 16.948.072 15.668.014 15.259 0 12 0Zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324ZM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881Z"/></svg>` +
+          `<span style="font-size:13px;color:#fff;font-weight:400;">@digihomedesign</span>` +
+        `</a>` + */ ``+
+        `<a href="https://www.facebook.com/digihomedesign" style="display:flex;align-items:center;gap:6px;text-decoration:none;">` +
+          `<svg width="22" height="22" viewBox="0 0 24 24" fill="#1877F2" xmlns="http://www.w3.org/2000/svg"><path d="M24 12.073C24 5.404 18.627 0 12 0S0 5.404 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.791-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.883v2.271h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073Z"/></svg>` +
+          `<span style="font-size:13px;color:#fff;font-weight:400;">digihomedesign</span>` +
+        `</a>` +
+        `<a href="https://www.tiktok.com/@digihomedesign" style="display:flex;align-items:center;gap:6px;text-decoration:none;">` +
+          `<svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" xmlns="http://www.w3.org/2000/svg"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.22 8.22 0 0 0 4.8 1.54V6.78a4.85 4.85 0 0 1-1.03-.09z"/></svg>` +
+          `<span style="font-size:13px;color:#fff;font-weight:400;">@digihomedesign</span>` +
+        `</a>` +
+      `</div>` +
+    `</div>` +
+
+    `</div>`
+  )
+}
+
 // ─── Costanti layout pagina A4 ───────────────────────────────────────────────
 
 const PAGE_W   = 794
@@ -1118,7 +1388,7 @@ export async function loadData(prevId: number, username: string, isStaff: boolea
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
-export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+export default async function Page({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const cookieStore = await cookies()
   const role     = cookieStore.get('session_role')?.value ?? ''
   const username = cookieStore.get('session_user')?.value ?? ''
@@ -1132,5 +1402,14 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   const stampaData = await loadData(prevId, username, isStaff)
   if (!stampaData) redirect('/area-clienti/preventivi')
 
-  return <StampaClient data={stampaData} backHref={`/area-clienti/preventivi/${prevId}`} />
+  const sp = await searchParams
+  if (isStaff && sp.pub === '1') {
+    const settings = await readSettings()
+    stampaData.coverPages = [
+      buildVolantinoCoverHtml(settings),
+      buildAppCoverHtml(),
+    ]
+  }
+
+  return <StampaClient data={stampaData} backHref={`/area-clienti/preventivi/${prevId}`} showPubBtn={isStaff} />
 }

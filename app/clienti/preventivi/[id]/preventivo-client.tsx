@@ -1293,6 +1293,25 @@ export default function PreventivoClient({
           </span>
         )}
 
+        {isStaff && tuttiSanati && (
+          <a
+            href={`/area-clienti/preventivi/${preventivo.id}/stampa?pub=1`}
+            className={b('btn-black', isApp)}
+            style={{ flex: 1, minWidth: 'max-content', padding: '0 20px', fontSize: 13, textDecoration: 'none' }}
+          >
+            Stampa con pubblicità
+          </a>
+        )}
+        {isStaff && !tuttiSanati && (
+          <span
+            className={b('btn-gray', isApp)}
+            style={{ flex: 1, minWidth: 'max-content', padding: '0 20px', fontSize: 13, cursor: 'not-allowed', opacity: 0.5 }}
+            title="Completa tutte le caratteristiche prima di stampare"
+          >
+            Stampa con pubblicità
+          </span>
+        )}
+
         {!isStaff && preventivo.stato === 'bozza' && (
           <button
             onClick={() => setShowInoltra(true)}

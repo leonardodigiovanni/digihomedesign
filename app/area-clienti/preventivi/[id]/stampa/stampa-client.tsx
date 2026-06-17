@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import { usePathname } from 'next/navigation'
 
 export interface StampaBlock {
   html: string
@@ -15,9 +16,11 @@ export interface StampaData {
   headerN: string
   footerTemplate: string
   layout: { pageW: number; pageH: number; padTop: number; padSide: number; padBot: number }
+  coverPages?: string[]
 }
 
-export default function StampaClient({ data, backHref }: { data: StampaData; backHref?: string }) {
+export default function StampaClient({ data, backHref, showPubBtn }: { data: StampaData; backHref?: string; showPubBtn?: boolean }) {
+  const pathname = usePathname()
   const [pages, setPages] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   const [pageZoom, setPageZoom] = useState(1)
@@ -149,7 +152,7 @@ ${footer}
 </div>`
       })
 
-      setPages(built)
+      setPages([...(data.coverPages ?? []), ...built])
       setLoading(false)
     }
 
@@ -292,40 +295,30 @@ ${pages.map(p => `<div class="page-break">${p}</div>`).join('\n')}
           display: 'flex', gap: 12, justifyContent: 'center',
           marginBottom: 28, flexWrap: 'wrap',
         }}>
-          <a href={backHref ?? '..'} style={{
-            padding: '0 20px', height: 42, fontSize: 13, fontWeight: 700, borderRadius: 21, textDecoration: 'none',
-            background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.04) 0px,rgba(255,255,255,0.04) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#111 0%,#222 20%,#383838 45%,#222 80%,#111 100%)',
-            boxShadow: '0 4px 16px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.08)',
-            color: '#fff', display: 'inline-flex', alignItems: 'center',
-          }}>
+          <a href={backHref ?? '..'} className="btn-black" style={{ textDecoration: 'none' }}>
             ← Torna al preventivo
           </a>
-          <button onClick={handleScarica} disabled={scaricando} style={{
-            padding: '0 22px', height: 42, fontSize: 13, fontWeight: 700, borderRadius: 21, border: 'none',
-            background: scaricando ? '#555' : 'repeating-linear-gradient(135deg,rgba(255,255,255,0.04) 0px,rgba(255,255,255,0.04) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#111 0%,#222 20%,#383838 45%,#222 80%,#111 100%)',
-            boxShadow: '0 4px 16px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.08)',
-            color: '#fff', cursor: scaricando ? 'default' : 'pointer', fontFamily: 'inherit',
-          }}>
+          <button onClick={handleScarica} disabled={scaricando} className="btn-black" style={{ opacity: scaricando ? 0.5 : 1, cursor: scaricando ? 'default' : 'pointer' }}>
             {scaricando ? 'Generazione PDF…' : '⬇ Scarica PDF'}
           </button>
           {isMobile ? (
-            <button onClick={handleCondividi} disabled={condividendo} style={{
-              padding: '0 22px', height: 42, fontSize: 13, fontWeight: 700, borderRadius: 21, border: 'none',
-              background: condividendo ? '#555' : 'repeating-linear-gradient(135deg,rgba(255,255,255,0.04) 0px,rgba(255,255,255,0.04) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#111 0%,#222 20%,#383838 45%,#222 80%,#111 100%)',
-              boxShadow: '0 4px 16px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.08)',
-              color: '#fff', cursor: condividendo ? 'default' : 'pointer', fontFamily: 'inherit',
-            }}>
+            <button onClick={handleCondividi} disabled={condividendo} className="btn-black" style={{ opacity: condividendo ? 0.5 : 1, cursor: condividendo ? 'default' : 'pointer' }}>
               {condividendo ? 'Generazione…' : '↗ Condividi'}
             </button>
           ) : (
-            <button onClick={handleStampa} style={{
-              padding: '0 22px', height: 42, fontSize: 13, fontWeight: 700, borderRadius: 21, border: 'none',
-              background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.04) 0px,rgba(255,255,255,0.04) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#111 0%,#222 20%,#383838 45%,#222 80%,#111 100%)',
-              boxShadow: '0 4px 16px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.08)',
-              color: '#fff', cursor: 'pointer', fontFamily: 'inherit',
-            }}>
+            <button onClick={handleStampa} className="btn-black">
               🖨 Stampa
             </button>
+          )}
+          {showPubBtn && !data.coverPages?.length && (
+            <a href={`${pathname}?pub=1`} className="btn-black" style={{ textDecoration: 'none' }}>
+              Stampa con pubblicità
+            </a>
+          )}
+          {!!data.coverPages?.length && (
+            <a href={pathname} className="btn-black" style={{ textDecoration: 'none' }}>
+              Stampa classica
+            </a>
           )}
           <span style={{ fontSize: 12, color: '#666', alignSelf: 'center' }}>
             {pages.length} pagina{pages.length !== 1 ? 'e' : ''} A4
