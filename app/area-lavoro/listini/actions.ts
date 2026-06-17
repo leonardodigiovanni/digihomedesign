@@ -238,6 +238,36 @@ export async function toggleColonnaBooleana(_: MutResult | null, fd: FormData): 
   } finally { await db.end() }
 }
 
+export async function cloneArticolo(_: AddResult | null, fd: FormData): Promise<AddResult> {
+  await checkAccess()
+  const sourceId = parseInt(fd.get('id') as string)
+  if (isNaN(sourceId)) return { ok: false, error: 'ID non valido.' }
+  await ensureTable()
+  const db = await getConnection()
+  try {
+    const [ins] = await db.execute(
+      `INSERT INTO listini
+        (categoria, produttore, serie, descrizione, unita, prezzo_acquisto, prezzo_vendita,
+         note, fornitore_id, max_acquistabile, sconto_articolo, costante, abbr, minimo,
+         disponibile, preventivabile, acquistabile, principale, caratteristica,
+         richiede_larghezza, richiede_altezza, richiede_quantita, richiede_piano,
+         richiede_km, richiede_peso, richiede_tipo_colore, richiede_tipo_colore_acc,
+         richiede_tipo_vetro, richiede_tipo_montaggio, foto_url)
+       SELECT
+        categoria, produttore, serie, descrizione, unita, prezzo_acquisto, prezzo_vendita,
+        note, fornitore_id, max_acquistabile, sconto_articolo, costante, abbr, minimo,
+        disponibile, preventivabile, acquistabile, principale, caratteristica,
+        richiede_larghezza, richiede_altezza, richiede_quantita, richiede_piano,
+        richiede_km, richiede_peso, richiede_tipo_colore, richiede_tipo_colore_acc,
+        richiede_tipo_vetro, richiede_tipo_montaggio, foto_url
+       FROM listini WHERE id=?`,
+      [sourceId]
+    ) as [{ insertId: number }, unknown]
+    revalidatePath('/area-lavoro/listini')
+    return { ok: true, id: ins.insertId }
+  } finally { await db.end() }
+}
+
 export async function clearImmagine(_: MutResult | null, fd: FormData): Promise<MutResult> {
   await checkAccess()
   const id   = parseInt(fd.get('id') as string)

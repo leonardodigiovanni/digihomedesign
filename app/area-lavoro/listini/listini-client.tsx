@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useActionState, useTransition, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { addArticolo, updateArticolo, deleteArticolo, toggleDisponibile, togglePreventivabile, toggleAcquistabile, togglePrincipale, toggleCaratteristica, toggleColonnaBooleana, updateSchedaTecnica, clearImmagine, type MutResult, type AddResult } from './actions'
+import { addArticolo, updateArticolo, deleteArticolo, cloneArticolo, toggleDisponibile, togglePreventivabile, toggleAcquistabile, togglePrincipale, toggleCaratteristica, toggleColonnaBooleana, updateSchedaTecnica, clearImmagine, type MutResult, type AddResult } from './actions'
 
 // ─── Tipi ─────────────────────────────────────────────────────────────────────
 
@@ -82,7 +82,7 @@ const thS: React.CSSProperties = {
 // ─── Form nuovo articolo ──────────────────────────────────────────────────────
 
 function NuovoArticoloForm({ categorie, produttori, fornitori, onDone }: {
-  categorie: string[]; produttori: string[]; fornitori: Fornitore[]; onDone: () => void
+  categorie: string[]; produttori: string[]; fornitori: Fornitore[]; onDone: (newId?: number) => void
 }) {
   const [result, action, pending] = useActionState<AddResult | null, FormData>(addArticolo, null)
   const [unitaCustom, setUnitaCustom] = useState(false)
@@ -101,10 +101,10 @@ function NuovoArticoloForm({ categorie, produttori, fornitori, onDone }: {
       fd.set('foto', file)
       fd.set('tipo', 'foto')
       fetch('/api/listini/foto', { method: 'POST', body: fd }).finally(() => {
-        router.refresh(); onDone()
+        router.refresh(); onDone(result.id)
       })
     } else {
-      router.refresh(); onDone()
+      router.refresh(); onDone(result.id)
     }
   }, [result])
 
@@ -648,11 +648,12 @@ function ImgCell({ artId, url, tipo, alt }: { artId: number; url: string | null;
   )
 }
 
-function RigaNormale({ art, onEdit, onScheda, onDelete, pending }: {
+function RigaNormale({ art, onEdit, onScheda, onDelete, onAction, pending }: {
   art: Articolo
   onEdit: () => void
   onScheda: () => void
   onDelete: () => void
+  onAction: () => void
   pending: boolean
 }) {
   const m = margine(art.prezzo_acquisto, art.prezzo_vendita)
@@ -664,7 +665,7 @@ function RigaNormale({ art, onEdit, onScheda, onDelete, pending }: {
   const hasDati = art.profilo_frontale_mm != null || art.profilo_profondita_mm != null || art.trasmittanza_uw != null
 
   return (
-    <tr onDoubleClick={onEdit} style={{ cursor: 'pointer', background: nonDisp ? '#f9f9f9' : undefined }} title="Doppio click per modificare">
+    <tr onDoubleClick={onEdit} onClick={onAction} style={{ cursor: 'pointer', background: nonDisp ? '#f9f9f9' : undefined }} title="Doppio click per modificare">
       <td style={td}><span style={{ background: '#e8e8f8', borderRadius: 3, padding: '2px 7px', fontSize: 11, fontWeight: 600 }}>{art.categoria}</span></td>
       <td style={{ ...td, color: '#555' }}>{art.produttore || '—'}</td>
       <td style={{ ...td, color: '#555' }}>{art.serie || '—'}</td>
@@ -745,8 +746,8 @@ function RigaNormale({ art, onEdit, onScheda, onDelete, pending }: {
 
 // ─── Riga in modifica ─────────────────────────────────────────────────────────
 
-function RigaEdit({ art, categorie, produttori, fornitori, onDone }: {
-  art: Articolo; categorie: string[]; produttori: string[]; fornitori: Fornitore[]; onDone: () => void
+function RigaEdit({ art, categorie, produttori, fornitori, onDone, onSaved }: {
+  art: Articolo; categorie: string[]; produttori: string[]; fornitori: Fornitore[]; onDone: () => void; onSaved?: (id: number) => void
 }) {
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
@@ -763,7 +764,7 @@ function RigaEdit({ art, categorie, produttori, fornitori, onDone }: {
     })
     startTransition(async () => {
       const result = await updateArticolo(null, fd)
-      if (result?.ok) { router.refresh(); onDone() }
+      if (result?.ok) { onSaved?.(art.id); router.refresh(); onDone() }
       else setError(result?.error ?? 'Errore')
     })
   }
@@ -845,6 +846,8 @@ export default function ListiniClient({ articoli, fornitori }: { articoli: Artic
   const [editId, setEditId]                 = useState<number | null>(null)
   const [schedaId, setSchedaId]             = useState<number | null>(null)
   const [deletingId, setDeletingId]         = useState<number | null>(null)
+  const [lastId, setLastId]                 = useState<number | null>(null)
+  const [isCloning, setIsCloning]           = useState(false)
   const router = useRouter()
 
   const categorie  = useMemo(() => [...new Set(articoli.map(a => a.categoria))].sort(), [articoli])
@@ -870,6 +873,15 @@ export default function ListiniClient({ articoli, fornitori }: { articoli: Artic
   const selInp: React.CSSProperties = {
     padding: '6px 10px', fontSize: 13, border: '1px solid #ccc',
     borderRadius: 4, fontFamily: 'inherit',
+  }
+
+  async function handleClone() {
+    if (!lastId) return
+    setIsCloning(true)
+    const fd = new FormData(); fd.set('id', String(lastId))
+    const res = await cloneArticolo(null, fd)
+    if (res.ok) { setLastId(res.id); router.refresh() }
+    setIsCloning(false)
   }
 
   async function handleDelete(id: number) {
@@ -912,14 +924,18 @@ export default function ListiniClient({ articoli, fornitori }: { articoli: Artic
         <span style={{ fontSize: 13, color: '#888' }}>{filtrati.length} articoli</span>
       </div>
 
-      {/* Pulsante nuovo */}
+      {/* Pulsanti nuovo / ripeti */}
       {!nuovoOpen ? (
-        <button className="btn-green" onClick={() => setNuovoOpen(true)}
-          style={{ marginBottom: 16 }}>
-          + Nuovo articolo
-        </button>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+          <button className="btn-green" onClick={() => setNuovoOpen(true)}>+ Nuovo articolo</button>
+          <button className="btn-green" onClick={handleClone} disabled={lastId === null || isCloning}
+            style={{ opacity: lastId === null ? 0.4 : 1 }}>
+            {isCloning ? 'Clonazione…' : '+ Ripeti articolo'}
+          </button>
+        </div>
       ) : (
-        <NuovoArticoloForm categorie={categorie} produttori={produttori} fornitori={fornitori} onDone={() => setNuovoOpen(false)} />
+        <NuovoArticoloForm categorie={categorie} produttori={produttori} fornitori={fornitori}
+          onDone={(newId) => { if (newId) setLastId(newId); setNuovoOpen(false) }} />
       )}
 
       {filtrati.length === 0 ? (
@@ -963,11 +979,12 @@ export default function ListiniClient({ articoli, fornitori }: { articoli: Artic
             <tbody>
               {filtrati.map(art => (
                 editId === art.id
-                  ? <RigaEdit key={art.id} art={art} categorie={categorie} produttori={produttori} fornitori={fornitori} onDone={() => setEditId(null)} />
+                  ? <RigaEdit key={art.id} art={art} categorie={categorie} produttori={produttori} fornitori={fornitori} onDone={() => setEditId(null)} onSaved={(id) => setLastId(id)} />
                   : <RigaNormale key={art.id} art={art}
                       onEdit={() => setEditId(art.id)}
                       onScheda={() => setSchedaId(art.id)}
                       onDelete={() => handleDelete(art.id)}
+                      onAction={() => setLastId(art.id)}
                       pending={deletingId === art.id} />
               ))}
             </tbody>

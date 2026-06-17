@@ -358,9 +358,9 @@ export default function VolantinoClient({
             {/* Logo + nome sovrapposti */}
             <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: Math.round(H_HEADER * 0.04), gap: 1 }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/images/volantino/rrr.png" alt="logo" style={{ height: Math.round(H_HEADER * 0.15), width: 'auto' }} />
+              <img src="/images/icons/DIGI-HOME-DESIGN-APP.png" alt="logo" style={{ height: Math.round(H_HEADER * 0.30), width: 'auto' }} />
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/images/volantino/nome_tr.png" alt="Home Design" style={{ height: Math.round(H_HEADER * 0.11), width: 'auto' }} />
+              <img src="/images/volantino/nome_tr.png" alt="Home Design" style={{ height: Math.round(H_HEADER * 0.07), width: 'auto' }} />
             </div>
           </div>
 
