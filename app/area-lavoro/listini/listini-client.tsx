@@ -234,7 +234,7 @@ function NuovoArticoloForm({ categorie, produttori, fornitori, onDone }: {
         <button type="submit" className="btn-green" disabled={pending}>
           {pending ? 'Salvataggio…' : 'Salva'}
         </button>
-        <button type="button" className="btn-gray" onClick={onDone}>Annulla</button>
+        <button type="button" className="btn-gray" onClick={() => onDone()}>Annulla</button>
       </div>
     </form>
   )
