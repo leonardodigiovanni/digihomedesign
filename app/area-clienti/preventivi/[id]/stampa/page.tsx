@@ -846,10 +846,10 @@ function buildVolantinoCoverHtml(settings: AppSettings): string {
     `<div style="width:794px;height:1123px;position:relative;overflow:hidden;font-family:'Times New Roman',Times,serif;box-sizing:border-box;">` +
     `<div style="width:100%;height:${HH}px;position:relative;overflow:hidden;">` +
       `<img src="/images/volantino/chiave.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"/>` +
-      `<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:${Math.round(HH*0.04)}px;gap:1px;">` +
-        `<img src="/images/icons/DIGI-HOME-DESIGN-APP.png" alt="logo" style="height:${Math.round(HH*0.30)}px;width:auto;"/>` +
-        `<img src="/images/volantino/nome_tr.png" alt="" style="height:${Math.round(HH*0.07)}px;width:auto;"/>` +
+      `<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:${Math.round(HH*0.04)-5}px;gap:1px;">` +
+        `<img src="/images/icons/DIGIHOMEDESIGN - nero.png" alt="logo" style="height:${Math.round(HH*0.20)}px;width:auto;margin-top:20px;"/>` +
       `</div>` +
+      `<div style="position:absolute;bottom:${Math.round(HH*0.04)}px;left:0;right:8px;text-align:right;color:#fff;font-weight:900;font-size:32px;letter-spacing:0.06em;line-height:1;text-shadow:2px 2px 6px rgba(0,0,0,0.8);">DIGI Home Design <span style="font-size:18px;">S.R.L.</span></div>` +
     `</div>` +
     `<div style="width:100%;height:${HS}px;background:${volantinoSubBg()};display:flex;align-items:center;justify-content:center;padding:12px 24px;box-sizing:border-box;">` +
       `<div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px;">` +
@@ -888,8 +888,8 @@ function buildVolantinoCoverHtml(settings: AppSettings): string {
 
 function buildAppCoverHtml(): string {
   // Altezze zona (totale 1123px):
-  // Header 110 + Screenshots 313 + Funzionalità 210 + Pagamenti 162 + Riconoscenza 88 + Qualità 50 + Prossimamente 120 + Social 70
-  const H_HEADER = 110, H_SCREEN = 313, H_FEAT = 210, H_PAY = 162, H_FED = 88, H_QUAL = 50, H_SOON = 120, H_SOCIAL = 70
+  // Header 100 + Screenshots 323 + Funzionalità 210 + Pagamenti 162 + Riconoscenza 88 + Qualità 50 + Prossimamente 120 + Social 70
+  const H_HEADER = 100, H_SCREEN = 323, H_FEAT = 210, H_PAY = 162, H_FED = 88, H_QUAL = 50, H_SOON = 120, H_SOCIAL = 70
 
   const screenshots = [
     { src: '/images/app/preventivo.jpg',     label: 'PREVENTIVI' },
@@ -916,7 +916,7 @@ function buildAppCoverHtml(): string {
   // 5 card + 4 gap×10px in 762px disponibili (794-32px padding)
   const cardW   = Math.floor((762 - 4 * 10) / 5)
   const phoneW  = 126
-  const phoneH  = H_SCREEN - 20 - 10 - 26  // padding top/bottom + label
+  const phoneH  = H_SCREEN - 10 - 4 - 26  // padding top/bottom + label
   const scrPadT = 8, scrPadB = 6, scrPadS = 2
   const screenshots_html = screenshots.map(({ src, label }) =>
     `<div style="width:${cardW}px;display:flex;flex-direction:column;align-items:center;flex-shrink:0;">` +
@@ -927,7 +927,7 @@ function buildAppCoverHtml(): string {
         `</div>` +
         `<div style="position:absolute;bottom:1px;left:50%;transform:translateX(-50%);width:24px;height:3px;background:#3a3a3a;border-radius:2px;"></div>` +
       `</div>` +
-      `<div style="padding:5px 4px;text-align:center;font-size:10px;font-weight:700;color:#c8960c;letter-spacing:0.05em;">${label}</div>` +
+      `<div style="padding:3px 4px 1px;text-align:center;font-size:10px;font-weight:700;color:#c8960c;letter-spacing:0.05em;">${label}</div>` +
     `</div>`
   ).join('')
 
@@ -952,7 +952,7 @@ function buildAppCoverHtml(): string {
   return (
     `<div style="width:794px;height:1123px;position:relative;overflow:hidden;font-family:'Times New Roman',Times,serif;box-sizing:border-box;background:#fff;">` +
 
-    `<div style="width:100%;height:${H_HEADER}px;background:#fff;display:flex;align-items:flex-end;padding:0 32px 0;gap:24px;box-sizing:border-box;">` +
+    `<div style="width:100%;height:${H_HEADER}px;background:#fffdf5;display:flex;align-items:center;padding:0 32px;gap:24px;box-sizing:border-box;">` +
       `<img src="/images/icons/DIGI-HOME-DESIGN-APP.png" alt="logo" style="height:72px;width:auto;flex-shrink:0;border-radius:16px;background:#000;padding:2px 5px;"/>` +
       `<div style="flex:1;">` +
         `<div style="font-size:34px;font-weight:900;color:#c8960c;letter-spacing:0.18em;margin-bottom:6px;">DIGI App</div>` +
@@ -960,11 +960,7 @@ function buildAppCoverHtml(): string {
       `</div>` +
     `</div>` +
 
-    `<div style="width:100%;height:${H_SCREEN}px;background:#fff;display:flex;align-items:center;justify-content:center;gap:10px;padding:20px 16px 10px;box-sizing:border-box;">` +
-      screenshots_html +
-    `</div>` +
-
-    `<div style="width:100%;height:${H_FEAT}px;background:#fffdf5;padding:12px 32px 4px;box-sizing:border-box;overflow:hidden;border-top:2px solid #c8960c;">` +
+    `<div style="width:100%;height:${H_FEAT}px;background:#fffdf5;padding:12px 32px 4px;box-sizing:border-box;overflow:hidden;">` +
       `<div style="font-size:14px;font-weight:800;color:#c8960c;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:10px;">Funzionalità Esclusive</div>` +
       `<div style="display:flex;gap:24px;">` +
         `<div style="flex:1;">${feat_col(features.slice(0, half))}</div>` +
@@ -972,20 +968,36 @@ function buildAppCoverHtml(): string {
       `</div>` +
     `</div>` +
 
-    `<div style="width:100%;height:${H_PAY}px;background:#fffdf5;padding:12px 32px 4px;box-sizing:border-box;overflow:hidden;border-top:2px solid #c8960c;">` +
-      `<div style="font-size:14px;font-weight:800;color:#c8960c;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:10px;">Comodità nei Pagamenti</div>` +
-      pay_items +
+    `<div style="width:100%;height:${H_SCREEN}px;background:#fffdf5;display:flex;align-items:center;justify-content:center;padding:6px 16px 22px;box-sizing:border-box;">` +
+      `<div style="background:#fff;border-radius:6px;border:1px solid rgba(0,0,0,0.15);display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 6px 10px;box-shadow:0 2px 8px rgba(0,0,0,0.08);box-sizing:border-box;">` +
+        screenshots_html +
+      `</div>` +
     `</div>` +
 
-    `<div style="width:100%;height:${H_FED}px;background:#fffdf5;padding:10px 32px 4px;box-sizing:border-box;overflow:hidden;border-top:2px solid #c8960c;">` +
-      `<div style="font-size:14px;font-weight:800;color:#c8960c;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:8px;">SCONTI e PREMI: SAPPIAMO COME RICAMBIARE IL TUO AFFETTO</div>` +
-      `<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;">` +
-        `<span style="color:#c8960c;font-size:13px;flex-shrink:0;margin-top:2px;line-height:1;">&#9670;</span>` +
-        `<div style="font-size:11px;color:#222;line-height:1.6;">Una volta assegnato il tuo numero Referral, lo sconto personalizzato si applicherà su tutti i tuoi lavori e acquisti futuri.</div>` +
+    `<div style="width:100%;height:${H_PAY}px;background:#fffdf5;padding:12px 16px 4px 32px;box-sizing:border-box;overflow:hidden;border-top:2px solid #c8960c;display:flex;gap:16px;">` +
+      `<div style="flex:1;min-width:0;">` +
+        `<div style="font-size:14px;font-weight:800;color:#c8960c;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:10px;">Comodità nei Pagamenti</div>` +
+        pay_items +
       `</div>` +
-      `<div style="display:flex;gap:8px;align-items:flex-start;">` +
-        `<span style="color:#c8960c;font-size:13px;flex-shrink:0;margin-top:2px;line-height:1;">&#9670;</span>` +
-        `<div style="font-size:11px;color:#222;line-height:1.6;">Porti un amico? Ricevi fantastici premi in regalo.</div>` +
+      `<div style="display:flex;align-items:center;justify-content:center;flex-shrink:0;">` +
+        `<img src="/images/app/pagamenti-stripe.png" alt="Pagamenti" style="height:${H_PAY - 24}px;width:auto;object-fit:contain;border:1px solid rgba(0,0,0,0.15);border-radius:6px;"/>` +
+      `</div>` +
+    `</div>` +
+
+    `<div style="width:100%;height:${H_FED}px;background:#fffdf5;padding:10px 32px 4px 16px;box-sizing:border-box;overflow:hidden;border-top:2px solid #c8960c;display:flex;gap:16px;">` +
+      `<div style="display:flex;align-items:center;justify-content:center;flex-shrink:0;">` +
+        `<img src="/images/app/sconti-premi.png" alt="Sconti e Premi" style="height:${H_FED - 20}px;width:auto;object-fit:contain;border:1px solid rgba(0,0,0,0.15);border-radius:6px;"/>` +
+      `</div>` +
+      `<div style="flex:1;min-width:0;padding-left:80px;">` +
+        `<div style="font-size:14px;font-weight:800;color:#c8960c;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:8px;">SCONTI e PREMI: SAPPIAMO COME RICAMBIARE IL TUO AFFETTO</div>` +
+        `<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;">` +
+          `<span style="color:#c8960c;font-size:13px;flex-shrink:0;margin-top:2px;line-height:1;">&#9670;</span>` +
+          `<div style="font-size:11px;color:#222;line-height:1.6;">Una volta assegnato il tuo numero Referral, lo sconto personalizzato si applicherà su tutti i tuoi lavori e acquisti futuri.</div>` +
+        `</div>` +
+        `<div style="display:flex;gap:8px;align-items:flex-start;">` +
+          `<span style="color:#c8960c;font-size:13px;flex-shrink:0;margin-top:2px;line-height:1;">&#9670;</span>` +
+          `<div style="font-size:11px;color:#222;line-height:1.6;">Porti un amico? Ricevi fantastici premi in regalo.</div>` +
+        `</div>` +
       `</div>` +
     `</div>` +
 
@@ -999,11 +1011,11 @@ function buildAppCoverHtml(): string {
       `<div style="font-size:26px;font-weight:900;letter-spacing:0.12em;color:#c8960c;text-transform:uppercase;text-shadow:2px 2px 0 rgba(0,0,0,0.35);line-height:1;flex-shrink:0;text-align:center;">Prossimamente...</div>` +
       `<div style="width:100%;height:1px;background:rgba(200,150,12,0.4);flex-shrink:0;"></div>` +
       `<div style="display:flex;align-items:center;gap:16px;flex:1;min-height:0;">` +
-        `<div style="flex:1;text-align:center;">` +
+        `<div style="flex:1;text-align:center;padding-top:10px;">` +
           `<div style="font-size:16px;font-weight:900;letter-spacing:0.04em;color:#fff;line-height:1.3;font-style:italic;text-shadow:1px 1px 0 rgba(0,0,0,0.35);">Come promesso,<br/><span style="color:#c8960c;">un unico referente per tutto!</span></div>` +
         `</div>` +
         `<div style="width:1px;background:rgba(200,150,12,0.4);align-self:stretch;"></div>` +
-        `<div style="flex:1;font-size:11.5px;color:#ddd;line-height:1.7;">` +
+        `<div style="flex:1;font-size:11.5px;color:#ddd;line-height:1.7;padding-top:10px;">` +
           `<span style="font-weight:700;color:#fff;">DIGI si occuperà anche di:</span><br/>` +
           `Arredo, divani, tende, tappeti, quadri, lampadari e tanto altro...<br/>` +
           `Acquisterai direttamente dal sito e lo porteremo a casa tua...` +
@@ -1012,7 +1024,7 @@ function buildAppCoverHtml(): string {
     `</div>` +
 
     `<div style="width:100%;height:${H_SOCIAL}px;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:0 16px;box-sizing:border-box;border-top:1px solid rgba(200,150,12,0.3);">` +
-      `<div style="font-size:14px;color:#ccc;font-style:italic;font-weight:500;">Se vuoi aiutarci a crescere, segui e condividi. Grazie di <span style="color:#e00;font-size:14px;vertical-align:middle;position:relative;top:-2px;">&#10084;</span></div>` +
+      `<div style="font-size:14px;color:#ccc;font-style:italic;font-weight:500;">Se vuoi aiutarci a crescere, segui e condividi i nostri canali social. Grazie di <span style="color:#e00;font-size:14px;vertical-align:middle;position:relative;top:-2px;">&#10084;</span></div>` +
       `<div style="display:flex;gap:20px;align-items:center;">` +
         `<a href="https://wa.me/393518716731" style="display:flex;align-items:center;gap:6px;text-decoration:none;">` +
           `<svg width="22" height="22" viewBox="0 0 24 24" fill="#25D366" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.523 3.656 1.432 5.168L2 22l4.98-1.404A9.953 9.953 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2Zm0 18a7.953 7.953 0 0 1-4.078-1.117l-.292-.174-3.057.862.822-3.001-.19-.308A7.953 7.953 0 0 1 4 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8Zm4.362-5.996c-.238-.119-1.407-.694-1.625-.773-.218-.079-.376-.119-.535.119-.158.238-.614.773-.752.931-.139.158-.277.178-.515.059-.238-.119-1.005-.371-1.914-1.181-.707-.631-1.185-1.411-1.323-1.649-.139-.238-.015-.366.104-.485.107-.107.238-.277.357-.416.119-.139.158-.238.238-.396.079-.158.04-.297-.02-.416-.059-.119-.535-1.29-.733-1.766-.193-.464-.389-.401-.535-.409l-.456-.008c-.158 0-.416.059-.634.297-.218.238-.832.813-.832 1.983s.852 2.3.97 2.459c.119.158 1.677 2.561 4.063 3.591.568.245 1.011.391 1.357.5.57.181 1.089.156 1.499.095.457-.068 1.407-.575 1.606-1.131.198-.556.198-1.033.139-1.131-.059-.099-.218-.158-.456-.277Z"/></svg>` +
@@ -1060,7 +1072,7 @@ function header1Html(data: string, numero: string, clienteNome: string, clienteI
   const warning = ''
   return `<div style="background:#111;margin:-${PAD_TOP}px -${PAD_SIDE}px 16px;padding:14px ${PAD_SIDE}px;display:flex;align-items:center;">
   <div style="flex:1;">
-    <div style="font-size:17px;font-weight:bold;color:#fff;">DIGI Home Design S.R.L.</div>
+    <div style="font-size:17px;font-weight:bold;color:#fff;">DIGI Home Design <span style="font-size:18px;">S.R.L.</span></div>
     <div style="font-size:10px;color:rgba(255,255,255,0.72);line-height:1.7;">URL: www.digi-home-design.com</div>
     <div style="font-size:10px;color:rgba(255,255,255,0.72);line-height:1.7;">Email: info@digi-home-design.com</div>
     <div style="font-size:10px;color:rgba(255,255,255,0.72);line-height:1.7;">Tel: +39 351 871 6731</div>
@@ -1092,14 +1104,14 @@ ${warning}`
 function headerNHtml(numero: string, isProv: boolean): string {
   const label = isProv ? 'Preventivo Provvisorio' : 'Preventivo Ufficiale'
   return `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #1a3a5c;">
-  <div style="font-size:14px;font-weight:bold;color:#111;">DIGI Home Design S.R.L.</div>
+  <div style="font-size:14px;font-weight:bold;color:#111;">DIGI Home Design <span style="font-size:18px;">S.R.L.</span></div>
   <div style="font-size:10px;color:#666;">${label} ${numero}</div>
 </div>`
 }
 
 function footerTemplateHtml(): string {
   return `<div style="position:absolute;bottom:16px;left:${PAD_SIDE}px;right:${PAD_SIDE}px;border-top:1px solid #ddd;padding-top:6px;font-size:9px;color:#999;display:flex;justify-content:space-between;line-height:1.4;">
-  <span>DIGI Home Design S.R.L. — Sede: Via Roberto Antiochia 3, 90121 Palermo (PA) — P.IVA: 07407080824 — PEC: digi_home_design_srl@namirialpec.it</span>
+  <span>DIGI Home Design <span style="font-size:18px;">S.R.L.</span> — Sede: Via Roberto Antiochia 3, 90121 Palermo (PA) — P.IVA: 07407080824 — PEC: digi_home_design_srl@namirialpec.it</span>
   <span style="white-space:nowrap;margin-left:12px;">Pagina {{PAGE}} di {{TOTAL}}</span>
 </div>`
 }

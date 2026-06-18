@@ -43,19 +43,12 @@ function IconFacebook() {
   )
 }
 
-function IconInstagram() {
+// function IconInstagram() { ... } // commentato temporaneamente
+
+function IconTikTok() {
   return (
-    <svg width="38" height="38" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="ig-c" x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#f09433"/>
-          <stop offset="25%" stopColor="#e6683c"/>
-          <stop offset="50%" stopColor="#dc2743"/>
-          <stop offset="75%" stopColor="#cc2366"/>
-          <stop offset="100%" stopColor="#bc1888"/>
-        </linearGradient>
-      </defs>
-      <path fill="url(#ig-c)" d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.336 3.608 1.311.975.975 1.249 2.242 1.311 3.608.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.062 1.366-.336 2.633-1.311 3.608-.975.975-2.242 1.249-3.608 1.311-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.062-2.633-.336-3.608-1.311-.975-.975-1.249-2.242-1.311-3.608C2.175 15.584 2.163 15.204 2.163 12s.012-3.584.07-4.85c.062-1.366.336-2.633 1.311-3.608.975-.975 2.242-1.249 3.608-1.311C8.416 2.175 8.796 2.163 12 2.163Zm0-2.163C8.741 0 8.333.014 7.053.072 5.197.157 3.355.673 2.014 2.014.673 3.355.157 5.197.072 7.053.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.085 1.856.601 3.698 1.942 5.039 1.341 1.341 3.183 1.857 5.039 1.942C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 1.856-.085 3.698-.601 5.039-1.942 1.341-1.341 1.857-3.183 1.942-5.039.058-1.28.072-1.689.072-4.948 0-3.259-.014-3.667-.072-4.947-.085-1.856-.601-3.698-1.942-5.039C20.646.673 18.804.157 16.948.072 15.668.014 15.259 0 12 0Zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324ZM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881Z"/>
+    <svg width="38" height="38" viewBox="0 0 24 24" fill="#000" xmlns="http://www.w3.org/2000/svg">
+      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.22 8.22 0 0 0 4.8 1.54V6.78a4.85 4.85 0 0 1-1.03-.09z"/>
     </svg>
   )
 }
@@ -66,10 +59,11 @@ const EMAIL = 'info@digi-home-design.com'
 const EMAIL_HREF = 'mailto:info@digi-home-design.com'
 
 const socials = [
-  { label: 'WhatsApp',  account: 'DIGI Home Design', href: '', icon: <IconWhatsApp /> },
-  { label: 'Telegram',  account: 'DIGI Home Design', href: '', icon: <IconTelegram /> },
-  { label: 'Instagram', account: '@digihomedesign',  href: '', icon: <IconInstagram /> },
-  { label: 'Facebook',  account: 'DIGI Home Design', href: '', icon: <IconFacebook /> },
+  { label: 'WhatsApp',  account: 'wa.me/393518716731',              href: 'https://wa.me/393518716731',                   icon: <IconWhatsApp /> },
+  { label: 'Telegram',  account: 't.me/digihomedesign',             href: 'https://t.me/digihomedesign',                  icon: <IconTelegram /> },
+  // { label: 'Instagram', account: '@digihomedesign',              href: 'https://www.instagram.com/digihomedesign',     icon: <IconInstagram /> },
+  { label: 'Facebook',  account: 'digihomedesign',                  href: 'https://www.facebook.com/digihomedesign',      icon: <IconFacebook /> },
+  { label: 'TikTok',    account: '@digihomedesign',                 href: 'https://www.tiktok.com/@digihomedesign',       icon: <IconTikTok /> },
 ]
 
 const ROW_H = 82

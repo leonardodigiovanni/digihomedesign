@@ -355,13 +355,13 @@ export default function VolantinoClient({
             {/* Immagine di sfondo chiave */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/images/volantino/chiave.png" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-            {/* Logo + nome sovrapposti */}
-            <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: Math.round(H_HEADER * 0.04), gap: 1 }}>
+            {/* Logo centrato in alto */}
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: Math.round(H_HEADER * 0.04) - 5, gap: 1 }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/images/icons/DIGI-HOME-DESIGN-APP.png" alt="logo" style={{ height: Math.round(H_HEADER * 0.30), width: 'auto' }} />
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/images/volantino/nome_tr.png" alt="Home Design" style={{ height: Math.round(H_HEADER * 0.07), width: 'auto' }} />
+              <img src="/images/icons/DIGIHOMEDESIGN - nero.png" alt="logo" style={{ height: Math.round(H_HEADER * 0.20), width: 'auto', marginTop: 20 }} />
             </div>
+            {/* Scritta sovrapposta sul prato in basso */}
+            <div style={{ position: 'absolute', bottom: Math.round(H_HEADER * 0.04), left: 0, right: 8, textAlign: 'right', color: '#fff', fontWeight: 900, fontSize: 32, letterSpacing: '0.06em', lineHeight: 1, textShadow: '2px 2px 6px rgba(0,0,0,0.8)' }}>DIGI Home Design <span style={{ fontSize: 18 }}>S.R.L.</span></div>
           </div>
 
           {/* 2 — Sottoheader = bordeaux spazzolato (rgb-volantino) */}
