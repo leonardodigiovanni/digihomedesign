@@ -1234,6 +1234,11 @@ async function buildStampaData(opts: {
   const isProv = !isUfficiale
 
   const roots = artRows.filter(a => a.parent_id == null)
+  // Ordina roots come l'UI: raggruppati per tipo+marca+serie, ordine prima apparizione
+  const _catKey = (p: Record<string, unknown>) => `${s(p.tipo_prodotto)}||${s(p.marca)}||${s(p.serie)}`
+  const _keyOrder: string[] = []
+  for (const p of roots) { const k = _catKey(p); if (!_keyOrder.includes(k)) _keyOrder.push(k) }
+  roots.sort((a, b) => { const ka = _keyOrder.indexOf(_catKey(a)), kb = _keyOrder.indexOf(_catKey(b)); return ka !== kb ? ka - kb : n(a.id) - n(b.id) })
   const childrenMap = new Map<number, Record<string, unknown>[]>()
   for (const c of artRows) {
     if (c.parent_id == null) continue
@@ -1296,7 +1301,7 @@ async function buildStampaData(opts: {
     const id = n(p.id)
     const ch = childrenMap.get(id) ?? []
     const tot = n(p.prezzo_totale) + ch.reduce((sum, c) => sum + n(c.prezzo_totale), 0)
-    return tot > 0 && ch.length > 0
+    return tot > 0
   })
 
   if (hasDetails) {
@@ -1384,7 +1389,8 @@ export async function loadData(prevId: number, username: string, isStaff: boolea
               pa.prezzo_totale, pa.prezzo_pre_sconto, pa.note, pa.sconto_articolo_pct, pa.parent_id,
               l.profilo_frontale_mm AS profilo_mm, l.foto_url AS foto_url, l.abbr AS abbr,
               l.richiede_tipo_colore, l.richiede_tipo_colore_acc, l.richiede_tipo_vetro, l.richiede_tipo_montaggio,
-              l.trasmittanza_uw AS trasmittanza_uw
+              l.trasmittanza_uw AS trasmittanza_uw,
+              l.serie AS serie
        FROM preventivo_articoli pa
        LEFT JOIN listini l ON pa.listino_id = l.id
        WHERE pa.preventivo_id = ?
