@@ -754,7 +754,7 @@ function riepilogoTableRowHtml(p: Record<string, unknown>, idx: number): string 
 
 function riepilogoNotaHtml(): string {
   return `<div style="font-size:10px;margin-top:8px;padding:8px 12px;background:#f5f5f5;border:1px solid #ddd;line-height:1.5;color:#555;">
-  <strong>Nota:</strong> Per ogni articolo in elenco è fornita una scheda di dettaglio delle caratteristiche tecniche e specifiche di acquisto nel seguito del documento.
+  <strong>Nota:</strong> Per alcuni articoli in elenco è fornita una scheda di dettaglio delle caratteristiche tecniche e specifiche di acquisto nel seguito del documento.
 </div>`
 }
 
@@ -1169,8 +1169,11 @@ function extraLastHtml(artRows: Record<string, unknown>[], totale: string, scont
   return `${totaleBoxHtml(artRows, totale, scontoClientePct)}${COND_ACCORDI_HTML}`
 }
 
-function accettazioneHtml(): string {
+function accettazioneHtml(isProv = false): string {
+  const avviso = isProv ? `<div style="margin-bottom:12px;padding:8px 12px;background:#fff0f0;border:1px solid #e53e3e;border-radius:4px;color:#c00;font-size:11px;font-weight:600;line-height:1.5;text-align:center;">Questo preventivo è provvisorio e non può essere accettato.<br/>A titolo esemplificativo si dà evidenza di quello che sarà lo schema proposto di accettazione nel preventivo ufficiale.</div>` : ''
+  const timbroOverlay = isProv ? `<img src="/images/app/NO-SIGN-TRASP.png" style="position:absolute;top:50%;left:62%;transform:translate(-50%,-50%);width:130px;opacity:0.85;pointer-events:none;" />` : ''
   return `<div style="margin-top:8px;padding-top:8px;font-size:12px;line-height:1.4;color:#222;font-family:'Times New Roman',Times,serif;">
+  ${avviso}
   <div style="font-size:11px;font-weight:bold;text-align:center;text-decoration:underline;letter-spacing:.04em;margin-bottom:8px;">ACCETTAZIONE</div>
   <div style="margin-bottom:3px;">Con l'accettazione del preventivo ufficiale il Cliente dichiara:</div>
   <div style="margin-left:12px;margin-bottom:2px;">• di aver letto integralmente l'elenco degli articoli;</div>
@@ -1186,7 +1189,7 @@ function accettazioneHtml(): string {
   <div style="margin-left:12px;margin-bottom:12px;">• procedura di Firma Elettronica Avanzata con OTP dall'area personale del sito.</div>
   <div style="display:flex;justify-content:space-between;font-size:12px;color:#333;margin-top:24px;">
     <div>Luogo e data, ________________,___________</div>
-    <div>PER ACCETTAZIONE ________________________________________________</div>
+    <div style="position:relative;">PER ACCETTAZIONE ________________________________________________${timbroOverlay}</div>
   </div>
 </div>`
 }
@@ -1339,7 +1342,7 @@ async function buildStampaData(opts: {
   const vendMid  = 6
   blocks.push({ html: `<div style="${COND_VEND_OUTER_STYLE}"><div style="margin-top:10px;">${COND_VEND_TITLE_HTML}</div><div style="display:flex;gap:20px;align-items:stretch;"><div style="flex:1;min-width:0;border-right:1px solid #ccc;padding-right:20px;margin-bottom:10px;">${vendArts.slice(0, vendMid).join('\n')}</div><div style="flex:1;min-width:0;">${vendArts.slice(vendMid).join('\n')}</div></div></div>` })
 
-  blocks.push({ html: accettazioneHtml() })
+  blocks.push({ html: accettazioneHtml(isProv) })
 
   return {
     blocks,
