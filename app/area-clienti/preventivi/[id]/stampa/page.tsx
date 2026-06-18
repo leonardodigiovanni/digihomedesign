@@ -1293,11 +1293,11 @@ async function buildStampaData(opts: {
       if (colonIdx > 0 && colonIdx < 60) {
         const titolo = t.slice(0, colonIdx)
         const resto  = t.slice(colonIdx + 1).trim()
-        return `<p style="margin:6px 0 2px;font-size:10.5px;"><strong>${titolo}:</strong>${resto ? ' ' + resto : ''}</p>`
+        return `<p style="margin:6px 0 2px;font-size:12px;"><strong>${titolo}:</strong>${resto ? ' ' + resto : ''}</p>`
       }
-      return `<p style="margin:4px 0;font-size:10.5px;">${t}</p>`
+      return `<p style="margin:4px 0;font-size:12px;">${t}</p>`
     }).join('')
-    blocks.push({ html: `<div style="margin-top:18px;"><div style="font-size:10.5px;line-height:1.55;color:#111;">${righeHtml}</div></div>` })
+    blocks.push({ html: `<div style="margin-top:18px;"><div style="font-size:12px;line-height:1.55;color:#111;">${righeHtml}</div></div>` })
   }
 
   blocks.push({ html: COND_ACCORDI_HTML })
