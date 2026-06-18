@@ -716,27 +716,12 @@ function noteContrattualiHtml(): string {
   const righe = voci.map(v =>
     `<div style="margin-bottom:6px;"><div style="font-weight:bold;font-size:10.5px;color:#111;">${v.titolo}</div><div style="font-size:10.5px;color:#111;line-height:1.6;">${v.testo}</div></div>`
   ).join('')
-  return `<div style="padding-top:10px;border-top:1px solid #ddd;">${righe}</div>`
+  return `<div style="padding-top:10px;border-top:1px solid #ddd;">
+<div style="text-align:center;font-size:16px;font-weight:bold;color:#111;letter-spacing:0.04em;margin-bottom:12px;">NOTE IMPORTANTI PER QUESTO PREVENTIVO PROVVISORIO</div>
+${righe}</div>`
 }
 
-function riepilogoHTML(roots: Record<string, unknown>[], artRows: Record<string, unknown>[], totale: string, scontoClientePct: number): string {
-  let rootIdx = 0
-  const rows = roots.map(p => {
-    const tipo    = s(p.tipo_prodotto)
-    const marca   = s(p.marca)
-    const modello = s(p.modello)
-    const l = n(p.larghezza_cm), h = n(p.altezza_cm)
-    const dims = l > 0 && h > 0 ? `${l}×${h} cm` : '—'
-    const qtà  = n(p.quantita)
-    return `<tr>
-      <td style="padding:3px 8px;border:1px solid #ddd;font-size:10px;text-align:center;">#${rootIdx++ + 1}</td>
-      <td style="padding:3px 8px;border:1px solid #ddd;font-size:10px;">${tipo}</td>
-      <td style="padding:3px 8px;border:1px solid #ddd;font-size:10px;">${marca}</td>
-      <td style="padding:3px 8px;border:1px solid #ddd;font-size:10px;">${modello}</td>
-      <td style="padding:3px 8px;border:1px solid #ddd;font-size:10px;text-align:center;white-space:nowrap;">${dims}</td>
-      <td style="padding:3px 8px;border:1px solid #ddd;font-size:10px;text-align:center;">${qtà}</td>
-    </tr>`
-  }).join('\n')
+function riepilogoIntroHtml(): string {
   return `<div style="font-size:12px;color:#333;line-height:1.4;margin-top:14px;margin-bottom:14px;text-align:justify;">
   <div style="margin-bottom:4px;">Gentile Cliente,</div>
   <div style="margin-bottom:6px;">siamo lieti di poterLe sottoporre la nostra migliore offerta e desideriamo innanzitutto ringraziarLa per aver scelto di affidarsi a noi.</div>
@@ -753,32 +738,49 @@ function riepilogoHTML(roots: Record<string, unknown>[], artRows: Record<string,
   <div style="margin-bottom:6px;">Per questo motivo, entrando a far parte della nostra rete clienti, Le verrà assegnato un codice referral personale che Le consentirà di accedere a vantaggi esclusivi, premi fedeltà, offerte promozionali dedicate e iniziative riservate.</div>
   <div style="margin-bottom:6px;">Il nostro impegno è quello di accompagnarLa nel tempo con professionalità, disponibilità e proposte sempre innovative, affinché possa sentirsi seguito e valorizzato in ogni fase della collaborazione.</div>
   <div style="margin-bottom:14px;">Con piacere, di seguito Le sottoponiamo l'elenco degli articoli e delle soluzioni da Lei richieste nella presente offerta economica, da intendersi IVA esclusa.</div>
-</div>
-<table style="width:100%;border-collapse:collapse;margin-bottom:12px;page-break-inside:avoid;break-inside:avoid;">
-  <thead>
-    <tr style="background:#f0f0f0;">
-      <th style="padding:4px 8px;border:1px solid #ddd;font-size:10px;width:28px;">Rif.</th>
-      <th style="padding:4px 8px;border:1px solid #ddd;font-size:10px;text-align:left;">Tipo</th>
-      <th style="padding:4px 8px;border:1px solid #ddd;font-size:10px;text-align:left;">Marca</th>
-      <th style="padding:4px 8px;border:1px solid #ddd;font-size:10px;text-align:left;">Modello</th>
-      <th style="padding:4px 8px;border:1px solid #ddd;font-size:10px;">L×H</th>
-      <th style="padding:4px 8px;border:1px solid #ddd;font-size:10px;">Qtà</th>
-    </tr>
-  </thead>
-  <tbody>
-    ${rows}
-  </tbody>
-</table>
-${totaleBoxHtml(artRows, totale, scontoClientePct)}
-<div style="font-size:12px;color:#333;line-height:1.6;margin-top:10px;margin-bottom:10px;">
+</div>`
+}
+
+function riepilogoTableHeaderHtml(): string {
+  return `<div style="display:flex;background:#f0f0f0;border:1px solid #ddd;font-size:10px;font-weight:bold;box-sizing:border-box;">
+  <div style="flex:0 0 6%;padding:4px 8px;border-right:1px solid #ddd;text-align:center;box-sizing:border-box;">Rif.</div>
+  <div style="flex:0 0 20%;padding:4px 8px;border-right:1px solid #ddd;box-sizing:border-box;">Tipo</div>
+  <div style="flex:0 0 17%;padding:4px 8px;border-right:1px solid #ddd;box-sizing:border-box;">Marca</div>
+  <div style="flex:0 0 35%;padding:4px 8px;border-right:1px solid #ddd;box-sizing:border-box;">Modello</div>
+  <div style="flex:0 0 14%;padding:4px 8px;border-right:1px solid #ddd;text-align:center;box-sizing:border-box;">L×H</div>
+  <div style="flex:0 0 8%;padding:4px 8px;text-align:center;box-sizing:border-box;">Qtà</div>
+</div>`
+}
+
+function riepilogoTableRowHtml(p: Record<string, unknown>, idx: number): string {
+  const tipo    = s(p.tipo_prodotto)
+  const marca   = s(p.marca)
+  const modello = s(p.modello)
+  const l = n(p.larghezza_cm), h = n(p.altezza_cm)
+  const dims = l > 0 && h > 0 ? `${l}×${h} cm` : '—'
+  const qtà  = n(p.quantita)
+  const bg = idx % 2 === 1 ? 'background:#fafafa;' : ''
+  return `<div style="display:flex;font-size:10px;border:1px solid #ddd;border-top:none;box-sizing:border-box;${bg}">
+  <div style="flex:0 0 6%;padding:3px 8px;border-right:1px solid #ddd;text-align:center;box-sizing:border-box;">#${idx + 1}</div>
+  <div style="flex:0 0 20%;padding:3px 8px;border-right:1px solid #ddd;box-sizing:border-box;">${tipo}</div>
+  <div style="flex:0 0 17%;padding:3px 8px;border-right:1px solid #ddd;box-sizing:border-box;">${marca}</div>
+  <div style="flex:0 0 35%;padding:3px 8px;border-right:1px solid #ddd;box-sizing:border-box;">${modello}</div>
+  <div style="flex:0 0 14%;padding:3px 8px;border-right:1px solid #ddd;text-align:center;white-space:nowrap;box-sizing:border-box;">${dims}</div>
+  <div style="flex:0 0 8%;padding:3px 8px;text-align:center;box-sizing:border-box;">${qtà}</div>
+</div>`
+}
+
+function riepilogoNotaHtml(): string {
+  return `<div style="font-size:10px;margin-top:8px;padding:8px 12px;background:#f5f5f5;border:1px solid #ddd;line-height:1.5;color:#555;">
+  <strong>Nota:</strong> Per ogni articolo in elenco è fornita una scheda di dettaglio delle caratteristiche tecniche e specifiche di acquisto nel seguito del documento.
+</div>`
+}
+
+function riepilogoChiusuraHtml(): string {
+  return `<div style="font-size:12px;color:#333;line-height:1.6;margin-top:10px;margin-bottom:10px;">
   <div style="margin-bottom:2px;">Restando a Sua completa disposizione per qualsiasi chiarimento o approfondimento, porgiamo</div>
   <div style="font-weight:bold;">Cordiali saluti</div>
   <img src="/images/carrello/sigla.png" style="height:130px;display:block;margin-top:-40px;" />
-</div>
-<div style="position:absolute;bottom:${PAD_BOT}px;left:${PAD_SIDE}px;right:${PAD_SIDE}px;">
-  <div style="font-size:10px;padding:8px 12px;background:#f5f5f5;border:1px solid #ddd;line-height:1.5;color:#555;">
-    <strong>Nota:</strong> Per ogni articolo in elenco è fornita una scheda di dettaglio delle caratteristiche tecniche e specifiche di acquisto nel seguito del documento.
-  </div>
 </div>`
 }
 
@@ -1280,34 +1282,51 @@ async function buildStampaData(opts: {
 
   const blocks: StampaBlock[] = []
 
-  blocks.push({ html: riepilogoHTML(roots, artRows, totale, scontoClientePct) })
+  // ── Sezione riepilogo ──────────────────────────────────────────────────────
+  blocks.push({ html: riepilogoIntroHtml() })
+  blocks.push({ html: riepilogoTableHeaderHtml() })
+  roots.forEach((p, i) => blocks.push({ html: riepilogoTableRowHtml(p, i) }))
+  blocks.push({ html: totaleBoxHtml(artRows, totale, scontoClientePct) })
+  blocks.push({ html: riepilogoNotaHtml() })
+  blocks.push({ html: riepilogoChiusuraHtml() })
   blocks.push({ html: noteContrattualiHtml() })
-  blocks.push({ html: `<div style="font-size:11px;font-weight:bold;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid #ddd;">DETTAGLIO FORNITURA:</div>`, forceNewPage: true })
 
-  roots.forEach((p, i) => {
+  // ── Sezione dettaglio (solo se ci sono articoli con caratteristiche) ───────
+  const hasDetails = roots.some(p => {
     const id = n(p.id)
-    const children = (childrenMap.get(id) ?? []).slice().sort((a, b) => childTypeOrder(a) - childTypeOrder(b))
-    const prezzo = n(p.prezzo_totale)
-    const scontoArt = n(p.sconto_articolo_pct)
-    const prezzoBase = n(p.prezzo_pre_sconto)
-    const scontoColor = scontoArt < 0 ? '#1565c0' : '#e65100'
-    const scontoLabel = scontoArt < 0 ? `Magg. +${Math.abs(scontoArt)}%` : `Promo −${scontoArt}%`
-    const prezzoHTML = scontoArt !== 0 && prezzoBase > 0
-      ? `<span style="color:#aaa;text-decoration:line-through;font-size:10.5px;">€ ${fmt(prezzoBase)}</span> <span style="color:${scontoColor};font-size:10.5px;">${scontoLabel}</span> <span style="display:block;font-size:10.5px;font-weight:bold;color:#111;">€ ${prezzo > 0 ? fmt(prezzo) : '—'}</span>`
-      : `<span style="font-size:10.5px;font-weight:bold;color:#111;">€ ${prezzo > 0 ? fmt(prezzo) : '—'}</span>`
-    const totaleArticolo = prezzo + children.reduce((sum, c) => sum + n(c.prezzo_totale), 0)
-    if (totaleArticolo === 0) return
-    const htmlFull = articoloBlockHTML(p, children, i, colorMap.get(id), colorAccMap.get(id), false)
-    if (children.length === 0) {
-      blocks.push({ html: htmlFull })
-    } else {
-      const htmlMain   = articoloBlockHTML(p, children, i, colorMap.get(id), colorAccMap.get(id), true)
-      const htmlCaratt = caratteristicheWrapperHTML(children, prezzo, i, prezzoHTML, s(p.tipo_prodotto))
-      blocks.push({ html: htmlFull, htmlMain, htmlCaratt })
-    }
+    const ch = childrenMap.get(id) ?? []
+    const tot = n(p.prezzo_totale) + ch.reduce((sum, c) => sum + n(c.prezzo_totale), 0)
+    return tot > 0 && ch.length > 0
   })
 
-  blocks.push({ html: extraLastHtml(artRows, totale, scontoClientePct, noteRaw) })
+  if (hasDetails) {
+    blocks.push({ html: `<div style="font-size:11px;font-weight:bold;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid #ddd;">DETTAGLIO FORNITURA:</div>`, forceNewPage: true })
+
+    roots.forEach((p, i) => {
+      const id = n(p.id)
+      const children = (childrenMap.get(id) ?? []).slice().sort((a, b) => childTypeOrder(a) - childTypeOrder(b))
+      const prezzo = n(p.prezzo_totale)
+      const scontoArt = n(p.sconto_articolo_pct)
+      const prezzoBase = n(p.prezzo_pre_sconto)
+      const scontoColor = scontoArt < 0 ? '#1565c0' : '#e65100'
+      const scontoLabel = scontoArt < 0 ? `Magg. +${Math.abs(scontoArt)}%` : `Promo −${scontoArt}%`
+      const prezzoHTML = scontoArt !== 0 && prezzoBase > 0
+        ? `<span style="color:#aaa;text-decoration:line-through;font-size:10.5px;">€ ${fmt(prezzoBase)}</span> <span style="color:${scontoColor};font-size:10.5px;">${scontoLabel}</span> <span style="display:block;font-size:10.5px;font-weight:bold;color:#111;">€ ${prezzo > 0 ? fmt(prezzo) : '—'}</span>`
+        : `<span style="font-size:10.5px;font-weight:bold;color:#111;">€ ${prezzo > 0 ? fmt(prezzo) : '—'}</span>`
+      const totaleArticolo = prezzo + children.reduce((sum, c) => sum + n(c.prezzo_totale), 0)
+      if (totaleArticolo === 0) return
+      const htmlFull = articoloBlockHTML(p, children, i, colorMap.get(id), colorAccMap.get(id), false)
+      if (children.length === 0) {
+        blocks.push({ html: htmlFull })
+      } else {
+        const htmlMain   = articoloBlockHTML(p, children, i, colorMap.get(id), colorAccMap.get(id), true)
+        const htmlCaratt = caratteristicheWrapperHTML(children, prezzo, i, prezzoHTML, s(p.tipo_prodotto))
+        blocks.push({ html: htmlFull, htmlMain, htmlCaratt })
+      }
+    })
+
+    blocks.push({ html: extraLastHtml(artRows, totale, scontoClientePct, noteRaw) })
+  }
 
   const prevArts = condizioniPreventivoArticles()
   const prevMid  = 9
