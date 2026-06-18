@@ -702,6 +702,23 @@ function articoloBlockHTML(parent: Record<string, unknown>, children: Record<str
 }
 
 
+function noteContrattualiHtml(): string {
+  const voci = [
+    { titolo: 'Preventivo indicativo',               testo: "Il presente preventivo ha carattere puramente orientativo e teorico ed è stato redatto sulla base delle lavorazioni attualmente previste. L'importo complessivo potrà subire variazioni in funzione della definizione dettagliata delle opere da eseguire e della scelta finale dei materiali." },
+    { titolo: 'Scontistica',                         testo: "Una formula di sconto dedicata verrà applicata al momento della definizione definitiva dell'intervento, che terrà conto di tutti i lavori da fare compresi: infissi, veranda, porte interne." },
+    { titolo: 'Modalità di pagamento',               testo: "Le modalità e le tempistiche di pagamento saranno concordate tra le parti prima dell'inizio dei lavori." },
+    { titolo: 'Gestione digitale del cantiere',      testo: "Omaggio incluso: utilizzo dell'applicazione Digi Home per il monitoraggio e la gestione del cantiere, con possibilità di seguire l'avanzamento dei lavori e la documentazione correlata." },
+    { titolo: 'Tempi di esecuzione',                 testo: "La data di inizio lavori sarà concordata successivamente in base alla disponibilità delle parti e alla definizione delle opere." },
+    { titolo: 'Certificazioni',                      testo: "Le pratiche di certificazione relative agli impianti sono incluse come omaggio." },
+    { titolo: 'Pratiche apertura e chiusura cantiere', testo: "Restano a carico della committenza i costi amministrativi relativi all'apertura e chiusura della pratica edilizia (CILA), da corrispondere direttamente al nostro ingegnere di fiducia." },
+    { titolo: 'IVA',                                 testo: "Tutti gli importi indicati nel presente preventivo sono da intendersi escluso IVA, che verrà applicata secondo le aliquote di legge vigenti." },
+  ]
+  const righe = voci.map(v =>
+    `<div style="margin-bottom:6px;"><div style="font-weight:bold;font-size:10.5px;color:#111;">${v.titolo}</div><div style="font-size:10.5px;color:#111;line-height:1.6;">${v.testo}</div></div>`
+  ).join('')
+  return `<div style="padding-top:10px;border-top:1px solid #ddd;">${righe}</div>`
+}
+
 function riepilogoHTML(roots: Record<string, unknown>[], artRows: Record<string, unknown>[], totale: string, scontoClientePct: number): string {
   let rootIdx = 0
   const rows = roots.map(p => {
@@ -1264,6 +1281,7 @@ async function buildStampaData(opts: {
   const blocks: StampaBlock[] = []
 
   blocks.push({ html: riepilogoHTML(roots, artRows, totale, scontoClientePct) })
+  blocks.push({ html: noteContrattualiHtml() })
   blocks.push({ html: `<div style="font-size:11px;font-weight:bold;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid #ddd;">DETTAGLIO FORNITURA:</div>`, forceNewPage: true })
 
   roots.forEach((p, i) => {
@@ -1277,6 +1295,8 @@ async function buildStampaData(opts: {
     const prezzoHTML = scontoArt !== 0 && prezzoBase > 0
       ? `<span style="color:#aaa;text-decoration:line-through;font-size:10.5px;">€ ${fmt(prezzoBase)}</span> <span style="color:${scontoColor};font-size:10.5px;">${scontoLabel}</span> <span style="display:block;font-size:10.5px;font-weight:bold;color:#111;">€ ${prezzo > 0 ? fmt(prezzo) : '—'}</span>`
       : `<span style="font-size:10.5px;font-weight:bold;color:#111;">€ ${prezzo > 0 ? fmt(prezzo) : '—'}</span>`
+    const totaleArticolo = prezzo + children.reduce((sum, c) => sum + n(c.prezzo_totale), 0)
+    if (totaleArticolo === 0) return
     const htmlFull = articoloBlockHTML(p, children, i, colorMap.get(id), colorAccMap.get(id), false)
     if (children.length === 0) {
       blocks.push({ html: htmlFull })
