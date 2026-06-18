@@ -524,6 +524,10 @@ export default function VolantinoClient({
               ))}
             </div>
           </div>
+
+          {/* Timbro sovrapposto */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/app/TIMBRO-TRASP.png" alt="" style={{ position: 'absolute', top: 675, left: 205, width: 140, height: 'auto', pointerEvents: 'none' }} />
         </div>
       </div>
 
