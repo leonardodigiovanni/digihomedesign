@@ -1170,8 +1170,8 @@ function extraLastHtml(artRows: Record<string, unknown>[], totale: string, scont
 }
 
 function accettazioneHtml(isProv = false): string {
-  const avviso = isProv ? `<div style="margin-bottom:12px;padding:8px 12px;background:#fff0f0;border:1px solid #e53e3e;border-radius:4px;color:#c00;font-size:11px;font-weight:600;line-height:1.5;text-align:center;">Questo preventivo è provvisorio e non può essere accettato.<br/>A titolo esemplificativo si dà evidenza di quello che sarà lo schema proposto di accettazione nel preventivo ufficiale.</div>` : ''
-  const timbroOverlay = isProv ? `<img src="/images/app/NO-SIGN-TRASP.png" style="position:absolute;top:50%;left:62%;transform:translate(-50%,-50%);width:130px;opacity:0.85;pointer-events:none;" />` : ''
+  const avviso = isProv ? `<div style="margin-bottom:12px;padding:8px 12px;border:1px solid #e53e3e;border-radius:4px;color:#c00;font-size:11px;font-weight:600;line-height:1.5;text-align:justify;text-transform:uppercase;">Questo preventivo è provvisorio e non può essere accettato.<br/>A titolo esemplificativo le proponiamo lo schema di accettazione nel futuro preventivo ufficiale.</div>` : ''
+  const timbroOverlay = isProv ? `<img src="/images/app/NO-SIGN-TRASP.png" style="position:absolute;bottom:0;left:62%;transform:translateX(-50%);width:130px;opacity:0.85;pointer-events:none;" />` : ''
   return `<div style="margin-top:8px;padding-top:8px;font-size:12px;line-height:1.4;color:#222;font-family:'Times New Roman',Times,serif;">
   ${avviso}
   <div style="font-size:11px;font-weight:bold;text-align:center;text-decoration:underline;letter-spacing:.04em;margin-bottom:8px;">ACCETTAZIONE</div>
