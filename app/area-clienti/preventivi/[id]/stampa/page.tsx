@@ -1161,14 +1161,12 @@ function totaleBoxHtml(artRows: Record<string, unknown>[], totale: string, scont
   </div>`
 }
 
-function extraLastHtml(artRows: Record<string, unknown>[], totale: string, scontoClientePct: number): string {
-  const scontoBlock = totaleBoxHtml(artRows, totale, scontoClientePct)
-
-  const condBlock = `<div style="font-size:10px;margin-top:8px;padding:8px 12px;background:#f5f5f5;border:1px solid #ddd;line-height:1.5;color:#555;">
+const COND_ACCORDI_HTML = `<div style="font-size:10px;margin-top:8px;padding:8px 12px;background:#f5f5f5;border:1px solid #ddd;line-height:1.5;color:#555;">
   <strong>Nota:</strong> Salvo accordi integrativi scritti e firmati tra le parti si fa riferimento alle condizioni generali di preventivo (<a href="https://www.digi-home-design.com/docs/condizioni-generali-del-preventivo.pdf" style="color:#555;">www.digi-home-design.com/docs/condizioni-generali-del-preventivo.pdf</a>) e di vendita (<a href="https://www.digi-home-design.com/docs/condizioni-generali-di-vendita.pdf" style="color:#555;">www.digi-home-design.com/docs/condizioni-generali-di-vendita.pdf</a>), riportate nel seguito del documento.
 </div>`
 
-  return `${scontoBlock}${condBlock}`
+function extraLastHtml(artRows: Record<string, unknown>[], totale: string, scontoClientePct: number): string {
+  return `${totaleBoxHtml(artRows, totale, scontoClientePct)}${COND_ACCORDI_HTML}`
 }
 
 function accettazioneHtml(): string {
@@ -1270,7 +1268,16 @@ async function buildStampaData(opts: {
   blocks.push({ html: riepilogoTableHeaderHtml() })
   roots.forEach((p, i) => blocks.push({ html: riepilogoTableRowHtml(p, i) }))
   blocks.push({ html: totaleBoxHtml(artRows, totale, scontoClientePct) })
-  blocks.push({ html: riepilogoNotaHtml() })
+
+  // ── Sezione dettaglio (solo se ci sono articoli con caratteristiche) ───────
+  const hasDetails = roots.some(p => {
+    const id = n(p.id)
+    const ch = childrenMap.get(id) ?? []
+    const tot = n(p.prezzo_totale) + ch.reduce((sum, c) => sum + n(c.prezzo_totale), 0)
+    return tot > 0
+  })
+
+  if (hasDetails) blocks.push({ html: riepilogoNotaHtml() })
   blocks.push({ html: riepilogoChiusuraHtml() })
   if (noteRaw) {
     const righe = noteRaw.split('\n')
@@ -1293,13 +1300,7 @@ async function buildStampaData(opts: {
     blocks.push({ html: `<div style="margin-top:18px;"><div style="font-size:10.5px;line-height:1.55;color:#111;">${righeHtml}</div></div>` })
   }
 
-  // ── Sezione dettaglio (solo se ci sono articoli con caratteristiche) ───────
-  const hasDetails = roots.some(p => {
-    const id = n(p.id)
-    const ch = childrenMap.get(id) ?? []
-    const tot = n(p.prezzo_totale) + ch.reduce((sum, c) => sum + n(c.prezzo_totale), 0)
-    return tot > 0
-  })
+  blocks.push({ html: COND_ACCORDI_HTML })
 
   if (hasDetails) {
     blocks.push({ html: `<div style="font-size:11px;font-weight:bold;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid #ddd;">DETTAGLIO FORNITURA:</div>`, forceNewPage: true })
