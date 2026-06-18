@@ -186,13 +186,25 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       }
     }
 
+    type ClienteOption = { id: number; label: string }
+    let clienti: ClienteOption[] = []
+    if (isStaff) {
+      const [clientiRows] = await db.query(
+        `SELECT id, nome, cognome, ragione_sociale FROM clienti ORDER BY ragione_sociale ASC, cognome ASC, nome ASC`
+      ) as [Record<string, unknown>[], unknown]
+      clienti = (clientiRows as Record<string, unknown>[]).map(c => ({
+        id: Number(c.id),
+        label: String(c.ragione_sociale || '').trim() || `${String(c.cognome ?? '').trim()} ${String(c.nome ?? '').trim()}`.trim(),
+      }))
+    }
+
     return (
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <PreventivoClient
           preventivo={preventivo}
           articoli={articoli}
           listini={listini}
-          clienti={[]}
+          clienti={clienti}
           isStaff={isStaff}
           clienteEmail={clienteEmail}
           clienteCellulare={clienteCellulare}
