@@ -1161,18 +1161,14 @@ function totaleBoxHtml(artRows: Record<string, unknown>[], totale: string, scont
   </div>`
 }
 
-function extraLastHtml(artRows: Record<string, unknown>[], totale: string, scontoClientePct: number, noteRaw: string | null): string {
+function extraLastHtml(artRows: Record<string, unknown>[], totale: string, scontoClientePct: number): string {
   const scontoBlock = totaleBoxHtml(artRows, totale, scontoClientePct)
-
-  const noteBlock = noteRaw
-    ? `<div style="margin-top:16px;border-top:1px solid #eee;padding-top:10px;font-size:11px;color:#666;line-height:1.6;"><strong>Note:</strong><br/>${noteRaw}</div>`
-    : ''
 
   const condBlock = `<div style="font-size:10px;margin-top:8px;padding:8px 12px;background:#f5f5f5;border:1px solid #ddd;line-height:1.5;color:#555;">
   <strong>Nota:</strong> Salvo accordi integrativi scritti e firmati tra le parti si fa riferimento alle condizioni generali di preventivo (<a href="https://www.digi-home-design.com/docs/condizioni-generali-del-preventivo.pdf" style="color:#555;">www.digi-home-design.com/docs/condizioni-generali-del-preventivo.pdf</a>) e di vendita (<a href="https://www.digi-home-design.com/docs/condizioni-generali-di-vendita.pdf" style="color:#555;">www.digi-home-design.com/docs/condizioni-generali-di-vendita.pdf</a>), riportate nel seguito del documento.
 </div>`
 
-  return `${scontoBlock}${noteBlock}${condBlock}`
+  return `${scontoBlock}${condBlock}`
 }
 
 function accettazioneHtml(): string {
@@ -1331,7 +1327,7 @@ async function buildStampaData(opts: {
       }
     })
 
-    blocks.push({ html: extraLastHtml(artRows, totale, scontoClientePct, noteRaw) })
+    blocks.push({ html: extraLastHtml(artRows, totale, scontoClientePct) })
   }
 
   const prevArts = condizioniPreventivoArticles()
