@@ -90,6 +90,7 @@ async function ensureTables() {
   await db.execute(`ALTER TABLE clienti ADD COLUMN sconto_pct DECIMAL(5,2) NOT NULL DEFAULT 0`).catch(() => {})
   await db.execute(`ALTER TABLE preventivi MODIFY COLUMN stato ENUM('bozza','richiesto','in preparazione','da inviare','inviato','accettato','rifiutato','scaduto','annullato') NOT NULL DEFAULT 'bozza'`).catch(() => {})
   await db.execute(`ALTER TABLE preventivi ADD COLUMN cloned_from INT NULL DEFAULT NULL`).catch(() => {})
+  await db.execute(`ALTER TABLE preventivi ADD COLUMN prezzo_forfait DECIMAL(10,2) NOT NULL DEFAULT 0`).catch(() => {})
   await db.execute(`UPDATE preventivi SET validita_giorni = 5 WHERE validita_giorni = 30`).catch(() => {})
   await db.execute(`UPDATE preventivi SET stato = 'scaduto' WHERE stato IN ('bozza','richiesto','inviato') AND DATE_ADD(data, INTERVAL validita_giorni DAY) < CURDATE()`).catch(() => {})
   await db.execute(`
@@ -162,16 +163,24 @@ export async function eliminaPreventivo(id: number): Promise<MutResult> {
 
 export async function aggiornaDatiPreventivo(_: MutResult | null, fd: FormData): Promise<MutResult> {
   await checkAnyRole()
+  const cookieStore = await cookies()
+  const role = cookieStore.get('session_role')?.value ?? ''
 
-  const preventivo_id  = parseInt(fd.get('preventivo_id') as string)
-  const descrizione    = ((fd.get('descrizione')     as string) ?? '').trim()
-  const note           = ((fd.get('note')            as string) ?? '').trim()
-  const validita       = parseInt(fd.get('validita_giorni') as string) || 5
+  const preventivo_id   = parseInt(fd.get('preventivo_id') as string)
+  const descrizione     = ((fd.get('descrizione')     as string) ?? '').trim()
+  const note            = ((fd.get('note')            as string) ?? '').trim()
+  const validita        = parseInt(fd.get('validita_giorni') as string) || 5
+  const isStaff         = role === 'admin' || role === 'dipendente'
+  const prezzoForfait   = isStaff ? (parseFloat(fd.get('prezzo_forfait') as string) || 0) : null
   if (!preventivo_id) return { ok: false, error: 'ID non valido.' }
 
   await ensureTables()
   const db = await getConnection()
-  await db.execute('UPDATE preventivi SET descrizione = ?, note = ?, validita_giorni = ? WHERE id = ?', [descrizione || null, note || null, validita, preventivo_id])
+  if (prezzoForfait !== null) {
+    await db.execute('UPDATE preventivi SET descrizione = ?, note = ?, validita_giorni = ?, prezzo_forfait = ? WHERE id = ?', [descrizione || null, note || null, validita, prezzoForfait, preventivo_id])
+  } else {
+    await db.execute('UPDATE preventivi SET descrizione = ?, note = ?, validita_giorni = ? WHERE id = ?', [descrizione || null, note || null, validita, preventivo_id])
+  }
   await db.end()
   revalidatePath(`/clienti/preventivi/${preventivo_id}`)
   return { ok: true }

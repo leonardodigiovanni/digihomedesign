@@ -68,6 +68,7 @@ export type Preventivo = {
   note: string | null
   visibile_cliente: number
   sconto_cliente_pct: number
+  prezzo_forfait: number
 }
 
 export type ClienteOption = { id: number; label: string }
@@ -126,13 +127,14 @@ const label: React.CSSProperties = {
 function DatiPreventivo({ preventivo, readOnly = false, isStaff = false, isApp }: { preventivo: Preventivo; readOnly?: boolean; isStaff?: boolean; isApp?: boolean }) {
   const router = useRouter()
   const [pending, startT] = useTransition()
-  const [desc, setDesc]       = useState(preventivo.descrizione ?? '')
-  const [note, setNote]       = useState(preventivo.note ?? '')
-  const [validita, setValidita] = useState(preventivo.validita_giorni)
-  const [saved, setSaved]     = useState(false)
-  const [open, setOpen]       = useState(false)
+  const [desc, setDesc]             = useState(preventivo.descrizione ?? '')
+  const [note, setNote]             = useState(preventivo.note ?? '')
+  const [validita, setValidita]     = useState(preventivo.validita_giorni)
+  const [forfait, setForfait]       = useState(preventivo.prezzo_forfait ?? 0)
+  const [saved, setSaved]           = useState(false)
+  const [open, setOpen]             = useState(false)
 
-  const dirty = desc !== (preventivo.descrizione ?? '') || note !== (preventivo.note ?? '') || (isStaff && validita !== preventivo.validita_giorni)
+  const dirty = desc !== (preventivo.descrizione ?? '') || note !== (preventivo.note ?? '') || (isStaff && (validita !== preventivo.validita_giorni || forfait !== (preventivo.prezzo_forfait ?? 0)))
 
   function handleSave() {
     const fd = new FormData()
@@ -140,6 +142,7 @@ function DatiPreventivo({ preventivo, readOnly = false, isStaff = false, isApp }
     fd.set('descrizione', desc)
     fd.set('note', note)
     fd.set('validita_giorni', String(validita))
+    fd.set('prezzo_forfait', String(forfait))
     startT(async () => {
       await aggiornaDatiPreventivo(null, fd)
       setSaved(true)
@@ -215,6 +218,17 @@ function DatiPreventivo({ preventivo, readOnly = false, isStaff = false, isApp }
                 value={validita}
                 onChange={e => { setValidita(parseInt(e.target.value) || 5); setSaved(false) }}
                 style={{ ...inp, width: 100, fontSize: 13 }}
+              />
+            </div>
+          )}
+          {isStaff && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              <span style={{ fontSize: 11, fontWeight: 600, color: '#333', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Prezzo forfait (€)</span>
+              <input
+                type="number" step="0.01"
+                value={forfait}
+                onChange={e => { setForfait(parseFloat(e.target.value) || 0); setSaved(false) }}
+                style={{ ...inp, width: 150, fontSize: 13 }}
               />
             </div>
           )}
@@ -1717,13 +1731,14 @@ export default function PreventivoClient({
       })()}
 
       {/* Totale corrente */}
-      {importo > 0 && (() => {
+      {(importo + (preventivo.prezzo_forfait ?? 0)) > 0 && (() => {
         const lordo       = articoli.reduce((s, a) => s + a.prezzo_pre_sconto, 0)
         const subtotale   = articoli.reduce((s, a) => s + a.prezzo_totale, 0)
         const scontiPromo = Math.round((lordo - subtotale) * 100) / 100
         const scontoCliPct = preventivo.sconto_cliente_pct ?? 0
         const scontoCliAmt = Math.round(subtotale * scontoCliPct / 100 * 100) / 100
         const hasScontiPromo = scontiPromo >= 0.01
+        const importoFinale = importo + (preventivo.prezzo_forfait ?? 0)
         const anyLacune = articoli.filter(a => !a.parent_id).some(root => {
           const rl = listini.find(l => l.id === root.listino_id)
           const nC = (rl?.richiede_tipo_colore ?? 0) === 1, nCA = (rl?.richiede_tipo_colore_acc ?? 0) === 1
@@ -1753,7 +1768,7 @@ export default function PreventivoClient({
               `− € ${fmt(scontoCliAmt)}`,
               { color: '#e65100' }
             )}
-            {row('Importo preventivo:', `€ ${fmt(importo)}`, { bold: true, large: true, color: '#111', separator: true })}
+            {row('Importo preventivo:', `€ ${fmt(importoFinale)}`, { bold: true, large: true, color: '#111', separator: true })}
             {isStaff && <ScontoClienteEditor preventivoId={preventivo.id} currentPct={scontoCliPct} isApp={isApp} />}
           </div>
         )

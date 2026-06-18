@@ -18,6 +18,7 @@ type Preventivo = {
   descrizione: string
   stato: 'bozza' | 'inviato' | 'accettato' | 'rifiutato' | 'scaduto'
   importo: number
+  prezzo_forfait: number
   data: string
   validita_giorni: number
   note: string | null
@@ -151,7 +152,7 @@ export default async function Page() {
                     <td style={tdStyle}>{p.cliente_nome || '—'}</td>
                     <td style={tdStyle}>{p.descrizione}</td>
                     <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>{p.data}</td>
-                    <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>€ {Number(p.importo).toFixed(2)}</td>
+                    <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>€ {(Number(p.importo) + Number(p.prezzo_forfait ?? 0)).toFixed(2)}</td>
                     <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>{p.validita_giorni} gg</td>
                     <td style={{ ...tdStyle, textAlign: 'center' }}>
                       <span style={{ background: bg, color, padding: '2px 10px', borderRadius: 12, fontSize: 11, fontWeight: 600 }}>

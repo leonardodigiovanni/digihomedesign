@@ -702,24 +702,6 @@ function articoloBlockHTML(parent: Record<string, unknown>, children: Record<str
 }
 
 
-function noteContrattualiHtml(): string {
-  const voci = [
-    { titolo: 'Preventivo indicativo',               testo: "Il presente preventivo ha carattere puramente orientativo e teorico ed è stato redatto sulla base delle lavorazioni attualmente previste. L'importo complessivo potrà subire variazioni in funzione della definizione dettagliata delle opere da eseguire e della scelta finale dei materiali." },
-    { titolo: 'Scontistica',                         testo: "Una formula di sconto dedicata verrà applicata al momento della definizione definitiva dell'intervento, che terrà conto di tutti i lavori da fare compresi: infissi, veranda, porte interne." },
-    { titolo: 'Modalità di pagamento',               testo: "Le modalità e le tempistiche di pagamento saranno concordate tra le parti prima dell'inizio dei lavori." },
-    { titolo: 'Gestione digitale del cantiere',      testo: "Omaggio incluso: utilizzo dell'applicazione Digi Home per il monitoraggio e la gestione del cantiere, con possibilità di seguire l'avanzamento dei lavori e la documentazione correlata." },
-    { titolo: 'Tempi di esecuzione',                 testo: "La data di inizio lavori sarà concordata successivamente in base alla disponibilità delle parti e alla definizione delle opere." },
-    { titolo: 'Certificazioni',                      testo: "Le pratiche di certificazione relative agli impianti sono incluse come omaggio." },
-    { titolo: 'Pratiche apertura e chiusura cantiere', testo: "Restano a carico della committenza i costi amministrativi relativi all'apertura e chiusura della pratica edilizia (CILA), da corrispondere direttamente al nostro ingegnere di fiducia." },
-    { titolo: 'IVA',                                 testo: "Tutti gli importi indicati nel presente preventivo sono da intendersi escluso IVA, che verrà applicata secondo le aliquote di legge vigenti." },
-  ]
-  const righe = voci.map(v =>
-    `<div style="margin-bottom:6px;"><div style="font-weight:bold;font-size:10.5px;color:#111;">${v.titolo}</div><div style="font-size:10.5px;color:#111;line-height:1.6;">${v.testo}</div></div>`
-  ).join('')
-  return `<div style="padding-top:10px;border-top:1px solid #ddd;">
-<div style="text-align:center;font-size:16px;font-weight:bold;color:#111;letter-spacing:0.04em;margin-bottom:12px;">NOTE IMPORTANTI PER QUESTO PREVENTIVO PROVVISORIO</div>
-${righe}</div>`
-}
 
 function riepilogoIntroHtml(): string {
   return `<div style="font-size:12px;color:#333;line-height:1.4;margin-top:14px;margin-bottom:14px;text-align:justify;">
@@ -746,7 +728,7 @@ function riepilogoTableHeaderHtml(): string {
   <div style="flex:0 0 6%;padding:4px 8px;border-right:1px solid #ddd;text-align:center;box-sizing:border-box;">Rif.</div>
   <div style="flex:0 0 20%;padding:4px 8px;border-right:1px solid #ddd;box-sizing:border-box;">Tipo</div>
   <div style="flex:0 0 17%;padding:4px 8px;border-right:1px solid #ddd;box-sizing:border-box;">Marca</div>
-  <div style="flex:0 0 35%;padding:4px 8px;border-right:1px solid #ddd;box-sizing:border-box;">Modello</div>
+  <div style="flex:0 0 35%;padding:4px 8px;border-right:1px solid #ddd;box-sizing:border-box;">Modello/Descrizione</div>
   <div style="flex:0 0 14%;padding:4px 8px;border-right:1px solid #ddd;text-align:center;box-sizing:border-box;">L×H</div>
   <div style="flex:0 0 8%;padding:4px 8px;text-align:center;box-sizing:border-box;">Qtà</div>
 </div>`
@@ -1294,7 +1276,26 @@ async function buildStampaData(opts: {
   blocks.push({ html: totaleBoxHtml(artRows, totale, scontoClientePct) })
   blocks.push({ html: riepilogoNotaHtml() })
   blocks.push({ html: riepilogoChiusuraHtml() })
-  blocks.push({ html: noteContrattualiHtml() })
+  if (noteRaw) {
+    const righe = noteRaw.split('\n')
+    const righeHtml = righe.map(r => {
+      const t = r.trim()
+      if (!t) return '<br/>'
+      const bangIdx = t.indexOf('!')
+      if (bangIdx >= 0 && bangIdx < 60) {
+        const testo = t.replace(/!/g, '').trim().toUpperCase()
+        return `<p style="margin:10px 0 4px;font-size:12px;font-weight:bold;text-align:center;text-transform:uppercase;letter-spacing:0.04em;">${testo}</p>`
+      }
+      const colonIdx = t.indexOf(':')
+      if (colonIdx > 0 && colonIdx < 60) {
+        const titolo = t.slice(0, colonIdx)
+        const resto  = t.slice(colonIdx + 1).trim()
+        return `<p style="margin:6px 0 2px;font-size:10.5px;"><strong>${titolo}:</strong>${resto ? ' ' + resto : ''}</p>`
+      }
+      return `<p style="margin:4px 0;font-size:10.5px;">${t}</p>`
+    }).join('')
+    blocks.push({ html: `<div style="margin-top:18px;"><div style="font-size:10.5px;line-height:1.55;color:#111;">${righeHtml}</div></div>` })
+  }
 
   // ── Sezione dettaglio (solo se ci sono articoli con caratteristiche) ───────
   const hasDetails = roots.some(p => {
@@ -1424,9 +1425,11 @@ export async function loadData(prevId: number, username: string, isStaff: boolea
     const rows = artRows as Record<string, unknown>[]
     const subtotaleArticoli = rows.reduce((sum, a) => sum + n(a.prezzo_totale), 0)
     const importoDb = n(p.importo)
-    const totale = (scontoClientePct > 0 && Math.abs(importoDb - subtotaleArticoli) < 0.05)
-      ? (subtotaleArticoli * (1 - scontoClientePct / 100)).toFixed(2)
-      : importoDb.toFixed(2)
+    const prezzoForfait = n(p.prezzo_forfait)
+    const totaleBase = (scontoClientePct > 0 && Math.abs(importoDb - subtotaleArticoli) < 0.05)
+      ? (subtotaleArticoli * (1 - scontoClientePct / 100))
+      : importoDb
+    const totale = (totaleBase + prezzoForfait).toFixed(2)
 
     return await buildStampaData({
       artRows: rows,

@@ -50,6 +50,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       note: raw.note != null ? String(raw.note) : null,
       visibile_cliente: Number(raw.visibile_cliente),
       sconto_cliente_pct: Number(raw.sconto_cliente_pct ?? 0),
+      prezzo_forfait: Number(raw.prezzo_forfait ?? 0),
     }
 
     if (preventivo.stato === 'inviato') {
