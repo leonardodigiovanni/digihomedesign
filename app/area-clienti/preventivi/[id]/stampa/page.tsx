@@ -1344,7 +1344,7 @@ async function buildStampaData(opts: {
       blocks.push({ html: htmlFull })
     } else {
       const htmlMain   = articoloBlockHTML(p, children, i, colorMap.get(id), colorAccMap.get(id), true)
-      const htmlCaratt = caratteristicheWrapperHTML(children, prezzo, i, prezzoHTML, s(p.tipo_prodotto), scontoArt)
+      const htmlCaratt = caratteristicheWrapperHTML(children.slice(2), prezzo, i, prezzoHTML, s(p.tipo_prodotto), scontoArt)
       blocks.push({ html: htmlFull, htmlMain, htmlCaratt })
     }
   })
