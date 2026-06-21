@@ -648,13 +648,15 @@ export async function modificaPreventivo(_: InviaResult | null, fd: FormData): P
     // Crea clone con stato "da inviare"
     const today = new Date().toISOString().slice(0, 10)
     const [cloneResult] = await db.execute(
-      `INSERT INTO preventivi (numero, cliente_id, descrizione, stato, importo, data, validita_giorni, note, visibile_cliente, sconto_cliente_pct, cloned_from)
-       VALUES (?,?,?,?,?,?,?,?,?,?,?)`,
+      `INSERT INTO preventivi (numero, cliente_id, descrizione, stato, importo, data, validita_giorni, note, visibile_cliente, sconto_cliente_pct, prezzo_forfait, sconto_cliente_override, cloned_from)
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`,
       ['', prev.cliente_id != null ? Number(prev.cliente_id) : null,
        prev.descrizione != null ? String(prev.descrizione) : null,
        'da inviare', Number(prev.importo), today, Number(prev.validita_giorni),
        prev.note != null ? String(prev.note) : null,
-       0, Number(prev.sconto_cliente_pct ?? 0), preventivo_id] as (string | number | null)[]
+       0, Number(prev.sconto_cliente_pct ?? 0),
+       Number(prev.prezzo_forfait ?? 0), Number(prev.sconto_cliente_override ?? 0),
+       preventivo_id] as (string | number | null)[]
     ) as [{ insertId: number }, unknown]
     const cloneId = cloneResult.insertId
     const dateStr = today.replace(/-/g, '')
