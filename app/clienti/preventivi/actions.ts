@@ -173,11 +173,16 @@ export async function aggiornaDatiPreventivo(_: MutResult | null, fd: FormData):
   const validita        = parseInt(fd.get('validita_giorni') as string) || 5
   const isStaff         = role === 'admin' || role === 'dipendente'
   const prezzoForfait   = isStaff ? (parseFloat(fd.get('prezzo_forfait') as string) || 0) : null
+  const statoRaw        = (fd.get('stato') as string | null)
+  const STATI_VALIDI    = ['bozza', 'richiesto', 'inviato', 'accettato', 'rifiutato', 'scaduto', 'annullato', 'da inviare']
+  const nuovoStato      = isStaff && statoRaw && STATI_VALIDI.includes(statoRaw) ? statoRaw : null
   if (!preventivo_id) return { ok: false, error: 'ID non valido.' }
 
   await ensureTables()
   const db = await getConnection()
-  if (prezzoForfait !== null) {
+  if (prezzoForfait !== null && nuovoStato) {
+    await db.execute('UPDATE preventivi SET descrizione = ?, note = ?, validita_giorni = ?, prezzo_forfait = ?, stato = ? WHERE id = ?', [descrizione || null, note || null, validita, prezzoForfait, nuovoStato, preventivo_id])
+  } else if (prezzoForfait !== null) {
     await db.execute('UPDATE preventivi SET descrizione = ?, note = ?, validita_giorni = ?, prezzo_forfait = ? WHERE id = ?', [descrizione || null, note || null, validita, prezzoForfait, preventivo_id])
   } else {
     await db.execute('UPDATE preventivi SET descrizione = ?, note = ?, validita_giorni = ? WHERE id = ?', [descrizione || null, note || null, validita, preventivo_id])

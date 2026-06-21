@@ -131,10 +131,11 @@ function DatiPreventivo({ preventivo, readOnly = false, isStaff = false, isApp }
   const [note, setNote]             = useState(preventivo.note ?? '')
   const [validita, setValidita]     = useState(preventivo.validita_giorni)
   const [forfait, setForfait]       = useState(preventivo.prezzo_forfait ?? 0)
+  const [stato, setStato]           = useState(preventivo.stato)
   const [saved, setSaved]           = useState(false)
   const [open, setOpen]             = useState(false)
 
-  const dirty = desc !== (preventivo.descrizione ?? '') || note !== (preventivo.note ?? '') || (isStaff && (validita !== preventivo.validita_giorni || forfait !== (preventivo.prezzo_forfait ?? 0)))
+  const dirty = desc !== (preventivo.descrizione ?? '') || note !== (preventivo.note ?? '') || (isStaff && (validita !== preventivo.validita_giorni || forfait !== (preventivo.prezzo_forfait ?? 0) || stato !== preventivo.stato))
 
   function handleSave() {
     const fd = new FormData()
@@ -143,6 +144,7 @@ function DatiPreventivo({ preventivo, readOnly = false, isStaff = false, isApp }
     fd.set('note', note)
     fd.set('validita_giorni', String(validita))
     fd.set('prezzo_forfait', String(forfait))
+    if (isStaff) fd.set('stato', stato)
     startT(async () => {
       await aggiornaDatiPreventivo(null, fd)
       setSaved(true)
@@ -230,6 +232,20 @@ function DatiPreventivo({ preventivo, readOnly = false, isStaff = false, isApp }
                 onChange={e => { setForfait(parseFloat(e.target.value) || 0); setSaved(false) }}
                 style={{ ...inp, width: 150, fontSize: 13 }}
               />
+            </div>
+          )}
+          {isStaff && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              <span style={{ fontSize: 11, fontWeight: 600, color: '#333', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Stato</span>
+              <select
+                value={stato}
+                onChange={e => { setStato(e.target.value as Preventivo['stato']); setSaved(false) }}
+                style={{ ...inp, width: 180, fontSize: 13 }}
+              >
+                {(['bozza', 'da inviare', 'richiesto', 'inviato', 'accettato', 'rifiutato', 'scaduto', 'annullato'] as Preventivo['stato'][]).map(s => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
             </div>
           )}
           <div>
