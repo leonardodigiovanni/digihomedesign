@@ -91,6 +91,7 @@ async function ensureTables() {
   await db.execute(`ALTER TABLE preventivi MODIFY COLUMN stato ENUM('bozza','richiesto','in preparazione','da inviare','inviato','accettato','rifiutato','scaduto','annullato') NOT NULL DEFAULT 'bozza'`).catch(() => {})
   await db.execute(`ALTER TABLE preventivi ADD COLUMN cloned_from INT NULL DEFAULT NULL`).catch(() => {})
   await db.execute(`ALTER TABLE preventivi ADD COLUMN prezzo_forfait DECIMAL(10,2) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE preventivi ADD COLUMN sconto_cliente_override TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
   await db.execute(`UPDATE preventivi SET validita_giorni = 5 WHERE validita_giorni = 30`).catch(() => {})
   await db.execute(`UPDATE preventivi SET stato = 'scaduto' WHERE stato IN ('bozza','richiesto','inviato') AND DATE_ADD(data, INTERVAL validita_giorni DAY) < CURDATE()`).catch(() => {})
   await db.execute(`
@@ -224,12 +225,13 @@ async function ricalcolaTotaleConSconti(
   preventivo_id: number
 ): Promise<void> {
   const [prevRows] = await db.query(
-    'SELECT cliente_id, sconto_cliente_pct FROM preventivi WHERE id = ? LIMIT 1', [preventivo_id]
-  ) as [{ cliente_id: number | null; sconto_cliente_pct: number }[], unknown]
+    'SELECT cliente_id, sconto_cliente_pct, sconto_cliente_override FROM preventivi WHERE id = ? LIMIT 1', [preventivo_id]
+  ) as [{ cliente_id: number | null; sconto_cliente_pct: number; sconto_cliente_override: number }[], unknown]
   const clienteId = prevRows[0]?.cliente_id ?? null
+  const hasOverride = Number(prevRows[0]?.sconto_cliente_override ?? 0) === 1
 
   let scontoClientePct = Number(prevRows[0]?.sconto_cliente_pct ?? 0)
-  if (scontoClientePct === 0 && clienteId) {
+  if (!hasOverride && scontoClientePct === 0 && clienteId) {
     const [cRows] = await db.query(
       'SELECT sconto_pct FROM clienti WHERE id = ? LIMIT 1', [clienteId]
     ) as [{ sconto_pct: number }[], unknown]
@@ -448,20 +450,73 @@ export async function modificaArticolo(_: MutResult | null, fd: FormData): Promi
   if (!preventivo_id) return { ok: false, error: 'ID preventivo non valido.' }
   await checkAccessToPreventivo(preventivo_id)
 
-  const id            = parseInt(fd.get('id') as string)
-  const altezza_cm    = parseFloat(fd.get('altezza_cm')   as string) || 0
-  const larghezza_cm  = parseFloat(fd.get('larghezza_cm') as string) || 0
-  const n_ante        = parseInt(fd.get('n_ante')    as string) || 1
-  const quantita      = parseInt(fd.get('quantita')  as string) || 1
-  const prezzo_base   = parseFloat(fd.get('prezzo_base')         as string) || 0
-  const sconto_art    = parseFloat(fd.get('sconto_articolo_pct') as string) || 0
-  const note          = ((fd.get('note') as string) ?? '').trim()
+  const id              = parseInt(fd.get('id') as string)
+  const altezza_cm      = parseFloat(fd.get('altezza_cm')   as string) || 0
+  const larghezza_cm    = parseFloat(fd.get('larghezza_cm') as string) || 0
+  const n_ante          = parseInt(fd.get('n_ante')    as string) || 1
+  const quantita        = parseFloat(fd.get('quantita')  as string) || 1
+  const prezzo_base     = parseFloat(fd.get('prezzo_base')         as string) || 0
+  const sconto_art      = parseFloat(fd.get('sconto_articolo_pct') as string) || 0
+  const note            = ((fd.get('note') as string) ?? '').trim()
+  const formulaDiretta  = fd.get('formula_diretta') === '1'
+  const nuovoListinoId  = parseInt(fd.get('nuovo_listino_id') as string) || null
 
   if (!id || !preventivo_id) return { ok: false, error: 'Dati mancanti.' }
 
   await ensureTables()
   const db = await getConnection()
   try {
+    // ── Cambio articolo: aggiorna listino root + cascade figli ──
+    if (nuovoListinoId) {
+      const [nlRows] = await db.query(
+        `SELECT id, categoria, produttore, serie, descrizione, prezzo_vendita, unita,
+                richiede_tipo_colore, richiede_tipo_colore_acc, richiede_tipo_vetro, richiede_tipo_montaggio
+         FROM listini WHERE id = ? LIMIT 1`,
+        [nuovoListinoId]
+      ) as [{ id: number; categoria: string; produttore: string; serie: string | null; descrizione: string; prezzo_vendita: number; unita: string;
+               richiede_tipo_colore: number; richiede_tipo_colore_acc: number; richiede_tipo_vetro: number; richiede_tipo_montaggio: number }[], unknown]
+      const nl = nlRows[0]
+      if (!nl) return { ok: false, error: 'Articolo non trovato nel listino.' }
+
+      // Verifica e cancella figli incompatibili
+      const [figlRows] = await db.query(
+        `SELECT pa.id, l.produttore, l.categoria, l.serie,
+                l.richiede_tipo_colore, l.richiede_tipo_colore_acc, l.richiede_tipo_vetro, l.richiede_tipo_montaggio
+         FROM preventivo_articoli pa
+         LEFT JOIN listini l ON l.id = pa.listino_id
+         WHERE pa.parent_id = ? AND pa.preventivo_id = ?`,
+        [id, preventivo_id]
+      ) as [{ id: number; produttore: string | null; categoria: string | null; serie: string | null;
+              richiede_tipo_colore: number; richiede_tipo_colore_acc: number; richiede_tipo_vetro: number; richiede_tipo_montaggio: number }[], unknown]
+
+      const nlSerie = nl.serie ?? ''
+      for (const figlio of figlRows) {
+        const brandOk = !figlio.produttore || figlio.produttore === nl.produttore
+        const catOk   = !figlio.categoria  || figlio.categoria  === nl.categoria
+        const serieOk = !figlio.serie      || figlio.serie      === nlSerie
+        let keep = false
+        if (brandOk && catOk && serieOk) {
+          const hasFlag = (figlio.richiede_tipo_colore ?? 0) === 1 || (figlio.richiede_tipo_colore_acc ?? 0) === 1 ||
+                          (figlio.richiede_tipo_vetro  ?? 0) === 1 || (figlio.richiede_tipo_montaggio  ?? 0) === 1
+          keep = hasFlag
+            ? (((figlio.richiede_tipo_colore     ?? 0) !== 1 || nl.richiede_tipo_colore     === 1) &&
+               ((figlio.richiede_tipo_colore_acc ?? 0) !== 1 || nl.richiede_tipo_colore_acc === 1) &&
+               ((figlio.richiede_tipo_vetro      ?? 0) !== 1 || nl.richiede_tipo_vetro      === 1) &&
+               ((figlio.richiede_tipo_montaggio  ?? 0) !== 1 || nl.richiede_tipo_montaggio  === 1))
+            : true
+        }
+        if (!keep) {
+          await db.execute('DELETE FROM preventivo_articoli WHERE id = ? AND preventivo_id = ?', [figlio.id, preventivo_id])
+        }
+      }
+
+      // Aggiorna listino/tipo/marca/modello/prezzo/unità del root
+      await db.execute(
+        `UPDATE preventivo_articoli SET listino_id=?, tipo_prodotto=?, marca=?, modello=?, prezzo_base=?, unita=? WHERE id=? AND preventivo_id=?`,
+        [nl.id, nl.categoria, nl.produttore, nl.descrizione, nl.prezzo_vendita, nl.unita, id, preventivo_id]
+      )
+    }
+
     const [artRows] = await db.query(
       'SELECT unita, listino_id FROM preventivo_articoli WHERE id = ? LIMIT 1', [id]
     ) as [{ unita: string; listino_id: number | null }[], unknown]
@@ -482,13 +537,15 @@ export async function modificaArticolo(_: MutResult | null, fd: FormData): Promi
       prezzoBaseListino = Number(lRows[0]?.prezzo_vendita ?? prezzo_base)
     }
 
-    const prezzo_base_calc = prezzoBaseListino > 0 ? prezzoBaseListino : prezzo_base
+    const prezzo_base_calc = prezzo_base > 0 ? prezzo_base : prezzoBaseListino
 
     const h = altezza_cm / 100
     const l = larghezza_cm / 100
     const factor = 1 - sconto_art / 100
     let prezzoLordo = 0
-    if (unita === 'm²') {
+    if (formulaDiretta) {
+      prezzoLordo = prezzo_base_calc * quantita
+    } else if (unita === 'm²') {
       const area = minimoMq > 0 ? Math.max(h * l, minimoMq) : h * l
       prezzoLordo = prezzo_base_calc * area * quantita
     } else if (unita === 'ml') prezzoLordo = prezzo_base_calc * l * quantita
@@ -556,7 +613,7 @@ export async function aggiornaSconto(_: MutResult | null, fd: FormData): Promise
     const subtotale = Number(rows[0].totale)
     const importo   = Math.round(subtotale * (1 - sconto_cliente_pct / 100) * 100) / 100
     await db.execute(
-      'UPDATE preventivi SET sconto_cliente_pct=?, importo=? WHERE id=?',
+      'UPDATE preventivi SET sconto_cliente_pct=?, importo=?, sconto_cliente_override=1 WHERE id=?',
       [sconto_cliente_pct, importo, preventivo_id]
     )
     revalidatePath(`/clienti/preventivi/${preventivo_id}`)

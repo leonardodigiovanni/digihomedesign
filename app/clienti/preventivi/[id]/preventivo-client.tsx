@@ -381,7 +381,7 @@ function ArticoloForm({
   const [pending, startT] = useTransition()
   const [error, setError] = useState('')
 
-  const isCaratteristicaMode = parentId !== null && !!gapTypeFilter
+  const isCaratteristicaMode = parentId !== null
   const [tipo, setTipo]         = useState(() =>
     isCaratteristicaMode && parentArt ? parentArt.tipo_prodotto : (prefill?.tipo_prodotto ?? '')
   )
@@ -395,9 +395,12 @@ function ArticoloForm({
 
   const listiniFiltrati = useMemo(() => {
     if (parentId !== null) {
+      const rootSerie = listini.find(l => l.id === parentArt?.listino_id)?.serie ?? ''
       let filtered = listini.filter(l =>
         l.caratteristica === 1 &&
-        (parentArt ? l.categoria === parentArt.tipo_prodotto : true)
+        (!l.categoria  || l.categoria  === (parentArt?.tipo_prodotto ?? '')) &&
+        (!l.produttore || l.produttore === (parentArt?.marca         ?? '')) &&
+        (!l.serie      || l.serie      === rootSerie)
       )
       if (gapTypeFilter) {
         filtered = filtered.filter(l =>
@@ -406,14 +409,11 @@ function ArticoloForm({
           gapTypeFilter === 'tipo_vetro'      ? (l.richiede_tipo_vetro      ?? 0) === 1 :
                                                 (l.richiede_tipo_montaggio  ?? 0) === 1
         )
-      } else {
-        const usedMarche = new Set(existingChildTypes)
-        filtered = filtered.filter(l => !usedMarche.has(l.produttore))
       }
       return filtered
     }
     return listini.filter(l => l.principale === 1)
-  }, [listini, parentId, parentArt, existingChildTypes, gapTypeFilter])
+  }, [listini, parentId, parentArt, gapTypeFilter])
 
   const tipi   = useMemo(() => [...new Set(listiniFiltrati.map(l => l.categoria))].sort(), [listiniFiltrati])
   const marche = useMemo(
@@ -773,9 +773,10 @@ function ScontoClienteEditor({ preventivoId, currentPct, isApp }: { preventivoId
 
 // ─── Modale Modifica Articolo (staff) ────────────────────────────────────────
 
-function ModificaArticoloModal({ articolo, parentArt, listini, onClose, isStaff = true, isApp }: {
+function ModificaArticoloModal({ articolo, parentArt, children = [], listini, onClose, isStaff = true, isApp }: {
   articolo: Articolo
   parentArt?: Articolo | null
+  children?: Articolo[]
   listini: ListinoItem[]
   onClose: () => void
   isStaff?: boolean
@@ -787,18 +788,68 @@ function ModificaArticoloModal({ articolo, parentArt, listini, onClose, isStaff 
   const [magg, setMagg] = useState(Math.abs(articolo.sconto_articolo_pct))
 
   const isChild = articolo.parent_id !== null
+
+  // ── Sezione "Cambia articolo" (solo root staff) ──
+  const [showCambiaArt, setShowCambiaArt] = useState(false)
+  const [nuovoTipo, setNuovoTipo]         = useState('')
+  const [nuovaMarca, setNuovaMarca]       = useState('')
+  const [nuovoListinoId, setNuovoListinoId] = useState('')
+
+  const listiniPrincipali = useMemo(() => listini.filter(l => l.principale === 1), [listini])
+  const tipiDisp   = useMemo(() => [...new Set(listiniPrincipali.map(l => l.categoria))].sort(), [listiniPrincipali])
+  const marcheDisp = useMemo(() => [...new Set(listiniPrincipali.filter(l => l.categoria === nuovoTipo).map(l => l.produttore))].filter(Boolean).sort(), [listiniPrincipali, nuovoTipo])
+  const modelliDisp = useMemo(() => listiniPrincipali.filter(l => l.categoria === nuovoTipo && l.produttore === nuovaMarca), [listiniPrincipali, nuovoTipo, nuovaMarca])
+  const nuovoListinoSel = useMemo(() => listiniPrincipali.find(l => l.id === parseInt(nuovoListinoId)), [listiniPrincipali, nuovoListinoId])
+
+  const childrenCompat = useMemo(() => {
+    if (!nuovoListinoSel || !children.length) return null
+    return children.map(child => {
+      const cl = listini.find(l => l.id === child.listino_id)
+      if (!cl) return { child, ok: false }
+      const newSerie = nuovoListinoSel.serie ?? ''
+      const brandOk = !cl.produttore || cl.produttore === nuovoListinoSel.produttore
+      const catOk   = !cl.categoria  || cl.categoria  === nuovoListinoSel.categoria
+      const serieOk = !cl.serie      || cl.serie      === newSerie
+      if (!brandOk || !catOk || !serieOk) return { child, ok: false }
+      const hasTipedFlag = (cl.richiede_tipo_colore ?? 0) === 1 || (cl.richiede_tipo_colore_acc ?? 0) === 1 ||
+                           (cl.richiede_tipo_vetro ?? 0) === 1  || (cl.richiede_tipo_montaggio  ?? 0) === 1
+      if (hasTipedFlag) {
+        const ok = ((cl.richiede_tipo_colore     ?? 0) !== 1 || (nuovoListinoSel.richiede_tipo_colore     ?? 0) === 1) &&
+                   ((cl.richiede_tipo_colore_acc ?? 0) !== 1 || (nuovoListinoSel.richiede_tipo_colore_acc ?? 0) === 1) &&
+                   ((cl.richiede_tipo_vetro      ?? 0) !== 1 || (nuovoListinoSel.richiede_tipo_vetro      ?? 0) === 1) &&
+                   ((cl.richiede_tipo_montaggio  ?? 0) !== 1 || (nuovoListinoSel.richiede_tipo_montaggio  ?? 0) === 1)
+        return { child, ok }
+      }
+      return { child, ok: true }
+    })
+  }, [nuovoListinoSel, children, listini])
+
+  function handleToggleCambiaArt() {
+    setShowCambiaArt(o => {
+      if (!o) setNuovoTipo(articolo.tipo_prodotto)
+      return !o
+    })
+  }
+
   const uLower  = (articolo.unita ?? '').toLowerCase()
   const isChildUnit = isChild && (uLower === 'm²' || uLower === 'mq' || uLower === 'm2' || uLower === 'ml')
   const childListino = listini.find(l => l.id === articolo.listino_id)
   const isChildMontaggio = isChild && !isChildUnit && (childListino?.richiede_tipo_montaggio ?? 0) === 1
   const isChildPerc = isChild && !isChildUnit && !isChildMontaggio
+  const isRootMq = !isChild && (uLower === 'm²' || uLower === 'mq' || uLower === 'm2')
+  const isRootMl = !isChild && (uLower === 'ml' || uLower === 'm' || uLower === 'mt')
+  const isRootKg = !isChild && uLower === 'kg'
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const fd = new FormData(e.currentTarget)
     fd.set('id',            String(articolo.id))
     fd.set('preventivo_id', String(articolo.preventivo_id))
-    if (isChild) {
+    if (isChildUnit) {
+      fd.set('altezza_cm',    '0')
+      fd.set('larghezza_cm',  '0')
+      fd.set('formula_diretta', '1')
+    } else if (isChild) {
       fd.set('altezza_cm',   String(articolo.altezza_cm))
       fd.set('larghezza_cm', String(articolo.larghezza_cm))
       fd.set('quantita',     String(articolo.quantita))
@@ -828,21 +879,91 @@ function ModificaArticoloModal({ articolo, parentArt, listini, onClose, isStaff 
         </div>
         <form onSubmit={handleSubmit}>
           <div style={{ display: 'grid', gap: 14 }}>
-            {isChildUnit ? (
-              <>
-                {articolo.altezza_cm > 0 && (
-                  <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 6, padding: '10px 14px', fontSize: 13, color: '#555' }}>
-                    Dimensioni: <strong>{articolo.altezza_cm} × {articolo.larghezza_cm} cm</strong>
-                    {parentArt && parentArt.quantita > 0 && <> · Qtà <strong>{parentArt.quantita}</strong></>}
+
+            {/* Sezione cambio articolo — solo root, solo staff */}
+            {!isChild && isStaff && (
+              <div style={{ border: '1px solid #d0d0d0', borderRadius: 8, padding: '10px 14px', background: '#fafafa' }}>
+                <button
+                  type="button"
+                  onClick={handleToggleCambiaArt}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'inherit', width: '100%' }}
+                >
+                  <span style={{ fontSize: 12, fontWeight: 700, color: '#555', textTransform: 'uppercase', letterSpacing: '0.05em', flex: 1, textAlign: 'left' }}>
+                    Cambia articolo
+                  </span>
+                  <span style={{ fontSize: 11, color: '#888' }}>{showCambiaArt ? '▲' : '▼'}</span>
+                </button>
+                {showCambiaArt && (
+                  <div style={{ display: 'grid', gap: 10, marginTop: 12 }}>
+                    {/* Tipo */}
+                    <div>
+                      <span style={label}>Tipo prodotto</span>
+                      <select value={nuovoTipo} onChange={e => { setNuovoTipo(e.target.value); setNuovaMarca(''); setNuovoListinoId('') }} style={inp}>
+                        <option value="">— Seleziona tipo —</option>
+                        {tipiDisp.map(t => <option key={t} value={t}>{t}</option>)}
+                      </select>
+                    </div>
+                    {/* Marca */}
+                    {nuovoTipo && (
+                      <div>
+                        <span style={label}>Marca</span>
+                        <select value={nuovaMarca} onChange={e => { setNuovaMarca(e.target.value); setNuovoListinoId('') }} style={inp}>
+                          <option value="">— Seleziona marca —</option>
+                          {marcheDisp.map(m => <option key={m} value={m}>{m}</option>)}
+                        </select>
+                      </div>
+                    )}
+                    {/* Modello */}
+                    {nuovaMarca && (
+                      <div>
+                        <span style={label}>Modello / Profilo</span>
+                        <select value={nuovoListinoId} onChange={e => setNuovoListinoId(e.target.value)} style={inp}>
+                          <option value="">— Seleziona modello —</option>
+                          {modelliDisp.map(m => {
+                            const details = ` — acq. €${Number(m.prezzo_acquisto ?? 0).toFixed(2)} / cli. €${Number(m.prezzo_vendita).toFixed(2)}`
+                            return <option key={m.id} value={m.id}>{m.descrizione} ({m.unita}{details})</option>
+                          })}
+                        </select>
+                      </div>
+                    )}
+                    {/* Preview caratteristiche */}
+                    {childrenCompat && (
+                      <div style={{ background: '#fff', border: '1px solid #ddd', borderRadius: 6, padding: '8px 12px' }}>
+                        <div style={{ fontSize: 11, fontWeight: 700, color: '#555', textTransform: 'uppercase', marginBottom: 6 }}>Caratteristiche associate</div>
+                        {childrenCompat.length === 0 ? (
+                          <div style={{ fontSize: 12, color: '#888', fontStyle: 'italic' }}>Nessuna caratteristica associata</div>
+                        ) : childrenCompat.map(({ child, ok }) => (
+                          <div key={child.id} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, marginBottom: 3 }}>
+                            <span style={{ fontWeight: 700, color: ok ? '#2e7d32' : '#c00', fontSize: 13, lineHeight: 1 }}>{ok ? '✓' : '✕'}</span>
+                            <span style={{ color: ok ? '#333' : '#aaa', textDecoration: ok ? 'none' : 'line-through' }}>{child.modello || child.tipo_prodotto}</span>
+                            {!ok && <span style={{ fontSize: 11, color: '#c00' }}>eliminata</span>}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {nuovoListinoId && <input type="hidden" name="nuovo_listino_id" value={nuovoListinoId} />}
                   </div>
                 )}
+              </div>
+            )}
+
+            {isChildUnit ? (
+              <>
                 <div>
-                  <span style={label}>Prezzo unitario ({articolo.unita})</span>
-                  <input type="number" name="prezzo_base" min={0} step="0.01" defaultValue={articolo.prezzo_base} style={inp} autoFocus />
+                  <span style={label}>Quantità ({articolo.unita})</span>
+                  <input type="number" name="quantita" min={0} step="0.01" defaultValue={articolo.quantita > 0 ? articolo.quantita : ''} style={inp} autoFocus />
+                </div>
+                <div>
+                  <span style={label}>Prezzo unitario (€/{articolo.unita})</span>
+                  <input type="number" name="prezzo_base" min={0} step="0.01" defaultValue={articolo.prezzo_base} style={inp} />
                 </div>
                 <div>
                   <span style={label}>Sconto %</span>
                   <input type="number" name="sconto_articolo_pct" min={-100} max={100} step="0.01" defaultValue={articolo.sconto_articolo_pct} style={inp} />
+                </div>
+                <div>
+                  <span style={label}>Nota</span>
+                  <input type="text" name="note" defaultValue={articolo.note ?? ''} placeholder="es. bagno" style={inp} />
                 </div>
               </>
             ) : isChildMontaggio ? (
@@ -895,20 +1016,44 @@ function ModificaArticoloModal({ articolo, parentArt, listini, onClose, isStaff 
               </>
             ) : (
               <>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
-                  <div>
-                    <span style={label}>Altezza (cm)</span>
-                    <input type="number" name="altezza_cm" min={0} step="0.1" defaultValue={articolo.altezza_cm} style={inp} />
+                {isRootMq ? (
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+                    <div>
+                      <span style={label}>Altezza (cm)</span>
+                      <input type="number" name="altezza_cm" min={0} step="0.1" defaultValue={articolo.altezza_cm} style={inp} />
+                    </div>
+                    <div>
+                      <span style={label}>Larghezza (cm)</span>
+                      <input type="number" name="larghezza_cm" min={0} step="0.1" defaultValue={articolo.larghezza_cm} style={inp} />
+                    </div>
+                    <div>
+                      <span style={label}>Quantità</span>
+                      <input type="number" name="quantita" min={1} defaultValue={articolo.quantita} style={inp} />
+                    </div>
                   </div>
-                  <div>
-                    <span style={label}>Larghezza (cm)</span>
-                    <input type="number" name="larghezza_cm" min={0} step="0.1" defaultValue={articolo.larghezza_cm} style={inp} />
+                ) : isRootMl ? (
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                    <div>
+                      <span style={label}>Lunghezza (cm)</span>
+                      <input type="number" name="larghezza_cm" min={0} step="0.1" defaultValue={articolo.larghezza_cm} style={inp} />
+                    </div>
+                    <div>
+                      <span style={label}>Quantità</span>
+                      <input type="number" name="quantita" min={1} defaultValue={articolo.quantita} style={inp} />
+                    </div>
                   </div>
+                ) : (
                   <div>
-                    <span style={label}>Quantità</span>
-                    <input type="number" name="quantita" min={1} defaultValue={articolo.quantita} style={inp} />
+                    <span style={label}>{isRootKg ? 'Quantità (kg)' : 'Quantità'}</span>
+                    <input type="number" name="quantita" min={isRootKg ? 0.1 : 1} step={isRootKg ? '0.1' : '1'} defaultValue={articolo.quantita} style={inp} />
                   </div>
-                </div>
+                )}
+                {!isRootMq && (
+                  <input type="hidden" name="altezza_cm" value={articolo.altezza_cm} />
+                )}
+                {!isRootMq && !isRootMl && (
+                  <input type="hidden" name="larghezza_cm" value={articolo.larghezza_cm} />
+                )}
                 {isStaff ? (
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                     <div>
@@ -1108,8 +1253,7 @@ export default function PreventivoClient({
         const okM  = !needsM  || cl.some(l => (l?.richiede_tipo_montaggio  ?? 0) === 1)
         return okC && okCA && okV && okM
       }
-      const usedMarche = new Set(children.map(c => c.marca))
-      return !listini.some(l => l.caratteristica === 1 && l.categoria === a.tipo_prodotto && !usedMarche.has(l.produttore))
+      return true
     })
   }, [articoli, listini])
 
@@ -1449,7 +1593,7 @@ export default function PreventivoClient({
                (nCA && !cl.some(l => (l?.richiede_tipo_colore_acc ?? 0) === 1)) ||
                (nV  && !cl.some(l => (l?.richiede_tipo_vetro      ?? 0) === 1)) ||
                (nM  && !cl.some(l => (l?.richiede_tipo_montaggio  ?? 0) === 1)))
-            : canEdit && [...new Set(listini.filter(l => l.caratteristica === 1 && l.categoria === root.tipo_prodotto && l.produttore).map(l => l.produttore))].some(p => !childs.some(c => c.marca === p))
+            : false
         }
         const anyLacune = groups.some(grp => artHasLacune(grp[0], grp.slice(1)))
 
@@ -1515,9 +1659,16 @@ export default function PreventivoClient({
                           (needsV  && !cl.some(l => (l?.richiede_tipo_vetro      ?? 0) === 1)) ||
                           (needsM  && !cl.some(l => (l?.richiede_tipo_montaggio  ?? 0) === 1))
                         )
-                        : canEdit && [...new Set(listini.filter(l => l.caratteristica === 1 && l.categoria === root.tipo_prodotto && l.produttore).map(l => l.produttore))].some(p => !children.some(c => c.marca === p))
+                        : false
 
-                      const hasDetails = children.length > 0 || hasLacune
+                      const rootSerie = rootListino?.serie ?? ''
+                      const hasOptionalCaratteristiche = !useTypeGaps && canEdit && listini.some(l =>
+                        l.caratteristica === 1 &&
+                        (!l.categoria  || l.categoria  === root.tipo_prodotto) &&
+                        (!l.produttore || l.produttore === root.marca) &&
+                        (!l.serie      || l.serie      === rootSerie)
+                      )
+                      const hasDetails = children.length > 0 || hasLacune || hasOptionalCaratteristiche
                       const expandBgRoot = isExpanded ? (hasLacune ? '#f5b8b4' : '#b8d9b8') : undefined
                       const expandBg    = isExpanded ? (hasLacune ? '#fdecea' : '#d6ecd6') : undefined
 
@@ -1532,34 +1683,29 @@ export default function PreventivoClient({
                           <tr style={{ background: '#ffffff' }}>
                             <td colSpan={canEdit ? 4 : 3} style={{ padding: 8, borderBottom: '1px solid #333', borderRight: 'none', textAlign: 'left', background: '#ffffff' }}>
                               <div style={{ display: 'flex', gap: 8 }}>
-                                {showC  && <button onClick={() => openCaratteristica(root.id, undefined, 'tipo_colore')}     style={{ flex: 1, height: 42, padding: '0 10px', borderRadius: 21, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', border: '1px solid #000', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>+ Colore</button>}
-                                {showCA && <button onClick={() => openCaratteristica(root.id, undefined, 'tipo_colore_acc')} style={{ flex: 1, height: 42, padding: '0 10px', borderRadius: 21, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', border: '1px solid #000', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>+ Accessori</button>}
-                                {showV  && <button onClick={() => openCaratteristica(root.id, undefined, 'tipo_vetro')}      style={{ flex: 1, height: 42, padding: '0 10px', borderRadius: 21, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', border: '1px solid #000', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>+ Vetro</button>}
-                                {showM  && <button onClick={() => openCaratteristica(root.id, undefined, 'tipo_montaggio')}  style={{ flex: 1, height: 42, padding: '0 10px', borderRadius: 21, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', border: '1px solid #000', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>+ Montaggio</button>}
+                                {showC  && <button onClick={() => openCaratteristica(root.id, undefined, 'tipo_colore')}     style={{ flex: 1, height: 42, padding: '0 10px', borderRadius: 21, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', border: 'none', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>+ Colore</button>}
+                                {showCA && <button onClick={() => openCaratteristica(root.id, undefined, 'tipo_colore_acc')} style={{ flex: 1, height: 42, padding: '0 10px', borderRadius: 21, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', border: 'none', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>+ Accessori</button>}
+                                {showV  && <button onClick={() => openCaratteristica(root.id, undefined, 'tipo_vetro')}      style={{ flex: 1, height: 42, padding: '0 10px', borderRadius: 21, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', border: 'none', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>+ Vetro</button>}
+                                {showM  && <button onClick={() => openCaratteristica(root.id, undefined, 'tipo_montaggio')}  style={{ flex: 1, height: 42, padding: '0 10px', borderRadius: 21, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', border: 'none', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>+ Montaggio</button>}
                               </div>
                             </td>
                           </tr>
                         ) : null
                       } else {
-                        const usedMarche = new Set(children.map(c => c.marca))
-                        const gapProduttori = canEdit
-                          ? ([...new Set(listini.filter(l => l.caratteristica === 1 && l.categoria === root.tipo_prodotto && l.produttore && !usedMarche.has(l.produttore)).map(l => l.produttore))] as string[])
-                          : [] as string[]
-                        gapRows = gapProduttori.map(prod => (
-                          <tr key={`gap-${root.id}-${prod}`} style={{ background: '#ffffff' }}>
-                            <td style={{ padding: '4px', textAlign: 'center', borderBottom: '1px solid #f0f0f0' }}>
-                              <button onClick={() => openCaratteristica(root.id, prod)}
-                                style={{ width: 42, height: 42, padding: 0, borderRadius: 21, fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #000', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>
+                        gapRows = hasOptionalCaratteristiche ? (
+                          <tr style={{ background: '#ffffff' }}>
+                            <td style={{ padding: '4px', textAlign: 'center' }}>
+                              <button onClick={() => openCaratteristica(root.id)} className={`${b('btn-pink', isApp)} btn-icon`} style={{ border: 'none' }}>
                                 <span style={{ position: 'relative', zIndex: 1, fontSize: 22, lineHeight: 1, fontWeight: 300 }}>+</span>
                               </button>
                             </td>
-                            <td colSpan={canEdit ? 3 : 2} style={{ padding: '4px 8px', borderBottom: '1px solid #f0f0f0' }}>
-                              <span style={{ fontSize: 11, color: '#8b0000', background: '#fff', border: '1px solid #e53e3e', borderRadius: 4, padding: '3px 8px', display: 'inline-block' }}>
-                                {root.tipo_prodotto} — {prod}
+                            <td colSpan={canEdit ? 3 : 2} style={{ padding: '4px 8px', borderRight: 'none' }}>
+                              <span style={{ fontSize: 11, color: '#555' }}>
+                                Aggiungi elemento (opzionale)
                               </span>
                             </td>
                           </tr>
-                        ))
+                        ) : null
                       }
 
                       return (
@@ -1618,12 +1764,18 @@ export default function PreventivoClient({
                                           </span>
                                         </div>
                                       )}
-                                      {renderPrezzo(root.prezzo_totale)}
+                                      {root.prezzo_totale === 0 && root.sconto_articolo_pct === 100
+                                        ? <span style={{ fontSize: 11, color: '#2e7d32', fontStyle: 'italic' }}>Omaggio</span>
+                                        : root.prezzo_totale === 0
+                                          ? <span style={{ fontSize: 11, color: '#555', fontStyle: 'italic' }}>A corpo</span>
+                                          : renderPrezzo(root.prezzo_totale)}
                                     </>
                                   ) : (() => {
                                     const lordo   = root.prezzo_pre_sconto + children.reduce((s, c) => s + c.prezzo_pre_sconto, 0)
                                     const netto   = root.prezzo_totale     + children.reduce((s, c) => s + c.prezzo_totale,     0)
                                     const hasDiff = Math.abs(lordo - netto) >= 0.01
+                                    if (netto === 0 && root.sconto_articolo_pct === 100) return <span style={{ fontSize: 11, color: '#2e7d32', fontStyle: 'italic' }}>Omaggio</span>
+                                    if (netto === 0) return <span style={{ fontSize: 11, color: '#c77700', fontStyle: 'italic' }}>Da definire</span>
                                     return (
                                       <>
                                         {hasDiff && <span style={{ color: '#aaa', fontSize: 11, textDecoration: 'line-through', fontFamily: 'monospace' }}>{fmt(lordo)}</span>}
@@ -1659,7 +1811,7 @@ export default function PreventivoClient({
                                 {child.listino_foto_url && (
                                   // eslint-disable-next-line @next/next/no-img-element
                                   <img
-                                    src={child.listino_foto_url.startsWith('/') ? child.listino_foto_url : `/${child.listino_foto_url}`}
+                                    src={child.listino_foto_url.startsWith('http') ? child.listino_foto_url : child.listino_foto_url.startsWith('/') ? child.listino_foto_url : `/${child.listino_foto_url}`}
                                     alt=""
                                     style={{ width: 42, height: 42, objectFit: 'cover', borderRadius: 4, display: 'block', margin: '0 auto' }}
                                   />
@@ -1667,8 +1819,7 @@ export default function PreventivoClient({
                               </td>
                               {/* Col 2: descrizione */}
                               <td style={{ ...tdS, paddingLeft: 12, textAlign: 'left' }}>
-                                {child.modello || child.tipo_prodotto || '—'}
-                                {child.note && <div style={{ fontSize: 12, color: '#555', marginTop: 1, fontStyle: 'italic', textAlign: 'left' }}>{child.note}</div>}
+                                {child.modello || child.tipo_prodotto || '—'}{child.note ? ` (${child.note})` : ''}
                               </td>
                               {/* Col 3: tipo + prezzo */}
                               <td style={{ ...tdS, textAlign: 'center', padding: '4px' }}>
@@ -1683,17 +1834,27 @@ export default function PreventivoClient({
                                         : ''
                                     })()}
                                   </div>
-                                  {child.sconto_articolo_pct !== 0 && (
-                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, fontFamily: 'monospace' }}>
-                                      {child.prezzo_pre_sconto !== 0 && (
-                                        <span style={{ color: '#aaa', fontSize: 11, textDecoration: 'line-through' }}>{fmt(Math.abs(child.prezzo_pre_sconto))}</span>
+                                  {child.prezzo_totale === 0 && child.sconto_articolo_pct === 100 ? (
+                                    <span style={{ fontSize: 11, color: '#2e7d32', fontStyle: 'italic' }}>Omaggio</span>
+                                  ) : child.prezzo_totale === 0 && (child.tipo_prodotto + ' ' + child.modello).toLowerCase().includes('nessun') ? (
+                                    <span style={{ fontSize: 11, color: '#b00020', fontStyle: 'italic' }}>Escluso</span>
+                                  ) : child.prezzo_totale === 0 ? (
+                                    <span style={{ fontSize: 11, color: '#555', fontStyle: 'italic' }}>Incluso</span>
+                                  ) : (
+                                    <>
+                                      {child.sconto_articolo_pct !== 0 && (
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, fontFamily: 'monospace' }}>
+                                          {child.prezzo_pre_sconto !== 0 && (
+                                            <span style={{ color: '#aaa', fontSize: 11, textDecoration: 'line-through' }}>{fmt(Math.abs(child.prezzo_pre_sconto))}</span>
+                                          )}
+                                          <span style={{ fontSize: 11, color: child.sconto_articolo_pct < 0 ? '#1565c0' : '#e65100' }}>
+                                            {child.sconto_articolo_pct < 0 ? `+${Math.abs(child.sconto_articolo_pct)}%` : `−${child.sconto_articolo_pct}%`}
+                                          </span>
+                                        </div>
                                       )}
-                                      <span style={{ fontSize: 11, color: child.sconto_articolo_pct < 0 ? '#1565c0' : '#e65100' }}>
-                                        {child.sconto_articolo_pct < 0 ? `+${Math.abs(child.sconto_articolo_pct)}%` : `−${child.sconto_articolo_pct}%`}
-                                      </span>
-                                    </div>
+                                      {renderPrezzo(child.prezzo_totale)}
+                                    </>
                                   )}
-                                  {renderPrezzo(child.prezzo_totale)}
                                 </div>
                               </td>
                               {/* Col 5: ✏ ✕ */}
@@ -1731,14 +1892,19 @@ export default function PreventivoClient({
       })()}
 
       {/* Totale corrente */}
-      {(importo + (preventivo.prezzo_forfait ?? 0)) > 0 && (() => {
+      {(() => {
+        const hasArticoliDaDefinire = articoli.filter(a => !a.parent_id).some(root => {
+          const figli = articoli.filter(c => c.parent_id === root.id)
+          return root.prezzo_totale === 0 && root.sconto_articolo_pct !== 100 && figli.every(c => c.prezzo_totale === 0)
+        })
+        const importoFinale = importo + (preventivo.prezzo_forfait ?? 0)
+        if (importoFinale <= 0 && !hasArticoliDaDefinire) return null
         const lordo       = articoli.reduce((s, a) => s + a.prezzo_pre_sconto, 0)
         const subtotale   = articoli.reduce((s, a) => s + a.prezzo_totale, 0)
         const scontiPromo = Math.round((lordo - subtotale) * 100) / 100
         const scontoCliPct = preventivo.sconto_cliente_pct ?? 0
         const scontoCliAmt = Math.round(subtotale * scontoCliPct / 100 * 100) / 100
         const hasScontiPromo = scontiPromo >= 0.01
-        const importoFinale = importo + (preventivo.prezzo_forfait ?? 0)
         const anyLacune = articoli.filter(a => !a.parent_id).some(root => {
           const rl = listini.find(l => l.id === root.listino_id)
           const nC = (rl?.richiede_tipo_colore ?? 0) === 1, nCA = (rl?.richiede_tipo_colore_acc ?? 0) === 1
@@ -1768,7 +1934,16 @@ export default function PreventivoClient({
               `− € ${fmt(scontoCliAmt)}`,
               { color: '#e65100' }
             )}
-            {row('Importo preventivo:', `€ ${fmt(importoFinale)}`, { bold: true, large: true, color: '#111', separator: true })}
+            {row(
+              'Importo preventivo:',
+              importoFinale > 0 ? `€ ${fmt(importoFinale)}` : '—',
+              { bold: true, large: true, color: '#111', separator: true }
+            )}
+            {hasArticoliDaDefinire && (
+              <div style={{ textAlign: 'right', fontSize: 11, color: '#c77700', fontStyle: 'italic', fontFamily: 'monospace', marginTop: 1 }}>
+                + Prezzi da definire
+              </div>
+            )}
             {isStaff && <ScontoClienteEditor preventivoId={preventivo.id} currentPct={scontoCliPct} isApp={isApp} />}
           </div>
         )
@@ -1815,6 +1990,7 @@ export default function PreventivoClient({
         <ModificaArticoloModal
           articolo={editArticolo}
           parentArt={editArticolo.parent_id !== null ? (articoli.find(a => a.id === editArticolo.parent_id) ?? null) : null}
+          children={editArticolo.parent_id === null ? articoli.filter(a => a.parent_id === editArticolo.id) : []}
           listini={listini}
           onClose={() => setEditArticolo(null)}
           isStaff={isStaff}
@@ -1859,7 +2035,7 @@ export default function PreventivoClient({
             ) : previewArt.listino_foto_url ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={previewArt.listino_foto_url.startsWith('/') ? previewArt.listino_foto_url : `/${previewArt.listino_foto_url}`}
+                src={previewArt.listino_foto_url.startsWith('http') ? previewArt.listino_foto_url : previewArt.listino_foto_url.startsWith('/') ? previewArt.listino_foto_url : `/${previewArt.listino_foto_url}`}
                 alt={previewArt.modello}
                 style={{ maxWidth: '100%', maxHeight: '100vh', objectFit: 'contain', display: 'block' }}
               />
