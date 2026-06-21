@@ -1554,6 +1554,28 @@ body {
   box-shadow: 0 2px 8px rgba(200,100,60,0.3), inset 0 1px 0 rgba(255,220,200,0.4);
 }
 .btn-pink:hover:not(:disabled) { filter: brightness(1.08); }
+.btn-pink.btn-icon { border: none !important; }
+.btn-pink-app {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    repeating-linear-gradient(135deg, rgba(255,255,255,0.12) 0px, rgba(255,255,255,0.12) 1px, transparent 1px, transparent 6px),
+    linear-gradient(135deg, #e0916a 0%, #ffbfa0 30%, #ffd4be 50%, #ffbfa0 70%, #e0916a 100%);
+  color: #000 !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(200,100,60,0.3), inset 0 1px 0 rgba(255,220,200,0.4);
+  font-family: inherit;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+.btn-pink-app:hover:not(:disabled) { filter: brightness(1.08); }
+.btn-pink-app.btn-icon {
+  aspect-ratio: 1 !important;
+  width: auto !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+}
 
 /* ── Registrazione ── */
 .reg-card {

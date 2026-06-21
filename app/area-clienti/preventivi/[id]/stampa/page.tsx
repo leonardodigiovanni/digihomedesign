@@ -520,7 +520,7 @@ function disegnoSVGAbbr(abbr: string, larghezza: number, altezza: number, profil
 
 // ─── HTML sezione caratteristiche figlie ─────────────────────────────────────
 
-function caratteristicheHTML(children: Record<string, unknown>[], parentPrezzo: number, parentIdx: number, prezzoHTML: string): string {
+function caratteristicheHTML(children: Record<string, unknown>[], parentPrezzo: number, parentIdx: number, prezzoHTML: string, parentScontoArt = 0): string {
   let totaleBlocco = parentPrezzo
   const righeCaratt = children.map(c => {
     const tipo       = s(c.tipo_prodotto)
@@ -537,8 +537,15 @@ function caratteristicheHTML(children: Record<string, unknown>[], parentPrezzo: 
           ? fotoRaw : `/${fotoRaw.replace(/^\/+/, '')}`)
       : ''
     const fotoAttr = fotoUrl.replace(/"/g, '%22')
+    const isNessun = (tipo + ' ' + modello).toLowerCase().includes('nessun')
     let prezzoCell: string
-    if (prezzoBase === 0 && scontoPct !== 0) {
+    if (scontoPct === 100) {
+      prezzoCell = `<div style="font-size:10.5px;font-style:italic;color:#2e7d32;white-space:nowrap;">Omaggio</div>`
+    } else if (contrib === 0 && prezzoBase === 0 && scontoPct === 0 && isNessun) {
+      prezzoCell = `<div style="font-size:10.5px;font-style:italic;color:#b00020;white-space:nowrap;">Escluso</div>`
+    } else if (contrib === 0 && prezzoBase === 0 && scontoPct === 0) {
+      prezzoCell = `<div style="font-size:10.5px;font-style:italic;color:#555;white-space:nowrap;">Incluso</div>`
+    } else if (prezzoBase === 0 && scontoPct !== 0) {
       const pctAbs = Math.abs(scontoPct)
       if (scontoPct < 0) {
         prezzoCell = `<div style="font-size:9.5px;color:#1565c0;margin-bottom:2px;">Maggiorazione del ${pctAbs}%</div>
@@ -579,7 +586,12 @@ function caratteristicheHTML(children: Record<string, unknown>[], parentPrezzo: 
   ${caratHeader}
   ${righeCaratt}
   <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:bold;color:#111;border-top:1px solid #c8d4e8;padding-top:3px;margin-top:3px;">
-    <span>Totale Articolo Rif#${String(parentIdx + 1).padStart(3, '0')}:</span><span>€ ${fmt(totaleBlocco)}</span>
+    <span>Totale Articolo Rif#${String(parentIdx + 1).padStart(3, '0')}:</span>
+    ${totaleBlocco === 0 && parentScontoArt === 100
+      ? `<span style="font-size:12px;font-weight:bold;color:#2e7d32;font-style:italic;">Omaggio</span>`
+      : totaleBlocco === 0
+      ? `<span style="font-size:12px;font-weight:bold;color:#c77700;font-style:italic;">Da definire</span>`
+      : `<span>€ ${fmt(totaleBlocco)}</span>`}
   </div>
 </div>`
 }
@@ -662,7 +674,11 @@ function articoloBlockHTML(parent: Record<string, unknown>, children: Record<str
 
   const scontoLabel = scontoArt < 0 ? `Magg. +${Math.abs(scontoArt)}%` : `Promo −${scontoArt}%`
   const scontoColor = scontoArt < 0 ? '#1565c0' : '#e65100'
-  const prezzoBaseHTML = scontoArt !== 0 && prezzoBase > 0
+  const prezzoBaseHTML = prezzo === 0 && scontoArt === 100
+    ? `<span style="font-size:10.5px;font-weight:bold;color:#2e7d32;font-style:italic;">Omaggio</span>`
+    : prezzo === 0
+    ? `<span style="font-size:10.5px;font-weight:bold;color:#555;font-style:italic;">A corpo</span>`
+    : scontoArt !== 0 && prezzoBase > 0
     ? `<span style="color:#aaa;text-decoration:line-through;font-size:10.5px;font-weight:normal;">€ ${fmt(prezzoBase)}</span>
        <span style="color:${scontoColor};font-size:10.5px;font-weight:normal;margin-left:4px;">${scontoLabel}</span>
        <span style="display:block;font-size:10.5px;font-weight:bold;color:#111;">€ ${prezzo > 0 ? fmt(prezzo) : '—'}</span>`
@@ -697,7 +713,7 @@ function articoloBlockHTML(parent: Record<string, unknown>, children: Record<str
         : `<div style="font-size:10px;color:#b0b0b0;text-align:center;">Nessuna immagine<br/>scheda tecnica</div>`}
     </div>
   </div>
-  ${onlyMain ? (children.length > 0 ? caratteristichePreviewHTML(children, prezzo, prezzoBaseHTML, 2) : '') : caratteristicheHTML(children, prezzo, idx, prezzoBaseHTML)}
+  ${onlyMain ? (children.length > 0 ? caratteristichePreviewHTML(children, prezzo, prezzoBaseHTML, 2) : '') : caratteristicheHTML(children, prezzo, idx, prezzoBaseHTML, scontoArt)}
 </div>`
 }
 
@@ -766,12 +782,12 @@ function riepilogoChiusuraHtml(): string {
 </div>`
 }
 
-function caratteristicheWrapperHTML(children: Record<string, unknown>[], parentPrezzo: number, parentIdx: number, prezzoHTML: string, tipoTitle: string): string {
+function caratteristicheWrapperHTML(children: Record<string, unknown>[], parentPrezzo: number, parentIdx: number, prezzoHTML: string, tipoTitle: string, parentScontoArt = 0): string {
   return `<div style="border:1px solid #d0d0d0;border-radius:4px;margin-bottom:10px;overflow:hidden;page-break-inside:avoid;break-inside:avoid;">
   <div style="background:#444;color:#fff;padding:4px 12px;font-size:10px;">
     ↳ Continua — Rif#${String(parentIdx + 1).padStart(3, '0')} ${tipoTitle.toUpperCase()}
   </div>
-  ${caratteristicheHTML(children, parentPrezzo, parentIdx, prezzoHTML)}
+  ${caratteristicheHTML(children, parentPrezzo, parentIdx, prezzoHTML, parentScontoArt)}
 </div>`
 }
 
@@ -1119,7 +1135,7 @@ function footerTemplateHtml(): string {
 </div>`
 }
 
-function totaleBoxHtml(artRows: Record<string, unknown>[], totale: string, scontoClientePct: number): string {
+function totaleBoxHtml(artRows: Record<string, unknown>[], totale: string, scontoClientePct: number, hasDaDefinire = false): string {
   const lordo     = artRows.reduce((sum, a) => sum + n(a.prezzo_pre_sconto), 0)
   const subtotale = artRows.reduce((sum, a) => sum + n(a.prezzo_totale), 0)
   const scontiPromo = Math.round((lordo - subtotale) * 100) / 100
@@ -1150,9 +1166,12 @@ function totaleBoxHtml(artRows: Record<string, unknown>[], totale: string, scont
     lines.push(row(label, `− € ${fmt(subtotale * pctEffettivo / 100)}`, '#e65100'))
   }
 
-  const totaleRow = `<div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-top:1px solid #c8d4e8;padding-top:5px;margin-top:4px;">
-    <span style="font-size:11px;color:#555;">Totale offerta (escluso IVA)</span>
-    <span style="font-size:22px;font-weight:bold;color:#111;">€ ${fmt(totaleNum)}</span>
+  const totaleRow = `<div style="border-top:1px solid #c8d4e8;padding-top:5px;margin-top:4px;">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;">
+      <span style="font-size:11px;color:#555;">Totale offerta (escluso IVA)</span>
+      <span style="font-size:22px;font-weight:bold;color:#111;">€ ${fmt(totaleNum)}</span>
+    </div>
+    ${hasDaDefinire ? `<div style="text-align:right;font-size:11px;color:#c77700;font-style:italic;margin-top:2px;">+ Prezzi da definire</div>` : ''}
   </div>`
 
   return `<div style="margin-top:8px;text-align:right;padding:7px 12px;background:#f5f5f5;border:1px solid #ddd;">
@@ -1165,8 +1184,8 @@ const COND_ACCORDI_HTML = `<div style="font-size:10px;margin-top:8px;padding:8px
   <strong>Nota:</strong> Salvo accordi integrativi scritti e firmati tra le parti si fa riferimento alle condizioni generali di preventivo (<a href="https://www.digi-home-design.com/docs/condizioni-generali-del-preventivo.pdf" style="color:#555;">www.digi-home-design.com/docs/condizioni-generali-del-preventivo.pdf</a>) e di vendita (<a href="https://www.digi-home-design.com/docs/condizioni-generali-di-vendita.pdf" style="color:#555;">www.digi-home-design.com/docs/condizioni-generali-di-vendita.pdf</a>), riportate nel seguito del documento.
 </div>`
 
-function extraLastHtml(artRows: Record<string, unknown>[], totale: string, scontoClientePct: number): string {
-  return `${totaleBoxHtml(artRows, totale, scontoClientePct)}${COND_ACCORDI_HTML}`
+function extraLastHtml(artRows: Record<string, unknown>[], totale: string, scontoClientePct: number, hasDaDefinire = false): string {
+  return `${totaleBoxHtml(artRows, totale, scontoClientePct, hasDaDefinire)}${COND_ACCORDI_HTML}`
 }
 
 function accettazioneHtml(isProv = false): string {
@@ -1267,17 +1286,22 @@ async function buildStampaData(opts: {
   const blocks: StampaBlock[] = []
 
   // ── Sezione riepilogo ──────────────────────────────────────────────────────
+  const hasArticoliDaDefinire = roots.some(p => {
+    const id = n(p.id)
+    const ch = childrenMap.get(id) ?? []
+    return n(p.prezzo_totale) === 0 && n(p.sconto_articolo_pct) !== 100 && ch.every(c => n(c.prezzo_totale) === 0)
+  })
+
   blocks.push({ html: riepilogoIntroHtml() })
   blocks.push({ html: riepilogoTableHeaderHtml() })
   roots.forEach((p, i) => blocks.push({ html: riepilogoTableRowHtml(p, i) }))
-  blocks.push({ html: totaleBoxHtml(artRows, totale, scontoClientePct) })
+  blocks.push({ html: totaleBoxHtml(artRows, totale, scontoClientePct, hasArticoliDaDefinire) })
 
-  // ── Sezione dettaglio (solo se ci sono articoli con caratteristiche) ───────
+  // ── Sezione dettaglio (se almeno un articolo ha figli o misure) ───────────
   const hasDetails = roots.some(p => {
     const id = n(p.id)
     const ch = childrenMap.get(id) ?? []
-    const tot = n(p.prezzo_totale) + ch.reduce((sum, c) => sum + n(c.prezzo_totale), 0)
-    return tot > 0
+    return ch.length > 0 || n(p.larghezza_cm) > 0 || n(p.altezza_cm) > 0
   })
 
   if (hasDetails) blocks.push({ html: riepilogoNotaHtml() })
@@ -1303,7 +1327,7 @@ async function buildStampaData(opts: {
     blocks.push({ html: `<div style="margin-top:18px;"><div style="font-size:12px;line-height:1.55;color:#111;">${righeHtml}</div></div>` })
   }
 
-  blocks.push({ html: COND_ACCORDI_HTML })
+  if (!hasDetails) blocks.push({ html: COND_ACCORDI_HTML })
 
   if (hasDetails) {
     blocks.push({ html: `<div style="font-size:11px;font-weight:bold;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid #ddd;">DETTAGLIO FORNITURA:</div>`, forceNewPage: true })
@@ -1314,24 +1338,27 @@ async function buildStampaData(opts: {
       const prezzo = n(p.prezzo_totale)
       const scontoArt = n(p.sconto_articolo_pct)
       const prezzoBase = n(p.prezzo_pre_sconto)
+      const nettoFigli = children.reduce((sum, c) => sum + n(c.prezzo_totale), 0)
       const scontoColor = scontoArt < 0 ? '#1565c0' : '#e65100'
       const scontoLabel = scontoArt < 0 ? `Magg. +${Math.abs(scontoArt)}%` : `Promo −${scontoArt}%`
-      const prezzoHTML = scontoArt !== 0 && prezzoBase > 0
+      const prezzoHTML = prezzo === 0 && scontoArt === 100
+        ? `<span style="font-size:10.5px;font-weight:bold;color:#2e7d32;font-style:italic;">Omaggio</span>`
+        : prezzo === 0
+        ? `<span style="font-size:10.5px;font-weight:bold;color:#555;font-style:italic;">A corpo</span>`
+        : scontoArt !== 0 && prezzoBase > 0
         ? `<span style="color:#aaa;text-decoration:line-through;font-size:10.5px;">€ ${fmt(prezzoBase)}</span> <span style="color:${scontoColor};font-size:10.5px;">${scontoLabel}</span> <span style="display:block;font-size:10.5px;font-weight:bold;color:#111;">€ ${prezzo > 0 ? fmt(prezzo) : '—'}</span>`
         : `<span style="font-size:10.5px;font-weight:bold;color:#111;">€ ${prezzo > 0 ? fmt(prezzo) : '—'}</span>`
-      const totaleArticolo = prezzo + children.reduce((sum, c) => sum + n(c.prezzo_totale), 0)
-      if (totaleArticolo === 0) return
       const htmlFull = articoloBlockHTML(p, children, i, colorMap.get(id), colorAccMap.get(id), false)
       if (children.length === 0) {
         blocks.push({ html: htmlFull })
       } else {
         const htmlMain   = articoloBlockHTML(p, children, i, colorMap.get(id), colorAccMap.get(id), true)
-        const htmlCaratt = caratteristicheWrapperHTML(children, prezzo, i, prezzoHTML, s(p.tipo_prodotto))
+        const htmlCaratt = caratteristicheWrapperHTML(children, prezzo, i, prezzoHTML, s(p.tipo_prodotto), scontoArt)
         blocks.push({ html: htmlFull, htmlMain, htmlCaratt })
       }
     })
 
-    blocks.push({ html: extraLastHtml(artRows, totale, scontoClientePct) })
+    blocks.push({ html: extraLastHtml(artRows, totale, scontoClientePct, hasArticoliDaDefinire) })
   }
 
   const prevArts = condizioniPreventivoArticles()
@@ -1404,14 +1431,15 @@ export async function loadData(prevId: number, username: string, isStaff: boolea
     const numero  = s(p.numero) || `#${p.id}`
     const stato   = s(p.stato) || 'bozza'
 
+    const hasOverride = Number(p.sconto_cliente_override ?? 0) === 1
     let scontoClientePct = n(p.sconto_cliente_pct)
-    if (scontoClientePct === 0 && p.cliente_id) {
+    if (!hasOverride && scontoClientePct === 0 && p.cliente_id) {
       try {
         const [cRows] = await db.query('SELECT sconto_pct FROM clienti WHERE id = ? LIMIT 1', [p.cliente_id]) as [{ sconto_pct: number }[], unknown]
         scontoClientePct = n(cRows[0]?.sconto_pct)
       } catch {}
     }
-    if (scontoClientePct === 0 && !isStaff) {
+    if (!hasOverride && scontoClientePct === 0 && !isStaff) {
       try {
         const [uRows] = await db.query('SELECT cliente_id FROM users WHERE username = ? LIMIT 1', [username]) as [{ cliente_id: number | null }[], unknown]
         const cid = uRows[0]?.cliente_id
