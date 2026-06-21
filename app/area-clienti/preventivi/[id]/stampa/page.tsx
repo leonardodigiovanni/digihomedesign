@@ -520,8 +520,9 @@ function disegnoSVGAbbr(abbr: string, larghezza: number, altezza: number, profil
 
 // ─── HTML sezione caratteristiche figlie ─────────────────────────────────────
 
-function caratteristicheHTML(children: Record<string, unknown>[], parentPrezzo: number, parentIdx: number, prezzoHTML: string, parentScontoArt = 0): string {
+function caratteristicheHTML(children: Record<string, unknown>[], parentPrezzo: number, parentIdx: number, prezzoHTML: string, parentScontoArt = 0, allChildrenForTotal?: Record<string, unknown>[]): string {
   let totaleBlocco = parentPrezzo
+  ;(allChildrenForTotal ?? children).forEach(c => { totaleBlocco += n(c.prezzo_totale) })
   const righeCaratt = children.map(c => {
     const tipo       = s(c.tipo_prodotto)
     const marca      = s(c.marca)
@@ -531,7 +532,6 @@ function caratteristicheHTML(children: Record<string, unknown>[], parentPrezzo: 
     const contrib    = n(c.prezzo_totale)
     const prezzoBase = n(c.prezzo_base)
     const scontoPct  = n(c.sconto_articolo_pct)
-    totaleBlocco += contrib
     const fotoRaw = s(c.foto_url)
     const fotoUrl = fotoRaw
       ? (fotoRaw.startsWith('http://') || fotoRaw.startsWith('https://') || fotoRaw.startsWith('/')
@@ -605,12 +605,25 @@ function caratteristichePreviewHTML(children: Record<string, unknown>[], parentP
     const modello = s(c.modello)
     const nota    = s(c.note)
     const label   = [tipo, [marca, modello].filter(Boolean).join(' ')].filter(Boolean).join(': ') + (nota ? ` (${nota})` : '')
-    const contrib = n(c.prezzo_totale)
+    const contrib    = n(c.prezzo_totale)
+    const prezzoBase = n(c.prezzo_base)
+    const scontoPct  = n(c.sconto_articolo_pct)
+    const isNessun   = (tipo + ' ' + modello).toLowerCase().includes('nessun')
     const fotoRaw = s(c.foto_url)
     const fotoUrl = fotoRaw
       ? (fotoRaw.startsWith('http://') || fotoRaw.startsWith('https://') || fotoRaw.startsWith('/') ? fotoRaw : `/${fotoRaw.replace(/^\/+/, '')}`)
       : ''
     const fotoAttr = fotoUrl.replace(/"/g, '%22')
+    let prezzoCell: string
+    if (scontoPct === 100) {
+      prezzoCell = `<div style="font-size:10.5px;font-style:italic;color:#2e7d32;white-space:nowrap;">Omaggio</div>`
+    } else if (contrib === 0 && prezzoBase === 0 && scontoPct === 0 && isNessun) {
+      prezzoCell = `<div style="font-size:10.5px;font-style:italic;color:#b00020;white-space:nowrap;">Escluso</div>`
+    } else if (contrib === 0 && prezzoBase === 0 && scontoPct === 0) {
+      prezzoCell = `<div style="font-size:10.5px;font-style:italic;color:#555;white-space:nowrap;">Incluso</div>`
+    } else {
+      prezzoCell = `<div style="font-size:10.5px;font-weight:bold;color:#111;white-space:nowrap;">+ € ${fmt(Math.abs(contrib))}</div>`
+    }
     return `<div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid #ececec;">
       <div style="width:40px;height:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
         ${fotoUrl
@@ -618,7 +631,7 @@ function caratteristichePreviewHTML(children: Record<string, unknown>[], parentP
           : `<div style="width:40px;height:28px;background:#ececec;border-radius:2px;"></div>`}
       </div>
       <div style="flex:1;font-size:10.5px;color:#333;line-height:1.4;">${label || 'Caratteristica'}</div>
-      <div style="font-size:10.5px;font-weight:bold;color:#111;white-space:nowrap;">+ € ${fmt(Math.abs(contrib))}</div>
+      <div style="text-align:right;">${prezzoCell}</div>
     </div>`
   }).join('\n')
   return `<div style="border-top:1px solid #d0d0d0;background:#f5f5f5;padding:4px 10px 5px;">
@@ -784,12 +797,12 @@ function riepilogoChiusuraHtml(): string {
 </div>`
 }
 
-function caratteristicheWrapperHTML(children: Record<string, unknown>[], parentPrezzo: number, parentIdx: number, prezzoHTML: string, tipoTitle: string, parentScontoArt = 0): string {
-  return `<div style="border:1px solid #d0d0d0;border-radius:4px;margin-bottom:10px;overflow:hidden;page-break-inside:avoid;break-inside:avoid;">
+function caratteristicheWrapperHTML(children: Record<string, unknown>[], parentPrezzo: number, parentIdx: number, prezzoHTML: string, tipoTitle: string, parentScontoArt = 0, allChildrenForTotal?: Record<string, unknown>[]): string {
+  return `<div style="border:1px solid #d0d0d0;border-radius:4px;margin-bottom:10px;overflow:hidden;">
   <div style="background:#444;color:#fff;padding:4px 12px;font-size:10px;">
     ↳ Continua — Rif#${String(parentIdx + 1).padStart(3, '0')} ${tipoTitle.toUpperCase()}
   </div>
-  ${caratteristicheHTML(children, parentPrezzo, parentIdx, prezzoHTML, parentScontoArt)}
+  ${caratteristicheHTML(children, parentPrezzo, parentIdx, prezzoHTML, parentScontoArt, allChildrenForTotal)}
 </div>`
 }
 
@@ -1340,12 +1353,19 @@ async function buildStampaData(opts: {
       ? `<span style="color:#aaa;text-decoration:line-through;font-size:10.5px;">€ ${fmt(prezzoBase)}</span> <span style="color:${scontoColor};font-size:10.5px;">${scontoLabel}</span> <span style="display:block;font-size:10.5px;font-weight:bold;color:#111;">€ ${prezzo > 0 ? fmt(prezzo) : '—'}</span>`
       : `<span style="font-size:10.5px;font-weight:bold;color:#111;">€ ${prezzo > 0 ? fmt(prezzo) : '—'}</span>`
     const htmlFull = articoloBlockHTML(p, children, i, colorMap.get(id), colorAccMap.get(id), false)
-    if (children.length === 0) {
+    const remaining = children.slice(2)
+    if (children.length === 0 || remaining.length === 0) {
       blocks.push({ html: htmlFull })
     } else {
-      const htmlMain   = articoloBlockHTML(p, children, i, colorMap.get(id), colorAccMap.get(id), true)
-      const htmlCaratt = caratteristicheWrapperHTML(children.slice(2), prezzo, i, prezzoHTML, s(p.tipo_prodotto), scontoArt)
+      const CHUNK = 15
+      const htmlMain    = articoloBlockHTML(p, children, i, colorMap.get(id), colorAccMap.get(id), true)
+      const firstChunk  = remaining.slice(0, CHUNK)
+      const htmlCaratt  = caratteristicheWrapperHTML(firstChunk, prezzo, i, prezzoHTML, s(p.tipo_prodotto), scontoArt, children)
       blocks.push({ html: htmlFull, htmlMain, htmlCaratt })
+      for (let ci = CHUNK; ci < remaining.length; ci += CHUNK) {
+        const chunk = remaining.slice(ci, ci + CHUNK)
+        blocks.push({ html: caratteristicheWrapperHTML(chunk, prezzo, i, prezzoHTML, s(p.tipo_prodotto), scontoArt, children) })
+      }
     }
   })
 
