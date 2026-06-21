@@ -1358,14 +1358,14 @@ async function buildStampaData(opts: {
       blocks.push({ html: htmlFull })
     } else {
       const CHUNK = 15
-      const htmlMain    = articoloBlockHTML(p, children, i, colorMap.get(id), colorAccMap.get(id), true)
-      const firstChunk  = remaining.slice(0, CHUNK)
-      const htmlCaratt  = caratteristicheWrapperHTML(firstChunk, prezzo, i, prezzoHTML, s(p.tipo_prodotto), scontoArt, children)
-      blocks.push({ html: htmlFull, htmlMain, htmlCaratt })
-      for (let ci = CHUNK; ci < remaining.length; ci += CHUNK) {
-        const chunk = remaining.slice(ci, ci + CHUNK)
-        blocks.push({ html: caratteristicheWrapperHTML(chunk, prezzo, i, prezzoHTML, s(p.tipo_prodotto), scontoArt, children) })
+      const htmlMain = articoloBlockHTML(p, children, i, colorMap.get(id), colorAccMap.get(id), true)
+      const chunks: string[] = []
+      for (let ci = 0; ci < remaining.length; ci += CHUNK) {
+        chunks.push(caratteristicheWrapperHTML(remaining.slice(ci, ci + CHUNK), prezzo, i, prezzoHTML, s(p.tipo_prodotto), scontoArt, children))
       }
+      // html = main + tutti i chunk concatenati (usato quando tutto entra in una pagina)
+      const htmlCombined = htmlMain + '\n' + chunks.join('\n')
+      blocks.push({ html: htmlCombined, htmlMain, htmlCarattChunks: chunks })
     }
   })
 

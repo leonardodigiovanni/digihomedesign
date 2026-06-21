@@ -7,6 +7,7 @@ export interface StampaBlock {
   html: string
   htmlMain?: string
   htmlCaratt?: string
+  htmlCarattChunks?: string[]
   forceNewPage?: boolean
 }
 
@@ -69,18 +70,18 @@ export default function StampaClient({ data, backHref, showPubBtn }: { data: Sta
         html: string; h: number
         htmlMain?: string; mainH?: number
         htmlCaratt?: string; caratH?: number
+        htmlCarattChunks?: string[]; chunkHs?: number[]
         forceNewPage?: boolean
       }
       const measured: MB[] = []
       for (const b of blocks) {
         const h = await measure(b.html)
-        if (b.htmlMain && b.htmlCaratt) {
-          measured.push({
-            html: b.html, h,
-            htmlMain: b.htmlMain, mainH: await measure(b.htmlMain),
-            htmlCaratt: b.htmlCaratt, caratH: await measure(b.htmlCaratt),
-            forceNewPage: b.forceNewPage,
-          })
+        if (b.htmlCarattChunks && b.htmlMain) {
+          const mainH = await measure(b.htmlMain)
+          const chunkHs = await Promise.all(b.htmlCarattChunks.map(c => measure(c)))
+          measured.push({ html: b.html, h, htmlMain: b.htmlMain, mainH, htmlCarattChunks: b.htmlCarattChunks, chunkHs, forceNewPage: b.forceNewPage })
+        } else if (b.htmlMain && b.htmlCaratt) {
+          measured.push({ html: b.html, h, htmlMain: b.htmlMain, mainH: await measure(b.htmlMain), htmlCaratt: b.htmlCaratt, caratH: await measure(b.htmlCaratt), forceNewPage: b.forceNewPage })
         } else {
           measured.push({ html: b.html, h, forceNewPage: b.forceNewPage })
         }
@@ -101,11 +102,32 @@ export default function StampaClient({ data, backHref, showPubBtn }: { data: Sta
 
       for (const mb of measured) {
         if (mb.forceNewPage && current.length > 0) flush()
-        if (mb.caratH == null) {
-          if (current.length > 0 && usedH + mb.h > avail) flush()
-          current.push({ html: mb.html })
-          usedH += mb.h
-        } else {
+
+        if (mb.chunkHs != null) {
+          // Articolo con N chunk di caratteristiche — riempie le pagine chunk per chunk
+          const mainH = mb.mainH!
+          const chunks = mb.htmlCarattChunks!
+          const chunkHs = mb.chunkHs!
+          const totalH = mainH + chunkHs.reduce((s, h) => s + h, 0)
+          if (usedH + totalH <= avail) {
+            // Tutto entra nella pagina corrente
+            current.push({ html: mb.html })
+            usedH += totalH
+          } else {
+            // Piazza l'header articolo
+            if (current.length > 0 && usedH + mainH > avail) flush()
+            current.push({ html: mb.htmlMain! })
+            usedH += mainH
+            // Piazza ogni chunk dove entra
+            for (let ci = 0; ci < chunks.length; ci++) {
+              const chunkH = chunkHs[ci]
+              if (current.length > 0 && usedH + chunkH > avail) flush()
+              current.push({ html: chunks[ci] })
+              usedH += chunkH
+            }
+          }
+        } else if (mb.caratH != null) {
+          // Articolo con singolo blocco caratteristiche (legacy)
           const mainH = mb.mainH!, caratH = mb.caratH!
           if (usedH + mb.h <= avail) {
             current.push({ html: mb.html })
@@ -133,6 +155,11 @@ export default function StampaClient({ data, backHref, showPubBtn }: { data: Sta
               usedH += caratH
             }
           }
+        } else {
+          // Blocco semplice
+          if (current.length > 0 && usedH + mb.h > avail) flush()
+          current.push({ html: mb.html })
+          usedH += mb.h
         }
       }
       if (current.length > 0) pageContents.push(current)
