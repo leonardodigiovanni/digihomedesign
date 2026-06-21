@@ -1297,14 +1297,7 @@ async function buildStampaData(opts: {
   roots.forEach((p, i) => blocks.push({ html: riepilogoTableRowHtml(p, i) }))
   blocks.push({ html: totaleBoxHtml(artRows, totale, scontoClientePct, hasArticoliDaDefinire) })
 
-  // ── Sezione dettaglio (se almeno un articolo ha figli o misure) ───────────
-  const hasDetails = roots.some(p => {
-    const id = n(p.id)
-    const ch = childrenMap.get(id) ?? []
-    return ch.length > 0 || n(p.larghezza_cm) > 0 || n(p.altezza_cm) > 0
-  })
-
-  if (hasDetails) blocks.push({ html: riepilogoNotaHtml() })
+  blocks.push({ html: riepilogoNotaHtml() })
   blocks.push({ html: riepilogoChiusuraHtml() })
   if (noteRaw) {
     const righe = noteRaw.split('\n')
@@ -1327,39 +1320,34 @@ async function buildStampaData(opts: {
     blocks.push({ html: `<div style="margin-top:18px;"><div style="font-size:12px;line-height:1.55;color:#111;">${righeHtml}</div></div>` })
   }
 
-  if (!hasDetails) blocks.push({ html: COND_ACCORDI_HTML })
+  blocks.push({ html: `<div style="font-size:11px;font-weight:bold;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid #ddd;">DETTAGLIO FORNITURA:</div>`, forceNewPage: true })
 
-  if (hasDetails) {
-    blocks.push({ html: `<div style="font-size:11px;font-weight:bold;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid #ddd;">DETTAGLIO FORNITURA:</div>`, forceNewPage: true })
+  roots.forEach((p, i) => {
+    const id = n(p.id)
+    const children = (childrenMap.get(id) ?? []).slice().sort((a, b) => childTypeOrder(a) - childTypeOrder(b))
+    const prezzo = n(p.prezzo_totale)
+    const scontoArt = n(p.sconto_articolo_pct)
+    const prezzoBase = n(p.prezzo_pre_sconto)
+    const scontoColor = scontoArt < 0 ? '#1565c0' : '#e65100'
+    const scontoLabel = scontoArt < 0 ? `Magg. +${Math.abs(scontoArt)}%` : `Promo −${scontoArt}%`
+    const prezzoHTML = prezzo === 0 && scontoArt === 100
+      ? `<span style="font-size:10.5px;font-weight:bold;color:#2e7d32;font-style:italic;">Omaggio</span>`
+      : prezzo === 0
+      ? `<span style="font-size:10.5px;font-weight:bold;color:#555;font-style:italic;">A corpo</span>`
+      : scontoArt !== 0 && prezzoBase > 0
+      ? `<span style="color:#aaa;text-decoration:line-through;font-size:10.5px;">€ ${fmt(prezzoBase)}</span> <span style="color:${scontoColor};font-size:10.5px;">${scontoLabel}</span> <span style="display:block;font-size:10.5px;font-weight:bold;color:#111;">€ ${prezzo > 0 ? fmt(prezzo) : '—'}</span>`
+      : `<span style="font-size:10.5px;font-weight:bold;color:#111;">€ ${prezzo > 0 ? fmt(prezzo) : '—'}</span>`
+    const htmlFull = articoloBlockHTML(p, children, i, colorMap.get(id), colorAccMap.get(id), false)
+    if (children.length === 0) {
+      blocks.push({ html: htmlFull })
+    } else {
+      const htmlMain   = articoloBlockHTML(p, children, i, colorMap.get(id), colorAccMap.get(id), true)
+      const htmlCaratt = caratteristicheWrapperHTML(children, prezzo, i, prezzoHTML, s(p.tipo_prodotto), scontoArt)
+      blocks.push({ html: htmlFull, htmlMain, htmlCaratt })
+    }
+  })
 
-    roots.forEach((p, i) => {
-      const id = n(p.id)
-      const children = (childrenMap.get(id) ?? []).slice().sort((a, b) => childTypeOrder(a) - childTypeOrder(b))
-      const prezzo = n(p.prezzo_totale)
-      const scontoArt = n(p.sconto_articolo_pct)
-      const prezzoBase = n(p.prezzo_pre_sconto)
-      const nettoFigli = children.reduce((sum, c) => sum + n(c.prezzo_totale), 0)
-      const scontoColor = scontoArt < 0 ? '#1565c0' : '#e65100'
-      const scontoLabel = scontoArt < 0 ? `Magg. +${Math.abs(scontoArt)}%` : `Promo −${scontoArt}%`
-      const prezzoHTML = prezzo === 0 && scontoArt === 100
-        ? `<span style="font-size:10.5px;font-weight:bold;color:#2e7d32;font-style:italic;">Omaggio</span>`
-        : prezzo === 0
-        ? `<span style="font-size:10.5px;font-weight:bold;color:#555;font-style:italic;">A corpo</span>`
-        : scontoArt !== 0 && prezzoBase > 0
-        ? `<span style="color:#aaa;text-decoration:line-through;font-size:10.5px;">€ ${fmt(prezzoBase)}</span> <span style="color:${scontoColor};font-size:10.5px;">${scontoLabel}</span> <span style="display:block;font-size:10.5px;font-weight:bold;color:#111;">€ ${prezzo > 0 ? fmt(prezzo) : '—'}</span>`
-        : `<span style="font-size:10.5px;font-weight:bold;color:#111;">€ ${prezzo > 0 ? fmt(prezzo) : '—'}</span>`
-      const htmlFull = articoloBlockHTML(p, children, i, colorMap.get(id), colorAccMap.get(id), false)
-      if (children.length === 0) {
-        blocks.push({ html: htmlFull })
-      } else {
-        const htmlMain   = articoloBlockHTML(p, children, i, colorMap.get(id), colorAccMap.get(id), true)
-        const htmlCaratt = caratteristicheWrapperHTML(children, prezzo, i, prezzoHTML, s(p.tipo_prodotto), scontoArt)
-        blocks.push({ html: htmlFull, htmlMain, htmlCaratt })
-      }
-    })
-
-    blocks.push({ html: extraLastHtml(artRows, totale, scontoClientePct, hasArticoliDaDefinire) })
-  }
+  blocks.push({ html: extraLastHtml(artRows, totale, scontoClientePct, hasArticoliDaDefinire) })
 
   const prevArts = condizioniPreventivoArticles()
   const prevMid  = 9
