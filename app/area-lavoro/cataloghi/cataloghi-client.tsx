@@ -20,6 +20,12 @@ export type Voce = {
   pdf_label: string
   descrizione: string
   listino_categoria: string | null
+  filtro_battente: number
+  filtro_scorrevole: number
+  filtro_taglio_termico: number
+  filtro_taglio_freddo: number
+  filtro_economico: number
+  filtro_fascia_alta: number
 }
 
 export type Categoria = {
@@ -241,6 +247,24 @@ function VoceEditForm({ voce, onDone }: { voce: Voce; onDone: () => void }) {
             placeholder="Descrizione tecnica del prodotto, caratteristiche, specifiche…"
             style={{ ...inp, resize: 'vertical', lineHeight: 1.6, fontSize: 12 }}
           />
+        </div>
+        <div style={{ gridColumn: '1 / -1' }}>
+          <label style={{ ...lbl, marginBottom: 6 }}>Filtri (caratteristiche del catalogo)</label>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6 }}>
+            {([
+              ['filtro_battente',       'A battente',     voce.filtro_battente],
+              ['filtro_scorrevole',     'Scorrevole',     voce.filtro_scorrevole],
+              ['filtro_taglio_termico', 'Taglio termico', voce.filtro_taglio_termico],
+              ['filtro_taglio_freddo',  'Taglio freddo',  voce.filtro_taglio_freddo],
+              ['filtro_economico',      'Economico',      voce.filtro_economico],
+              ['filtro_fascia_alta',    'Fascia alta',    voce.filtro_fascia_alta],
+            ] as [string, string, number][]).map(([name, label, val]) => (
+              <label key={name} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#333', cursor: 'pointer', padding: '4px 0' }}>
+                <input type="checkbox" name={name} defaultChecked={val === 1} style={{ width: 15, height: 15, cursor: 'pointer', accentColor: '#c8960c' }} />
+                {label}
+              </label>
+            ))}
+          </div>
         </div>
         <div style={{ gridColumn: '1 / -1' }}>
           <label style={lbl}>PDF attuale</label>

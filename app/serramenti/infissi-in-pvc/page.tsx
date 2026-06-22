@@ -35,10 +35,10 @@ async function getCatalogoData(nomeCategoria: string) {
       const categoria = (cats as { id: number; nome: string; listino_categoria: string | null }[])[0]
       if (!categoria) return null
       const [voci] = await db.query(
-        'SELECT id, nome, serie, pdf_filename, pdf_label, listino_categoria, descrizione FROM catalogo_voci WHERE categoria_id = ? ORDER BY nome ASC',
+        'SELECT id, nome, serie, pdf_filename, pdf_label, listino_categoria, descrizione, filtro_battente, filtro_scorrevole, filtro_taglio_termico, filtro_taglio_freddo, filtro_economico, filtro_fascia_alta FROM catalogo_voci WHERE categoria_id = ? ORDER BY nome ASC',
         [categoria.id]
       )
-      const voceList = voci as { id: number; nome: string; serie: string; pdf_filename: string; pdf_label: string; listino_categoria: string | null; descrizione: string | null }[]
+      const voceList = voci as { id: number; nome: string; serie: string; pdf_filename: string; pdf_label: string; listino_categoria: string | null; descrizione: string | null; filtro_battente: number; filtro_scorrevole: number; filtro_taglio_termico: number; filtro_taglio_freddo: number; filtro_economico: number; filtro_fascia_alta: number }[]
       const allListiniSet = new Set<string>()
       if (categoria.listino_categoria) allListiniSet.add(categoria.listino_categoria)
       for (const v of voceList) { if (v.listino_categoria) allListiniSet.add(v.listino_categoria) }

@@ -23,7 +23,7 @@ function Toggle({ checked, disabled }: { checked: boolean; disabled?: boolean })
     <div style={{
       position: 'relative', width: W, height: H,
       borderRadius: H / 2,
-      background: checked ? '#1e5c1e' : '#5a1a1a',
+      background: checked ? '#1e5c1e' : '#3a3a3a',
       opacity: disabled ? 0.55 : 1,
       cursor: disabled ? 'not-allowed' : 'pointer',
       flexShrink: 0,
@@ -40,7 +40,7 @@ function Toggle({ checked, disabled }: { checked: boolean; disabled?: boolean })
         position: 'absolute', right: 8, top: 0, bottom: 0,
         display: 'flex', alignItems: 'center',
         fontSize: 9, fontFamily: 'monospace', fontWeight: 700, letterSpacing: 0.5,
-        color: checked ? 'transparent' : '#dd7d7d',
+        color: checked ? 'transparent' : '#aaaaaa',
         transition: 'color 0.2s',
       }}>NO</span>
       <div style={{

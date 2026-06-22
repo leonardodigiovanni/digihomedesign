@@ -57,6 +57,12 @@ async function ensureTables() {
   if ((listCatCheck[0]?.cnt ?? 0) === 0) {
     await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN listino_categoria VARCHAR(100) NULL DEFAULT NULL`)
   }
+  await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_battente TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_scorrevole TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_taglio_termico TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_taglio_freddo TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_economico TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_fascia_alta TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
   await db.end()
 }
 
@@ -155,23 +161,31 @@ export async function updateVoce(_: MutResult | null, fd: FormData): Promise<Mut
   const pdf_label        = (fd.get('pdf_label')        as string)?.trim() ?? ''
   const descrizione      = (fd.get('descrizione')      as string)?.trim() ?? ''
   const new_pdf_filename = (fd.get('new_pdf_filename') as string)?.trim() || null
+  const filtro_battente      = fd.get('filtro_battente')      === 'on' ? 1 : 0
+  const filtro_scorrevole    = fd.get('filtro_scorrevole')    === 'on' ? 1 : 0
+  const filtro_taglio_termico = fd.get('filtro_taglio_termico') === 'on' ? 1 : 0
+  const filtro_taglio_freddo = fd.get('filtro_taglio_freddo') === 'on' ? 1 : 0
+  const filtro_economico     = fd.get('filtro_economico')     === 'on' ? 1 : 0
+  const filtro_fascia_alta   = fd.get('filtro_fascia_alta')   === 'on' ? 1 : 0
 
   if (isNaN(id) || !nome) return { ok: false, error: 'Dati incompleti.' }
 
   await ensureTables()
   const db = await getConnection()
   try {
+    const filtriCols = ', filtro_battente=?, filtro_scorrevole=?, filtro_taglio_termico=?, filtro_taglio_freddo=?, filtro_economico=?, filtro_fascia_alta=?'
+    const filtriVals = [filtro_battente, filtro_scorrevole, filtro_taglio_termico, filtro_taglio_freddo, filtro_economico, filtro_fascia_alta]
     if (new_pdf_filename) {
       const [rows] = await db.query('SELECT pdf_filename FROM catalogo_voci WHERE id = ?', [id])
       const old = (rows as { pdf_filename: string }[])[0]
       await db.execute(
-        'UPDATE catalogo_voci SET nome=?, serie=?, pdf_label=?, descrizione=?, pdf_filename=? WHERE id=?',
-        [nome, serie, pdf_label, descrizione, new_pdf_filename, id]
+        `UPDATE catalogo_voci SET nome=?, serie=?, pdf_label=?, descrizione=?, pdf_filename=?${filtriCols} WHERE id=?`,
+        [nome, serie, pdf_label, descrizione, new_pdf_filename, ...filtriVals, id]
       )
     } else {
       await db.execute(
-        'UPDATE catalogo_voci SET nome=?, serie=?, pdf_label=?, descrizione=? WHERE id=?',
-        [nome, serie, pdf_label, descrizione, id]
+        `UPDATE catalogo_voci SET nome=?, serie=?, pdf_label=?, descrizione=?${filtriCols} WHERE id=?`,
+        [nome, serie, pdf_label, descrizione, ...filtriVals, id]
       )
     }
     // listino_categoria gestita da updateListinoVoce

@@ -52,9 +52,15 @@ async function getData(): Promise<{ categorie: Categoria[]; listiniCategorie: st
     if ((listCatVoceCheck[0]?.cnt ?? 0) === 0) {
       await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN listino_categoria VARCHAR(100) NULL DEFAULT NULL`)
     }
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_battente TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_scorrevole TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_taglio_termico TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_taglio_freddo TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_economico TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_fascia_alta TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
 
     const [cats] = await db.query('SELECT id, nome, ordine, listino_categoria FROM catalogo_categorie ORDER BY ordine ASC, nome ASC')
-    const [voci] = await db.query('SELECT id, categoria_id, nome, pdf_filename, pdf_label, serie, descrizione, listino_categoria FROM catalogo_voci ORDER BY nome ASC')
+    const [voci] = await db.query('SELECT id, categoria_id, nome, pdf_filename, pdf_label, serie, descrizione, listino_categoria, filtro_battente, filtro_scorrevole, filtro_taglio_termico, filtro_taglio_freddo, filtro_economico, filtro_fascia_alta FROM catalogo_voci ORDER BY nome ASC')
 
     let listiniCategorie: string[] = []
     try {
@@ -63,9 +69,9 @@ async function getData(): Promise<{ categorie: Categoria[]; listiniCategorie: st
     } catch {}
 
     const voceMap: Record<number, Categoria['voci']> = {}
-    for (const v of voci as { id: number; categoria_id: number; nome: string; pdf_filename: string; pdf_label: string; serie: string; descrizione: string; listino_categoria: string | null }[]) {
+    for (const v of voci as { id: number; categoria_id: number; nome: string; pdf_filename: string; pdf_label: string; serie: string; descrizione: string; listino_categoria: string | null; filtro_battente: number; filtro_scorrevole: number; filtro_taglio_termico: number; filtro_taglio_freddo: number; filtro_economico: number; filtro_fascia_alta: number }[]) {
       if (!voceMap[v.categoria_id]) voceMap[v.categoria_id] = []
-      voceMap[v.categoria_id].push({ id: v.id, nome: v.nome, pdf_filename: v.pdf_filename, pdf_label: v.pdf_label, serie: v.serie ?? '', descrizione: v.descrizione ?? '', listino_categoria: v.listino_categoria ?? null })
+      voceMap[v.categoria_id].push({ id: v.id, nome: v.nome, pdf_filename: v.pdf_filename, pdf_label: v.pdf_label, serie: v.serie ?? '', descrizione: v.descrizione ?? '', listino_categoria: v.listino_categoria ?? null, filtro_battente: v.filtro_battente ?? 0, filtro_scorrevole: v.filtro_scorrevole ?? 0, filtro_taglio_termico: v.filtro_taglio_termico ?? 0, filtro_taglio_freddo: v.filtro_taglio_freddo ?? 0, filtro_economico: v.filtro_economico ?? 0, filtro_fascia_alta: v.filtro_fascia_alta ?? 0 })
     }
 
     const categorie = (cats as { id: number; nome: string; ordine: number; listino_categoria: string | null }[]).map(c => ({

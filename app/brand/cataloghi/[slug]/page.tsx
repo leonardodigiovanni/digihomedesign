@@ -40,9 +40,15 @@ async function getData(slug: string) {
     if ((descrCheck[0]?.cnt ?? 0) === 0) {
       await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN descrizione TEXT NULL`)
     }
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_battente TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_scorrevole TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_taglio_termico TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_taglio_freddo TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_economico TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_fascia_alta TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
 
     const [voci] = await db.query(
-      'SELECT id, nome, pdf_filename, pdf_label, listino_categoria, descrizione FROM catalogo_voci WHERE categoria_id = ? ORDER BY nome ASC',
+      'SELECT id, nome, pdf_filename, pdf_label, listino_categoria, descrizione, filtro_battente, filtro_scorrevole, filtro_taglio_termico, filtro_taglio_freddo, filtro_economico, filtro_fascia_alta FROM catalogo_voci WHERE categoria_id = ? ORDER BY nome ASC',
       [categoria.id]
     )
 
@@ -69,7 +75,7 @@ async function getData(slug: string) {
 
     return {
       categoria,
-      voci: voci as { id: number; nome: string; pdf_filename: string; pdf_label: string; listino_categoria: string | null; descrizione: string | null }[],
+      voci: voci as { id: number; nome: string; pdf_filename: string; pdf_label: string; listino_categoria: string | null; descrizione: string | null; filtro_battente: number; filtro_scorrevole: number; filtro_taglio_termico: number; filtro_taglio_freddo: number; filtro_economico: number; filtro_fascia_alta: number }[],
       articoliAcquisto,
     }
   } finally {
