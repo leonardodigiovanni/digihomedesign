@@ -1844,28 +1844,19 @@ export default function PreventivoClient({
                               <td style={{ ...tdS, paddingLeft: 12, textAlign: 'left' }}>
                                 {child.modello || child.tipo_prodotto || '—'}{child.note ? ` (${child.note})` : ''}
                               </td>
-                              {/* Col 3: tipo + prezzo */}
-                              <td style={{ ...tdS, textAlign: 'center', padding: '4px' }}>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'center', whiteSpace: 'nowrap' }}>
-                                  <div style={{ fontSize: 12, color: '#1a1a1a' }}>
-                                    {(() => {
-                                      const l = listini.find(li => li.id === child.listino_id)
-                                      return (l?.richiede_tipo_colore     ?? 0) === 1 ? 'Colore'
-                                        : (l?.richiede_tipo_colore_acc ?? 0) === 1 ? 'Accessori'
-                                        : (l?.richiede_tipo_vetro      ?? 0) === 1 ? 'Vetro'
-                                        : (l?.richiede_tipo_montaggio  ?? 0) === 1 ? 'Montaggio'
-                                        : ''
-                                    })()}
+                              {/* Col 3: N° + prezzo */}
+                              <td style={{ ...tdS, padding: 0, textAlign: 'center' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                                  <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid #e0e0e0', fontSize: 12, color: '#1a1a1a', padding: '0 4px', whiteSpace: 'nowrap' }}>
+                                    N°&nbsp;{child.quantita > 0 ? child.quantita : 1}
                                   </div>
+                                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2px 4px', whiteSpace: 'nowrap' }}>
                                   {child.prezzo_totale === 0 && child.sconto_articolo_pct === 100 ? (
                                     <span style={{ fontSize: 11, color: '#2e7d32', fontStyle: 'italic' }}>Omaggio</span>
                                   ) : child.prezzo_totale === 0 && (child.tipo_prodotto + ' ' + child.modello).toLowerCase().includes('nessun') ? (
                                     <span style={{ fontSize: 11, color: '#b00020', fontStyle: 'italic' }}>Escluso</span>
                                   ) : child.prezzo_totale === 0 ? (
-                                    <>
-                                      <span style={{ fontSize: 11, color: '#555', fontStyle: 'italic' }}>Incluso</span>
-                                      {child.quantita > 1 && <span style={{ fontSize: 10, color: '#888' }}>× {child.quantita}</span>}
-                                    </>
+                                    <span style={{ fontSize: 11, color: '#555', fontStyle: 'italic' }}>Incluso</span>
                                   ) : (
                                     <>
                                       {child.sconto_articolo_pct !== 0 && (
@@ -1881,6 +1872,7 @@ export default function PreventivoClient({
                                       {renderPrezzo(child.prezzo_totale)}
                                     </>
                                   )}
+                                  </div>
                                 </div>
                               </td>
                               {/* Col 5: ✏ ✕ */}

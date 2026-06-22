@@ -546,7 +546,7 @@ function caratteristicheHTML(children: Record<string, unknown>[], parentPrezzo: 
     } else if (contrib === 0 && prezzoBase === 0 && scontoPct === 0 && isNessun) {
       prezzoCell = `<div style="font-size:10.5px;font-style:italic;color:#b00020;white-space:nowrap;">Escluso</div>`
     } else if (contrib === 0 && prezzoBase === 0 && scontoPct === 0) {
-      prezzoCell = `<div style="font-size:10.5px;font-style:italic;color:#555;white-space:nowrap;">Incluso${qtaCaratt > 1 ? `</div><div style="font-size:9.5px;color:#888;white-space:nowrap;">× ${qtaCaratt}` : ''}</div>`
+      prezzoCell = `${qtaCaratt > 1 ? `<div style="font-size:9.5px;color:#888;white-space:nowrap;border-bottom:1px solid #e0e0e0;padding-bottom:2px;margin-bottom:2px;">N° ${qtaCaratt}</div>` : ''}<div style="font-size:10.5px;font-style:italic;color:#555;white-space:nowrap;">Incluso</div>`
     } else if (prezzoBase === 0 && scontoPct !== 0) {
       const pctAbs = Math.abs(scontoPct)
       if (scontoPct < 0) {
@@ -622,7 +622,7 @@ function caratteristichePreviewHTML(children: Record<string, unknown>[], parentP
     } else if (contrib === 0 && prezzoBase === 0 && scontoPct === 0 && isNessun) {
       prezzoCell = `<div style="font-size:10.5px;font-style:italic;color:#b00020;white-space:nowrap;">Escluso</div>`
     } else if (contrib === 0 && prezzoBase === 0 && scontoPct === 0) {
-      prezzoCell = `<div style="font-size:10.5px;font-style:italic;color:#555;white-space:nowrap;">Incluso${qtaCaratt > 1 ? `</div><div style="font-size:9.5px;color:#888;white-space:nowrap;">× ${qtaCaratt}` : ''}</div>`
+      prezzoCell = `${qtaCaratt > 1 ? `<div style="font-size:9.5px;color:#888;white-space:nowrap;border-bottom:1px solid #e0e0e0;padding-bottom:2px;margin-bottom:2px;">N° ${qtaCaratt}</div>` : ''}<div style="font-size:10.5px;font-style:italic;color:#555;white-space:nowrap;">Incluso</div>`
     } else {
       prezzoCell = `<div style="font-size:10.5px;font-weight:bold;color:#111;white-space:nowrap;">+ € ${fmt(Math.abs(contrib))}</div>`
     }
