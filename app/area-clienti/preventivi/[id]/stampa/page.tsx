@@ -647,7 +647,7 @@ function caratteristichePreviewHTML(children: Record<string, unknown>[], parentP
 
 // ─── HTML blocco articolo ─────────────────────────────────────────────────────
 
-function articoloBlockHTML(parent: Record<string, unknown>, children: Record<string, unknown>[], idx: number, barColor?: string | null, barColorAcc?: string | null, onlyMain = false): string {
+function articoloBlockHTML(parent: Record<string, unknown>, children: Record<string, unknown>[], idx: number, barColor?: string | null, barColorAcc?: string | null, onlyMain = false, previewN = 2): string {
   const tipo    = s(parent.tipo_prodotto)
   const marca   = s(parent.marca)
   const modello = s(parent.modello)
@@ -728,7 +728,7 @@ function articoloBlockHTML(parent: Record<string, unknown>, children: Record<str
         : `<div style="font-size:10px;color:#b0b0b0;text-align:center;">Nessuna immagine<br/>scheda tecnica</div>`}
     </div>
   </div>
-  ${onlyMain ? (children.length > 0 ? caratteristichePreviewHTML(children, prezzo, prezzoBaseHTML, 2) : '') : caratteristicheHTML(children, prezzo, idx, prezzoBaseHTML, scontoArt)}
+  ${onlyMain ? (children.length > 0 ? caratteristichePreviewHTML(children, prezzo, prezzoBaseHTML, previewN) : '') : caratteristicheHTML(children, prezzo, idx, prezzoBaseHTML, scontoArt)}
 </div>`
 }
 
@@ -1352,20 +1352,20 @@ async function buildStampaData(opts: {
       : scontoArt !== 0 && prezzoBase > 0
       ? `<span style="color:#aaa;text-decoration:line-through;font-size:10.5px;">€ ${fmt(prezzoBase)}</span> <span style="color:${scontoColor};font-size:10.5px;">${scontoLabel}</span> <span style="display:block;font-size:10.5px;font-weight:bold;color:#111;">€ ${prezzo > 0 ? fmt(prezzo) : '—'}</span>`
       : `<span style="font-size:10.5px;font-weight:bold;color:#111;">€ ${prezzo > 0 ? fmt(prezzo) : '—'}</span>`
-    const htmlFull = articoloBlockHTML(p, children, i, colorMap.get(id), colorAccMap.get(id), false)
-    const remaining = children.slice(2)
-    if (children.length === 0 || remaining.length === 0) {
-      blocks.push({ html: htmlFull })
+    const FIRST_CHUNK = 19
+    const NEXT_CHUNK  = 20
+    const barColor    = colorMap.get(id)
+    const barColorAcc = colorAccMap.get(id)
+    if (children.length <= FIRST_CHUNK) {
+      blocks.push({ html: articoloBlockHTML(p, children, i, barColor, barColorAcc, false) })
     } else {
-      const CHUNK = 15
-      const htmlMain = articoloBlockHTML(p, children, i, colorMap.get(id), colorAccMap.get(id), true)
-      const chunks: string[] = []
-      for (let ci = 0; ci < remaining.length; ci += CHUNK) {
-        chunks.push(caratteristicheWrapperHTML(remaining.slice(ci, ci + CHUNK), prezzo, i, prezzoHTML, s(p.tipo_prodotto), scontoArt, children))
+      blocks.push({ html: articoloBlockHTML(p, children, i, barColor, barColorAcc, true, FIRST_CHUNK) })
+      let offset = FIRST_CHUNK
+      while (offset < children.length) {
+        const chunk = children.slice(offset, offset + NEXT_CHUNK)
+        blocks.push({ html: caratteristicheWrapperHTML(chunk, prezzo, i, prezzoHTML, s(p.tipo_prodotto), scontoArt, children) })
+        offset += NEXT_CHUNK
       }
-      // html = main + tutti i chunk concatenati (usato quando tutto entra in una pagina)
-      const htmlCombined = htmlMain + '\n' + chunks.join('\n')
-      blocks.push({ html: htmlCombined, htmlMain, htmlCarattChunks: chunks })
     }
   })
 
