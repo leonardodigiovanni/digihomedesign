@@ -1844,12 +1844,14 @@ export default function PreventivoClient({
                               <td style={{ ...tdS, paddingLeft: 12, textAlign: 'left' }}>
                                 {child.modello || child.tipo_prodotto || '—'}{child.note ? ` (${child.note})` : ''}
                               </td>
-                              {/* Col 3: N° + prezzo */}
-                              <td style={{ ...tdS, padding: 0, textAlign: 'center' }}>
+                              {/* Col 3: N° (se >1) + prezzo */}
+                              <td style={{ ...tdS, padding: 0, height: 1, textAlign: 'center' }}>
                                 <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                                  <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid #e0e0e0', fontSize: 12, color: '#1a1a1a', padding: '0 4px', whiteSpace: 'nowrap' }}>
-                                    N°&nbsp;{child.quantita > 0 ? child.quantita : 1}
-                                  </div>
+                                  {child.quantita > 1 && (
+                                    <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid #e0e0e0', fontSize: 12, color: '#1a1a1a', padding: '0 4px', whiteSpace: 'nowrap' }}>
+                                      N°&nbsp;{child.quantita}
+                                    </div>
+                                  )}
                                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2px 4px', whiteSpace: 'nowrap' }}>
                                   {child.prezzo_totale === 0 && child.sconto_articolo_pct === 100 ? (
                                     <span style={{ fontSize: 11, color: '#2e7d32', fontStyle: 'italic' }}>Omaggio</span>
