@@ -657,7 +657,6 @@ function articoloBlockHTML(parent: Record<string, unknown>, children: Record<str
   const h       = n(parent.altezza_cm)
   const l       = n(parent.larghezza_cm)
   const anteRaw = n(parent.n_ante)
-  const ante    = anteRaw >= 2 ? anteRaw : 2
   const qtà     = n(parent.quantita)
   const prezzo  = n(parent.prezzo_totale)
   const unita   = s(parent.unita)
@@ -700,12 +699,12 @@ function articoloBlockHTML(parent: Record<string, unknown>, children: Record<str
     : `<span style="font-size:10.5px;font-weight:bold;color:#111;">€ ${prezzo > 0 ? fmt(prezzo) : '—'}</span>`
 
   const righe: string[] = []
-  if (marca || modello) righe.push(`<span style="color:#555;">Profilo:</span> ${[marca, modello].filter(Boolean).join(' — ')}`)
-  if (colore)           righe.push(`<span style="color:#555;">Colore:</span> ${colore}`)
-  if (h > 0 || l > 0)  righe.push(`<span style="color:#555;">Dimensioni:</span> ${l} × ${h} cm`)
-  if (ante > 1)         righe.push(`<span style="color:#555;">N° ante:</span> ${ante}`)
-  if (vetro)            righe.push(`<span style="color:#555;">Vetro:</span> ${vetro}`)
-  if (acc)              righe.push(`<span style="color:#555;">Accessori:</span> ${acc}`)
+  if (abbr && (marca || modello)) righe.push(`<span style="color:#555;">Profilo:</span> ${[marca, modello].filter(Boolean).join(' — ')}`)
+  if (colore)                     righe.push(`<span style="color:#555;">Colore:</span> ${colore}`)
+  if (h > 0 || l > 0)            righe.push(`<span style="color:#555;">Dimensioni:</span> ${l} × ${h} cm`)
+  if (abbr && anteRaw > 1)        righe.push(`<span style="color:#555;">N° ante:</span> ${anteRaw}`)
+  if (vetro)                      righe.push(`<span style="color:#555;">Vetro:</span> ${vetro}`)
+  if (acc)                        righe.push(`<span style="color:#555;">Accessori:</span> ${acc}`)
   righe.push(`<span style="color:#555;">Quantità:</span> ${qtà}`)
 
   return `<div style="border:1px solid #d0d0d0;border-radius:4px;margin-bottom:6px;overflow:hidden;page-break-inside:avoid;break-inside:avoid;">

@@ -868,7 +868,6 @@ function ModificaArticoloModal({ articolo, parentArt, children = [], listini, on
     } else if (isChild) {
       fd.set('altezza_cm',   String(articolo.altezza_cm))
       fd.set('larghezza_cm', String(articolo.larghezza_cm))
-      fd.set('quantita',     String(articolo.quantita))
     }
     if (isChildPerc) {
       fd.set('sconto_articolo_pct', String(-Math.abs(magg)))
@@ -990,6 +989,10 @@ function ModificaArticoloModal({ articolo, parentArt, children = [], listini, on
                   </div>
                 )}
                 <div>
+                  <span style={label}>Quantità</span>
+                  <input type="number" name="quantita" min={1} defaultValue={articolo.quantita > 0 ? articolo.quantita : 1} style={inp} />
+                </div>
+                <div>
                   <span style={label}>Prezzo unitario ({articolo.unita})</span>
                   <input type="number" name="prezzo_base" min={0} step="0.01" defaultValue={articolo.prezzo_base} style={inp} autoFocus />
                 </div>
@@ -1028,6 +1031,10 @@ function ModificaArticoloModal({ articolo, parentArt, children = [], listini, on
                       </span>
                     </div>
                   )}
+                </div>
+                <div>
+                  <span style={label}>Quantità</span>
+                  <input type="number" name="quantita" min={1} defaultValue={articolo.quantita > 0 ? articolo.quantita : 1} style={inp} />
                 </div>
               </>
             ) : (
