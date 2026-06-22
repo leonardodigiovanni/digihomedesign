@@ -84,9 +84,10 @@ type Props = {
   preventivoClienteBaseHref?: string
   submitLabel?: string
   isApp?: boolean
+  mostraFiltri?: boolean
 }
 
-export default function CatalogoWrapper({ voci, articoliPerListino, isStaff, isLoggedIn, preventiviBozza, cartNonVuoto, parentPendente, categorySlug, basePath, carrelloHref, preventivoClienteBaseHref, submitLabel, isApp }: Props) {
+export default function CatalogoWrapper({ voci, articoliPerListino, isStaff, isLoggedIn, preventiviBozza, cartNonVuoto, parentPendente, categorySlug, basePath, carrelloHref, preventivoClienteBaseHref, submitLabel, isApp, mostraFiltri = false }: Props) {
   const [selectedVoce, setSelectedVoce] = useState<Voce | null>(null)
   const [filtriAttivi, setFiltriAttivi] = useState<Set<keyof Voce>>(new Set())
 
@@ -123,16 +124,18 @@ export default function CatalogoWrapper({ voci, articoliPerListino, isStaff, isL
 
   return (
     <>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 12 }}>
-        {FILTRI.map(f => (
-          <FiltroToggle
-            key={String(f.key)}
-            label={f.label}
-            attivo={filtriAttivi.has(f.key)}
-            onToggle={() => toggleFiltro(f.key)}
-          />
-        ))}
-      </div>
+      {mostraFiltri && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 12 }}>
+          {FILTRI.map(f => (
+            <FiltroToggle
+              key={String(f.key)}
+              label={f.label}
+              attivo={filtriAttivi.has(f.key)}
+              onToggle={() => toggleFiltro(f.key)}
+            />
+          ))}
+        </div>
+      )}
 
       {vociFiltrate.length === 0 ? (
         <p className="fs-13" style={{ color: '#aaa', padding: '12px 0' }}>

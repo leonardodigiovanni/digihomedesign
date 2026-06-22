@@ -225,6 +225,7 @@ export default async function Page({ params }: Props) {
         parentPendente={parentPendente}
         categorySlug={slug}
         submitLabel="Conferma"
+        mostraFiltri={slug === 'infissi-in-alluminio'}
       />
 
       {articoliAcquisto.length > 0 && (

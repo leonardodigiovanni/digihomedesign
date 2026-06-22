@@ -185,6 +185,7 @@ export default async function Page() {
             preventiviBozza={preventiviBozza}
             cartNonVuoto={cartNonVuoto}
             submitLabel="Conferma"
+            mostraFiltri
           />
         )}
 
