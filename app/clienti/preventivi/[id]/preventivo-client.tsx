@@ -1862,7 +1862,10 @@ export default function PreventivoClient({
                                   ) : child.prezzo_totale === 0 && (child.tipo_prodotto + ' ' + child.modello).toLowerCase().includes('nessun') ? (
                                     <span style={{ fontSize: 11, color: '#b00020', fontStyle: 'italic' }}>Escluso</span>
                                   ) : child.prezzo_totale === 0 ? (
-                                    <span style={{ fontSize: 11, color: '#555', fontStyle: 'italic' }}>Incluso</span>
+                                    <>
+                                      <span style={{ fontSize: 11, color: '#555', fontStyle: 'italic' }}>Incluso</span>
+                                      {child.quantita > 1 && <span style={{ fontSize: 10, color: '#888' }}>× {child.quantita}</span>}
+                                    </>
                                   ) : (
                                     <>
                                       {child.sconto_articolo_pct !== 0 && (
