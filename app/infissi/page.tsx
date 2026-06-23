@@ -27,7 +27,7 @@ export default function Page() {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '16px' }}>
-          <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 8 }}>
+          <div className="vetrina-foto-row">
             <div className="page-card" style={{ flex: '1 1 220px', maxWidth: 480 }}>
               <div style={{ position: 'relative', width: '100%', aspectRatio: '1/1' }}>
                 <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="(max-width: 480px) 100vw, 480px" style={{ objectFit: 'cover' }} />

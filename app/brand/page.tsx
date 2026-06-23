@@ -26,14 +26,14 @@ const pages = [
 
 export default function Page() {
   return (
-    <div className="fs-15" style={{ maxWidth: 860, margin: '48px auto', padding: '0 20px 64px', color: '#444', lineHeight: 1.8 }}>
+    <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
         <Link href="/" style={{ color: '#888', textDecoration: 'underline' }}>Home</Link> / Brand
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 12 }}>
         Brand
       </h1>
-      <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, padding: '24px 28px', marginBottom: 36 }}>
+      <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '24px 24px', marginBottom: 36 }}>
         <p className="testo-articoli" style={{ margin: 0 }}>Tutto quello che riguarda Digi Home Design: la nostra storia, i lavori realizzati, come contattarci, i partner con cui lavoriamo e la documentazione ufficiale.</p>
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20 }}>
@@ -43,7 +43,7 @@ export default function Page() {
             href={p.href}
             style={{
               flex: '1 1 240px',
-              border: '2px solid #c8960c',
+              border: '1px solid #c8960c',
               borderRadius: 10,
               padding: '24px 20px',
               textDecoration: 'none',

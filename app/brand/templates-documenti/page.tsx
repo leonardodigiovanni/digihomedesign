@@ -15,10 +15,10 @@ export default function Page() {
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 16 }}>Documenti Legali</h1>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 8 }}>
-        <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '24px 28px' }}>
+        <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '24px 24px' }}>
           <p className="testo-articoli" style={{ margin: 0 }}>Raccolta dei modelli di documento ufficiali Digi Home Design: contratti di appalto, moduli di accettazione preventivo, dichiarazioni di conformità impianti, verbali di consegna lavori e liberatorie per accesso cantiere.</p>
         </div>
-        <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '24px 28px' }}>
+        <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '24px 24px' }}>
           <p className="testo-articoli" style={{ margin: 0 }}>I template sono disponibili in formato PDF, pronti per essere scaricati. Per modelli personalizzati o versioni aggiornate contatta il nostro ufficio amministrativo.</p>
         </div>
       </div>

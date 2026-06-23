@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useMemo, useActionState, useTransition, useRef, useEffect } from 'react'
+import React, { useState, useMemo, useActionState, useTransition, useRef, useEffect, useContext, createContext } from 'react'
 import { useRouter } from 'next/navigation'
 import { addArticolo, updateArticolo, deleteArticolo, cloneArticolo, toggleDisponibile, togglePreventivabile, toggleAcquistabile, togglePrincipale, toggleCaratteristica, toggleColonnaBooleana, updateSchedaTecnica, clearImmagine, type MutResult, type AddResult } from './actions'
 
@@ -51,6 +51,35 @@ export type Articolo = {
   minimo: number | null
 }
 
+// ─── Visibilità colonne ────────────────────────────────────────────────────────
+
+const COL_KEYS = ['cat','prod','serie','forn','schema','foto','descr','unita','minimo','p_acq','p_vnd','costante','abbr','sconto','margine','note','richiede','azioni'] as const
+type ColKey = typeof COL_KEYS[number]
+
+const COL_LABELS: Record<ColKey, string> = {
+  cat: 'Cat.', prod: 'Produttore', serie: 'Serie', forn: 'Fornitore',
+  schema: 'Schema', foto: 'Foto', descr: 'Descriz.', unita: 'Unità',
+  minimo: 'Minimo', p_acq: 'P.Acq', p_vnd: 'P.Vnd', costante: 'Cost.',
+  abbr: 'Abbr', sconto: 'Sconto', margine: 'Margine', note: 'Note',
+  richiede: 'Richiede…', azioni: 'Azioni',
+}
+
+const COL_DEFAULT: Record<ColKey, boolean> = {
+  cat: true, prod: true, serie: true, forn: true,
+  schema: true, foto: true, descr: true, unita: true,
+  minimo: false, p_acq: true, p_vnd: true, costante: false,
+  abbr: false, sconto: true, margine: true, note: true,
+  richiede: true, azioni: true,
+}
+
+const LS_COL_KEY = 'listini_col_vis'
+const ColVisCtx = createContext<Record<ColKey, boolean>>(COL_DEFAULT)
+
+function useVis() {
+  const cv = useContext(ColVisCtx)
+  return (key: ColKey): React.CSSProperties => cv[key] ? {} : { display: 'none' }
+}
+
 // ─── Costanti ─────────────────────────────────────────────────────────────────
 
 const UNITA_PREDEFINITE = ['m²', 'ml', 'kg', 't', 'pz', 'h', 'corpo']
@@ -76,6 +105,7 @@ const inp: React.CSSProperties = {
 const thS: React.CSSProperties = {
   padding: '8px 10px', color: '#c8960c', fontSize: 11, fontWeight: 700,
   textAlign: 'left', whiteSpace: 'nowrap', borderBottom: '2px solid #444',
+  borderRight: '1px solid #444',
   background: '#2a2a3e', userSelect: 'none',
 }
 
@@ -339,7 +369,6 @@ function SchedaTecnicaModal({ art, onClose }: { art: Articolo; onClose: () => vo
     }
   }
 
-  // Paste globale mentre il modale è aperto — va al target attivo
   useEffect(() => {
     function handlePaste(e: ClipboardEvent) {
       const items = e.clipboardData?.items
@@ -395,7 +424,6 @@ function SchedaTecnicaModal({ art, onClose }: { art: Articolo; onClose: () => vo
         <form action={formAction}>
           <input type="hidden" name="id" value={art.id} />
 
-          {/* Foto prodotto */}
           <div style={{ marginBottom: 14 }}>
             <span style={lbl}>Foto prodotto</span>
             <ImgUploadRow
@@ -409,7 +437,6 @@ function SchedaTecnicaModal({ art, onClose }: { art: Articolo; onClose: () => vo
             />
           </div>
 
-          {/* Schema */}
           <div style={{ marginBottom: 18 }}>
             <span style={lbl}>Schema</span>
             <ImgUploadRow
@@ -425,43 +452,18 @@ function SchedaTecnicaModal({ art, onClose }: { art: Articolo; onClose: () => vo
 
           {uploadErr && <p style={{ color: '#c00', fontSize: 11, margin: '-10px 0 14px', background: '#fff5f5', padding: '6px 10px', borderRadius: 4 }}>{uploadErr}</p>}
 
-          {/* Dati tecnici */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 16 }}>
             <div>
               <label style={lbl}>Frontale (mm)</label>
-              <input
-                name="profilo_frontale_mm"
-                type="number"
-                step="0.1"
-                min="0"
-                defaultValue={art.profilo_frontale_mm ?? ''}
-                placeholder="es. 70"
-                style={numInp}
-              />
+              <input name="profilo_frontale_mm" type="number" step="0.1" min="0" defaultValue={art.profilo_frontale_mm ?? ''} placeholder="es. 70" style={numInp} />
             </div>
             <div>
               <label style={lbl}>Profondità (mm)</label>
-              <input
-                name="profilo_profondita_mm"
-                type="number"
-                step="0.1"
-                min="0"
-                defaultValue={art.profilo_profondita_mm ?? ''}
-                placeholder="es. 80"
-                style={numInp}
-              />
+              <input name="profilo_profondita_mm" type="number" step="0.1" min="0" defaultValue={art.profilo_profondita_mm ?? ''} placeholder="es. 80" style={numInp} />
             </div>
             <div>
               <label style={lbl}>Uw (W/m²K)</label>
-              <input
-                name="trasmittanza_uw"
-                type="number"
-                step="0.001"
-                min="0"
-                defaultValue={art.trasmittanza_uw ?? ''}
-                placeholder="es. 1.3"
-                style={numInp}
-              />
+              <input name="trasmittanza_uw" type="number" step="0.001" min="0" defaultValue={art.trasmittanza_uw ?? ''} placeholder="es. 1.3" style={numInp} />
             </div>
           </div>
 
@@ -492,7 +494,7 @@ function SchedaTecnicaModal({ art, onClose }: { art: Articolo; onClose: () => vo
   )
 }
 
-// ─── Riga normale ─────────────────────────────────────────────────────────────
+// ─── Toggle buttons ────────────────────────────────────────────────────────────
 
 function ToggleDisponibileBtn({ art }: { art: Articolo }) {
   const [, startT] = React.useTransition()
@@ -648,6 +650,8 @@ function ImgCell({ artId, url, tipo, alt }: { artId: number; url: string | null;
   )
 }
 
+// ─── Riga normale ─────────────────────────────────────────────────────────────
+
 function RigaNormale({ art, onEdit, onScheda, onDelete, onAction, pending }: {
   art: Articolo
   onEdit: () => void
@@ -656,50 +660,51 @@ function RigaNormale({ art, onEdit, onScheda, onDelete, onAction, pending }: {
   onAction: () => void
   pending: boolean
 }) {
+  const vis = useVis()
   const m = margine(art.prezzo_acquisto, art.prezzo_vendita)
   const nonDisp = art.disponibile === 0
   const td: React.CSSProperties = {
-    padding: '7px 10px', borderBottom: '1px solid #eee', fontSize: 12, verticalAlign: 'middle',
+    padding: '7px 10px', borderBottom: '1px solid #eee', borderRight: '1px solid #eee', fontSize: 12, verticalAlign: 'middle',
     opacity: nonDisp ? 0.45 : 1,
   }
   const hasDati = art.profilo_frontale_mm != null || art.profilo_profondita_mm != null || art.trasmittanza_uw != null
 
   return (
     <tr onDoubleClick={onEdit} onClick={onAction} style={{ cursor: 'pointer', background: nonDisp ? '#f9f9f9' : undefined }} title="Doppio click per modificare">
-      <td style={td}><span style={{ background: '#e8e8f8', borderRadius: 3, padding: '2px 7px', fontSize: 11, fontWeight: 600 }}>{art.categoria}</span></td>
-      <td style={{ ...td, color: '#555' }}>{art.produttore || '—'}</td>
-      <td style={{ ...td, color: '#555' }}>{art.serie || '—'}</td>
-      <td style={{ ...td, color: '#555' }}>{art.fornitore_nome || '—'}</td>
-      <td style={{ ...td, padding: 4, width: 140, minWidth: 120 }}>
+      <td style={{ ...td, ...vis('cat') }}><span style={{ background: '#e8e8f8', borderRadius: 3, padding: '2px 7px', fontSize: 11, fontWeight: 600 }}>{art.categoria}</span></td>
+      <td style={{ ...td, color: '#555', ...vis('prod') }}>{art.produttore || '—'}</td>
+      <td style={{ ...td, color: '#555', ...vis('serie') }}>{art.serie || '—'}</td>
+      <td style={{ ...td, color: '#555', ...vis('forn') }}>{art.fornitore_nome || '—'}</td>
+      <td style={{ ...td, padding: 4, width: 140, minWidth: 120, ...vis('schema') }}>
         <ImgCell artId={art.id} url={art.schema_url} tipo="schema" alt="schema" />
       </td>
-      <td style={{ ...td, padding: 4, width: 140, minWidth: 120 }}>
+      <td style={{ ...td, padding: 4, width: 140, minWidth: 120, ...vis('foto') }}>
         <ImgCell artId={art.id} url={art.foto_url} tipo="foto" alt={art.descrizione} />
       </td>
-      <td style={{ ...td, fontWeight: 500, maxWidth: 300 }}>
+      <td style={{ ...td, fontWeight: 500, maxWidth: 300, ...vis('descr') }}>
         {art.descrizione}
       </td>
-      <td style={{ ...td, textAlign: 'center', color: '#666' }}>{art.unita}</td>
-      <td style={{ ...td, textAlign: 'center', color: '#666' }}>{art.minimo ?? ''}</td>
-      <td style={{ ...td, textAlign: 'right', color: '#1565c0', fontWeight: 600 }}>{fmt(art.prezzo_acquisto)}</td>
-      <td style={{ ...td, textAlign: 'right', color: '#2e7d32', fontWeight: 600 }}>{fmt(art.prezzo_vendita)}</td>
-      <td style={{ ...td, textAlign: 'right', color: '#aaa', fontSize: 11 }}>
+      <td style={{ ...td, textAlign: 'center', color: '#666', ...vis('unita') }}>{art.unita}</td>
+      <td style={{ ...td, textAlign: 'center', color: '#666', ...vis('minimo') }}>{art.minimo ?? ''}</td>
+      <td style={{ ...td, textAlign: 'right', color: '#1565c0', fontWeight: 600, ...vis('p_acq') }}>{fmt(art.prezzo_acquisto)}</td>
+      <td style={{ ...td, textAlign: 'right', color: '#2e7d32', fontWeight: 600, ...vis('p_vnd') }}>{fmt(art.prezzo_vendita)}</td>
+      <td style={{ ...td, textAlign: 'right', color: '#aaa', fontSize: 11, ...vis('costante') }}>
         {art.costante !== 0 ? art.costante : ''}
       </td>
-      <td style={{ ...td, color: '#aaa', fontSize: 11 }}>
+      <td style={{ ...td, color: '#aaa', fontSize: 11, ...vis('abbr') }}>
         {art.abbr || ''}
       </td>
-      <td style={{ ...td, textAlign: 'center' }}>
+      <td style={{ ...td, textAlign: 'center', ...vis('sconto') }}>
         {art.sconto_articolo !== 0
           ? <span style={{ color: art.sconto_articolo < 0 ? '#1565c0' : '#e65100', fontWeight: 700, fontSize: 11 }}>
               {art.sconto_articolo < 0 ? `+${Math.abs(art.sconto_articolo)}%` : `${art.sconto_articolo}%`}
             </span>
           : <span style={{ color: '#ccc' }}>—</span>}
       </td>
-      <td style={{ ...td, textAlign: 'center' }}>
+      <td style={{ ...td, textAlign: 'center', ...vis('margine') }}>
         {m ? <span style={{ color: m.color, fontWeight: 700, fontSize: 11 }}>{m.pct}</span> : <span style={{ color: '#ccc' }}>—</span>}
       </td>
-      <td style={{ ...td, color: '#888', maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+      <td style={{ ...td, color: '#888', maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', ...vis('note') }}>
         {art.note || '—'}
         {art.max_acquistabile === 0 && (
           <span style={{ marginLeft: 6, background: '#c62828', color: '#fff', fontSize: 9, fontWeight: 700, borderRadius: 3, padding: '1px 5px' }}>ESAURITO</span>
@@ -708,17 +713,17 @@ function RigaNormale({ art, onEdit, onScheda, onDelete, onAction, pending }: {
           <span style={{ marginLeft: 6, background: '#e65100', color: '#fff', fontSize: 9, fontWeight: 700, borderRadius: 3, padding: '1px 5px' }}>Max {art.max_acquistabile}</span>
         )}
       </td>
-      <td style={{ ...td, textAlign: 'center' }}><ToggleCheckbox id={art.id} colonna="richiede_larghezza"   valore={art.richiede_larghezza} /></td>
-      <td style={{ ...td, textAlign: 'center' }}><ToggleCheckbox id={art.id} colonna="richiede_altezza"    valore={art.richiede_altezza} /></td>
-      <td style={{ ...td, textAlign: 'center' }}><ToggleCheckbox id={art.id} colonna="richiede_quantita"   valore={art.richiede_quantita} /></td>
-      <td style={{ ...td, textAlign: 'center' }}><ToggleCheckbox id={art.id} colonna="richiede_piano"      valore={art.richiede_piano} /></td>
-      <td style={{ ...td, textAlign: 'center' }}><ToggleCheckbox id={art.id} colonna="richiede_km"         valore={art.richiede_km} /></td>
-      <td style={{ ...td, textAlign: 'center' }}><ToggleCheckbox id={art.id} colonna="richiede_peso"       valore={art.richiede_peso} /></td>
-      <td style={{ ...td, textAlign: 'center' }}><ToggleCheckbox id={art.id} colonna="richiede_tipo_colore"     valore={art.richiede_tipo_colore} /></td>
-      <td style={{ ...td, textAlign: 'center' }}><ToggleCheckbox id={art.id} colonna="richiede_tipo_colore_acc" valore={art.richiede_tipo_colore_acc} /></td>
-      <td style={{ ...td, textAlign: 'center' }}><ToggleCheckbox id={art.id} colonna="richiede_tipo_vetro"      valore={art.richiede_tipo_vetro} /></td>
-      <td style={{ ...td, textAlign: 'center' }}><ToggleCheckbox id={art.id} colonna="richiede_tipo_montaggio" valore={art.richiede_tipo_montaggio} /></td>
-      <td style={{ ...td, opacity: 1, whiteSpace: 'nowrap' }}>
+      <td style={{ ...td, textAlign: 'center', ...vis('richiede') }}><ToggleCheckbox id={art.id} colonna="richiede_larghezza"   valore={art.richiede_larghezza} /></td>
+      <td style={{ ...td, textAlign: 'center', ...vis('richiede') }}><ToggleCheckbox id={art.id} colonna="richiede_altezza"    valore={art.richiede_altezza} /></td>
+      <td style={{ ...td, textAlign: 'center', ...vis('richiede') }}><ToggleCheckbox id={art.id} colonna="richiede_quantita"   valore={art.richiede_quantita} /></td>
+      <td style={{ ...td, textAlign: 'center', ...vis('richiede') }}><ToggleCheckbox id={art.id} colonna="richiede_piano"      valore={art.richiede_piano} /></td>
+      <td style={{ ...td, textAlign: 'center', ...vis('richiede') }}><ToggleCheckbox id={art.id} colonna="richiede_km"         valore={art.richiede_km} /></td>
+      <td style={{ ...td, textAlign: 'center', ...vis('richiede') }}><ToggleCheckbox id={art.id} colonna="richiede_peso"       valore={art.richiede_peso} /></td>
+      <td style={{ ...td, textAlign: 'center', ...vis('richiede') }}><ToggleCheckbox id={art.id} colonna="richiede_tipo_colore"     valore={art.richiede_tipo_colore} /></td>
+      <td style={{ ...td, textAlign: 'center', ...vis('richiede') }}><ToggleCheckbox id={art.id} colonna="richiede_tipo_colore_acc" valore={art.richiede_tipo_colore_acc} /></td>
+      <td style={{ ...td, textAlign: 'center', ...vis('richiede') }}><ToggleCheckbox id={art.id} colonna="richiede_tipo_vetro"      valore={art.richiede_tipo_vetro} /></td>
+      <td style={{ ...td, textAlign: 'center', ...vis('richiede') }}><ToggleCheckbox id={art.id} colonna="richiede_tipo_montaggio" valore={art.richiede_tipo_montaggio} /></td>
+      <td style={{ ...td, opacity: 1, whiteSpace: 'nowrap', ...vis('azioni') }}>
         <div style={{ display: 'flex', gap: 4 }}>
           <ToggleDisponibileBtn art={art} />
           <TogglePreventivabileBtn art={art} />
@@ -749,6 +754,7 @@ function RigaNormale({ art, onEdit, onScheda, onDelete, onAction, pending }: {
 function RigaEdit({ art, categorie, produttori, fornitori, onDone, onSaved }: {
   art: Articolo; categorie: string[]; produttori: string[]; fornitori: Fornitore[]; onDone: () => void; onSaved?: (id: number) => void
 }) {
+  const vis = useVis()
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
   const [unitaCustom, setUnitaCustom] = useState(!UNITA_PREDEFINITE.includes(art.unita))
@@ -769,31 +775,31 @@ function RigaEdit({ art, categorie, produttori, fornitori, onDone, onSaved }: {
     })
   }
 
-  const tde: React.CSSProperties = { padding: '5px 6px', borderBottom: '1px solid #c8960c', background: '#fffdf0', verticalAlign: 'middle' }
+  const tde: React.CSSProperties = { padding: '5px 6px', borderBottom: '1px solid #c8960c', borderRight: '1px solid #c8960c', background: '#fffdf0', verticalAlign: 'middle' }
 
   return (
     <tr ref={trRef} style={{ background: '#fffdf0' }}>
-      <td style={tde}>
+      <td style={{ ...tde, ...vis('cat') }}>
         <input name="categoria" defaultValue={art.categoria} required style={inp} list="cat-list-edit" />
         <datalist id="cat-list-edit">{categorie.map(c => <option key={c} value={c} />)}</datalist>
       </td>
-      <td style={tde}>
+      <td style={{ ...tde, ...vis('prod') }}>
         <input name="produttore" defaultValue={art.produttore} style={inp} list="prod-list-edit" />
         <datalist id="prod-list-edit">{produttori.map(p => <option key={p} value={p} />)}</datalist>
       </td>
-      <td style={tde}>
+      <td style={{ ...tde, ...vis('serie') }}>
         <input name="serie" defaultValue={art.serie} style={inp} placeholder="Es. AWS 75" />
       </td>
-      <td style={tde}>
+      <td style={{ ...tde, ...vis('forn') }}>
         <select name="fornitore_id" defaultValue={art.fornitore_id ?? ''} style={{ ...inp, width: 130 }}>
           <option value="">—</option>
           {fornitori.map(f => <option key={f.id} value={f.id}>{f.ragione_sociale}</option>)}
         </select>
       </td>
-      <td style={tde} />
-      <td style={tde} />
-      <td style={tde}><input name="descrizione" defaultValue={art.descrizione} required style={inp} /></td>
-      <td style={tde}>
+      <td style={{ ...tde, ...vis('schema') }} />
+      <td style={{ ...tde, ...vis('foto') }} />
+      <td style={{ ...tde, ...vis('descr') }}><input name="descrizione" defaultValue={art.descrizione} required style={inp} /></td>
+      <td style={{ ...tde, ...vis('unita') }}>
         {unitaCustom ? (
           <input name="unita" defaultValue={art.unita} required style={{ ...inp, width: 60 }}
             onBlur={e => { if (!e.target.value) setUnitaCustom(false) }} />
@@ -805,21 +811,21 @@ function RigaEdit({ art, categorie, produttori, fornitori, onDone, onSaved }: {
           </select>
         )}
       </td>
-      <td style={tde}><input name="minimo" type="number" step="0.0001" min="0" defaultValue={art.minimo ?? ''} style={{ ...inp, width: 70, textAlign: 'right' }} placeholder="—" /></td>
-      <td style={tde}><input name="prezzo_acquisto" type="number" step="0.01" min="0" defaultValue={art.prezzo_acquisto} required style={{ ...inp, width: 80, textAlign: 'right' }} /></td>
-      <td style={tde}><input name="prezzo_vendita" type="number" step="0.01" min="0" defaultValue={art.prezzo_vendita} required style={{ ...inp, width: 80, textAlign: 'right' }} /></td>
-      <td style={tde}><input name="costante" type="number" step="0.0001" defaultValue={art.costante} style={{ ...inp, width: 80, textAlign: 'right' }} /></td>
-      <td style={tde}><input name="abbr" defaultValue={art.abbr} style={{ ...inp, width: 70 }} placeholder="abbr" /></td>
-      <td style={tde}><input name="sconto_articolo" type="number" step="0.01" min="-100" max="100" defaultValue={art.sconto_articolo} style={{ ...inp, width: 60, textAlign: 'right' }} /></td>
-      <td style={tde} />
-      <td style={tde}>
+      <td style={{ ...tde, ...vis('minimo') }}><input name="minimo" type="number" step="0.0001" min="0" defaultValue={art.minimo ?? ''} style={{ ...inp, width: 70, textAlign: 'right' }} placeholder="—" /></td>
+      <td style={{ ...tde, ...vis('p_acq') }}><input name="prezzo_acquisto" type="number" step="0.01" min="0" defaultValue={art.prezzo_acquisto} required style={{ ...inp, width: 80, textAlign: 'right' }} /></td>
+      <td style={{ ...tde, ...vis('p_vnd') }}><input name="prezzo_vendita" type="number" step="0.01" min="0" defaultValue={art.prezzo_vendita} required style={{ ...inp, width: 80, textAlign: 'right' }} /></td>
+      <td style={{ ...tde, ...vis('costante') }}><input name="costante" type="number" step="0.0001" defaultValue={art.costante} style={{ ...inp, width: 80, textAlign: 'right' }} /></td>
+      <td style={{ ...tde, ...vis('abbr') }}><input name="abbr" defaultValue={art.abbr} style={{ ...inp, width: 70 }} placeholder="abbr" /></td>
+      <td style={{ ...tde, ...vis('sconto') }}><input name="sconto_articolo" type="number" step="0.01" min="-100" max="100" defaultValue={art.sconto_articolo} style={{ ...inp, width: 60, textAlign: 'right' }} /></td>
+      <td style={{ ...tde, ...vis('margine') }} />
+      <td style={{ ...tde, ...vis('note') }}>
         <input name="note" defaultValue={art.note ?? ''} style={{ ...inp, marginBottom: 3 }} placeholder="Note" />
         <input name="max_acquistabile" type="number" min={0} step="1"
           defaultValue={art.max_acquistabile ?? ''} style={{ ...inp, width: 70 }}
           placeholder="max" title="vuoto=illimitato, 0=esaurito" />
       </td>
-      <td style={tde} /><td style={tde} /><td style={tde} /><td style={tde} />
-      <td style={tde} /><td style={tde} /><td style={tde} /><td style={tde} /><td style={tde} /><td style={tde} />
+      <td style={{ ...tde, ...vis('richiede') }} /><td style={{ ...tde, ...vis('richiede') }} /><td style={{ ...tde, ...vis('richiede') }} /><td style={{ ...tde, ...vis('richiede') }} />
+      <td style={{ ...tde, ...vis('richiede') }} /><td style={{ ...tde, ...vis('richiede') }} /><td style={{ ...tde, ...vis('richiede') }} /><td style={{ ...tde, ...vis('richiede') }} /><td style={{ ...tde, ...vis('richiede') }} /><td style={{ ...tde, ...vis('richiede') }} />
       <td style={{ ...tde, whiteSpace: 'nowrap' }}>
         <div style={{ display: 'flex', gap: 4 }}>
           <button onClick={handleSubmit} className="btn-green" disabled={pending}>
@@ -848,7 +854,23 @@ export default function ListiniClient({ articoli, fornitori }: { articoli: Artic
   const [deletingId, setDeletingId]         = useState<number | null>(null)
   const [lastId, setLastId]                 = useState<number | null>(null)
   const [isCloning, setIsCloning]           = useState(false)
+  const [colVis, setColVis]                 = useState<Record<ColKey, boolean>>(COL_DEFAULT)
   const router = useRouter()
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(LS_COL_KEY)
+      if (saved) setColVis(prev => ({ ...prev, ...JSON.parse(saved) }))
+    } catch {}
+  }, [])
+
+  function toggleCol(key: ColKey) {
+    setColVis(prev => {
+      const next = { ...prev, [key]: !prev[key] }
+      try { localStorage.setItem(LS_COL_KEY, JSON.stringify(next)) } catch {}
+      return next
+    })
+  }
 
   const categorie  = useMemo(() => [...new Set(articoli.map(a => a.categoria))].sort(), [articoli])
   const produttori = useMemo(() => [...new Set(articoli.map(a => a.produttore).filter(Boolean))].sort(), [articoli])
@@ -893,107 +915,133 @@ export default function ListiniClient({ articoli, fornitori }: { articoli: Artic
     setDeletingId(null)
   }
 
+  // helper locale per th
+  const thVis = (key: ColKey): React.CSSProperties => colVis[key] ? {} : { display: 'none' }
+
   return (
-    <div>
-      {/* Barra filtri */}
-      <div style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
-        <input placeholder="Cerca descrizione, produttore…"
-          value={filtroTesto} onChange={e => setFiltroTesto(e.target.value)}
-          style={{ ...selInp, minWidth: 240 }} />
-        <select value={filtroCategoria} onChange={e => setFiltroCategoria(e.target.value)} style={selInp}>
-          <option value="">Tutte le categorie</option>
-          {categorie.map(c => <option key={c} value={c}>{c}</option>)}
-        </select>
-        <select value={filtroProduttore} onChange={e => setFiltroProduttore(e.target.value)} style={selInp}>
-          <option value="">Tutti i produttori</option>
-          {produttori.map(p => <option key={p} value={p}>{p}</option>)}
-        </select>
-        <select value={filtroSerie} onChange={e => setFiltroSerie(e.target.value)} style={selInp}>
-          <option value="">Tutte le serie</option>
-          {serie.map(s => <option key={s} value={s}>{s}</option>)}
-        </select>
-        <select value={filtroFornitore} onChange={e => setFiltroFornitore(e.target.value)} style={selInp}>
-          <option value="">Tutti i fornitori</option>
-          {fornitori.map(f => <option key={f.id} value={f.id}>{f.ragione_sociale}</option>)}
-        </select>
-        <select value={filtroDisp} onChange={e => setFiltroDisp(e.target.value as 'tutti' | 'disp' | 'nondisp')} style={selInp}>
-          <option value="tutti">Tutti gli stati</option>
-          <option value="disp">Solo disponibili</option>
-          <option value="nondisp">Solo non disponibili</option>
-        </select>
-        <span style={{ fontSize: 13, color: '#888' }}>{filtrati.length} articoli</span>
+    <ColVisCtx.Provider value={colVis}>
+      <div>
+        {/* Selettore colonne */}
+        <div style={{
+          display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center',
+          padding: '8px 12px', background: '#1e1e30', borderRadius: 8, marginBottom: 12,
+        }}>
+          <span style={{ fontSize: 11, color: '#c8960c', fontWeight: 700, whiteSpace: 'nowrap', marginRight: 4 }}>Colonne:</span>
+          {COL_KEYS.map(key => (
+            <button
+              key={key}
+              onClick={() => toggleCol(key)}
+              style={{
+                padding: '3px 9px', fontSize: 10, fontWeight: 700, borderRadius: 3,
+                border: 'none', cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap',
+                background: colVis[key] ? '#c8960c' : '#3a3a3a',
+                color: colVis[key] ? '#fff' : '#666',
+              }}
+            >
+              {COL_LABELS[key]}
+            </button>
+          ))}
+        </div>
+
+        {/* Barra filtri */}
+        <div style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
+          <input placeholder="Cerca descrizione, produttore…"
+            value={filtroTesto} onChange={e => setFiltroTesto(e.target.value)}
+            style={{ ...selInp, minWidth: 240 }} />
+          <select value={filtroCategoria} onChange={e => setFiltroCategoria(e.target.value)} style={selInp}>
+            <option value="">Tutte le categorie</option>
+            {categorie.map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
+          <select value={filtroProduttore} onChange={e => setFiltroProduttore(e.target.value)} style={selInp}>
+            <option value="">Tutti i produttori</option>
+            {produttori.map(p => <option key={p} value={p}>{p}</option>)}
+          </select>
+          <select value={filtroSerie} onChange={e => setFiltroSerie(e.target.value)} style={selInp}>
+            <option value="">Tutte le serie</option>
+            {serie.map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
+          <select value={filtroFornitore} onChange={e => setFiltroFornitore(e.target.value)} style={selInp}>
+            <option value="">Tutti i fornitori</option>
+            {fornitori.map(f => <option key={f.id} value={f.id}>{f.ragione_sociale}</option>)}
+          </select>
+          <select value={filtroDisp} onChange={e => setFiltroDisp(e.target.value as 'tutti' | 'disp' | 'nondisp')} style={selInp}>
+            <option value="tutti">Tutti gli stati</option>
+            <option value="disp">Solo disponibili</option>
+            <option value="nondisp">Solo non disponibili</option>
+          </select>
+          <span style={{ fontSize: 13, color: '#888' }}>{filtrati.length} articoli</span>
+        </div>
+
+        {/* Pulsanti nuovo / ripeti */}
+        {!nuovoOpen ? (
+          <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+            <button className="btn-green" onClick={() => setNuovoOpen(true)}>+ Nuovo articolo</button>
+            <button className="btn-green" onClick={handleClone} disabled={lastId === null || isCloning}
+              style={{ opacity: lastId === null ? 0.4 : 1 }}>
+              {isCloning ? 'Clonazione…' : '+ Ripeti articolo'}
+            </button>
+          </div>
+        ) : (
+          <NuovoArticoloForm categorie={categorie} produttori={produttori} fornitori={fornitori}
+            onDone={(newId) => { if (newId) setLastId(newId); setNuovoOpen(false) }} />
+        )}
+
+        {filtrati.length === 0 ? (
+          <p style={{ color: '#aaa', fontSize: 13 }}>
+            {articoli.length === 0 ? 'Nessun articolo. Aggiungine uno con "+ Nuovo articolo".' : 'Nessun risultato.'}
+          </p>
+        ) : (
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+              <thead>
+                <tr>
+                  <th style={{ ...thS, ...thVis('cat') }}>Categoria</th>
+                  <th style={{ ...thS, ...thVis('prod') }}>Produttore</th>
+                  <th style={{ ...thS, ...thVis('serie') }}>Serie</th>
+                  <th style={{ ...thS, ...thVis('forn') }}>Fornitore</th>
+                  <th style={{ ...thS, width: 140, ...thVis('schema') }}>Schema</th>
+                  <th style={{ ...thS, width: 140, ...thVis('foto') }}>Foto prodotto</th>
+                  <th style={{ ...thS, ...thVis('descr') }}>Descrizione</th>
+                  <th style={{ ...thS, textAlign: 'center', ...thVis('unita') }}>Unità</th>
+                  <th style={{ ...thS, textAlign: 'center', color: '#b0bec5', fontSize: 10, ...thVis('minimo') }}>Minimo</th>
+                  <th style={{ ...thS, textAlign: 'right', color: '#90caf9', ...thVis('p_acq') }}>P. Acquisto €</th>
+                  <th style={{ ...thS, textAlign: 'right', color: '#a5d6a7', ...thVis('p_vnd') }}>P. Vendita €</th>
+                  <th style={{ ...thS, textAlign: 'right', color: '#b0bec5', fontSize: 10, ...thVis('costante') }}>Costante</th>
+                  <th style={{ ...thS, color: '#b0bec5', fontSize: 10, ...thVis('abbr') }}>Abbr</th>
+                  <th style={{ ...thS, textAlign: 'center', color: '#ffb74d', ...thVis('sconto') }}>Sconto %</th>
+                  <th style={{ ...thS, textAlign: 'center', ...thVis('margine') }}>Margine</th>
+                  <th style={{ ...thS, ...thVis('note') }}>Note / Max</th>
+                  <th style={{ ...thS, textAlign: 'center', color: '#80cbc4', ...thVis('richiede') }}>larghezza</th>
+                  <th style={{ ...thS, textAlign: 'center', color: '#80cbc4', ...thVis('richiede') }}>altezza</th>
+                  <th style={{ ...thS, textAlign: 'center', color: '#80cbc4', ...thVis('richiede') }}>quantita</th>
+                  <th style={{ ...thS, textAlign: 'center', color: '#80cbc4', ...thVis('richiede') }}>piano</th>
+                  <th style={{ ...thS, textAlign: 'center', color: '#80cbc4', ...thVis('richiede') }}>km</th>
+                  <th style={{ ...thS, textAlign: 'center', color: '#80cbc4', ...thVis('richiede') }}>peso</th>
+                  <th style={{ ...thS, textAlign: 'center', color: '#ce93d8', ...thVis('richiede') }}>tipo_colore</th>
+                  <th style={{ ...thS, textAlign: 'center', color: '#ce93d8', ...thVis('richiede') }}>tipo_colore_acc</th>
+                  <th style={{ ...thS, textAlign: 'center', color: '#ce93d8', ...thVis('richiede') }}>tipo_vetro</th>
+                  <th style={{ ...thS, textAlign: 'center', color: '#ce93d8', ...thVis('richiede') }}>tipo_montaggio</th>
+                  <th style={{ ...thS, ...(colVis['azioni'] || editId !== null ? {} : { display: 'none' }) }}>Azioni</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtrati.map(art => (
+                  editId === art.id
+                    ? <RigaEdit key={art.id} art={art} categorie={categorie} produttori={produttori} fornitori={fornitori} onDone={() => setEditId(null)} onSaved={(id) => setLastId(id)} />
+                    : <RigaNormale key={art.id} art={art}
+                        onEdit={() => setEditId(art.id)}
+                        onScheda={() => setSchedaId(art.id)}
+                        onDelete={() => handleDelete(art.id)}
+                        onAction={() => setLastId(art.id)}
+                        pending={deletingId === art.id} />
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {schedaArt && <SchedaTecnicaModal art={schedaArt} onClose={() => setSchedaId(null)} />}
       </div>
-
-      {/* Pulsanti nuovo / ripeti */}
-      {!nuovoOpen ? (
-        <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-          <button className="btn-green" onClick={() => setNuovoOpen(true)}>+ Nuovo articolo</button>
-          <button className="btn-green" onClick={handleClone} disabled={lastId === null || isCloning}
-            style={{ opacity: lastId === null ? 0.4 : 1 }}>
-            {isCloning ? 'Clonazione…' : '+ Ripeti articolo'}
-          </button>
-        </div>
-      ) : (
-        <NuovoArticoloForm categorie={categorie} produttori={produttori} fornitori={fornitori}
-          onDone={(newId) => { if (newId) setLastId(newId); setNuovoOpen(false) }} />
-      )}
-
-      {filtrati.length === 0 ? (
-        <p style={{ color: '#aaa', fontSize: 13 }}>
-          {articoli.length === 0 ? 'Nessun articolo. Aggiungine uno con "+ Nuovo articolo".' : 'Nessun risultato.'}
-        </p>
-      ) : (
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-            <thead>
-              <tr>
-                <th style={thS}>Categoria</th>
-                <th style={thS}>Produttore</th>
-                <th style={thS}>Serie</th>
-                <th style={thS}>Fornitore</th>
-                <th style={{ ...thS, width: 140 }}>Schema</th>
-                <th style={{ ...thS, width: 140 }}>Foto prodotto</th>
-                <th style={thS}>Descrizione</th>
-                <th style={{ ...thS, textAlign: 'center' }}>Unità</th>
-                <th style={{ ...thS, textAlign: 'center', color: '#b0bec5', fontSize: 10 }}>Minimo</th>
-                <th style={{ ...thS, textAlign: 'right', color: '#90caf9' }}>P. Acquisto €</th>
-                <th style={{ ...thS, textAlign: 'right', color: '#a5d6a7' }}>P. Vendita €</th>
-                <th style={{ ...thS, textAlign: 'right', color: '#b0bec5', fontSize: 10 }}>Costante</th>
-                <th style={{ ...thS, color: '#b0bec5', fontSize: 10 }}>Abbr</th>
-                <th style={{ ...thS, textAlign: 'center', color: '#ffb74d' }}>Sconto %</th>
-                <th style={{ ...thS, textAlign: 'center' }}>Margine</th>
-                <th style={thS}>Note / Max</th>
-                <th style={{ ...thS, textAlign: 'center', color: '#80cbc4' }}>larghezza</th>
-                <th style={{ ...thS, textAlign: 'center', color: '#80cbc4' }}>altezza</th>
-                <th style={{ ...thS, textAlign: 'center', color: '#80cbc4' }}>quantita</th>
-                <th style={{ ...thS, textAlign: 'center', color: '#80cbc4' }}>piano</th>
-                <th style={{ ...thS, textAlign: 'center', color: '#80cbc4' }}>km</th>
-                <th style={{ ...thS, textAlign: 'center', color: '#80cbc4' }}>peso</th>
-                <th style={{ ...thS, textAlign: 'center', color: '#ce93d8' }}>tipo_colore</th>
-                <th style={{ ...thS, textAlign: 'center', color: '#ce93d8' }}>tipo_colore_acc</th>
-                <th style={{ ...thS, textAlign: 'center', color: '#ce93d8' }}>tipo_vetro</th>
-                <th style={{ ...thS, textAlign: 'center', color: '#ce93d8' }}>tipo_montaggio</th>
-                <th style={thS}>Azioni</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtrati.map(art => (
-                editId === art.id
-                  ? <RigaEdit key={art.id} art={art} categorie={categorie} produttori={produttori} fornitori={fornitori} onDone={() => setEditId(null)} onSaved={(id) => setLastId(id)} />
-                  : <RigaNormale key={art.id} art={art}
-                      onEdit={() => setEditId(art.id)}
-                      onScheda={() => setSchedaId(art.id)}
-                      onDelete={() => handleDelete(art.id)}
-                      onAction={() => setLastId(art.id)}
-                      pending={deletingId === art.id} />
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {/* Scheda tecnica modale */}
-      {schedaArt && <SchedaTecnicaModal art={schedaArt} onClose={() => setSchedaId(null)} />}
-    </div>
+    </ColVisCtx.Provider>
   )
 }

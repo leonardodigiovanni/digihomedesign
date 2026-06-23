@@ -9,6 +9,6 @@ const VoceViewerInner = dynamic(() => import('./voce-viewer-inner'), {
   loading: () => <p className="fs-14" style={{ color: '#888', marginTop: 32 }}>Caricamento visualizzatore…</p>,
 })
 
-export default function VoceViewer({ voce }: { voce: Voce }) {
-  return <VoceViewerInner voce={voce} />
+export default function VoceViewer({ voce, backHref }: { voce: Voce; backHref?: string }) {
+  return <VoceViewerInner voce={voce} backHref={backHref} />
 }

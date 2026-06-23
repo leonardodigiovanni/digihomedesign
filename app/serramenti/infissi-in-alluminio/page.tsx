@@ -145,18 +145,18 @@ export default async function Page() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
 
         <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '16px' }}>
-          <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 8 }}>
-            <div className="page-card" style={{ flex: '1 1 220px', maxWidth: 480 }}>
-              <div style={{ position: 'relative', width: '100%', aspectRatio: '1/1' }}>
-                <Image src="/images/serramenti/infissi-in-alluminio/infisso-balcone.jpg" alt="Infisso balcone" fill sizes="(max-width: 480px) 100vw, 480px" style={{ objectFit: 'cover' }} />
+          <div className="vetrina-foto-row">
+            <div className="page-card">
+              <div style={{ position: 'relative', width: '100%', height: 148 }}>
+                <Image src="/images/serramenti/infissi-in-alluminio/infisso-balcone.jpg" alt="Infisso balcone" fill sizes="240px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '8px 12px 10px' }}>
                 <span className="testo-articoli">Infisso balcone</span>
               </div>
             </div>
-            <div className="page-card" style={{ flex: '1 1 220px', maxWidth: 480 }}>
-              <div style={{ position: 'relative', width: '100%', aspectRatio: '1/1' }}>
-                <Image src="/images/serramenti/infissi-in-alluminio/infisso-finestra.jpg" alt="Infisso finestra" fill sizes="(max-width: 480px) 100vw, 480px" style={{ objectFit: 'cover' }} />
+            <div className="page-card">
+              <div style={{ position: 'relative', width: '100%', height: 148 }}>
+                <Image src="/images/serramenti/infissi-in-alluminio/infisso-finestra.jpg" alt="Infisso finestra" fill sizes="240px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '8px 12px 10px' }}>
                 <span className="testo-articoli">Infisso finestra</span>

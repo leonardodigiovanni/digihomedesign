@@ -33,7 +33,7 @@ const numStyle: React.CSSProperties = {
 
 const cardStyle: React.CSSProperties = {
   background: '#fff',
-  border: '2px solid #c8960c',
+  border: '1px solid #c8960c',
   borderRadius: 12,
   padding: '20px 22px',
   flex: '1 1 360px',
@@ -70,7 +70,7 @@ export default async function AppDownloadPage() {
   })
 
   return (
-    <div style={{ maxWidth: 700, margin: '40px auto', padding: '0 20px' }}>
+    <div style={{ padding: '0 0 64px' }}>
 
       {/* Header */}
       <div style={{ textAlign: 'center', marginBottom: 36 }}>

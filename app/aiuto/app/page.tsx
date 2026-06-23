@@ -16,7 +16,7 @@ export default async function AppPage() {
     color: { dark: '#1c1c1c', light: '#ffffff' },
   })
   return (
-    <div style={{ maxWidth: 860, margin: '0 auto' }}>
+    <div style={{ padding: '0 0 64px' }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
         <Link href="/" style={{ color: '#888', textDecoration: 'underline' }}>Home</Link> / Aiuto / App
       </p>
@@ -27,7 +27,7 @@ export default async function AppPage() {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
 
-        <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '16px' }}>
+        <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '24px 24px' }}>
           <p className="testo-articoli" style={{ marginBottom: 8 }}>Tutto in tasca</p>
           <p className="testo-articoli" style={{ lineHeight: 1.8, margin: 0 }}>
             Con la nostra app hai a portata di mano i preventivi, lo stato del tuo cantiere in tempo reale,
@@ -35,33 +35,27 @@ export default async function AppPage() {
           </p>
         </div>
 
-        <style>{`
-          .app-foto-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-          .app-foto-card { width: calc(25% - 6px); min-width: 0; }
-          @media (max-width: 580px) { .app-foto-card { width: calc(50% - 4px); } }
-          @media (max-width: 300px) { .app-foto-card { width: 100%; } }
-        `}</style>
-        <div className="app-foto-grid">
-          <div className="page-card app-foto-card" style={{ boxShadow: '0 8px 28px rgba(0,0,0,0.25)' }}>
-            <Image src="/images/app/preventivo.jpg" alt="Preventivo serramenti" width={280} height={600} style={{ width: '100%', height: 'auto', display: 'block' }} />
+        <div className="vetrina-foto-row">
+          <div className="page-card" style={{ boxShadow: '0 8px 28px rgba(0,0,0,0.25)' }}>
+            <Image src="/images/app/preventivo.jpg" alt="Preventivo serramenti" width={240} height={148} style={{ width: '100%', height: 'auto', display: 'block' }} />
             <div style={{ padding: '8px 12px 10px' }}>
               <span className="testo-articoli">Preventivi serramenti</span>
             </div>
           </div>
-          <div className="page-card app-foto-card" style={{ boxShadow: '0 6px 22px rgba(0,0,0,0.2)' }}>
-            <Image src="/images/app/lavori-cantiere.jpg" alt="Lista cantieri" width={280} height={600} style={{ width: '100%', height: 'auto', display: 'block' }} />
+          <div className="page-card" style={{ boxShadow: '0 6px 22px rgba(0,0,0,0.2)' }}>
+            <Image src="/images/app/lavori-cantiere.jpg" alt="Lista cantieri" width={240} height={148} style={{ width: '100%', height: 'auto', display: 'block' }} />
             <div style={{ padding: '8px 12px 10px' }}>
               <span className="testo-articoli">Lista cantieri</span>
             </div>
           </div>
-          <div className="page-card app-foto-card" style={{ boxShadow: '0 8px 28px rgba(0,0,0,0.25)' }}>
-            <Image src="/images/app/foto-cantiere.jpg" alt="Cantiere in tempo reale" width={280} height={600} style={{ width: '100%', height: 'auto', display: 'block' }} />
+          <div className="page-card" style={{ boxShadow: '0 8px 28px rgba(0,0,0,0.25)' }}>
+            <Image src="/images/app/foto-cantiere.jpg" alt="Cantiere in tempo reale" width={240} height={148} style={{ width: '100%', height: 'auto', display: 'block' }} />
             <div style={{ padding: '8px 12px 10px' }}>
               <span className="testo-articoli">Cantiere in tempo reale</span>
             </div>
           </div>
-          <div className="page-card app-foto-card" style={{ boxShadow: '0 6px 22px rgba(0,0,0,0.2)' }}>
-            <Image src="/images/app/avvisi.jpg" alt="Avvisi e notifiche" width={280} height={600} style={{ width: '100%', height: 'auto', display: 'block' }} />
+          <div className="page-card" style={{ boxShadow: '0 6px 22px rgba(0,0,0,0.2)' }}>
+            <Image src="/images/app/avvisi.jpg" alt="Avvisi e notifiche" width={240} height={148} style={{ width: '100%', height: 'auto', display: 'block' }} />
             <div style={{ padding: '8px 12px 10px' }}>
               <span className="testo-articoli">Avvisi e notifiche</span>
             </div>
@@ -69,7 +63,7 @@ export default async function AppPage() {
         </div>
 
         {/* Cosa puoi fare */}
-        <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '16px' }}>
+        <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '24px 24px' }}>
           <p className="testo-articoli" style={{ marginBottom: 8 }}>Cosa puoi fare dall&apos;app</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {[
@@ -90,7 +84,7 @@ export default async function AppPage() {
         </div>
 
         {/* Download */}
-        <div style={{ background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 10, padding: '16px', display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'flex-start' }}>
+        <div style={{ background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 10, padding: '24px 24px', display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'flex-start' }}>
           <p className="testo-articoli" style={{ margin: 0 }}>
             Scarica l&apos;app gratuitamente
           </p>

@@ -233,7 +233,7 @@ export default function ContattoForm({ username, role }: { username: string | nu
   const loggato = !!username && !!role
 
   return (
-    <div style={{ marginTop: 8, background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '24px 4px' }}>
+    <div style={{ marginTop: 8, background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '24px 24px' }}>
       <h2 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 20 }}>Scrivici</h2>
       {loggato
         ? <FormLoggato username={username} role={role} />

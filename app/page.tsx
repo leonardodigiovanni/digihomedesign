@@ -42,16 +42,31 @@ export default async function Page() {
 
   return (
     <>
-      <p style={{ textAlign: 'center', margin: '6px 6px 6px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 16, marginBottom: 16 }}>
+      <p style={{ textAlign: 'center', margin: 0, padding: 0, lineHeight: 1 }}>
       <span className="testo-titoli" style={{ display: 'block' }}>Infissi Verande</span>
       <span className="testo-titoli" style={{ display: 'block' }}>Persiane Porte</span>
       <span className="testo-titoli" style={{ display: 'block' }}>Ristrutturazioni</span>
       </p>
       <div className="home-hero">
-        <div className="home-hero-text class_silver_D_safe" style={{ borderRadius: 20 }}>
-          <div style={{ height: '100%', overflowY: 'auto', padding: '28px 28px 24px', boxSizing: 'border-box' }}>
+        <div className="home-hero-cta">
+          <Link href={ctaPreventivi} className="cta-home-btn">
+            <div><Image src="/images/cta/preventivo-online-t.png" alt="Preventivo" width={130} height={130} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} /></div>
+            <span className="testo-cta"><span className="animato">Preventivo Online</span></span>
+          </Link>
+          <Link href={ctaCantiere} className="cta-home-btn">
+            <div><Image src="/images/cta/cantieri-online-t.png" alt="Cantiere" width={130} height={130} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} /></div>
+            <span className="testo-cta"><span className="animato">Foto/Video Cantiere</span></span>
+          </Link>
+          <Link href="/app-download" className="cta-home-btn cta-home-btn-app">
+            <div><Image src="/images/cta/digi-home-design-srl-app.png" alt="App" width={70} height={70} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} unoptimized /></div>
+            <span className="testo-cta"><span className="animato">DIGI App</span></span>
+          </Link>
+        </div>
+        <div className="home-hero-text" style={{ borderRadius: 20, background: '#fff' }}>
+          <div style={{ padding: '28px 28px 24px' }}>
           <p className="testo-articoli">
-            DIGI Home Design nasce da oltre 60 anni di esperienza nel settore della lavorazione del ferro e dell&apos;acciaio, avviata nei primi anni &apos;60 e proseguita, nei primi anni &apos;80, nel mondo dei serramenti. Da realtà artigiana a conduzione familiare, stimata nella città di Palermo, l&apos;azienda si è evoluta nel tempo fino a diventare una realtà moderna e innovativa, capace di integrare competenze nell&apos;edilizia, nelle ristrutturazioni e nella riqualificazione energetica.<br /><br />
+            DIGI Home Design nasce da oltre 60 anni di esperienza nel settore della lavorazione del ferro e dei serramenti. Da realtà artigiana a conduzione familiare, stimata nella città di Palermo, l&apos;azienda si è evoluta nel tempo fino a diventare una realtà moderna e innovativa, capace di integrare competenze nell&apos;edilizia, nelle ristrutturazioni e nella riqualificazione energetica.<br /><br />
             Alla base del nostro percorso ci sono la passione per il design d&apos;interni e la volontà di offrire soluzioni complete per abitazioni e spazi commerciali. Dalla progettazione alla posa in opera, ogni intervento viene seguito con cura artigianale, precisione e attenzione al dettaglio.<br /><br />
             Nel corso degli anni abbiamo ampliato la nostra offerta, abbracciando diversi ambiti: dai serramenti alla falegnameria, dall&apos;impiantistica alle opere edili, fino alle ristrutturazioni chiavi in mano. Il tutto con un unico interlocutore, in grado di coordinare ogni fase del lavoro.<br /><br />
             Oggi ci proponiamo come partner di fiducia per chi desidera migliorare, recuperare o valorizzare il proprio immobile. Gestiamo l&apos;intero processo, semplificando la comunicazione tra le figure coinvolte e sollevando il committente da problematiche organizzative, tecniche e gestionali.<br /><br />
@@ -65,22 +80,7 @@ export default async function Page() {
           </p>
           </div>
         </div>
-        {/* CTA esclusivi — colonna a destra su schermi larghi */}
-        <div className="home-hero-cta">
-          <Link href={ctaPreventivi} className="cta-home-btn">
-            <Image src="/images/cta/preventivo-online-t.png" alt="Preventivo" width={130} height={130} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '60%', flexShrink: 1 }} />
-            <span className="testo-cta"><span className="animato">Calcola Preventivo Online</span></span>
-          </Link>
-          <Link href={ctaCantiere} className="cta-home-btn">
-            <Image src="/images/cta/cantieri-online-t.png" alt="Cantiere" width={130} height={130} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '60%', flexShrink: 1 }} />
-            <span className="testo-cta"><span className="animato">Foto/Video dal tuo Cantiere Online</span></span>
-          </Link>
-          <Link href="/app-download" className="cta-home-btn cta-home-btn-app">
-            <Image src="/images/cta/digi-home-design-srl-app.png" alt="App" width={70} height={70} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '60%', flexShrink: 1 }} unoptimized />
-            <span className="testo-cta"><span className="animato">Scarica la comoda DIGI-App</span> (Android/Apple)</span>
-          </Link>
-        </div>
-      <div className="home-hero-cards" style={{ display: 'flex', flexWrap: 'wrap', gap: 16, alignContent: 'flex-start', justifyContent: 'center', padding: '8px' }}>
+      <div className="home-hero-cards" style={{ display: 'flex', gap: 16, overflowX: 'auto', padding: '8px 4px', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
 
         {/* ── Brand ── */}
 
@@ -776,8 +776,8 @@ export default async function Page() {
       </div>
 
       {/* Vendiamo Marchi di valore */}
-      <div className="page-section-wrapper" style={{ maxWidth: 1100, margin: '48px auto 0', padding: '0 20px' }}>
-        <div className="class_silver_D_safe" style={{ borderRadius: 20, padding: '28px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
+      <div className="page-section-wrapper" style={{ margin: 0 }}>
+        <div style={{ borderRadius: 20, padding: '28px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, background: '#fff' }}>
           <h2 className="testo-articoli" style={{ textAlign: 'center', margin: 0 }}>
             Vendiamo Marchi di valore
           </h2>
@@ -805,8 +805,8 @@ export default async function Page() {
       </div> */}
 
       {/* Blocco SEO keyword cluster */}
-      <div className="page-section-wrapper" style={{ maxWidth: 1100, margin: '48px auto 48px', padding: '0 20px' }}>
-        <div className="class_silver_D_safe" style={{ borderRadius: 20, padding: '28px 24px', color: '#444', fontSize: 15, lineHeight: 1.8 }}>
+      <div className="page-section-wrapper" style={{ margin: 0 }}>
+        <div style={{ borderRadius: 20, padding: '28px 24px', color: '#444', fontSize: 15, lineHeight: 1.8, background: '#fff' }}>
           <div className="seo-block-flex">
             <div>
               <h2 className="testo-articoli" style={{ marginBottom: 6, marginTop: 0 }}>
@@ -873,7 +873,8 @@ export default async function Page() {
           </p>
         </div>
       </div>
-      <p className="IsDebug fs-11" style={{ marginTop: 8 }}>login e logout non devono cambiare pagina</p>
+      <p className="IsDebug fs-11">login e logout non devono cambiare pagina</p>
+    </div>
     </>
   )
 }

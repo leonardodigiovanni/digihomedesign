@@ -11,7 +11,7 @@ function pdfSrc(filename: string): string {
   return filename.startsWith('https://') ? filename : `/uploads/cataloghi/${filename}`
 }
 
-export default function VoceViewerInner({ voce }: { voce: Voce }) {
+export default function VoceViewerInner({ voce, backHref }: { voce: Voce; backHref?: string }) {
   const [numPages, setNumPages] = useState(0)
   const [page, setPage] = useState(1)
   const [scale, setScale] = useState(1)
@@ -82,18 +82,33 @@ export default function VoceViewerInner({ voce }: { voce: Voce }) {
             <span className="fs-13" style={{ color: '#555', whiteSpace: 'nowrap', minWidth: 36, textAlign: 'center' }}>{page} / {numPages || '…'}</span>
             <button style={btnStyle(page >= numPages)} disabled={page >= numPages} onClick={() => setPage(p => p + 1)}>›</button>
           </div>
-          <a
-            href={pdfSrc(voce.pdf_filename)}
-            download
-            className="btn-black fs-13"
-            style={{
-              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-              height: 34, padding: '0 16px', borderRadius: 17,
-              textDecoration: 'none', whiteSpace: 'nowrap', fontFamily: 'monospace', flexShrink: 0,
-            }}
-          >
-            Scarica
-          </a>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexShrink: 0 }}>
+            <a
+              href={pdfSrc(voce.pdf_filename)}
+              download
+              className="btn-black fs-13"
+              style={{
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                height: 34, padding: '0 16px', borderRadius: 17,
+                textDecoration: 'none', whiteSpace: 'nowrap', fontFamily: 'monospace',
+              }}
+            >
+              Scarica
+            </a>
+            {backHref && (
+              <a
+                href={backHref}
+                className="btn-red fs-13"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                  width: 34, height: 34, borderRadius: 17,
+                  textDecoration: 'none', fontWeight: 700, flexShrink: 0,
+                }}
+              >
+                ✕
+              </a>
+            )}
+          </div>
         </div>
       </div>
       {/* leva zoom verticale — sovrapposta alla card, non scorre col PDF */}

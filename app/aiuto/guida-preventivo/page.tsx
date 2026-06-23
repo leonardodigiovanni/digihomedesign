@@ -18,7 +18,7 @@ export default async function GuidaPreventivo() {
   const cartRaw = cookieStore.get('digi_cart')?.value
   const cartNonVuoto = !!cartRaw && (() => { try { const c = JSON.parse(cartRaw); return Array.isArray(c) && c.length > 0 } catch { return false } })()
   return (
-    <div style={{ maxWidth: 860, margin: '0 auto' }}>
+    <div style={{ padding: '0 0 64px' }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
         <Link href="/" style={{ color: '#888', textDecoration: 'underline' }}>Home</Link> / Aiuto / Guida Preventivo
       </p>
@@ -29,37 +29,35 @@ export default async function GuidaPreventivo() {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
 
-        <div className="storia-row" style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
-          <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '16px', flex: 1, minWidth: 0 }}>
-            <p className="testo-articoli" style={{ lineHeight: 1.8, margin: 0 }}>
-              Il nostro sistema di preventivo online ti permette di configurare infissi, persiane, verande e porte
-              direttamente dal tuo browser o tramite DIGI-App. Inserisci le misure, scegli i materiali e le finiture: riceverai
-              una stima immediata e se soddisfatto potrai inviare con un click la richiesta di ricontatto.
-            </p>
-          </div>
-
-          <div className="storia-foto" style={{ flexShrink: 0, display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center', alignItems: 'flex-start' }}>
-            <div className="page-card storia-card-1" style={{ width: 280, boxShadow: '0 8px 28px rgba(0,0,0,0.25)' }}>
-              <div style={{ position: 'relative', width: 280, height: 300 }}>
-                <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="280px" style={{ objectFit: 'cover' }} />
-              </div>
-              <div style={{ padding: '8px 12px 10px' }}>
-                <span className="testo-articoli">Fotografia da scegliere</span>
-              </div>
+        <div className="vetrina-foto-row">
+          <div className="page-card" style={{ boxShadow: '0 8px 28px rgba(0,0,0,0.25)' }}>
+            <div style={{ position: 'relative', width: '100%', height: 148 }}>
+              <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="240px" style={{ objectFit: 'cover' }} />
             </div>
-            <div className="page-card storia-card-2" style={{ width: 280, boxShadow: '0 6px 22px rgba(0,0,0,0.2)' }}>
-              <div style={{ position: 'relative', width: 280, height: 300 }}>
-                <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="280px" style={{ objectFit: 'cover' }} />
-              </div>
-              <div style={{ padding: '8px 12px 10px' }}>
-                <span className="testo-articoli">Fotografia da scegliere</span>
-              </div>
+            <div style={{ padding: '8px 12px 10px' }}>
+              <span className="testo-articoli">Fotografia da scegliere</span>
+            </div>
+          </div>
+          <div className="page-card" style={{ boxShadow: '0 6px 22px rgba(0,0,0,0.2)' }}>
+            <div style={{ position: 'relative', width: '100%', height: 148 }}>
+              <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="240px" style={{ objectFit: 'cover' }} />
+            </div>
+            <div style={{ padding: '8px 12px 10px' }}>
+              <span className="testo-articoli">Fotografia da scegliere</span>
             </div>
           </div>
         </div>
 
+        <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '24px 24px' }}>
+          <p className="testo-articoli" style={{ lineHeight: 1.8, margin: 0 }}>
+            Il nostro sistema di preventivo online ti permette di configurare infissi, persiane, verande e porte
+            direttamente dal tuo browser o tramite DIGI-App. Inserisci le misure, scegli i materiali e le finiture: riceverai
+            una stima immediata e se soddisfatto potrai inviare con un click la richiesta di ricontatto.
+          </p>
+        </div>
+
         {/* Come funziona */}
-        <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '16px' }}>
+        <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '24px 24px' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {[
               { n: '1', titolo: 'Configura il tuo preventivo', testo: 'Scegli il tipo di serramento, le dimensioni, i materiali e le finiture che preferisci, per tutti gli elementi che devi acquistare. Potrai aggiungere elementi nel carrello-preventivo direttamente navigando tra i cataloghi oppure selezionandoli nella pagina preventivo-online.' },
@@ -85,7 +83,7 @@ export default async function GuidaPreventivo() {
 
         {/* Banner accesso — solo per utenti non loggati */}
         {!username && (
-          <div style={{ background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 10, padding: '16px', display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'flex-start' }}>
+          <div style={{ background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 10, padding: '24px 24px', display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'flex-start' }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
               Per accedere al preventivo online <span style={{ textDecoration: 'underline' }}>NON</span> è necessario registrarsi.
             </p>

@@ -161,7 +161,7 @@ export default async function Page({ params }: Props) {
         <Link href={`/brand/cataloghi/${slug}`} style={{ color: '#888', textDecoration: 'underline' }}>{categoria.nome}</Link>
         {' / '}{voce.pdf_label || voce.nome}
       </p>
-      <VoceViewer voce={voce} />
+      <VoceViewer voce={voce} backHref={`/brand/cataloghi/${slug}`} />
 
       {articoliPreventivo.length > 0 && (
         <>

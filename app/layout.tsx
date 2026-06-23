@@ -15,6 +15,7 @@ import EmergencyLogin from '@/components/emergency-login'
 import PwaRegister from '@/components/pwa-register'
 import CookieBanner from '@/components/cookie-banner'
 import ManutenzioneWatcher from '@/components/manutenzione-watcher'
+import MainWrapper from '@/components/main-wrapper'
 import './globals.css'
 
 export const viewport: Viewport = {
@@ -223,6 +224,9 @@ export default async function RootLayout({
 
   const inManutenzione = settings.manutenzione && role !== 'admin'
 
+  const STAFF_PREFIXES = ['/area-lavoro', '/clienti', '/amministrazione', '/disegno']
+  const isStaffPage = STAFF_PREFIXES.some(p => pathname.startsWith(p))
+
 
   const bannerDur      = Math.max(26, Math.round(settings.bannerTesto.length * 0.23))
   const bannerPausePct = Math.round((1 - 1 / bannerDur) * 100)
@@ -286,7 +290,7 @@ export default async function RootLayout({
           {!inManutenzione && <Navbar role={role} disabledPages={settings.disabledPages} rolePermissions={rolePermissions} username={username} registrazioniDisabilitate={settings.registrazioniDisabilitate} bannerAbilitato={settings.bannerAbilitato} cartCount={cartCount} cartAcquistiCount={cartAcquistiCount} unreadEmailCount={unreadEmailCount} unreadAvvisiCount={unreadAvvisiCount} clienteAbilitato={clienteAbilitato} />}
         </div>
 
-        <main className="main-layout" style={{ flex: 1, padding: '8px 8px' }}>
+        <MainWrapper role={role ?? ''}>
           {inManutenzione ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '50vh', gap: 20, textAlign: 'center' }}>
               <Image src="/images/manutenzione/sito_manutenzione.png" alt="Manutenzione" width={108} height={108} priority style={{ objectFit: 'contain' }} />
@@ -296,7 +300,7 @@ export default async function RootLayout({
               </p>
             </div>
           ) : children}
-        </main>
+        </MainWrapper>
 
         {!inManutenzione && <SitemapSection disabledPages={settings.disabledPages} />}
         <Footer footerBg={settings.footerBg} footerBgMode={settings.footerBgMode} />

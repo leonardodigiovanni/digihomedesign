@@ -25,7 +25,7 @@ const td: React.CSSProperties = {
 
 export default function Page() {
   return (
-    <div style={{ maxWidth: 760, margin: '0 auto', padding: '40px 20px 80px' }}>
+    <div style={{ padding: '0 0 80px' }}>
 
       <h1 style={{ fontSize: 22, fontWeight: 700, fontFamily: 'monospace', marginBottom: 4 }}>
         Privacy Policy &amp; Cookie Policy
