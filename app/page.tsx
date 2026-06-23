@@ -156,7 +156,7 @@ export default async function Page() {
         )}
         {ok('/serramenti/infissi-in-pvc') && (
         <Link href="/serramenti/infissi-in-pvc" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/casa-ristrutturata-2.jpg" alt="Infissi in PVC" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/infissi-in-pvc/PVC.jpg" alt="Infissi in PVC" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Infissi in PVC</span></div>
         </Link>
         )}
