@@ -100,8 +100,8 @@ function PdfViewer({ voce, onClose, isApp }: { voce: Voce; onClose: () => void; 
               style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: 34, padding: '0 16px', borderRadius: 17, textDecoration: 'none', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
               Scarica
             </a>
-            <button onClick={onClose} title="Chiudi" className={`${b('btn-black', isApp)} fs-13`}
-              style={{ width: 34, height: 34, borderRadius: 17, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, flexShrink: 0 }}>
+            <button onClick={onClose} title="Chiudi" className={`${b('btn-red btn-icon', isApp)} fs-13`}
+              style={{ flexShrink: 0 }}>
               ✕
             </button>
           </div>

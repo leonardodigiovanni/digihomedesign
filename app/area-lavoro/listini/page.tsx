@@ -57,6 +57,16 @@ async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[]
     await db.execute(`ALTER TABLE listini ADD COLUMN costante DECIMAL(10,4) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE listini ADD COLUMN abbr VARCHAR(50) NOT NULL DEFAULT ''`).catch(() => {})
     await db.execute(`ALTER TABLE listini ADD COLUMN minimo DECIMAL(10,4) NULL DEFAULT NULL`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_1  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_2  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_3  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_4  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_5  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_6  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_7  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_8  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_9  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_10 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
 
     const [rows] = await db.query(`
       SELECT l.id, l.categoria, l.produttore, l.descrizione, l.unita,
@@ -64,6 +74,8 @@ async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[]
              l.sconto_articolo, l.serie, l.principale, l.caratteristica,
              l.richiede_larghezza, l.richiede_altezza, l.richiede_quantita, l.richiede_piano,
              l.richiede_km, l.richiede_peso, l.richiede_tipo_colore, l.richiede_tipo_colore_acc, l.richiede_tipo_vetro, l.richiede_tipo_montaggio, l.costante, l.abbr, l.minimo,
+             l.Filtro_1, l.Filtro_2, l.Filtro_3, l.Filtro_4, l.Filtro_5,
+             l.Filtro_6, l.Filtro_7, l.Filtro_8, l.Filtro_9, l.Filtro_10,
              l.updated_at, l.foto_url, l.schema_url, l.profilo_frontale_mm, l.profilo_profondita_mm,
              l.trasmittanza_uw, l.fornitore_id,
              COALESCE(f.ragione_sociale, '') AS fornitore_nome
@@ -99,6 +111,16 @@ async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[]
       costante:              parseFloat(String(r.costante ?? 0)),
       abbr:                  String(r.abbr ?? ''),
       minimo:                r.minimo != null ? parseFloat(String(r.minimo)) : null,
+      filtro_1:  Number(r.Filtro_1  ?? 0),
+      filtro_2:  Number(r.Filtro_2  ?? 0),
+      filtro_3:  Number(r.Filtro_3  ?? 0),
+      filtro_4:  Number(r.Filtro_4  ?? 0),
+      filtro_5:  Number(r.Filtro_5  ?? 0),
+      filtro_6:  Number(r.Filtro_6  ?? 0),
+      filtro_7:  Number(r.Filtro_7  ?? 0),
+      filtro_8:  Number(r.Filtro_8  ?? 0),
+      filtro_9:  Number(r.Filtro_9  ?? 0),
+      filtro_10: Number(r.Filtro_10 ?? 0),
       updated_at:            r.updated_at instanceof Date ? r.updated_at.toISOString() : String(r.updated_at ?? ''),
       foto_url:              r.foto_url   ? String(r.foto_url)   : null,
       schema_url:            r.schema_url ? String(r.schema_url) : null,

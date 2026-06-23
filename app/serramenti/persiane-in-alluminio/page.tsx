@@ -133,7 +133,7 @@ export default async function Page() {
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Persiane a Palermo</h1>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
         <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '16px' }}>
           <div className="vetrina-foto-row">
             <div className="page-card">
@@ -153,7 +153,7 @@ export default async function Page() {
               </div>
             </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
               Forniamo e installiamo <strong>persiane su misura a Palermo</strong> in alluminio, PVC e legno: persiane a battente con stecche orientabili o fisse, scorrevoli su binario laterale, a pannelli e a libro. Le persiane proteggono dall&apos;irraggiamento solare estivo â€” fondamentale in Sicilia â€” garantendo allo stesso tempo ventilazione e oscuramento regolabile.
             </p>

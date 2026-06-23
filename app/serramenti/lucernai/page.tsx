@@ -133,7 +133,7 @@ export default async function Page() {
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Lucernai a Palermo</h1>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
         <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '16px' }}>
           <div className="vetrina-foto-row">
             <div className="page-card">
@@ -153,7 +153,7 @@ export default async function Page() {
               </div>
             </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
               Installiamo <strong>lucernai a Palermo</strong> per portare luce naturale zenitale in ambienti privi di finestre laterali: bagni ciechi, corridoi, vani scale, sottotetti e ambienti commerciali. Le tipologie disponibili comprendono cupole in policarbonato a doppia camera, lucernai piani in vetro temperato stratificato su telaio in alluminio, e sistemi a shed con ventilazione naturale integrata.
             </p>

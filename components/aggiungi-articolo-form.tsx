@@ -25,6 +25,10 @@ export type ArticoloListino = {
   richiede_tipo_montaggio?: number
   schema_url?: string | null
   max_acquistabile?: number | null
+  filtro_1?: number
+  filtro_2?: number
+  filtro_3?: number
+  filtro_4?: number
 }
 
 
@@ -216,7 +220,7 @@ export default function AggiungiArticoloForm({
   return (
     <div style={{
       background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 10,
-      padding: isApp ? '20px 4px 0' : '20px 4px',
+      padding: isApp ? '20px 4px 0' : '20px 24px',
     }}>
       {parentPendente && (
         <div style={{

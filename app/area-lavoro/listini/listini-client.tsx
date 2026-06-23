@@ -49,11 +49,21 @@ export type Articolo = {
   costante: number
   abbr: string
   minimo: number | null
+  filtro_1: number
+  filtro_2: number
+  filtro_3: number
+  filtro_4: number
+  filtro_5: number
+  filtro_6: number
+  filtro_7: number
+  filtro_8: number
+  filtro_9: number
+  filtro_10: number
 }
 
 // ─── Visibilità colonne ────────────────────────────────────────────────────────
 
-const COL_KEYS = ['cat','prod','serie','forn','schema','foto','descr','unita','minimo','p_acq','p_vnd','costante','abbr','sconto','margine','note','richiede','azioni'] as const
+const COL_KEYS = ['cat','prod','serie','forn','schema','foto','descr','unita','minimo','p_acq','p_vnd','costante','abbr','sconto','margine','note','richiede','filtri','azioni'] as const
 type ColKey = typeof COL_KEYS[number]
 
 const COL_LABELS: Record<ColKey, string> = {
@@ -61,7 +71,7 @@ const COL_LABELS: Record<ColKey, string> = {
   schema: 'Schema', foto: 'Foto', descr: 'Descriz.', unita: 'Unità',
   minimo: 'Minimo', p_acq: 'P.Acq', p_vnd: 'P.Vnd', costante: 'Cost.',
   abbr: 'Abbr', sconto: 'Sconto', margine: 'Margine', note: 'Note',
-  richiede: 'Richiede…', azioni: 'Azioni',
+  richiede: 'Richiede…', filtri: 'Filtri', azioni: 'Azioni',
 }
 
 const COL_DEFAULT: Record<ColKey, boolean> = {
@@ -69,7 +79,7 @@ const COL_DEFAULT: Record<ColKey, boolean> = {
   schema: true, foto: true, descr: true, unita: true,
   minimo: false, p_acq: true, p_vnd: true, costante: false,
   abbr: false, sconto: true, margine: true, note: true,
-  richiede: true, azioni: true,
+  richiede: true, filtri: true, azioni: true,
 }
 
 const LS_COL_KEY = 'listini_col_vis'
@@ -83,6 +93,23 @@ function useVis() {
 // ─── Costanti ─────────────────────────────────────────────────────────────────
 
 const UNITA_PREDEFINITE = ['m²', 'ml', 'kg', 't', 'pz', 'h', 'corpo']
+
+const FILTRI_FIELDS = [
+  { n: 1,  col: 'Filtro_1',  label: '1A',  title: '1 Anta' },
+  { n: 2,  col: 'Filtro_2',  label: '2A',  title: '2 Ante' },
+  { n: 3,  col: 'Filtro_3',  label: '3+',  title: '3+ Ante' },
+  { n: 4,  col: 'Filtro_4',  label: 'S',   title: 'Sopraluce' },
+  { n: 5,  col: 'Filtro_5',  label: 'F5',  title: 'F5' },
+  { n: 6,  col: 'Filtro_6',  label: 'F6',  title: 'F6' },
+  { n: 7,  col: 'Filtro_7',  label: 'F7',  title: 'F7' },
+  { n: 8,  col: 'Filtro_8',  label: 'F8',  title: 'F8' },
+  { n: 9,  col: 'Filtro_9',  label: 'F9',  title: 'F9' },
+  { n: 10, col: 'Filtro_10', label: 'F10', title: 'F10' },
+]
+
+function getFiltro(art: Articolo, n: number): number {
+  return (art as unknown as Record<string, number>)[`filtro_${n}`] ?? 0
+}
 
 function fmt(n: number) {
   return n.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
@@ -723,6 +750,16 @@ function RigaNormale({ art, onEdit, onScheda, onDelete, onAction, pending }: {
       <td style={{ ...td, textAlign: 'center', ...vis('richiede') }}><ToggleCheckbox id={art.id} colonna="richiede_tipo_colore_acc" valore={art.richiede_tipo_colore_acc} /></td>
       <td style={{ ...td, textAlign: 'center', ...vis('richiede') }}><ToggleCheckbox id={art.id} colonna="richiede_tipo_vetro"      valore={art.richiede_tipo_vetro} /></td>
       <td style={{ ...td, textAlign: 'center', ...vis('richiede') }}><ToggleCheckbox id={art.id} colonna="richiede_tipo_montaggio" valore={art.richiede_tipo_montaggio} /></td>
+      <td style={{ ...td, padding: 4, verticalAlign: 'middle', ...vis('filtri') }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 6px', width: 126 }}>
+          {FILTRI_FIELDS.map(f => (
+            <div key={f.col} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }} title={f.title}>
+              <ToggleCheckbox id={art.id} colonna={f.col} valore={getFiltro(art, f.n)} />
+              <span style={{ fontSize: 8, color: '#888', lineHeight: 1 }}>{f.label}</span>
+            </div>
+          ))}
+        </div>
+      </td>
       <td style={{ ...td, opacity: 1, whiteSpace: 'nowrap', ...vis('azioni') }}>
         <div style={{ display: 'flex', gap: 4 }}>
           <ToggleDisponibileBtn art={art} />
@@ -826,6 +863,7 @@ function RigaEdit({ art, categorie, produttori, fornitori, onDone, onSaved }: {
       </td>
       <td style={{ ...tde, ...vis('richiede') }} /><td style={{ ...tde, ...vis('richiede') }} /><td style={{ ...tde, ...vis('richiede') }} /><td style={{ ...tde, ...vis('richiede') }} />
       <td style={{ ...tde, ...vis('richiede') }} /><td style={{ ...tde, ...vis('richiede') }} /><td style={{ ...tde, ...vis('richiede') }} /><td style={{ ...tde, ...vis('richiede') }} /><td style={{ ...tde, ...vis('richiede') }} /><td style={{ ...tde, ...vis('richiede') }} />
+      <td style={{ ...tde, ...vis('filtri') }} />
       <td style={{ ...tde, whiteSpace: 'nowrap' }}>
         <div style={{ display: 'flex', gap: 4 }}>
           <button onClick={handleSubmit} className="btn-green" disabled={pending}>
@@ -1021,6 +1059,7 @@ export default function ListiniClient({ articoli, fornitori }: { articoli: Artic
                   <th style={{ ...thS, textAlign: 'center', color: '#ce93d8', ...thVis('richiede') }}>tipo_colore_acc</th>
                   <th style={{ ...thS, textAlign: 'center', color: '#ce93d8', ...thVis('richiede') }}>tipo_vetro</th>
                   <th style={{ ...thS, textAlign: 'center', color: '#ce93d8', ...thVis('richiede') }}>tipo_montaggio</th>
+                  <th style={{ ...thS, textAlign: 'center', color: '#80deea', ...thVis('filtri') }}>Filtri</th>
                   <th style={{ ...thS, ...(colVis['azioni'] || editId !== null ? {} : { display: 'none' }) }}>Azioni</th>
                 </tr>
               </thead>

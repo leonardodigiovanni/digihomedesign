@@ -133,7 +133,7 @@ export default async function Page() {
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Avvolgibili Motorizzati a Palermo</h1>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
         <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '16px' }}>
           <div className="vetrina-foto-row">
             <div className="page-card">
@@ -153,7 +153,7 @@ export default async function Page() {
               </div>
             </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
               Installiamo <strong>avvolgibili e tapparelle motorizzate a Palermo</strong>: motori tubulari silenziosi integrati nell&apos;avvolgitore con comando tramite pulsante a parete, telecomando radio o app da smartphone. Compatibili con i principali sistemi domotici â€” KNX, BTicino, Google Home, Alexa â€” per l&apos;automazione programmata in base all&apos;ora, al sole e al vento.
             </p>

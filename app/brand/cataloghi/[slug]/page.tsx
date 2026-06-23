@@ -159,13 +159,17 @@ export default async function Page({ params }: Props) {
   if (categoria.listino_categoria) allListiniSet.add(categoria.listino_categoria)
   for (const v of voci) { if (v.listino_categoria) allListiniSet.add(v.listino_categoria) }
 
-  const COLS = 'id, descrizione, produttore, serie, unita, prezzo_acquisto, prezzo_vendita, sconto_articolo, richiede_larghezza, richiede_altezza, richiede_quantita, richiede_piano, richiede_km, richiede_peso, richiede_tipo_colore, richiede_tipo_vetro, richiede_tipo_montaggio, schema_url, max_acquistabile'
+  const COLS = 'id, descrizione, produttore, serie, unita, prezzo_acquisto, prezzo_vendita, sconto_articolo, richiede_larghezza, richiede_altezza, richiede_quantita, richiede_piano, richiede_km, richiede_peso, richiede_tipo_colore, richiede_tipo_vetro, richiede_tipo_montaggio, schema_url, max_acquistabile, Filtro_1 AS filtro_1, Filtro_2 AS filtro_2, Filtro_3 AS filtro_3, Filtro_4 AS filtro_4'
   const articoliPerListino: Record<string, ArticoloListino[]> = {}
   if (allListiniSet.size > 0) {
     const dbL = await getConnection()
     try {
       await dbL.execute(`ALTER TABLE listini ADD COLUMN principale TINYINT(1) NOT NULL DEFAULT 1`).catch(() => {})
       await dbL.execute(`ALTER TABLE listini ADD COLUMN caratteristica TINYINT(1) NOT NULL DEFAULT 1`).catch(() => {})
+      await dbL.execute(`ALTER TABLE listini ADD COLUMN Filtro_1  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+      await dbL.execute(`ALTER TABLE listini ADD COLUMN Filtro_2  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+      await dbL.execute(`ALTER TABLE listini ADD COLUMN Filtro_3  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+      await dbL.execute(`ALTER TABLE listini ADD COLUMN Filtro_4  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
       for (const listino of allListiniSet) {
         try {
           let articoli: ArticoloListino[]

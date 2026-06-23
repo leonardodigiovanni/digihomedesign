@@ -46,10 +46,14 @@ async function getCatalogoData(nomeCategoria: string) {
       if (categoria.listino_categoria) allListiniSet.add(categoria.listino_categoria)
       for (const v of voceList) { if (v.listino_categoria) allListiniSet.add(v.listino_categoria) }
 
-      const COLS = 'id, descrizione, produttore, serie, unita, prezzo_acquisto, prezzo_vendita, sconto_articolo, richiede_larghezza, richiede_altezza, richiede_quantita, richiede_piano, richiede_km, richiede_peso, richiede_tipo_colore, richiede_tipo_vetro, richiede_tipo_montaggio, schema_url, max_acquistabile'
+      const COLS = 'id, descrizione, produttore, serie, unita, prezzo_acquisto, prezzo_vendita, sconto_articolo, richiede_larghezza, richiede_altezza, richiede_quantita, richiede_piano, richiede_km, richiede_peso, richiede_tipo_colore, richiede_tipo_vetro, richiede_tipo_montaggio, schema_url, max_acquistabile, Filtro_1 AS filtro_1, Filtro_2 AS filtro_2, Filtro_3 AS filtro_3, Filtro_4 AS filtro_4'
       const articoliPerListino: Record<string, ArticoloListino[]> = {}
       if (allListiniSet.size > 0) {
         await db.execute(`ALTER TABLE listini ADD COLUMN principale TINYINT(1) NOT NULL DEFAULT 1`).catch(() => {})
+        await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_1 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+        await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_2 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+        await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_3 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+        await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_4 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
         for (const listino of allListiniSet) {
           try {
             const [rows] = await db.query(
@@ -142,9 +146,9 @@ export default async function Page() {
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Infissi in Alluminio a Palermo</h1>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
-        <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '16px' }}>
+        <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '24px 24px' }}>
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
@@ -163,7 +167,7 @@ export default async function Page() {
               </div>
             </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
               Gli <strong>infissi in alluminio a taglio termico a Palermo</strong> rappresentano la scelta ideale per chi cerca durata, minima manutenzione e design contemporaneo. Il taglio termico — una barriera in poliammide che interrompe il ponte termico tra il profilo esterno e quello interno — garantisce elevate prestazioni di isolamento termoacustico, riducendo sensibilmente i consumi energetici.
             </p>

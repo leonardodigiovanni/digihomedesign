@@ -62,6 +62,16 @@ async function ensureTable() {
   await db.execute(`ALTER TABLE listini ADD COLUMN abbr VARCHAR(50) NOT NULL DEFAULT ''`).catch(() => {})
   await db.execute(`ALTER TABLE listini MODIFY COLUMN abbr VARCHAR(255) NOT NULL DEFAULT ''`).catch(() => {})
   await db.execute(`ALTER TABLE listini ADD COLUMN minimo DECIMAL(10,4) NULL DEFAULT NULL`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_1  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_2  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_3  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_4  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_5  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_6  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_7  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_8  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_9  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_10 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
   await db.end()
 }
 
@@ -221,7 +231,7 @@ export async function toggleCaratteristica(_: MutResult | null, fd: FormData): P
   } finally { await db.end() }
 }
 
-const COLONNE_BOOL_ALLOWED = ['richiede_larghezza','richiede_altezza','richiede_quantita','richiede_piano','richiede_km','richiede_peso','richiede_tipo_colore','richiede_tipo_colore_acc','richiede_tipo_vetro','richiede_tipo_montaggio']
+const COLONNE_BOOL_ALLOWED = ['richiede_larghezza','richiede_altezza','richiede_quantita','richiede_piano','richiede_km','richiede_peso','richiede_tipo_colore','richiede_tipo_colore_acc','richiede_tipo_vetro','richiede_tipo_montaggio','Filtro_1','Filtro_2','Filtro_3','Filtro_4','Filtro_5','Filtro_6','Filtro_7','Filtro_8','Filtro_9','Filtro_10']
 
 export async function toggleColonnaBooleana(_: MutResult | null, fd: FormData): Promise<MutResult> {
   await checkAccess()

@@ -133,7 +133,7 @@ export default async function Page() {
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Tapparelle Manuali a Palermo</h1>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
         <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '16px' }}>
           <div className="vetrina-foto-row">
             <div className="page-card">
@@ -153,7 +153,7 @@ export default async function Page() {
               </div>
             </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
               Forniamo e installiamo <strong>tapparelle manuali su misura a Palermo</strong> in PVC coibentato, alluminio estruso e acciaio zincato: a cinghia, a manovella laterale o a moschettone, con avvolgitore a cassonetto incassato o a vista. Le tapparelle manuali sono la soluzione piÃ¹ semplice e affidabile per oscuramento, isolamento termoacustico e sicurezza delle aperture.
             </p>

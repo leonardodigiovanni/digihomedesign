@@ -18,6 +18,13 @@ const FILTRI_CATALOGO: { key: keyof Voce; label: string }[] = [
 
 const FILTRI_ARTICOLO = ['1 Anta', '2 Ante', '3+ Ante', 'Sopraluce']
 
+const FILTRI_ARTICOLO_KEY: Record<string, keyof ArticoloListino> = {
+  '1 Anta':    'filtro_1',
+  '2 Ante':    'filtro_2',
+  '3+ Ante':   'filtro_3',
+  'Sopraluce': 'filtro_4',
+}
+
 const H = 28, THUMB = 22
 
 function Linguetta({ label, attiva, onToggle }: { label: string; attiva: boolean; onToggle: () => void }) {
@@ -78,7 +85,7 @@ function RigaFiltri({
     <div style={{
       display: 'flex', alignItems: 'center', gap: 0,
       background: '#fff', border: '1px solid #c8960c', borderRadius: 10,
-      padding: '6px 12px', overflow: 'hidden',
+      padding: '6px 24px', overflow: 'hidden',
     }}>
       {/* X */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
@@ -167,6 +174,15 @@ export default function CatalogoWrapper({ voci, articoliPerListino, isStaff, isL
         if (!seen.has(a.id)) { seen.add(a.id); articoliVisibili.push(a) }
       }
     }
+  }
+
+  if (filtriArticoloAttivi.size > 0) {
+    articoliVisibili = articoliVisibili.filter(a =>
+      [...filtriArticoloAttivi].every(label => {
+        const key = FILTRI_ARTICOLO_KEY[label]
+        return key && Number(a[key]) === 1
+      })
+    )
   }
 
   return (
