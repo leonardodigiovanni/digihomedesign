@@ -90,15 +90,18 @@ export default function SelectLookup({ value, onChange, options, placeholder = '
 
       {/* campo aperto con filtro */}
       {open && (
-        <input
-          ref={inputRef}
-          value={query}
-          onChange={e => setQuery(e.target.value)}
-          onKeyDown={handleKeyDown}
-          onClick={() => { setOpen(false); setQuery('') }}
-          placeholder="Cerca..."
-          style={{ ...base, cursor: 'text', paddingRight: 8 }}
-        />
+        <>
+          <input
+            ref={inputRef}
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onClick={() => { setOpen(false); setQuery('') }}
+            placeholder="Cerca..."
+            style={{ ...base, cursor: 'text', paddingRight: 28 }}
+          />
+          <span style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', color: '#888', fontSize: 10, pointerEvents: 'none' }}>▴</span>
+        </>
       )}
 
       {/* dropdown */}
