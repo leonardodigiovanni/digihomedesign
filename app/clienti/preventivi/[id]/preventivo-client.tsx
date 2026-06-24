@@ -167,7 +167,7 @@ function DatiPreventivo({ preventivo, readOnly = false, isStaff = false, isApp }
 
   if (readOnly) {
     return (
-      <div style={{ background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 8, padding: '10px 16px' }}>
+      <div style={{ background: '#fff', border: '1px solid #d0d0d0', borderRadius: 8, padding: '10px 16px' }}>
         {header}
         {open && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 10 }}>
@@ -190,7 +190,7 @@ function DatiPreventivo({ preventivo, readOnly = false, isStaff = false, isApp }
   }
 
   return (
-    <div style={{ background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 8, padding: '10px 16px' }}>
+    <div style={{ background: '#fff', border: '1px solid #d0d0d0', borderRadius: 8, padding: '10px 16px' }}>
       {header}
       {open && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 10 }}>
