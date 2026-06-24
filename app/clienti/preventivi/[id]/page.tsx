@@ -142,14 +142,12 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     }))
 
     const [clientiRows] = await db.query(
-      `SELECT id, nome, cognome, ragione_sociale FROM clienti ORDER BY ragione_sociale ASC, cognome ASC, nome ASC`
+      `SELECT id, COALESCE(NULLIF(TRIM(ragione_sociale), ''), CONCAT(TRIM(cognome), ' ', TRIM(nome))) AS label FROM clienti ORDER BY label ASC`
     ) as [Record<string, unknown>[], unknown]
 
-    const clienti: ClienteOption[] = (clientiRows as Record<string, unknown>[]).map(c => ({
-      id: Number(c.id),
-      label: String(c.ragione_sociale || '').trim()
-        || `${String(c.cognome ?? '')} ${String(c.nome ?? '')}`.trim(),
-    }))
+    const clienti: ClienteOption[] = (clientiRows as Record<string, unknown>[])
+      .map(c => ({ id: Number(c.id), label: String(c.label ?? '').trim() }))
+      .filter(c => c.label !== '')
 
     let clienteEmail = '', clienteCellulare = ''
     if (preventivo.cliente_id) {

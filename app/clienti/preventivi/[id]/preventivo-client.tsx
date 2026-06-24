@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { aggiungiArticolo, rimuoviArticolo, associaCliente, aggiornaDatiPreventivo, inoltroRichiesta, modificaArticolo, aggiornaSconto, modificaPreventivo, inviaAlCliente, accettaPreventivo, rifiutaPreventivo, annullaPreventivo, creaClienteRapido } from '../actions'
 import PreviewInfisso from '@/components/preview-infisso'
 import { b } from '@/lib/btn'
+import SelectLookup from '@/components/select-lookup'
 
 // ─── Tipi ─────────────────────────────────────────────────────────────────────
 
@@ -325,14 +326,13 @@ function ClienteSelector({ preventivo_id, cliente_id, clienti: clientiInit, isAp
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
           <span style={{ fontSize: 13, color: '#555', fontWeight: 600, whiteSpace: 'nowrap' }}>Cliente:</span>
-          <select
+          <SelectLookup
             value={sel}
-            onChange={e => { setSel(e.target.value); setSaved(false) }}
-            style={{ ...inp, minWidth: 220 }}
-          >
-            <option value="">— Nessun cliente —</option>
-            {clienti.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
-          </select>
+            onChange={v => { setSel(v); setSaved(false) }}
+            options={[{ value: '', label: '— Nessun cliente —' }, ...clienti.map(c => ({ value: String(c.id), label: c.label }))]}
+            placeholder="— Nessun cliente —"
+            style={{ minWidth: 220 }}
+          />
         </div>
         <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
           <button
