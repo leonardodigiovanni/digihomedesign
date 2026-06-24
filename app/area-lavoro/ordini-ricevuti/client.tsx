@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { addOrdineRicevuto, updateStatoRicevuto, deleteOrdineRicevuto, addNota, deleteNota, toggleVisibileOrdine, type MutResult } from './actions'
+import SelectLookup from '@/components/select-lookup'
 
 export type Nota = {
   id: number
@@ -77,10 +78,9 @@ function StatoRow({ ordine }: { ordine: OrdineRicevuto }) {
   return (
     <form action={action} style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'center' }}>
       <input type="hidden" name="id" value={ordine.id} />
-      <select name="stato" value={stato} onChange={e => setStato(e.target.value)}
-        style={{ padding: '3px 6px', fontSize: 12, border: '1px solid #ccc', borderRadius: 5, fontFamily: 'inherit', background: '#fff' }}>
-        {STATI.map(s => <option key={s} value={s}>{s.replace('_',' ')}</option>)}
-      </select>
+      <SelectLookup name="stato" value={stato} onChange={setStato}
+        options={STATI.map(s => ({ value: s, label: s.replace('_', ' ') }))}
+        style={{ padding: '3px 6px', fontSize: 12, border: '1px solid #ccc', borderRadius: 5, fontFamily: 'inherit' }} />
       {dirty && (
         <button type="submit" disabled={pending}
           className={pending ? 'btn-gray' : 'btn-green'}
@@ -232,6 +232,7 @@ function AddModal({ onClose, clienti }: { onClose: () => void; clienti: Cliente[
   const [result, formAction, pending] = useActionState<MutResult | null, FormData>(addOrdineRicevuto, null)
   useEffect(() => { if (result?.ok) { router.refresh(); onClose() } }, [result])
   const today = new Date().toISOString().slice(0, 10)
+  const [clienteIdSel, setClienteIdSel] = useState('')
 
   const inp: React.CSSProperties = {
     padding: '8px 10px', fontSize: 14, border: '1px solid #ccc',
@@ -251,14 +252,9 @@ function AddModal({ onClose, clienti }: { onClose: () => void; clienti: Cliente[
             <F label="N° ordine" name="numero_ordine" type="text" placeholder="ORD-2026-001" />
             <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
               <label style={{ fontSize: 13, fontWeight: 500, color: '#444' }}>Cliente *</label>
-              <select name="cliente_id" required style={inp}>
-                <option value="">— Seleziona cliente —</option>
-                {clienti.map(c => (
-                  <option key={c.id} value={c.id}>
-                    {c.ragione_sociale || `${c.cognome} ${c.nome}`.trim()}
-                  </option>
-                ))}
-              </select>
+              <SelectLookup name="cliente_id" required value={clienteIdSel} onChange={setClienteIdSel}
+                options={[{ value: '', label: '— Seleziona cliente —' }, ...clienti.map(c => ({ value: String(c.id), label: c.ragione_sociale || `${c.cognome} ${c.nome}`.trim() }))]}
+                style={inp} />
             </div>
           </div>
           <F label="Descrizione" name="descrizione" type="text" placeholder="Descrizione ordine…" />
@@ -339,11 +335,9 @@ export default function OrdiniRicevutiClient({ ordini, clienti, role }: { ordini
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
         <input type="text" placeholder="Cerca cliente, numero, descrizione…" value={search} onChange={e => setSearch(e.target.value)}
           style={{ flex: 1, minWidth: 200, padding: '8px 12px', fontSize: 14, border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit' }} />
-        <select value={statoFilter} onChange={e => setStatoFilter(e.target.value)}
-          style={{ padding: '8px 12px', fontSize: 14, border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit', background: '#fff' }}>
-          <option value="">Tutti gli stati</option>
-          {STATI.map(s => <option key={s} value={s}>{s.replace('_',' ')}</option>)}
-        </select>
+        <SelectLookup value={statoFilter} onChange={setStatoFilter}
+          options={[{ value: '', label: 'Tutti gli stati' }, ...STATI.map(s => ({ value: s, label: s.replace('_', ' ') }))]}
+          style={{ padding: '8px 12px', fontSize: 14, border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit' }} />
         <button onClick={() => setShowModal(true)} className="btn-green" style={btnBase}>
           + Nuovo ordine
         </button>

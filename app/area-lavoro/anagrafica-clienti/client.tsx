@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { addCliente, updateCliente, deleteCliente, type MutResult } from './actions'
+import SelectLookup from '@/components/select-lookup'
 
 export type Cliente = {
   id: number
@@ -275,12 +276,9 @@ export default function AnagraficaClientiClient({ clienti, role }: { clienti: Cl
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
         <input type="text" placeholder="Cerca nome, email, telefono, SDI…" value={search} onChange={e => setSearch(e.target.value)}
           style={{ flex: 1, minWidth: 200, padding: '8px 12px', fontSize: 14, border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit' }} />
-        <select value={tipoFilter} onChange={e => setTipoFilter(e.target.value)}
-          style={{ padding: '8px 12px', fontSize: 14, border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit', background: '#fff' }}>
-          <option value="">Tutti i tipi</option>
-          <option value="fisica">Persona fisica</option>
-          <option value="giuridica">Persona giuridica</option>
-        </select>
+        <SelectLookup value={tipoFilter} onChange={setTipoFilter}
+          options={[{ value: '', label: 'Tutti i tipi' }, { value: 'fisica', label: 'Persona fisica' }, { value: 'giuridica', label: 'Persona giuridica' }]}
+          style={{ padding: '8px 12px', fontSize: 14, border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit' }} />
         <button onClick={() => setShowAdd(true)} className="btn-green" style={btnBase}>
           + Nuovo cliente
         </button>

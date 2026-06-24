@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { updateClienteDocumento } from './actions'
+import SelectLookup from '@/components/select-lookup'
 
 type ClienteOption = { id: number; label: string }
 
@@ -11,29 +12,25 @@ export function ClienteSelect({ docId, clienteId, clienti }: {
   clienti: ClienteOption[]
 }) {
   const [saving, setSaving] = useState(false)
+  const [selValue, setSelValue] = useState(String(clienteId ?? ''))
 
-  async function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
-    const val = e.target.value
+  async function handleChange(val: string) {
+    setSelValue(val)
     setSaving(true)
     await updateClienteDocumento(docId, val ? Number(val) : null)
     setSaving(false)
   }
 
   return (
-    <select
-      defaultValue={clienteId ?? ''}
+    <SelectLookup
+      value={selValue}
       onChange={handleChange}
       disabled={saving}
+      options={[{ value: '', label: '— nessuno —' }, ...clienti.map(c => ({ value: String(c.id), label: c.label }))]}
       style={{
         border: '1px solid #ddd', borderRadius: 5, padding: '4px 8px',
-        fontSize: 13, background: saving ? '#f5f5f5' : '#fff',
-        cursor: saving ? 'wait' : 'pointer', minWidth: 140,
+        fontSize: 13, cursor: saving ? 'wait' : 'pointer', minWidth: 140,
       }}
-    >
-      <option value="">— nessuno —</option>
-      {clienti.map(c => (
-        <option key={c.id} value={c.id}>{c.label}</option>
-      ))}
-    </select>
+    />
   )
 }

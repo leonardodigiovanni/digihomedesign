@@ -10,9 +10,11 @@ type Props = {
   placeholder?: string
   style?: React.CSSProperties
   disabled?: boolean
+  name?: string
+  required?: boolean
 }
 
-export default function SelectLookup({ value, onChange, options, placeholder = '— Seleziona —', style, disabled }: Props) {
+export default function SelectLookup({ value, onChange, options, placeholder = '— Seleziona —', style, disabled, name, required }: Props) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const wrapRef = useRef<HTMLDivElement>(null)
@@ -71,6 +73,7 @@ export default function SelectLookup({ value, onChange, options, placeholder = '
 
   return (
     <div ref={wrapRef} style={{ position: 'relative', display: 'inline-block', width: style?.width ?? style?.minWidth ? undefined : '100%', minWidth: style?.minWidth, maxWidth: style?.maxWidth }}>
+      {name && <input type="hidden" name={name} value={value} required={required} />}
       {/* campo chiuso */}
       {!open && (
         <div onClick={handleOpen} style={base}>

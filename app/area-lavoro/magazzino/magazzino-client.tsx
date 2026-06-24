@@ -3,6 +3,7 @@
 import React, { useActionState, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { addMateriale, deleteMateriale, updateGiacenza, type AddMaterialeResult, type DeleteMaterialeResult, type UpdateGiacenzaResult } from './actions'
+import SelectLookup from '@/components/select-lookup'
 
 export type Materiale = {
   id: number
@@ -443,14 +444,9 @@ export default function MagazzinoClient({ materiali, role }: { materiali: Materi
             onChange={e => setSearch(e.target.value)}
             style={{ flex: 1, minWidth: 220, padding: '8px 12px', fontSize: 14, border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit' }}
           />
-          <select
-            value={unitaFilter}
-            onChange={e => setUnitaFilter(e.target.value)}
-            style={{ padding: '8px 12px', fontSize: 14, border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit', background: '#fff', cursor: 'pointer' }}
-          >
-            <option value="">Tutte le unità</option>
-            {unitaOptions.map(u => <option key={u} value={u}>{u}</option>)}
-          </select>
+          <SelectLookup value={unitaFilter} onChange={setUnitaFilter}
+            options={[{ value: '', label: 'Tutte le unità' }, ...unitaOptions.map(u => ({ value: u, label: u }))]}
+            style={{ padding: '8px 12px', fontSize: 14, border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit' }} />
         </div>
         <button
           onClick={() => setShowModal(true)}

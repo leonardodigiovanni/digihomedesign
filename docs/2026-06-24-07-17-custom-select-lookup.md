@@ -1,6 +1,6 @@
 # Custom Select Lookup — componente riutilizzabile
 
-**Stato**: in pianificazione
+**Stato**: completato
 
 ## Obiettivo
 
@@ -68,3 +68,34 @@ File da escludere: qualsiasi file sotto `app/area-app/`, `app/app-*`, o con perc
 - Posizionamento dropdown: `position:absolute` relativo al wrapper `position:relative`
 - Il wrapper ha `display:inline-block` con larghezza ereditata dall'esterno via `style` prop
 - Niente Portals — il z-index 9999 è sufficiente per i casi d'uso attuali
+
+## Riepilogo implementazione
+
+**Completato**: tutti i `<select>` nativi del sito (incluso `/app`) sostituiti con `SelectLookup`.
+
+**File toccati** (30 file):
+- `components/select-lookup.tsx` — componente creato
+- `app/globals.css` — aggiunto `color-scheme: light` + bg bianco su select/option (CSS residuo)
+- `app/clienti/preventivi/[id]/preventivo-client.tsx` — ClienteSelector + 9 selects interni
+- `app/clienti/preventivi/[id]/page.tsx` — fix query SQL clienti (COALESCE persone giuridiche)
+- `components/aggiungi-articolo-form.tsx`, `components/aggiungi-articolo-acquisto-form.tsx`
+- `app/area-lavoro/worklist/worklist-client.tsx`, `app/amministrazione/gestione-utenti/gestione-utenti-client.tsx`
+- `app/area-lavoro/ordini-ricevuti/ordini-staff-client.tsx`, `app/area-lavoro/ordini-ricevuti/client.tsx`
+- `app/area-lavoro/ordini-fornitori/client.tsx`, `app/area-lavoro/miei-ordini/client.tsx`
+- `app/area-lavoro/cantieri/cantieri-client.tsx`, `app/area-clienti/cantieri/cantieri-cliente-client.tsx`
+- `app/area-lavoro/anagrafica-clienti/client.tsx`, `app/area-lavoro/marketing/marketing-client.tsx`
+- `app/area-lavoro/archivio/archivio-client.tsx`, `app/area-lavoro/bilancio/bilancio-client.tsx`
+- `app/area-clienti/avvisi/avvisi-client.tsx`, `app/area-lavoro/adempimenti/adempimenti-client.tsx`
+- `app/area-lavoro/magazzino/magazzino-client.tsx`, `app/area-lavoro/facsimili/facsimili-client.tsx`
+- `app/area-lavoro/listini/listini-client.tsx` (9 selects)
+- `app/area-lavoro/cataloghi/cataloghi-client.tsx`
+- `app/area-clienti/documenti/upload-form.tsx`, `app/clienti/documenti/upload-form.tsx`
+- `app/area-lavoro/fatture/fatture-client.tsx`
+- `app/clienti/documenti/cliente-select.tsx`, `app/clienti/documenti/filtri.tsx`
+- `app/disegno/disegno-client.tsx` (25 selects)
+
+**Note tecniche**:
+- Selects con `name` prop: SelectLookup renderizza `<input type="hidden" name={name} value={value}>` per la form submission
+- Selects con tipo union TypeScript: usato cast `v as typeof state` per evitare errori TS
+- Optgroup in disegno-client.tsx: appiattiti in opzioni flat con flatMap
+- `cantieri-client.tsx` (area-lavoro): due cast aggiuntivi per tipi union stato

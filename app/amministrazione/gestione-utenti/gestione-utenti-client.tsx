@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { changeUserRole, toggleUserActive, toggleCantieriCliente, toggleOrdiniCliente, changePassword, type ChangeRoleResult, type ToggleActiveResult, type ToggleCantieriResult, type ToggleOrdiniResult, type ChangePasswordResult } from './actions'
+import SelectLookup from '@/components/select-lookup'
 
 type User = {
   username: string
@@ -225,19 +226,13 @@ function RoleRow({ user, isSelf, hasClienti }: { user: User; isSelf: boolean; ha
         ) : (
           <form action={roleAction} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <input type="hidden" name="username" value={user.username} />
-            <select
+            <SelectLookup
               name="role"
               value={selectedRole}
-              onChange={e => setSelectedRole(e.target.value)}
-              style={{
-                padding: '5px 8px', fontSize: 13, border: '1px solid #ccc',
-                borderRadius: 5, fontFamily: 'inherit', background: '#fff', cursor: 'pointer',
-              }}
-            >
-              {ALL_ASSIGNABLE_ROLES.map(r => (
-                <option key={r} value={r}>{ROLE_LABELS[r] ?? r}</option>
-              ))}
-            </select>
+              onChange={setSelectedRole}
+              options={ALL_ASSIGNABLE_ROLES.map(r => ({ value: r, label: ROLE_LABELS[r] ?? r }))}
+              style={{ padding: '5px 8px', fontSize: 13, border: '1px solid #ccc', borderRadius: 5, fontFamily: 'inherit' }}
+            />
             <button
               type="submit"
               disabled={!dirty || rolePending}
@@ -331,19 +326,12 @@ export default function GestioneUtentiClient({ users, currentUser }: { users: Us
               border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit',
             }}
           />
-          <select
+          <SelectLookup
             value={roleFilter}
-            onChange={e => setRoleFilter(e.target.value)}
-            style={{
-              padding: '8px 12px', fontSize: 14, border: '1px solid #ccc',
-              borderRadius: 6, fontFamily: 'inherit', background: '#fff', cursor: 'pointer',
-            }}
-          >
-            <option value="">Tutti i ruoli</option>
-            {ALL_ASSIGNABLE_ROLES.map(r => (
-              <option key={r} value={r}>{ROLE_LABELS[r]}</option>
-            ))}
-          </select>
+            onChange={setRoleFilter}
+            options={[{ value: '', label: 'Tutti i ruoli' }, ...ALL_ASSIGNABLE_ROLES.map(r => ({ value: r, label: ROLE_LABELS[r] }))]}
+            style={{ padding: '8px 12px', fontSize: 14, border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit' }}
+          />
         </div>
       </div>
 

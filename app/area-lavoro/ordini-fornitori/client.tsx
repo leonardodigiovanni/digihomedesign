@@ -7,6 +7,7 @@ import {
   updateStatoConsegna, sollecitaFornitore, deleteOrdineFornitore,
   type MutResult
 } from './actions'
+import SelectLookup from '@/components/select-lookup'
 
 export type OrdineFornitore = {
   id: number
@@ -130,12 +131,9 @@ function SelectConsegna({ id, val }: { id: number; val: string }) {
   return (
     <form action={action} style={{ display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'center' }}>
       <input type="hidden" name="id" value={id} />
-      <select name="stato_consegna" value={stato} onChange={e => setStato(e.target.value)}
-        style={{ padding: '3px 6px', fontSize: 11, border: '1px solid #ccc', borderRadius: 5, fontFamily: 'inherit', background: '#fff' }}>
-        <option value="non_consegnato">Non consegnato</option>
-        <option value="parziale">Parziale</option>
-        <option value="consegnato">Consegnato</option>
-      </select>
+      <SelectLookup name="stato_consegna" value={stato} onChange={setStato}
+        options={[{ value: 'non_consegnato', label: 'Non consegnato' }, { value: 'parziale', label: 'Parziale' }, { value: 'consegnato', label: 'Consegnato' }]}
+        style={{ padding: '3px 6px', fontSize: 11, border: '1px solid #ccc', borderRadius: 5, fontFamily: 'inherit' }} />
       {dirty && (
         <button type="submit" disabled={pending}
           className={pending ? 'btn-gray' : 'btn-green'}
@@ -403,25 +401,15 @@ export default function OrdiniForniClient({ ordini, role }: { ordini: OrdineForn
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
         <input type="text" placeholder="Cerca fornitore, numero, descrizione…" value={search} onChange={e => setSearch(e.target.value)}
           style={{ flex: 1, minWidth: 220, padding: '8px 12px', fontSize: 14, border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit' }} />
-        <select value={filtroConsegna} onChange={e => setFiltroConsegna(e.target.value)}
-          style={{ padding: '8px 10px', fontSize: 13, border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit', background: '#fff' }}>
-          <option value="">Tutte le consegne</option>
-          <option value="non_consegnato">Non consegnato</option>
-          <option value="parziale">Parziale</option>
-          <option value="consegnato">Consegnato</option>
-        </select>
-        <select value={filtroFatturato} onChange={e => setFiltroFatturato(e.target.value)}
-          style={{ padding: '8px 10px', fontSize: 13, border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit', background: '#fff' }}>
-          <option value="">Fatturato: tutti</option>
-          <option value="1">Fatturato</option>
-          <option value="0">Non fatturato</option>
-        </select>
-        <select value={filtroPagato} onChange={e => setFiltroPagato(e.target.value)}
-          style={{ padding: '8px 10px', fontSize: 13, border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit', background: '#fff' }}>
-          <option value="">Pagato: tutti</option>
-          <option value="1">Pagato</option>
-          <option value="0">Non pagato</option>
-        </select>
+        <SelectLookup value={filtroConsegna} onChange={setFiltroConsegna}
+          options={[{ value: '', label: 'Tutte le consegne' }, { value: 'non_consegnato', label: 'Non consegnato' }, { value: 'parziale', label: 'Parziale' }, { value: 'consegnato', label: 'Consegnato' }]}
+          style={{ padding: '8px 10px', fontSize: 13, border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit' }} />
+        <SelectLookup value={filtroFatturato} onChange={setFiltroFatturato}
+          options={[{ value: '', label: 'Fatturato: tutti' }, { value: '1', label: 'Fatturato' }, { value: '0', label: 'Non fatturato' }]}
+          style={{ padding: '8px 10px', fontSize: 13, border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit' }} />
+        <SelectLookup value={filtroPagato} onChange={setFiltroPagato}
+          options={[{ value: '', label: 'Pagato: tutti' }, { value: '1', label: 'Pagato' }, { value: '0', label: 'Non pagato' }]}
+          style={{ padding: '8px 10px', fontSize: 13, border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit' }} />
         <button onClick={() => setShowModal(true)} className="btn-green" style={btnBase}>
           + Nuovo ordine
         </button>

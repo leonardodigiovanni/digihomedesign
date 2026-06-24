@@ -238,15 +238,12 @@ function DatiPreventivo({ preventivo, readOnly = false, isStaff = false, isApp }
           {isStaff && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               <span style={{ fontSize: 11, fontWeight: 600, color: '#333', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Stato</span>
-              <select
+              <SelectLookup
                 value={stato}
-                onChange={e => { setStato(e.target.value as Preventivo['stato']); setSaved(false) }}
+                onChange={v => { setStato(v as Preventivo['stato']); setSaved(false) }}
+                options={(['bozza', 'da inviare', 'richiesto', 'inviato', 'accettato', 'rifiutato', 'scaduto', 'annullato'] as Preventivo['stato'][]).map(s => ({ value: s, label: s }))}
                 style={{ ...inp, width: 180, fontSize: 13 }}
-              >
-                {(['bozza', 'da inviare', 'richiesto', 'inviato', 'accettato', 'rifiutato', 'scaduto', 'annullato'] as Preventivo['stato'][]).map(s => (
-                  <option key={s} value={s}>{s}</option>
-                ))}
-              </select>
+              />
             </div>
           )}
           <div>
@@ -552,30 +549,23 @@ function ArticoloForm({
                 <input type="hidden" name="marca" value={marca} />
                 <div>
                   <span style={label}>Caratteristica *</span>
-                  <select
+                  <SelectLookup
                     value={listinoId}
-                    onChange={e => {
-                      const id = e.target.value
+                    onChange={id => {
                       setListinoId(id)
                       const sel = modelli.find(m => m.id === parseInt(id))
                       if (sel) setMarca(sel.produttore)
                     }}
-                    style={inp}
-                  >
-                    <option value="">— Seleziona —</option>
-                    {modelli.map(m => {
+                    options={[{ value: '', label: '— Seleziona —' }, ...modelli.map(m => {
                       const sc = m.sconto_articolo ?? 0
                       const promo = sc !== 0 ? (sc < 0 ? ` · Magg. +${Math.abs(sc)}%` : ` · Sconto -${sc}%`) : ''
                       const details = isStaff
                         ? ` — acq. €${Number(m.prezzo_acquisto ?? 0).toFixed(2)} / cli. €${Number(m.prezzo_vendita).toFixed(2)}`
                         : ` — €${Number(m.prezzo_vendita).toFixed(2)}`
-                      return (
-                        <option key={m.id} value={m.id}>
-                          {m.descrizione}{m.produttore ? ` · ${m.produttore}` : ''} ({m.unita}{details}){promo}
-                        </option>
-                      )
-                    })}
-                  </select>
+                      return { value: String(m.id), label: `${m.descrizione}${m.produttore ? ` · ${m.produttore}` : ''} (${m.unita}${details})${promo}` }
+                    })]}
+                    style={inp}
+                  />
                 </div>
               </>
             ) : (
@@ -583,32 +573,28 @@ function ArticoloForm({
                 {/* Tipo prodotto */}
                 <div>
                   <span style={label}>Tipo prodotto *</span>
-                  <select
+                  <SelectLookup
                     name="tipo_prodotto"
                     value={tipo}
-                    onChange={e => handleChangeTipo(e.target.value)}
+                    onChange={v => handleChangeTipo(v)}
                     required
+                    options={[{ value: '', label: '— Seleziona tipo —' }, ...tipi.map(t => ({ value: t, label: t }))]}
                     style={inp}
-                  >
-                    <option value="">— Seleziona tipo —</option>
-                    {tipi.map(t => <option key={t} value={t}>{t}</option>)}
-                  </select>
+                  />
                 </div>
 
                 {/* Marca */}
                 {tipo && (
                   <div>
                     <span style={label}>Marca *</span>
-                    <select
+                    <SelectLookup
                       name="marca"
                       value={marca}
-                      onChange={e => handleChangeMarca(e.target.value)}
+                      onChange={v => handleChangeMarca(v)}
                       required
+                      options={[{ value: '', label: '— Seleziona marca —' }, ...marche.map(m => ({ value: m, label: m }))]}
                       style={inp}
-                    >
-                      <option value="">— Seleziona marca —</option>
-                      {marche.map(m => <option key={m} value={m}>{m}</option>)}
-                    </select>
+                    />
                   </div>
                 )}
 
@@ -616,25 +602,19 @@ function ArticoloForm({
                 {marca && (
                   <div>
                     <span style={label}>Modello / Profilo *</span>
-                    <select
+                    <SelectLookup
                       value={listinoId}
-                      onChange={e => setListinoId(e.target.value)}
-                      style={inp}
-                    >
-                      <option value="">— Seleziona modello —</option>
-                      {modelli.map(m => {
+                      onChange={setListinoId}
+                      options={[{ value: '', label: '— Seleziona modello —' }, ...modelli.map(m => {
                         const sc = m.sconto_articolo ?? 0
                         const promo = sc !== 0 ? (sc < 0 ? ` · Magg. +${Math.abs(sc)}%` : ` · Sconto -${sc}%`) : ''
                         const details = isStaff
                           ? ` — acq. €${Number(m.prezzo_acquisto ?? 0).toFixed(2)} / cli. €${Number(m.prezzo_vendita).toFixed(2)}${m.fornitore_nome ? ` · ${m.fornitore_nome}` : ''}`
                           : ` — €${Number(m.prezzo_vendita).toFixed(2)}${m.fornitore_nome ? ` · ${m.fornitore_nome}` : ''}`
-                        return (
-                          <option key={m.id} value={m.id}>
-                            {m.descrizione} ({m.unita}{details}){promo}
-                          </option>
-                        )
-                      })}
-                    </select>
+                        return { value: String(m.id), label: `${m.descrizione} (${m.unita}${details})${promo}` }
+                      })]}
+                      style={inp}
+                    />
                   </div>
                 )}
               </>
@@ -651,10 +631,9 @@ function ArticoloForm({
                   {haVetro && (
                     <div>
                       <span style={label}>Tipo vetro *</span>
-                      <select name="tipo_vetro" value={tipoVetro} onChange={e => setTipoVetro(e.target.value)} required style={inp}>
-                        <option value="">— Seleziona vetro —</option>
-                        {TIPI_VETRO.map(v => <option key={v} value={v}>{v}</option>)}
-                      </select>
+                      <SelectLookup name="tipo_vetro" value={tipoVetro} onChange={setTipoVetro} required
+                        options={[{ value: '', label: '— Seleziona vetro —' }, ...TIPI_VETRO.map(v => ({ value: v, label: v }))]}
+                        style={inp} />
                     </div>
                   )}
 
@@ -913,32 +892,29 @@ function ModificaArticoloModal({ articolo, parentArt, children = [], listini, on
                     {/* Tipo */}
                     <div>
                       <span style={label}>Tipo prodotto</span>
-                      <select value={nuovoTipo} onChange={e => { setNuovoTipo(e.target.value); setNuovaMarca(''); setNuovoListinoId('') }} style={inp}>
-                        <option value="">— Seleziona tipo —</option>
-                        {tipiDisp.map(t => <option key={t} value={t}>{t}</option>)}
-                      </select>
+                      <SelectLookup value={nuovoTipo} onChange={v => { setNuovoTipo(v); setNuovaMarca(''); setNuovoListinoId('') }}
+                        options={[{ value: '', label: '— Seleziona tipo —' }, ...tipiDisp.map(t => ({ value: t, label: t }))]}
+                        style={inp} />
                     </div>
                     {/* Marca */}
                     {nuovoTipo && (
                       <div>
                         <span style={label}>Marca</span>
-                        <select value={nuovaMarca} onChange={e => { setNuovaMarca(e.target.value); setNuovoListinoId('') }} style={inp}>
-                          <option value="">— Seleziona marca —</option>
-                          {marcheDisp.map(m => <option key={m} value={m}>{m}</option>)}
-                        </select>
+                        <SelectLookup value={nuovaMarca} onChange={v => { setNuovaMarca(v); setNuovoListinoId('') }}
+                          options={[{ value: '', label: '— Seleziona marca —' }, ...marcheDisp.map(m => ({ value: m, label: m }))]}
+                          style={inp} />
                       </div>
                     )}
                     {/* Modello */}
                     {nuovaMarca && (
                       <div>
                         <span style={label}>Modello / Profilo</span>
-                        <select value={nuovoListinoId} onChange={e => setNuovoListinoId(e.target.value)} style={inp}>
-                          <option value="">— Seleziona modello —</option>
-                          {modelliDisp.map(m => {
+                        <SelectLookup value={nuovoListinoId} onChange={setNuovoListinoId}
+                          options={[{ value: '', label: '— Seleziona modello —' }, ...modelliDisp.map(m => {
                             const details = ` — acq. €${Number(m.prezzo_acquisto ?? 0).toFixed(2)} / cli. €${Number(m.prezzo_vendita).toFixed(2)}`
-                            return <option key={m.id} value={m.id}>{m.descrizione} ({m.unita}{details})</option>
-                          })}
-                        </select>
+                            return { value: String(m.id), label: `${m.descrizione} (${m.unita}${details})` }
+                          })]}
+                          style={inp} />
                       </div>
                     )}
                     {/* Preview caratteristiche */}

@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react'
 import { useTransition } from 'react'
 import { toggleVisibile, eliminaOrdine } from './ordini-actions'
+import SelectLookup from '@/components/select-lookup'
 
 type OrdineCliente = {
   id: number; numero: string; tipo: 'preventivo' | 'acquisto'
@@ -61,15 +62,11 @@ export default function OrdiniStaffClient({
 
       {/* Filtri */}
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-        <select
+        <SelectLookup
           value={filterCliente}
-          onChange={e => setFilterCliente(e.target.value)}
-          style={{ padding: '8px 12px', fontSize: 13, borderRadius: 4, border: '1px solid #ccc', flex: 1, minWidth: 150 }}>
-          <option value="">Tutti i clienti</option>
-          {clienti.map(c => (
-            <option key={c.id} value={String(c.id)}>{c.nome}</option>
-          ))}
-        </select>
+          onChange={setFilterCliente}
+          options={[{ value: '', label: 'Tutti i clienti' }, ...clienti.map(c => ({ value: String(c.id), label: c.nome }))]}
+          style={{ padding: '8px 12px', fontSize: 13, borderRadius: 4, border: '1px solid #ccc', flex: 1, minWidth: 150 }} />
         <input
           type="text"
           placeholder="Numero ordine"

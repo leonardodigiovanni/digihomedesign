@@ -2,6 +2,7 @@
 import { b } from '@/lib/btn'
 
 import { useState, useEffect, useMemo, useTransition, useRef } from 'react'
+import SelectLookup from '@/components/select-lookup'
 import { useRouter } from 'next/navigation'
 import { aggiungiAlCarrello, aggiungiAlPreventivoDaCatalogo, annullaParentPendente, type CartResult, type PreventivoDestOption } from '@/app/brand/cataloghi/actions'
 
@@ -287,19 +288,13 @@ export default function AggiungiArticoloForm({
             {produttori.length >= 2 && (
               <div style={{ flex: '1 1 150px' }}>
                 <label className="testo-articoli" style={{ display: 'block', marginBottom: 3 }}>Produttore</label>
-                <select value={produttoreFiltro} onChange={e => setProduttoreFiltro(e.target.value)} style={inpStyle}>
-                  <option value="">— Tutti —</option>
-                  {produttori.map(p => <option key={p} value={p}>{p}</option>)}
-                </select>
+                <SelectLookup value={produttoreFiltro} onChange={setProduttoreFiltro} options={[{ value: '', label: '— Tutti —' }, ...produttori.map(p => ({ value: p, label: p }))]} style={inpStyle} />
               </div>
             )}
             {serie.length >= 2 && (
               <div style={{ flex: '1 1 150px' }}>
                 <label className="testo-articoli" style={{ display: 'block', marginBottom: 3 }}>Serie</label>
-                <select value={serieFiltro} onChange={e => setSerieFiltro(e.target.value)} style={inpStyle}>
-                  <option value="">— Tutte —</option>
-                  {serie.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
+                <SelectLookup value={serieFiltro} onChange={setSerieFiltro} options={[{ value: '', label: '— Tutte —' }, ...serie.map(s => ({ value: s, label: s }))]} style={inpStyle} />
               </div>
             )}
             <div style={{ flex: '2 1 200px' }}>
@@ -322,15 +317,12 @@ export default function AggiungiArticoloForm({
               {artFiltrati.length === 0 ? (
                 <p className="testo-articoli" style={{ margin: 0 }}>Nessun articolo trovato.</p>
               ) : (
-                <select
-                  value={selectedId}
-                  onChange={e => setSelectedId(Number(e.target.value))}
+                <SelectLookup
+                  value={String(selectedId)}
+                  onChange={v => setSelectedId(Number(v))}
+                  options={artFiltrati.map(a => ({ value: String(a.id), label: labelOf(a) }))}
                   style={inpStyle}
-                >
-                  {artFiltrati.map(a => (
-                    <option key={a.id} value={a.id}>{labelOf(a)}</option>
-                  ))}
-                </select>
+                />
               )}
             </div>
             {artFiltrati.length > 0 && (
@@ -344,15 +336,12 @@ export default function AggiungiArticoloForm({
                   {mostraDestinazione ? 'Aggiungi a:' : '+ Aggiungi a simulazione'}
                 </button>
                 {mostraDestinazione && (
-                  <select
+                  <SelectLookup
                     value={destId}
-                    onChange={e => setDestId(e.target.value)}
-                    style={{ flex: 1, fontSize: 12, padding: '4px 8px', border: '1px solid #ccc', borderRadius: 4, fontFamily: 'inherit', cursor: 'pointer', minWidth: 0, height: 42 }}
-                  >
-                    {destOptions.map(o => (
-                      <option key={o.value} value={o.value}>{o.label}</option>
-                    ))}
-                  </select>
+                    onChange={setDestId}
+                    options={destOptions}
+                    style={{ flex: 1, fontSize: 12, padding: '4px 8px', border: '1px solid #ccc', borderRadius: 4, fontFamily: 'inherit', minWidth: 0 }}
+                  />
                 )}
               </div>
             )}

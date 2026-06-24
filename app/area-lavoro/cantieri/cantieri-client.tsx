@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useTransition, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
+import SelectLookup from '@/components/select-lookup'
 import {
   addCantiere, deleteCantiere, updateStatoCantiere, toggleVisibileCantiere,
   assignClienteToCantiere,
@@ -141,6 +142,7 @@ function AddCantiereForm({ clienti }: { clienti: Cliente[] }) {
   const [error, setError] = useState('')
   const [pending, startT] = useTransition()
   const formRef           = useRef<HTMLFormElement>(null)
+  const [statoCantiereNuovo, setStatoCantiereNuovo] = useState('preventivo')
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -177,9 +179,8 @@ function AddCantiereForm({ clienti }: { clienti: Cliente[] }) {
         </div>
         <div>
           <label style={{ fontSize: 12, color: '#555', display: 'block', marginBottom: 2 }}>Stato</label>
-          <select name="stato" style={inp} defaultValue="preventivo">
-            {STATI_CANTIERE.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
-          </select>
+          <SelectLookup name="stato" value={statoCantiereNuovo} onChange={setStatoCantiereNuovo}
+            options={STATI_CANTIERE.map(s => ({ value: s.value, label: s.label }))} style={inp} />
         </div>
         <div style={{ gridColumn: '1 / -1' }}>
           <label style={{ fontSize: 12, color: '#555', display: 'block', marginBottom: 2 }}>Indirizzo lavori</label>
@@ -324,6 +325,7 @@ function TaskItem({
   const [pending, startT]       = useTransition()
   const [errEdit, setErrEdit]   = useState('')
   const formEditRef             = useRef<HTMLFormElement>(null)
+  const [statoTaskSel, setStatoTaskSel] = useState(task.stato)
 
   const taskMedia = media.filter(m => m.task_id === task.id)
   const nVisti    = taskMedia.filter(m => m.visto).length
@@ -408,9 +410,8 @@ function TaskItem({
                 </div>
                 <div>
                   <div style={{ fontSize: 11, color: '#666', marginBottom: 2 }}>Stato</div>
-                  <select name="stato" defaultValue={task.stato} style={{ ...inpSm, width: '100%' }}>
-                    {STATI_TASK.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
-                  </select>
+                  <SelectLookup name="stato" value={statoTaskSel} onChange={v => setStatoTaskSel(v as typeof task.stato)}
+                    options={STATI_TASK.map(s => ({ value: s.value, label: s.label }))} style={{ ...inpSm, width: '100%' }} />
                 </div>
                 <div>
                   <div style={{ fontSize: 11, color: '#666', marginBottom: 2 }}>Data inizio</div>
@@ -485,18 +486,18 @@ function AssignClienteSection({
   cantiereId: number; currentClienteId: number | null; clienti: Cliente[]
 }) {
   const router       = useRouter()
-  const selectRef    = useRef<HTMLSelectElement>(null)
   const [open, setOpen]   = useState(false)
   const [filter, setFilter] = useState('')
   const [saving, setSaving] = useState(false)
   const [error, setError]   = useState('')
+  const [clienteSel, setClienteSel] = useState(currentClienteId ? String(currentClienteId) : '')
 
   const filtered = filter
     ? clienti.filter(c => nomeCliente(c).toLowerCase().includes(filter.toLowerCase()))
     : clienti
 
   async function handleSave() {
-    const val = selectRef.current?.value
+    const val = clienteSel
     if (!val) { setError('Seleziona un cliente.'); return }
     setError('')
     setSaving(true)
@@ -532,12 +533,9 @@ function AssignClienteSection({
         placeholder="Filtra clienti..."
         style={{ ...inpSm, width: 160 }}
       />
-      <select ref={selectRef} defaultValue={currentClienteId ?? ''} style={{ ...inpSm, minWidth: 200 }}>
-        <option value="">— nessuno —</option>
-        {filtered.map(c => (
-          <option key={c.id} value={c.id}>{nomeCliente(c)}</option>
-        ))}
-      </select>
+      <SelectLookup value={clienteSel} onChange={setClienteSel}
+        options={[{ value: '', label: '— nessuno —' }, ...filtered.map(c => ({ value: String(c.id), label: nomeCliente(c) }))]}
+        style={{ ...inpSm, minWidth: 200 }} />
       {error && <span style={{ fontSize: 12, color: '#c00' }}>{error}</span>}
       <button type="button" onClick={handleSave} disabled={saving} className="btn-green">
         {saving ? '...' : 'Salva'}
@@ -559,6 +557,7 @@ function DettaglioCantiere({
 }) {
   const [pending, startT]  = useTransition()
   const [addingTask, setAddingTask] = useState(false)
+  const [statoCantiereDettaglio, setStatoCantiereDettaglio] = useState(cantiere.stato)
 
   const mieiTask  = tasks.filter(t => t.cantiere_id === cantiere.id)
 
@@ -583,14 +582,14 @@ function DettaglioCantiere({
           <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
             <StatoBadge stato={cantiere.stato} />
             {isStaff && (
-              <select defaultValue={cantiere.stato}
-                onChange={async e => {
-                  const fd = new FormData(); fd.set('id', String(cantiere.id)); fd.set('stato', e.target.value)
+              <SelectLookup value={statoCantiereDettaglio}
+                onChange={v => {
+                  setStatoCantiereDettaglio(v as typeof cantiere.stato)
+                  const fd = new FormData(); fd.set('id', String(cantiere.id)); fd.set('stato', v)
                   startT(async () => { await updateStatoCantiere(null, fd) })
                 }}
-                style={{ padding: '4px 8px', fontSize: 12, border: '1px solid #ccc', borderRadius: 4, fontFamily: 'inherit' }}>
-                {STATI_CANTIERE.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
-              </select>
+                options={STATI_CANTIERE.map(s => ({ value: s.value, label: s.label }))}
+                style={{ padding: '4px 8px', fontSize: 12, border: '1px solid #ccc', borderRadius: 4, fontFamily: 'inherit' }} />
             )}
             <button onClick={onClose} style={{
               background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#666', lineHeight: 1,
@@ -788,15 +787,14 @@ export default function CantieriClient({
           value={filtroTesto} onChange={e => setFiltroTesto(e.target.value)}
           style={{ ...selInp, minWidth: 220 }}
         />
-        <select value={filtroStato} onChange={e => setFiltroStato(e.target.value)} style={selInp}>
-          <option value="">Tutti gli stati</option>
-          {STATI_CANTIERE.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
-        </select>
+        <SelectLookup value={filtroStato} onChange={setFiltroStato}
+          options={[{ value: '', label: 'Tutti gli stati' }, ...STATI_CANTIERE.map(s => ({ value: s.value, label: s.label }))]}
+          style={selInp} />
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginLeft: 8 }}>
           <span style={{ fontSize: 12, color: '#666', whiteSpace: 'nowrap' }}>Ordina per:</span>
-          <select value={sortField} onChange={e => setSortField(e.target.value as SortField)} style={selInp}>
-            {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-          </select>
+          <SelectLookup value={sortField} onChange={v => setSortField(v as SortField)}
+            options={SORT_OPTIONS.map(o => ({ value: o.value, label: o.label }))}
+            style={selInp} />
           <button onClick={() => setSortDir(d => d === 'asc' ? 'desc' : 'asc')} style={{
             padding: '6px 10px', fontSize: 13, border: '1px solid #ccc', borderRadius: 4, cursor: 'pointer', background: '#fff',
           }}>

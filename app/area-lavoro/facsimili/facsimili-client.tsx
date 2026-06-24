@@ -4,6 +4,7 @@ import { useActionState, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { uploadFacsimile, deleteFacsimile, type UploadResult, type DeleteResult } from './actions'
 import { documentoSrc } from '@/lib/media-src'
+import SelectLookup from '@/components/select-lookup'
 
 export type Documento = {
   id: number
@@ -83,6 +84,7 @@ function DeleteBtn({ id, role }: { id: number; role: string }) {
 function UploadModal({ onClose }: { onClose: () => void }) {
   const router = useRouter()
   const [result, formAction, pending] = useActionState<UploadResult | null, FormData>(uploadFacsimile, null)
+  const [categoriaSel, setCategoriaSel] = useState('')
 
   useEffect(() => {
     if (result?.ok) { router.refresh(); onClose() }
@@ -106,11 +108,9 @@ function UploadModal({ onClose }: { onClose: () => void }) {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             <label style={{ fontSize: 13, fontWeight: 500, color: '#444' }}>Categoria *</label>
-            <select name="categoria" required
-              style={{ padding: '8px 10px', fontSize: 14, border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit', background: '#fff' }}>
-              <option value="">Seleziona…</option>
-              {CATEGORIE.map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
+            <SelectLookup name="categoria" required value={categoriaSel} onChange={setCategoriaSel}
+              options={[{ value: '', label: 'Seleziona…' }, ...CATEGORIE.map(c => ({ value: c, label: c }))]}
+              style={{ padding: '8px 10px', fontSize: 14, border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit' }} />
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>

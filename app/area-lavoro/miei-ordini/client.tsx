@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import SelectLookup from '@/components/select-lookup'
 
 export type OrdineCliente = {
   id: number
@@ -84,11 +85,9 @@ export default function MieiOrdiniClient({ ordini }: { ordini: OrdineCliente[] }
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
         <input type="text" placeholder="Cerca numero ordine, descrizione…" value={search} onChange={e => setSearch(e.target.value)}
           style={{ flex: 1, minWidth: 200, padding: '8px 12px', fontSize: 14, border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit' }} />
-        <select value={statoFilter} onChange={e => setStatoFilter(e.target.value)}
-          style={{ padding: '8px 12px', fontSize: 14, border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit', background: '#fff' }}>
-          <option value="">Tutti gli stati</option>
-          {STATI.map(s => <option key={s} value={s}>{s.replace('_',' ')}</option>)}
-        </select>
+        <SelectLookup value={statoFilter} onChange={setStatoFilter}
+          options={[{ value: '', label: 'Tutti gli stati' }, ...STATI.map(s => ({ value: s, label: s.replace('_', ' ') }))]}
+          style={{ padding: '8px 12px', fontSize: 14, border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit' }} />
       </div>
 
       <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, overflow: 'hidden' }}>

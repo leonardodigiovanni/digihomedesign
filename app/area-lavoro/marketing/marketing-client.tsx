@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useRef, useTransition, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { addRecord, deleteRecord, type MutResult } from './actions'
+import SelectLookup from '@/components/select-lookup'
 import { useRouter } from 'next/navigation'
 import { useActionState } from 'react'
 import { marketingSrc } from '@/lib/media-src'
@@ -203,11 +204,10 @@ function AddRecordForm() {
             <input name="tipo" required style={inp} placeholder="Es. Radio, TV…"
               autoFocus onBlur={e => { if (!e.target.value) setTipoCustom(false) }} />
           ) : (
-            <select name="tipo" required style={inp} value={tipoSel}
-              onChange={e => { if (e.target.value === '__altro__') setTipoCustom(true); else setTipoSel(e.target.value) }}>
-              {TIPI.map(t => <option key={t} value={t}>{t}</option>)}
-              <option value="__altro__">+ Personalizzato…</option>
-            </select>
+            <SelectLookup name="tipo" required value={tipoSel}
+              onChange={v => { if (v === '__altro__') setTipoCustom(true); else setTipoSel(v) }}
+              options={[...TIPI.map(t => ({ value: t, label: t })), { value: '__altro__', label: '+ Personalizzato…' }]}
+              style={inp} />
           )}
         </div>
 
@@ -378,10 +378,9 @@ export default function MarketingClient({ records }: { records: Record_[] }) {
         <input placeholder="Cerca titolo, periodo, note…"
           value={filtroTesto} onChange={e => setFiltroTesto(e.target.value)}
           style={{ ...selInp, minWidth: 220 }} />
-        <select value={filtroTipo} onChange={e => setFiltroTipo(e.target.value)} style={selInp}>
-          <option value="">Tutti i tipi</option>
-          {tipiPresenti.map(t => <option key={t} value={t}>{t}</option>)}
-        </select>
+        <SelectLookup value={filtroTipo} onChange={setFiltroTipo}
+          options={[{ value: '', label: 'Tutti i tipi' }, ...tipiPresenti.map(t => ({ value: t, label: t }))]}
+          style={selInp} />
         <span style={{ fontSize: 13, color: '#888' }}>{ordinati.length} record</span>
       </div>
 

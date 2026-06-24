@@ -4,6 +4,7 @@ import { useActionState, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { uploadDocumento, deleteDocumento, type UploadResult, type DeleteResult } from './actions'
 import { documentoSrc } from '@/lib/media-src'
+import SelectLookup from '@/components/select-lookup'
 
 export type Documento = {
   id: number
@@ -90,6 +91,7 @@ function DeleteBtn({ id, role }: { id: number; role: string }) {
 function UploadModal({ onClose }: { onClose: () => void }) {
   const router = useRouter()
   const [result, formAction, pending] = useActionState<UploadResult | null, FormData>(uploadDocumento, null)
+  const [categoriaSel, setCategoriaSel] = useState('')
 
   useEffect(() => {
     if (result?.ok) { router.refresh(); onClose() }
@@ -113,11 +115,9 @@ function UploadModal({ onClose }: { onClose: () => void }) {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             <label style={{ fontSize: 13, fontWeight: 500, color: '#444' }}>Categoria *</label>
-            <select name="categoria" required
-              style={{ padding: '8px 10px', fontSize: 14, border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit', background: '#fff' }}>
-              <option value="">Seleziona…</option>
-              {CATEGORIE.map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
+            <SelectLookup name="categoria" required value={categoriaSel} onChange={setCategoriaSel}
+              options={[{ value: '', label: 'Seleziona…' }, ...CATEGORIE.map(c => ({ value: c, label: c }))]}
+              style={{ padding: '8px 10px', fontSize: 14, border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit' }} />
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -187,11 +187,9 @@ export default function ArchivioClient({ documenti, role }: { documenti: Documen
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', flex: 1 }}>
           <input type="text" placeholder="Cerca per nome…" value={search} onChange={e => setSearch(e.target.value)}
             style={{ flex: 1, minWidth: 200, padding: '8px 12px', fontSize: 14, border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit' }} />
-          <select value={catFilter} onChange={e => setCatFilter(e.target.value)}
-            style={{ padding: '8px 12px', fontSize: 14, border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit', background: '#fff' }}>
-            <option value="">Tutte le categorie</option>
-            {CATEGORIE.map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
+          <SelectLookup value={catFilter} onChange={setCatFilter}
+            options={[{ value: '', label: 'Tutte le categorie' }, ...CATEGORIE.map(c => ({ value: c, label: c }))]}
+            style={{ padding: '8px 12px', fontSize: 14, border: '1px solid #ccc', borderRadius: 6, fontFamily: 'inherit' }} />
         </div>
         <button onClick={() => setShowModal(true)} className="btn-green" style={btnBase}>
           + Carica documento

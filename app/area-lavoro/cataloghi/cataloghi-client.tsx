@@ -2,6 +2,7 @@
 
 import React, { useState, useTransition, useEffect } from 'react'
 import { useActionState } from 'react'
+import SelectLookup from '@/components/select-lookup'
 import { useRouter } from 'next/navigation'
 import { addCategoria, deleteCategoria, addVoce, updateVoce, deleteVoce, updateListinoCategoria, updateListinoVoce, type MutResult } from './actions'
 import GestioneBlob from '@/components/gestione-blob'
@@ -144,6 +145,7 @@ function NuovaVoceForm({ categoriaId, onDone }: { categoriaId: number; onDone: (
 
 function ListinoCategoriaForm({ catId, current, listiniCategorie }: { catId: number; current: string | null; listiniCategorie: string[] }) {
   const [result, action, pending] = useActionState<MutResult | null, FormData>(updateListinoCategoria, null)
+  const [listinoCatSel, setListinoCatSel] = useState(current ?? '')
   const router = useRouter()
   React.useEffect(() => { if (result?.ok) router.refresh() }, [result, router])
 
@@ -151,11 +153,9 @@ function ListinoCategoriaForm({ catId, current, listiniCategorie }: { catId: num
     <form action={action} style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
       <input type="hidden" name="id" value={catId} />
       <label style={{ fontSize: 11, color: '#666', whiteSpace: 'nowrap' }}>Listino collegato:</label>
-      <select name="listino_categoria" defaultValue={current ?? ''}
-        style={{ flex: 1, minWidth: 140, padding: '4px 6px', border: '1px solid #ccc', borderRadius: 4, fontSize: 12, fontFamily: 'inherit' }}>
-        <option value="">— nessuno —</option>
-        {listiniCategorie.map(c => <option key={c} value={c}>{c}</option>)}
-      </select>
+      <SelectLookup name="listino_categoria" value={listinoCatSel} onChange={setListinoCatSel}
+        options={[{ value: '', label: '— nessuno —' }, ...listiniCategorie.map(c => ({ value: c, label: c }))]}
+        style={{ flex: 1, minWidth: 140, padding: '4px 6px', border: '1px solid #ccc', borderRadius: 4, fontSize: 12, fontFamily: 'inherit' }} />
       <button type="submit" disabled={pending} className="btn-green">
         {pending ? '…' : 'Salva'}
       </button>
@@ -355,11 +355,9 @@ function ListinoVoceForm({ voceId, current, listiniCategorie }: { voceId: number
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginTop: 5 }}>
       <label style={{ fontSize: 11, color: '#888', whiteSpace: 'nowrap' }}>Listino:</label>
-      <select value={sel} onChange={e => setSel(e.target.value)}
-        style={{ flex: 1, minWidth: 160, padding: '3px 6px', border: '1px solid #ccc', borderRadius: 4, fontSize: 12, fontFamily: 'inherit' }}>
-        <option value="">— nessuno —</option>
-        {listiniCategorie.map(c => <option key={c} value={c}>{c}</option>)}
-      </select>
+      <SelectLookup value={sel} onChange={setSel}
+        options={[{ value: '', label: '— nessuno —' }, ...listiniCategorie.map(c => ({ value: c, label: c }))]}
+        style={{ flex: 1, minWidth: 160, padding: '3px 6px', border: '1px solid #ccc', borderRadius: 4, fontSize: 12, fontFamily: 'inherit' }} />
       <button type="button" onClick={handleSave} disabled={pending} className="btn-green">
         {pending ? '…' : 'Salva'}
       </button>

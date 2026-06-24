@@ -2,6 +2,7 @@
 
 import { useActionState, useState, useEffect } from 'react'
 import { uploadDocumento } from './actions'
+import SelectLookup from '@/components/select-lookup'
 
 type ClienteOption = { id: number; label: string }
 
@@ -17,9 +18,10 @@ const labelStyle: React.CSSProperties = {
 export function UploadDocumentoForm({ clienti }: { clienti: ClienteOption[] }) {
   const [state, action, pending] = useActionState(uploadDocumento, {})
   const [resetKey, setResetKey] = useState(0)
+  const [clienteIdSel, setClienteIdSel] = useState('')
 
   useEffect(() => {
-    if (!pending && !state?.error) setResetKey(k => k + 1)
+    if (!pending && !state?.error) { setResetKey(k => k + 1); setClienteIdSel('') }
   }, [pending, state])
 
   return (
@@ -42,12 +44,9 @@ export function UploadDocumentoForm({ clienti }: { clienti: ClienteOption[] }) {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 12 }}>
         <div>
           <label style={labelStyle}>Cliente</label>
-          <select name="cliente_id" style={inputStyle}>
-            <option value="">— nessuno —</option>
-            {clienti.map(c => (
-              <option key={c.id} value={c.id}>{c.label}</option>
-            ))}
-          </select>
+          <SelectLookup name="cliente_id" value={clienteIdSel} onChange={setClienteIdSel}
+            options={[{ value: '', label: '— nessuno —' }, ...clienti.map(c => ({ value: String(c.id), label: c.label }))]}
+            style={inputStyle} />
         </div>
         <div>
           <label style={labelStyle}>Titolo *</label>

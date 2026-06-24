@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react'
 import { aggiungiAlCarrelloAcquisti, type CartResult } from '@/app/brand/cataloghi/actions'
 import { b } from '@/lib/btn'
+import SelectLookup from '@/components/select-lookup'
 
 export type ArticoloListinoAcquisto = {
   id: number
@@ -69,22 +70,19 @@ export default function AggiungiArticoloAcquistoForm({ articoli, isApp }: { arti
         <div style={{ display: 'flex', flexDirection: isApp ? 'column' : 'row', gap: 8, flexWrap: isApp ? undefined : 'wrap', alignItems: isApp ? 'stretch' : 'flex-end' }}>
           <div style={isApp ? {} : { flex: '2 1 260px' }}>
             <label className="testo-articoli" style={{ display: 'block', marginBottom: 3 }}>Articolo</label>
-            <select
-              value={selectedId}
-              onChange={e => setSelectedId(Number(e.target.value))}
-              style={inpStyle}
-            >
-              {articoli.map(a => {
+            <SelectLookup
+              value={String(selectedId)}
+              onChange={v => setSelectedId(Number(v))}
+              options={articoli.map(a => {
                 const parts = [a.descrizione, a.produttore, a.serie].filter(Boolean)
                 if (a.prezzo_vendita > 0) parts.push(`(€${Number(a.prezzo_vendita).toFixed(2)}${a.unita ? ` al ${a.unita}` : ''})`)
                 else if (a.unita) parts.push(a.unita)
                 const label = parts.join(' - ')
                 const stock = a.max_acquistabile === 0 ? ' [ESAURITO]' : a.max_acquistabile != null ? ` [Max ${a.max_acquistabile}]` : ''
-                return (
-                  <option key={a.id} value={a.id}>{label}{stock}</option>
-                )
+                return { value: String(a.id), label: `${label}${stock}` }
               })}
-            </select>
+              style={inpStyle}
+            />
           </div>
           <button
             type="button"

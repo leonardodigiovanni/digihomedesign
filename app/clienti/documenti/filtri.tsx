@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import SelectLookup from '@/components/select-lookup'
 import { documentoSrc } from '@/lib/media-src'
 import { ClienteSelect } from './cliente-select'
 import { VisibileCheckbox } from './visibile-checkbox'
@@ -67,19 +68,15 @@ export function DocumentiFiltri({ documenti, clienti }: { documenti: Documento[]
           onChange={e => setTitolo(e.target.value)}
           style={{ ...controlStyle, minWidth: 180 }}
         />
-        <select value={cliente} onChange={e => setCliente(e.target.value)} style={{ ...controlStyle, minWidth: 160 }}>
-          <option value="">Tutti i clienti</option>
-          {clienti.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
-        </select>
-        <select value={tipo} onChange={e => setTipo(e.target.value)} style={{ ...controlStyle, minWidth: 140 }}>
-          <option value="">Tutti i tipi</option>
-          {tipiDistinti.map(t => <option key={t} value={t}>{t}</option>)}
-        </select>
-        <select value={visibile} onChange={e => setVis(e.target.value)} style={{ ...controlStyle, minWidth: 120 }}>
-          <option value="">Visibilità: tutti</option>
-          <option value="1">Visibile: Sì</option>
-          <option value="0">Visibile: No</option>
-        </select>
+        <SelectLookup value={cliente} onChange={setCliente}
+          options={[{ value: '', label: 'Tutti i clienti' }, ...clienti.map(c => ({ value: String(c.id), label: c.label }))]}
+          style={{ ...controlStyle, minWidth: 160 }} />
+        <SelectLookup value={tipo} onChange={setTipo}
+          options={[{ value: '', label: 'Tutti i tipi' }, ...tipiDistinti.map(t => ({ value: t, label: t }))]}
+          style={{ ...controlStyle, minWidth: 140 }} />
+        <SelectLookup value={visibile} onChange={setVis}
+          options={[{ value: '', label: 'Visibilità: tutti' }, { value: '1', label: 'Visibile: Sì' }, { value: '0', label: 'Visibile: No' }]}
+          style={{ ...controlStyle, minWidth: 120 }} />
         {hasFilter && (
           <button
             onClick={() => { setTitolo(''); setCliente(''); setTipo(''); setVis('') }}

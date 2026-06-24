@@ -1,5 +1,6 @@
 'use client'
 import { useState, useRef } from 'react'
+import SelectLookup from '@/components/select-lookup'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -1682,9 +1683,8 @@ export default function DisegnoClient() {
               <>
                 <h3 style={{ margin: '0 0 14px', fontSize: '15px', color: '#1a3a5c' }}>+ SottoArea</h3>
                 <label style={lbl}>Zona contenitore</label>
-                <select style={inp} value={aForm.dove}
-                  onChange={e => {
-                    const newDove = e.target.value
+                <SelectLookup style={inp} value={aForm.dove}
+                  onChange={newDove => {
                     const colonIdx = aForm.modo.indexOf(':')
                     if (colonIdx !== -1) {
                       const rifName = aForm.modo.slice(colonIdx + 1)
@@ -1701,23 +1701,21 @@ export default function DisegnoClient() {
                       }
                     }
                     setAForm(f => ({ ...f, dove: newDove }))
-                  }}>
-                  {zones.map(z => <option key={z.name} value={z.name}>{zoneDimLabel(z)}</option>)}
-                </select>
+                  }}
+                  options={zones.map(z => ({ value: z.name, label: zoneDimLabel(z) }))} />
                 <label style={lbl}>Ancoraggio</label>
-                <select style={inp} value={aForm.modo}
-                  onChange={e => setAForm(f => ({ ...f, modo: e.target.value }))}>
-                  <option value="center">Centrato</option>
-                  <option value="coords">Da coordinate (x cm, y cm)</option>
-                  {areaDirectChildren.map(ch => (
-                    <optgroup key={ch} label={`— Relativo a ${ch} —`}>
-                      <option value={`sopra:${ch}`}>Sopra {ch}</option>
-                      <option value={`sotto:${ch}`}>Sotto {ch}</option>
-                      <option value={`sinistra:${ch}`}>A sinistra di {ch}</option>
-                      <option value={`destra:${ch}`}>A destra di {ch}</option>
-                    </optgroup>
-                  ))}
-                </select>
+                <SelectLookup style={inp} value={aForm.modo}
+                  onChange={v => setAForm(f => ({ ...f, modo: v }))}
+                  options={[
+                    { value: 'center', label: 'Centrato' },
+                    { value: 'coords', label: 'Da coordinate (x cm, y cm)' },
+                    ...areaDirectChildren.flatMap(ch => [
+                      { value: `sopra:${ch}`, label: `Sopra ${ch}` },
+                      { value: `sotto:${ch}`, label: `Sotto ${ch}` },
+                      { value: `sinistra:${ch}`, label: `A sinistra di ${ch}` },
+                      { value: `destra:${ch}`, label: `A destra di ${ch}` },
+                    ]),
+                  ]} />
                 {aForm.modo === 'coords' && (
                   <div style={{ display: 'flex', gap: '8px' }}>
                     <div style={{ flex: 1 }}>
@@ -1774,17 +1772,13 @@ export default function DisegnoClient() {
               <>
                 <h3 style={{ margin: '0 0 14px', fontSize: '15px', color: '#1a3a5c' }}>Aggiungi Telaio</h3>
                 <label style={lbl}>Zona (dove)</label>
-                <select style={inp} value={tForm.dove}
-                  onChange={e => setTForm(f => ({ ...f, dove: e.target.value }))}>
-                  {zones.map(z => <option key={z.name} value={z.name}>{zoneDimLabel(z)}</option>)}
-                </select>
+                <SelectLookup style={inp} value={tForm.dove}
+                  onChange={v => setTForm(f => ({ ...f, dove: v }))}
+                  options={zones.map(z => ({ value: z.name, label: zoneDimLabel(z) }))} />
                 <label style={lbl}>Modo posizionamento</label>
-                <select style={inp} value={tForm.modo}
-                  onChange={e => setTForm(f => ({ ...f, modo: e.target.value as 'centrato' | 'coords' | 'esteso' }))}>
-                  <option value="centrato">Centrato</option>
-                  <option value="coords">Da coordinate [x, y]</option>
-                  <option value="esteso">Esteso (copre tutta la zona)</option>
-                </select>
+                <SelectLookup style={inp} value={tForm.modo}
+                  onChange={v => setTForm(f => ({ ...f, modo: v as 'centrato' | 'coords' | 'esteso' }))}
+                  options={[{ value: 'centrato', label: 'Centrato' }, { value: 'coords', label: 'Da coordinate [x, y]' }, { value: 'esteso', label: 'Esteso (copre tutta la zona)' }]} />
                 {tForm.modo === 'coords' && (
                   <div style={{ display: 'flex', gap: '8px' }}>
                     <div style={{ flex: 1 }}>
@@ -1817,11 +1811,9 @@ export default function DisegnoClient() {
                 <input style={inp} type="number" value={tForm.spessore}
                   onChange={e => setTForm(f => ({ ...f, spessore: e.target.value }))} placeholder="es. 70" />
                 <label style={lbl}>Tipo apertura</label>
-                <select style={inp} value={tForm.aperto ? 'aperto' : 'chiuso'}
-                  onChange={e => setTForm(f => ({ ...f, aperto: e.target.value === 'aperto' }))}>
-                  <option value="chiuso">Chiuso (fisso)</option>
-                  <option value="aperto">Aperto (apribile)</option>
-                </select>
+                <SelectLookup style={inp} value={tForm.aperto ? 'aperto' : 'chiuso'}
+                  onChange={v => setTForm(f => ({ ...f, aperto: v === 'aperto' }))}
+                  options={[{ value: 'chiuso', label: 'Chiuso (fisso)' }, { value: 'aperto', label: 'Aperto (apribile)' }]} />
               </>
             )}
 
@@ -1829,16 +1821,13 @@ export default function DisegnoClient() {
               <>
                 <h3 style={{ margin: '0 0 14px', fontSize: '15px', color: '#1a3a5c' }}>Dividi in parti uguali</h3>
                 <label style={lbl}>Zona da dividere</label>
-                <select style={inp} value={dForm.zona}
-                  onChange={e => setDForm(f => ({ ...f, zona: e.target.value }))}>
-                  {zones.map(z => <option key={z.name} value={z.name}>{zoneDimLabel(z)}</option>)}
-                </select>
+                <SelectLookup style={inp} value={dForm.zona}
+                  onChange={v => setDForm(f => ({ ...f, zona: v }))}
+                  options={zones.map(z => ({ value: z.name, label: zoneDimLabel(z) }))} />
                 <label style={lbl}>Orientamento</label>
-                <select style={inp} value={dForm.orientamento}
-                  onChange={e => setDForm(f => ({ ...f, orientamento: e.target.value as 'verticale' | 'orizzontale' }))}>
-                  <option value="verticale">Verticale (divide in colonne)</option>
-                  <option value="orizzontale">Orizzontale (divide in righe)</option>
-                </select>
+                <SelectLookup style={inp} value={dForm.orientamento}
+                  onChange={v => setDForm(f => ({ ...f, orientamento: v as 'verticale' | 'orizzontale' }))}
+                  options={[{ value: 'verticale', label: 'Verticale (divide in colonne)' }, { value: 'orizzontale', label: 'Orizzontale (divide in righe)' }]} />
                 <label style={lbl}>Numero di aree</label>
                 <input style={inp} type="number" min="2" max="10" value={dForm.nAree}
                   onChange={e => setDForm(f => ({ ...f, nAree: e.target.value }))} placeholder="es. 2" />
@@ -1852,16 +1841,13 @@ export default function DisegnoClient() {
               <>
                 <h3 style={{ margin: '0 0 14px', fontSize: '15px', color: '#1a3a5c' }}>Dividi Area</h3>
                 <label style={lbl}>Zona da dividere</label>
-                <select style={inp} value={sForm.zona}
-                  onChange={e => setSForm(f => ({ ...f, zona: e.target.value }))}>
-                  {zones.map(z => <option key={z.name} value={z.name}>{zoneDimLabel(z)}</option>)}
-                </select>
+                <SelectLookup style={inp} value={sForm.zona}
+                  onChange={v => setSForm(f => ({ ...f, zona: v }))}
+                  options={zones.map(z => ({ value: z.name, label: zoneDimLabel(z) }))} />
                 <label style={lbl}>Orientamento taglio</label>
-                <select style={inp} value={sForm.orientamento}
-                  onChange={e => setSForm(f => ({ ...f, orientamento: e.target.value as 'verticale' | 'orizzontale' }))}>
-                  <option value="verticale">Verticale (taglia in larghezza)</option>
-                  <option value="orizzontale">Orizzontale (taglia in altezza)</option>
-                </select>
+                <SelectLookup style={inp} value={sForm.orientamento}
+                  onChange={v => setSForm(f => ({ ...f, orientamento: v as 'verticale' | 'orizzontale' }))}
+                  options={[{ value: 'verticale', label: 'Verticale (taglia in larghezza)' }, { value: 'orizzontale', label: 'Orizzontale (taglia in altezza)' }]} />
                 <label style={lbl}>
                   {sForm.orientamento === 'verticale' ? 'Distanza dal bordo sinistro (cm)' : 'Distanza dal bordo superiore (cm)'}
                 </label>
@@ -1878,16 +1864,13 @@ export default function DisegnoClient() {
               <>
                 <h3 style={{ margin: '0 0 14px', fontSize: '15px', color: '#1a3a5c' }}>+ Anta</h3>
                 <label style={lbl}>Zona</label>
-                <select style={inp} value={antaForm.zona}
-                  onChange={e => setAntaForm(f => ({ ...f, zona: e.target.value }))}>
-                  {zones.map(z => <option key={z.name} value={z.name}>{zoneDimLabel(z)}</option>)}
-                </select>
+                <SelectLookup style={inp} value={antaForm.zona}
+                  onChange={v => setAntaForm(f => ({ ...f, zona: v }))}
+                  options={zones.map(z => ({ value: z.name, label: zoneDimLabel(z) }))} />
                 <label style={lbl}>Lato cerniere</label>
-                <select style={inp} value={antaForm.lato}
-                  onChange={e => setAntaForm(f => ({ ...f, lato: e.target.value as 'sinistra' | 'destra' }))}>
-                  <option value="sinistra">Sinistra</option>
-                  <option value="destra">Destra</option>
-                </select>
+                <SelectLookup style={inp} value={antaForm.lato}
+                  onChange={v => setAntaForm(f => ({ ...f, lato: v as 'sinistra' | 'destra' }))}
+                  options={[{ value: 'sinistra', label: 'Sinistra' }, { value: 'destra', label: 'Destra' }]} />
                 <label style={lbl}>Numero cerniere</label>
                 <input style={inp} type="number" min="1" max="10" value={antaForm.nCerniere}
                   onChange={e => setAntaForm(f => ({ ...f, nCerniere: e.target.value }))}
@@ -1897,11 +1880,9 @@ export default function DisegnoClient() {
                   onChange={e => setAntaForm(f => ({ ...f, spessore: e.target.value }))}
                   placeholder="es. 70" />
                 <label style={lbl}>Maniglia</label>
-                <select style={inp} value={antaForm.maniglia ? 'si' : 'no'}
-                  onChange={e => setAntaForm(f => ({ ...f, maniglia: e.target.value === 'si' }))}>
-                  <option value="no">No</option>
-                  <option value="si">Sì</option>
-                </select>
+                <SelectLookup style={inp} value={antaForm.maniglia ? 'si' : 'no'}
+                  onChange={v => setAntaForm(f => ({ ...f, maniglia: v === 'si' }))}
+                  options={[{ value: 'no', label: 'No' }, { value: 'si', label: 'Sì' }]} />
               </>
             )}
 
@@ -1909,10 +1890,9 @@ export default function DisegnoClient() {
               <>
                 <h3 style={{ margin: '0 0 14px', fontSize: '15px', color: '#1a3a5c' }}>+ Vasistas</h3>
                 <label style={lbl}>Zona</label>
-                <select style={inp} value={vasForm.zona}
-                  onChange={e => setVasForm(f => ({ ...f, zona: e.target.value }))}>
-                  {zones.map(z => <option key={z.name} value={z.name}>{zoneDimLabel(z)}</option>)}
-                </select>
+                <SelectLookup style={inp} value={vasForm.zona}
+                  onChange={v => setVasForm(f => ({ ...f, zona: v }))}
+                  options={zones.map(z => ({ value: z.name, label: zoneDimLabel(z) }))} />
                 <label style={lbl}>Numero cerniere</label>
                 <input style={inp} type="number" min="1" max="10" value={vasForm.nCerniere}
                   onChange={e => setVasForm(f => ({ ...f, nCerniere: e.target.value }))}
@@ -1931,10 +1911,9 @@ export default function DisegnoClient() {
               <>
                 <h3 style={{ margin: '0 0 14px', fontSize: '15px', color: '#1a3a5c' }}>+ Vetro</h3>
                 <label style={lbl}>Zona</label>
-                <select style={inp} value={vForm.zona}
-                  onChange={e => setVForm({ zona: e.target.value })}>
-                  {zones.map(z => <option key={z.name} value={z.name}>{zoneDimLabel(z)}</option>)}
-                </select>
+                <SelectLookup style={inp} value={vForm.zona}
+                  onChange={v => setVForm({ zona: v })}
+                  options={zones.map(z => ({ value: z.name, label: zoneDimLabel(z) }))} />
               </>
             )}
 
@@ -1942,10 +1921,9 @@ export default function DisegnoClient() {
               <>
                 <h3 style={{ margin: '0 0 14px', fontSize: '15px', color: '#1a3a5c' }}>+ Pannello</h3>
                 <label style={lbl}>Zona</label>
-                <select style={inp} value={pnForm.zona}
-                  onChange={e => setPnForm({ zona: e.target.value })}>
-                  {zones.map(z => <option key={z.name} value={z.name}>{zoneDimLabel(z)}</option>)}
-                </select>
+                <SelectLookup style={inp} value={pnForm.zona}
+                  onChange={v => setPnForm({ zona: v })}
+                  options={zones.map(z => ({ value: z.name, label: zoneDimLabel(z) }))} />
                 <p style={{ fontSize: '11px', color: '#888', marginTop: '8px', lineHeight: 1.5 }}>
                   Pannello oscurante (colore beige). Nessuna trasparenza.
                 </p>
@@ -1956,18 +1934,13 @@ export default function DisegnoClient() {
               <>
                 <h3 style={{ margin: '0 0 14px', fontSize: '15px', color: '#1a3a5c' }}>+ Area Ortogonale</h3>
                 <label style={lbl}>Zona di ancoraggio</label>
-                <select style={inp} value={ortForm.zona}
-                  onChange={e => setOrtForm(f => ({ ...f, zona: e.target.value }))}>
-                  {zones.map(z => <option key={z.name} value={z.name}>{zoneDimLabel(z)}</option>)}
-                </select>
+                <SelectLookup style={inp} value={ortForm.zona}
+                  onChange={v => setOrtForm(f => ({ ...f, zona: v }))}
+                  options={zones.map(z => ({ value: z.name, label: zoneDimLabel(z) }))} />
                 <label style={lbl}>Lato di ancoraggio</label>
-                <select style={inp} value={ortForm.lato}
-                  onChange={e => setOrtForm(f => ({ ...f, lato: e.target.value as 'sinistra' | 'destra' | 'alto' | 'basso' }))}>
-                  <option value="destra">Destra</option>
-                  <option value="sinistra">Sinistra</option>
-                  <option value="alto">Alto</option>
-                  <option value="basso">Basso</option>
-                </select>
+                <SelectLookup style={inp} value={ortForm.lato}
+                  onChange={v => setOrtForm(f => ({ ...f, lato: v as 'sinistra' | 'destra' | 'alto' | 'basso' }))}
+                  options={[{ value: 'destra', label: 'Destra' }, { value: 'sinistra', label: 'Sinistra' }, { value: 'alto', label: 'Alto' }, { value: 'basso', label: 'Basso' }]} />
                 <label style={lbl}>Larghezza (cm)</label>
                 <input style={inp} type="number" value={ortForm.larghezza}
                   onChange={e => setOrtForm(f => ({ ...f, larghezza: e.target.value }))}
@@ -1986,10 +1959,9 @@ export default function DisegnoClient() {
               <>
                 <h3 style={{ margin: '0 0 14px', fontSize: '15px', color: '#1a3a5c' }}>Rimuovi Area</h3>
                 <label style={lbl}>Zona da rimuovere</label>
-                <select style={inp} value={raForm.zona}
-                  onChange={e => setRaForm({ zona: e.target.value })}>
-                  {zones.filter(z => z.name !== 'A1').map(z => <option key={z.name} value={z.name}>{zoneDimLabel(z)}</option>)}
-                </select>
+                <SelectLookup style={inp} value={raForm.zona}
+                  onChange={v => setRaForm({ zona: v })}
+                  options={zones.filter(z => z.name !== 'A1').map(z => ({ value: z.name, label: zoneDimLabel(z) }))} />
                 <p style={{ fontSize: '11px', color: '#888', marginTop: '8px', lineHeight: 1.5 }}>
                   Rimuove la zona selezionata e tutti gli elementi di disegno al suo interno (ricorsivo). Azione irreversibile.
                 </p>
@@ -2000,15 +1972,13 @@ export default function DisegnoClient() {
               <>
                 <h3 style={{ margin: '0 0 14px', fontSize: '15px', color: '#1a3a5c' }}>+ Unisci Aree</h3>
                 <label style={lbl}>Prima zona</label>
-                <select style={inp} value={uForm.zona1}
-                  onChange={e => setUForm(f => ({ ...f, zona1: e.target.value }))}>
-                  {zones.filter(z => z.name !== 'A1').map(z => <option key={z.name} value={z.name}>{zoneDimLabel(z)}</option>)}
-                </select>
+                <SelectLookup style={inp} value={uForm.zona1}
+                  onChange={v => setUForm(f => ({ ...f, zona1: v }))}
+                  options={zones.filter(z => z.name !== 'A1').map(z => ({ value: z.name, label: zoneDimLabel(z) }))} />
                 <label style={lbl}>Seconda zona</label>
-                <select style={inp} value={uForm.zona2}
-                  onChange={e => setUForm(f => ({ ...f, zona2: e.target.value }))}>
-                  {zones.filter(z => z.name !== 'A1').map(z => <option key={z.name} value={z.name}>{zoneDimLabel(z)}</option>)}
-                </select>
+                <SelectLookup style={inp} value={uForm.zona2}
+                  onChange={v => setUForm(f => ({ ...f, zona2: v }))}
+                  options={zones.filter(z => z.name !== 'A1').map(z => ({ value: z.name, label: zoneDimLabel(z) }))} />
                 <p style={{ fontSize: '11px', color: '#888', marginTop: '8px', lineHeight: 1.5 }}>
                   Le due zone devono essere vuote (nessun figlio né disegno) e condividere un lato intero.
                   Il risultato mantiene il nome della prima zona.
@@ -2020,16 +1990,13 @@ export default function DisegnoClient() {
               <>
                 <h3 style={{ margin: '0 0 14px', fontSize: '15px', color: '#1a3a5c' }}>+ Traversa</h3>
                 <label style={lbl}>Zona</label>
-                <select style={inp} value={trForm.zona}
-                  onChange={e => setTrForm(f => ({ ...f, zona: e.target.value }))}>
-                  {zones.map(z => <option key={z.name} value={z.name}>{zoneDimLabel(z)}</option>)}
-                </select>
+                <SelectLookup style={inp} value={trForm.zona}
+                  onChange={v => setTrForm(f => ({ ...f, zona: v }))}
+                  options={zones.map(z => ({ value: z.name, label: zoneDimLabel(z) }))} />
                 <label style={lbl}>Lato di appoggio</label>
-                <select style={inp} value={trForm.lato}
-                  onChange={e => setTrForm(f => ({ ...f, lato: e.target.value as 'alto' | 'basso' }))}>
-                  <option value="alto">Alto</option>
-                  <option value="basso">Basso</option>
-                </select>
+                <SelectLookup style={inp} value={trForm.lato}
+                  onChange={v => setTrForm(f => ({ ...f, lato: v as 'alto' | 'basso' }))}
+                  options={[{ value: 'alto', label: 'Alto' }, { value: 'basso', label: 'Basso' }]} />
                 <label style={lbl}>Spessore (mm)</label>
                 <input style={inp} type="number" value={trForm.spessore}
                   onChange={e => setTrForm(f => ({ ...f, spessore: e.target.value }))}
@@ -2044,16 +2011,13 @@ export default function DisegnoClient() {
               <>
                 <h3 style={{ margin: '0 0 14px', fontSize: '15px', color: '#1a3a5c' }}>Aggiungi Pilastrino</h3>
                 <label style={lbl}>Zona</label>
-                <select style={inp} value={pForm.zona}
-                  onChange={e => setPForm(f => ({ ...f, zona: e.target.value }))}>
-                  {zones.map(z => <option key={z.name} value={z.name}>{zoneDimLabel(z)}</option>)}
-                </select>
+                <SelectLookup style={inp} value={pForm.zona}
+                  onChange={v => setPForm(f => ({ ...f, zona: v }))}
+                  options={zones.map(z => ({ value: z.name, label: zoneDimLabel(z) }))} />
                 <label style={lbl}>Lato di appoggio</label>
-                <select style={inp} value={pForm.lato}
-                  onChange={e => setPForm(f => ({ ...f, lato: e.target.value as 'sinistra' | 'destra' }))}>
-                  <option value="sinistra">Sinistra</option>
-                  <option value="destra">Destra</option>
-                </select>
+                <SelectLookup style={inp} value={pForm.lato}
+                  onChange={v => setPForm(f => ({ ...f, lato: v as 'sinistra' | 'destra' }))}
+                  options={[{ value: 'sinistra', label: 'Sinistra' }, { value: 'destra', label: 'Destra' }]} />
                 <label style={lbl}>Spessore (mm)</label>
                 <input style={inp} type="number" value={pForm.spessore}
                   onChange={e => setPForm(f => ({ ...f, spessore: e.target.value }))}
@@ -2068,10 +2032,9 @@ export default function DisegnoClient() {
               <>
                 <h3 style={{ margin: '0 0 14px', fontSize: '15px', color: '#1a3a5c' }}>Laterale Fisso</h3>
                 <label style={lbl}>Zona</label>
-                <select style={inp} value={fForm.zona}
-                  onChange={e => setFForm(f => ({ ...f, zona: e.target.value }))}>
-                  {zones.map(z => <option key={z.name} value={z.name}>{zoneDimLabel(z)}</option>)}
-                </select>
+                <SelectLookup style={inp} value={fForm.zona}
+                  onChange={v => setFForm(f => ({ ...f, zona: v }))}
+                  options={zones.map(z => ({ value: z.name, label: zoneDimLabel(z) }))} />
                 <label style={lbl}>Spessore profilo (mm)</label>
                 <input style={inp} type="number" value={fForm.spessore}
                   onChange={e => setFForm(f => ({ ...f, spessore: e.target.value }))} placeholder="es. 70" />

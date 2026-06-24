@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, useTransition, useRef, useEffect } from 'react'
 import { addAdempimento, deleteAdempimento, updateStato, duplicaAnno } from './actions'
+import SelectLookup from '@/components/select-lookup'
 
 export type Adempimento = {
   id: number
@@ -45,6 +46,7 @@ function AddForm({ anno }: { anno: number }) {
   const [error, setError] = useState('')
   const [pending, startT] = useTransition()
   const formRef           = useRef<HTMLFormElement>(null)
+  const [ricorrenteSel, setRicorrenteSel] = useState('1')
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -99,10 +101,9 @@ function AddForm({ anno }: { anno: number }) {
         </div>
         <div>
           <label style={{ fontSize: 12, color: '#555', display: 'block', marginBottom: 2 }}>Ricorrente</label>
-          <select name="ricorrente" style={inp} defaultValue="1">
-            <option value="1">Sì (ogni anno)</option>
-            <option value="0">No (una tantum)</option>
-          </select>
+          <SelectLookup name="ricorrente" value={ricorrenteSel} onChange={setRicorrenteSel}
+            options={[{ value: '1', label: 'Sì (ogni anno)' }, { value: '0', label: 'No (una tantum)' }]}
+            style={inp} />
         </div>
         <div style={{ gridColumn: '1 / -1' }}>
           <label style={{ fontSize: 12, color: '#555', display: 'block', marginBottom: 2 }}>Note</label>
@@ -231,10 +232,9 @@ export default function AdempimentiClient({ adempimenti }: { adempimenti: Adempi
       <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20, flexWrap: 'wrap' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <label style={{ fontSize: 13, fontWeight: 600 }}>Anno:</label>
-          <select value={anno} onChange={e => setAnno(Number(e.target.value))}
-            style={{ padding: '6px 10px', fontSize: 13, border: '1px solid #ccc', borderRadius: 4, fontFamily: 'inherit' }}>
-            {anniDisponibili.map(a => <option key={a} value={a}>{a}</option>)}
-          </select>
+          <SelectLookup value={String(anno)} onChange={v => setAnno(Number(v))}
+            options={anniDisponibili.map(a => ({ value: String(a), label: String(a) }))}
+            style={{ padding: '6px 10px', fontSize: 13, border: '1px solid #ccc', borderRadius: 4, fontFamily: 'inherit' }} />
         </div>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           {[
@@ -271,16 +271,13 @@ export default function AdempimentiClient({ adempimenti }: { adempimenti: Adempi
                 {COLS.map(col => (
                   <th key={col.key} style={{ padding: '4px 6px' }}>
                     {col.key === 'ricorrente' ? (
-                      <select style={inpF} onChange={e => setFilters(p => ({ ...p, [col.key]: e.target.value }))}>
-                        <option value="">Tutti</option>
-                        <option value="1">Sì</option>
-                        <option value="0">No</option>
-                      </select>
+                      <SelectLookup value={filters[col.key] ?? ''} onChange={v => setFilters(p => ({ ...p, [col.key]: v }))}
+                        options={[{ value: '', label: 'Tutti' }, { value: '1', label: 'Sì' }, { value: '0', label: 'No' }]}
+                        style={inpF} />
                     ) : col.key === 'stato' ? (
-                      <select style={inpF} onChange={e => setFilters(p => ({ ...p, [col.key]: e.target.value }))}>
-                        <option value="">Tutti</option>
-                        {STATI.map(s => <option key={s.value} value={s.label}>{s.label}</option>)}
-                      </select>
+                      <SelectLookup value={filters[col.key] ?? ''} onChange={v => setFilters(p => ({ ...p, [col.key]: v }))}
+                        options={[{ value: '', label: 'Tutti' }, ...STATI.map(s => ({ value: s.label, label: s.label }))]}
+                        style={inpF} />
                     ) : (
                       <input style={inpF} placeholder="Filtra..."
                         onChange={e => setFilters(p => ({ ...p, [col.key]: e.target.value }))} />

@@ -4,6 +4,7 @@ import React, { useState, useMemo, useTransition, useRef, useEffect } from 'reac
 import { addCompito, updateStato, deleteCompito, type MutResult } from './actions'
 import { useRouter } from 'next/navigation'
 import { useActionState } from 'react'
+import SelectLookup from '@/components/select-lookup'
 
 // ─── Tipi ─────────────────────────────────────────────────────────────────────
 
@@ -70,10 +71,9 @@ function StatoSelect({ compito }: { compito: Compito }) {
   return (
     <form action={action} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
       <input type="hidden" name="id" value={compito.id} />
-      <select name="stato" value={stato} onChange={e => setStato(e.target.value as typeof stato)}
-        style={{ padding: '3px 6px', fontSize: 12, border: '1px solid #ccc', borderRadius: 4, fontFamily: 'inherit', background: '#fff' }}>
-        {STATI.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
-      </select>
+      <SelectLookup name="stato" value={stato} onChange={v => setStato(v as typeof stato)}
+        options={STATI.map(s => ({ value: s.value, label: s.label }))}
+        style={{ padding: '3px 6px', fontSize: 12, border: '1px solid #ccc', borderRadius: 4, fontFamily: 'inherit' }} />
       {dirty && (
         <button type="submit" disabled={pending} className={pending ? 'btn-gray' : 'btn-green'}
           style={{ padding: '3px 8px', fontSize: 11, fontFamily: 'inherit' }}>
@@ -91,6 +91,8 @@ function AddCompitoForm({ utenti, currentUser }: { utenti: Utente[]; currentUser
   const [result, action, pending] = useActionState<MutResult | null, FormData>(addCompito, null)
   const router = useRouter()
   const formRef = useRef<HTMLFormElement>(null)
+  const [assegnatoSel, setAssegnatoSel] = useState(currentUser)
+  const [prioritaSel, setPrioritaSel] = useState('normale')
 
   useEffect(() => {
     if (result?.ok) { router.refresh(); formRef.current?.reset(); setOpen(false) }
@@ -120,20 +122,15 @@ function AddCompitoForm({ utenti, currentUser }: { utenti: Utente[]; currentUser
         </div>
         <div>
           <label style={{ fontSize: 12, color: '#555', display: 'block', marginBottom: 2 }}>Assegna a *</label>
-          <select name="assegnato_a" required style={inp} defaultValue={currentUser}>
-            <option value="">— Seleziona —</option>
-            {utenti.map(u => (
-              <option key={u.username} value={u.username}>
-                {u.nome} {u.cognome} ({u.username}){u.username === currentUser ? ' — io' : ''}
-              </option>
-            ))}
-          </select>
+          <SelectLookup name="assegnato_a" required value={assegnatoSel} onChange={setAssegnatoSel}
+            options={[{ value: '', label: '— Seleziona —' }, ...utenti.map(u => ({ value: u.username, label: `${u.nome} ${u.cognome} (${u.username})${u.username === currentUser ? ' — io' : ''}` }))]}
+            style={inp} />
         </div>
         <div>
           <label style={{ fontSize: 12, color: '#555', display: 'block', marginBottom: 2 }}>Priorità</label>
-          <select name="priorita" style={inp} defaultValue="normale">
-            {PRIORITA.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
-          </select>
+          <SelectLookup name="priorita" value={prioritaSel} onChange={setPrioritaSel}
+            options={PRIORITA.map(p => ({ value: p.value, label: p.label }))}
+            style={inp} />
         </div>
         <div>
           <label style={{ fontSize: 12, color: '#555', display: 'block', marginBottom: 2 }}>Scadenza</label>
@@ -292,23 +289,16 @@ export default function WorklistClient({
     <div>
       {/* Filtri */}
       <div style={{ display: 'flex', gap: 10, marginBottom: 20, flexWrap: 'wrap', alignItems: 'center' }}>
-        <select value={filtroStato} onChange={e => setFiltroStato(e.target.value)} style={selInp}>
-          <option value="">Tutti gli stati</option>
-          {STATI.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
-        </select>
-        <select value={filtroPriorita} onChange={e => setFiltroPriorita(e.target.value)} style={selInp}>
-          <option value="">Tutte le priorità</option>
-          {PRIORITA.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
-        </select>
+        <SelectLookup value={filtroStato} onChange={setFiltroStato}
+          options={[{ value: '', label: 'Tutti gli stati' }, ...STATI.map(s => ({ value: s.value, label: s.label }))]}
+          style={selInp} />
+        <SelectLookup value={filtroPriorita} onChange={setFiltroPriorita}
+          options={[{ value: '', label: 'Tutte le priorità' }, ...PRIORITA.map(p => ({ value: p.value, label: p.label }))]}
+          style={selInp} />
         {isGestore && (
-          <select value={filtroUtente} onChange={e => setFiltroUtente(e.target.value)} style={selInp}>
-            <option value="">Tutti gli utenti</option>
-            {utenti.map(u => (
-              <option key={u.username} value={u.username}>
-                {u.nome} {u.cognome}
-              </option>
-            ))}
-          </select>
+          <SelectLookup value={filtroUtente} onChange={setFiltroUtente}
+            options={[{ value: '', label: 'Tutti gli utenti' }, ...utenti.map(u => ({ value: u.username, label: `${u.nome} ${u.cognome}` }))]}
+            style={selInp} />
         )}
         <span style={{ fontSize: 13, color: '#888' }}>{ordinati.length} compiti</span>
       </div>

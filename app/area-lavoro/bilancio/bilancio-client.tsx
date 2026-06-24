@@ -6,6 +6,7 @@ import {
   addMovimento, deleteMovimento,
   type AddMovimentoResult, type DeleteMovimentoResult,
 } from './actions'
+import SelectLookup from '@/components/select-lookup'
 import FlashSuccess from '@/components/flash-success'
 
 // ─── Tipi ────────────────────────────────────────────────────────────────────
@@ -375,25 +376,13 @@ function AddMovimentoForm() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             <label style={{ fontSize: 13, fontWeight: 500, color: '#444' }}>Categoria Conto Economico *</label>
-            <select
-              name="sezione_ce"
-              value={sezCe}
-              onChange={e => setSezCe(e.target.value)}
-              style={{ ...inputStyle, cursor: 'pointer' }}
-            >
-              {ceCats.map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
+            <SelectLookup name="sezione_ce" value={sezCe} onChange={setSezCe}
+              options={ceCats.map(c => ({ value: c, label: c }))} style={{ ...inputStyle }} />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             <label style={{ fontSize: 13, fontWeight: 500, color: '#444' }}>Categoria Stato Patrimoniale *</label>
-            <select
-              name="sezione_sp"
-              value={sezSp}
-              onChange={e => setSezSp(e.target.value)}
-              style={{ ...inputStyle, cursor: 'pointer' }}
-            >
-              {spCats.map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
+            <SelectLookup name="sezione_sp" value={sezSp} onChange={setSezSp}
+              options={spCats.map(c => ({ value: c, label: c }))} style={{ ...inputStyle }} />
           </div>
         </div>
 
@@ -569,13 +558,9 @@ export default function BilancioClient({ movimenti, anno, anni, role }: {
       {/* Header con selettore anno */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <span style={{ fontSize: 14, color: '#555', fontWeight: 500 }}>Anno di riferimento:</span>
-        <select
-          value={anno}
-          onChange={e => router.push(`/bilancio?anno=${e.target.value}`)}
-          style={{ ...inputStyle, fontSize: 15, fontWeight: 700, padding: '6px 12px', cursor: 'pointer' }}
-        >
-          {anni.map(a => <option key={a} value={a}>{a}</option>)}
-        </select>
+        <SelectLookup value={String(anno)} onChange={v => router.push(`/bilancio?anno=${v}`)}
+          options={anni.map(a => ({ value: String(a), label: String(a) }))}
+          style={{ ...inputStyle, fontSize: 15, fontWeight: 700, padding: '6px 12px' }} />
       </div>
 
       {/* KPI */}

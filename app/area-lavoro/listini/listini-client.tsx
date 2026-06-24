@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useMemo, useActionState, useTransition, useRef, useEffect, useContext, createContext } from 'react'
+import SelectLookup from '@/components/select-lookup'
 import { useRouter } from 'next/navigation'
 import { addArticolo, updateArticolo, deleteArticolo, cloneArticolo, toggleDisponibile, togglePreventivabile, toggleAcquistabile, togglePrincipale, toggleCaratteristica, toggleColonnaBooleana, updateSchedaTecnica, clearImmagine, type MutResult, type AddResult } from './actions'
 
@@ -144,6 +145,7 @@ function NuovoArticoloForm({ categorie, produttori, fornitori, onDone }: {
   const [result, action, pending] = useActionState<AddResult | null, FormData>(addArticolo, null)
   const [unitaCustom, setUnitaCustom] = useState(false)
   const [unitaSel, setUnitaSel] = useState(UNITA_PREDEFINITE[0])
+  const [fornitoreIdSel, setFornitoreIdSel] = useState('')
   const [preview, setPreview] = useState<string | null>(null)
   const fileRef      = useRef<HTMLInputElement>(null)
   const pendingFile  = useRef<File | null>(null)
@@ -240,10 +242,9 @@ function NuovoArticoloForm({ categorie, produttori, fornitori, onDone }: {
 
         <div>
           <label style={lbl}>Fornitore</label>
-          <select name="fornitore_id" style={inp}>
-            <option value="">— nessuno —</option>
-            {fornitori.map(f => <option key={f.id} value={f.id}>{f.ragione_sociale}</option>)}
-          </select>
+          <SelectLookup name="fornitore_id" value={fornitoreIdSel} onChange={setFornitoreIdSel}
+            options={[{ value: '', label: '— nessuno —' }, ...fornitori.map(f => ({ value: String(f.id), label: f.ragione_sociale }))]}
+            style={inp} />
         </div>
 
         <div>
@@ -252,11 +253,10 @@ function NuovoArticoloForm({ categorie, produttori, fornitori, onDone }: {
             <input name="unita" required style={inp} placeholder="Es. rotolo"
               autoFocus onBlur={e => { if (!e.target.value) setUnitaCustom(false) }} />
           ) : (
-            <select name="unita" required style={inp} value={unitaSel}
-              onChange={e => { if (e.target.value === '__altro__') setUnitaCustom(true); else setUnitaSel(e.target.value) }}>
-              {UNITA_PREDEFINITE.map(u => <option key={u} value={u}>{u}</option>)}
-              <option value="__altro__">+ Altra…</option>
-            </select>
+            <SelectLookup name="unita" required value={unitaSel}
+              onChange={v => { if (v === '__altro__') setUnitaCustom(true); else setUnitaSel(v) }}
+              options={[...UNITA_PREDEFINITE.map(u => ({ value: u, label: u })), { value: '__altro__', label: '+ Altra…' }]}
+              style={inp} />
           )}
         </div>
 
@@ -796,6 +796,7 @@ function RigaEdit({ art, categorie, produttori, fornitori, onDone, onSaved }: {
   const [error, setError] = useState<string | null>(null)
   const [unitaCustom, setUnitaCustom] = useState(!UNITA_PREDEFINITE.includes(art.unita))
   const [unitaSel, setUnitaSel] = useState(UNITA_PREDEFINITE.includes(art.unita) ? art.unita : UNITA_PREDEFINITE[0])
+  const [fornitoreIdSel, setFornitoreIdSel] = useState(String(art.fornitore_id ?? ''))
   const router = useRouter()
   const trRef = useRef<HTMLTableRowElement>(null)
 
@@ -828,10 +829,9 @@ function RigaEdit({ art, categorie, produttori, fornitori, onDone, onSaved }: {
         <input name="serie" defaultValue={art.serie} style={inp} placeholder="Es. AWS 75" />
       </td>
       <td style={{ ...tde, ...vis('forn') }}>
-        <select name="fornitore_id" defaultValue={art.fornitore_id ?? ''} style={{ ...inp, width: 130 }}>
-          <option value="">—</option>
-          {fornitori.map(f => <option key={f.id} value={f.id}>{f.ragione_sociale}</option>)}
-        </select>
+        <SelectLookup name="fornitore_id" value={fornitoreIdSel} onChange={setFornitoreIdSel}
+          options={[{ value: '', label: '—' }, ...fornitori.map(f => ({ value: String(f.id), label: f.ragione_sociale }))]}
+          style={{ ...inp, width: 130 }} />
       </td>
       <td style={{ ...tde, ...vis('schema') }} />
       <td style={{ ...tde, ...vis('foto') }} />
@@ -841,11 +841,10 @@ function RigaEdit({ art, categorie, produttori, fornitori, onDone, onSaved }: {
           <input name="unita" defaultValue={art.unita} required style={{ ...inp, width: 60 }}
             onBlur={e => { if (!e.target.value) setUnitaCustom(false) }} />
         ) : (
-          <select name="unita" required style={{ ...inp, width: 70 }} value={unitaSel}
-            onChange={e => { if (e.target.value === '__altro__') setUnitaCustom(true); else setUnitaSel(e.target.value) }}>
-            {UNITA_PREDEFINITE.map(u => <option key={u} value={u}>{u}</option>)}
-            <option value="__altro__">+</option>
-          </select>
+          <SelectLookup name="unita" required value={unitaSel}
+            onChange={v => { if (v === '__altro__') setUnitaCustom(true); else setUnitaSel(v) }}
+            options={[...UNITA_PREDEFINITE.map(u => ({ value: u, label: u })), { value: '__altro__', label: '+' }]}
+            style={{ ...inp, width: 70 }} />
         )}
       </td>
       <td style={{ ...tde, ...vis('minimo') }}><input name="minimo" type="number" step="0.0001" min="0" defaultValue={art.minimo ?? ''} style={{ ...inp, width: 70, textAlign: 'right' }} placeholder="—" /></td>
@@ -986,27 +985,21 @@ export default function ListiniClient({ articoli, fornitori }: { articoli: Artic
           <input placeholder="Cerca descrizione, produttore…"
             value={filtroTesto} onChange={e => setFiltroTesto(e.target.value)}
             style={{ ...selInp, minWidth: 240 }} />
-          <select value={filtroCategoria} onChange={e => setFiltroCategoria(e.target.value)} style={selInp}>
-            <option value="">Tutte le categorie</option>
-            {categorie.map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
-          <select value={filtroProduttore} onChange={e => setFiltroProduttore(e.target.value)} style={selInp}>
-            <option value="">Tutti i produttori</option>
-            {produttori.map(p => <option key={p} value={p}>{p}</option>)}
-          </select>
-          <select value={filtroSerie} onChange={e => setFiltroSerie(e.target.value)} style={selInp}>
-            <option value="">Tutte le serie</option>
-            {serie.map(s => <option key={s} value={s}>{s}</option>)}
-          </select>
-          <select value={filtroFornitore} onChange={e => setFiltroFornitore(e.target.value)} style={selInp}>
-            <option value="">Tutti i fornitori</option>
-            {fornitori.map(f => <option key={f.id} value={f.id}>{f.ragione_sociale}</option>)}
-          </select>
-          <select value={filtroDisp} onChange={e => setFiltroDisp(e.target.value as 'tutti' | 'disp' | 'nondisp')} style={selInp}>
-            <option value="tutti">Tutti gli stati</option>
-            <option value="disp">Solo disponibili</option>
-            <option value="nondisp">Solo non disponibili</option>
-          </select>
+          <SelectLookup value={filtroCategoria} onChange={setFiltroCategoria}
+            options={[{ value: '', label: 'Tutte le categorie' }, ...categorie.map(c => ({ value: c, label: c }))]}
+            style={selInp} />
+          <SelectLookup value={filtroProduttore} onChange={setFiltroProduttore}
+            options={[{ value: '', label: 'Tutti i produttori' }, ...produttori.map(p => ({ value: p, label: p }))]}
+            style={selInp} />
+          <SelectLookup value={filtroSerie} onChange={setFiltroSerie}
+            options={[{ value: '', label: 'Tutte le serie' }, ...serie.map(s => ({ value: s, label: s }))]}
+            style={selInp} />
+          <SelectLookup value={filtroFornitore} onChange={setFiltroFornitore}
+            options={[{ value: '', label: 'Tutti i fornitori' }, ...fornitori.map(f => ({ value: String(f.id), label: f.ragione_sociale }))]}
+            style={selInp} />
+          <SelectLookup value={filtroDisp} onChange={v => setFiltroDisp(v as 'tutti' | 'disp' | 'nondisp')}
+            options={[{ value: 'tutti', label: 'Tutti gli stati' }, { value: 'disp', label: 'Solo disponibili' }, { value: 'nondisp', label: 'Solo non disponibili' }]}
+            style={selInp} />
           <span style={{ fontSize: 13, color: '#888' }}>{filtrati.length} articoli</span>
         </div>
 

@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, useTransition, useRef, useEffect } from 'react'
 import { addFattura, deleteFattura, addPagamento, deletePagamento } from './actions'
+import SelectLookup from '@/components/select-lookup'
 
 function localDateStr(): string {
   const d = new Date()
@@ -69,6 +70,7 @@ function AddFatturaForm({ defaultTipo }: { defaultTipo: 'attiva' | 'passiva' }) 
   const [pending, startT] = useTransition()
   const formRef           = useRef<HTMLFormElement>(null)
   const [today, setToday] = useState('')
+  const [ivaSel, setIvaSel] = useState('22')
   useEffect(() => { setToday(localDateStr()) }, [])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -122,11 +124,9 @@ function AddFatturaForm({ defaultTipo }: { defaultTipo: 'attiva' | 'passiva' }) 
         </div>
         <div>
           <label style={{ fontSize: 12, color: '#555', display: 'block', marginBottom: 2 }}>IVA *</label>
-          <select name="iva" style={inp} defaultValue="22">
-            {IVA_OPZIONI.map(o => (
-              <option key={o.value} value={o.value}>{o.label}</option>
-            ))}
-          </select>
+          <SelectLookup name="iva" required value={ivaSel} onChange={setIvaSel}
+            options={IVA_OPZIONI.map(o => ({ value: String(o.value), label: o.label }))}
+            style={inp} />
         </div>
         <div style={{ gridColumn: '1 / -1' }}>
           <label style={{ fontSize: 12, color: '#555', display: 'block', marginBottom: 2 }}>Note</label>
@@ -310,6 +310,7 @@ function TabellaFatture({ fatture, pagamenti }: { fatture: Fattura[]; pagamenti:
   const [sortKey, setSortKey]     = useState<SortKey>('data')
   const [sortDir, setSortDir]     = useState<SortDir>('desc')
   const [filters, setFilters]     = useState<Record<string, string>>({})
+  const [statoFiltro, setStatoFiltro] = useState('all')
   const [expanded, setExpanded]   = useState<number | null>(null)
   const [pending, startT]         = useTransition()
 
@@ -375,13 +376,9 @@ function TabellaFatture({ fatture, pagamenti }: { fatture: Fattura[]; pagamenti:
             {COLS.map((col, i) => (
               <th key={i} style={{ padding: '4px 6px' }}>
                 {col.type === 'stato' ? (
-                  <select style={inpF} onChange={e => setFilters(p => ({ ...p, _stato: e.target.value }))}>
-                    <option value="all">Tutti</option>
-                    <option value="non pagata">Non pagata</option>
-                    <option value="parziale">Parziale</option>
-                    <option value="saldata">Saldata</option>
-                    <option value="eccedenza">Eccedenza</option>
-                  </select>
+                  <SelectLookup value={statoFiltro} onChange={v => { setStatoFiltro(v); setFilters(p => ({ ...p, _stato: v })) }}
+                    options={[{ value: 'all', label: 'Tutti' }, { value: 'non pagata', label: 'Non pagata' }, { value: 'parziale', label: 'Parziale' }, { value: 'saldata', label: 'Saldata' }, { value: 'eccedenza', label: 'Eccedenza' }]}
+                    style={inpF} />
                 ) : (
                   <input style={inpF} placeholder="Filtra..."
                     onChange={e => setFilters(p => ({ ...p, [col.key]: e.target.value }))} />
@@ -591,10 +588,9 @@ export default function FattureClient({ fatture, pagamenti }: { fatture: Fattura
     <div>
       {/* Filtro periodo */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24, flexWrap: 'wrap' }}>
-        <select value={anno} onChange={e => setAnno(Number(e.target.value))}
-          style={{ padding: '6px 10px', fontSize: 13, border: '1px solid #ccc', borderRadius: 4, fontFamily: 'inherit' }}>
-          {anniDisponibili.map(a => <option key={a} value={a}>{a}</option>)}
-        </select>
+        <SelectLookup value={String(anno)} onChange={v => setAnno(Number(v))}
+          options={anniDisponibili.map(a => ({ value: String(a), label: String(a) }))}
+          style={{ padding: '6px 10px', fontSize: 13, border: '1px solid #ccc', borderRadius: 4, fontFamily: 'inherit' }} />
         {TRIMESTRI.map(t => (
           <button key={t.value} onClick={() => setTrimestre(t.value)} style={btnPeriodo(trimestre === t.value)}>
             {t.label}

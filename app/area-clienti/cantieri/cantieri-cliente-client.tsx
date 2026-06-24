@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useRef } from 'react'
+import SelectLookup from '@/components/select-lookup'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import type { Cantiere, Task, Media } from '@/app/area-lavoro/cantieri/cantieri-client'
 import ApriCantiereBtn from './apri-btn'
@@ -87,10 +88,9 @@ function AddCantiereForm({ clienti, isApp }: { clienti: ClienteOpt[]; isApp?: bo
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
         <label style={{ fontSize: 12, color: '#555' }}>Cliente</label>
-        <select style={inp} value={clienteId} onChange={e => setClienteId(e.target.value)}>
-          <option value="">— Nessun cliente —</option>
-          {clienti.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
-        </select>
+        <SelectLookup value={clienteId} onChange={setClienteId}
+          options={[{ value: '', label: '— Nessun cliente —' }, ...clienti.map(c => ({ value: String(c.id), label: c.label }))]}
+          style={inp} />
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
         <label style={{ fontSize: 12, color: '#555' }}>Indirizzo</label>
@@ -98,12 +98,9 @@ function AddCantiereForm({ clienti, isApp }: { clienti: ClienteOpt[]; isApp?: bo
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
         <label style={{ fontSize: 12, color: '#555' }}>Stato</label>
-        <select style={inp} value={stato} onChange={e => setStato(e.target.value)}>
-          <option value="preventivo">Preventivo</option>
-          <option value="in_corso">In corso</option>
-          <option value="completato">Completato</option>
-          <option value="sospeso">Sospeso</option>
-        </select>
+        <SelectLookup value={stato} onChange={setStato}
+          options={[{ value: 'preventivo', label: 'Preventivo' }, { value: 'in_corso', label: 'In corso' }, { value: 'completato', label: 'Completato' }, { value: 'sospeso', label: 'Sospeso' }]}
+          style={inp} />
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -266,12 +263,9 @@ function AddTaskForm({ cantiereId, isApp }: { cantiereId: number; isApp?: boolea
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
         <label style={{ fontSize: 12, color: '#555' }}>Stato</label>
-        <select style={inp} value={stato} onChange={e => setStato(e.target.value)}>
-          <option value="da_fare">Da fare</option>
-          <option value="in_corso">In corso</option>
-          <option value="completato">Completato</option>
-          <option value="sospeso">Sospeso</option>
-        </select>
+        <SelectLookup value={stato} onChange={setStato}
+          options={[{ value: 'da_fare', label: 'Da fare' }, { value: 'in_corso', label: 'In corso' }, { value: 'completato', label: 'Completato' }, { value: 'sospeso', label: 'Sospeso' }]}
+          style={inp} />
       </div>
       {errore && <div style={{ fontSize: 12, color: '#c00' }}>{errore}</div>}
       <div style={{ display: 'flex', gap: 8 }}>
