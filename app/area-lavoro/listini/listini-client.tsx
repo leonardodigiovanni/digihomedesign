@@ -126,7 +126,7 @@ function margine(acq: number, vnd: number): { pct: string; color: string } | nul
 
 const inp: React.CSSProperties = {
   padding: '4px 6px', border: '1px solid #bbb', borderRadius: 3,
-  fontSize: 12, fontFamily: 'inherit', width: '100%', boxSizing: 'border-box',
+  fontSize: 12, fontFamily: 'inherit', width: '100%', boxSizing: 'border-box', background: '#fff',
 }
 
 const thS: React.CSSProperties = {

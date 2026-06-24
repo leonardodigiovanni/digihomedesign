@@ -61,7 +61,7 @@ function nomeCliente(c: Cliente) {
 
 const inp: React.CSSProperties = {
   padding: '5px 8px', border: '1px solid #ccc', borderRadius: 4,
-  fontSize: 13, fontFamily: 'inherit', width: '100%', boxSizing: 'border-box',
+  fontSize: 13, fontFamily: 'inherit', width: '100%', boxSizing: 'border-box', background: '#fff',
 }
 
 const inpSm: React.CSSProperties = {

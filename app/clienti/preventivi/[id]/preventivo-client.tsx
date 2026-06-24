@@ -315,7 +315,7 @@ function ClienteSelector({ preventivo_id, cliente_id, clienti: clientiInit, isAp
     setMostraForm(false)
   }
 
-  const inp: React.CSSProperties = { padding: '5px 8px', border: '1px solid #ccc', borderRadius: 5, fontSize: 13, fontFamily: 'inherit' }
+  const inp: React.CSSProperties = { padding: '5px 8px', border: '1px solid #ccc', borderRadius: 5, fontSize: 13, fontFamily: 'inherit', background: '#fff' }
 
   return (
     <div style={{

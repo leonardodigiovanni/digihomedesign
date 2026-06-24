@@ -1,6 +1,9 @@
 *, *::before, *::after {
   box-sizing: border-box;
 }
+:root {
+  color-scheme: light;
+}
 .IsDebug { display: none !important; }
 html, body {
   margin: 0;
