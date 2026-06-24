@@ -127,8 +127,7 @@ async function getArticoliDaCookie(cart: CartItem[]) {
     if (colorChild) {
       const fotoRaw = rows.find(r => r.id === colorChild.listino_id)?.foto_url
       if (fotoRaw) {
-        const fotoUrl = fotoRaw.startsWith('/') ? fotoRaw : `/${fotoRaw}`
-        a.bar_color = await extractAvgColor(fotoUrl)
+        a.bar_color = await extractAvgColor(fotoRaw.startsWith('http') ? fotoRaw : fotoRaw.startsWith('/') ? fotoRaw : `/${fotoRaw}`)
       }
       if (!a.bar_color) a.bar_color = colorFromDesc(colorChild.descrizione ?? '')
     }
@@ -136,8 +135,7 @@ async function getArticoliDaCookie(cart: CartItem[]) {
     if (colorAccChild) {
       const fotoRaw = rows.find(r => r.id === colorAccChild.listino_id)?.foto_url
       if (fotoRaw) {
-        const fotoUrl = fotoRaw.startsWith('/') ? fotoRaw : `/${fotoRaw}`
-        a.bar_color_acc = await extractAvgColor(fotoUrl)
+        a.bar_color_acc = await extractAvgColor(fotoRaw.startsWith('http') ? fotoRaw : fotoRaw.startsWith('/') ? fotoRaw : `/${fotoRaw}`)
       }
       if (!a.bar_color_acc) a.bar_color_acc = colorFromDesc(colorAccChild.descrizione ?? '')
     }

@@ -772,7 +772,7 @@ export default function CarrelloClient({
                                 {child.foto_url && (
                                   // eslint-disable-next-line @next/next/no-img-element
                                   <img
-                                    src={child.foto_url.startsWith('/') ? child.foto_url : `/${child.foto_url}`}
+                                    src={child.foto_url.startsWith('http') ? child.foto_url : child.foto_url.startsWith('/') ? child.foto_url : `/${child.foto_url}`}
                                     alt=""
                                     style={{ width: 42, height: 42, objectFit: 'cover', borderRadius: 4, display: 'block', margin: '0 auto' }}
                                   />
@@ -999,7 +999,7 @@ export default function CarrelloClient({
             ) : previewArt.foto_url ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={previewArt.foto_url.startsWith('/') ? previewArt.foto_url : `/${previewArt.foto_url}`}
+                src={previewArt.foto_url.startsWith('http') ? previewArt.foto_url : previewArt.foto_url.startsWith('/') ? previewArt.foto_url : `/${previewArt.foto_url}`}
                 alt={previewArt.descrizione}
                 style={{ maxWidth: '100%', maxHeight: '100vh', objectFit: 'contain', display: 'block' }}
               />
