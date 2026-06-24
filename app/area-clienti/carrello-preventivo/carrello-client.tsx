@@ -678,7 +678,7 @@ export default function CarrelloClient({
   // ── rendering ──────────────────────────────────────────────────────────────
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       {renderModal()}
 
       {/* Bottoni aggiunta articoli */}
@@ -750,19 +750,19 @@ export default function CarrelloClient({
         let globalIdx = 0
         return (
           <div className="carrello-overflow" style={{ overflowX: 'auto' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, width: '100%' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: '100%' }}>
             {catGroups.map(cg => {
               const groupComplete = cg.groups.every(grp => getLacuneAperte(grp[0]).length === 0)
               return (
-              <div key={cg.key} className={groupComplete ? 'sfondo-riquadri-app' : 'sfondo-orange-app'} style={{ border: '1px solid #222', borderRadius: 8, overflow: 'hidden', width: '100%', boxSizing: 'border-box' }}>
+              <div key={cg.key} className={groupComplete ? undefined : 'sfondo-orange-app'} style={{ background: groupComplete ? '#fff' : undefined, border: '1px solid #222', borderRadius: 8, overflow: 'hidden', width: '100%', boxSizing: 'border-box' }}>
                 {/* Label gruppo */}
-                <div className="sfondo-riquadri-app" style={{ padding: '6px 14px', borderBottom: '1px solid #222', fontSize: 12, fontWeight: 700, color: '#1a1a1a', fontFamily: 'monospace' }}>
+                <div style={{ background: '#fff', padding: '6px 14px', borderBottom: '1px solid #222', fontSize: 12, fontWeight: 700, color: '#1a1a1a', fontFamily: 'monospace' }}>
                   {cg.label}
                 </div>
                 <table className="carrello-table" style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
                   {renderColgroup()}
                   <thead>
-                    <tr className="sfondo-riquadri-app">
+                    <tr style={{ background: '#fff' }}>
                       <th style={{ ...thS, textAlign: 'center', width: 70 }}>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -798,7 +798,7 @@ export default function CarrelloClient({
                       return (
                         <React.Fragment key={root.index}>
                           {/* Riga articolo principale */}
-                          <tr className={hasLacune ? 'sfondo-orange-app' : 'sfondo-riquadri-app'} style={{ borderTop: groupIdx > 0 ? '1px solid #333' : undefined }}>
+                          <tr className={hasLacune ? 'sfondo-orange-app' : undefined} style={{ background: hasLacune ? undefined : '#fff', borderTop: groupIdx > 0 ? '1px solid #333' : undefined }}>
                             <td style={{ ...tdS, textAlign: 'center', padding: '4px 0' }}>
                               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
                                 <button type="button" onClick={() => setPreviewArt(root)} disabled={hasLacune || (!root.abbr && !root.foto_url)} className={(hasLacune || (!root.abbr && !root.foto_url)) ? `${b('btn-gray', isApp)} btn-icon` : `${b('btn-black', isApp)} btn-icon`} title="Anteprima infisso"
@@ -980,7 +980,7 @@ export default function CarrelloClient({
             )})}
 
             {/* Totale */}
-            <div className="sfondo-riquadri-app" style={{ border: '1px solid #222', borderRadius: 8, padding: '12px 20px', display: 'flex', flexDirection: 'column', gap: 4, color: '#1a1a1a' }}>
+            <div style={{ background: '#fff', border: '1px solid #222', borderRadius: 8, padding: '12px 20px', display: 'flex', flexDirection: 'column', gap: 4, color: '#1a1a1a' }}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <span style={{ flex: 1, fontSize: 12, color: '#1a1a1a', fontFamily: 'monospace', fontWeight: 700 }}>Listino (escluso IVA):</span>
                 <span style={{ fontSize: 12, fontWeight: 700, color: '#1a1a1a', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>{`€ ${fmt(totale)}`}</span>
@@ -1073,7 +1073,7 @@ export default function CarrelloClient({
       )}
 
       {/* Barra azioni */}
-      <div className="sfondo-riquadri-app" style={{ border: '1px solid #222', borderRadius: 10, padding: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div style={{ background: '#fff', border: '1px solid #222', borderRadius: 10, padding: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
         <p style={{ fontSize: 14, color: '#1a1a1a', margin: 0, fontFamily: 'monospace' }}>
           {isLoggedIn
             ? <><svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style={{ display: 'inline', verticalAlign: 'middle', marginRight: 6, flexShrink: 0 }}><path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z"/></svg>Se non procedi al trasferimento nella tua area personale, ti consigliamo di scaricare il pdf o stamparlo perché non verrà salvato nel nostro sistema.</>
