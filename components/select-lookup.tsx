@@ -95,6 +95,7 @@ export default function SelectLookup({ value, onChange, options, placeholder = '
           value={query}
           onChange={e => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
+          onClick={() => { setOpen(false); setQuery('') }}
           placeholder="Cerca..."
           style={{ ...base, cursor: 'text', paddingRight: 8 }}
         />
