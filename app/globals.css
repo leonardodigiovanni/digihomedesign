@@ -4,6 +4,10 @@
 :root {
   color-scheme: light;
 }
+select, option {
+  background-color: #fff;
+  color: #333;
+}
 .IsDebug { display: none !important; }
 html, body {
   margin: 0;
