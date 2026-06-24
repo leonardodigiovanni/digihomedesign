@@ -165,6 +165,14 @@ export default function CatalogoWrapper({ voci, articoliPerListino, isStaff, isL
     articoliVisibili = selectedVoce.listino_categoria
       ? articoliPerListino[selectedVoce.listino_categoria] ?? []
       : []
+  } else if (voci.length === 0) {
+    const seen = new Set<number>()
+    articoliVisibili = []
+    for (const arts of Object.values(articoliPerListino)) {
+      for (const a of arts) {
+        if (!seen.has(a.id)) { seen.add(a.id); articoliVisibili.push(a) }
+      }
+    }
   } else {
     const seen = new Set<number>()
     articoliVisibili = []
@@ -203,13 +211,13 @@ export default function CatalogoWrapper({ voci, articoliPerListino, isStaff, isL
         />
       )}
 
-      {vociFiltrate.length === 0 ? (
+      {voci.length > 0 && (vociFiltrate.length === 0 ? (
         <p className="fs-13" style={{ color: '#aaa', padding: '12px 0' }}>
           Nessun catalogo corrisponde ai filtri selezionati.
         </p>
       ) : (
         <CatalogoClient voci={vociFiltrate} onSelect={setSelectedVoce} categorySlug={categorySlug} basePath={basePath} isApp={isApp} />
-      )}
+      ))}
 
       {mostraFiltri && (
         <RigaFiltri

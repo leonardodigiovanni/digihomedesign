@@ -6,10 +6,12 @@ import PreviewInfisso from '@/components/preview-infisso'
 import { b } from '@/lib/btn'
 import {
   rimuoviDaCarrello, salvaCarrelloComePreventivo, svuotaCarrello,
-  aggiornaArticoloCarrello, aggiungiArticoloAlCarrello, impostaParentPendente,
-  applicaCaratteristicaAlCarrello,
+  aggiornaArticoloCarrello, aggiungiArticoloAlCarrello,
+  applicaCaratteristicaAlCarrello, fetchCaratteristicheOpt,
+  type OptCarItem,
 } from '@/app/brand/cataloghi/actions'
 import { DropdownLoginForm } from '@/components/header-auth'
+import SelectLookup from '@/components/select-lookup'
 
 export type CaratteristicaListino = {
   id: number
@@ -66,6 +68,7 @@ type ModalState =
   | { type: 'edit'; item: ArticoloCarrello }
   | { type: 'duplica'; lastItem: ArticoloCarrello }
   | { type: 'lacuna'; target: ArticoloCarrello; lacuna: string }
+  | { type: 'opt_car'; target: ArticoloCarrello }
 
 type EditVals = { q: number; ante: number; l: number; h: number; colore: string; note: string; desc: string }
 
@@ -140,10 +143,13 @@ export default function CarrelloClient({
   isApp?: boolean
 }) {
   const router = useRouter()
-  const [delPending,  startDel]   = useTransition()
-  const [savePending, startSave]  = useTransition()
-  const [clearPending, startClear] = useTransition()
-  const [actPending,  startAct]   = useTransition()
+  const [delPending,    startDel]    = useTransition()
+  const [savePending,   startSave]   = useTransition()
+  const [clearPending,  startClear]  = useTransition()
+  const [actPending,    startAct]    = useTransition()
+  const [optCarPending, startOptCar] = useTransition()
+  const [optCarOpzioni, setOptCarOpzioni] = useState<OptCarItem[]>([])
+  const [optCarNote,    setOptCarNote]    = useState('')
   const [saveError, setSaveError] = useState('')
   const [editError, setEditError] = useState('')
   const [modal, setModal]         = useState<ModalState>(null)
@@ -209,6 +215,7 @@ export default function CarrelloClient({
   const lastTopLevel = [...articoli].reverse().find(a => !a.parent && a.tipo !== 'caratteristica')
 
   const hasLacuneAperte = articoli.some(a => !a.parent && a.tipo !== 'caratteristica' && getLacuneAperte(a).length > 0)
+  const hasDaDefinire = articoli.some(a => !a.parent && a.tipo !== 'caratteristica' && calcolaPrezzo(a, articoli) === 0 && (a.sconto_articolo ?? 0) !== 100)
 
   // ── modal openers ──────────────────────────────────────────────────────────
 
@@ -236,9 +243,31 @@ export default function CarrelloClient({
     return lacune
   }
 
-  async function handleAggiungiComeFiglio(a: ArticoloCarrello) {
-    await impostaParentPendente(a.uid, a.descrizione, getLacuneAperte(a))
-    router.push(cataloghiHref)
+  function handleAggiungiComeFiglio(root: ArticoloCarrello) {
+    startOptCar(async () => {
+      const opzioni = await fetchCaratteristicheOpt(root.categoria, root.produttore)
+      setOptCarOpzioni(opzioni)
+      setLacunaFilter('')
+      setLacunaSelected(null)
+      setOptCarNote('')
+      setModal({ type: 'opt_car', target: root })
+    })
+  }
+
+  function handleApplicaOptCar() {
+    if (modal?.type !== 'opt_car') return
+    if (!lacunaSelected) return
+    const { target } = modal
+    const selectedId = lacunaSelected
+    const nota = optCarNote.trim() || undefined
+    startAct(async () => {
+      const result = await applicaCaratteristicaAlCarrello([target.uid], selectedId, nota)
+      if (result.ok && result.newCart) {
+        document.cookie = `digi_cart=${result.newCart}; max-age=${30 * 24 * 60 * 60}; path=/; samesite=lax`
+      }
+      setModal(null)
+      router.refresh()
+    })
   }
 
   function handleAggiungiLacuna(a: ArticoloCarrello, lacuna: string) {
@@ -293,7 +322,7 @@ export default function CarrelloClient({
     startAct(async () => {
       let res
       if (item.tipo === 'caratteristica') {
-        res = await aggiornaArticoloCarrello(item.index, { desc: editVals.desc })
+        res = await aggiornaArticoloCarrello(item.index, { desc: editVals.desc, note: editVals.note || undefined })
       } else {
         res = await aggiornaArticoloCarrello(item.index, {
           q:      editVals.q,
@@ -366,11 +395,6 @@ export default function CarrelloClient({
     setExpandedUID(prev => prev === uid ? null : uid)
   }
 
-  async function handleAggiungiCaratteristicaUltimo() {
-    if (!lastTopLevel) return
-    await impostaParentPendente(lastTopLevel.uid, lastTopLevel.descrizione, getLacuneAperte(lastTopLevel))
-    router.push(cataloghiHref)
-  }
 
   // ── stili ──────────────────────────────────────────────────────────────────
 
@@ -502,6 +526,61 @@ export default function CarrelloClient({
       )
     }
 
+    // ── Modal opt_car ───────────────────────────────────────────────────────────
+    if (modal.type === 'opt_car') {
+      const { target } = modal
+      return (
+        <div
+          onClick={onClose}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{ background: '#fff', borderRadius: 12, padding: '24px 28px', maxWidth: 520, width: '100%', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}
+          >
+            <h3 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 6px', color: '#1a1a1a' }}>Aggiungi elemento opzionale</h3>
+            <p style={{ fontSize: 14, color: '#1a1a1a', margin: '0 0 18px' }}>
+              Articolo selezionato: <strong>{target.produttore ? `${target.produttore} — ` : ''}{target.descrizione}</strong>
+            </p>
+            <div style={fieldS}>
+              <label style={lblS}>Scegli l'elemento da aggiungere</label>
+              <SelectLookup
+                value={lacunaSelected ? String(lacunaSelected) : ''}
+                onChange={v => setLacunaSelected(parseInt(v) || null)}
+                placeholder="— Seleziona elemento —"
+                options={optCarOpzioni.map(c => {
+                  const magg = c.sconto_articolo < 0 ? ` (Magg. del ${Math.abs(c.sconto_articolo)}%)` : ''
+                  const prefix = c.produttore ? `${c.produttore} · ` : ''
+                  return { value: String(c.id), label: `${prefix}${c.descrizione}${magg}` }
+                })}
+              />
+            </div>
+            <div style={fieldS}>
+              <label style={lblS}>Note (opzionale)</label>
+              <textarea
+                value={optCarNote}
+                onChange={e => setOptCarNote(e.target.value)}
+                rows={3}
+                placeholder="Eventuali richieste specifiche…"
+                style={{ ...inpS, resize: 'vertical' }}
+              />
+            </div>
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginTop: 8, alignItems: 'center' }}>
+              <button type="button" onClick={onClose} className={b('btn-orange', isApp)}
+                style={{ fontSize: 14, paddingLeft: 24, paddingRight: 24 }}>
+                Annulla
+              </button>
+              <button type="button" onClick={handleApplicaOptCar} disabled={!lacunaSelected || actPending}
+                className={(!lacunaSelected || actPending) ? b('btn-gray', isApp) : b('btn-green', isApp)}
+                style={{ fontSize: 14, paddingLeft: 24, paddingRight: 24 }}>
+                {actPending ? '…' : 'Applica'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )
+    }
+
     // ── Modal edit / duplica ────────────────────────────────────────────────────
     const isEdit    = modal.type === 'edit'
     const isDuplica = modal.type === 'duplica'
@@ -561,6 +640,18 @@ export default function CarrelloClient({
                     </div>
                   )}
                 </div>
+                {isEdit && (
+                  <div style={fieldS}>
+                    <label style={lblS}>Note</label>
+                    <textarea
+                      value={(vals as EditVals).note}
+                      onChange={e => setVals({ note: e.target.value })}
+                      rows={3}
+                      placeholder="Eventuali richieste specifiche…"
+                      style={{ ...inpS, resize: 'vertical' }}
+                    />
+                  </div>
+                )}
               </>
             )
           })()}
@@ -700,7 +791,7 @@ export default function CarrelloClient({
                       const showVetro     = root.richiede_tipo_vetro      === 1 && !childrenOfRoot.some(c => c.richiede_tipo_vetro      === 1)
                       const showMontaggio = root.richiede_tipo_montaggio  === 1 && !childrenOfRoot.some(c => c.richiede_tipo_montaggio  === 1)
                       const hasLacune   = showColore || showColoreAcc || showVetro || showMontaggio
-                      const hasDetails  = children.length > 0 || hasLacune
+                      const hasDetails  = true
                       const isExpanded  = expandedUID === root.uid
                       const expandBg     = isExpanded ? (hasLacune ? '#fdecea' : '#d6ecd6') : undefined
                       const expandBgRoot = isExpanded ? (hasLacune ? '#f5b8b4' : '#b8d9b8') : undefined
@@ -710,7 +801,7 @@ export default function CarrelloClient({
                           <tr className={hasLacune ? 'sfondo-orange-app' : 'sfondo-riquadri-app'} style={{ borderTop: groupIdx > 0 ? '1px solid #333' : undefined }}>
                             <td style={{ ...tdS, textAlign: 'center', padding: '4px 0' }}>
                               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-                                <button type="button" onClick={() => setPreviewArt(root)} disabled={hasLacune} className={hasLacune ? `${b('btn-gray', isApp)} btn-icon` : `${b('btn-black', isApp)} btn-icon`} title="Anteprima infisso"
+                                <button type="button" onClick={() => setPreviewArt(root)} disabled={hasLacune || (!root.abbr && !root.foto_url)} className={(hasLacune || (!root.abbr && !root.foto_url)) ? `${b('btn-gray', isApp)} btn-icon` : `${b('btn-black', isApp)} btn-icon`} title="Anteprima infisso"
                                   style={{ fontFamily: 'inherit' }}>
                                   <svg style={{ position: 'relative', zIndex: 1 }} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                                 </button>
@@ -745,10 +836,16 @@ export default function CarrelloClient({
                                   rif #{String(gi + 1).padStart(3, '0')}
                                 </div>
                                 <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px', whiteSpace: 'nowrap' }}>
-                                  {renderPrezzo(isExpanded
-                                    ? calcolaPrezzo(root, articoli)
-                                    : calcolaPrezzo(root, articoli) + children.reduce((s, c) => s + calcolaPrezzo(c, articoli), 0)
-                                  )}
+                                  {calcolaPrezzo(root, articoli) === 0
+                                    ? ((root.sconto_articolo ?? 0) === 100
+                                        ? <span style={{ fontSize: 10, fontStyle: 'italic', color: '#2e7d32', fontFamily: 'monospace' }}>Omaggio</span>
+                                        : <span style={{ fontSize: 10, fontStyle: 'italic', color: '#c77700', fontFamily: 'monospace' }}>Da def.</span>
+                                      )
+                                    : renderPrezzo(isExpanded
+                                        ? calcolaPrezzo(root, articoli)
+                                        : calcolaPrezzo(root, articoli) + children.reduce((s, c) => s + calcolaPrezzo(c, articoli), 0)
+                                      )
+                                  }
                                 </div>
                               </div>
                             </td>
@@ -779,7 +876,7 @@ export default function CarrelloClient({
                                 )}
                               </td>
                               <td style={{ ...tdS, paddingLeft: 8, textAlign: 'left' }}>
-                                {child.descrizione}
+                                {child.descrizione}{child.note ? ` (${child.note})` : ''}
                                 {(() => {
                                   const parts: string[] = []
                                   if (child.ante && child.ante > 1) parts.push(`${child.ante} ante`)
@@ -788,7 +885,6 @@ export default function CarrelloClient({
                                   if (child.colore)       parts.push(child.colore)
                                   return <div style={{ fontSize: 12, color: '#1a1a1a', marginTop: 1, textAlign: 'left' }}>{parts.join(' · ')}</div>
                                 })()}
-                                {child.note && <div style={{ fontSize: 12, color: '#1a1a1a', marginTop: 1, fontStyle: 'italic', textAlign: 'left' }}>{child.note}</div>}
                               </td>
                               <td style={{ ...tdS, textAlign: 'center', padding: '4px' }}>
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'center' }}>
@@ -799,21 +895,35 @@ export default function CarrelloClient({
                                     : child.richiede_tipo_montaggio  === 1 ? 'Montaggio'
                                     : ''}
                                   </div>
-                                  <div style={{ whiteSpace: 'nowrap' }}>{renderPrezzo(calcolaPrezzo(child, articoli))}</div>
+                                  <div style={{ whiteSpace: 'nowrap' }}>
+                                    {calcolaPrezzo(child, articoli) === 0
+                                      ? ((child.sconto_articolo ?? 0) === 100
+                                          ? <span style={{ fontSize: 10, fontStyle: 'italic', color: '#2e7d32' }}>Omaggio</span>
+                                          : (child.descrizione ?? '').toLowerCase().includes('nessun')
+                                            ? <span style={{ fontSize: 10, fontStyle: 'italic', color: '#b00020' }}>Escluso</span>
+                                            : <span style={{ fontSize: 10, fontStyle: 'italic', color: '#555' }}>Incluso</span>
+                                        )
+                                      : renderPrezzo(calcolaPrezzo(child, articoli))
+                                    }
+                                  </div>
                                 </div>
                               </td>
                               <td style={{ ...tdS, padding: '4px 0', textAlign: 'center' }}>
-                                <button type="button" onClick={() => handleRimuovi(child.index)} disabled={delPending} className={`${b('btn-red', isApp)} btn-icon`}
-                                  style={{ fontFamily: 'inherit' }}>
-                                  <span style={{ position: 'relative', zIndex: 1, fontSize: 14 }}>✕</span>
-                                </button>
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                                  <button type="button" onClick={() => openEdit(child)} className={`${b('btn-black', isApp)} btn-icon`}
+                                    style={{ fontFamily: 'inherit' }}>
+                                    <span style={{ position: 'relative', zIndex: 1, fontSize: 14, display: 'inline-block', transform: 'rotate(135deg)' }}>✏</span>
+                                  </button>
+                                  <button type="button" onClick={() => handleRimuovi(child.index)} disabled={delPending} className={`${b('btn-red', isApp)} btn-icon`}
+                                    style={{ fontFamily: 'inherit' }}>
+                                    <span style={{ position: 'relative', zIndex: 1, fontSize: 14 }}>✕</span>
+                                  </button>
+                                </div>
                               </td>
                             </tr>
                           ))}
                           {/* Riga bottoni lacune */}
                           {isExpanded && hasLacune && (() => {
-                            const lacuneCount = [showColore, showColoreAcc, showVetro, showMontaggio].filter(Boolean).length
-                            const cols = lacuneCount <= 3 ? lacuneCount : 2
                             return (
                               <tr style={{ background: '#ffffff' }}>
                                 <td colSpan={4} style={{ padding: 12, borderBottom: '1px solid #333', borderRight: 'none', textAlign: 'left', background: '#ffffff' }}>
@@ -843,6 +953,24 @@ export default function CarrelloClient({
                               </tr>
                             )
                           })()}
+                          {/* Riga + aggiungi quando espanso e senza lacune (es. ristrutturazione) */}
+                          {isExpanded && !hasLacune && (
+                            <tr style={{ background: '#ffffff' }}>
+                              <td style={{ padding: '4px', textAlign: 'center', borderBottom: '1px solid #333' }}>
+                                <button type="button" onClick={() => handleAggiungiComeFiglio(root)}
+                                  disabled={optCarPending}
+                                  className={`${optCarPending ? b('btn-gray', isApp) : b('btn-pink', isApp)} btn-icon`}
+                                  style={{ border: 'none' }}>
+                                  <span style={{ position: 'relative', zIndex: 1, fontSize: 22, lineHeight: 1, fontWeight: 300 }}>
+                                    {optCarPending ? '…' : '+'}
+                                  </span>
+                                </button>
+                              </td>
+                              <td colSpan={3} style={{ padding: '4px 8px', borderBottom: '1px solid #333', fontSize: 11, color: '#555' }}>
+                                Aggiungi elemento (opzionale)
+                              </td>
+                            </tr>
+                          )}
                         </React.Fragment>
                       )
                     })}
@@ -857,6 +985,11 @@ export default function CarrelloClient({
                 <span style={{ flex: 1, fontSize: 12, color: '#1a1a1a', fontFamily: 'monospace', fontWeight: 700 }}>Listino (escluso IVA):</span>
                 <span style={{ fontSize: 12, fontWeight: 700, color: '#1a1a1a', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>{`€ ${fmt(totale)}`}</span>
               </div>
+              {hasDaDefinire && (
+                <div style={{ textAlign: 'right', fontSize: 11, color: '#c77700', fontStyle: 'italic', fontFamily: 'monospace' }}>
+                  + Prezzi da definire
+                </div>
+              )}
             </div>
           </div>
           </div>

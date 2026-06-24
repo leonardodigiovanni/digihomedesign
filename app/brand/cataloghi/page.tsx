@@ -46,6 +46,8 @@ async function getCategorie(): Promise<CategoriaCard[]> {
         (SELECT COUNT(*) FROM listini l WHERE l.categoria = cc.listino_categoria AND l.disponibile = 1 AND l.preventivabile = 1) AS n_prev,
         (SELECT COUNT(*) FROM listini l WHERE l.categoria = cc.listino_categoria AND l.disponibile = 1 AND l.acquistabile  = 1) AS n_vend
       FROM catalogo_categorie cc
+      WHERE EXISTS (SELECT 1 FROM catalogo_voci cv WHERE cv.categoria_id = cc.id)
+         OR (cc.listino_categoria IS NOT NULL AND EXISTS (SELECT 1 FROM listini l WHERE l.categoria = cc.listino_categoria AND l.disponibile = 1 AND (l.preventivabile = 1 OR l.acquistabile = 1)))
       ORDER BY cc.ordine ASC, cc.nome ASC
     `) as [{ id: number; nome: string; listino_categoria: string | null; n_prev: number; n_vend: number }[], unknown]
 

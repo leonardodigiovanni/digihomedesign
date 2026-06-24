@@ -72,7 +72,7 @@ export default function SelectLookup({ value, onChange, options, placeholder = '
   }
 
   return (
-    <div ref={wrapRef} style={{ position: 'relative', display: 'inline-block', width: style?.width ?? style?.minWidth ? undefined : '100%', minWidth: style?.minWidth, maxWidth: style?.maxWidth }}>
+    <div ref={wrapRef} style={{ position: 'relative', display: 'inline-block', width: style?.width ?? (style?.minWidth ? undefined : '100%'), minWidth: style?.minWidth, maxWidth: style?.maxWidth }}>
       {name && <input type="hidden" name={name} value={value} required={required} />}
       {/* campo chiuso */}
       {!open && (

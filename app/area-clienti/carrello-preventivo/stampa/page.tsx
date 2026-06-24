@@ -32,6 +32,8 @@ export type ArtRow = {
   foto_url: string
   profilo_mm: number
   abbr: string
+  richiede_larghezza?: number
+  richiede_altezza?: number
   richiede_tipo_colore?: number
   richiede_tipo_colore_acc?: number
   richiede_tipo_vetro?: number
@@ -659,8 +661,10 @@ function caratteristicheHTML(children: ArtRow[], allArts: ArtRow[], parentPrezzo
       : ''
     const fotoAttr = fotoUrl.replace(/"/g, '%22')
     const label = [c.categoria, [c.produttore, c.descrizione].filter(Boolean).join(' ')].filter(Boolean).join(': ')
-    const sign = contrib >= 0 ? '+' : '−'
-    const contribColor = '#111'
+    const isIncluso = contrib === 0 && c.prezzo_vendita === 0 && c.sconto_articolo === 0
+    const prezzoHtml = isIncluso
+      ? `<div style="font-size:10.5px;font-style:italic;color:#555;white-space:nowrap;">Incluso</div>`
+      : `<div style="font-size:10.5px;font-weight:bold;color:#111;white-space:nowrap;">${contrib >= 0 ? '+' : '−'}€ ${fmt(Math.abs(contrib))}</div>`
     return `<div style="display:flex;align-items:center;gap:8px;padding:2px 0;border-bottom:1px solid #ececec;">
       <div style="width:40px;height:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
         ${fotoUrl
@@ -668,7 +672,7 @@ function caratteristicheHTML(children: ArtRow[], allArts: ArtRow[], parentPrezzo
           : `<div style="width:40px;height:28px;background:#ececec;border-radius:2px;"></div>`}
       </div>
       <div style="flex:1;font-size:10.5px;color:#333;line-height:1.4;">${label || 'Caratteristica'}</div>
-      <div style="font-size:10.5px;font-weight:bold;color:${contribColor};white-space:nowrap;">${sign}€ ${fmt(Math.abs(contrib))}</div>
+      ${prezzoHtml}
     </div>`
   }).join('\n')
 
@@ -699,7 +703,10 @@ function caratteristichePreviewHTML(children: ArtRow[], allArts: ArtRow[], paren
       : ''
     const fotoAttr = fotoUrl.replace(/"/g, '%22')
     const label = [c.categoria, [c.produttore, c.descrizione].filter(Boolean).join(' ')].filter(Boolean).join(': ')
-    const sign = contrib >= 0 ? '+' : '−'
+    const isIncluso = contrib === 0 && c.prezzo_vendita === 0 && c.sconto_articolo === 0
+    const prezzoHtml = isIncluso
+      ? `<div style="font-size:10.5px;font-style:italic;color:#555;white-space:nowrap;">Incluso</div>`
+      : `<div style="font-size:10.5px;font-weight:bold;color:#111;white-space:nowrap;">${contrib >= 0 ? '+' : '−'}€ ${fmt(Math.abs(contrib))}</div>`
     return `<div style="display:flex;align-items:center;gap:8px;padding:2px 0;border-bottom:1px solid #ececec;">
       <div style="width:40px;height:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
         ${fotoUrl
@@ -707,7 +714,7 @@ function caratteristichePreviewHTML(children: ArtRow[], allArts: ArtRow[], paren
           : `<div style="width:40px;height:28px;background:#ececec;border-radius:2px;"></div>`}
       </div>
       <div style="flex:1;font-size:10.5px;color:#333;line-height:1.4;">${label || 'Caratteristica'}</div>
-      <div style="font-size:10.5px;font-weight:bold;color:#111;white-space:nowrap;">${sign}€ ${fmt(Math.abs(contrib))}</div>
+      ${prezzoHtml}
     </div>`
   }).join('\n')
   return `<div style="border-top:1px solid #d0d0d0;background:#f5f5f5;padding:4px 10px 5px;">
@@ -738,7 +745,7 @@ function articoloBlockHTML(parent: ArtRow, children: ArtRow[], allArts: ArtRow[]
     `<span style="color:#555;">Produttore:</span> ${parent.produttore || '—'}`,
     `<span style="color:#555;">Articolo:</span> ${parent.descrizione}`,
     `<span style="color:#555;">Unità:</span> ${parent.unita}`,
-    `<span style="color:#555;">Prezzo unit.:</span> € ${fmt(Number(parent.prezzo_vendita))}`,
+    `<span style="color:#555;">Prezzo unit.:</span> ${subtotale === 0 && parent.sconto_articolo !== 100 ? '<span style="color:#c77700;font-style:italic;">Da definire</span>' : subtotale === 0 && parent.sconto_articolo === 100 ? '<span style="color:#2e7d32;font-style:italic;">Omaggio</span>' : `€ ${fmt(Number(parent.prezzo_vendita))}`}`,
     `<span style="color:#555;">Quantità:</span> ${parent.quantita}`,
   ]
 
@@ -783,7 +790,7 @@ function articoloBlockHTML(parent: ArtRow, children: ArtRow[], allArts: ArtRow[]
 }
 
 
-function riepilogoHTML(roots: ArtRow[], totale: string): string {
+function riepilogoHTML(roots: ArtRow[], totale: string, hasDaDefinire = false): string {
   const rows = roots.map(r => {
     const dims = r.larghezza_cm > 0 && r.altezza_cm > 0 ? `${r.larghezza_cm}×${r.altezza_cm} cm` : '—'
     const serieLabel = [r.produttore, r.serie || r.descrizione].filter(Boolean).join(' ')
@@ -826,7 +833,7 @@ function riepilogoHTML(roots: ArtRow[], totale: string): string {
     ${rows}
   </tbody>
 </table>
-${totaleNoteHtml(totale)}
+${totaleNoteHtml(totale, hasDaDefinire)}
 <div style="font-size:12px;color:#333;line-height:1.6;margin-top:10px;margin-bottom:10px;">
   <div style="margin-bottom:2px;">Restando a Sua completa disposizione per qualsiasi chiarimento o approfondimento, porgiamo</div>
   <div style="font-weight:bold;">Cordiali saluti</div>
@@ -907,15 +914,17 @@ function footerTemplateHtml(): string {
 </div>`
 }
 
-function totaleNoteHtml(totale: string): string {
+function totaleNoteHtml(totale: string, hasDaDefinire = false): string {
   return `<div style="text-align:right;margin-top:8px;padding:7px 12px;background:#f5f5f5;border:1px solid #ddd;">
   <div style="font-size:10px;color:#555;margin-bottom:2px;">Totale offerta (escluso IVA)</div>
   <div style="font-size:20px;font-weight:bold;color:#111;">€ ${fmt(parseFloat(totale))}</div>
+  ${hasDaDefinire ? `<div style="text-align:right;font-size:11px;color:#c77700;font-style:italic;margin-top:2px;">+ Prezzi da definire</div>` : ''}
 </div>`
 }
 
 function accettazioneHtml(): string {
   return `<div style="margin-top:8px;padding-top:8px;font-size:12px;line-height:1.4;color:#222;font-family:'Times New Roman',Times,serif;">
+  <div style="margin-bottom:12px;padding:8px 12px;border:1px solid #e53e3e;border-radius:4px;color:#c00;font-size:11px;font-weight:600;line-height:1.5;text-align:justify;text-transform:uppercase;">Questo preventivo è provvisorio e non può essere accettato.<br/>A titolo esemplificativo le proponiamo lo schema di accettazione nel futuro preventivo ufficiale.</div>
   <div style="font-size:11px;font-weight:bold;text-align:center;text-decoration:underline;letter-spacing:.04em;margin-bottom:8px;">ACCETTAZIONE</div>
   <div style="margin-bottom:3px;">Con l'accettazione del preventivo ufficiale il Cliente dichiara:</div>
   <div style="margin-left:12px;margin-bottom:2px;">• di aver letto integralmente l'elenco degli articoli;</div>
@@ -931,7 +940,7 @@ function accettazioneHtml(): string {
   <div style="margin-left:12px;margin-bottom:12px;">• procedura di Firma Elettronica Avanzata con OTP dall'area personale del sito.</div>
   <div style="display:flex;justify-content:space-between;font-size:12px;color:#333;margin-top:24px;">
     <div>Luogo e data, ________________,___________</div>
-    <div>PER ACCETTAZIONE ________________________________________________</div>
+    <div style="position:relative;">PER ACCETTAZIONE ________________________________________________<img src="/images/app/NO-SIGN-TRASP.png" style="position:absolute;bottom:0;left:62%;transform:translateX(-50%);width:130px;opacity:0.85;pointer-events:none;" /></div>
   </div>
 </div>`
 }
@@ -990,9 +999,11 @@ export async function buildStampaData(opts: {
     return 4
   }
 
+  const hasArticoliDaDefinire = roots.some(p => calcolaPrezzo(p, arts) === 0 && p.sconto_articolo !== 100)
+
   const blocks: StampaBlock[] = []
 
-  blocks.push({ html: riepilogoHTML(roots, totale) })
+  blocks.push({ html: riepilogoHTML(roots, totale, hasArticoliDaDefinire) })
   blocks.push({ html: `<div style="font-size:11px;font-weight:bold;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid #ddd;">DETTAGLIO FORNITURA:</div>`, forceNewPage: true })
 
   for (const p of roots) {
@@ -1010,7 +1021,7 @@ export async function buildStampaData(opts: {
     }
   }
 
-  blocks.push({ html: totaleNoteHtml(totale) })
+  blocks.push({ html: totaleNoteHtml(totale, hasArticoliDaDefinire) })
 
   const prevArts = condizioniPreventivoArticles()
   const prevMid  = 9
@@ -1054,9 +1065,9 @@ export default async function Page() {
     const ids = cart.map(i => i.id)
     const ph  = ids.map(() => '?').join(',')
     const [rows] = await db.query(
-      `SELECT id, categoria, produttore, serie, descrizione, unita, prezzo_vendita, sconto_articolo, costante, foto_url, profilo_frontale_mm, abbr, richiede_tipo_colore, richiede_tipo_colore_acc, richiede_tipo_vetro, richiede_tipo_montaggio, trasmittanza_uw, minimo FROM listini WHERE id IN (${ph})`,
+      `SELECT id, categoria, produttore, serie, descrizione, unita, prezzo_vendita, sconto_articolo, costante, foto_url, profilo_frontale_mm, abbr, richiede_larghezza, richiede_altezza, richiede_tipo_colore, richiede_tipo_colore_acc, richiede_tipo_vetro, richiede_tipo_montaggio, trasmittanza_uw, minimo FROM listini WHERE id IN (${ph})`,
       ids
-    ) as [{ id: number; categoria: string; produttore: string; serie: string; descrizione: string; unita: string; prezzo_vendita: number; sconto_articolo: number; costante: number; foto_url: string | null; profilo_frontale_mm: number | null; abbr: string | null; richiede_tipo_colore: number | null; richiede_tipo_colore_acc: number | null; richiede_tipo_vetro: number | null; richiede_tipo_montaggio: number | null; minimo: number | null; trasmittanza_uw: number | null }[], unknown]
+    ) as [{ id: number; categoria: string; produttore: string; serie: string; descrizione: string; unita: string; prezzo_vendita: number; sconto_articolo: number; costante: number; foto_url: string | null; profilo_frontale_mm: number | null; abbr: string | null; richiede_larghezza: number | null; richiede_altezza: number | null; richiede_tipo_colore: number | null; richiede_tipo_colore_acc: number | null; richiede_tipo_vetro: number | null; richiede_tipo_montaggio: number | null; minimo: number | null; trasmittanza_uw: number | null }[], unknown]
 
     let rootIdx = 0
     arts = cart.map((item) => {
@@ -1081,6 +1092,8 @@ export default async function Page() {
         foto_url: r.foto_url ?? '',
         profilo_mm: Number(r.profilo_frontale_mm ?? 0),
         abbr: r.abbr ?? '',
+        richiede_larghezza:       Number(r.richiede_larghezza       ?? 0),
+        richiede_altezza:         Number(r.richiede_altezza         ?? 0),
         richiede_tipo_colore:     Number(r.richiede_tipo_colore     ?? 0),
         richiede_tipo_colore_acc: Number(r.richiede_tipo_colore_acc ?? 0),
         richiede_tipo_vetro:      Number(r.richiede_tipo_vetro      ?? 0),

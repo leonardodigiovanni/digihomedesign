@@ -131,6 +131,8 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
              l.principale, l.caratteristica,
              l.richiede_tipo_colore, l.richiede_tipo_colore_acc, l.richiede_tipo_vetro, l.richiede_tipo_montaggio,
              l.minimo,
+             l.Filtro_1 AS filtro_1, l.Filtro_2 AS filtro_2, l.Filtro_3 AS filtro_3, l.Filtro_4 AS filtro_4,
+             l.schema_url,
              COALESCE(f.ragione_sociale, '') AS fornitore_nome
       FROM listini l
       LEFT JOIN fornitori f ON f.id = l.fornitore_id
@@ -138,7 +140,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       ORDER BY l.categoria, l.produttore, l.serie, l.descrizione
     `) as [Record<string, unknown>[], unknown]
 
-    type RawListino = { id: number; categoria: string; produttore: string; serie: string; descrizione: string; unita: string; prezzo_vendita: number; prezzo_acquisto: number; sconto_articolo: number; fornitore_nome: string; principale: number; caratteristica: number; richiede_tipo_colore: number; richiede_tipo_colore_acc: number; richiede_tipo_vetro: number; richiede_tipo_montaggio: number; minimo: number | null }
+    type RawListino = { id: number; categoria: string; produttore: string; serie: string; descrizione: string; unita: string; prezzo_vendita: number; prezzo_acquisto: number; sconto_articolo: number; fornitore_nome: string; principale: number; caratteristica: number; richiede_tipo_colore: number; richiede_tipo_colore_acc: number; richiede_tipo_vetro: number; richiede_tipo_montaggio: number; minimo: number | null; filtro_1: number; filtro_2: number; filtro_3: number; filtro_4: number; schema_url: string | null }
     const allListini: RawListino[] = (listiniRows as Record<string, unknown>[]).map(l => ({
       id: Number(l.id),
       categoria: String(l.categoria ?? ''),
@@ -157,6 +159,11 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       richiede_tipo_vetro:      Number(l.richiede_tipo_vetro      ?? 0),
       richiede_tipo_montaggio:  Number(l.richiede_tipo_montaggio  ?? 0),
       minimo: l.minimo != null ? Number(l.minimo) : null,
+      filtro_1: Number(l.filtro_1 ?? 0),
+      filtro_2: Number(l.filtro_2 ?? 0),
+      filtro_3: Number(l.filtro_3 ?? 0),
+      filtro_4: Number(l.filtro_4 ?? 0),
+      schema_url: l.schema_url != null ? String(l.schema_url) : null,
     }))
 
     let listini: ListinoItem[]
@@ -172,7 +179,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
           best.set(key, l)
         }
       }
-      listini = [...best.values()].map(l => ({ id: l.id, categoria: l.categoria, produttore: l.produttore, serie: l.serie, descrizione: l.descrizione, unita: l.unita, prezzo_vendita: l.prezzo_vendita, sconto_articolo: l.sconto_articolo, fornitore_nome: l.fornitore_nome, principale: l.principale, caratteristica: l.caratteristica, richiede_tipo_colore: l.richiede_tipo_colore, richiede_tipo_colore_acc: l.richiede_tipo_colore_acc, richiede_tipo_vetro: l.richiede_tipo_vetro, richiede_tipo_montaggio: l.richiede_tipo_montaggio, minimo: l.minimo }))
+      listini = [...best.values()].map(l => ({ id: l.id, categoria: l.categoria, produttore: l.produttore, serie: l.serie, descrizione: l.descrizione, unita: l.unita, prezzo_vendita: l.prezzo_vendita, sconto_articolo: l.sconto_articolo, fornitore_nome: l.fornitore_nome, principale: l.principale, caratteristica: l.caratteristica, richiede_tipo_colore: l.richiede_tipo_colore, richiede_tipo_colore_acc: l.richiede_tipo_colore_acc, richiede_tipo_vetro: l.richiede_tipo_vetro, richiede_tipo_montaggio: l.richiede_tipo_montaggio, minimo: l.minimo, filtro_1: l.filtro_1, filtro_2: l.filtro_2, filtro_3: l.filtro_3, filtro_4: l.filtro_4, schema_url: l.schema_url }))
     }
 
     let clienteEmail = '', clienteCellulare = ''

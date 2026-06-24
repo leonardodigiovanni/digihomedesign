@@ -192,7 +192,8 @@ export async function aggiornaArticoloCarrello(
 
 export async function applicaCaratteristicaAlCarrello(
   parentUids: number[],
-  listinoId: number
+  listinoId: number,
+  note?: string
 ): Promise<CartResult> {
   if (!listinoId || parentUids.length === 0) return { ok: false, error: 'Dati non validi.' }
   const cs   = await cookies()
@@ -216,6 +217,7 @@ export async function applicaCaratteristicaAlCarrello(
         if (parentItem.h) newItem.h = parentItem.h
         newItem.q = parentItem.q
       }
+      if (note?.trim()) newItem.note = note.trim()
       const parentIdx = cart.findIndex(i => i.uid === parentUid)
       let insertIdx = parentIdx + 1
       while (insertIdx < cart.length && cart[insertIdx].parent === parentUid) insertIdx++
@@ -588,6 +590,36 @@ export async function salvaCarrelloComePreventivo(): Promise<SaveResult> {
 
 export async function importaCarrello(): Promise<void> {
   await salvaCarrelloComePreventivo()
+}
+
+// ─── Caratteristiche opzionali per una categoria/produttore ──────────────────
+
+export type OptCarItem = {
+  id: number
+  categoria: string
+  produttore: string
+  descrizione: string
+  prezzo_vendita: number
+  sconto_articolo: number
+}
+
+export async function fetchCaratteristicheOpt(categoria: string, produttore: string): Promise<OptCarItem[]> {
+  const db = await getConnection()
+  try {
+    const [rows] = await db.query(
+      `SELECT id, COALESCE(categoria,'') AS categoria, COALESCE(produttore,'') AS produttore,
+              descrizione, prezzo_vendita, sconto_articolo
+       FROM listini
+       WHERE caratteristica = 1 AND disponibile = 1 AND preventivabile = 1
+         AND (categoria = '' OR categoria IS NULL OR categoria = ?)
+         AND (produttore = '' OR produttore IS NULL OR produttore = ?)
+       ORDER BY descrizione ASC`,
+      [categoria, produttore]
+    )
+    return rows as OptCarItem[]
+  } finally {
+    await db.end()
+  }
 }
 
 // ─── Aggiungi articolo direttamente a un preventivo esistente ────────────────

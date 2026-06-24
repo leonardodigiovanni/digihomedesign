@@ -27,6 +27,11 @@ export type ListinoItem = {
   richiede_tipo_vetro?: number
   richiede_tipo_montaggio?: number
   minimo?: number | null
+  filtro_1?: number
+  filtro_2?: number
+  filtro_3?: number
+  filtro_4?: number
+  schema_url?: string | null
 }
 
 export type Articolo = {
@@ -317,7 +322,7 @@ function ClienteSelector({ preventivo_id, cliente_id, clienti: clientiInit, isAp
 
   return (
     <div style={{
-      background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 8,
+      background: '#fff', border: '1px solid #d0d0d0', borderRadius: 8,
       padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 10,
     }}>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
@@ -372,6 +377,15 @@ function ClienteSelector({ preventivo_id, cliente_id, clienti: clientiInit, isAp
     </div>
   )
 }
+
+// ─── Filtri modello (linguette) ───────────────────────────────────────────────
+
+const FILTRI_MODELLO: { label: string; key: 'filtro_1' | 'filtro_2' | 'filtro_3' | 'filtro_4' }[] = [
+  { label: '1 Anta',    key: 'filtro_1' },
+  { label: '2 Ante',   key: 'filtro_2' },
+  { label: '3+ Ante',  key: 'filtro_3' },
+  { label: 'Sopraluce', key: 'filtro_4' },
+]
 
 // ─── Form aggiunta articolo ───────────────────────────────────────────────────
 
@@ -429,15 +443,26 @@ function ArticoloForm({
   }, [listini, parentId, parentArt, gapTypeFilter])
 
   const tipi   = useMemo(() => [...new Set(listiniFiltrati.map(l => l.categoria))].sort(), [listiniFiltrati])
-  const marche = useMemo(
-    () => [...new Set(listiniFiltrati.filter(l => l.categoria === tipo).map(l => l.produttore))].filter(Boolean).sort(),
-    [listiniFiltrati, tipo]
-  )
+
+  const [filtriModelloAttivi, setFiltriModelloAttivi] = useState<Set<string>>(new Set())
+  const [schemaFiltro, setSchemaFiltro] = useState<string | null>(null)
+
+  const marche = useMemo(() => {
+    let base = listiniFiltrati.filter(l => l.categoria === tipo)
+    if (filtriModelloAttivi.size > 0) {
+      base = base.filter(l => [...filtriModelloAttivi].every(lbl => {
+        const f = FILTRI_MODELLO.find(f => f.label === lbl)
+        return f && (l[f.key] ?? 0) === 1
+      }))
+    }
+    if (schemaFiltro) base = base.filter(l => l.schema_url === schemaFiltro)
+    return [...new Set(base.map(l => l.produttore))].filter(Boolean).sort()
+  }, [listiniFiltrati, tipo, filtriModelloAttivi, schemaFiltro])
   const modelli = useMemo(
     () => isCaratteristicaMode
       ? listiniFiltrati
-      : listiniFiltrati.filter(l => l.categoria === tipo && l.produttore === marca),
-    [listiniFiltrati, tipo, marca, isCaratteristicaMode]
+      : listiniFiltrati.filter(l => l.categoria === tipo),
+    [listiniFiltrati, tipo, isCaratteristicaMode]
   )
   const listinoSel = useMemo(
     () => listiniFiltrati.find(l => l.id === parseInt(listinoId)),
@@ -446,6 +471,59 @@ function ArticoloForm({
 
   const haVetro = TIPI_CON_VETRO.has(tipo.toLowerCase())
 
+  const haFiltriModello = useMemo(
+    () => !isCaratteristicaMode && tipo !== '' && FILTRI_MODELLO.some(f =>
+      listiniFiltrati.filter(l => l.categoria === tipo).some(m => (m[f.key] ?? 0) === 1)
+    ),
+    [listiniFiltrati, tipo, isCaratteristicaMode]
+  )
+
+  const modelliFiltrati = useMemo(() => {
+    if (isCaratteristicaMode) {
+      if (filtriModelloAttivi.size === 0) return modelli
+      return modelli.filter(m => [...filtriModelloAttivi].every(lbl => {
+        const f = FILTRI_MODELLO.find(f => f.label === lbl)
+        return f && (m[f.key] ?? 0) === 1
+      }))
+    }
+    let base = modelli
+    if (filtriModelloAttivi.size > 0) {
+      base = base.filter(m => [...filtriModelloAttivi].every(lbl => {
+        const f = FILTRI_MODELLO.find(f => f.label === lbl)
+        return f && (m[f.key] ?? 0) === 1
+      }))
+    }
+    if (marca) base = base.filter(m => m.produttore === marca)
+    return base
+  }, [modelli, filtriModelloAttivi, marca, isCaratteristicaMode])
+
+  const thumbnailsData = useMemo(() => {
+    if (!tipo) return []
+    let base = listiniFiltrati.filter(l => l.categoria === tipo && l.principale === 1)
+    if (filtriModelloAttivi.size > 0) {
+      base = base.filter(m => [...filtriModelloAttivi].every(lbl => {
+        const f = FILTRI_MODELLO.find(f => f.label === lbl)
+        return f && (m[f.key] ?? 0) === 1
+      }))
+    }
+    if (marca) base = base.filter(l => l.produttore === marca)
+    const map = new Map<string, number[]>()
+    for (const m of base) {
+      if (!m.schema_url) continue
+      const ids = map.get(m.schema_url) ?? []
+      ids.push(m.id)
+      map.set(m.schema_url, ids)
+    }
+    return [...map.entries()]
+      .map(([url, ids]) => ({ url, count: ids.length, singleId: ids.length === 1 ? ids[0] : null }))
+      .sort((a, b) => b.count - a.count)
+  }, [listiniFiltrati, tipo, filtriModelloAttivi, marca])
+
+  const modelliConSchema = useMemo(() => {
+    if (!schemaFiltro) return modelliFiltrati
+    return modelliFiltrati.filter(m => m.schema_url === schemaFiltro)
+  }, [modelliFiltrati, schemaFiltro])
+
   function toggleAccessorio(nome: string) {
     setAccessoriSel(prev =>
       prev.includes(nome) ? prev.filter(x => x !== nome) : [...prev, nome]
@@ -453,11 +531,11 @@ function ArticoloForm({
   }
 
   function handleChangeTipo(t: string) {
-    setTipo(t); setMarca(''); setListinoId('')
+    setTipo(t); setMarca(''); setListinoId(''); setFiltriModelloAttivi(new Set()); setSchemaFiltro(null)
   }
 
   function handleChangeMarca(m: string) {
-    setMarca(m); setListinoId('')
+    setMarca(m); setListinoId(''); setSchemaFiltro(null)
   }
 
   function buildFd(targetParentId: number | null): FormData {
@@ -513,12 +591,12 @@ function ArticoloForm({
   return (
     <div style={{
       position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)',
-      zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center',
-      padding: 20,
+      zIndex: 1000, display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
+      padding: 20, overflowY: 'auto',
     }}>
       <div style={{
-        background: '#fff', borderRadius: 10, padding: 28, width: '100%', maxWidth: 620,
-        maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 8px 40px rgba(0,0,0,0.18)',
+        background: '#fff', borderRadius: 10, padding: 28, width: '100%', maxWidth: 'calc(100vw - 40px)',
+        boxShadow: '0 8px 40px rgba(0,0,0,0.18)', marginTop: 'auto', marginBottom: 'auto',
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: parentId ? 4 : 20 }}>
           <h3 style={{ margin: 0, fontSize: 17, fontWeight: 700 }}>
@@ -583,29 +661,114 @@ function ArticoloForm({
                   />
                 </div>
 
-                {/* Marca */}
+                {/* Linguette filtro (visibili subito dopo il tipo, se la categoria le ha) */}
+                {tipo && haFiltriModello && (() => {
+                  const H = 28, THUMB = 22
+                  const chipsDisponibili = FILTRI_MODELLO.filter(f =>
+                    listiniFiltrati.filter(l => l.categoria === tipo).some(m => (m[f.key] ?? 0) === 1)
+                  )
+                  return (
+                    <div style={{
+                      display: 'flex', alignItems: 'center', gap: 0,
+                      background: '#fff', border: '1px solid #d0d0d0', borderRadius: 10,
+                      padding: '6px 12px', overflow: 'hidden',
+                    }}>
+                      <button type="button" disabled={filtriModelloAttivi.size === 0}
+                        className={`${filtriModelloAttivi.size > 0 ? 'btn-red' : 'btn-gray'} btn-icon fs-11`}
+                        style={{ flexShrink: 0 }}
+                        onClick={() => { setFiltriModelloAttivi(new Set()); setSchemaFiltro(null); setMarca(''); setListinoId('') }}
+                      >✕</button>
+                      <div style={{ width: 1, height: 20, background: '#ddd', flexShrink: 0, margin: '0 10px' }} />
+                      <div style={{ display: 'flex', gap: 6, overflowX: 'auto', WebkitOverflowScrolling: 'touch' as const, paddingBottom: 2 }}>
+                        {chipsDisponibili.map(f => {
+                          const attiva = filtriModelloAttivi.has(f.label)
+                          const W = Math.max(THUMB + 8 + f.label.length * 7, 90)
+                          return (
+                            <div key={f.label} role="button" tabIndex={0}
+                              onClick={() => {
+                                setFiltriModelloAttivi(prev => { const n = new Set(prev); n.has(f.label) ? n.delete(f.label) : n.add(f.label); return n })
+                                setSchemaFiltro(null); setMarca(''); setListinoId('')
+                              }}
+                              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setFiltriModelloAttivi(prev => { const n = new Set(prev); n.has(f.label) ? n.delete(f.label) : n.add(f.label); return n }); setSchemaFiltro(null); setMarca(''); setListinoId('') } }}
+                              style={{ position: 'relative', width: W, height: H, borderRadius: H / 2, flexShrink: 0, background: attiva ? '#1e5c1e' : '#3a3a3a', transition: 'background 0.2s', cursor: 'pointer', userSelect: 'none' }}
+                            >
+                              <span style={{ position: 'absolute', left: 8, top: 0, bottom: 0, display: 'flex', alignItems: 'center', fontSize: 10, fontFamily: 'inherit', fontWeight: 700, color: attiva ? '#7dda7d' : 'transparent', transition: 'color 0.2s', whiteSpace: 'nowrap', pointerEvents: 'none' }}>{f.label}</span>
+                              <span style={{ position: 'absolute', right: 8, top: 0, bottom: 0, display: 'flex', alignItems: 'center', fontSize: 10, fontFamily: 'inherit', fontWeight: 400, color: attiva ? 'transparent' : '#aaaaaa', transition: 'color 0.2s', whiteSpace: 'nowrap', pointerEvents: 'none' }}>{f.label}</span>
+                              <div style={{ position: 'absolute', width: THUMB, height: THUMB, borderRadius: '50%', background: '#fff', top: (H - THUMB) / 2, left: attiva ? W - THUMB - 3 : 3, transition: 'left 0.2s', boxShadow: '0 1px 4px rgba(0,0,0,0.5)' }} />
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )
+                })()}
+
+                {/* Schemi — visibili dopo tipo/linguette, prima della marca */}
+                {tipo && thumbnailsData.length > 0 && (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: 8 }}>
+                    {thumbnailsData.map(({ url, count, singleId }) => {
+                      const isSelected = schemaFiltro === url || (singleId !== null && listinoId === String(singleId))
+                      return (
+                        <button
+                          key={url}
+                          type="button"
+                          onClick={() => {
+                            if (singleId !== null) {
+                              const item = listiniFiltrati.find(l => l.id === singleId)
+                              if (item) setMarca(item.produttore)
+                              setListinoId(String(singleId))
+                              setSchemaFiltro(null)
+                            } else {
+                              setSchemaFiltro(isSelected ? null : url)
+                              setMarca(''); setListinoId('')
+                            }
+                          }}
+                          title={count > 1 ? `${count} modelli` : undefined}
+                          style={{
+                            padding: 0, background: '#fff', cursor: 'pointer',
+                            border: isSelected ? '2px solid #c8960c' : '1px solid #ddd',
+                            borderRadius: 6, overflow: 'hidden',
+                            boxShadow: isSelected ? '0 0 0 2px rgba(200,150,12,0.25)' : 'none',
+                          }}
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={url} alt="" style={{ display: 'block', width: '100%', height: 70, objectFit: 'contain', background: '#f9f9f9' }} />
+                        </button>
+                      )
+                    })}
+                  </div>
+                )}
+
+                {/* Marca (filtro opzionale) */}
                 {tipo && (
                   <div>
-                    <span style={label}>Marca *</span>
+                    <span style={label}>Marca</span>
                     <SelectLookup
                       name="marca"
                       value={marca}
                       onChange={v => handleChangeMarca(v)}
-                      required
-                      options={[{ value: '', label: '— Seleziona marca —' }, ...marche.map(m => ({ value: m, label: m }))]}
+                      options={[{ value: '', label: '— Tutte le marche —' }, ...marche.map(m => ({ value: m, label: m }))]}
                       style={inp}
                     />
                   </div>
                 )}
 
                 {/* Modello */}
-                {marca && (
+                {tipo && (
                   <div>
-                    <span style={label}>Modello / Profilo *</span>
+                    <span style={label}>
+                      Modello / Profilo *{modelliConSchema.length !== modelliFiltrati.length ? ` (${modelliConSchema.length} di ${modelliFiltrati.length})` : ''}
+                    </span>
                     <SelectLookup
                       value={listinoId}
-                      onChange={setListinoId}
-                      options={[{ value: '', label: '— Seleziona modello —' }, ...modelli.map(m => {
+                      onChange={v => {
+                        setListinoId(v)
+                        if (v) {
+                          const item = listiniFiltrati.find(l => l.id === parseInt(v))
+                          if (item) setMarca(item.produttore)
+                        }
+                      }}
+                      options={[{ value: '', label: '— Seleziona modello —' }, ...modelliConSchema.map(m => {
                         const sc = m.sconto_articolo ?? 0
                         const promo = sc !== 0 ? (sc < 0 ? ` · Magg. +${Math.abs(sc)}%` : ` · Sconto -${sc}%`) : ''
                         const details = isStaff
@@ -976,6 +1139,10 @@ function ModificaArticoloModal({ articolo, parentArt, children = [], listini, on
                   <span style={label}>Sconto %</span>
                   <input type="number" name="sconto_articolo_pct" min={-100} max={100} step="0.01" defaultValue={articolo.sconto_articolo_pct} style={inp} />
                 </div>
+                <div>
+                  <span style={label}>Nota</span>
+                  <input type="text" name="note" defaultValue={articolo.note ?? ''} placeholder="es. bagno" style={inp} />
+                </div>
               </>
             ) : isChildPerc ? (
               <>
@@ -1011,6 +1178,10 @@ function ModificaArticoloModal({ articolo, parentArt, children = [], listini, on
                 <div>
                   <span style={label}>Quantità</span>
                   <input type="number" name="quantita" min={1} defaultValue={articolo.quantita > 0 ? articolo.quantita : 1} style={inp} />
+                </div>
+                <div>
+                  <span style={label}>Nota</span>
+                  <input type="text" name="note" defaultValue={articolo.note ?? ''} placeholder="es. bagno" style={inp} />
                 </div>
               </>
             ) : (
@@ -1362,7 +1533,7 @@ export default function PreventivoClient({
     overflow: 'hidden', wordBreak: 'break-word', fontFamily: 'monospace',
   }
 
-  const VERDE = 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)'
+  const VERDE = '#fff'
   const ROSA  = 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)'
 
   function renderPrezzo(value: number) {
@@ -1377,7 +1548,7 @@ export default function PreventivoClient({
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
       {/* Header */}
       <div>
@@ -1409,7 +1580,7 @@ export default function PreventivoClient({
       )}
 
       {/* Pulsanti azione */}
-      <div style={{ background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 8, padding: '12px 16px', display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+      <div style={{ background: '#fff', border: '1px solid #d0d0d0', borderRadius: 8, padding: '12px 16px', display: 'flex', gap: 10, flexWrap: 'wrap' }}>
         {(preventivo.stato === 'bozza' || (isStaff && preventivo.stato === 'da inviare')) && (
           <>
             <button

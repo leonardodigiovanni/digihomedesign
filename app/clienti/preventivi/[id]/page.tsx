@@ -114,6 +114,8 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
              l.principale, l.caratteristica,
              l.richiede_tipo_colore, l.richiede_tipo_colore_acc, l.richiede_tipo_vetro, l.richiede_tipo_montaggio,
              l.minimo,
+             l.Filtro_1 AS filtro_1, l.Filtro_2 AS filtro_2, l.Filtro_3 AS filtro_3, l.Filtro_4 AS filtro_4,
+             l.schema_url,
              COALESCE(f.ragione_sociale, '') AS fornitore_nome
       FROM listini l
       LEFT JOIN fornitori f ON f.id = l.fornitore_id
@@ -139,6 +141,11 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       richiede_tipo_vetro:      Number(l.richiede_tipo_vetro      ?? 0),
       richiede_tipo_montaggio:  Number(l.richiede_tipo_montaggio  ?? 0),
       minimo: l.minimo != null ? Number(l.minimo) : null,
+      filtro_1: Number(l.filtro_1 ?? 0),
+      filtro_2: Number(l.filtro_2 ?? 0),
+      filtro_3: Number(l.filtro_3 ?? 0),
+      filtro_4: Number(l.filtro_4 ?? 0),
+      schema_url: l.schema_url != null ? String(l.schema_url) : null,
     }))
 
     const [clientiRows] = await db.query(
