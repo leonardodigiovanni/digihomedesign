@@ -1742,8 +1742,8 @@ export default function PreventivoClient({
                               {root.note && <div style={{ fontSize: 12, color: '#555', marginTop: 1, fontStyle: 'italic', textAlign: 'left' }}>{root.note}</div>}
                             </td>
                             {/* Col 3: Q.tà + Rif + Prezzo */}
-                            <td style={{ ...tdS, padding: 0, height: 1, textAlign: 'center' }}>
-                              <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                            <td style={{ ...tdS, padding: 0, textAlign: 'center', position: 'relative' }}>
+                              <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column' }}>
                                 <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid #222', fontSize: 12, color: '#1a1a1a', padding: '0 4px' }}>
                                   N°&nbsp;{root.quantita}
                                 </div>
@@ -1821,8 +1821,8 @@ export default function PreventivoClient({
                                 {child.modello || child.tipo_prodotto || '—'}{child.note ? ` (${child.note})` : ''}
                               </td>
                               {/* Col 3: N° (se >1) + prezzo */}
-                              <td style={{ ...tdS, padding: 0, height: 1, textAlign: 'center' }}>
-                                <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                              <td style={{ ...tdS, padding: 0, textAlign: 'center', position: 'relative' }}>
+                                <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column' }}>
                                   {child.quantita > 1 && (
                                     <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid #e0e0e0', fontSize: 12, color: '#1a1a1a', padding: '0 4px', whiteSpace: 'nowrap' }}>
                                       N°&nbsp;{child.quantita}
