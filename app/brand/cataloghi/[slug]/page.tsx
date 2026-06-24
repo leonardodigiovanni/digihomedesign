@@ -215,44 +215,49 @@ export default async function Page({ params }: Props) {
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>
         {categoria.nome}
       </h1>
-      <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '24px 28px', marginBottom: 8 }}>
-        <p className="testo-articoli" style={{ margin: 0 }}>Sfoglia i cataloghi disponibili:</p>
-      </div>
 
-      <CatalogoWrapper
-        voci={voci}
-        articoliPerListino={articoliPerListino}
-        isStaff={isStaff}
-        isLoggedIn={!!username}
-        preventiviBozza={preventiviBozza}
-        cartNonVuoto={cartNonVuoto}
-        parentPendente={parentPendente}
-        categorySlug={slug}
-        submitLabel="Conferma"
-        mostraFiltri={slug === 'infissi-in-alluminio'}
-      />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
-      {articoliAcquisto.length > 0 && (
-        <>
-          <h2 className="fs-16" style={{ fontWeight: 700, margin: '8px 0 0', color: '#1a1a1a' }}>
-            Articoli acquistabili
-          </h2>
-          <p className="fs-13" style={{ color: '#888', margin: '2px 0 0' }}>
-            Questi articoli sono disponibili per l&apos;acquisto diretto.
-          </p>
-          <div style={{ marginTop: 8 }}><AggiungiArticoloAcquisto articoli={articoliAcquisto} /></div>
-        </>
-      )}
+        <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '24px 24px' }}>
+          <p className="testo-articoli" style={{ margin: 0 }}>Sfoglia i cataloghi disponibili:</p>
+        </div>
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
-        <Link href="/brand/cataloghi" className="btn-black fs-12" style={{ flex: 1 }}>
-          ← Torna ai Cataloghi
-        </Link>
-        {cartNonVuoto && (
-          <Link href="/area-clienti/carrello-preventivo" className="btn-black fs-12" style={{ flex: 1 }}>
-            Vai alla simulazione
-          </Link>
+        <CatalogoWrapper
+          voci={voci}
+          articoliPerListino={articoliPerListino}
+          isStaff={isStaff}
+          isLoggedIn={!!username}
+          preventiviBozza={preventiviBozza}
+          cartNonVuoto={cartNonVuoto}
+          parentPendente={parentPendente}
+          categorySlug={slug}
+          submitLabel="Conferma"
+          mostraFiltri={slug === 'infissi-in-alluminio'}
+        />
+
+        {articoliAcquisto.length > 0 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <h2 className="fs-16" style={{ fontWeight: 700, margin: 0, color: '#1a1a1a' }}>
+              Articoli acquistabili
+            </h2>
+            <p className="fs-13" style={{ color: '#888', margin: 0 }}>
+              Questi articoli sono disponibili per l&apos;acquisto diretto.
+            </p>
+            <AggiungiArticoloAcquisto articoli={articoliAcquisto} />
+          </div>
         )}
+
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          <Link href="/brand/cataloghi" className="btn-black fs-12" style={{ flex: 1 }}>
+            ← Torna ai Cataloghi
+          </Link>
+          {cartNonVuoto && (
+            <Link href="/area-clienti/carrello-preventivo" className="btn-black fs-12" style={{ flex: 1 }}>
+              Vai alla simulazione
+            </Link>
+          )}
+        </div>
+
       </div>
     </div>
   )
