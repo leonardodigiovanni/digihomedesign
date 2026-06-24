@@ -342,9 +342,9 @@ function ClienteSelector({ preventivo_id, cliente_id, clienti: clientiInit, isAp
           </button>
           <button
             onClick={handleSave}
-            disabled={pending || sel === '' || sel === (cliente_id?.toString() ?? '')}
+            disabled={pending || sel === (cliente_id?.toString() ?? '')}
             className={b('btn-black', isApp)}
-            style={{ padding: '0 16px', fontSize: 13, opacity: (sel === '' || sel === (cliente_id?.toString() ?? '')) ? 0.4 : 1 }}
+            style={{ padding: '0 16px', fontSize: 13, opacity: sel === (cliente_id?.toString() ?? '') ? 0.4 : 1 }}
           >
             {saved ? '✓ Salvato' : pending ? '…' : 'Assegna'}
           </button>
