@@ -201,6 +201,7 @@ export const adminPages: NavPage[] = [
   { id: 62, label: 'Templates Carte Intestate', href: '/amministrazione/templates',       roles: ['admin'] },
   { id: 63, label: 'Editor Disegno',      href: '/disegno',                         roles: ['admin'] },
   { id: 64, label: 'Database',            href: '/amministrazione/database',        roles: ['admin'] },
+  { id: 65, label: 'Area di Test',        href: '/amministrazione/area-di-test',    roles: ['admin'] },
 ]
 
 // Pagine Fornitori: visibili solo a dipendenti e admin
