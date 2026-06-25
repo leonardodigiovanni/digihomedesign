@@ -10,11 +10,19 @@ async function checkAdmin() {
   if (cookieStore.get('session_role')?.value !== 'admin') redirect('/')
 }
 
-export async function aggiungiAPreventivo2(articolo2_id: number): Promise<{ ok: boolean; error?: string }> {
+export async function aggiungiAPreventivo2(
+  articolo2_id: number,
+  percorso_id: number,
+  categoria: string,
+  sottocategoria: string,
+): Promise<{ ok: boolean; error?: string }> {
   await checkAdmin()
   const db = await getConnection()
   try {
-    await db.execute('INSERT INTO preventivo2 (articolo2_id) VALUES (?)', [articolo2_id])
+    await db.execute(
+      'INSERT INTO preventivo2 (articolo2_id, percorso_id, categoria, sottocategoria) VALUES (?,?,?,?)',
+      [articolo2_id, percorso_id || null, categoria, sottocategoria]
+    )
     revalidatePath('/amministrazione/area-di-test')
     return { ok: true }
   } catch {

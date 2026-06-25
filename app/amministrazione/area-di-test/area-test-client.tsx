@@ -7,6 +7,7 @@ import { aggiungiAPreventivo2, eliminaDaPreventivo2, inserisciArticolo2 } from '
 
 export type FlatRow = {
   id: number
+  percorso_id: number
   fase: string
   materiale: string
   tipologia: string
@@ -26,6 +27,8 @@ export type Pv2Row = {
   fase: string
   marca: string
   serie: string
+  categoria: string
+  sottocategoria: string
   created_at: string
 }
 
@@ -93,23 +96,23 @@ export default function AreaTestClient({ flatRows, pv2 }: { flatRows: FlatRow[];
     return vals.map(v => ({ value: v, label: v }))
   }
 
-  const matchedIds = useMemo(() => {
-    const filtered = flatRows.filter(row =>
+  const matchedRows = useMemo(() => {
+    return flatRows.filter(row =>
       DIMS.every(d => {
         const v = filters[d.key]
         return !v || (row as Record<string, unknown>)[d.key] === v
       })
     )
-    return [...new Set(filtered.map(r => r.id))]
   }, [flatRows, filters])
 
-  const canConfirm = matchedIds.length === 1
+  const canConfirm = matchedRows.length === 1
 
   function handleConfirm() {
     if (!canConfirm) return
+    const row = matchedRows[0]
     setError('')
     startT(async () => {
-      const res = await aggiungiAPreventivo2(matchedIds[0])
+      const res = await aggiungiAPreventivo2(row.id, row.percorso_id, row.categoria, row.sottocategoria)
       if (!res.ok) { setError(res.error ?? 'Errore'); return }
       setShowModal(false)
       setFilters(emptyFilters())
@@ -145,13 +148,13 @@ export default function AreaTestClient({ flatRows, pv2 }: { flatRows: FlatRow[];
   }
 
   const matchInfo = canConfirm
-    ? `✓ 1 articolo individuato (id ${matchedIds[0]})`
-    : matchedIds.length === 0
-    ? 'Nessun articolo corrisponde ai filtri.'
-    : `${matchedIds.length} articoli corrispondono — affina i filtri.`
+    ? `✓ Selezione univoca: articolo #${matchedRows[0].id} — ${matchedRows[0].categoria || '(nessun percorso)'}${matchedRows[0].sottocategoria ? ' / ' + matchedRows[0].sottocategoria : ''}`
+    : matchedRows.length === 0
+    ? 'Nessuna combinazione corrisponde ai filtri.'
+    : `${matchedRows.length} combinazioni articolo/percorso — affina i filtri.`
 
-  const matchColor = canConfirm ? '#2e7d32' : matchedIds.length === 0 ? '#c00' : '#c77700'
-  const matchBg    = canConfirm ? '#e8f5e9' : matchedIds.length === 0 ? '#fff5f5' : '#fff8e1'
+  const matchColor = canConfirm ? '#2e7d32' : matchedRows.length === 0 ? '#c00' : '#c77700'
+  const matchBg    = canConfirm ? '#e8f5e9' : matchedRows.length === 0 ? '#fff5f5' : '#fff8e1'
 
   const inp: React.CSSProperties = { width: '100%', padding: '6px 8px', border: '1px solid #ccc', borderRadius: 5, fontSize: 13, fontFamily: 'inherit', boxSizing: 'border-box' }
 
@@ -298,7 +301,7 @@ export default function AreaTestClient({ flatRows, pv2 }: { flatRows: FlatRow[];
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr style={{ background: '#f5f5f5' }}>
-                    {['ID','Articolo','Fase','Marca','Serie',''].map((h, i) => (
+                    {['ID','Articolo','Fase','Marca','Serie','Categoria','Sottocategoria',''].map((h, i) => (
                       <th key={i} style={{ ...tdS, fontWeight: 700, textAlign: 'left', borderBottom: '2px solid #ddd' }}>{h}</th>
                     ))}
                   </tr>
@@ -311,6 +314,8 @@ export default function AreaTestClient({ flatRows, pv2 }: { flatRows: FlatRow[];
                       <td style={tdS}>{r.fase}</td>
                       <td style={tdS}>{r.marca}</td>
                       <td style={tdS}>{r.serie}</td>
+                      <td style={tdS}>{r.categoria || <span style={{ color: '#ccc' }}>—</span>}</td>
+                      <td style={tdS}>{r.sottocategoria || <span style={{ color: '#ccc' }}>—</span>}</td>
                       <td style={{ ...tdS, textAlign: 'center', width: 36 }}>
                         <button
                           onClick={() => handleDelete(r.id)}
