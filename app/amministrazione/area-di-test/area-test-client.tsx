@@ -3,7 +3,7 @@
 import { useState, useMemo, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import SelectLookup from '@/components/select-lookup'
-import { aggiungiAPreventivo2, eliminaDaPreventivo2 } from './actions'
+import { aggiungiAPreventivo2, eliminaDaPreventivo2, inserisciArticolo2 } from './actions'
 
 export type FlatRow = {
   id: number
@@ -44,6 +44,20 @@ const DIMS: { key: keyof FlatRow; label: string }[] = [
 
 const emptyFilters = () => Object.fromEntries(DIMS.map(d => [d.key, ''])) as Record<string, string>
 
+const CAMPI: { key: string; label: string }[] = [
+  { key: 'fase',        label: 'Fase' },
+  { key: 'materiale',   label: 'Materiale' },
+  { key: 'tipologia',   label: 'Tipologia' },
+  { key: 'ambiente',    label: 'Ambiente' },
+  { key: 'articolo',    label: 'Articolo' },
+  { key: 'fascia',      label: 'Fascia' },
+  { key: 'marca',       label: 'Marca' },
+  { key: 'serie',       label: 'Serie' },
+]
+
+const emptyArticolo = () => ({ fase: '', materiale: '', tipologia: '', ambiente: '', articolo: '', fascia: '', marca: '', serie: '' })
+const emptyPercorso = () => ({ categoria: '', sottocategoria: '' })
+
 const lbl: React.CSSProperties = {
   fontSize: 11, fontWeight: 700, color: '#555',
   textTransform: 'uppercase', letterSpacing: '0.05em',
@@ -59,6 +73,13 @@ export default function AreaTestClient({ flatRows, pv2 }: { flatRows: FlatRow[];
   const [filters, setFilters] = useState<Record<string, string>>(emptyFilters())
   const [pending, startT] = useTransition()
   const [error, setError] = useState('')
+
+  // form inserimento articolo2
+  const [formOpen, setFormOpen] = useState(false)
+  const [campi, setCampi] = useState(emptyArticolo())
+  const [percorsi, setPercorsi] = useState([emptyPercorso()])
+  const [formErr, setFormErr] = useState('')
+  const [formOk, setFormOk] = useState(false)
 
   function optionsFor(dim: string): { value: string; label: string }[] {
     const filtered = flatRows.filter(row =>
@@ -104,6 +125,19 @@ export default function AreaTestClient({ flatRows, pv2 }: { flatRows: FlatRow[];
     })
   }
 
+  function handleFormSubmit() {
+    setFormErr('')
+    setFormOk(false)
+    startT(async () => {
+      const res = await inserisciArticolo2({ ...campi, percorsi })
+      if (!res.ok) { setFormErr(res.error ?? 'Errore'); return }
+      setCampi(emptyArticolo())
+      setPercorsi([emptyPercorso()])
+      setFormOk(true)
+      router.refresh()
+    })
+  }
+
   function openModal() {
     setFilters(emptyFilters())
     setError('')
@@ -119,8 +153,97 @@ export default function AreaTestClient({ flatRows, pv2 }: { flatRows: FlatRow[];
   const matchColor = canConfirm ? '#2e7d32' : matchedIds.length === 0 ? '#c00' : '#c77700'
   const matchBg    = canConfirm ? '#e8f5e9' : matchedIds.length === 0 ? '#fff5f5' : '#fff8e1'
 
+  const inp: React.CSSProperties = { width: '100%', padding: '6px 8px', border: '1px solid #ccc', borderRadius: 5, fontSize: 13, fontFamily: 'inherit', boxSizing: 'border-box' }
+
   return (
     <>
+      {/* Form inserimento articoli2 */}
+      <div style={{ border: '1px solid #e0e0e0', borderRadius: 10, overflow: 'hidden' }}>
+        <button
+          onClick={() => { setFormOpen(o => !o); setFormErr(''); setFormOk(false) }}
+          style={{ width: '100%', padding: '12px 16px', background: '#f5f5f5', border: 'none', borderBottom: formOpen ? '1px solid #e0e0e0' : 'none', cursor: 'pointer', textAlign: 'left', fontSize: 14, fontWeight: 700, fontFamily: 'inherit', display: 'flex', justifyContent: 'space-between' }}
+        >
+          <span>+ Nuovo articolo in articoli2</span>
+          <span style={{ color: '#888', fontSize: 12 }}>{formOpen ? '▲' : '▼'}</span>
+        </button>
+
+        {formOpen && (
+          <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {/* 8 campi in griglia */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+              {CAMPI.map(c => (
+                <div key={c.key}>
+                  <span style={lbl}>{c.label}</span>
+                  <input
+                    value={(campi as Record<string, string>)[c.key]}
+                    onChange={e => setCampi(f => ({ ...f, [c.key]: e.target.value }))}
+                    style={inp}
+                    placeholder={c.label}
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Percorsi */}
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
+                <span style={lbl}>Percorsi (categoria / sottocategoria)</span>
+                <button
+                  type="button"
+                  onClick={() => setPercorsi(p => [...p, emptyPercorso()])}
+                  className="btn-black"
+                  style={{ padding: '0 12px', fontSize: 12 }}
+                >
+                  + Aggiungi percorso
+                </button>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {percorsi.map((p, i) => (
+                  <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <input
+                      value={p.categoria}
+                      onChange={e => setPercorsi(ps => ps.map((x, j) => j === i ? { ...x, categoria: e.target.value } : x))}
+                      placeholder="Categoria"
+                      style={{ ...inp, flex: 1 }}
+                    />
+                    <input
+                      value={p.sottocategoria}
+                      onChange={e => setPercorsi(ps => ps.map((x, j) => j === i ? { ...x, sottocategoria: e.target.value } : x))}
+                      placeholder="Sottocategoria"
+                      style={{ ...inp, flex: 1 }}
+                    />
+                    {percorsi.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => setPercorsi(ps => ps.filter((_, j) => j !== i))}
+                        className="btn-red btn-icon"
+                        style={{ fontFamily: 'inherit', flexShrink: 0 }}
+                      >
+                        <span style={{ position: 'relative', zIndex: 1, fontSize: 13 }}>✕</span>
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {formErr && <p style={{ margin: 0, fontSize: 12, color: '#c00' }}>{formErr}</p>}
+            {formOk  && <p style={{ margin: 0, fontSize: 12, color: '#2e7d32' }}>✓ Articolo inserito.</p>}
+
+            <div>
+              <button
+                onClick={handleFormSubmit}
+                disabled={pending}
+                className={pending ? 'btn-gray' : 'btn-green'}
+                style={{ padding: '0 24px', fontSize: 13 }}
+              >
+                {pending ? 'Salvataggio…' : 'Salva articolo'}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
       <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start' }}>
 
         {/* Sinistra: griglia articoli2 */}
