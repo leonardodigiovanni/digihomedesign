@@ -93,7 +93,7 @@ export default function AreaTestClient({ flatRows, pv2 }: { flatRows: FlatRow[];
       })
     )
     const vals = [...new Set(filtered.map(r => (r as Record<string, unknown>)[dim] as string).filter(Boolean))].sort()
-    return vals.map(v => ({ value: v, label: v }))
+    return [{ value: '', label: '— Tutti —' }, ...vals.map(v => ({ value: v, label: v }))]
   }
 
   const matchedRows = useMemo(() => {
