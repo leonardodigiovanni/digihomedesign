@@ -1395,6 +1395,7 @@ async function buildStampaData(opts: {
 
 export async function loadData(prevId: number, username: string, isStaff: boolean): Promise<StampaData | null> {
   const db = await getConnection()
+  await db.execute(`ALTER TABLE preventivo_articoli ADD COLUMN ordine INT NOT NULL DEFAULT 0`).catch(() => {})
   try {
     const [pRows] = await db.query('SELECT * FROM preventivi WHERE id = ?', [prevId]) as [Record<string, unknown>[], unknown]
     if (!pRows[0]) return null
@@ -1433,7 +1434,7 @@ export async function loadData(prevId: number, username: string, isStaff: boolea
        FROM preventivo_articoli pa
        LEFT JOIN listini l ON pa.listino_id = l.id
        WHERE pa.preventivo_id = ?
-       ORDER BY pa.id ASC`,
+       ORDER BY COALESCE(pa.parent_id, pa.id) ASC, pa.ordine ASC, pa.id ASC`,
       [prevId]
     ) as [Record<string, unknown>[], unknown]
 

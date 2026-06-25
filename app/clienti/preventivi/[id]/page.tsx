@@ -22,6 +22,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   if (isNaN(prevId)) redirect('/clienti/preventivi')
 
   const db = await getConnection()
+  await db.execute(`ALTER TABLE preventivo_articoli ADD COLUMN ordine INT NOT NULL DEFAULT 0`).catch(() => {})
   try {
     const [prevRows] = await db.query(
       'SELECT * FROM preventivi WHERE id = ?',
@@ -49,7 +50,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       `SELECT pa.*, l.abbr, l.profilo_frontale_mm, l.foto_url AS listino_foto_url, l.richiede_tipo_colore_acc
        FROM preventivo_articoli pa
        LEFT JOIN listini l ON l.id = pa.listino_id
-       WHERE pa.preventivo_id = ? ORDER BY pa.id ASC`,
+       WHERE pa.preventivo_id = ? ORDER BY COALESCE(pa.parent_id, pa.id) ASC, pa.ordine ASC, pa.id ASC`,
       [prevId]
     ) as [Record<string, unknown>[], unknown]
 
@@ -73,6 +74,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       prezzo_pre_sconto: Number(a.prezzo_pre_sconto ?? 0),
       sconto_articolo_pct: Number(a.sconto_articolo_pct ?? 0),
       note: a.note != null ? String(a.note) : null,
+      ordine: Number(a.ordine ?? 0),
       parent_id: a.parent_id != null ? Number(a.parent_id) : null,
       abbr: a.abbr != null ? String(a.abbr) : '',
       profilo_mm: a.profilo_frontale_mm != null ? Number(a.profilo_frontale_mm) : 80,

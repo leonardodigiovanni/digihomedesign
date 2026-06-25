@@ -54,6 +54,7 @@ export type Articolo = {
   prezzo_pre_sconto: number
   sconto_articolo_pct: number
   note: string | null
+  ordine: number
   parent_id: number | null
   abbr: string
   profilo_mm: number
@@ -1119,6 +1120,10 @@ function ModificaArticoloModal({ articolo, parentArt, children = [], listini, on
                   <span style={label}>Nota</span>
                   <input type="text" name="note" defaultValue={articolo.note ?? ''} placeholder="es. bagno" style={inp} />
                 </div>
+                <div>
+                  <span style={label}>Ordine</span>
+                  <input type="number" name="ordine" defaultValue={articolo.ordine} style={inp} />
+                </div>
               </>
             ) : isChildMontaggio ? (
               <>
@@ -1142,6 +1147,10 @@ function ModificaArticoloModal({ articolo, parentArt, children = [], listini, on
                 <div>
                   <span style={label}>Nota</span>
                   <input type="text" name="note" defaultValue={articolo.note ?? ''} placeholder="es. bagno" style={inp} />
+                </div>
+                <div>
+                  <span style={label}>Ordine</span>
+                  <input type="number" name="ordine" defaultValue={articolo.ordine} style={inp} />
                 </div>
               </>
             ) : isChildPerc ? (
@@ -1182,6 +1191,10 @@ function ModificaArticoloModal({ articolo, parentArt, children = [], listini, on
                 <div>
                   <span style={label}>Nota</span>
                   <input type="text" name="note" defaultValue={articolo.note ?? ''} placeholder="es. bagno" style={inp} />
+                </div>
+                <div>
+                  <span style={label}>Ordine</span>
+                  <input type="number" name="ordine" defaultValue={articolo.ordine} style={inp} />
                 </div>
               </>
             ) : (

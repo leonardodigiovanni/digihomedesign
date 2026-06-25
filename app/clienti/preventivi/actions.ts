@@ -86,6 +86,7 @@ async function ensureTables() {
   await db.execute(`ALTER TABLE preventivi ADD COLUMN sconto_cliente_pct DECIMAL(5,2) NOT NULL DEFAULT 0`).catch(() => {})
   await db.execute(`ALTER TABLE preventivo_articoli ADD COLUMN sconto_articolo_pct DECIMAL(5,2) NOT NULL DEFAULT 0`).catch(() => {})
   await db.execute(`ALTER TABLE preventivo_articoli ADD COLUMN parent_id INT NULL DEFAULT NULL`).catch(() => {})
+  await db.execute(`ALTER TABLE preventivo_articoli ADD COLUMN ordine INT NOT NULL DEFAULT 0`).catch(() => {})
   await db.execute(`ALTER TABLE listini ADD COLUMN sconto_articolo DECIMAL(5,2) NOT NULL DEFAULT 0`).catch(() => {})
   await db.execute(`ALTER TABLE clienti ADD COLUMN sconto_pct DECIMAL(5,2) NOT NULL DEFAULT 0`).catch(() => {})
   await db.execute(`ALTER TABLE preventivi MODIFY COLUMN stato ENUM('bozza','richiesto','in preparazione','da inviare','inviato','accettato','rifiutato','scaduto','annullato') NOT NULL DEFAULT 'bozza'`).catch(() => {})
@@ -463,6 +464,7 @@ export async function modificaArticolo(_: MutResult | null, fd: FormData): Promi
   const prezzo_base     = parseFloat(fd.get('prezzo_base')         as string) || 0
   const sconto_art      = parseFloat(fd.get('sconto_articolo_pct') as string) || 0
   const note            = ((fd.get('note') as string) ?? '').trim()
+  const ordine          = parseInt(fd.get('ordine') as string) || 0
   const formulaDiretta  = fd.get('formula_diretta') === '1'
   const nuovoListinoId  = parseInt(fd.get('nuovo_listino_id') as string) || null
 
@@ -561,9 +563,9 @@ export async function modificaArticolo(_: MutResult | null, fd: FormData): Promi
     await db.execute(
       `UPDATE preventivo_articoli
        SET altezza_cm=?, larghezza_cm=?, n_ante=?, quantita=?,
-           prezzo_base=?, sconto_articolo_pct=?, prezzo_totale=?, prezzo_pre_sconto=?, prezzo_scontato=?, note=?
+           prezzo_base=?, sconto_articolo_pct=?, prezzo_totale=?, prezzo_pre_sconto=?, prezzo_scontato=?, note=?, ordine=?
        WHERE id=? AND preventivo_id=?`,
-      [altezza_cm, larghezza_cm, n_ante, quantita, prezzo_base_calc, sconto_art, prezzo, prezzoPre, prezzo, note || null, id, preventivo_id]
+      [altezza_cm, larghezza_cm, n_ante, quantita, prezzo_base_calc, sconto_art, prezzo, prezzoPre, prezzo, note || null, ordine, id, preventivo_id]
     )
 
     // Aggiorna figli: ereditano le nuove dimensioni e ricalcolano il loro contributo
@@ -673,8 +675,8 @@ export async function modificaPreventivo(_: InviaResult | null, fd: FormData): P
       if (a.parent_id != null) continue
       const [res] = await db.execute(
         `INSERT INTO preventivo_articoli (preventivo_id, tipo_prodotto, marca, modello, listino_id, prezzo_base, unita,
-         colore, tipo_vetro, accessori, altezza_cm, larghezza_cm, n_ante, quantita, prezzo_totale, prezzo_pre_sconto, prezzo_scontato, note, sconto_articolo_pct, parent_id)
-         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+         colore, tipo_vetro, accessori, altezza_cm, larghezza_cm, n_ante, quantita, prezzo_totale, prezzo_pre_sconto, prezzo_scontato, note, sconto_articolo_pct, parent_id, ordine)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
         [cloneId, String(a.tipo_prodotto ?? ''), String(a.marca ?? ''), String(a.modello ?? ''),
          a.listino_id != null ? Number(a.listino_id) : null,
          Number(a.prezzo_base), String(a.unita ?? 'pz'),
@@ -682,7 +684,7 @@ export async function modificaPreventivo(_: InviaResult | null, fd: FormData): P
          Number(a.altezza_cm), Number(a.larghezza_cm), Number(a.n_ante),
          Number(a.quantita), Number(a.prezzo_totale), Number(a.prezzo_pre_sconto ?? 0), Number(a.prezzo_scontato ?? 0),
          a.note != null ? String(a.note) : null,
-         Number(a.sconto_articolo_pct ?? 0), null] as (string | number | null)[]
+         Number(a.sconto_articolo_pct ?? 0), null, Number(a.ordine ?? 0)] as (string | number | null)[]
       ) as [{ insertId: number }, unknown]
       idMap.set(Number(a.id), res.insertId)
     }
@@ -692,8 +694,8 @@ export async function modificaPreventivo(_: InviaResult | null, fd: FormData): P
       const newParentId = idMap.get(Number(a.parent_id)) ?? null
       await db.execute(
         `INSERT INTO preventivo_articoli (preventivo_id, tipo_prodotto, marca, modello, listino_id, prezzo_base, unita,
-         colore, tipo_vetro, accessori, altezza_cm, larghezza_cm, n_ante, quantita, prezzo_totale, prezzo_pre_sconto, prezzo_scontato, note, sconto_articolo_pct, parent_id)
-         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+         colore, tipo_vetro, accessori, altezza_cm, larghezza_cm, n_ante, quantita, prezzo_totale, prezzo_pre_sconto, prezzo_scontato, note, sconto_articolo_pct, parent_id, ordine)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
         [cloneId, String(a.tipo_prodotto ?? ''), String(a.marca ?? ''), String(a.modello ?? ''),
          a.listino_id != null ? Number(a.listino_id) : null,
          Number(a.prezzo_base), String(a.unita ?? 'pz'),
@@ -701,7 +703,7 @@ export async function modificaPreventivo(_: InviaResult | null, fd: FormData): P
          Number(a.altezza_cm), Number(a.larghezza_cm), Number(a.n_ante),
          Number(a.quantita), Number(a.prezzo_totale), Number(a.prezzo_pre_sconto ?? 0), Number(a.prezzo_scontato ?? 0),
          a.note != null ? String(a.note) : null,
-         Number(a.sconto_articolo_pct ?? 0), newParentId] as (string | number | null)[]
+         Number(a.sconto_articolo_pct ?? 0), newParentId, Number(a.ordine ?? 0)] as (string | number | null)[]
       )
     }
 
@@ -775,8 +777,8 @@ export async function inviaAlCliente(_: InviaResult | null, fd: FormData): Promi
         if (a.parent_id != null) continue
         const [res] = await db.execute(
           `INSERT INTO preventivo_articoli (preventivo_id, tipo_prodotto, marca, modello, listino_id, prezzo_base, unita,
-           colore, tipo_vetro, accessori, altezza_cm, larghezza_cm, n_ante, quantita, prezzo_totale, prezzo_pre_sconto, prezzo_scontato, note, sconto_articolo_pct, parent_id)
-           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+           colore, tipo_vetro, accessori, altezza_cm, larghezza_cm, n_ante, quantita, prezzo_totale, prezzo_pre_sconto, prezzo_scontato, note, sconto_articolo_pct, parent_id, ordine)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
           [cloneId, String(a.tipo_prodotto ?? ''), String(a.marca ?? ''), String(a.modello ?? ''),
            a.listino_id != null ? Number(a.listino_id) : null,
            Number(a.prezzo_base), String(a.unita ?? 'pz'),
@@ -784,7 +786,7 @@ export async function inviaAlCliente(_: InviaResult | null, fd: FormData): Promi
            Number(a.altezza_cm), Number(a.larghezza_cm), Number(a.n_ante),
            Number(a.quantita), Number(a.prezzo_totale), Number(a.prezzo_pre_sconto ?? 0), Number(a.prezzo_scontato ?? 0),
            a.note != null ? String(a.note) : null,
-           Number(a.sconto_articolo_pct ?? 0), null] as (string | number | null)[]
+           Number(a.sconto_articolo_pct ?? 0), null, Number(a.ordine ?? 0)] as (string | number | null)[]
         ) as [{ insertId: number }, unknown]
         idMap.set(Number(a.id), res.insertId)
       }
@@ -795,8 +797,8 @@ export async function inviaAlCliente(_: InviaResult | null, fd: FormData): Promi
         const newParentId = idMap.get(Number(a.parent_id)) ?? null
         await db.execute(
           `INSERT INTO preventivo_articoli (preventivo_id, tipo_prodotto, marca, modello, listino_id, prezzo_base, unita,
-           colore, tipo_vetro, accessori, altezza_cm, larghezza_cm, n_ante, quantita, prezzo_totale, prezzo_pre_sconto, prezzo_scontato, note, sconto_articolo_pct, parent_id)
-           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+           colore, tipo_vetro, accessori, altezza_cm, larghezza_cm, n_ante, quantita, prezzo_totale, prezzo_pre_sconto, prezzo_scontato, note, sconto_articolo_pct, parent_id, ordine)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
           [cloneId, String(a.tipo_prodotto ?? ''), String(a.marca ?? ''), String(a.modello ?? ''),
            a.listino_id != null ? Number(a.listino_id) : null,
            Number(a.prezzo_base), String(a.unita ?? 'pz'),
@@ -804,7 +806,7 @@ export async function inviaAlCliente(_: InviaResult | null, fd: FormData): Promi
            Number(a.altezza_cm), Number(a.larghezza_cm), Number(a.n_ante),
            Number(a.quantita), Number(a.prezzo_totale), Number(a.prezzo_pre_sconto ?? 0), Number(a.prezzo_scontato ?? 0),
            a.note != null ? String(a.note) : null,
-           Number(a.sconto_articolo_pct ?? 0), newParentId] as (string | number | null)[]
+           Number(a.sconto_articolo_pct ?? 0), newParentId, Number(a.ordine ?? 0)] as (string | number | null)[]
         )
       }
     }
