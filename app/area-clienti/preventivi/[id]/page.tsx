@@ -97,6 +97,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       prezzo_pre_sconto: Number(a.prezzo_pre_sconto ?? 0),
       sconto_articolo_pct: Number(a.sconto_articolo_pct ?? 0),
       note: a.note != null ? String(a.note) : null,
+      ordine: Number(a.ordine ?? 0),
       parent_id: a.parent_id != null ? Number(a.parent_id) : null,
       abbr: a.abbr != null ? String(a.abbr) : '',
       profilo_mm: a.profilo_frontale_mm != null ? Number(a.profilo_frontale_mm) : 80,
