@@ -3,13 +3,17 @@ import { usePathname } from 'next/navigation'
 
 const STAFF_PREFIXES = ['/area-lavoro', '/clienti', '/amministrazione', '/disegno']
 const STAFF_ROLES = ['admin', 'dipendente', 'venditore', 'magazzino', 'ragioniere', 'commercialista', 'direttore', 'marketing', 'email', 'operaio']
+const CLIENT_WIDTH_PATHS = ['/clienti/preventivi/', '/area-clienti/carrello-preventivo']
 
 export default function MainWrapper({ children, role }: { children: React.ReactNode; role: string }) {
   const pathname = usePathname()
   const isStaffRole = STAFF_ROLES.includes(role)
+  const forceClientWidth = CLIENT_WIDTH_PATHS.some(p => pathname.startsWith(p))
   const isFullWidth =
-    STAFF_PREFIXES.some(p => pathname.startsWith(p)) ||
-    (pathname.startsWith('/area-clienti/') && isStaffRole)
+    !forceClientWidth && (
+      STAFF_PREFIXES.some(p => pathname.startsWith(p)) ||
+      (pathname.startsWith('/area-clienti/') && isStaffRole)
+    )
   return (
     <main
       className="main-layout class_silver_D_safe"

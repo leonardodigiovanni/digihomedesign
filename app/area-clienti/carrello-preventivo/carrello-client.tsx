@@ -791,6 +791,13 @@ export default function CarrelloClient({
                       const showVetro     = root.richiede_tipo_vetro      === 1 && !childrenOfRoot.some(c => c.richiede_tipo_vetro      === 1)
                       const showMontaggio = root.richiede_tipo_montaggio  === 1 && !childrenOfRoot.some(c => c.richiede_tipo_montaggio  === 1)
                       const hasLacune   = showColore || showColoreAcc || showVetro || showMontaggio
+                      const hasOptPure  = caratteristiche.some(c =>
+                        (!c.categoria || c.categoria === root.categoria) &&
+                        c.richiede_tipo_colore     === 0 &&
+                        c.richiede_tipo_colore_acc === 0 &&
+                        c.richiede_tipo_vetro      === 0 &&
+                        c.richiede_tipo_montaggio  === 0
+                      )
                       const hasDetails  = true
                       const isExpanded  = expandedUID === root.uid
                       const expandBg     = isExpanded ? (hasLacune ? '#fdecea' : '#d6ecd6') : undefined
@@ -953,8 +960,8 @@ export default function CarrelloClient({
                               </tr>
                             )
                           })()}
-                          {/* Riga + aggiungi quando espanso e senza lacune (es. ristrutturazione) */}
-                          {isExpanded && !hasLacune && (
+                          {/* Riga + aggiungi: solo se esistono caratteristiche pure (tutti 4 flag = 0) per questa categoria */}
+                          {isExpanded && !hasLacune && hasOptPure && (
                             <tr style={{ background: '#ffffff' }}>
                               <td style={{ padding: '4px', textAlign: 'center', borderBottom: '1px solid #333' }}>
                                 <button type="button" onClick={() => handleAggiungiComeFiglio(root)}

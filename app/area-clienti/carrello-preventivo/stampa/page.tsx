@@ -661,7 +661,7 @@ function caratteristicheHTML(children: ArtRow[], allArts: ArtRow[], parentPrezzo
       : ''
     const fotoAttr = fotoUrl.replace(/"/g, '%22')
     const label = [c.categoria, [c.produttore, c.descrizione].filter(Boolean).join(' ')].filter(Boolean).join(': ')
-    const isIncluso = contrib === 0 && c.prezzo_vendita === 0 && c.sconto_articolo === 0
+    const isIncluso = contrib === 0 && (c.sconto_articolo ?? 0) !== 100
     const prezzoHtml = isIncluso
       ? `<div style="font-size:10.5px;font-style:italic;color:#555;white-space:nowrap;">Incluso</div>`
       : `<div style="font-size:10.5px;font-weight:bold;color:#111;white-space:nowrap;">${contrib >= 0 ? '+' : '−'}€ ${fmt(Math.abs(contrib))}</div>`
@@ -703,7 +703,7 @@ function caratteristichePreviewHTML(children: ArtRow[], allArts: ArtRow[], paren
       : ''
     const fotoAttr = fotoUrl.replace(/"/g, '%22')
     const label = [c.categoria, [c.produttore, c.descrizione].filter(Boolean).join(' ')].filter(Boolean).join(': ')
-    const isIncluso = contrib === 0 && c.prezzo_vendita === 0 && c.sconto_articolo === 0
+    const isIncluso = contrib === 0 && (c.sconto_articolo ?? 0) !== 100
     const prezzoHtml = isIncluso
       ? `<div style="font-size:10.5px;font-style:italic;color:#555;white-space:nowrap;">Incluso</div>`
       : `<div style="font-size:10.5px;font-weight:bold;color:#111;white-space:nowrap;">${contrib >= 0 ? '+' : '−'}€ ${fmt(Math.abs(contrib))}</div>`

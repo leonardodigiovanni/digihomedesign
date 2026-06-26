@@ -261,9 +261,14 @@ export default async function Page() {
         `SELECT id, categoria, produttore, descrizione, unita, prezzo_vendita, sconto_articolo,
                 richiede_tipo_colore, richiede_tipo_colore_acc, richiede_tipo_vetro, richiede_tipo_montaggio
          FROM listini
-         WHERE (richiede_tipo_colore = 1 OR richiede_tipo_colore_acc = 1 OR richiede_tipo_vetro = 1 OR richiede_tipo_montaggio = 1)
-           AND disponibile = 1
+         WHERE disponibile = 1
            AND principale = 0
+           AND (
+             (richiede_tipo_colore = 1 OR richiede_tipo_colore_acc = 1 OR richiede_tipo_vetro = 1 OR richiede_tipo_montaggio = 1)
+             OR (caratteristica = 1 AND preventivabile = 1
+                 AND richiede_tipo_colore = 0 AND richiede_tipo_colore_acc = 0
+                 AND richiede_tipo_vetro = 0 AND richiede_tipo_montaggio = 0)
+           )
          ORDER BY categoria ASC, descrizione ASC`
       ) as [Record<string, unknown>[], unknown]
       caratteristiche = cr.map(r => ({

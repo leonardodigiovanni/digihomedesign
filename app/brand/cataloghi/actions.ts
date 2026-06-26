@@ -611,6 +611,8 @@ export async function fetchCaratteristicheOpt(categoria: string, produttore: str
               descrizione, prezzo_vendita, sconto_articolo
        FROM listini
        WHERE caratteristica = 1 AND disponibile = 1 AND preventivabile = 1
+         AND richiede_tipo_colore = 0 AND richiede_tipo_colore_acc = 0
+         AND richiede_tipo_vetro = 0 AND richiede_tipo_montaggio = 0
          AND (categoria = '' OR categoria IS NULL OR categoria = ?)
          AND (produttore = '' OR produttore IS NULL OR produttore = ?)
        ORDER BY descrizione ASC`,
