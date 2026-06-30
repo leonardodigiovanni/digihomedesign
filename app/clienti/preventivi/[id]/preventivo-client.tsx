@@ -32,6 +32,12 @@ export type ListinoItem = {
   filtro_3?: number
   filtro_4?: number
   schema_url?: string | null
+  sottocategoria?: string | null
+  fase?: string | null
+  materiale?: string | null
+  tipologia?: string | null
+  ambiente?: string | null
+  fascia?: string | null
 }
 
 export type Articolo = {
@@ -391,7 +397,7 @@ const FILTRI_MODELLO: { label: string; key: 'filtro_1' | 'filtro_2' | 'filtro_3'
 // ─── Form aggiunta articolo ───────────────────────────────────────────────────
 
 function ArticoloForm({
-  preventivo_id, listini, prefill, parentId = null, parentArt = null, existingChildTypes = [], gapTypeFilter = null, altriParentIds = [], onClose, isStaff = true, isApp,
+  preventivo_id, listini, prefill, parentId = null, parentArt = null, existingChildTypes = [], gapTypeFilter = null, altriParentIds = [], onClose, isStaff = true, isApp, percorsiPerListino = {},
 }: {
   preventivo_id: number
   listini: ListinoItem[]
@@ -404,6 +410,7 @@ function ArticoloForm({
   onClose: () => void
   isStaff?: boolean
   isApp?: boolean
+  percorsiPerListino?: Record<number, PercorsoEntry[]>
 }) {
   const router = useRouter()
   const [pending, startT] = useTransition()
@@ -414,7 +421,14 @@ function ArticoloForm({
     isCaratteristicaMode && parentArt ? parentArt.tipo_prodotto : (prefill?.tipo_prodotto ?? '')
   )
   const [marca, setMarca]       = useState(prefill?.marca ?? '')
+  const [serieFiltro, setSerieFiltro] = useState('')
   const [listinoId, setListinoId] = useState(prefill?.listino_id?.toString() ?? '')
+  const [sottocatFiltro, setSottocatFiltro] = useState('')
+  const [faseFiltro, setFaseFiltro]         = useState('')
+  const [materialeFiltro, setMaterialeFiltro] = useState('')
+  const [tipologiaFiltro, setTipologiaFiltro] = useState('')
+  const [ambienteFiltro, setAmbienteFiltro] = useState('')
+  const [fasciaFiltro, setFasciaFiltro]     = useState('')
   const [colore, setColore]     = useState(prefill?.colore ?? '')
   const [tipoVetro, setTipoVetro] = useState(prefill?.tipo_vetro ?? '')
   const [accessoriSel, setAccessoriSel] = useState<string[]>(
@@ -425,9 +439,9 @@ function ArticoloForm({
     if (parentId !== null) {
       const rootSerie = listini.find(l => l.id === parentArt?.listino_id)?.serie ?? ''
       let filtered = listini.filter(l =>
-        l.caratteristica === 1 &&
-        (!l.categoria  || l.categoria  === (parentArt?.tipo_prodotto ?? '')) &&
-        (!l.produttore || l.produttore === (parentArt?.marca         ?? '')) &&
+        (gapTypeFilter !== null ? l.principale === 0 : l.caratteristica === 1) &&
+        matchesPercorsi(l.id, l.categoria ?? '', parentArt?.listino_id ?? 0, parentArt?.tipo_prodotto ?? '', percorsiPerListino) &&
+        (!l.produttore || l.produttore === (parentArt?.marca ?? '')) &&
         (!l.serie      || l.serie      === rootSerie)
       )
       if (gapTypeFilter) {
@@ -445,11 +459,71 @@ function ArticoloForm({
 
   const tipi   = useMemo(() => [...new Set(listiniFiltrati.map(l => l.categoria))].sort(), [listiniFiltrati])
 
+  // ─── Cascata classificazione ────────────────────────────────────────────────
+  const listiniPerTipo = useMemo(
+    () => isCaratteristicaMode ? listiniFiltrati : (tipo ? listiniFiltrati.filter(l => l.categoria === tipo) : listiniFiltrati),
+    [listiniFiltrati, tipo, isCaratteristicaMode]
+  )
+  const sottocatOptions = useMemo(
+    () => [...new Set(listiniPerTipo.map(l => l.sottocategoria).filter(Boolean))].sort() as string[],
+    [listiniPerTipo]
+  )
+  const postSottocat = useMemo(
+    () => sottocatFiltro ? listiniPerTipo.filter(l => l.sottocategoria === sottocatFiltro) : listiniPerTipo,
+    [listiniPerTipo, sottocatFiltro]
+  )
+  const faseOptions = useMemo(
+    () => [...new Set(postSottocat.map(l => l.fase).filter(Boolean))].sort() as string[],
+    [postSottocat]
+  )
+  const postFase = useMemo(
+    () => faseFiltro ? postSottocat.filter(l => l.fase === faseFiltro) : postSottocat,
+    [postSottocat, faseFiltro]
+  )
+  const materialeOptions = useMemo(
+    () => [...new Set(postFase.map(l => l.materiale).filter(Boolean))].sort() as string[],
+    [postFase]
+  )
+  const postMateriale = useMemo(
+    () => materialeFiltro ? postFase.filter(l => l.materiale === materialeFiltro) : postFase,
+    [postFase, materialeFiltro]
+  )
+  const tipologiaOptions = useMemo(
+    () => [...new Set(postMateriale.map(l => l.tipologia).filter(Boolean))].sort() as string[],
+    [postMateriale]
+  )
+  const postTipologia = useMemo(
+    () => tipologiaFiltro ? postMateriale.filter(l => l.tipologia === tipologiaFiltro) : postMateriale,
+    [postMateriale, tipologiaFiltro]
+  )
+  const ambienteOptions = useMemo(
+    () => [...new Set(postTipologia.map(l => l.ambiente).filter(Boolean))].sort() as string[],
+    [postTipologia]
+  )
+  const postAmbiente = useMemo(
+    () => ambienteFiltro ? postTipologia.filter(l => l.ambiente === ambienteFiltro) : postTipologia,
+    [postTipologia, ambienteFiltro]
+  )
+  const fasciaOptions = useMemo(
+    () => [...new Set(postAmbiente.map(l => l.fascia).filter(Boolean))].sort() as string[],
+    [postAmbiente]
+  )
+  const postClassifica = useMemo(
+    () => fasciaFiltro ? postAmbiente.filter(l => l.fascia === fasciaFiltro) : postAmbiente,
+    [postAmbiente, fasciaFiltro]
+  )
+  const serieOptions = useMemo(() => {
+    let base = postClassifica
+    if (marca) base = base.filter(l => l.produttore === marca)
+    return [...new Set(base.map(l => l.serie).filter(Boolean))].sort() as string[]
+  }, [postClassifica, marca])
+  // ────────────────────────────────────────────────────────────────────────────
+
   const [filtriModelloAttivi, setFiltriModelloAttivi] = useState<Set<string>>(new Set())
   const [schemaFiltro, setSchemaFiltro] = useState<string | null>(null)
 
   const marche = useMemo(() => {
-    let base = listiniFiltrati.filter(l => l.categoria === tipo)
+    let base = postClassifica
     if (filtriModelloAttivi.size > 0) {
       base = base.filter(l => [...filtriModelloAttivi].every(lbl => {
         const f = FILTRI_MODELLO.find(f => f.label === lbl)
@@ -458,12 +532,10 @@ function ArticoloForm({
     }
     if (schemaFiltro) base = base.filter(l => l.schema_url === schemaFiltro)
     return [...new Set(base.map(l => l.produttore))].filter(Boolean).sort()
-  }, [listiniFiltrati, tipo, filtriModelloAttivi, schemaFiltro])
+  }, [postClassifica, filtriModelloAttivi, schemaFiltro])
   const modelli = useMemo(
-    () => isCaratteristicaMode
-      ? listiniFiltrati
-      : listiniFiltrati.filter(l => l.categoria === tipo),
-    [listiniFiltrati, tipo, isCaratteristicaMode]
+    () => isCaratteristicaMode ? listiniFiltrati : postClassifica,
+    [listiniFiltrati, postClassifica, isCaratteristicaMode]
   )
   const listinoSel = useMemo(
     () => listiniFiltrati.find(l => l.id === parseInt(listinoId)),
@@ -473,10 +545,10 @@ function ArticoloForm({
   const haVetro = TIPI_CON_VETRO.has(tipo.toLowerCase())
 
   const haFiltriModello = useMemo(
-    () => !isCaratteristicaMode && tipo !== '' && FILTRI_MODELLO.some(f =>
-      listiniFiltrati.filter(l => l.categoria === tipo).some(m => (m[f.key] ?? 0) === 1)
+    () => !isCaratteristicaMode && FILTRI_MODELLO.some(f =>
+      postClassifica.some(m => (m[f.key] ?? 0) === 1)
     ),
-    [listiniFiltrati, tipo, isCaratteristicaMode]
+    [postClassifica, isCaratteristicaMode]
   )
 
   const modelliFiltrati = useMemo(() => {
@@ -495,12 +567,12 @@ function ArticoloForm({
       }))
     }
     if (marca) base = base.filter(m => m.produttore === marca)
+    if (serieFiltro) base = base.filter(m => m.serie === serieFiltro)
     return base
-  }, [modelli, filtriModelloAttivi, marca, isCaratteristicaMode])
+  }, [modelli, filtriModelloAttivi, marca, serieFiltro, isCaratteristicaMode])
 
   const thumbnailsData = useMemo(() => {
-    if (!tipo) return []
-    let base = listiniFiltrati.filter(l => l.categoria === tipo && l.principale === 1)
+    let base = postClassifica.filter(l => l.principale === 1)
     if (filtriModelloAttivi.size > 0) {
       base = base.filter(m => [...filtriModelloAttivi].every(lbl => {
         const f = FILTRI_MODELLO.find(f => f.label === lbl)
@@ -518,7 +590,7 @@ function ArticoloForm({
     return [...map.entries()]
       .map(([url, ids]) => ({ url, count: ids.length, singleId: ids.length === 1 ? ids[0] : null }))
       .sort((a, b) => b.count - a.count)
-  }, [listiniFiltrati, tipo, filtriModelloAttivi, marca])
+  }, [postClassifica, filtriModelloAttivi, marca])
 
   const modelliConSchema = useMemo(() => {
     if (!schemaFiltro) return modelliFiltrati
@@ -532,11 +604,14 @@ function ArticoloForm({
   }
 
   function handleChangeTipo(t: string) {
-    setTipo(t); setMarca(''); setListinoId(''); setFiltriModelloAttivi(new Set()); setSchemaFiltro(null)
+    setTipo(t)
+    setSottocatFiltro(''); setFaseFiltro(''); setMaterialeFiltro('')
+    setTipologiaFiltro(''); setAmbienteFiltro(''); setFasciaFiltro('')
+    setMarca(''); setSerieFiltro(''); setListinoId(''); setFiltriModelloAttivi(new Set()); setSchemaFiltro(null)
   }
 
   function handleChangeMarca(m: string) {
-    setMarca(m); setListinoId(''); setSchemaFiltro(null)
+    setMarca(m); setSerieFiltro(''); setListinoId(''); setSchemaFiltro(null)
   }
 
   function buildFd(targetParentId: number | null): FormData {
@@ -593,10 +668,10 @@ function ArticoloForm({
     <div style={{
       position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)',
       zIndex: 1000, display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
-      padding: 20, overflowY: 'auto',
+      padding: '20px 0', overflowY: 'auto',
     }}>
       <div style={{
-        background: '#fff', borderRadius: 10, padding: 28, width: '100%', maxWidth: 'calc(100vw - 40px)',
+        background: '#fff', borderRadius: 0, padding: 28, width: '100%', maxWidth: 720,
         boxShadow: '0 8px 40px rgba(0,0,0,0.18)', marginTop: 'auto', marginBottom: 'auto',
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: parentId ? 4 : 20 }}>
@@ -620,7 +695,7 @@ function ArticoloForm({
           <input type="hidden" name="modello"       value={listinoSel?.descrizione ?? ''} />
           <input type="hidden" name="accessori"     value={accessoriSel.join(',')} />
 
-          <div style={{ display: 'grid', gap: 14 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 14 }}>
 
             {isCaratteristicaMode ? (
               <>
@@ -651,22 +726,110 @@ function ArticoloForm({
               <>
                 {/* Tipo prodotto */}
                 <div>
-                  <span style={label}>Tipo prodotto *</span>
+                  <span style={label}>Categoria</span>
                   <SelectLookup
                     name="tipo_prodotto"
                     value={tipo}
                     onChange={v => handleChangeTipo(v)}
-                    required
                     options={[{ value: '', label: '— Seleziona tipo —' }, ...tipi.map(t => ({ value: t, label: t }))]}
                     style={inp}
                   />
                 </div>
 
-                {/* Linguette filtro (visibili subito dopo il tipo, se la categoria le ha) */}
-                {tipo && haFiltriModello && (() => {
+                {/* Sottocategoria */}
+                <div>
+                  <span style={label}>Sottocategoria</span>
+                  <SelectLookup
+                    value={sottocatFiltro}
+                    onChange={v => { setSottocatFiltro(v); setFaseFiltro(''); setMaterialeFiltro(''); setTipologiaFiltro(''); setAmbienteFiltro(''); setFasciaFiltro(''); setMarca(''); setListinoId(''); setSchemaFiltro(null) }}
+                    options={[{ value: '', label: '— Tutte —' }, ...sottocatOptions.map(v => ({ value: v, label: v }))]}
+                    style={inp}
+                  />
+                </div>
+
+                {/* Fase */}
+                <div>
+                  <span style={label}>Fase</span>
+                  <SelectLookup
+                    value={faseFiltro}
+                    onChange={v => { setFaseFiltro(v); setMaterialeFiltro(''); setTipologiaFiltro(''); setAmbienteFiltro(''); setFasciaFiltro(''); setMarca(''); setListinoId(''); setSchemaFiltro(null) }}
+                    options={[{ value: '', label: '— Tutte —' }, ...faseOptions.map(v => ({ value: v, label: v }))]}
+                    style={inp}
+                  />
+                </div>
+
+                {/* Materiale */}
+                <div>
+                  <span style={label}>Materiale</span>
+                  <SelectLookup
+                    value={materialeFiltro}
+                    onChange={v => { setMaterialeFiltro(v); setTipologiaFiltro(''); setAmbienteFiltro(''); setFasciaFiltro(''); setMarca(''); setListinoId(''); setSchemaFiltro(null) }}
+                    options={[{ value: '', label: '— Tutti —' }, ...materialeOptions.map(v => ({ value: v, label: v }))]}
+                    style={inp}
+                  />
+                </div>
+
+                {/* Tipologia */}
+                <div>
+                  <span style={label}>Tipologia</span>
+                  <SelectLookup
+                    value={tipologiaFiltro}
+                    onChange={v => { setTipologiaFiltro(v); setAmbienteFiltro(''); setFasciaFiltro(''); setMarca(''); setListinoId(''); setSchemaFiltro(null) }}
+                    options={[{ value: '', label: '— Tutte —' }, ...tipologiaOptions.map(v => ({ value: v, label: v }))]}
+                    style={inp}
+                  />
+                </div>
+
+                {/* Ambiente */}
+                <div>
+                  <span style={label}>Ambiente</span>
+                  <SelectLookup
+                    value={ambienteFiltro}
+                    onChange={v => { setAmbienteFiltro(v); setFasciaFiltro(''); setMarca(''); setListinoId(''); setSchemaFiltro(null) }}
+                    options={[{ value: '', label: '— Tutti —' }, ...ambienteOptions.map(v => ({ value: v, label: v }))]}
+                    style={inp}
+                  />
+                </div>
+
+                {/* Fascia */}
+                <div>
+                  <span style={label}>Fascia</span>
+                  <SelectLookup
+                    value={fasciaFiltro}
+                    onChange={v => { setFasciaFiltro(v); setMarca(''); setListinoId(''); setSchemaFiltro(null) }}
+                    options={[{ value: '', label: '— Tutte —' }, ...fasciaOptions.map(v => ({ value: v, label: v }))]}
+                    style={inp}
+                  />
+                </div>
+
+                {/* Marca (filtro opzionale) */}
+                <div>
+                  <span style={label}>Marca</span>
+                  <SelectLookup
+                    name="marca"
+                    value={marca}
+                    onChange={v => handleChangeMarca(v)}
+                    options={[{ value: '', label: '— Tutte le marche —' }, ...marche.map(m => ({ value: m, label: m }))]}
+                    style={inp}
+                  />
+                </div>
+
+                {/* Serie */}
+                <div>
+                  <span style={label}>Serie</span>
+                  <SelectLookup
+                    value={serieFiltro}
+                    onChange={v => { setSerieFiltro(v); setListinoId(''); setSchemaFiltro(null) }}
+                    options={[{ value: '', label: '— Tutte le serie —' }, ...serieOptions.map(s => ({ value: s, label: s }))]}
+                    style={inp}
+                  />
+                </div>
+
+                {/* Linguette filtro */}
+                {haFiltriModello && (() => {
                   const H = 28, THUMB = 22
                   const chipsDisponibili = FILTRI_MODELLO.filter(f =>
-                    listiniFiltrati.filter(l => l.categoria === tipo).some(m => (m[f.key] ?? 0) === 1)
+                    postClassifica.some(m => (m[f.key] ?? 0) === 1)
                   )
                   return (
                     <div style={{
@@ -704,8 +867,8 @@ function ArticoloForm({
                   )
                 })()}
 
-                {/* Schemi — visibili dopo tipo/linguette, prima della marca */}
-                {tipo && thumbnailsData.length > 0 && (
+                {/* Disegno — in fondo, dopo tutti i filtri */}
+                {thumbnailsData.length > 0 && (
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: 8 }}>
                     {thumbnailsData.map(({ url, count, singleId }) => {
                       const isSelected = schemaFiltro === url || (singleId !== null && listinoId === String(singleId))
@@ -715,10 +878,12 @@ function ArticoloForm({
                           type="button"
                           onClick={() => {
                             if (singleId !== null) {
-                              const item = listiniFiltrati.find(l => l.id === singleId)
-                              if (item) setMarca(item.produttore)
-                              setListinoId(String(singleId))
-                              setSchemaFiltro(null)
+                              if (isSelected) { setListinoId(''); setSchemaFiltro(null) }
+                              else {
+                                const item = listiniFiltrati.find(l => l.id === singleId)
+                                if (item) setMarca(item.produttore)
+                                setListinoId(String(singleId)); setSchemaFiltro(url)
+                              }
                             } else {
                               setSchemaFiltro(isSelected ? null : url)
                               setMarca(''); setListinoId('')
@@ -740,47 +905,32 @@ function ArticoloForm({
                   </div>
                 )}
 
-                {/* Marca (filtro opzionale) */}
-                {tipo && (
-                  <div>
-                    <span style={label}>Marca</span>
-                    <SelectLookup
-                      name="marca"
-                      value={marca}
-                      onChange={v => handleChangeMarca(v)}
-                      options={[{ value: '', label: '— Tutte le marche —' }, ...marche.map(m => ({ value: m, label: m }))]}
-                      style={inp}
-                    />
-                  </div>
-                )}
-
-                {/* Modello */}
-                {tipo && (
-                  <div>
-                    <span style={label}>
-                      Modello / Profilo *{modelliConSchema.length !== modelliFiltrati.length ? ` (${modelliConSchema.length} di ${modelliFiltrati.length})` : ''}
-                    </span>
-                    <SelectLookup
-                      value={listinoId}
-                      onChange={v => {
-                        setListinoId(v)
-                        if (v) {
-                          const item = listiniFiltrati.find(l => l.id === parseInt(v))
-                          if (item) setMarca(item.produttore)
-                        }
-                      }}
-                      options={[{ value: '', label: '— Seleziona modello —' }, ...modelliConSchema.map(m => {
-                        const sc = m.sconto_articolo ?? 0
-                        const promo = sc !== 0 ? (sc < 0 ? ` · Magg. +${Math.abs(sc)}%` : ` · Sconto -${sc}%`) : ''
-                        const details = isStaff
-                          ? ` — acq. €${Number(m.prezzo_acquisto ?? 0).toFixed(2)} / cli. €${Number(m.prezzo_vendita).toFixed(2)}${m.fornitore_nome ? ` · ${m.fornitore_nome}` : ''}`
-                          : ` — €${Number(m.prezzo_vendita).toFixed(2)}${m.fornitore_nome ? ` · ${m.fornitore_nome}` : ''}`
-                        return { value: String(m.id), label: `${m.descrizione} (${m.unita}${details})${promo}` }
-                      })]}
-                      style={inp}
-                    />
-                  </div>
-                )}
+                {/* Descrizione — selezione finale articolo */}
+                <div>
+                  <span style={label}>
+                    Descrizione *{modelliConSchema.length !== modelliFiltrati.length ? ` (${modelliConSchema.length} di ${modelliFiltrati.length})` : ''}
+                  </span>
+                  <SelectLookup
+                    value={listinoId}
+                    onChange={v => {
+                      setListinoId(v)
+                      if (!v) { setSchemaFiltro(null) }
+                      if (v) {
+                        const item = listiniFiltrati.find(l => l.id === parseInt(v))
+                        if (item) setMarca(item.produttore)
+                      }
+                    }}
+                    options={[{ value: '', label: '— Seleziona —' }, ...modelliConSchema.map(m => {
+                      const sc = m.sconto_articolo ?? 0
+                      const promo = sc !== 0 ? (sc < 0 ? ` · Magg. +${Math.abs(sc)}%` : ` · Sconto -${sc}%`) : ''
+                      const details = isStaff
+                        ? ` — acq. €${Number(m.prezzo_acquisto ?? 0).toFixed(2)} / cli. €${Number(m.prezzo_vendita).toFixed(2)}${m.fornitore_nome ? ` · ${m.fornitore_nome}` : ''}`
+                        : ` — €${Number(m.prezzo_vendita).toFixed(2)}${m.fornitore_nome ? ` · ${m.fornitore_nome}` : ''}`
+                      return { value: String(m.id), label: `${m.descrizione} (${m.unita}${details})${promo}` }
+                    })]}
+                    style={inp}
+                  />
+                </div>
               </>
             )}
 
@@ -862,10 +1012,11 @@ function ArticoloForm({
               </p>
             )}
 
-            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', paddingTop: 4 }}>
-              <button type="button" onClick={onClose} className={b('btn-gray', isApp)}
-                style={{ padding: '0 20px', fontSize: 13 }}>
-                Annulla
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'center', paddingTop: 4 }}>
+              <button type="submit" disabled={pending || !listinoId}
+                className={pending || !listinoId ? b('btn-gray', isApp) : b('btn-green', isApp)}
+                style={{ padding: '0 22px', fontSize: 13 }}>
+                {pending ? '…' : isCaratteristicaMode ? 'Applica' : 'Conferma'}
               </button>
               {isCaratteristicaMode && altriParentIds.length > 0 && (
                 <button type="button" onClick={handleApplicaATutti} disabled={pending || !listinoId}
@@ -874,10 +1025,9 @@ function ArticoloForm({
                   {pending ? '…' : 'Applica a tutti'}
                 </button>
               )}
-              <button type="submit" disabled={pending || (isCaratteristicaMode ? !listinoId : (!tipo || !marca || !listinoId))}
-                className={pending || (isCaratteristicaMode ? !listinoId : (!tipo || !marca || !listinoId)) ? b('btn-gray', isApp) : b('btn-green', isApp)}
-                style={{ padding: '0 22px', fontSize: 13 }}>
-                {pending ? '…' : isCaratteristicaMode ? 'Applica' : 'Aggiungi'}
+              <button type="button" onClick={onClose} className={b('btn-red', isApp)}
+                style={{ padding: '0 20px', fontSize: 13 }}>
+                Annulla
               </button>
             </div>
           </div>
@@ -967,7 +1117,7 @@ function ModificaArticoloModal({ articolo, parentArt, children = [], listini, on
       if (!cl) return { child, ok: false }
       const newSerie = nuovoListinoSel.serie ?? ''
       const brandOk = !cl.produttore || cl.produttore === nuovoListinoSel.produttore
-      const catOk   = !cl.categoria  || cl.categoria  === nuovoListinoSel.categoria
+      const catOk   = matchesPercorsi(cl.id, cl.categoria ?? '', nuovoListinoSel.id, nuovoListinoSel.categoria ?? '', percorsiPerListino)
       const serieOk = !cl.serie      || cl.serie      === newSerie
       if (!brandOk || !catOk || !serieOk) return { child, ok: false }
       const hasTipedFlag = (cl.richiede_tipo_colore ?? 0) === 1 || (cl.richiede_tipo_colore_acc ?? 0) === 1 ||
@@ -1026,8 +1176,8 @@ function ModificaArticoloModal({ articolo, parentArt, children = [], listini, on
   }
 
   return (
-    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-      <div style={{ background: '#fff', borderRadius: 10, padding: 28, width: '100%', maxWidth: isChild ? 400 : 540, maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 8px 40px rgba(0,0,0,0.18)' }}>
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px 0' }}>
+      <div style={{ background: '#fff', borderRadius: 0, padding: 28, width: '100%', maxWidth: 720, maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 8px 40px rgba(0,0,0,0.18)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
           <h3 style={{ margin: 0, fontSize: 17, fontWeight: 700 }}>Modifica articolo #{articolo.id}</h3>
           <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: '#888', lineHeight: 1 }}>✕</button>
@@ -1036,7 +1186,7 @@ function ModificaArticoloModal({ articolo, parentArt, children = [], listini, on
           {articolo.tipo_prodotto} — {articolo.marca} {articolo.modello}
         </div>
         <form onSubmit={handleSubmit}>
-          <div style={{ display: 'grid', gap: 14 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 14 }}>
 
             {/* Sezione cambio articolo — solo root, solo staff */}
             {!isChild && isStaff && (
@@ -1055,7 +1205,7 @@ function ModificaArticoloModal({ articolo, parentArt, children = [], listini, on
                   <div style={{ display: 'grid', gap: 10, marginTop: 12 }}>
                     {/* Tipo */}
                     <div>
-                      <span style={label}>Tipo prodotto</span>
+                      <span style={label}>Categoria</span>
                       <SelectLookup value={nuovoTipo} onChange={v => { setNuovoTipo(v); setNuovaMarca(''); setNuovoListinoId('') }}
                         options={[{ value: '', label: '— Seleziona tipo —' }, ...tipiDisp.map(t => ({ value: t, label: t }))]}
                         style={inp} />
@@ -1307,10 +1457,10 @@ function InoltraModal({
   return (
     <div style={{
       position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)',
-      zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20,
+      zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px 0',
     }}>
       <div style={{
-        background: '#fff', borderRadius: 10, padding: 28, width: '100%', maxWidth: 480,
+        background: '#fff', borderRadius: 0, padding: 28, width: '100%',
         boxShadow: '0 8px 40px rgba(0,0,0,0.18)',
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
@@ -1318,7 +1468,7 @@ function InoltraModal({
           <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: '#888', lineHeight: 1 }}>✕</button>
         </div>
         <form onSubmit={handleSubmit}>
-          <div style={{ display: 'grid', gap: 14 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 14 }}>
             <div>
               <span style={label}>N° Preventivo</span>
               <input value={preventivo.numero || `#${preventivo.id}`} readOnly style={{ ...inp, background: '#f5f5f5', color: '#888' }} />
@@ -1356,11 +1506,32 @@ function InoltraModal({
   )
 }
 
+// ─── Matching percorsi (cat+sottocat, sottocat vuota = wildcard) ──────────────
+
+type PercorsoEntry = { categoria: string; sottocategoria: string }
+
+function matchesPercorsi(
+  aId: number, aCat: string,
+  bId: number, bCat: string,
+  map: Record<number, PercorsoEntry[]>
+): boolean {
+  const ap = map[aId] ?? []
+  const bp = map[bId] ?? []
+  if (!ap.length || !bp.length) return aCat === bCat
+  return ap.some(a =>
+    bp.some(b =>
+      a.categoria === b.categoria &&
+      (!a.sottocategoria || a.sottocategoria === b.sottocategoria)
+    )
+  )
+}
+
 // ─── Componente principale ────────────────────────────────────────────────────
 
 export default function PreventivoClient({
   preventivo, articoli, listini, clienti, isStaff = true,
   clienteEmail = '', clienteCellulare = '', backHref, stampaHref, isApp,
+  percorsiPerListino = {},
 }: {
   preventivo: Preventivo
   articoli: Articolo[]
@@ -1372,6 +1543,7 @@ export default function PreventivoClient({
   backHref?: string
   stampaHref?: string
   isApp?: boolean
+  percorsiPerListino?: Record<number, PercorsoEntry[]>
 }) {
   const router = useRouter()
   const [showForm, setShowForm]         = useState(false)
@@ -1847,7 +2019,7 @@ export default function PreventivoClient({
                       const rootSerie = rootListino?.serie ?? ''
                       const hasOptionalCaratteristiche = !useTypeGaps && canEdit && listini.some(l =>
                         l.caratteristica === 1 &&
-                        (!l.categoria  || l.categoria  === root.tipo_prodotto) &&
+                        matchesPercorsi(l.id, l.categoria ?? '', root.listino_id ?? 0, root.tipo_prodotto, percorsiPerListino) &&
                         (!l.produttore || l.produttore === root.marca) &&
                         (!l.serie      || l.serie      === rootSerie)
                       )
@@ -2153,6 +2325,7 @@ export default function PreventivoClient({
           onClose={() => { setShowForm(false); setParentId(null); setParentArt(null); setGapType(null) }}
           isStaff={isStaff}
           isApp={isApp}
+          percorsiPerListino={percorsiPerListino}
         />
       )}
 

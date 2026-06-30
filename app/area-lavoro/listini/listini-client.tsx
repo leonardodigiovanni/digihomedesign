@@ -4,6 +4,7 @@ import React, { useState, useMemo, useActionState, useTransition, useRef, useEff
 import SelectLookup from '@/components/select-lookup'
 import { useRouter } from 'next/navigation'
 import { addArticolo, updateArticolo, deleteArticolo, cloneArticolo, toggleDisponibile, togglePreventivabile, toggleAcquistabile, togglePrincipale, toggleCaratteristica, toggleColonnaBooleana, updateSchedaTecnica, clearImmagine, type MutResult, type AddResult } from './actions'
+import { addPercorsoListino, removePercorsoListino, type Percorso } from '@/lib/percorsi'
 
 // ─── Tipi ─────────────────────────────────────────────────────────────────────
 
@@ -15,8 +16,14 @@ export type Fornitore = {
 export type Articolo = {
   id: number
   categoria: string
+  sottocategoria: string | null
+  fase: string | null
+  materiale: string | null
+  tipologia: string | null
+  ambiente: string | null
   produttore: string
   descrizione: string
+  fascia: string | null
   unita: string
   prezzo_acquisto: number
   prezzo_vendita: number
@@ -64,20 +71,24 @@ export type Articolo = {
 
 // ─── Visibilità colonne ────────────────────────────────────────────────────────
 
-const COL_KEYS = ['cat','prod','serie','forn','schema','foto','descr','unita','minimo','p_acq','p_vnd','costante','abbr','sconto','margine','note','richiede','filtri','azioni'] as const
+const COL_KEYS = ['percorsi','cat','fase','mat','tipo','amb','descr','fascia','prod','serie','forn','schema','foto','unita','minimo','p_acq','p_vnd','costante','abbr','sconto','margine','note','richiede','filtri','azioni'] as const
 type ColKey = typeof COL_KEYS[number]
 
 const COL_LABELS: Record<ColKey, string> = {
-  cat: 'Cat.', prod: 'Produttore', serie: 'Serie', forn: 'Fornitore',
-  schema: 'Schema', foto: 'Foto', descr: 'Descriz.', unita: 'Unità',
+  percorsi: 'Percorsi', cat: 'Categoria',
+  fase: 'Fase', mat: 'Materiale', tipo: 'Tipologia', amb: 'Ambiente',
+  descr: 'Descriz.', fascia: 'Fascia', prod: 'Marca', serie: 'Serie', forn: 'Fornitore',
+  schema: 'Schema', foto: 'Foto', unita: 'Unità',
   minimo: 'Minimo', p_acq: 'P.Acq', p_vnd: 'P.Vnd', costante: 'Cost.',
   abbr: 'Abbr', sconto: 'Sconto', margine: 'Margine', note: 'Note',
   richiede: 'Richiede…', filtri: 'Filtri', azioni: 'Azioni',
 }
 
 const COL_DEFAULT: Record<ColKey, boolean> = {
-  cat: true, prod: true, serie: true, forn: true,
-  schema: true, foto: true, descr: true, unita: true,
+  percorsi: true, cat: true,
+  fase: true, mat: true, tipo: true, amb: true,
+  descr: true, fascia: true, prod: true, serie: true, forn: true,
+  schema: true, foto: true, unita: true,
   minimo: false, p_acq: true, p_vnd: true, costante: false,
   abbr: false, sconto: true, margine: true, note: true,
   richiede: true, filtri: true, azioni: true,
@@ -139,8 +150,8 @@ const thS: React.CSSProperties = {
 
 // ─── Form nuovo articolo ──────────────────────────────────────────────────────
 
-function NuovoArticoloForm({ categorie, produttori, fornitori, onDone }: {
-  categorie: string[]; produttori: string[]; fornitori: Fornitore[]; onDone: (newId?: number) => void
+function NuovoArticoloForm({ articoli, fornitori, onDone }: {
+  articoli: Articolo[]; fornitori: Fornitore[]; onDone: (newId?: number) => void
 }) {
   const [result, action, pending] = useActionState<AddResult | null, FormData>(addArticolo, null)
   const [unitaCustom, setUnitaCustom] = useState(false)
@@ -150,6 +161,69 @@ function NuovoArticoloForm({ categorie, produttori, fornitori, onDone }: {
   const fileRef      = useRef<HTMLInputElement>(null)
   const pendingFile  = useRef<File | null>(null)
   const router = useRouter()
+
+  // ─── Stato classificazione (cascade) ──────────────────────────────────────
+  const [catSel, setCatSel]           = useState('')
+  const [sottocatSel, setSottocatSel] = useState('')
+  const [faseSel, setFaseSel]         = useState('')
+  const [materialeSel, setMaterialeSel] = useState('')
+  const [tipologiaSel, setTipologiaSel] = useState('')
+  const [ambienteSel, setAmbienteSel] = useState('')
+  const [fasciaSel, setFasciaSel]     = useState('')
+
+  const categorieOpt = useMemo(
+    () => [...new Set(articoli.map(a => a.categoria))].sort(),
+    [articoli]
+  )
+  const sottocatOpt = useMemo(() => {
+    const base = catSel ? articoli.filter(a => a.categoria === catSel) : articoli
+    return [...new Set(base.map(a => a.sottocategoria).filter(Boolean))].sort() as string[]
+  }, [articoli, catSel])
+  const faseOpt = useMemo(() => {
+    let b = catSel ? articoli.filter(a => a.categoria === catSel) : articoli
+    if (sottocatSel) b = b.filter(a => a.sottocategoria === sottocatSel)
+    return [...new Set(b.map(a => a.fase).filter(Boolean))].sort() as string[]
+  }, [articoli, catSel, sottocatSel])
+  const materialeOpt = useMemo(() => {
+    let b = catSel ? articoli.filter(a => a.categoria === catSel) : articoli
+    if (sottocatSel) b = b.filter(a => a.sottocategoria === sottocatSel)
+    if (faseSel) b = b.filter(a => a.fase === faseSel)
+    return [...new Set(b.map(a => a.materiale).filter(Boolean))].sort() as string[]
+  }, [articoli, catSel, sottocatSel, faseSel])
+  const tipologiaOpt = useMemo(() => {
+    let b = catSel ? articoli.filter(a => a.categoria === catSel) : articoli
+    if (sottocatSel) b = b.filter(a => a.sottocategoria === sottocatSel)
+    if (faseSel) b = b.filter(a => a.fase === faseSel)
+    if (materialeSel) b = b.filter(a => a.materiale === materialeSel)
+    return [...new Set(b.map(a => a.tipologia).filter(Boolean))].sort() as string[]
+  }, [articoli, catSel, sottocatSel, faseSel, materialeSel])
+  const ambienteOpt = useMemo(() => {
+    let b = catSel ? articoli.filter(a => a.categoria === catSel) : articoli
+    if (sottocatSel) b = b.filter(a => a.sottocategoria === sottocatSel)
+    if (faseSel) b = b.filter(a => a.fase === faseSel)
+    if (materialeSel) b = b.filter(a => a.materiale === materialeSel)
+    if (tipologiaSel) b = b.filter(a => a.tipologia === tipologiaSel)
+    return [...new Set(b.map(a => a.ambiente).filter(Boolean))].sort() as string[]
+  }, [articoli, catSel, sottocatSel, faseSel, materialeSel, tipologiaSel])
+  const fasciaOpt = useMemo(() => {
+    let b = catSel ? articoli.filter(a => a.categoria === catSel) : articoli
+    if (sottocatSel) b = b.filter(a => a.sottocategoria === sottocatSel)
+    if (faseSel) b = b.filter(a => a.fase === faseSel)
+    if (materialeSel) b = b.filter(a => a.materiale === materialeSel)
+    if (tipologiaSel) b = b.filter(a => a.tipologia === tipologiaSel)
+    if (ambienteSel) b = b.filter(a => a.ambiente === ambienteSel)
+    return [...new Set(b.map(a => a.fascia).filter(Boolean))].sort() as string[]
+  }, [articoli, catSel, sottocatSel, faseSel, materialeSel, tipologiaSel, ambienteSel])
+  const produttoriOpt = useMemo(() => {
+    let b = catSel ? articoli.filter(a => a.categoria === catSel) : articoli
+    if (sottocatSel) b = b.filter(a => a.sottocategoria === sottocatSel)
+    if (faseSel) b = b.filter(a => a.fase === faseSel)
+    if (materialeSel) b = b.filter(a => a.materiale === materialeSel)
+    if (tipologiaSel) b = b.filter(a => a.tipologia === tipologiaSel)
+    if (ambienteSel) b = b.filter(a => a.ambiente === ambienteSel)
+    if (fasciaSel) b = b.filter(a => a.fascia === fasciaSel)
+    return [...new Set(b.map(a => a.produttore).filter(Boolean))].sort()
+  }, [articoli, catSel, sottocatSel, faseSel, materialeSel, tipologiaSel, ambienteSel, fasciaSel])
 
   useEffect(() => {
     if (!result?.ok) return
@@ -178,24 +252,67 @@ function NuovoArticoloForm({ categorie, produttori, fornitori, onDone }: {
 
         <div>
           <label style={lbl}>Categoria *</label>
-          <input name="categoria" required style={inp} list="cat-list" placeholder="Es. Infissi" />
-          <datalist id="cat-list">{categorie.map(c => <option key={c} value={c} />)}</datalist>
+          <input name="categoria" required style={inp} list="naf-cat" placeholder="Es. Infissi"
+            value={catSel} onChange={e => { setCatSel(e.target.value); setSottocatSel(''); setFaseSel(''); setMaterialeSel(''); setTipologiaSel(''); setAmbienteSel(''); setFasciaSel('') }} />
+          <datalist id="naf-cat">{categorieOpt.map(c => <option key={c} value={c} />)}</datalist>
         </div>
 
         <div>
-          <label style={lbl}>Produttore / Marca</label>
-          <input name="produttore" style={inp} list="prod-list" placeholder="Es. Schüco" />
-          <datalist id="prod-list">{produttori.map(p => <option key={p} value={p} />)}</datalist>
+          <label style={lbl}>Sottocategoria</label>
+          <input name="sottocategoria" style={inp} list="naf-sottocat" placeholder="Es. Scorrevoli"
+            value={sottocatSel} onChange={e => { setSottocatSel(e.target.value); setFaseSel(''); setMaterialeSel(''); setTipologiaSel(''); setAmbienteSel(''); setFasciaSel('') }} />
+          <datalist id="naf-sottocat">{sottocatOpt.map(v => <option key={v} value={v} />)}</datalist>
         </div>
 
         <div>
-          <label style={lbl}>Serie / Modello</label>
-          <input name="serie" style={inp} placeholder="Es. AWS 75" />
+          <label style={lbl}>Fase</label>
+          <input name="fase" style={inp} list="naf-fase" placeholder="Es. Installazione"
+            value={faseSel} onChange={e => { setFaseSel(e.target.value); setMaterialeSel(''); setTipologiaSel(''); setAmbienteSel(''); setFasciaSel('') }} />
+          <datalist id="naf-fase">{faseOpt.map(v => <option key={v} value={v} />)}</datalist>
+        </div>
+
+        <div>
+          <label style={lbl}>Materiale</label>
+          <input name="materiale" style={inp} list="naf-mat" placeholder="Es. Alluminio"
+            value={materialeSel} onChange={e => { setMaterialeSel(e.target.value); setTipologiaSel(''); setAmbienteSel(''); setFasciaSel('') }} />
+          <datalist id="naf-mat">{materialeOpt.map(v => <option key={v} value={v} />)}</datalist>
+        </div>
+
+        <div>
+          <label style={lbl}>Tipologia</label>
+          <input name="tipologia" style={inp} list="naf-tipo" placeholder="Es. Battente"
+            value={tipologiaSel} onChange={e => { setTipologiaSel(e.target.value); setAmbienteSel(''); setFasciaSel('') }} />
+          <datalist id="naf-tipo">{tipologiaOpt.map(v => <option key={v} value={v} />)}</datalist>
+        </div>
+
+        <div>
+          <label style={lbl}>Ambiente</label>
+          <input name="ambiente" style={inp} list="naf-amb" placeholder="Es. Esterno"
+            value={ambienteSel} onChange={e => { setAmbienteSel(e.target.value); setFasciaSel('') }} />
+          <datalist id="naf-amb">{ambienteOpt.map(v => <option key={v} value={v} />)}</datalist>
         </div>
 
         <div style={{ gridColumn: 'span 2' }}>
           <label style={lbl}>Etichetta / Descrizione *</label>
           <input name="descrizione" required style={inp} placeholder="Es. Finestra scorrevole 2 ante" />
+        </div>
+
+        <div>
+          <label style={lbl}>Fascia</label>
+          <input name="fascia" style={inp} list="naf-fascia" placeholder="Es. Premium"
+            value={fasciaSel} onChange={e => setFasciaSel(e.target.value)} />
+          <datalist id="naf-fascia">{fasciaOpt.map(v => <option key={v} value={v} />)}</datalist>
+        </div>
+
+        <div>
+          <label style={lbl}>Marca / Produttore</label>
+          <input name="produttore" style={inp} list="naf-prod" placeholder="Es. Schüco" />
+          <datalist id="naf-prod">{produttoriOpt.map(p => <option key={p} value={p} />)}</datalist>
+        </div>
+
+        <div>
+          <label style={lbl}>Serie / Modello</label>
+          <input name="serie" style={inp} placeholder="Es. AWS 75" />
         </div>
 
         {/* Upload foto */}
@@ -679,8 +796,65 @@ function ImgCell({ artId, url, tipo, alt }: { artId: number; url: string | null;
 
 // ─── Riga normale ─────────────────────────────────────────────────────────────
 
-function RigaNormale({ art, onEdit, onScheda, onDelete, onAction, pending }: {
+// ─── Pannello percorsi ────────────────────────────────────────────────────────
+
+function PercorsiPanel({ percorsi, listinoId }: { percorsi: Percorso[]; listinoId: number }) {
+  const router = useRouter()
+  const [catInput, setCatInput] = useState('')
+  const [sottoInput, setSottoInput] = useState('')
+  const [adding, setAdding] = useState(false)
+  const [removing, setRemoving] = useState<number | null>(null)
+
+  async function handleAdd() {
+    if (!catInput.trim()) return
+    setAdding(true)
+    const res = await addPercorsoListino(listinoId, catInput.trim(), sottoInput.trim())
+    if (res.ok) { setCatInput(''); setSottoInput(''); router.refresh() }
+    setAdding(false)
+  }
+  async function handleRemove(id: number) {
+    setRemoving(id)
+    await removePercorsoListino(id)
+    router.refresh()
+    setRemoving(null)
+  }
+
+  const chip: React.CSSProperties = {
+    borderRadius: 3, padding: '2px 5px', fontSize: 10, fontWeight: 600, whiteSpace: 'nowrap',
+  }
+  const miniInp: React.CSSProperties = {
+    fontSize: 10, padding: '2px 4px', border: '1px solid #ccc', borderRadius: 3, width: 70,
+  }
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: '3px 4px', alignItems: 'center' }}>
+      {percorsi.length === 0 && null}
+      {percorsi.map(p => (
+        <React.Fragment key={p.id}>
+          <span style={{ ...chip, background: '#e8e8f8' }}>{p.categoria}</span>
+          <span style={{ ...chip, background: '#e8f0e8' }}>{p.sottocategoria}</span>
+          <button onClick={() => handleRemove(p.id)} disabled={removing === p.id}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#c62828', fontSize: 12, padding: 0, lineHeight: 1, fontWeight: 700 }}>
+            ✕
+          </button>
+        </React.Fragment>
+      ))}
+      <input value={catInput} onChange={e => setCatInput(e.target.value)}
+        placeholder="categoria" style={miniInp} />
+      <input value={sottoInput} onChange={e => setSottoInput(e.target.value)}
+        placeholder="sottocategoria" style={miniInp} />
+      <button onClick={handleAdd} disabled={adding || !catInput.trim()}
+        style={{ fontSize: 10, padding: '2px 5px', background: '#2e7d32', color: '#fff', border: 'none', borderRadius: 3, cursor: 'pointer', fontWeight: 700 }}>
+        +
+      </button>
+    </div>
+  )
+}
+
+// ─── Riga normale ─────────────────────────────────────────────────────────────
+
+function RigaNormale({ art, percorsi, onEdit, onScheda, onDelete, onAction, pending }: {
   art: Articolo
+  percorsi: Percorso[]
   onEdit: () => void
   onScheda: () => void
   onDelete: () => void
@@ -698,18 +872,28 @@ function RigaNormale({ art, onEdit, onScheda, onDelete, onAction, pending }: {
 
   return (
     <tr onDoubleClick={onEdit} onClick={onAction} style={{ cursor: 'pointer', background: nonDisp ? '#f9f9f9' : undefined }} title="Doppio click per modificare">
-      <td style={{ ...td, ...vis('cat') }}><span style={{ background: '#e8e8f8', borderRadius: 3, padding: '2px 7px', fontSize: 11, fontWeight: 600 }}>{art.categoria}</span></td>
-      <td style={{ ...td, color: '#555', ...vis('prod') }}>{art.produttore || '—'}</td>
-      <td style={{ ...td, color: '#555', ...vis('serie') }}>{art.serie || '—'}</td>
-      <td style={{ ...td, color: '#555', ...vis('forn') }}>{art.fornitore_nome || '—'}</td>
+      <td style={{ ...td, ...vis('percorsi'), padding: '6px 8px', verticalAlign: 'top', minWidth: 200 }} onClick={e => e.stopPropagation()}>
+        <PercorsiPanel percorsi={percorsi} listinoId={art.id} />
+      </td>
+      <td style={{ ...td, ...vis('cat') }}>
+        {art.categoria ? <span style={{ background: '#e8e8f8', borderRadius: 3, padding: '2px 7px', fontSize: 11, fontWeight: 600 }}>{art.categoria}</span> : null}
+      </td>
+      <td style={{ ...td, ...vis('fase') }}>{art.fase ? <span style={{ background: '#f0e8f8', borderRadius: 3, padding: '2px 7px', fontSize: 11, fontWeight: 600 }}>{art.fase}</span> : null}</td>
+      <td style={{ ...td, ...vis('mat') }}>{art.materiale ? <span style={{ background: '#f8f0e8', borderRadius: 3, padding: '2px 7px', fontSize: 11, fontWeight: 600 }}>{art.materiale}</span> : null}</td>
+      <td style={{ ...td, ...vis('tipo') }}>{art.tipologia ? <span style={{ background: '#e8f8f8', borderRadius: 3, padding: '2px 7px', fontSize: 11, fontWeight: 600 }}>{art.tipologia}</span> : null}</td>
+      <td style={{ ...td, ...vis('amb') }}>{art.ambiente ? <span style={{ background: '#f8f8e8', borderRadius: 3, padding: '2px 7px', fontSize: 11, fontWeight: 600 }}>{art.ambiente}</span> : null}</td>
+      <td style={{ ...td, fontWeight: 500, maxWidth: 300, ...vis('descr') }}>
+        {art.descrizione}
+      </td>
+      <td style={{ ...td, ...vis('fascia') }}>{art.fascia ? <span style={{ background: '#f8e8ee', borderRadius: 3, padding: '2px 7px', fontSize: 11, fontWeight: 600 }}>{art.fascia}</span> : null}</td>
+      <td style={{ ...td, color: '#555', ...vis('prod') }}>{art.produttore}</td>
+      <td style={{ ...td, color: '#555', ...vis('serie') }}>{art.serie}</td>
+      <td style={{ ...td, color: '#555', ...vis('forn') }}>{art.fornitore_nome}</td>
       <td style={{ ...td, padding: 4, width: 140, minWidth: 120, ...vis('schema') }}>
         <ImgCell artId={art.id} url={art.schema_url} tipo="schema" alt="schema" />
       </td>
       <td style={{ ...td, padding: 4, width: 140, minWidth: 120, ...vis('foto') }}>
         <ImgCell artId={art.id} url={art.foto_url} tipo="foto" alt={art.descrizione} />
-      </td>
-      <td style={{ ...td, fontWeight: 500, maxWidth: 300, ...vis('descr') }}>
-        {art.descrizione}
       </td>
       <td style={{ ...td, textAlign: 'center', color: '#666', ...vis('unita') }}>{art.unita}</td>
       <td style={{ ...td, textAlign: 'center', color: '#666', ...vis('minimo') }}>{art.minimo ?? ''}</td>
@@ -729,10 +913,10 @@ function RigaNormale({ art, onEdit, onScheda, onDelete, onAction, pending }: {
           : <span style={{ color: '#ccc' }}>—</span>}
       </td>
       <td style={{ ...td, textAlign: 'center', ...vis('margine') }}>
-        {m ? <span style={{ color: m.color, fontWeight: 700, fontSize: 11 }}>{m.pct}</span> : <span style={{ color: '#ccc' }}>—</span>}
+        {m ? <span style={{ color: m.color, fontWeight: 700, fontSize: 11 }}>{m.pct}</span> : null}
       </td>
       <td style={{ ...td, color: '#888', maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', ...vis('note') }}>
-        {art.note || '—'}
+        {art.note}
         {art.max_acquistabile === 0 && (
           <span style={{ marginLeft: 6, background: '#c62828', color: '#fff', fontSize: 9, fontWeight: 700, borderRadius: 3, padding: '1px 5px' }}>ESAURITO</span>
         )}
@@ -817,10 +1001,19 @@ function RigaEdit({ art, categorie, produttori, fornitori, onDone, onSaved }: {
 
   return (
     <tr ref={trRef} style={{ background: '#fffdf0' }}>
+      <input type="hidden" name="sottocategoria" value={art.sottocategoria ?? ''} readOnly />
+      <td style={{ ...tde, ...vis('percorsi') }} />
       <td style={{ ...tde, ...vis('cat') }}>
-        <input name="categoria" defaultValue={art.categoria} required style={inp} list="cat-list-edit" />
+        <input name="categoria" defaultValue={art.categoria} required style={{ ...inp, minWidth: 90 }}
+          list="cat-list-edit" placeholder="Categoria" />
         <datalist id="cat-list-edit">{categorie.map(c => <option key={c} value={c} />)}</datalist>
       </td>
+      <td style={{ ...tde, ...vis('fase') }}><input name="fase" defaultValue={art.fase ?? ''} style={inp} /></td>
+      <td style={{ ...tde, ...vis('mat') }}><input name="materiale" defaultValue={art.materiale ?? ''} style={inp} /></td>
+      <td style={{ ...tde, ...vis('tipo') }}><input name="tipologia" defaultValue={art.tipologia ?? ''} style={inp} /></td>
+      <td style={{ ...tde, ...vis('amb') }}><input name="ambiente" defaultValue={art.ambiente ?? ''} style={inp} /></td>
+      <td style={{ ...tde, ...vis('descr') }}><input name="descrizione" defaultValue={art.descrizione} required style={inp} /></td>
+      <td style={{ ...tde, ...vis('fascia') }}><input name="fascia" defaultValue={art.fascia ?? ''} style={inp} /></td>
       <td style={{ ...tde, ...vis('prod') }}>
         <input name="produttore" defaultValue={art.produttore} style={inp} list="prod-list-edit" />
         <datalist id="prod-list-edit">{produttori.map(p => <option key={p} value={p} />)}</datalist>
@@ -835,7 +1028,6 @@ function RigaEdit({ art, categorie, produttori, fornitori, onDone, onSaved }: {
       </td>
       <td style={{ ...tde, ...vis('schema') }} />
       <td style={{ ...tde, ...vis('foto') }} />
-      <td style={{ ...tde, ...vis('descr') }}><input name="descrizione" defaultValue={art.descrizione} required style={inp} /></td>
       <td style={{ ...tde, ...vis('unita') }}>
         {unitaCustom ? (
           <input name="unita" defaultValue={art.unita} required style={{ ...inp, width: 60 }}
@@ -878,13 +1070,19 @@ function RigaEdit({ art, categorie, produttori, fornitori, onDone, onSaved }: {
 
 // ─── Componente principale ────────────────────────────────────────────────────
 
-export default function ListiniClient({ articoli, fornitori }: { articoli: Articolo[]; fornitori: Fornitore[] }) {
-  const [filtroTesto, setFiltroTesto]           = useState('')
-  const [filtroCategoria, setFiltroCategoria]   = useState('')
-  const [filtroProduttore, setFiltroProduttore] = useState('')
+export default function ListiniClient({ articoli, fornitori, percorsiPerListino }: { articoli: Articolo[]; fornitori: Fornitore[]; percorsiPerListino: Record<number, Percorso[]> }) {
+  const [filtroTesto, setFiltroTesto]               = useState('')
+  const [filtroCategoria, setFiltroCategoria]       = useState('')
+  const [filtroSottocategoria, setFiltroSottocategoria] = useState('')
+  const [filtroProduttore, setFiltroProduttore]     = useState('')
   const [filtroSerie, setFiltroSerie]           = useState('')
   const [filtroFornitore, setFiltroFornitore]   = useState('')
   const [filtroDisp, setFiltroDisp]             = useState<'tutti' | 'disp' | 'nondisp'>('tutti')
+  const [filtroFase, setFiltroFase]             = useState('')
+  const [filtroMateriale, setFiltroMateriale]   = useState('')
+  const [filtroTipologia, setFiltroTipologia]   = useState('')
+  const [filtroAmbiente, setFiltroAmbiente]     = useState('')
+  const [filtroFascia, setFiltroFascia]         = useState('')
   const [nuovoOpen, setNuovoOpen]           = useState(false)
   const [editId, setEditId]                 = useState<number | null>(null)
   const [schedaId, setSchedaId]             = useState<number | null>(null)
@@ -909,23 +1107,50 @@ export default function ListiniClient({ articoli, fornitori }: { articoli: Artic
     })
   }
 
-  const categorie  = useMemo(() => [...new Set(articoli.map(a => a.categoria))].sort(), [articoli])
-  const produttori = useMemo(() => [...new Set(articoli.map(a => a.produttore).filter(Boolean))].sort(), [articoli])
-  const serie      = useMemo(() => [...new Set(articoli.map(a => a.serie).filter(Boolean))].sort(), [articoli])
+  const allPercorsi = useMemo(() => Object.values(percorsiPerListino).flat(), [percorsiPerListino])
+  const categorie   = useMemo(() => [...new Set(allPercorsi.map(p => p.categoria))].sort(), [allPercorsi])
+  const sottocategorie = useMemo(() => {
+    const src = filtroCategoria
+      ? allPercorsi.filter(p => p.categoria === filtroCategoria)
+      : allPercorsi
+    return [...new Set(src.map(p => p.sottocategoria).filter(Boolean))].sort()
+  }, [allPercorsi, filtroCategoria])
+  const produttori  = useMemo(() => [...new Set(articoli.map(a => a.produttore).filter(Boolean))].sort(), [articoli])
+  const serie       = useMemo(() => [...new Set(articoli.map(a => a.serie).filter(Boolean))].sort(), [articoli])
+  const fasi        = useMemo(() => [...new Set(articoli.map(a => a.fase).filter(Boolean) as string[])].sort(), [articoli])
+  const materiali   = useMemo(() => [...new Set(articoli.map(a => a.materiale).filter(Boolean) as string[])].sort(), [articoli])
+  const tipologie   = useMemo(() => [...new Set(articoli.map(a => a.tipologia).filter(Boolean) as string[])].sort(), [articoli])
+  const ambienti    = useMemo(() => [...new Set(articoli.map(a => a.ambiente).filter(Boolean) as string[])].sort(), [articoli])
+  const fasce       = useMemo(() => [...new Set(articoli.map(a => a.fascia).filter(Boolean) as string[])].sort(), [articoli])
 
   const filtrati = useMemo(() => articoli.filter(a => {
-    if (filtroCategoria && a.categoria !== filtroCategoria) return false
+    const percorsi = percorsiPerListino[a.id] ?? []
+    if (filtroCategoria) {
+      const matchCat = percorsi.some(p => p.categoria === filtroCategoria)
+      if (!matchCat) return false
+    }
+    if (filtroSottocategoria) {
+      const matchSub = percorsi.some(p =>
+        (!filtroCategoria || p.categoria === filtroCategoria) && p.sottocategoria === filtroSottocategoria
+      )
+      if (!matchSub) return false
+    }
     if (filtroProduttore && a.produttore !== filtroProduttore) return false
     if (filtroSerie && a.serie !== filtroSerie) return false
     if (filtroFornitore && String(a.fornitore_id ?? '') !== filtroFornitore) return false
     if (filtroDisp === 'disp' && a.disponibile !== 1) return false
     if (filtroDisp === 'nondisp' && a.disponibile !== 0) return false
+    if (filtroFase      && a.fase      !== filtroFase)      return false
+    if (filtroMateriale && a.materiale !== filtroMateriale) return false
+    if (filtroTipologia && a.tipologia !== filtroTipologia) return false
+    if (filtroAmbiente  && a.ambiente  !== filtroAmbiente)  return false
+    if (filtroFascia    && a.fascia    !== filtroFascia)    return false
     if (filtroTesto) {
       const t = filtroTesto.toLowerCase()
       return a.descrizione.toLowerCase().includes(t) || a.produttore.toLowerCase().includes(t) || a.fornitore_nome.toLowerCase().includes(t) || (a.note ?? '').toLowerCase().includes(t)
     }
     return true
-  }), [articoli, filtroCategoria, filtroProduttore, filtroSerie, filtroFornitore, filtroTesto, filtroDisp])
+  }), [articoli, percorsiPerListino, filtroCategoria, filtroSottocategoria, filtroProduttore, filtroSerie, filtroFornitore, filtroTesto, filtroDisp, filtroFase, filtroMateriale, filtroTipologia, filtroAmbiente, filtroFascia])
 
   const schedaArt = schedaId !== null ? (articoli.find(a => a.id === schedaId) ?? null) : null
 
@@ -982,11 +1207,29 @@ export default function ListiniClient({ articoli, fornitori }: { articoli: Artic
 
         {/* Barra filtri */}
         <div style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
+          <SelectLookup value={filtroCategoria} onChange={v => { setFiltroCategoria(v); setFiltroSottocategoria('') }}
+            options={[{ value: '', label: 'Tutte le categorie' }, ...categorie.map(c => ({ value: c, label: c }))]}
+            style={selInp} />
+          <SelectLookup value={filtroSottocategoria} onChange={setFiltroSottocategoria}
+            options={[{ value: '', label: 'Tutte le sottocategorie' }, ...sottocategorie.map(s => ({ value: s, label: s }))]}
+            style={selInp} />
+          <SelectLookup value={filtroFase} onChange={setFiltroFase}
+            options={[{ value: '', label: 'Tutte le fasi' }, ...fasi.map(v => ({ value: v, label: v }))]}
+            style={selInp} />
+          <SelectLookup value={filtroMateriale} onChange={setFiltroMateriale}
+            options={[{ value: '', label: 'Tutti i materiali' }, ...materiali.map(v => ({ value: v, label: v }))]}
+            style={selInp} />
+          <SelectLookup value={filtroTipologia} onChange={setFiltroTipologia}
+            options={[{ value: '', label: 'Tutte le tipologie' }, ...tipologie.map(v => ({ value: v, label: v }))]}
+            style={selInp} />
+          <SelectLookup value={filtroAmbiente} onChange={setFiltroAmbiente}
+            options={[{ value: '', label: 'Tutti gli ambienti' }, ...ambienti.map(v => ({ value: v, label: v }))]}
+            style={selInp} />
           <input placeholder="Cerca descrizione, produttore…"
             value={filtroTesto} onChange={e => setFiltroTesto(e.target.value)}
             style={{ ...selInp, minWidth: 240 }} />
-          <SelectLookup value={filtroCategoria} onChange={setFiltroCategoria}
-            options={[{ value: '', label: 'Tutte le categorie' }, ...categorie.map(c => ({ value: c, label: c }))]}
+          <SelectLookup value={filtroFascia} onChange={setFiltroFascia}
+            options={[{ value: '', label: 'Tutte le fasce' }, ...fasce.map(v => ({ value: v, label: v }))]}
             style={selInp} />
           <SelectLookup value={filtroProduttore} onChange={setFiltroProduttore}
             options={[{ value: '', label: 'Tutti i produttori' }, ...produttori.map(p => ({ value: p, label: p }))]}
@@ -1013,7 +1256,7 @@ export default function ListiniClient({ articoli, fornitori }: { articoli: Artic
             </button>
           </div>
         ) : (
-          <NuovoArticoloForm categorie={categorie} produttori={produttori} fornitori={fornitori}
+          <NuovoArticoloForm articoli={articoli} fornitori={fornitori}
             onDone={(newId) => { if (newId) setLastId(newId); setNuovoOpen(false) }} />
         )}
 
@@ -1026,13 +1269,19 @@ export default function ListiniClient({ articoli, fornitori }: { articoli: Artic
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
                 <tr>
+                  <th style={{ ...thS, ...thVis('percorsi') }}>Percorsi</th>
                   <th style={{ ...thS, ...thVis('cat') }}>Categoria</th>
-                  <th style={{ ...thS, ...thVis('prod') }}>Produttore</th>
+                  <th style={{ ...thS, ...thVis('fase') }}>Fase</th>
+                  <th style={{ ...thS, ...thVis('mat') }}>Materiale</th>
+                  <th style={{ ...thS, ...thVis('tipo') }}>Tipologia</th>
+                  <th style={{ ...thS, ...thVis('amb') }}>Ambiente</th>
+                  <th style={{ ...thS, ...thVis('descr') }}>Descrizione</th>
+                  <th style={{ ...thS, ...thVis('fascia') }}>Fascia</th>
+                  <th style={{ ...thS, ...thVis('prod') }}>Marca</th>
                   <th style={{ ...thS, ...thVis('serie') }}>Serie</th>
                   <th style={{ ...thS, ...thVis('forn') }}>Fornitore</th>
                   <th style={{ ...thS, width: 140, ...thVis('schema') }}>Schema</th>
                   <th style={{ ...thS, width: 140, ...thVis('foto') }}>Foto prodotto</th>
-                  <th style={{ ...thS, ...thVis('descr') }}>Descrizione</th>
                   <th style={{ ...thS, textAlign: 'center', ...thVis('unita') }}>Unità</th>
                   <th style={{ ...thS, textAlign: 'center', color: '#b0bec5', fontSize: 10, ...thVis('minimo') }}>Minimo</th>
                   <th style={{ ...thS, textAlign: 'right', color: '#90caf9', ...thVis('p_acq') }}>P. Acquisto €</th>
@@ -1061,6 +1310,7 @@ export default function ListiniClient({ articoli, fornitori }: { articoli: Artic
                   editId === art.id
                     ? <RigaEdit key={art.id} art={art} categorie={categorie} produttori={produttori} fornitori={fornitori} onDone={() => setEditId(null)} onSaved={(id) => setLastId(id)} />
                     : <RigaNormale key={art.id} art={art}
+                        percorsi={percorsiPerListino[art.id] ?? []}
                         onEdit={() => setEditId(art.id)}
                         onScheda={() => setSchedaId(art.id)}
                         onDelete={() => handleDelete(art.id)}

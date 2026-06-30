@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import Link from 'next/link'
 import type { Metadata } from 'next'
-import CarrelloClient, { type ArticoloCarrello, type CaratteristicaListino } from './carrello-client'
+import CarrelloClient, { type ArticoloCarrello, type CaratteristicaListino, type ListinoItem } from './carrello-client'
 import { decompressCart } from '@/lib/cart-cookie'
 import { extractAvgColor, colorFromDesc } from '@/lib/extract-color'
 
@@ -287,6 +287,93 @@ export default async function Page() {
     } finally { await db2.end() }
   } catch {}
 
+  // Percorsi (coppie cat+sottocat) per articoli carrello + caratteristiche
+  let percorsiPerListino: Record<number, { categoria: string; sottocategoria: string }[]> = {}
+  try {
+    const allIds = [
+      ...articoli.map(a => a.listino_id).filter(id => id > 0),
+      ...caratteristiche.map(c => c.id),
+    ]
+    const uniqIds = [...new Set(allIds)]
+    if (uniqIds.length > 0) {
+      const dbP = await getConnection()
+      try {
+        const ph = uniqIds.map(() => '?').join(',')
+        const [pRows] = await dbP.query(
+          `SELECT listino_id, categoria, sottocategoria FROM listini_percorsi WHERE listino_id IN (${ph})`,
+          uniqIds
+        ) as [Record<string, unknown>[], unknown]
+        for (const row of pRows as Record<string, unknown>[]) {
+          const id = Number(row.listino_id)
+          if (!percorsiPerListino[id]) percorsiPerListino[id] = []
+          percorsiPerListino[id].push({ categoria: String(row.categoria), sottocategoria: String(row.sottocategoria) })
+        }
+      } finally { await dbP.end() }
+    }
+  } catch {}
+
+  // Carica listini principali per la modale aggiungi articolo
+  let listini: ListinoItem[] = []
+  try {
+    const dbL = await getConnection()
+    try {
+      await dbL.execute(`ALTER TABLE listini ADD COLUMN sottocategoria VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
+      await dbL.execute(`ALTER TABLE listini ADD COLUMN fase          VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
+      await dbL.execute(`ALTER TABLE listini ADD COLUMN materiale     VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
+      await dbL.execute(`ALTER TABLE listini ADD COLUMN tipologia     VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
+      await dbL.execute(`ALTER TABLE listini ADD COLUMN ambiente      VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
+      await dbL.execute(`ALTER TABLE listini ADD COLUMN fascia        VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
+      const [lr] = await dbL.query(`
+        SELECT l.id,
+               COALESCE(lp.categoria, l.categoria)           AS categoria,
+               COALESCE(lp.sottocategoria, l.sottocategoria) AS sottocategoria,
+               l.fase, l.materiale, l.tipologia, l.ambiente,
+               l.produttore, l.serie, l.descrizione, l.fascia, l.unita,
+               l.prezzo_vendita, l.sconto_articolo,
+               l.principale, l.caratteristica,
+               l.richiede_larghezza, l.richiede_altezza,
+               l.richiede_tipo_colore, l.richiede_tipo_colore_acc, l.richiede_tipo_vetro, l.richiede_tipo_montaggio,
+               l.minimo,
+               l.Filtro_1 AS filtro_1, l.Filtro_2 AS filtro_2, l.Filtro_3 AS filtro_3, l.Filtro_4 AS filtro_4,
+               l.schema_url
+        FROM listini l
+        LEFT JOIN listini_percorsi lp ON lp.listino_id = l.id
+        WHERE l.disponibile = 1 AND l.preventivabile = 1 AND l.principale = 1
+        ORDER BY COALESCE(lp.categoria, l.categoria), l.produttore, l.serie, l.descrizione
+      `) as [Record<string, unknown>[], unknown]
+      listini = (lr as Record<string, unknown>[]).map(l => ({
+        id:           Number(l.id),
+        categoria:    String(l.categoria ?? ''),
+        sottocategoria: l.sottocategoria ? String(l.sottocategoria) : null,
+        fase:           l.fase           ? String(l.fase)           : null,
+        materiale:      l.materiale      ? String(l.materiale)      : null,
+        tipologia:      l.tipologia      ? String(l.tipologia)      : null,
+        ambiente:       l.ambiente       ? String(l.ambiente)       : null,
+        produttore:   String(l.produttore ?? ''),
+        serie:        String(l.serie ?? ''),
+        descrizione:  String(l.descrizione ?? ''),
+        fascia:         l.fascia         ? String(l.fascia)         : null,
+        unita:        String(l.unita ?? 'pz'),
+        prezzo_vendita: Number(l.prezzo_vendita),
+        sconto_articolo: Number(l.sconto_articolo ?? 0),
+        principale:   Number(l.principale ?? 1),
+        caratteristica: Number(l.caratteristica ?? 1),
+        richiede_larghezza: Number(l.richiede_larghezza ?? 0),
+        richiede_altezza:   Number(l.richiede_altezza   ?? 0),
+        richiede_tipo_colore:     Number(l.richiede_tipo_colore     ?? 0),
+        richiede_tipo_colore_acc: Number(l.richiede_tipo_colore_acc ?? 0),
+        richiede_tipo_vetro:      Number(l.richiede_tipo_vetro      ?? 0),
+        richiede_tipo_montaggio:  Number(l.richiede_tipo_montaggio  ?? 0),
+        minimo: l.minimo != null ? Number(l.minimo) : null,
+        filtro_1: Number(l.filtro_1 ?? 0),
+        filtro_2: Number(l.filtro_2 ?? 0),
+        filtro_3: Number(l.filtro_3 ?? 0),
+        filtro_4: Number(l.filtro_4 ?? 0),
+        schema_url: l.schema_url != null ? String(l.schema_url) : null,
+      }))
+    } finally { await dbL.end() }
+  } catch {}
+
   // Leggi sconto cliente se loggato
   let scontoClientePct = 0
   if (username && role === 'cliente') {
@@ -305,7 +392,7 @@ export default async function Page() {
   return (
     <div className="page-content-wrapper" style={{ margin: '8px 0', padding: '0 0 8px', color: '#444', fontSize: 15, lineHeight: 1.8 }}>
 
-<CarrelloClient articoli={articoli} isLoggedIn={isLoggedIn} scontoClientePct={scontoClientePct} caratteristiche={caratteristiche} />
+<CarrelloClient articoli={articoli} isLoggedIn={isLoggedIn} scontoClientePct={scontoClientePct} caratteristiche={caratteristiche} listini={listini} percorsiPerListino={percorsiPerListino} />
 
       {isStaff && (
         <div style={{ marginTop: 56, borderTop: '2px solid #e8e8e8', paddingTop: 40 }}>

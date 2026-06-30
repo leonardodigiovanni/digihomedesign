@@ -25,6 +25,12 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   const db = await getConnection()
   try {
     await db.execute(`ALTER TABLE listini ADD COLUMN richiede_tipo_colore_acc TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN sottocategoria VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN fase          VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN materiale     VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN tipologia     VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN ambiente      VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN fascia        VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
 
     const [prevRows] = await db.query('SELECT * FROM preventivi WHERE id = ?', [prevId]) as [Record<string, unknown>[], unknown]
     if (!prevRows[0]) redirect('/app/preventivo')
@@ -118,28 +124,48 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     }))
 
     const [listiniRows] = await db.query(`
-      SELECT l.id, l.categoria, l.produttore, l.serie, l.descrizione, l.unita,
+      SELECT l.id,
+             COALESCE(lp.categoria, l.categoria)           AS categoria,
+             COALESCE(lp.sottocategoria, l.sottocategoria) AS sottocategoria,
+             l.fase, l.materiale, l.tipologia, l.ambiente,
+             l.produttore, l.serie, l.descrizione, l.fascia, l.unita,
              l.prezzo_vendita, l.prezzo_acquisto, l.sconto_articolo,
              l.principale, l.caratteristica,
              l.richiede_tipo_colore, l.richiede_tipo_colore_acc, l.richiede_tipo_vetro, l.richiede_tipo_montaggio,
              l.minimo,
+             l.Filtro_1 AS filtro_1, l.Filtro_2 AS filtro_2, l.Filtro_3 AS filtro_3, l.Filtro_4 AS filtro_4,
+             l.schema_url,
              COALESCE(f.ragione_sociale, '') AS fornitore_nome
       FROM listini l
+      LEFT JOIN listini_percorsi lp ON lp.listino_id = l.id
       LEFT JOIN fornitori f ON f.id = l.fornitore_id
-      WHERE l.disponibile = 1 AND l.preventivabile = 1
-      ORDER BY l.categoria, l.produttore, l.serie, l.descrizione
+      WHERE l.disponibile = 1 AND (
+        l.preventivabile = 1
+        OR (l.principale = 0 AND (l.richiede_tipo_colore = 1 OR l.richiede_tipo_colore_acc = 1 OR l.richiede_tipo_vetro = 1 OR l.richiede_tipo_montaggio = 1))
+      )
+      ORDER BY COALESCE(lp.categoria, l.categoria), l.produttore, l.serie, l.descrizione
     `) as [Record<string, unknown>[], unknown]
 
     type RawListino = {
-      id: number; categoria: string; produttore: string; serie: string; descrizione: string; unita: string
+      id: number; categoria: string; sottocategoria: string | null; fase: string | null; materiale: string | null
+      tipologia: string | null; ambiente: string | null; fascia: string | null
+      produttore: string; serie: string; descrizione: string; unita: string
       prezzo_vendita: number; prezzo_acquisto: number; sconto_articolo: number; fornitore_nome: string
       principale: number; caratteristica: number
       richiede_tipo_colore: number; richiede_tipo_colore_acc: number; richiede_tipo_vetro: number; richiede_tipo_montaggio: number
       minimo: number | null
+      filtro_1: number; filtro_2: number; filtro_3: number; filtro_4: number
+      schema_url: string | null
     }
     const allListini: RawListino[] = (listiniRows as Record<string, unknown>[]).map(l => ({
       id: Number(l.id),
       categoria: String(l.categoria ?? ''),
+      sottocategoria: l.sottocategoria ? String(l.sottocategoria) : null,
+      fase:           l.fase           ? String(l.fase)           : null,
+      materiale:      l.materiale      ? String(l.materiale)      : null,
+      tipologia:      l.tipologia      ? String(l.tipologia)      : null,
+      ambiente:       l.ambiente       ? String(l.ambiente)       : null,
+      fascia:         l.fascia         ? String(l.fascia)         : null,
       produttore: String(l.produttore ?? ''),
       serie: String(l.serie ?? ''),
       descrizione: String(l.descrizione ?? ''),
@@ -155,7 +181,33 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       richiede_tipo_vetro:      Number(l.richiede_tipo_vetro      ?? 0),
       richiede_tipo_montaggio:  Number(l.richiede_tipo_montaggio  ?? 0),
       minimo: l.minimo != null ? Number(l.minimo) : null,
+      filtro_1: Number(l.filtro_1 ?? 0),
+      filtro_2: Number(l.filtro_2 ?? 0),
+      filtro_3: Number(l.filtro_3 ?? 0),
+      filtro_4: Number(l.filtro_4 ?? 0),
+      schema_url: l.schema_url != null ? String(l.schema_url) : null,
     }))
+
+    let percorsiPerListino: Record<number, { categoria: string; sottocategoria: string }[]> = {}
+    try {
+      const allIds = [
+        ...articoli.map(a => a.listino_id).filter((id): id is number => id !== null && id > 0),
+        ...allListini.map(l => l.id),
+      ]
+      const uniqIds = [...new Set(allIds)]
+      if (uniqIds.length > 0) {
+        const ph = uniqIds.map(() => '?').join(',')
+        const [pRows] = await db.query(
+          `SELECT listino_id, categoria, sottocategoria FROM listini_percorsi WHERE listino_id IN (${ph})`,
+          uniqIds
+        ) as [Record<string, unknown>[], unknown]
+        for (const row of pRows as Record<string, unknown>[]) {
+          const id = Number(row.listino_id)
+          if (!percorsiPerListino[id]) percorsiPerListino[id] = []
+          percorsiPerListino[id].push({ categoria: String(row.categoria), sottocategoria: String(row.sottocategoria) })
+        }
+      }
+    } catch {}
 
     let listini: ListinoItem[]
     if (isStaff) {
@@ -170,13 +222,17 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         }
       }
       listini = [...best.values()].map(l => ({
-        id: l.id, categoria: l.categoria, produttore: l.produttore, serie: l.serie,
+        id: l.id, categoria: l.categoria, sottocategoria: l.sottocategoria, fase: l.fase,
+        materiale: l.materiale, tipologia: l.tipologia, ambiente: l.ambiente, fascia: l.fascia,
+        produttore: l.produttore, serie: l.serie,
         descrizione: l.descrizione, unita: l.unita, prezzo_vendita: l.prezzo_vendita,
         sconto_articolo: l.sconto_articolo, fornitore_nome: l.fornitore_nome,
         principale: l.principale, caratteristica: l.caratteristica,
         richiede_tipo_colore: l.richiede_tipo_colore, richiede_tipo_colore_acc: l.richiede_tipo_colore_acc,
         richiede_tipo_vetro: l.richiede_tipo_vetro, richiede_tipo_montaggio: l.richiede_tipo_montaggio,
         minimo: l.minimo,
+        filtro_1: l.filtro_1, filtro_2: l.filtro_2, filtro_3: l.filtro_3, filtro_4: l.filtro_4,
+        schema_url: l.schema_url,
       }))
     }
 
@@ -214,6 +270,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
           isApp={true}
           stampaHref={`/app/preventivo/${prevId}/stampa`}
           backHref="/app/preventivo"
+          percorsiPerListino={percorsiPerListino}
         />
       </div>
     )

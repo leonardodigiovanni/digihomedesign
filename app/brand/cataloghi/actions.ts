@@ -603,20 +603,41 @@ export type OptCarItem = {
   sconto_articolo: number
 }
 
-export async function fetchCaratteristicheOpt(categoria: string, produttore: string): Promise<OptCarItem[]> {
+export async function fetchCaratteristicheOpt(
+  percorsi: { categoria: string; sottocategoria: string }[],
+  produttore: string
+): Promise<OptCarItem[]> {
   const db = await getConnection()
   try {
-    const [rows] = await db.query(
-      `SELECT id, COALESCE(categoria,'') AS categoria, COALESCE(produttore,'') AS produttore,
-              descrizione, prezzo_vendita, sconto_articolo
-       FROM listini
-       WHERE caratteristica = 1 AND disponibile = 1 AND preventivabile = 1
+    const base = `caratteristica = 1 AND disponibile = 1 AND preventivabile = 1
          AND richiede_tipo_colore = 0 AND richiede_tipo_colore_acc = 0
          AND richiede_tipo_vetro = 0 AND richiede_tipo_montaggio = 0
-         AND (categoria = '' OR categoria IS NULL OR categoria = ?)
-         AND (produttore = '' OR produttore IS NULL OR produttore = ?)
-       ORDER BY descrizione ASC`,
-      [categoria, produttore]
+         AND (l.produttore = '' OR l.produttore IS NULL OR l.produttore = ?)`
+
+    if (!percorsi.length) {
+      const [rows] = await db.query(
+        `SELECT id, COALESCE(l.categoria,'') AS categoria, COALESCE(l.produttore,'') AS produttore,
+                l.descrizione, l.prezzo_vendita, l.sconto_articolo
+         FROM listini l
+         WHERE ${base}
+         ORDER BY l.descrizione ASC`,
+        [produttore]
+      )
+      return rows as OptCarItem[]
+    }
+
+    // sottocat vuota = wildcard: basta la categoria; sottocat piena = match esatto
+    const pairConds = percorsi.map(() => `(lp.categoria = ? AND (? = '' OR lp.sottocategoria = ?))`).join(' OR ')
+    const pairParams = percorsi.flatMap(p => [p.categoria, p.sottocategoria, p.sottocategoria])
+    const [rows] = await db.query(
+      `SELECT DISTINCT l.id, COALESCE(l.categoria,'') AS categoria, COALESCE(l.produttore,'') AS produttore,
+              l.descrizione, l.prezzo_vendita, l.sconto_articolo
+       FROM listini l
+       JOIN listini_percorsi lp ON lp.listino_id = l.id
+       WHERE ${base}
+         AND (${pairConds})
+       ORDER BY l.descrizione ASC`,
+      [produttore, ...pairParams]
     )
     return rows as OptCarItem[]
   } finally {

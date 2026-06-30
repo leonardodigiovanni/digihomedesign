@@ -109,9 +109,19 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     await db.execute(`ALTER TABLE listini ADD COLUMN caratteristica TINYINT(1) NOT NULL DEFAULT 1`).catch(() => {})
     await db.execute(`ALTER TABLE listini ADD COLUMN minimo DECIMAL(10,4) NULL DEFAULT NULL`).catch(() => {})
     await db.execute(`ALTER TABLE listini ADD COLUMN richiede_tipo_colore_acc TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN sottocategoria VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN fase          VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN materiale     VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN tipologia     VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN ambiente      VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN fascia        VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
 
     const [listiniRows] = await db.query(`
-      SELECT l.id, l.categoria, l.produttore, l.serie, l.descrizione, l.unita,
+      SELECT l.id,
+             COALESCE(lp.categoria, l.categoria)           AS categoria,
+             COALESCE(lp.sottocategoria, l.sottocategoria) AS sottocategoria,
+             l.fase, l.materiale, l.tipologia, l.ambiente,
+             l.produttore, l.serie, l.descrizione, l.fascia, l.unita,
              l.prezzo_vendita, l.prezzo_acquisto, l.sconto_articolo,
              l.principale, l.caratteristica,
              l.richiede_tipo_colore, l.richiede_tipo_colore_acc, l.richiede_tipo_vetro, l.richiede_tipo_montaggio,
@@ -120,17 +130,27 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
              l.schema_url,
              COALESCE(f.ragione_sociale, '') AS fornitore_nome
       FROM listini l
+      LEFT JOIN listini_percorsi lp ON lp.listino_id = l.id
       LEFT JOIN fornitori f ON f.id = l.fornitore_id
-      WHERE l.disponibile = 1 AND l.preventivabile = 1
-      ORDER BY l.categoria, l.produttore, l.serie, l.descrizione
+      WHERE l.disponibile = 1 AND (
+        l.preventivabile = 1
+        OR (l.principale = 0 AND (l.richiede_tipo_colore = 1 OR l.richiede_tipo_colore_acc = 1 OR l.richiede_tipo_vetro = 1 OR l.richiede_tipo_montaggio = 1))
+      )
+      ORDER BY COALESCE(lp.categoria, l.categoria), l.produttore, l.serie, l.descrizione
     `) as [Record<string, unknown>[], unknown]
 
     const listini: ListinoItem[] = (listiniRows as Record<string, unknown>[]).map(l => ({
       id: Number(l.id),
       categoria: String(l.categoria ?? ''),
+      sottocategoria: l.sottocategoria ? String(l.sottocategoria) : null,
+      fase:           l.fase           ? String(l.fase)           : null,
+      materiale:      l.materiale      ? String(l.materiale)      : null,
+      tipologia:      l.tipologia      ? String(l.tipologia)      : null,
+      ambiente:       l.ambiente       ? String(l.ambiente)       : null,
       produttore: String(l.produttore ?? ''),
       serie: String(l.serie ?? ''),
       descrizione: String(l.descrizione ?? ''),
+      fascia:         l.fascia         ? String(l.fascia)         : null,
       unita: String(l.unita ?? 'pz'),
       prezzo_vendita: Number(l.prezzo_vendita),
       prezzo_acquisto: Number(l.prezzo_acquisto),
@@ -150,6 +170,28 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       schema_url: l.schema_url != null ? String(l.schema_url) : null,
     }))
 
+    // Percorsi per articoli preventivo + listini (per matching per coppie)
+    let percorsiPerListino: Record<number, { categoria: string; sottocategoria: string }[]> = {}
+    try {
+      const allIds = [
+        ...articoli.map(a => a.listino_id).filter((id): id is number => id !== null && id > 0),
+        ...listini.map(l => l.id),
+      ]
+      const uniqIds = [...new Set(allIds)]
+      if (uniqIds.length > 0) {
+        const ph = uniqIds.map(() => '?').join(',')
+        const [pRows] = await db.query(
+          `SELECT listino_id, categoria, sottocategoria FROM listini_percorsi WHERE listino_id IN (${ph})`,
+          uniqIds
+        ) as [Record<string, unknown>[], unknown]
+        for (const row of pRows as Record<string, unknown>[]) {
+          const id = Number(row.listino_id)
+          if (!percorsiPerListino[id]) percorsiPerListino[id] = []
+          percorsiPerListino[id].push({ categoria: String(row.categoria), sottocategoria: String(row.sottocategoria) })
+        }
+      }
+    } catch {}
+
     const [clientiRows] = await db.query(
       `SELECT id, COALESCE(NULLIF(TRIM(ragione_sociale), ''), CONCAT(TRIM(cognome), ' ', TRIM(nome))) AS label FROM clienti ORDER BY label ASC`
     ) as [Record<string, unknown>[], unknown]
@@ -165,7 +207,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       clienteCellulare  = cInfo[0]?.telefono ?? ''
     }
 
-    return <PreventivoClient preventivo={preventivo} articoli={articoli} listini={listini} clienti={clienti} isStaff={true} clienteEmail={clienteEmail} clienteCellulare={clienteCellulare} />
+    return <PreventivoClient preventivo={preventivo} articoli={articoli} listini={listini} clienti={clienti} isStaff={true} clienteEmail={clienteEmail} clienteCellulare={clienteCellulare} percorsiPerListino={percorsiPerListino} />
   } catch {
     redirect('/clienti/preventivi')
   } finally {

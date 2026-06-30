@@ -12,6 +12,38 @@ import {
 } from '@/app/brand/cataloghi/actions'
 import { DropdownLoginForm } from '@/components/header-auth'
 import SelectLookup from '@/components/select-lookup'
+import AggiungiArticoloForm, { type ArticoloListino, type ConfirmData as AggConfirmData } from '@/components/aggiungi-articolo-form'
+
+export type ListinoItem = {
+  id: number
+  categoria: string
+  produttore: string
+  serie?: string
+  descrizione: string
+  unita: string
+  prezzo_vendita: number
+  sconto_articolo?: number
+  principale?: number
+  caratteristica?: number
+  richiede_larghezza?: number
+  richiede_altezza?: number
+  richiede_tipo_colore?: number
+  richiede_tipo_colore_acc?: number
+  richiede_tipo_vetro?: number
+  richiede_tipo_montaggio?: number
+  minimo?: number | null
+  filtro_1?: number
+  filtro_2?: number
+  filtro_3?: number
+  filtro_4?: number
+  schema_url?: string | null
+  sottocategoria?: string | null
+  fase?: string | null
+  materiale?: string | null
+  tipologia?: string | null
+  ambiente?: string | null
+  fascia?: string | null
+}
 
 export type CaratteristicaListino = {
   id: number
@@ -63,12 +95,34 @@ export type ArticoloCarrello = {
   bar_color_acc?: string | null
 }
 
+type PercorsoEntry = { categoria: string; sottocategoria: string }
+
+// aId = caratteristica, bId = articolo primario
+// Regola: se la caratteristica ha sottocat vuota → wildcard (basta stessa categoria)
+//         se la caratteristica ha sottocat piena → match esatto (cat + sottocat)
+function matchesPercorsi(
+  aId: number, aCat: string,
+  bId: number, bCat: string,
+  map: Record<number, PercorsoEntry[]>
+): boolean {
+  const ap = map[aId] ?? []
+  const bp = map[bId] ?? []
+  if (!ap.length || !bp.length) return aCat === bCat
+  return ap.some(a =>
+    bp.some(b =>
+      a.categoria === b.categoria &&
+      (!a.sottocategoria || a.sottocategoria === b.sottocategoria)
+    )
+  )
+}
+
 type ModalState =
   | null
   | { type: 'edit'; item: ArticoloCarrello }
   | { type: 'duplica'; lastItem: ArticoloCarrello }
   | { type: 'lacuna'; target: ArticoloCarrello; lacuna: string }
   | { type: 'opt_car'; target: ArticoloCarrello }
+  | { type: 'aggiungi' }
 
 type EditVals = { q: number; ante: number; l: number; h: number; colore: string; note: string; desc: string }
 
@@ -128,6 +182,8 @@ export default function CarrelloClient({
   isLoggedIn,
   scontoClientePct = 0,
   caratteristiche = [],
+  listini = [],
+  percorsiPerListino = {},
   cataloghiHref = '/brand/cataloghi',
   stampaHref = '/area-clienti/carrello-preventivo/stampa',
   postSaveHref,
@@ -137,6 +193,8 @@ export default function CarrelloClient({
   isLoggedIn: boolean
   scontoClientePct?: number
   caratteristiche?: CaratteristicaListino[]
+  listini?: ListinoItem[]
+  percorsiPerListino?: Record<number, PercorsoEntry[]>
   cataloghiHref?: string
   stampaHref?: string
   postSaveHref?: string
@@ -161,6 +219,10 @@ export default function CarrelloClient({
   const [isTouch, setIsTouch] = useState(false)
   useEffect(() => { setIsTouch(window.matchMedia('(pointer: coarse)').matches) }, [])
   const [expandedUID, setExpandedUID] = useState<number | null>(null)
+
+  function openAggiungi() {
+    setModal({ type: 'aggiungi' })
+  }
 
   // ── helpers ────────────────────────────────────────────────────────────────
 
@@ -245,7 +307,7 @@ export default function CarrelloClient({
 
   function handleAggiungiComeFiglio(root: ArticoloCarrello) {
     startOptCar(async () => {
-      const opzioni = await fetchCaratteristicheOpt(root.categoria, root.produttore)
+      const opzioni = await fetchCaratteristicheOpt(percorsiPerListino[root.listino_id] ?? [], root.produttore)
       setOptCarOpzioni(opzioni)
       setLacunaFilter('')
       setLacunaSelected(null)
@@ -365,7 +427,7 @@ export default function CarrelloClient({
       uids = articoli
         .filter(a => !a.parent && a.tipo !== 'caratteristica'
           && (a[lacunaFlag as keyof ArticoloCarrello] as number) === 1
-          && a.categoria === target.categoria
+          && matchesPercorsi(a.listino_id, a.categoria, target.listino_id, target.categoria, percorsiPerListino)
           && getLacuneAperte(a).includes(lacuna))
         .map(a => a.uid)
     } else {
@@ -432,7 +494,10 @@ export default function CarrelloClient({
     if (modal.type === 'lacuna') {
       const { target, lacuna } = modal
       const lacunaFlag = lacuna === 'tipo_colore' ? 'richiede_tipo_colore' : lacuna === 'tipo_colore_acc' ? 'richiede_tipo_colore_acc' : lacuna === 'tipo_vetro' ? 'richiede_tipo_vetro' : 'richiede_tipo_montaggio'
-      const disponibili = caratteristiche.filter(c => c[lacunaFlag as keyof CaratteristicaListino] === 1 && c.categoria === target.categoria)
+      const disponibili = caratteristiche.filter(c =>
+        c[lacunaFlag as keyof CaratteristicaListino] === 1 &&
+        matchesPercorsi(c.id, c.categoria, target.listino_id, target.categoria, percorsiPerListino)
+      )
       const filtrate = lacunaFilter.trim()
         ? disponibili.filter(c => {
             const q = lacunaFilter.toLowerCase()
@@ -444,17 +509,17 @@ export default function CarrelloClient({
         .filter(a => !a.parent && a.tipo !== 'caratteristica' && a.uid !== target.uid)
         .filter(a => (a[lacunaFlag as keyof ArticoloCarrello] as number) === 1)
         .filter(a => getLacuneAperte(a).includes(lacuna))
-        .filter(a => a.categoria === target.categoria)
+        .filter(a => matchesPercorsi(a.listino_id, a.categoria, target.listino_id, target.categoria, percorsiPerListino))
       const hasAltri = altriConLacuna.length > 0
 
       return (
         <div
           onClick={onClose}
-          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px 0' }}
         >
           <div
             onClick={e => e.stopPropagation()}
-            style={{ background: '#fff', borderRadius: 12, padding: '24px 28px', maxWidth: 520, width: '100%', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}
+            style={{ background: '#fff', borderRadius: 0, padding: '24px 28px', width: '100%', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}
           >
             <h3 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 6px', color: '#1a1a1a' }}>Aggiungi caratteristica</h3>
             <p style={{ fontSize: 14, color: '#1a1a1a', margin: '0 0 18px' }}>
@@ -532,11 +597,11 @@ export default function CarrelloClient({
       return (
         <div
           onClick={onClose}
-          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px 0' }}
         >
           <div
             onClick={e => e.stopPropagation()}
-            style={{ background: '#fff', borderRadius: 12, padding: '24px 28px', maxWidth: 520, width: '100%', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}
+            style={{ background: '#fff', borderRadius: 0, padding: '24px 28px', width: '100%', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}
           >
             <h3 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 6px', color: '#1a1a1a' }}>Aggiungi elemento opzionale</h3>
             <p style={{ fontSize: 14, color: '#1a1a1a', margin: '0 0 18px' }}>
@@ -581,6 +646,39 @@ export default function CarrelloClient({
       )
     }
 
+    // ── Modal aggiungi ─────────────────────────────────────────────────────────
+    if (modal.type === 'aggiungi') {
+      return (
+        <div
+          onClick={onClose}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1000, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '20px 0', overflowY: 'auto' }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{ width: '100%', maxWidth: 720, padding: '0 16px', boxSizing: 'border-box', marginTop: 'auto', marginBottom: 'auto' }}
+          >
+            <AggiungiArticoloForm
+              articoli={listini as unknown as ArticoloListino[]}
+              isLoggedIn={isLoggedIn}
+              onConfirm={async (data: AggConfirmData) => {
+                const res = await aggiungiArticoloAlCarrello(data.listinoId, {
+                  q:      data.quantita ?? 1,
+                  l:      data.larghezza,
+                  h:      data.altezza,
+                  colore: data.colore,
+                  note:   data.note,
+                })
+                if (res.ok) router.refresh()
+                return res
+              }}
+              onClose={onClose}
+              isApp={isApp}
+            />
+          </div>
+        </div>
+      )
+    }
+
     // ── Modal edit / duplica ────────────────────────────────────────────────────
     const isEdit    = modal.type === 'edit'
     const isDuplica = modal.type === 'duplica'
@@ -597,11 +695,11 @@ export default function CarrelloClient({
     return (
       <div
         onClick={onClose}
-        style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
+        style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px 0' }}
       >
         <div
           onClick={e => e.stopPropagation()}
-          style={{ background: '#fff', borderRadius: 12, padding: '24px 28px', maxWidth: 480, width: '100%', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}
+          style={{ background: '#fff', borderRadius: 0, padding: '24px 28px', width: '100%', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}
         >
           <h3 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 18px', color: '#1a1a1a' }}>{title}</h3>
 
@@ -683,11 +781,11 @@ export default function CarrelloClient({
 
       {/* Bottoni aggiunta articoli */}
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
-        <a href={cataloghiHref} className={b('btn-green', isApp)} style={{
+        <button type="button" onClick={openAggiungi} className={b('btn-green', isApp)} style={{
           minWidth: 200, padding: '0 8px', fontSize: 14,
         }}>
           + Aggiungi articolo
-        </a>
+        </button>
         {lastTopLevel && (
           <button type="button" onClick={openDuplica} disabled={actPending}
             className={actPending ? b('btn-gray', isApp) : b('btn-green', isApp)}
@@ -792,7 +890,7 @@ export default function CarrelloClient({
                       const showMontaggio = root.richiede_tipo_montaggio  === 1 && !childrenOfRoot.some(c => c.richiede_tipo_montaggio  === 1)
                       const hasLacune   = showColore || showColoreAcc || showVetro || showMontaggio
                       const hasOptPure  = caratteristiche.some(c =>
-                        (!c.categoria || c.categoria === root.categoria) &&
+                        matchesPercorsi(c.id, c.categoria, root.listino_id, root.categoria, percorsiPerListino) &&
                         c.richiede_tipo_colore     === 0 &&
                         c.richiede_tipo_colore_acc === 0 &&
                         c.richiede_tipo_vetro      === 0 &&
