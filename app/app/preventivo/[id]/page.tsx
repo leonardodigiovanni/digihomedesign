@@ -4,6 +4,7 @@ import { getConnection } from '@/lib/db'
 import PreventivoClient, { type Articolo, type ListinoItem, type Preventivo } from '../../../clienti/preventivi/[id]/preventivo-client'
 import PreventivoActionsBar from './actions-bar'
 import { extractAvgColor } from '@/lib/extract-color'
+import { ensurePercorsiTables } from '@/lib/percorsi'
 
 function dateToLocal(d: unknown): string {
   if (!(d instanceof Date)) return String(d ?? '')
@@ -196,6 +197,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       ]
       const uniqIds = [...new Set(allIds)]
       if (uniqIds.length > 0) {
+        await ensurePercorsiTables(db)
         const ph = uniqIds.map(() => '?').join(',')
         const [pRows] = await db.query(
           `SELECT listino_id, categoria, sottocategoria FROM listini_percorsi WHERE listino_id IN (${ph})`,

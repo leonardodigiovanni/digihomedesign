@@ -6,6 +6,7 @@ import type { Metadata } from 'next'
 import CarrelloClient, { type ArticoloCarrello, type CaratteristicaListino, type ListinoItem } from './carrello-client'
 import { decompressCart } from '@/lib/cart-cookie'
 import { extractAvgColor, colorFromDesc } from '@/lib/extract-color'
+import { ensurePercorsiTables } from '@/lib/percorsi'
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = { title: 'Carrello Preventivo' }
@@ -298,6 +299,7 @@ export default async function Page() {
     if (uniqIds.length > 0) {
       const dbP = await getConnection()
       try {
+        await ensurePercorsiTables(dbP)
         const ph = uniqIds.map(() => '?').join(',')
         const [pRows] = await dbP.query(
           `SELECT listino_id, categoria, sottocategoria FROM listini_percorsi WHERE listino_id IN (${ph})`,

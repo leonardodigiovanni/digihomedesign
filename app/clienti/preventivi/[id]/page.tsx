@@ -4,6 +4,7 @@ import { getConnection } from '@/lib/db'
 import type { Metadata } from 'next'
 import PreventivoClient, { type Articolo, type ListinoItem, type Preventivo, type ClienteOption } from './preventivo-client'
 import { extractAvgColor } from '@/lib/extract-color'
+import { ensurePercorsiTables } from '@/lib/percorsi'
 
 export const metadata: Metadata = { title: 'Dettaglio Preventivo' }
 
@@ -179,6 +180,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       ]
       const uniqIds = [...new Set(allIds)]
       if (uniqIds.length > 0) {
+        await ensurePercorsiTables(db)
         const ph = uniqIds.map(() => '?').join(',')
         const [pRows] = await db.query(
           `SELECT listino_id, categoria, sottocategoria FROM listini_percorsi WHERE listino_id IN (${ph})`,
