@@ -31,12 +31,11 @@ async function getCatalogoData(nomeCategoria: string) {
     try {
       const [vociRows] = await db.query(
         `SELECT cv.id, cv.nome, cv.serie, cv.pdf_filename, cv.pdf_label, cv.descrizione,
-                vp.sottocategoria
+                (SELECT vp2.sottocategoria FROM catalogo_voci_percorsi vp2 WHERE vp2.voce_id = cv.id AND LOWER(REPLACE(TRIM(vp2.categoria), '-', ' ')) = ? LIMIT 1) AS sottocategoria
          FROM catalogo_voci cv
-         JOIN catalogo_voci_percorsi vp ON vp.voce_id = cv.id
-         WHERE LOWER(REPLACE(TRIM(vp.categoria), '-', ' ')) = ?
+         WHERE cv.id IN (SELECT vp.voce_id FROM catalogo_voci_percorsi vp WHERE LOWER(REPLACE(TRIM(vp.categoria), '-', ' ')) = ?)
          ORDER BY cv.nome ASC`,
-        [normCat]
+        [normCat, normCat]
       )
       const voceList = vociRows as { id: number; nome: string; serie: string; pdf_filename: string; pdf_label: string; descrizione: string | null; sottocategoria?: string | null }[]
       await db.execute(`ALTER TABLE listini ADD COLUMN principale TINYINT(1) NOT NULL DEFAULT 1`).catch(() => {})

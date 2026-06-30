@@ -33,16 +33,16 @@ async function getData(slug: string) {
     if (!catNome) return null
 
     const [vociRows] = await db.query(`
-      SELECT DISTINCT cv.id, cv.nome, cv.pdf_filename, cv.pdf_label, cv.descrizione,
+      SELECT cv.id, cv.nome, cv.pdf_filename, cv.pdf_label, cv.descrizione,
              cv.filtro_battente, cv.filtro_scorrevole, cv.filtro_taglio_termico,
              cv.filtro_taglio_freddo, cv.filtro_economico, cv.filtro_fascia_alta,
-             vp.sottocategoria, cv.fase, cv.materiale, cv.tipologia, cv.ambiente, cv.fascia,
+             (SELECT vp2.sottocategoria FROM catalogo_voci_percorsi vp2 WHERE vp2.voce_id = cv.id AND vp2.categoria = ? LIMIT 1) AS sottocategoria,
+             cv.fase, cv.materiale, cv.tipologia, cv.ambiente, cv.fascia,
              cv.filtro_1, cv.filtro_2, cv.filtro_3, cv.filtro_4
       FROM catalogo_voci cv
-      JOIN catalogo_voci_percorsi vp ON vp.voce_id = cv.id
-      WHERE vp.categoria = ?
+      WHERE cv.id IN (SELECT vp.voce_id FROM catalogo_voci_percorsi vp WHERE vp.categoria = ?)
       ORDER BY cv.nome ASC
-    `, [catNome])
+    `, [catNome, catNome])
 
     const [rowsAcq] = await db.query(
       `SELECT id, descrizione, produttore, serie, unita, prezzo_vendita, max_acquistabile

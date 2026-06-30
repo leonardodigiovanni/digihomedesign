@@ -38,14 +38,13 @@ async function getCatalogoData(nomeCategoria: string, sottocatSlug: string) {
         `SELECT cv.id, cv.nome, cv.serie, cv.pdf_filename, cv.pdf_label, cv.descrizione,
                 cv.filtro_battente, cv.filtro_scorrevole, cv.filtro_taglio_termico,
                 cv.filtro_taglio_freddo, cv.filtro_economico, cv.filtro_fascia_alta,
-                vp.sottocategoria, cv.fase, cv.materiale, cv.tipologia, cv.ambiente, cv.fascia,
+                (SELECT vp2.sottocategoria FROM catalogo_voci_percorsi vp2 WHERE vp2.voce_id = cv.id AND LOWER(REPLACE(TRIM(vp2.categoria), '-', ' ')) = ? AND (LOWER(REPLACE(TRIM(vp2.sottocategoria), '-', ' ')) = ? OR TRIM(vp2.sottocategoria) = '') LIMIT 1) AS sottocategoria,
+                cv.fase, cv.materiale, cv.tipologia, cv.ambiente, cv.fascia,
                 cv.filtro_1, cv.filtro_2, cv.filtro_3, cv.filtro_4
          FROM catalogo_voci cv
-         JOIN catalogo_voci_percorsi vp ON vp.voce_id = cv.id
-         WHERE LOWER(REPLACE(TRIM(vp.categoria), '-', ' ')) = ?
-           AND LOWER(REPLACE(TRIM(vp.sottocategoria), '-', ' ')) = ?
+         WHERE cv.id IN (SELECT vp.voce_id FROM catalogo_voci_percorsi vp WHERE LOWER(REPLACE(TRIM(vp.categoria), '-', ' ')) = ? AND (LOWER(REPLACE(TRIM(vp.sottocategoria), '-', ' ')) = ? OR TRIM(vp.sottocategoria) = ''))
          ORDER BY cv.nome ASC`,
-        [normCat, normSubcat]
+        [normCat, normSubcat, normCat, normSubcat]
       )
       const voceList = voci as VoceRow[]
 
@@ -61,7 +60,7 @@ async function getCatalogoData(nomeCategoria: string, sottocatSlug: string) {
            AND id IN (
              SELECT listino_id FROM listini_percorsi
              WHERE LOWER(REPLACE(TRIM(categoria), '-', ' ')) = ?
-               AND LOWER(REPLACE(TRIM(sottocategoria), '-', ' ')) = ?
+               AND (LOWER(REPLACE(TRIM(sottocategoria), '-', ' ')) = ? OR TRIM(sottocategoria) = '')
            )
          ORDER BY descrizione ASC`,
         [normCat, normSubcat]
