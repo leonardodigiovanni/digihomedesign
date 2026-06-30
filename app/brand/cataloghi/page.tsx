@@ -3,6 +3,7 @@ import { cookies } from 'next/headers'
 import { getConnection } from '@/lib/db'
 import type { Metadata } from 'next'
 import { CatalogoGrid } from './catalogo-grid'
+import { ensurePercorsiTables } from '@/lib/percorsi'
 
 export const metadata: Metadata = {
   title: 'Cataloghi — Digi Home Design Palermo',
@@ -23,38 +24,14 @@ export type CategoriaCard = { id: number; nome: string; slug: string }
 async function getCategorie(): Promise<CategoriaCard[]> {
   const db = await getConnection()
   try {
-    await db.execute(`
-      CREATE TABLE IF NOT EXISTS catalogo_categorie (
-        id     INT AUTO_INCREMENT PRIMARY KEY,
-        nome   VARCHAR(100) NOT NULL,
-        ordine INT NOT NULL DEFAULT 0
-      )
-    `)
-    const [colCheck] = await db.query(
-      `SELECT COUNT(*) AS cnt FROM INFORMATION_SCHEMA.COLUMNS
-       WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'catalogo_categorie' AND COLUMN_NAME = 'listino_categoria'`
-    ) as [{ cnt: number }[], unknown]
-    if ((colCheck[0]?.cnt ?? 0) === 0) {
-      await db.execute(`ALTER TABLE catalogo_categorie ADD COLUMN listino_categoria VARCHAR(100) NULL DEFAULT NULL`)
-    }
-
-    const [rows] = await db.query(`
-      SELECT
-        cc.id,
-        cc.nome,
-        cc.listino_categoria,
-        (SELECT COUNT(*) FROM listini l WHERE l.categoria = cc.listino_categoria AND l.disponibile = 1 AND l.preventivabile = 1) AS n_prev,
-        (SELECT COUNT(*) FROM listini l WHERE l.categoria = cc.listino_categoria AND l.disponibile = 1 AND l.acquistabile  = 1) AS n_vend
-      FROM catalogo_categorie cc
-      WHERE EXISTS (SELECT 1 FROM catalogo_voci cv WHERE cv.categoria_id = cc.id)
-         OR (cc.listino_categoria IS NOT NULL AND EXISTS (SELECT 1 FROM listini l WHERE l.categoria = cc.listino_categoria AND l.disponibile = 1 AND (l.preventivabile = 1 OR l.acquistabile = 1)))
-      ORDER BY cc.ordine ASC, cc.nome ASC
-    `) as [{ id: number; nome: string; listino_categoria: string | null; n_prev: number; n_vend: number }[], unknown]
-
-    return (rows as { id: number; nome: string; listino_categoria: string | null; n_prev: number; n_vend: number }[]).map(r => ({
-      id: r.id,
-      nome: r.nome,
-      slug: toSlug(r.nome),
+    await ensurePercorsiTables(db)
+    const [rows] = await db.query(
+      `SELECT DISTINCT categoria FROM catalogo_voci_percorsi WHERE categoria != '' ORDER BY categoria ASC`
+    ) as [{ categoria: string }[], unknown]
+    return (rows as { categoria: string }[]).map((r, i) => ({
+      id: i,
+      nome: r.categoria,
+      slug: toSlug(r.categoria),
     }))
   } finally {
     await db.end()

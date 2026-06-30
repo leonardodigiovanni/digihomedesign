@@ -25,56 +25,42 @@ export const metadata: Metadata = {
 }
 
 async function getCatalogoData(nomeCategoria: string) {
+  const normCat = nomeCategoria.toLowerCase().replace(/-/g, ' ').trim()
   try {
     const db = await getConnection()
     try {
-      const [cats] = await db.query(
-        'SELECT id, nome, listino_categoria FROM catalogo_categorie WHERE LOWER(nome) = LOWER(?) LIMIT 1',
-        [nomeCategoria]
+      const [vociRows] = await db.query(
+        `SELECT cv.id, cv.nome, cv.serie, cv.pdf_filename, cv.pdf_label, cv.descrizione,
+                vp.sottocategoria
+         FROM catalogo_voci cv
+         JOIN catalogo_voci_percorsi vp ON vp.voce_id = cv.id
+         WHERE LOWER(REPLACE(TRIM(vp.categoria), '-', ' ')) = ?
+         ORDER BY cv.nome ASC`,
+        [normCat]
       )
-      const categoria = (cats as { id: number; nome: string; listino_categoria: string | null }[])[0]
-      if (!categoria) return null
-      const [voci] = await db.query(
-        'SELECT id, nome, serie, pdf_filename, pdf_label, listino_categoria, descrizione FROM catalogo_voci WHERE categoria_id = ? ORDER BY nome ASC',
-        [categoria.id]
-      )
-      const voceList = voci as { id: number; nome: string; serie: string; pdf_filename: string; pdf_label: string; listino_categoria: string | null; descrizione: string | null }[]
-      const allListiniSet = new Set<string>()
-      if (categoria.listino_categoria) allListiniSet.add(categoria.listino_categoria)
-      for (const v of voceList) { if (v.listino_categoria) allListiniSet.add(v.listino_categoria) }
+      const voceList = vociRows as { id: number; nome: string; serie: string; pdf_filename: string; pdf_label: string; descrizione: string | null; sottocategoria?: string | null }[]
+      await db.execute(`ALTER TABLE listini ADD COLUMN principale TINYINT(1) NOT NULL DEFAULT 1`).catch(() => {})
       const COLS = 'id, descrizione, produttore, serie, unita, prezzo_acquisto, prezzo_vendita, sconto_articolo, richiede_larghezza, richiede_altezza, richiede_quantita, richiede_piano, richiede_km, richiede_peso, richiede_tipo_colore, richiede_tipo_vetro, richiede_tipo_montaggio, schema_url, max_acquistabile'
-      const articoliPerListino: Record<string, ArticoloListino[]> = {}
-      if (allListiniSet.size > 0) {
-        await db.execute(`ALTER TABLE listini ADD COLUMN principale TINYINT(1) NOT NULL DEFAULT 1`).catch(() => {})
-        for (const listino of allListiniSet) {
-          try {
-            const [rows] = await db.query(
-              `SELECT ${COLS} FROM listini WHERE categoria = ? AND disponibile = 1 AND preventivabile = 1 AND principale = 1 ORDER BY descrizione ASC`,
-              [listino]
-            )
-            articoliPerListino[listino] = rows as ArticoloListino[]
-          } catch {}
-        }
-      }
-      const acquistoCats = new Set<string>()
-      if (categoria.listino_categoria) acquistoCats.add(categoria.listino_categoria)
-      for (const v of voceList) { if (v.listino_categoria) acquistoCats.add(v.listino_categoria) }
-      let articoliAcquisto: ArticoloListinoAcquisto[] = []
-      if (acquistoCats.size > 0) {
-        try {
-          const cats = [...acquistoCats]
-          const ph = cats.map(() => '?').join(',')
-          const [rowsAcq] = await db.query(
-            `SELECT id, descrizione, produttore, serie, unita, prezzo_vendita, max_acquistabile FROM listini WHERE categoria IN (${ph}) AND disponibile = 1 AND acquistabile = 1 ORDER BY descrizione ASC`,
-            cats
-          )
-          articoliAcquisto = (rowsAcq as (ArticoloListinoAcquisto & { max_acquistabile: number | null })[]).map(r => ({
-            ...r,
-            max_acquistabile: r.max_acquistabile != null ? Number(r.max_acquistabile) : null,
-          }))
-        } catch {}
-      }
-      return { categoria: { nome: categoria.nome, listino_categoria: categoria.listino_categoria }, voci: voceList, articoliPerListino, articoliAcquisto }
+      const [rows] = await db.query(
+        `SELECT ${COLS} FROM listini
+         WHERE disponibile = 1 AND preventivabile = 1 AND principale = 1
+           AND id IN (SELECT listino_id FROM listini_percorsi WHERE LOWER(REPLACE(TRIM(categoria), '-', ' ')) = ?)
+         ORDER BY descrizione ASC`,
+        [normCat]
+      )
+      const articoliPerListino: Record<string, ArticoloListino[]> = { '0': rows as ArticoloListino[] }
+      const [rowsAcq] = await db.query(
+        `SELECT id, descrizione, produttore, serie, unita, prezzo_vendita, max_acquistabile
+         FROM listini
+         WHERE disponibile = 1 AND acquistabile = 1
+           AND id IN (SELECT listino_id FROM listini_percorsi WHERE LOWER(REPLACE(TRIM(categoria), '-', ' ')) = ?)
+         ORDER BY descrizione ASC`,
+        [normCat]
+      )
+      const articoliAcquisto = (rowsAcq as (ArticoloListinoAcquisto & { max_acquistabile: number | null })[]).map(r => ({
+        ...r, max_acquistabile: r.max_acquistabile != null ? Number(r.max_acquistabile) : null,
+      }))
+      return { categoria: { nome: nomeCategoria }, voci: voceList, articoliPerListino, articoliAcquisto }
     } finally {
       await db.end()
     }
@@ -189,10 +175,10 @@ export default async function Page() {
       </div>
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>{(() => {
         const cerca = catalogo
-          ? `${catalogo.categoria.nome}/${catalogo.categoria.listino_categoria ?? 'nessun listino categoria'}`
+          ? `${catalogo.categoria.nome}`
           : `${CERCA}/non trovata`
         const trova = catalogo && catalogo.voci.length > 0
-          ? catalogo.voci.map(v => `(${v.nome}:${v.serie}:${v.pdf_label})/${v.listino_categoria ?? 'nessuno'}`).join('+')
+          ? catalogo.voci.map(v => `(${v.nome}:${v.serie}:${v.pdf_label})/${v.sottocategoria ?? 'nessuna'}`).join('+')
           : 'nessuno'
         return `tipo pagina fototesto con cataloghi visualizzatore aggiunta carrello (cerca categoria cataloghi [${cerca}])(trova ${trova})`
       })()}</p>

@@ -6,6 +6,8 @@ import type { Metadata } from 'next'
 import AggiungiArticolo, { type ArticoloListino } from '../aggiungi-articolo'
 import VoceViewer from './voce-viewer'
 import type { PreventivoDestOption } from '@/app/brand/cataloghi/actions'
+import { LISTINO_COLS } from '@/lib/catalogo-matching'
+import { ensurePercorsiTables } from '@/lib/percorsi'
 
 type Props = { params: Promise<{ slug: string; voceSlug: string }> }
 
@@ -20,27 +22,27 @@ function toSlug(nome: string): string {
 async function getData(slug: string, voceSlug: string) {
   const db = await getConnection()
   try {
-    const [colCheck] = await db.query(
-      `SELECT COUNT(*) AS cnt FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'catalogo_categorie' AND COLUMN_NAME = 'listino_categoria'`
-    ) as [{ cnt: number }[], unknown]
-    if ((colCheck[0]?.cnt ?? 0) === 0) {
-      await db.execute(`ALTER TABLE catalogo_categorie ADD COLUMN listino_categoria VARCHAR(100) NULL DEFAULT NULL`)
-    }
+    await ensurePercorsiTables(db)
 
-    const [cats] = await db.query('SELECT id, nome, listino_categoria FROM catalogo_categorie')
-    const categoria = (cats as { id: number; nome: string; listino_categoria: string | null }[]).find(c => toSlug(c.nome) === slug)
-    if (!categoria) return null
+    const [catRows] = await db.query(
+      `SELECT DISTINCT categoria FROM catalogo_voci_percorsi WHERE categoria != '' ORDER BY categoria ASC`
+    ) as [{ categoria: string }[], unknown]
+    const catNome = (catRows as { categoria: string }[]).find(r => toSlug(r.categoria) === slug)?.categoria
+    if (!catNome) return null
 
-    const [voci] = await db.query(
-      'SELECT id, nome, pdf_filename, pdf_label, listino_categoria FROM catalogo_voci WHERE categoria_id = ? ORDER BY nome ASC',
-      [categoria.id]
-    )
+    const [vociRows] = await db.query(`
+      SELECT DISTINCT cv.id, cv.nome, cv.pdf_filename, cv.pdf_label
+      FROM catalogo_voci cv
+      JOIN catalogo_voci_percorsi vp ON vp.voce_id = cv.id
+      WHERE vp.categoria = ?
+      ORDER BY cv.nome ASC
+    `, [catNome])
     const voceId = parseInt(voceSlug)
-    const voce = (voci as { id: number; nome: string; pdf_filename: string; pdf_label: string; listino_categoria: string | null }[])
+    const voce = (vociRows as { id: number; nome: string; pdf_filename: string; pdf_label: string }[])
       .find(v => isNaN(voceId) ? toSlug(v.nome) === voceSlug : v.id === voceId)
     if (!voce) return null
 
-    return { categoria, voce }
+    return { categoria: { nome: catNome }, voce }
   } finally {
     await db.end()
   }
@@ -116,30 +118,37 @@ export default async function Page({ params }: Props) {
   }
 
   let articoliPreventivo: ArticoloListino[] = []
-  if (voce.listino_categoria) {
-    const COLS = 'id, descrizione, produttore, serie, unita, prezzo_acquisto, prezzo_vendita, sconto_articolo, richiede_larghezza, richiede_altezza, richiede_quantita, richiede_piano, richiede_km, richiede_peso, richiede_tipo_colore, richiede_tipo_vetro, richiede_tipo_montaggio, schema_url'
+  {
     const dbA = await getConnection()
     try {
-      await dbA.execute(`ALTER TABLE listini ADD COLUMN principale TINYINT(1) NOT NULL DEFAULT 1`).catch(() => {})
+      await dbA.execute(`ALTER TABLE listini ADD COLUMN principale    TINYINT(1) NOT NULL DEFAULT 1`).catch(() => {})
       await dbA.execute(`ALTER TABLE listini ADD COLUMN caratteristica TINYINT(1) NOT NULL DEFAULT 1`).catch(() => {})
-      if (!parentPendente) {
-        const [rows] = await dbA.query(
-          `SELECT ${COLS} FROM listini WHERE categoria = ? AND disponibile = 1 AND preventivabile = 1 AND principale = 1 ORDER BY descrizione ASC`,
-          [voce.listino_categoria]
-        )
-        articoliPreventivo = rows as ArticoloListino[]
-      } else if (lacuneAperte.length === 0) {
-        const [rows] = await dbA.query(
-          `SELECT ${COLS} FROM listini WHERE categoria = ? AND disponibile = 1 AND preventivabile = 1 AND caratteristica = 1 ORDER BY descrizione ASC`,
-          [voce.listino_categoria]
-        )
-        articoliPreventivo = rows as ArticoloListino[]
-      } else {
-        const [rows] = await dbA.query(
-          `SELECT ${COLS} FROM listini WHERE categoria = ? AND disponibile = 1 AND preventivabile = 1 AND caratteristica = 1 ORDER BY descrizione ASC`,
-          [voce.listino_categoria]
-        )
-        articoliPreventivo = (rows as ArticoloListino[]).filter(a =>
+      await dbA.execute(`ALTER TABLE listini ADD COLUMN Filtro_1      TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+      await dbA.execute(`ALTER TABLE listini ADD COLUMN Filtro_2      TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+      await dbA.execute(`ALTER TABLE listini ADD COLUMN Filtro_3      TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+      await dbA.execute(`ALTER TABLE listini ADD COLUMN Filtro_4      TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+      await dbA.execute(`ALTER TABLE listini ADD COLUMN sottocategoria VARCHAR(100) NULL`).catch(() => {})
+      await dbA.execute(`ALTER TABLE listini ADD COLUMN fase          VARCHAR(100) NULL`).catch(() => {})
+      await dbA.execute(`ALTER TABLE listini ADD COLUMN materiale     VARCHAR(100) NULL`).catch(() => {})
+      await dbA.execute(`ALTER TABLE listini ADD COLUMN tipologia     VARCHAR(100) NULL`).catch(() => {})
+      await dbA.execute(`ALTER TABLE listini ADD COLUMN ambiente      VARCHAR(100) NULL`).catch(() => {})
+      await dbA.execute(`ALTER TABLE listini ADD COLUMN fascia        VARCHAR(100) NULL`).catch(() => {})
+      await ensurePercorsiTables(dbA)
+      const principaleCol = parentPendente ? 'caratteristica' : 'principale'
+      const [rows] = await dbA.query(
+        `SELECT ${LISTINO_COLS} FROM listini
+         WHERE disponibile = 1 AND preventivabile = 1 AND ${principaleCol} = 1
+           AND id IN (
+             SELECT lp.listino_id FROM listini_percorsi lp
+             JOIN catalogo_voci_percorsi vp ON vp.categoria = lp.categoria AND vp.sottocategoria = lp.sottocategoria
+             WHERE vp.voce_id = ?
+           )
+         ORDER BY descrizione ASC`,
+        [voce.id]
+      )
+      articoliPreventivo = rows as ArticoloListino[]
+      if (parentPendente && lacuneAperte.length > 0) {
+        articoliPreventivo = articoliPreventivo.filter(a =>
           lacuneAperte.some(l =>
             (l === 'tipo_colore'    && a.richiede_tipo_colore    === 1) ||
             (l === 'tipo_vetro'     && a.richiede_tipo_vetro     === 1) ||

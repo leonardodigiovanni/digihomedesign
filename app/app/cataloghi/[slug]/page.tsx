@@ -8,6 +8,8 @@ import type { ArticoloListinoAcquisto } from '@/components/aggiungi-articolo-acq
 import CatalogoWrapper from '@/app/brand/cataloghi/[slug]/catalogo-wrapper'
 import { type ArticoloListino } from '@/app/brand/cataloghi/[slug]/aggiungi-articolo'
 import type { PreventivoDestOption } from '@/app/brand/cataloghi/actions'
+import { LISTINO_COLS } from '@/lib/catalogo-matching'
+import { ensurePercorsiTables } from '@/lib/percorsi'
 
 type Props = { params: Promise<{ slug: string }> }
 
@@ -22,53 +24,40 @@ function toSlug(nome: string): string {
 async function getData(slug: string) {
   const db = await getConnection()
   try {
-    const [colCheck] = await db.query(
-      `SELECT COUNT(*) AS cnt FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'catalogo_categorie' AND COLUMN_NAME = 'listino_categoria'`
-    ) as [{ cnt: number }[], unknown]
-    if ((colCheck[0]?.cnt ?? 0) === 0) {
-      await db.execute(`ALTER TABLE catalogo_categorie ADD COLUMN listino_categoria VARCHAR(100) NULL DEFAULT NULL`)
-    }
-    const [cats] = await db.query('SELECT id, nome, listino_categoria FROM catalogo_categorie')
-    const allCats = cats as { id: number; nome: string; listino_categoria: string | null }[]
-    const categoria = allCats.find(c => toSlug(c.nome) === slug)
-    if (!categoria) return null
+    await ensurePercorsiTables(db)
 
-    const [descrCheck] = await db.query(
-      `SELECT COUNT(*) AS cnt FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'catalogo_voci' AND COLUMN_NAME = 'descrizione'`
-    ) as [{ cnt: number }[], unknown]
-    if ((descrCheck[0]?.cnt ?? 0) === 0) {
-      await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN descrizione TEXT NULL`)
-    }
+    const [catRows] = await db.query(
+      `SELECT DISTINCT categoria FROM catalogo_voci_percorsi WHERE categoria != '' ORDER BY categoria ASC`
+    ) as [{ categoria: string }[], unknown]
+    const catNome = (catRows as { categoria: string }[]).find(r => toSlug(r.categoria) === slug)?.categoria
+    if (!catNome) return null
 
-    const [voci] = await db.query(
-      'SELECT id, nome, pdf_filename, pdf_label, listino_categoria, descrizione FROM catalogo_voci WHERE categoria_id = ? ORDER BY nome ASC',
-      [categoria.id]
+    const [vociRows] = await db.query(`
+      SELECT DISTINCT cv.id, cv.nome, cv.pdf_filename, cv.pdf_label, cv.descrizione,
+             cv.filtro_battente, cv.filtro_scorrevole, cv.filtro_taglio_termico,
+             cv.filtro_taglio_freddo, cv.filtro_economico, cv.filtro_fascia_alta,
+             vp.sottocategoria, cv.fase, cv.materiale, cv.tipologia, cv.ambiente, cv.fascia,
+             cv.filtro_1, cv.filtro_2, cv.filtro_3, cv.filtro_4
+      FROM catalogo_voci cv
+      JOIN catalogo_voci_percorsi vp ON vp.voce_id = cv.id
+      WHERE vp.categoria = ?
+      ORDER BY cv.nome ASC
+    `, [catNome])
+
+    const [rowsAcq] = await db.query(
+      `SELECT id, descrizione, produttore, serie, unita, prezzo_vendita, max_acquistabile
+       FROM listini WHERE disponibile = 1 AND acquistabile = 1
+         AND id IN (SELECT listino_id FROM listini_percorsi WHERE categoria = ?)
+       ORDER BY descrizione ASC`,
+      [catNome]
     )
-
-    const acquistoCats = new Set<string>()
-    if (categoria.listino_categoria) acquistoCats.add(categoria.listino_categoria)
-    for (const v of voci as { listino_categoria: string | null }[]) {
-      if (v.listino_categoria) acquistoCats.add(v.listino_categoria)
-    }
-    let articoliAcquisto: ArticoloListinoAcquisto[] = []
-    if (acquistoCats.size > 0) {
-      try {
-        const cats = [...acquistoCats]
-        const ph = cats.map(() => '?').join(',')
-        const [rows2] = await db.query(
-          `SELECT id, descrizione, produttore, serie, unita, prezzo_vendita, max_acquistabile FROM listini WHERE categoria IN (${ph}) AND disponibile = 1 AND acquistabile = 1 ORDER BY descrizione ASC`,
-          cats
-        )
-        articoliAcquisto = (rows2 as (ArticoloListinoAcquisto & { max_acquistabile: number | null })[]).map(r => ({
-          ...r,
-          max_acquistabile: r.max_acquistabile != null ? Number(r.max_acquistabile) : null,
-        }))
-      } catch {}
-    }
+    const articoliAcquisto = (rowsAcq as (ArticoloListinoAcquisto & { max_acquistabile: number | null })[]).map(r => ({
+      ...r, max_acquistabile: r.max_acquistabile != null ? Number(r.max_acquistabile) : null,
+    }))
 
     return {
-      categoria,
-      voci: voci as { id: number; nome: string; pdf_filename: string; pdf_label: string; listino_categoria: string | null; descrizione: string | null }[],
+      categoria: { nome: catNome },
+      voci: vociRows as { id: number; nome: string; pdf_filename: string; pdf_label: string; descrizione: string | null; filtro_battente: number; filtro_scorrevole: number; filtro_taglio_termico: number; filtro_taglio_freddo: number; filtro_economico: number; filtro_fascia_alta: number; sottocategoria?: string | null; fase?: string | null; materiale?: string | null; tipologia?: string | null; ambiente?: string | null; fascia?: string | null; filtro_1?: number; filtro_2?: number; filtro_3?: number; filtro_4?: number }[],
       articoliAcquisto,
     }
   } finally {
@@ -92,16 +81,31 @@ export default async function Page({ params }: Props) {
   if (username && !cartNonVuoto) {
     const db2 = await getConnection()
     try {
-      const [r] = await db2.query(`
-        SELECT p.id, p.numero, p.descrizione, '' AS cliente_nome
-        FROM preventivi p LEFT JOIN clienti c ON c.id = p.cliente_id
-        JOIN users u ON u.username = ?
-        WHERE p.stato IN ('bozza','richiesto')
-          AND ((c.email = u.email) OR (p.creato_da = ? AND p.cliente_id IS NULL))
-        ORDER BY p.data DESC, p.id DESC
-      `, [username, username]) as [{ id: number; numero: string; descrizione: string; cliente_nome: string }[], unknown]
-      preventiviBozza = r.map(p => {
+      let rows: { id: number; numero: string; descrizione: string; cliente_nome: string }[]
+      if (isStaff) {
+        const [r] = await db2.query(`
+          SELECT p.id, p.numero, p.descrizione,
+            CASE WHEN c.id IS NULL THEN '' WHEN c.ragione_sociale != '' THEN c.ragione_sociale ELSE CONCAT(TRIM(c.cognome), ' ', TRIM(c.nome)) END AS cliente_nome
+          FROM preventivi p
+          LEFT JOIN clienti c ON c.id = p.cliente_id
+          WHERE p.stato IN ('bozza','richiesto')
+          ORDER BY p.data DESC, p.id DESC
+        `) as [{ id: number; numero: string; descrizione: string; cliente_nome: string }[], unknown]
+        rows = r
+      } else {
+        const [r] = await db2.query(`
+          SELECT p.id, p.numero, p.descrizione, '' AS cliente_nome
+          FROM preventivi p LEFT JOIN clienti c ON c.id = p.cliente_id
+          JOIN users u ON u.username = ?
+          WHERE p.stato IN ('bozza','richiesto')
+            AND ((c.email = u.email) OR (p.creato_da = ? AND p.cliente_id IS NULL))
+          ORDER BY p.data DESC, p.id DESC
+        `, [username, username]) as [{ id: number; numero: string; descrizione: string; cliente_nome: string }[], unknown]
+        rows = r
+      }
+      preventiviBozza = rows.map(p => {
         const parts = [p.numero || `#${p.id}`]
+        if (p.cliente_nome) parts.push(p.cliente_nome)
         if (p.descrizione) parts.push(p.descrizione)
         return { id: p.id, label: parts.join(' — ') }
       })
@@ -121,41 +125,46 @@ export default async function Page({ params }: Props) {
 
   const { categoria, voci, articoliAcquisto } = data
 
-  const allListiniSet = new Set<string>()
-  if (categoria.listino_categoria) allListiniSet.add(categoria.listino_categoria)
-  for (const v of voci) { if (v.listino_categoria) allListiniSet.add(v.listino_categoria) }
+  const dbL = await getConnection()
+  let articoliPerListino: Record<string, ArticoloListino[]> = {}
+  try {
+    await dbL.execute(`ALTER TABLE listini ADD COLUMN principale    TINYINT(1) NOT NULL DEFAULT 1`).catch(() => {})
+    await dbL.execute(`ALTER TABLE listini ADD COLUMN caratteristica TINYINT(1) NOT NULL DEFAULT 1`).catch(() => {})
+    await dbL.execute(`ALTER TABLE listini ADD COLUMN Filtro_1      TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await dbL.execute(`ALTER TABLE listini ADD COLUMN Filtro_2      TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await dbL.execute(`ALTER TABLE listini ADD COLUMN Filtro_3      TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await dbL.execute(`ALTER TABLE listini ADD COLUMN Filtro_4      TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await dbL.execute(`ALTER TABLE listini ADD COLUMN sottocategoria VARCHAR(100) NULL`).catch(() => {})
+    await dbL.execute(`ALTER TABLE listini ADD COLUMN fase          VARCHAR(100) NULL`).catch(() => {})
+    await dbL.execute(`ALTER TABLE listini ADD COLUMN materiale     VARCHAR(100) NULL`).catch(() => {})
+    await dbL.execute(`ALTER TABLE listini ADD COLUMN tipologia     VARCHAR(100) NULL`).catch(() => {})
+    await dbL.execute(`ALTER TABLE listini ADD COLUMN ambiente      VARCHAR(100) NULL`).catch(() => {})
+    await dbL.execute(`ALTER TABLE listini ADD COLUMN fascia        VARCHAR(100) NULL`).catch(() => {})
 
-  const COLS = 'id, descrizione, produttore, serie, unita, prezzo_acquisto, prezzo_vendita, sconto_articolo, richiede_larghezza, richiede_altezza, richiede_quantita, richiede_piano, richiede_km, richiede_peso, richiede_tipo_colore, richiede_tipo_vetro, richiede_tipo_montaggio, schema_url, max_acquistabile'
-  const articoliPerListino: Record<string, ArticoloListino[]> = {}
-  if (allListiniSet.size > 0) {
-    const dbL = await getConnection()
-    try {
-      await dbL.execute(`ALTER TABLE listini ADD COLUMN principale TINYINT(1) NOT NULL DEFAULT 1`).catch(() => {})
-      await dbL.execute(`ALTER TABLE listini ADD COLUMN caratteristica TINYINT(1) NOT NULL DEFAULT 1`).catch(() => {})
-      for (const listino of allListiniSet) {
-        try {
-          let articoli: ArticoloListino[]
-          if (!parentPendente) {
-            const [rows] = await dbL.query(`SELECT ${COLS} FROM listini WHERE categoria = ? AND disponibile = 1 AND preventivabile = 1 AND principale = 1 ORDER BY descrizione ASC`, [listino])
-            articoli = rows as ArticoloListino[]
-          } else if (lacuneAperte.length === 0) {
-            const [rows] = await dbL.query(`SELECT ${COLS} FROM listini WHERE categoria = ? AND disponibile = 1 AND preventivabile = 1 AND caratteristica = 1 ORDER BY descrizione ASC`, [listino])
-            articoli = rows as ArticoloListino[]
-          } else {
-            const [rows] = await dbL.query(`SELECT ${COLS} FROM listini WHERE categoria = ? AND disponibile = 1 AND preventivabile = 1 AND caratteristica = 1 ORDER BY descrizione ASC`, [listino])
-            articoli = (rows as ArticoloListino[]).filter(a =>
-              lacuneAperte.some(l =>
-                (l === 'tipo_colore'    && a.richiede_tipo_colore    === 1) ||
-                (l === 'tipo_vetro'     && a.richiede_tipo_vetro     === 1) ||
-                (l === 'tipo_montaggio' && a.richiede_tipo_montaggio === 1)
-              )
-            )
-          }
-          articoliPerListino[listino] = articoli
-        } catch {}
+    await ensurePercorsiTables(dbL)
+
+    {
+      const principaleCol = parentPendente ? 'caratteristica' : 'principale'
+      const [rows] = await dbL.query(
+        `SELECT ${LISTINO_COLS} FROM listini
+         WHERE disponibile = 1 AND preventivabile = 1 AND ${principaleCol} = 1
+           AND id IN (SELECT listino_id FROM listini_percorsi WHERE categoria = ?)
+         ORDER BY descrizione ASC`,
+        [categoria.nome]
+      )
+      let articoli = rows as ArticoloListino[]
+      if (parentPendente && lacuneAperte.length > 0) {
+        articoli = articoli.filter(a =>
+          lacuneAperte.some(l =>
+            (l === 'tipo_colore'    && a.richiede_tipo_colore    === 1) ||
+            (l === 'tipo_vetro'     && a.richiede_tipo_vetro     === 1) ||
+            (l === 'tipo_montaggio' && a.richiede_tipo_montaggio === 1)
+          )
+        )
       }
-    } finally { await dbL.end() }
-  }
+      articoliPerListino['0'] = articoli
+    }
+  } catch {} finally { await dbL.end() }
 
   return (
     <div className="fs-15" style={{ padding: '0 0 80px', color: '#444', lineHeight: 1.8 }}>

@@ -5,115 +5,17 @@ import { useState } from 'react'
 import AggiungiArticolo, { type ArticoloListino } from './aggiungi-articolo'
 import type { PreventivoDestOption } from '@/app/brand/cataloghi/actions'
 
-type Voce = { id: number; nome: string; serie?: string; pdf_filename: string; pdf_label: string; listino_categoria: string | null; descrizione?: string | null; filtro_battente?: number; filtro_scorrevole?: number; filtro_taglio_termico?: number; filtro_taglio_freddo?: number; filtro_economico?: number; filtro_fascia_alta?: number }
+// ─── Types ────────────────────────────────────────────────────────────────────
 
-const FILTRI_CATALOGO: { key: keyof Voce; label: string }[] = [
-  { key: 'filtro_battente',       label: 'A battente' },
-  { key: 'filtro_scorrevole',     label: 'Scorrevole' },
-  { key: 'filtro_taglio_termico', label: 'Taglio termico' },
-  { key: 'filtro_taglio_freddo',  label: 'Taglio freddo' },
-  { key: 'filtro_economico',      label: 'Economico' },
-  { key: 'filtro_fascia_alta',    label: 'Fascia alta' },
-]
-
-const FILTRI_ARTICOLO = ['1 Anta', '2 Ante', '3+ Ante', 'Sopraluce']
-
-const FILTRI_ARTICOLO_KEY: Record<string, keyof ArticoloListino> = {
-  '1 Anta':    'filtro_1',
-  '2 Ante':    'filtro_2',
-  '3+ Ante':   'filtro_3',
-  'Sopraluce': 'filtro_4',
+type Voce = {
+  id: number; nome: string; serie?: string; pdf_filename: string; pdf_label: string
+  descrizione?: string | null
+  filtro_battente?: number; filtro_scorrevole?: number; filtro_taglio_termico?: number
+  filtro_taglio_freddo?: number; filtro_economico?: number; filtro_fascia_alta?: number
+  sottocategoria?: string | null; fase?: string | null; materiale?: string | null
+  tipologia?: string | null; ambiente?: string | null; fascia?: string | null
+  filtro_1?: number; filtro_2?: number; filtro_3?: number; filtro_4?: number
 }
-
-const H = 28, THUMB = 22
-
-function Linguetta({ label, attiva, onToggle }: { label: string; attiva: boolean; onToggle: () => void }) {
-  const W = Math.max(THUMB + 8 + label.length * 7, 90)
-  return (
-    <div
-      role="button"
-      tabIndex={0}
-      onClick={onToggle}
-      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') onToggle() }}
-      style={{
-        position: 'relative', width: W, height: H, borderRadius: H / 2, flexShrink: 0,
-        background: attiva ? '#1e5c1e' : '#3a3a3a',
-        transition: 'background 0.2s',
-        cursor: 'pointer', userSelect: 'none',
-      }}
-    >
-      <span style={{
-        position: 'absolute', left: 8, top: 0, bottom: 0,
-        display: 'flex', alignItems: 'center',
-        fontSize: 10, fontFamily: 'inherit', fontWeight: 700,
-        color: attiva ? '#7dda7d' : 'transparent',
-        transition: 'color 0.2s',
-        whiteSpace: 'nowrap', pointerEvents: 'none',
-      }}>{label}</span>
-      <span style={{
-        position: 'absolute', right: 8, top: 0, bottom: 0,
-        display: 'flex', alignItems: 'center',
-        fontSize: 10, fontFamily: 'inherit', fontWeight: 400,
-        color: attiva ? 'transparent' : '#aaaaaa',
-        transition: 'color 0.2s',
-        whiteSpace: 'nowrap', pointerEvents: 'none',
-      }}>{label}</span>
-      <div style={{
-        position: 'absolute',
-        width: THUMB, height: THUMB, borderRadius: '50%', background: '#fff',
-        top: (H - THUMB) / 2,
-        left: attiva ? W - THUMB - 3 : 3,
-        transition: 'left 0.2s',
-        boxShadow: '0 1px 4px rgba(0,0,0,0.5)',
-      }} />
-    </div>
-  )
-}
-
-function RigaFiltri({
-  label,
-  bambini,
-  nAttivi,
-  onClearAll,
-}: {
-  label: string
-  bambini: React.ReactNode
-  nAttivi: number
-  onClearAll: () => void
-}) {
-  return (
-    <div style={{
-      display: 'flex', alignItems: 'center', gap: 0,
-      background: '#fff', border: '1px solid #c8960c', borderRadius: 10,
-      padding: '6px 24px', overflow: 'hidden',
-    }}>
-      {/* X */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-        <button
-          onClick={onClearAll}
-          disabled={nAttivi === 0}
-          className={`${nAttivi > 0 ? 'btn-red' : 'btn-gray'} btn-icon fs-11`}
-          style={{ flexShrink: 0 }}
-        >✕</button>
-      </div>
-      {/* Separatore */}
-      <div style={{ width: 1, height: 20, background: '#ddd', flexShrink: 0, margin: '0 10px' }} />
-      {/* Chips scrollabili */}
-      <div style={{
-        display: 'flex', gap: 6,
-        overflowX: 'auto', WebkitOverflowScrolling: 'touch' as const,
-        paddingBottom: 2,
-      }}>
-        {bambini}
-      </div>
-    </div>
-  )
-}
-
-const CatalogoClient = dynamic(() => import('./catalogo-client'), {
-  ssr: false,
-  loading: () => <p className="fs-14" style={{ color: '#aaa' }}>Caricamento…</p>,
-})
 
 type Props = {
   voci: Voce[]
@@ -130,85 +32,177 @@ type Props = {
   submitLabel?: string
   isApp?: boolean
   mostraFiltri?: boolean
+  fixedCat?: string
+  fixedSottocat?: string
 }
 
-export default function CatalogoWrapper({ voci, articoliPerListino, isStaff, isLoggedIn, preventiviBozza, cartNonVuoto, parentPendente, categorySlug, basePath, carrelloHref, preventivoClienteBaseHref, submitLabel, isApp, mostraFiltri = false }: Props) {
+// ─── Linguette PDF ─────────────────────────────────────────────────────────────
+
+const PDF_FILTRI: { label: string; key: keyof Voce; sottocatMatch: string }[] = [
+  { label: 'Battente',    key: 'filtro_battente',       sottocatMatch: 'battente' },
+  { label: 'Scorrevole',  key: 'filtro_scorrevole',     sottocatMatch: 'scorrevole' },
+  { label: 'T. Termico',  key: 'filtro_taglio_termico', sottocatMatch: 'taglio termico' },
+  { label: 'T. Freddo',   key: 'filtro_taglio_freddo',  sottocatMatch: 'taglio freddo' },
+  { label: 'Economico',   key: 'filtro_economico',      sottocatMatch: 'economico' },
+  { label: 'Fascia Alta', key: 'filtro_fascia_alta',    sottocatMatch: 'fascia alta' },
+]
+
+const H = 28, THUMB = 22
+
+function Linguetta({ label, attiva, onToggle }: { label: string; attiva: boolean; onToggle: () => void }) {
+  const W = Math.max(THUMB + 8 + label.length * 7, 90)
+  return (
+    <div
+      role="button" tabIndex={0} onClick={onToggle}
+      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') onToggle() }}
+      style={{ position: 'relative', width: W, height: H, borderRadius: H / 2, flexShrink: 0, background: attiva ? '#1e5c1e' : '#3a3a3a', transition: 'background 0.2s', cursor: 'pointer', userSelect: 'none' }}
+    >
+      <span style={{ position: 'absolute', left: 8, top: 0, bottom: 0, display: 'flex', alignItems: 'center', fontSize: 10, fontFamily: 'inherit', fontWeight: 700, color: attiva ? '#7dda7d' : 'transparent', transition: 'color 0.2s', whiteSpace: 'nowrap', pointerEvents: 'none' }}>{label}</span>
+      <span style={{ position: 'absolute', right: 8, top: 0, bottom: 0, display: 'flex', alignItems: 'center', fontSize: 10, fontFamily: 'inherit', fontWeight: 400, color: attiva ? 'transparent' : '#aaaaaa', transition: 'color 0.2s', whiteSpace: 'nowrap', pointerEvents: 'none' }}>{label}</span>
+      <div style={{ position: 'absolute', width: THUMB, height: THUMB, borderRadius: '50%', background: '#fff', top: (H - THUMB) / 2, left: attiva ? W - THUMB - 3 : 3, transition: 'left 0.2s', boxShadow: '0 1px 4px rgba(0,0,0,0.5)' }} />
+    </div>
+  )
+}
+
+// ─── Dynamic import ───────────────────────────────────────────────────────────
+
+const CatalogoClient = dynamic(() => import('./catalogo-client'), {
+  ssr: false,
+  loading: () => <p className="fs-14" style={{ color: '#aaa' }}>Caricamento…</p>,
+})
+
+const selStyle = { fontSize: 11, padding: '3px 6px', border: '1px solid #ccc', borderRadius: 4, fontFamily: 'inherit', background: '#fff', height: 26 }
+
+// ─── Main component ───────────────────────────────────────────────────────────
+
+export default function CatalogoWrapper({
+  voci, articoliPerListino, isStaff, isLoggedIn, preventiviBozza, cartNonVuoto,
+  parentPendente, categorySlug, basePath, carrelloHref, preventivoClienteBaseHref,
+  submitLabel, isApp, fixedCat, fixedSottocat,
+}: Props) {
   const [selectedVoce, setSelectedVoce] = useState<Voce | null>(null)
-  const [filtriAttivi, setFiltriAttivi] = useState<Set<keyof Voce>>(new Set())
-  const [filtriArticoloAttivi, setFiltriArticoloAttivi] = useState<Set<string>>(new Set())
 
-  const vociFiltrate = filtriAttivi.size === 0
-    ? voci
-    : voci.filter(v => [...filtriAttivi].every(k => (v[k] as number) === 1))
+  const [formSottocat, setFormSottocat] = useState('')
+  const [faseSel, setFaseSel] = useState('')
+  const [materialeSel, setMaterialeSel] = useState('')
+  const [tipologiaSel, setTipologiaSel] = useState('')
+  const [ambienteSel, setAmbienteSel] = useState('')
+  const [fasciaSel, setFasciaSel] = useState('')
+  const [filtriPdf, setFiltriPdf] = useState<Set<string>>(new Set())
 
-  function toggleFiltroCatalogo(key: keyof Voce) {
-    setFiltriAttivi(prev => {
-      const next = new Set(prev)
-      if (next.has(key)) next.delete(key)
-      else next.add(key)
-      return next
-    })
-    setSelectedVoce(null)
-  }
-
-  function toggleFiltroArticolo(label: string) {
-    setFiltriArticoloAttivi(prev => {
-      const next = new Set(prev)
-      if (next.has(label)) next.delete(label)
-      else next.add(label)
-      return next
-    })
-  }
-
-  let articoliVisibili: ArticoloListino[]
-  if (selectedVoce !== null) {
-    articoliVisibili = selectedVoce.listino_categoria
-      ? articoliPerListino[selectedVoce.listino_categoria] ?? []
-      : []
-  } else if (voci.length === 0) {
+  // Pool articoli: tutti gli articoli da tutti i voci, deduplicati
+  const articoliPool: ArticoloListino[] = (() => {
     const seen = new Set<number>()
-    articoliVisibili = []
+    const result: ArticoloListino[] = []
     for (const arts of Object.values(articoliPerListino)) {
-      for (const a of arts) {
-        if (!seen.has(a.id)) { seen.add(a.id); articoliVisibili.push(a) }
-      }
+      for (const a of arts) { if (!seen.has(a.id)) { seen.add(a.id); result.push(a) } }
     }
-  } else {
-    const seen = new Set<number>()
-    articoliVisibili = []
-    for (const v of vociFiltrate) {
-      if (!v.listino_categoria) continue
-      for (const a of articoliPerListino[v.listino_categoria] ?? []) {
-        if (!seen.has(a.id)) { seen.add(a.id); articoliVisibili.push(a) }
-      }
-    }
+    return result
+  })()
+
+  // Cascade — opzioni da unione voci+articoli; voci senza campo passano sempre
+  const sottocatOpt = [...new Set([...voci.map(v => v.sottocategoria), ...articoliPool.map(a => a.sottocategoria)].filter(Boolean))].sort() as string[]
+  const post1 = formSottocat ? voci.filter(v => v.sottocategoria?.toLowerCase() === formSottocat.toLowerCase()) : voci
+  const art1  = formSottocat ? articoliPool.filter(a => a.sottocategoria?.toLowerCase() === formSottocat.toLowerCase()) : articoliPool
+
+  const faseOpt = [...new Set([...post1.map(v => v.fase), ...art1.map(a => a.fase)].filter(Boolean))].sort() as string[]
+  const post2 = faseSel ? post1.filter(v => v.fase === faseSel) : post1
+  const art2  = faseSel ? art1.filter(a => a.fase === faseSel) : art1
+
+  const materialeOpt = [...new Set([...post2.map(v => v.materiale), ...art2.map(a => a.materiale)].filter(Boolean))].sort() as string[]
+  const post3 = materialeSel ? post2.filter(v => v.materiale === materialeSel) : post2
+  const art3  = materialeSel ? art2.filter(a => a.materiale === materialeSel) : art2
+
+  const tipologiaOpt = [...new Set([...post3.map(v => v.tipologia), ...art3.map(a => a.tipologia)].filter(Boolean))].sort() as string[]
+  const post4 = tipologiaSel ? post3.filter(v => v.tipologia === tipologiaSel) : post3
+  const art4  = tipologiaSel ? art3.filter(a => a.tipologia === tipologiaSel) : art3
+
+  const ambienteOpt = [...new Set([...post4.map(v => v.ambiente), ...art4.map(a => a.ambiente)].filter(Boolean))].sort() as string[]
+  const post5 = ambienteSel ? post4.filter(v => v.ambiente === ambienteSel) : post4
+  const art5  = ambienteSel ? art4.filter(a => a.ambiente === ambienteSel) : art4
+
+  const fasciaOpt = [...new Set([...post5.map(v => v.fascia), ...art5.map(a => a.fascia)].filter(Boolean))].sort() as string[]
+  const post6 = fasciaSel ? post5.filter(v => v.fascia === fasciaSel) : post5
+  const art6  = fasciaSel ? art5.filter(a => a.fascia === fasciaSel) : art5
+
+  // Linguette PDF: filtrano i PDF per flag E gli articoli per sottocategoria (OR tra linguette attive)
+  const vociFiltrate = filtriPdf.size === 0 ? post6 : post6.filter(v =>
+    [...filtriPdf].some(lbl => {
+      const f = PDF_FILTRI.find(f => f.label === lbl)
+      return f && (v[f.key] as number ?? 0) === 1
+    })
+  )
+
+  const artFiltrati = filtriPdf.size === 0 ? art6 : art6.filter(a => {
+    if (!a.sottocategoria) return true
+    const sc = a.sottocategoria.toLowerCase()
+    return [...filtriPdf].some(lbl => {
+      const f = PDF_FILTRI.find(f => f.label === lbl)
+      return f && (sc === f.sottocatMatch || sc.includes(f.sottocatMatch))
+    })
+  })
+
+  const hasFilters = !!(faseSel || materialeSel || tipologiaSel || ambienteSel || fasciaSel || filtriPdf.size)
+
+  // Linguette PDF disponibili = solo quelle per cui almeno un PDF ha il flag
+  const linguettePdfDisponibili = PDF_FILTRI.filter(f => voci.some(v => (v[f.key] as number ?? 0) === 1))
+
+  const showFiltriBar =
+    linguettePdfDisponibili.length > 0 ||
+    voci.some(v => v.sottocategoria || v.fase || v.materiale || v.tipologia || v.ambiente || v.fascia) ||
+    articoliPool.some(a => a.sottocategoria || a.fase || a.materiale || a.tipologia || a.ambiente || a.fascia)
+
+  function resetFiltri() {
+    setFormSottocat(''); setFaseSel(''); setMaterialeSel('')
+    setTipologiaSel(''); setAmbienteSel(''); setFasciaSel('')
+    setFiltriPdf(new Set())
   }
 
-  if (filtriArticoloAttivi.size > 0) {
-    articoliVisibili = articoliVisibili.filter(a =>
-      [...filtriArticoloAttivi].every(label => {
-        const key = FILTRI_ARTICOLO_KEY[label]
-        return key && Number(a[key]) === 1
-      })
-    )
+  function selectVoce(voce: Voce | null) {
+    setSelectedVoce(voce)
   }
 
   return (
     <>
-      {mostraFiltri && (
-        <RigaFiltri
-          label="Filtri catalogo"
-          nAttivi={filtriAttivi.size}
-          onClearAll={() => { setFiltriAttivi(new Set()); setSelectedVoce(null) }}
-          bambini={FILTRI_CATALOGO.map(f => (
-            <Linguetta
-              key={String(f.key)}
-              label={f.label}
-              attiva={filtriAttivi.has(f.key)}
-              onToggle={() => toggleFiltroCatalogo(f.key)}
+      {showFiltriBar && (
+        <div style={{ display: 'flex', flexWrap: 'nowrap', gap: 6, alignItems: 'center', background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '8px 16px', marginBottom: 8, overflowX: 'auto', WebkitOverflowScrolling: 'touch' as const }}>
+          <button onClick={resetFiltri} disabled={!hasFilters} className={hasFilters ? 'btn-red' : 'btn-gray'} style={{ fontSize: 11, padding: '2px 8px', height: 26 }}>✕</button>
+          {faseOpt.length > 0 && (
+            <select value={faseSel} onChange={e => { setFaseSel(e.target.value); setMaterialeSel(''); setTipologiaSel(''); setAmbienteSel(''); setFasciaSel('') }} style={selStyle}>
+              <option value="">Fase</option>
+              {faseOpt.map(o => <option key={o} value={o}>{o}</option>)}
+            </select>
+          )}
+          {materialeOpt.length > 0 && (
+            <select value={materialeSel} onChange={e => { setMaterialeSel(e.target.value); setTipologiaSel(''); setAmbienteSel(''); setFasciaSel('') }} style={selStyle}>
+              <option value="">Materiale</option>
+              {materialeOpt.map(o => <option key={o} value={o}>{o}</option>)}
+            </select>
+          )}
+          {tipologiaOpt.length > 0 && (
+            <select value={tipologiaSel} onChange={e => { setTipologiaSel(e.target.value); setAmbienteSel(''); setFasciaSel('') }} style={selStyle}>
+              <option value="">Tipologia</option>
+              {tipologiaOpt.map(o => <option key={o} value={o}>{o}</option>)}
+            </select>
+          )}
+          {ambienteOpt.length > 0 && (
+            <select value={ambienteSel} onChange={e => { setAmbienteSel(e.target.value); setFasciaSel('') }} style={selStyle}>
+              <option value="">Ambiente</option>
+              {ambienteOpt.map(o => <option key={o} value={o}>{o}</option>)}
+            </select>
+          )}
+          {fasciaOpt.length > 0 && (
+            <select value={fasciaSel} onChange={e => setFasciaSel(e.target.value)} style={selStyle}>
+              <option value="">Fascia</option>
+              {fasciaOpt.map(o => <option key={o} value={o}>{o}</option>)}
+            </select>
+          )}
+          {linguettePdfDisponibili.map(f => (
+            <Linguetta key={f.label} label={f.label} attiva={filtriPdf.has(f.label)}
+              onToggle={() => setFiltriPdf(prev => { const s = new Set(prev); s.has(f.label) ? s.delete(f.label) : s.add(f.label); return s })}
             />
           ))}
-        />
+        </div>
       )}
 
       {voci.length > 0 && (vociFiltrate.length === 0 ? (
@@ -216,29 +210,16 @@ export default function CatalogoWrapper({ voci, articoliPerListino, isStaff, isL
           Nessun catalogo corrisponde ai filtri selezionati.
         </p>
       ) : (
-        <CatalogoClient voci={vociFiltrate} onSelect={setSelectedVoce} categorySlug={categorySlug} basePath={basePath} isApp={isApp} />
+        <CatalogoClient voci={vociFiltrate} onSelect={selectVoce} isApp={isApp} />
       ))}
 
-      {mostraFiltri && (
-        <RigaFiltri
-          label="Filtri articolo"
-          nAttivi={filtriArticoloAttivi.size}
-          onClearAll={() => setFiltriArticoloAttivi(new Set())}
-          bambini={FILTRI_ARTICOLO.map(label => (
-            <Linguetta
-              key={label}
-              label={label}
-              attiva={filtriArticoloAttivi.has(label)}
-              onToggle={() => toggleFiltroArticolo(label)}
-            />
-          ))}
-        />
-      )}
-
-      {articoliVisibili.length > 0 && (
+      {artFiltrati.length > 0 && (
         <div style={{ marginTop: 12 }}>
           <AggiungiArticolo
-            articoli={articoliVisibili}
+            articoli={artFiltrati}
+            lockedCat={fixedCat}
+            lockedSottocat={fixedSottocat}
+            onSottocatChange={fixedSottocat ? undefined : v => setFormSottocat(v)}
             isStaff={isStaff}
             isLoggedIn={isLoggedIn}
             preventiviBozza={preventiviBozza}

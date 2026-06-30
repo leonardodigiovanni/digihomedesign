@@ -4,6 +4,7 @@ import { CatalogoGrid } from '@/app/brand/cataloghi/catalogo-grid'
 import type { CategoriaCard } from '@/app/brand/cataloghi/page'
 import SetActionBar from '@/app/app/set-action-bar'
 import InfoCard from '@/app/app/info-card'
+import { ensurePercorsiTables } from '@/lib/percorsi'
 
 function toSlug(nome: string): string {
   return nome
@@ -16,22 +17,15 @@ function toSlug(nome: string): string {
 async function getCategorie(): Promise<CategoriaCard[]> {
   const db = await getConnection()
   try {
-    await db.execute(`
-      CREATE TABLE IF NOT EXISTS catalogo_categorie (
-        id     INT AUTO_INCREMENT PRIMARY KEY,
-        nome   VARCHAR(100) NOT NULL,
-        ordine INT NOT NULL DEFAULT 0
-      )
-    `)
-    const [colCheck] = await db.query(
-      `SELECT COUNT(*) AS cnt FROM INFORMATION_SCHEMA.COLUMNS
-       WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'catalogo_categorie' AND COLUMN_NAME = 'listino_categoria'`
-    ) as [{ cnt: number }[], unknown]
-    if ((colCheck[0]?.cnt ?? 0) === 0) {
-      await db.execute(`ALTER TABLE catalogo_categorie ADD COLUMN listino_categoria VARCHAR(100) NULL DEFAULT NULL`)
-    }
-    const [rows] = await db.query(`SELECT cc.id, cc.nome FROM catalogo_categorie cc ORDER BY cc.ordine ASC, cc.nome ASC`) as [{ id: number; nome: string }[], unknown]
-    return rows.map(r => ({ id: r.id, nome: r.nome, slug: toSlug(r.nome) }))
+    await ensurePercorsiTables(db)
+    const [rows] = await db.query(
+      `SELECT DISTINCT categoria FROM catalogo_voci_percorsi WHERE categoria != '' ORDER BY categoria ASC`
+    ) as [{ categoria: string }[], unknown]
+    return (rows as { categoria: string }[]).map((r, i) => ({
+      id: i,
+      nome: r.categoria,
+      slug: toSlug(r.categoria),
+    }))
   } finally {
     await db.end()
   }

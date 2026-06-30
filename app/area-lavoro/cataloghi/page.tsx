@@ -3,85 +3,91 @@ import { redirect } from 'next/navigation'
 import { readSettings } from '@/lib/settings'
 import { hasPageAccess } from '@/lib/permissions'
 import { getConnection } from '@/lib/db'
-import CataloghiClient, { type Categoria } from './cataloghi-client'
+import CataloghiClient, { type Voce } from './cataloghi-client'
 import type { Metadata } from 'next'
+import { ensurePercorsiTables, type Percorso } from '@/lib/percorsi'
 
-export const metadata: Metadata = {
-  title: 'Cataloghi',
-}
+export const metadata: Metadata = { title: 'Cataloghi' }
 
 const STAFF_ROLES = ['admin', 'dipendente', 'direttore']
 
-async function getData(): Promise<{ categorie: Categoria[]; listiniCategorie: string[] }> {
+async function getData(): Promise<{ voci: Voce[]; percorsiPerVoce: Record<number, Percorso[]> }> {
   const db = await getConnection()
   try {
-    await db.execute(`
-      CREATE TABLE IF NOT EXISTS catalogo_categorie (
-        id     INT AUTO_INCREMENT PRIMARY KEY,
-        nome   VARCHAR(100) NOT NULL,
-        ordine INT NOT NULL DEFAULT 0
-      )
-    `)
-    const [colCheck] = await db.query(
-      `SELECT COUNT(*) AS cnt FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'catalogo_categorie' AND COLUMN_NAME = 'listino_categoria'`
-    ) as [{ cnt: number }[], unknown]
-    if ((colCheck[0]?.cnt ?? 0) === 0) {
-      await db.execute(`ALTER TABLE catalogo_categorie ADD COLUMN listino_categoria VARCHAR(100) NULL DEFAULT NULL`)
-    }
+    await ensurePercorsiTables(db)
+
     await db.execute(`
       CREATE TABLE IF NOT EXISTS catalogo_voci (
         id           INT AUTO_INCREMENT PRIMARY KEY,
-        categoria_id INT NOT NULL,
         nome         VARCHAR(200) NOT NULL,
         pdf_filename VARCHAR(255) NOT NULL,
         pdf_label    VARCHAR(200) NOT NULL DEFAULT '',
-        created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (categoria_id) REFERENCES catalogo_categorie(id) ON DELETE CASCADE
+        created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `)
     await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN serie VARCHAR(200) NOT NULL DEFAULT ''`).catch(() => {})
-    const [descrCheck] = await db.query(
-      `SELECT COUNT(*) AS cnt FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'catalogo_voci' AND COLUMN_NAME = 'descrizione'`
-    ) as [{ cnt: number }[], unknown]
-    if ((descrCheck[0]?.cnt ?? 0) === 0) {
-      await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN descrizione TEXT NULL`)
-    }
-    const [listCatVoceCheck] = await db.query(
-      `SELECT COUNT(*) AS cnt FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'catalogo_voci' AND COLUMN_NAME = 'listino_categoria'`
-    ) as [{ cnt: number }[], unknown]
-    if ((listCatVoceCheck[0]?.cnt ?? 0) === 0) {
-      await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN listino_categoria VARCHAR(100) NULL DEFAULT NULL`)
-    }
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN descrizione TEXT NULL`).catch(() => {})
     await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_battente TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_scorrevole TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_taglio_termico TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_taglio_freddo TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_economico TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_fascia_alta TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN fase VARCHAR(100) NULL`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN materiale VARCHAR(100) NULL`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN tipologia VARCHAR(100) NULL`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN ambiente VARCHAR(100) NULL`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN fascia VARCHAR(100) NULL`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_1 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_2 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_3 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_4 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN schema_url VARCHAR(500) NULL`).catch(() => {})
 
-    const [cats] = await db.query('SELECT id, nome, ordine, listino_categoria FROM catalogo_categorie ORDER BY ordine ASC, nome ASC')
-    const [voci] = await db.query('SELECT id, categoria_id, nome, pdf_filename, pdf_label, serie, descrizione, listino_categoria, filtro_battente, filtro_scorrevole, filtro_taglio_termico, filtro_taglio_freddo, filtro_economico, filtro_fascia_alta FROM catalogo_voci ORDER BY nome ASC')
+    const [vociRows] = await db.query(`
+      SELECT id, nome, pdf_filename, pdf_label, serie, descrizione,
+             filtro_battente, filtro_scorrevole, filtro_taglio_termico, filtro_taglio_freddo,
+             filtro_economico, filtro_fascia_alta,
+             fase, materiale, tipologia, ambiente, fascia,
+             filtro_1, filtro_2, filtro_3, filtro_4, schema_url
+      FROM catalogo_voci ORDER BY nome ASC
+    `)
 
-    let listiniCategorie: string[] = []
-    try {
-      const [lc] = await db.query('SELECT DISTINCT categoria FROM listini WHERE categoria IS NOT NULL AND categoria != \'\' ORDER BY categoria ASC')
-      listiniCategorie = (lc as { categoria: string }[]).map(r => r.categoria)
-    } catch {}
-
-    const voceMap: Record<number, Categoria['voci']> = {}
-    for (const v of voci as { id: number; categoria_id: number; nome: string; pdf_filename: string; pdf_label: string; serie: string; descrizione: string; listino_categoria: string | null; filtro_battente: number; filtro_scorrevole: number; filtro_taglio_termico: number; filtro_taglio_freddo: number; filtro_economico: number; filtro_fascia_alta: number }[]) {
-      if (!voceMap[v.categoria_id]) voceMap[v.categoria_id] = []
-      voceMap[v.categoria_id].push({ id: v.id, nome: v.nome, pdf_filename: v.pdf_filename, pdf_label: v.pdf_label, serie: v.serie ?? '', descrizione: v.descrizione ?? '', listino_categoria: v.listino_categoria ?? null, filtro_battente: v.filtro_battente ?? 0, filtro_scorrevole: v.filtro_scorrevole ?? 0, filtro_taglio_termico: v.filtro_taglio_termico ?? 0, filtro_taglio_freddo: v.filtro_taglio_freddo ?? 0, filtro_economico: v.filtro_economico ?? 0, filtro_fascia_alta: v.filtro_fascia_alta ?? 0 })
+    const [percorsiRows] = await db.query(
+      'SELECT id, voce_id, categoria, sottocategoria FROM catalogo_voci_percorsi ORDER BY id ASC'
+    )
+    const percorsiPerVoce: Record<number, Percorso[]> = {}
+    for (const r of percorsiRows as { id: number; voce_id: number; categoria: string; sottocategoria: string }[]) {
+      if (!percorsiPerVoce[r.voce_id]) percorsiPerVoce[r.voce_id] = []
+      percorsiPerVoce[r.voce_id].push({ id: r.id, categoria: r.categoria, sottocategoria: r.sottocategoria })
     }
 
-    const categorie = (cats as { id: number; nome: string; ordine: number; listino_categoria: string | null }[]).map(c => ({
-      id: c.id,
-      nome: c.nome,
-      ordine: c.ordine,
-      listino_categoria: c.listino_categoria ?? null,
-      voci: voceMap[c.id] ?? [],
-    }))
-    return { categorie, listiniCategorie }
+    const voci = (vociRows as Record<string, unknown>[]).map(r => ({
+      id:                    Number(r.id),
+      nome:                  String(r.nome ?? ''),
+      serie:                 String(r.serie ?? ''),
+      pdf_filename:          String(r.pdf_filename ?? ''),
+      pdf_label:             String(r.pdf_label ?? ''),
+      descrizione:           String(r.descrizione ?? ''),
+      filtro_battente:       Number(r.filtro_battente       ?? 0),
+      filtro_scorrevole:     Number(r.filtro_scorrevole     ?? 0),
+      filtro_taglio_termico: Number(r.filtro_taglio_termico ?? 0),
+      filtro_taglio_freddo:  Number(r.filtro_taglio_freddo  ?? 0),
+      filtro_economico:      Number(r.filtro_economico      ?? 0),
+      filtro_fascia_alta:    Number(r.filtro_fascia_alta    ?? 0),
+      fase:      r.fase      ? String(r.fase)      : null,
+      materiale: r.materiale ? String(r.materiale) : null,
+      tipologia: r.tipologia ? String(r.tipologia) : null,
+      ambiente:  r.ambiente  ? String(r.ambiente)  : null,
+      fascia:    r.fascia    ? String(r.fascia)     : null,
+      filtro_1:  Number(r.filtro_1 ?? 0),
+      filtro_2:  Number(r.filtro_2 ?? 0),
+      filtro_3:  Number(r.filtro_3 ?? 0),
+      filtro_4:  Number(r.filtro_4 ?? 0),
+      schema_url: r.schema_url ? String(r.schema_url) : null,
+    })) as Voce[]
+
+    return { voci, percorsiPerVoce }
   } finally {
     await db.end()
   }
@@ -90,21 +96,20 @@ async function getData(): Promise<{ categorie: Categoria[]; listiniCategorie: st
 export default async function Page() {
   const cookieStore = await cookies()
   const role = cookieStore.get('session_role')?.value ?? ''
-
   if (!role) redirect('/')
   const settings = await readSettings()
   if (!hasPageAccess(role, 23, settings)) redirect('/')
 
-  const { categorie, listiniCategorie } = await getData()
+  const { voci, percorsiPerVoce } = await getData()
   const isStaff = STAFF_ROLES.includes(role)
 
   return (
     <div>
       <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 6 }}>Cataloghi</h2>
-      <p style={{ color: '#000', fontSize: 13, marginBottom: 24 }}>
-        Depliant e cataloghi prodotti per categoria.
+      <p style={{ color: '#000', fontSize: 13, marginBottom: 16 }}>
+        Depliant e cataloghi prodotti. Ogni voce ha un PDF e N coppie categoria / sottocategoria.
       </p>
-      <CataloghiClient categorie={categorie} isStaff={isStaff} listiniCategorie={listiniCategorie} />
+      <CataloghiClient voci={voci} isStaff={isStaff} percorsiPerVoce={percorsiPerVoce} />
     </div>
   )
 }

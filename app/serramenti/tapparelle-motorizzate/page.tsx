@@ -1,4 +1,4 @@
-﻿import Link from 'next/link'
+import Link from 'next/link'
 import Image from 'next/image'
 import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
@@ -7,6 +7,7 @@ import CtaPreventivo from '@/components/cta-preventivo'
 import CtaCantiere from '@/components/cta-cantiere'
 import CatalogoWrapper from '@/app/brand/cataloghi/[slug]/catalogo-wrapper'
 import { type ArticoloListino } from '@/app/brand/cataloghi/[slug]/aggiungi-articolo'
+import { LISTINO_COLS } from '@/lib/catalogo-matching'
 import type { PreventivoDestOption } from '@/app/brand/cataloghi/actions'
 import AggiungiArticoloAcquistoForm from '@/components/aggiungi-articolo-acquisto-form'
 import type { ArticoloListinoAcquisto } from '@/components/aggiungi-articolo-acquisto-form'
@@ -24,57 +25,60 @@ export const metadata: Metadata = {
   },
 }
 
-async function getCatalogoData(nomeCategoria: string) {
+function normalize(s: string) { return s.toLowerCase().replace(/-/g, ' ').trim() }
+
+async function getCatalogoData(nomeCategoria: string, sottocatSlug: string) {
+  const normCat    = normalize(nomeCategoria)
+  const normSubcat = normalize(sottocatSlug)
   try {
     const db = await getConnection()
     try {
-      const [cats] = await db.query(
-        'SELECT id, nome, listino_categoria FROM catalogo_categorie WHERE LOWER(nome) = LOWER(?) LIMIT 1',
-        [nomeCategoria]
-      )
-      const categoria = (cats as { id: number; nome: string; listino_categoria: string | null }[])[0]
-      if (!categoria) return null
+      type VoceRow = { id: number; nome: string; serie: string; pdf_filename: string; pdf_label: string; descrizione: string | null; filtro_battente: number; filtro_scorrevole: number; filtro_taglio_termico: number; filtro_taglio_freddo: number; filtro_economico: number; filtro_fascia_alta: number; sottocategoria?: string | null; fase?: string | null; materiale?: string | null; tipologia?: string | null; ambiente?: string | null; fascia?: string | null; filtro_1?: number; filtro_2?: number; filtro_3?: number; filtro_4?: number }
       const [voci] = await db.query(
-        'SELECT id, nome, serie, pdf_filename, pdf_label, listino_categoria, descrizione, filtro_battente, filtro_scorrevole, filtro_taglio_termico, filtro_taglio_freddo, filtro_economico, filtro_fascia_alta FROM catalogo_voci WHERE categoria_id = ? ORDER BY nome ASC',
-        [categoria.id]
+        `SELECT cv.id, cv.nome, cv.serie, cv.pdf_filename, cv.pdf_label, cv.descrizione,
+                cv.filtro_battente, cv.filtro_scorrevole, cv.filtro_taglio_termico,
+                cv.filtro_taglio_freddo, cv.filtro_economico, cv.filtro_fascia_alta,
+                vp.sottocategoria, cv.fase, cv.materiale, cv.tipologia, cv.ambiente, cv.fascia,
+                cv.filtro_1, cv.filtro_2, cv.filtro_3, cv.filtro_4
+         FROM catalogo_voci cv
+         JOIN catalogo_voci_percorsi vp ON vp.voce_id = cv.id
+         WHERE LOWER(REPLACE(TRIM(vp.categoria), '-', ' ')) = ?
+           AND LOWER(REPLACE(TRIM(vp.sottocategoria), '-', ' ')) = ?
+         ORDER BY cv.nome ASC`,
+        [normCat, normSubcat]
       )
-      const voceList = voci as { id: number; nome: string; serie: string; pdf_filename: string; pdf_label: string; listino_categoria: string | null; descrizione: string | null; filtro_battente: number; filtro_scorrevole: number; filtro_taglio_termico: number; filtro_taglio_freddo: number; filtro_economico: number; filtro_fascia_alta: number }[]
-      const allListiniSet = new Set<string>()
-      if (categoria.listino_categoria) allListiniSet.add(categoria.listino_categoria)
-      for (const v of voceList) { if (v.listino_categoria) allListiniSet.add(v.listino_categoria) }
-      const COLS = 'id, descrizione, produttore, serie, unita, prezzo_acquisto, prezzo_vendita, sconto_articolo, richiede_larghezza, richiede_altezza, richiede_quantita, richiede_piano, richiede_km, richiede_peso, richiede_tipo_colore, richiede_tipo_vetro, richiede_tipo_montaggio, schema_url, max_acquistabile'
-      const articoliPerListino: Record<string, ArticoloListino[]> = {}
-      if (allListiniSet.size > 0) {
-        await db.execute(`ALTER TABLE listini ADD COLUMN principale TINYINT(1) NOT NULL DEFAULT 1`).catch(() => {})
-        for (const listino of allListiniSet) {
-          try {
-            const [rows] = await db.query(
-              `SELECT ${COLS} FROM listini WHERE categoria = ? AND disponibile = 1 AND preventivabile = 1 AND principale = 1 ORDER BY descrizione ASC`,
-              [listino]
-            )
-            articoliPerListino[listino] = rows as ArticoloListino[]
-          } catch {}
-        }
-      }
-      const acquistoCats = new Set<string>()
-      if (categoria.listino_categoria) acquistoCats.add(categoria.listino_categoria)
-      for (const v of voceList) { if (v.listino_categoria) acquistoCats.add(v.listino_categoria) }
-      let articoliAcquisto: ArticoloListinoAcquisto[] = []
-      if (acquistoCats.size > 0) {
-        try {
-          const cats = [...acquistoCats]
-          const ph = cats.map(() => '?').join(',')
-          const [rowsAcq] = await db.query(
-            `SELECT id, descrizione, produttore, serie, unita, prezzo_vendita, max_acquistabile FROM listini WHERE categoria IN (${ph}) AND disponibile = 1 AND acquistabile = 1 ORDER BY descrizione ASC`,
-            cats
-          )
-          articoliAcquisto = (rowsAcq as (ArticoloListinoAcquisto & { max_acquistabile: number | null })[]).map(r => ({
-            ...r,
-            max_acquistabile: r.max_acquistabile != null ? Number(r.max_acquistabile) : null,
-          }))
-        } catch {}
-      }
-      return { categoria: { nome: categoria.nome, listino_categoria: categoria.listino_categoria }, voci: voceList, articoliPerListino, articoliAcquisto }
+      const voceList = voci as VoceRow[]
+
+      await db.execute(`ALTER TABLE listini ADD COLUMN principale    TINYINT(1) NOT NULL DEFAULT 1`).catch(() => {})
+      await db.execute(`ALTER TABLE listini ADD COLUMN caratteristica TINYINT(1) NOT NULL DEFAULT 1`).catch(() => {})
+      await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_1      TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+      await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_2      TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+      await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_3      TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+      await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_4      TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+      const [artRows] = await db.query(
+        `SELECT ${LISTINO_COLS} FROM listini
+         WHERE disponibile = 1 AND preventivabile = 1 AND principale = 1
+           AND id IN (
+             SELECT listino_id FROM listini_percorsi
+             WHERE LOWER(REPLACE(TRIM(categoria), '-', ' ')) = ?
+               AND LOWER(REPLACE(TRIM(sottocategoria), '-', ' ')) = ?
+           )
+         ORDER BY descrizione ASC`,
+        [normCat, normSubcat]
+      )
+      const articoliPerListino: Record<string, ArticoloListino[]> = { '0': artRows as ArticoloListino[] }
+      const [rowsAcq] = await db.query(
+        `SELECT id, descrizione, produttore, serie, unita, prezzo_vendita, max_acquistabile
+         FROM listini
+         WHERE disponibile = 1 AND acquistabile = 1
+           AND id IN (SELECT listino_id FROM listini_percorsi WHERE LOWER(REPLACE(TRIM(categoria), '-', ' ')) = ?)
+         ORDER BY descrizione ASC`,
+        [normCat]
+      )
+      const articoliAcquisto = (rowsAcq as (ArticoloListinoAcquisto & { max_acquistabile: number | null })[]).map(r => ({
+        ...r, max_acquistabile: r.max_acquistabile != null ? Number(r.max_acquistabile) : null,
+      }))
+      return { categoria: { nome: nomeCategoria }, voci: voceList, articoliPerListino, articoliAcquisto }
     } finally {
       await db.end()
     }
@@ -84,8 +88,7 @@ async function getCatalogoData(nomeCategoria: string) {
 }
 
 export default async function Page() {
-  const CERCA = 'Tapparelle Motorizzate'
-  const catalogo = await getCatalogoData(CERCA)
+  const catalogo = await getCatalogoData('serramenti', 'tapparelle-motorizzate')
   const cookieStore = await cookies()
   const role = cookieStore.get('session_role')?.value ?? ''
   const isStaff = role === 'admin' || role === 'dipendente'
@@ -175,6 +178,8 @@ export default async function Page() {
             preventiviBozza={preventiviBozza}
             cartNonVuoto={cartNonVuoto}
             submitLabel="Conferma"
+            fixedCat="serramenti"
+            fixedSottocat="tapparelle-motorizzate"
           />
         )}
 
@@ -190,10 +195,10 @@ export default async function Page() {
       </div>
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>{(() => {
         const cerca = catalogo
-          ? `${catalogo.categoria.nome}/${catalogo.categoria.listino_categoria ?? 'nessun listino categoria'}`
-          : `${CERCA}/non trovata`
+          ? `${catalogo.categoria.nome}`
+          : 'serramenti/tapparelle-motorizzate/non trovata'
         const trova = catalogo && catalogo.voci.length > 0
-          ? catalogo.voci.map(v => `(${v.nome}:${v.serie}:${v.pdf_label})/${v.listino_categoria ?? 'nessuno'}`).join('+')
+          ? catalogo.voci.map(v => `(${v.nome}:${v.serie}:${v.pdf_label})/${v.sottocategoria ?? 'nessuno'}`).join('+')
           : 'nessuno'
         return `tipo pagina fototesto con cataloghi visualizzatore aggiunta carrello (cerca categoria cataloghi [${cerca}])(trova ${trova})`
       })()}</p>

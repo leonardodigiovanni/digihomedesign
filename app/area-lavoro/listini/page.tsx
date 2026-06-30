@@ -5,12 +5,13 @@ import { hasPageAccess } from '@/lib/permissions'
 import { getConnection } from '@/lib/db'
 import ListiniClient, { type Articolo, type Fornitore } from './listini-client'
 import type { Metadata } from 'next'
+import { ensurePercorsiTables, type Percorso } from '@/lib/percorsi'
 
 export const metadata: Metadata = {
   title: 'Listini',
 }
 
-async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[] }> {
+async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[]; percorsiPerListino: Record<number, Percorso[]> }> {
   const db = await getConnection()
   try {
     await db.execute(`
@@ -67,9 +68,15 @@ async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[]
     await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_8  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_9  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_10 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN sottocategoria VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN fase          VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN materiale     VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN tipologia     VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN ambiente      VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN fascia        VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
 
     const [rows] = await db.query(`
-      SELECT l.id, l.categoria, l.produttore, l.descrizione, l.unita,
+      SELECT l.id, l.categoria, l.sottocategoria, l.fase, l.materiale, l.tipologia, l.ambiente, l.produttore, l.descrizione, l.fascia, l.unita,
              l.prezzo_acquisto, l.prezzo_vendita, l.note, l.disponibile, l.preventivabile, l.acquistabile, l.max_acquistabile,
              l.sconto_articolo, l.serie, l.principale, l.caratteristica,
              l.richiede_larghezza, l.richiede_altezza, l.richiede_quantita, l.richiede_piano,
@@ -129,12 +136,27 @@ async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[]
       trasmittanza_uw:       r.trasmittanza_uw != null ? parseFloat(String(r.trasmittanza_uw)) : null,
       fornitore_id:          r.fornitore_id != null ? Number(r.fornitore_id) : null,
       fornitore_nome:        String(r.fornitore_nome ?? ''),
+      sottocategoria:        r.sottocategoria ? String(r.sottocategoria) : null,
+      fase:                  r.fase           ? String(r.fase)           : null,
+      materiale:             r.materiale      ? String(r.materiale)      : null,
+      tipologia:             r.tipologia      ? String(r.tipologia)      : null,
+      ambiente:              r.ambiente       ? String(r.ambiente)       : null,
+      fascia:                r.fascia         ? String(r.fascia)         : null,
     })) as Articolo[]
     const fornitori = (forniRows as Record<string, unknown>[]).map(r => ({
       id: Number(r.id),
       ragione_sociale: String(r.ragione_sociale ?? ''),
     })) as Fornitore[]
-    return { articoli, fornitori }
+
+    await ensurePercorsiTables(db)
+    const [percorsiRows] = await db.query('SELECT id, listino_id, categoria, sottocategoria FROM listini_percorsi ORDER BY id ASC')
+    const percorsiPerListino: Record<number, Percorso[]> = {}
+    for (const r of percorsiRows as { id: number; listino_id: number; categoria: string; sottocategoria: string }[]) {
+      if (!percorsiPerListino[r.listino_id]) percorsiPerListino[r.listino_id] = []
+      percorsiPerListino[r.listino_id].push({ id: r.id, categoria: r.categoria, sottocategoria: r.sottocategoria })
+    }
+
+    return { articoli, fornitori, percorsiPerListino }
   } finally {
     await db.end()
   }
@@ -148,7 +170,7 @@ export default async function Page() {
   const settings = await readSettings()
   if (!hasPageAccess(role, 25, settings)) redirect('/')
 
-  const { articoli, fornitori } = await getData()
+  const { articoli, fornitori, percorsiPerListino } = await getData()
 
   return (
     <div>
@@ -156,7 +178,7 @@ export default async function Page() {
       <p style={{ color: '#000', fontSize: 13, marginBottom: 24 }}>
         Prezzi di acquisto e vendita per articoli e lavorazioni. Doppio click su una riga per modificarla.
       </p>
-      <ListiniClient articoli={articoli} fornitori={fornitori} />
+      <ListiniClient articoli={articoli} fornitori={fornitori} percorsiPerListino={percorsiPerListino} />
     </div>
   )
 }

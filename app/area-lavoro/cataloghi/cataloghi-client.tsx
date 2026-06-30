@@ -1,15 +1,20 @@
 'use client'
 
-import React, { useState, useTransition, useEffect } from 'react'
-import { useActionState } from 'react'
-import SelectLookup from '@/components/select-lookup'
+import React, { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { addCategoria, deleteCategoria, addVoce, updateVoce, deleteVoce, updateListinoCategoria, updateListinoVoce, type MutResult } from './actions'
+import { addVoce, updateVoce, deleteVoce } from './actions'
+import { addPercorsoVoce, removePercorsoVoce, type Percorso } from '@/lib/percorsi'
 import GestioneBlob from '@/components/gestione-blob'
 
 function pdfSrc(filename: string): string {
   return filename.startsWith('https://') ? filename : `/uploads/cataloghi/${filename}`
 }
+
+const inp: React.CSSProperties = {
+  padding: '6px 10px', border: '1px solid #ccc', borderRadius: 4,
+  fontSize: 13, fontFamily: 'inherit', width: '100%', boxSizing: 'border-box',
+}
+const lbl: React.CSSProperties = { fontSize: 11, color: '#666', display: 'block', marginBottom: 2 }
 
 // ─── Tipi ─────────────────────────────────────────────────────────────────────
 
@@ -20,82 +25,46 @@ export type Voce = {
   pdf_filename: string
   pdf_label: string
   descrizione: string
-  listino_categoria: string | null
   filtro_battente: number
   filtro_scorrevole: number
   filtro_taglio_termico: number
   filtro_taglio_freddo: number
   filtro_economico: number
   filtro_fascia_alta: number
-}
-
-export type Categoria = {
-  id: number
-  nome: string
-  ordine: number
-  listino_categoria: string | null
-  voci: Voce[]
-}
-
-// ─── Form nuova categoria ─────────────────────────────────────────────────────
-
-function NuovaCategoriaForm({ onDone }: { onDone: () => void }) {
-  const [result, action, pending] = useActionState<MutResult | null, FormData>(addCategoria, null)
-  const router = useRouter()
-
-  useEffect(() => { if (result?.ok) { router.refresh(); onDone() } }, [result])
-
-  const inp: React.CSSProperties = {
-    padding: '6px 10px', border: '1px solid #ccc', borderRadius: 4,
-    fontSize: 13, fontFamily: 'inherit', flex: 1,
-  }
-
-  return (
-    <form action={action} style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 20 }}>
-      <input name="nome" required placeholder="Nome categoria (es. Infissi)" style={inp} autoFocus />
-      <button type="submit" className="btn-green" disabled={pending}>
-        {pending ? 'Salvataggio…' : 'Crea'}
-      </button>
-      <button type="button" className="btn-gray" onClick={onDone}>Annulla</button>
-      {result && !result.ok && (
-        <span style={{ color: '#c00', fontSize: 12 }}>{result.error}</span>
-      )}
-    </form>
-  )
+  fase: string | null
+  materiale: string | null
+  tipologia: string | null
+  ambiente: string | null
+  fascia: string | null
+  filtro_1: number
+  filtro_2: number
+  filtro_3: number
+  filtro_4: number
+  schema_url: string | null
 }
 
 // ─── Form nuova voce ──────────────────────────────────────────────────────────
 
-function NuovaVoceForm({ categoriaId, onDone }: { categoriaId: number; onDone: () => void }) {
+function NuovaVoceForm({ onDone }: { onDone: () => void }) {
   const [pdfFile, setPdfFile] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
   const [errore, setErrore] = useState('')
   const router = useRouter()
 
-  const inp: React.CSSProperties = {
-    padding: '6px 10px', border: '1px solid #ccc', borderRadius: 4,
-    fontSize: 13, fontFamily: 'inherit', width: '100%', boxSizing: 'border-box',
-  }
-  const lbl: React.CSSProperties = { fontSize: 11, color: '#666', display: 'block', marginBottom: 2 }
-
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!pdfFile) { setErrore('Seleziona un PDF.'); return }
-    const form = e.currentTarget  // cattura prima degli await
+    const form = e.currentTarget
     setErrore('')
     setUploading(true)
-
     try {
       const uf = new FormData()
       uf.append('file', pdfFile)
       const res = await fetch('/api/upload-catalogo', { method: 'POST', body: uf })
       const data = await res.json()
       if (data.error) { setErrore(data.error); return }
-
       const fd = new FormData(form)
       fd.set('pdf_filename', data.filename)
-      fd.set('categoria_id', String(categoriaId))
-
       const result = await addVoce(null, fd)
       if (result.ok) { router.refresh(); onDone() }
       else setErrore(result.error)
@@ -107,7 +76,7 @@ function NuovaVoceForm({ categoriaId, onDone }: { categoriaId: number; onDone: (
   return (
     <form onSubmit={handleSubmit} style={{
       background: '#f8f8f8', border: '1px solid #ddd', borderRadius: 6,
-      padding: '14px 16px', marginBottom: 10,
+      padding: '14px 16px', marginBottom: 12,
     }}>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, marginBottom: 10 }}>
         <div>
@@ -132,35 +101,11 @@ function NuovaVoceForm({ categoriaId, onDone }: { categoriaId: number; onDone: (
       </div>
       {errore && <div style={{ color: '#c00', fontSize: 12, marginBottom: 8 }}>{errore}</div>}
       <div style={{ display: 'flex', gap: 8 }}>
-        <button type="submit" className="btn-green" disabled={uploading}>
+        <button type="submit" className="btn-green" disabled={uploading} style={{ flex: 1 }}>
           {uploading ? 'Upload…' : 'Aggiungi'}
         </button>
-        <button type="button" className="btn-gray" onClick={onDone}>Annulla</button>
+        <button type="button" className="btn-gray" onClick={onDone} style={{ flex: 1 }}>Annulla</button>
       </div>
-    </form>
-  )
-}
-
-// ─── Form listino collegato ───────────────────────────────────────────────────
-
-function ListinoCategoriaForm({ catId, current, listiniCategorie }: { catId: number; current: string | null; listiniCategorie: string[] }) {
-  const [result, action, pending] = useActionState<MutResult | null, FormData>(updateListinoCategoria, null)
-  const [listinoCatSel, setListinoCatSel] = useState(current ?? '')
-  const router = useRouter()
-  React.useEffect(() => { if (result?.ok) router.refresh() }, [result, router])
-
-  return (
-    <form action={action} style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-      <input type="hidden" name="id" value={catId} />
-      <label style={{ fontSize: 11, color: '#666', whiteSpace: 'nowrap' }}>Listino collegato:</label>
-      <SelectLookup name="listino_categoria" value={listinoCatSel} onChange={setListinoCatSel}
-        options={[{ value: '', label: '— nessuno —' }, ...listiniCategorie.map(c => ({ value: c, label: c }))]}
-        style={{ flex: 1, minWidth: 140, padding: '4px 6px', border: '1px solid #ccc', borderRadius: 4, fontSize: 12, fontFamily: 'inherit' }} />
-      <button type="submit" disabled={pending} className="btn-green">
-        {pending ? '…' : 'Salva'}
-      </button>
-      {result && !result.ok && <span style={{ fontSize: 11, color: '#c00' }}>{result.error}</span>}
-      {result?.ok && <span style={{ fontSize: 11, color: '#2e7d32' }}>✓</span>}
     </form>
   )
 }
@@ -177,21 +122,13 @@ function VoceEditForm({ voce, onDone }: { voce: Voce; onDone: () => void }) {
   const [blobScelto, setBlobScelto] = useState<string | null>(null)
   const router = useRouter()
 
-  const inp: React.CSSProperties = {
-    padding: '6px 10px', border: '1px solid #ccc', borderRadius: 4,
-    fontSize: 13, fontFamily: 'inherit', width: '100%', boxSizing: 'border-box',
-  }
-  const lbl: React.CSSProperties = { fontSize: 11, color: '#666', display: 'block', marginBottom: 2 }
-
   async function caricaBlob() {
     setBlobLoading(true)
     try {
       const res = await fetch('/api/blob/lista?prefix=cataloghi/')
       const data = await res.json()
       setBlobList(data.blobs ?? [])
-    } finally {
-      setBlobLoading(false)
-    }
+    } finally { setBlobLoading(false) }
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -215,15 +152,13 @@ function VoceEditForm({ voce, onDone }: { voce: Voce; onDone: () => void }) {
       const result = await updateVoce(null, fd)
       if (result.ok) { router.refresh(); onDone() }
       else setErrore(result.error)
-    } finally {
-      setUploading(false)
-    }
+    } finally { setUploading(false) }
   }
 
   return (
     <form onSubmit={handleSubmit} style={{
-      background: '#fffdf0', border: '2px solid #c8960c', borderRadius: 0,
-      padding: '14px 16px',
+      background: '#fffdf0', border: '2px solid #c8960c', borderRadius: 6,
+      padding: '14px 16px', marginTop: 10,
     }}>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, marginBottom: 10 }}>
         <div>
@@ -232,39 +167,67 @@ function VoceEditForm({ voce, onDone }: { voce: Voce; onDone: () => void }) {
         </div>
         <div>
           <label style={lbl}>Serie / Modello</label>
-          <input name="serie" defaultValue={voce.serie} style={inp} placeholder="Es. AWS 75" />
+          <input name="serie" defaultValue={voce.serie} style={inp} />
         </div>
         <div>
           <label style={lbl}>Etichetta PDF</label>
-          <input name="pdf_label" defaultValue={voce.pdf_label} style={inp} placeholder="Es. Catalogo 2025" />
+          <input name="pdf_label" defaultValue={voce.pdf_label} style={inp} />
         </div>
         <div style={{ gridColumn: '1 / -1' }}>
-          <label style={lbl}>Descrizione (opzionale)</label>
-          <textarea
-            name="descrizione"
-            defaultValue={voce.descrizione}
-            rows={7}
-            placeholder="Descrizione tecnica del prodotto, caratteristiche, specifiche…"
-            style={{ ...inp, resize: 'vertical', lineHeight: 1.6, fontSize: 12 }}
-          />
+          <label style={lbl}>Descrizione</label>
+          <textarea name="descrizione" defaultValue={voce.descrizione} rows={5}
+            style={{ ...inp, resize: 'vertical', lineHeight: 1.6, fontSize: 12 }} />
         </div>
         <div style={{ gridColumn: '1 / -1' }}>
-          <label style={{ ...lbl, marginBottom: 6 }}>Filtri (caratteristiche del catalogo)</label>
+          <label style={{ ...lbl, marginBottom: 6 }}>Classificazione</label>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+            {(['fase', 'materiale', 'tipologia', 'ambiente', 'fascia'] as const).map(k => (
+              <div key={k}>
+                <label style={lbl}>{k.charAt(0).toUpperCase() + k.slice(1)}</label>
+                <input name={k} defaultValue={voce[k] ?? ''} style={inp} />
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{ gridColumn: '1 / -1' }}>
+          <label style={{ ...lbl, marginBottom: 6 }}>Filtri catalogo</label>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6 }}>
             {([
-              ['filtro_battente',       'A battente',     voce.filtro_battente],
-              ['filtro_scorrevole',     'Scorrevole',     voce.filtro_scorrevole],
-              ['filtro_taglio_termico', 'Taglio termico', voce.filtro_taglio_termico],
-              ['filtro_taglio_freddo',  'Taglio freddo',  voce.filtro_taglio_freddo],
-              ['filtro_economico',      'Economico',      voce.filtro_economico],
-              ['filtro_fascia_alta',    'Fascia alta',    voce.filtro_fascia_alta],
-            ] as [string, string, number][]).map(([name, label, val]) => (
-              <label key={name} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#333', cursor: 'pointer', padding: '4px 0' }}>
-                <input type="checkbox" name={name} defaultChecked={val === 1} style={{ width: 15, height: 15, cursor: 'pointer', accentColor: '#c8960c' }} />
+              ['filtro_battente',       'A battente'],
+              ['filtro_scorrevole',     'Scorrevole'],
+              ['filtro_taglio_termico', 'Taglio termico'],
+              ['filtro_taglio_freddo',  'Taglio freddo'],
+              ['filtro_economico',      'Economico'],
+              ['filtro_fascia_alta',    'Fascia alta'],
+            ] as [keyof Voce, string][]).map(([k, label]) => (
+              <label key={k} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, cursor: 'pointer' }}>
+                <input type="checkbox" name={k as string} defaultChecked={(voce[k] as number) === 1}
+                  style={{ width: 15, height: 15, accentColor: '#c8960c' }} />
                 {label}
               </label>
             ))}
           </div>
+        </div>
+        <div style={{ gridColumn: '1 / -1' }}>
+          <label style={{ ...lbl, marginBottom: 6 }}>Filtri modello (ante)</label>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 6 }}>
+            {([
+              ['filtro_1', '1 anta'],
+              ['filtro_2', '2 ante'],
+              ['filtro_3', '3+ ante'],
+              ['filtro_4', 'Sopraluce'],
+            ] as [keyof Voce, string][]).map(([k, label]) => (
+              <label key={k} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, cursor: 'pointer' }}>
+                <input type="checkbox" name={k as string} defaultChecked={(voce[k] as number) === 1}
+                  style={{ width: 15, height: 15, accentColor: '#1e5c1e' }} />
+                {label}
+              </label>
+            ))}
+          </div>
+        </div>
+        <div style={{ gridColumn: '1 / -1' }}>
+          <label style={lbl}>Schema (URL immagine)</label>
+          <input name="schema_url" defaultValue={voce.schema_url ?? ''} style={inp} placeholder="/listini/schema.png" />
         </div>
         <div style={{ gridColumn: '1 / -1' }}>
           <label style={lbl}>PDF attuale</label>
@@ -272,11 +235,9 @@ function VoceEditForm({ voce, onDone }: { voce: Voce; onDone: () => void }) {
             <span style={{ fontSize: 12, color: '#333', fontFamily: 'monospace', wordBreak: 'break-all' }}>
               {decodeURIComponent(voce.pdf_filename.split('/').pop() ?? voce.pdf_filename)}
             </span>
-            <a href={pdfSrc(voce.pdf_filename)} target="_blank" rel="noreferrer" className="btn-black" style={{ fontSize: 11, padding: '2px 10px', height: 24, flexShrink: 0 }}>
-              Apri
-            </a>
+            <a href={pdfSrc(voce.pdf_filename)} target="_blank" rel="noreferrer"
+              className="btn-black" style={{ fontSize: 11, padding: '2px 10px', flexShrink: 0 }}>Apri</a>
           </div>
-
           <label style={lbl}>Sostituisci PDF</label>
           <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
             {(['mantieni', 'carica', 'blob'] as const).map(m => (
@@ -284,35 +245,27 @@ function VoceEditForm({ voce, onDone }: { voce: Voce; onDone: () => void }) {
                 onClick={() => { setPdfMode(m); if (m === 'blob') caricaBlob() }}
                 className={pdfMode === m ? 'btn-black' : 'btn-gray'}
                 style={{ fontSize: 11, padding: '3px 10px' }}>
-                {m === 'mantieni' ? 'Mantieni attuale' : m === 'carica' ? 'Carica file' : 'Scegli da Blob'}
+                {m === 'mantieni' ? 'Mantieni' : m === 'carica' ? 'Carica file' : 'Da Blob'}
               </button>
             ))}
           </div>
-
           {pdfMode === 'carica' && (
             <div>
-              <input type="file" accept=".pdf"
-                onChange={e => setPdfFile(e.target.files?.[0] ?? null)}
-                style={{ fontSize: 12 }} />
+              <input type="file" accept=".pdf" onChange={e => setPdfFile(e.target.files?.[0] ?? null)} style={{ fontSize: 12 }} />
               {pdfFile && <span style={{ fontSize: 11, color: '#888', marginLeft: 8 }}>{pdfFile.name}</span>}
             </div>
           )}
-
           {pdfMode === 'blob' && (
-            <div style={{ border: '1px solid #ddd', borderRadius: 4, maxHeight: 200, overflowY: 'auto', background: '#fff' }}>
+            <div style={{ border: '1px solid #ddd', borderRadius: 4, maxHeight: 180, overflowY: 'auto', background: '#fff' }}>
               {blobLoading && <div style={{ padding: '8px 12px', fontSize: 12, color: '#888' }}>Caricamento…</div>}
-              {!blobLoading && blobList.length === 0 && <div style={{ padding: '8px 12px', fontSize: 12, color: '#888' }}>Nessun file su Vercel Blob.</div>}
+              {!blobLoading && blobList.length === 0 && <div style={{ padding: '8px 12px', fontSize: 12, color: '#888' }}>Nessun file su Blob.</div>}
               {blobList.map(b => (
-                <div key={b.url}
-                  onClick={() => setBlobScelto(b.url)}
-                  style={{
-                    padding: '7px 12px', cursor: 'pointer', fontSize: 12, fontFamily: 'monospace',
-                    background: blobScelto === b.url ? '#fffbe6' : 'transparent',
-                    borderLeft: blobScelto === b.url ? '3px solid #c8960c' : '3px solid transparent',
-                    borderBottom: '1px solid #f0f0f0',
-                  }}>
-                  {b.nome}
-                </div>
+                <div key={b.url} onClick={() => setBlobScelto(b.url)} style={{
+                  padding: '6px 12px', cursor: 'pointer', fontSize: 12, fontFamily: 'monospace',
+                  background: blobScelto === b.url ? '#fffbe6' : 'transparent',
+                  borderLeft: blobScelto === b.url ? '3px solid #c8960c' : '3px solid transparent',
+                  borderBottom: '1px solid #f0f0f0',
+                }}>{b.nome}</div>
               ))}
             </div>
           )}
@@ -320,180 +273,201 @@ function VoceEditForm({ voce, onDone }: { voce: Voce; onDone: () => void }) {
       </div>
       {errore && <div style={{ color: '#c00', fontSize: 12, marginBottom: 8 }}>{errore}</div>}
       <div style={{ display: 'flex', gap: 8 }}>
-        <button type="submit" className="btn-green" disabled={uploading}>
+        <button type="submit" className="btn-green" disabled={uploading} style={{ flex: 1 }}>
           {uploading ? 'Salvataggio…' : 'Salva'}
         </button>
-        <button type="button" className="btn-gray" onClick={onDone}>Annulla</button>
+        <button type="button" className="btn-gray" onClick={onDone} style={{ flex: 1 }}>Annulla</button>
       </div>
     </form>
   )
 }
 
-// ─── Listino per voce ────────────────────────────────────────────────────────
+// ─── Percorsi inline ──────────────────────────────────────────────────────────
 
-function ListinoVoceForm({ voceId, current, listiniCategorie }: { voceId: number; current: string | null; listiniCategorie: string[] }) {
-  const [sel, setSel] = useState(current ?? '')
-  const [pending, startT] = useTransition()
-  const [saved, setSaved] = useState(false)
-  const [error, setError] = useState('')
+function PercorsiInline({ percorsi, voceId }: { percorsi: Percorso[]; voceId: number }) {
   const router = useRouter()
+  const [catInput, setCatInput] = useState('')
+  const [sottoInput, setSottoInput] = useState('')
+  const [adding, setAdding] = useState(false)
+  const [removing, setRemoving] = useState<number | null>(null)
+  const [showAdd, setShowAdd] = useState(false)
 
-  useEffect(() => { setSel(current ?? '') }, [current])
-
-  function handleSave() {
-    const fd = new FormData()
-    fd.set('id', String(voceId))
-    fd.set('listino_categoria', sel)
-    setSaved(false); setError('')
-    startT(async () => {
-      const res = await updateListinoVoce(null, fd)
-      if (res.ok) { setSaved(true); setTimeout(() => setSaved(false), 2000); router.refresh() }
-      else setError(res.ok === false ? res.error : '')
-    })
+  async function handleAdd() {
+    if (!catInput.trim()) return
+    setAdding(true)
+    const res = await addPercorsoVoce(voceId, catInput.trim(), sottoInput.trim())
+    if (res.ok) { setCatInput(''); setSottoInput(''); setShowAdd(false); router.refresh() }
+    setAdding(false)
+  }
+  async function handleRemove(id: number) {
+    setRemoving(id)
+    await removePercorsoVoce(id)
+    router.refresh()
+    setRemoving(null)
   }
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginTop: 5 }}>
-      <label style={{ fontSize: 11, color: '#888', whiteSpace: 'nowrap' }}>Listino:</label>
-      <SelectLookup value={sel} onChange={setSel}
-        options={[{ value: '', label: '— nessuno —' }, ...listiniCategorie.map(c => ({ value: c, label: c }))]}
-        style={{ flex: 1, minWidth: 160, padding: '3px 6px', border: '1px solid #ccc', borderRadius: 4, fontSize: 12, fontFamily: 'inherit' }} />
-      <button type="button" onClick={handleSave} disabled={pending} className="btn-green">
-        {pending ? '…' : 'Salva'}
-      </button>
-      {error && <span style={{ fontSize: 11, color: '#c00' }}>{error}</span>}
-      {saved && <span style={{ fontSize: 11, color: '#2e7d32' }}>✓</span>}
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, alignItems: 'center' }}>
+      {percorsi.map(p => (
+        <span key={p.id} style={{
+          display: 'inline-flex', alignItems: 'center', gap: 3,
+          background: '#fff7e0', border: '1px solid #c8960c', borderRadius: 3,
+          padding: '1px 6px', fontSize: 11, lineHeight: 1.6,
+        }}>
+          <b style={{ color: '#7a5000' }}>{p.categoria}</b>
+          {p.sottocategoria ? <span style={{ color: '#999' }}>{' / '}{p.sottocategoria}</span> : null}
+          <button onClick={() => handleRemove(p.id)} disabled={removing === p.id}
+            style={{ marginLeft: 3, background: 'none', border: 'none', cursor: 'pointer', color: '#c62828', fontSize: 12, padding: 0, lineHeight: 1, fontWeight: 700 }}>
+            ✕
+          </button>
+        </span>
+      ))}
+      {percorsi.length === 0 && !showAdd && (
+        <span style={{ fontSize: 11, color: '#bbb', fontStyle: 'italic' }}>Nessun percorso</span>
+      )}
+      {!showAdd && (
+        <button onClick={() => setShowAdd(true)} style={{
+          background: 'none', border: '1px dashed #aaa', borderRadius: 3,
+          fontSize: 11, color: '#888', padding: '1px 6px', cursor: 'pointer', lineHeight: 1.6,
+        }}>+ percorso</button>
+      )}
+      {showAdd && (
+        <div style={{ display: 'flex', gap: 4, alignItems: 'center', flexWrap: 'wrap', marginTop: 2 }}>
+          <input value={catInput} onChange={e => setCatInput(e.target.value)}
+            placeholder="Categoria" style={{ fontSize: 11, padding: '2px 6px', border: '1px solid #ccc', borderRadius: 3, width: 130 }}
+            onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAdd() } }} />
+          <input value={sottoInput} onChange={e => setSottoInput(e.target.value)}
+            placeholder="Sottocategoria" style={{ fontSize: 11, padding: '2px 6px', border: '1px solid #ccc', borderRadius: 3, width: 130 }}
+            onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAdd() } }} />
+          <button onClick={handleAdd} disabled={adding || !catInput.trim()} className="btn-green"
+            style={{ fontSize: 11, padding: '2px 8px' }}>{adding ? '…' : '✓'}</button>
+          <button onClick={() => { setShowAdd(false); setCatInput(''); setSottoInput('') }} className="btn-red"
+            style={{ fontSize: 11, padding: '2px 8px' }}>✕</button>
+        </div>
+      )}
     </div>
   )
 }
 
 // ─── Riga voce ────────────────────────────────────────────────────────────────
 
-function VoceRow({ voce, isStaff, listiniCategorie }: { voce: Voce; isStaff: boolean; listiniCategorie: string[] }) {
-  const [pending, startT] = useTransition()
+const FLAG_CATALOGO: [keyof Voce, string][] = [
+  ['filtro_battente',       'Battente'],
+  ['filtro_scorrevole',     'Scorrevole'],
+  ['filtro_taglio_termico', 'T.Termico'],
+  ['filtro_taglio_freddo',  'T.Freddo'],
+  ['filtro_economico',      'Economico'],
+  ['filtro_fascia_alta',    'F.Alta'],
+]
+const FLAG_MODELLO: [keyof Voce, string][] = [
+  ['filtro_1', '1 anta'],
+  ['filtro_2', '2 ante'],
+  ['filtro_3', '3+ ante'],
+  ['filtro_4', 'Sopraluce'],
+]
+
+function VoceRow({ voce, isStaff, percorsi }: { voce: Voce; isStaff: boolean; percorsi: Percorso[] }) {
+  const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState(false)
+  const [pending, startT] = useTransition()
   const router = useRouter()
 
-  if (editing && isStaff) {
-    return <VoceEditForm voce={voce} onDone={() => setEditing(false)} />
-  }
+  const classAtivi = FLAG_CATALOGO.filter(([k]) => (voce[k] as number) === 1).map(([, l]) => l)
+  const modAtivi   = FLAG_MODELLO.filter(([k]) => (voce[k] as number) === 1).map(([, l]) => l)
+  const hasDetail  = !!(voce.fase || voce.materiale || voce.tipologia || voce.ambiente || voce.fascia ||
+                        voce.descrizione || classAtivi.length || modAtivi.length)
 
   return (
-    <div style={{
-      padding: '10px 14px', borderBottom: '1px solid #f0f0f0',
-      background: '#fff',
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-        <div>
-          <span style={{ fontWeight: 600, fontSize: 14 }}>{voce.nome}</span>
-          {voce.serie && (
-            <span style={{ fontSize: 12, color: '#555', marginLeft: 8 }}>— {voce.serie}</span>
-          )}
-          {voce.pdf_label && (
-            <span style={{ fontSize: 12, color: '#888', marginLeft: 8 }}>— {voce.pdf_label}</span>
+    <div style={{ border: '1px solid #e0e0e0', borderRadius: 6, marginBottom: 6, background: '#fff', overflow: 'hidden' }}>
+      {/* Riga principale */}
+      <div style={{ display: 'flex', gap: 10, padding: '10px 14px', alignItems: 'flex-start' }}>
+        {/* Sinistra: nome + percorsi */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, flexWrap: 'wrap', marginBottom: 4 }}>
+            <span style={{ fontWeight: 700, fontSize: 14 }}>{voce.nome}</span>
+            {voce.serie && <span style={{ fontSize: 12, color: '#555' }}>{voce.serie}</span>}
+            {voce.pdf_label && (
+              <span style={{ fontSize: 11, color: '#fff', background: '#2a2a3e', borderRadius: 3, padding: '1px 6px' }}>
+                {voce.pdf_label}
+              </span>
+            )}
+          </div>
+          <PercorsiInline percorsi={percorsi} voceId={voce.id} />
+        </div>
+        {/* Destra: azioni */}
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexShrink: 0 }}>
+          <a href={pdfSrc(voce.pdf_filename)} target="_blank" rel="noreferrer"
+            className="btn-black" style={{ fontSize: 11 }}>PDF</a>
+          {hasDetail && (
+            <button onClick={() => { setOpen(o => !o); if (editing) setEditing(false) }}
+              className="btn-gray" style={{ fontSize: 11, padding: '3px 8px', minWidth: 28 }}>
+              {open ? '▲' : '▼'}
+            </button>
           )}
         </div>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexShrink: 0 }}>
-          <a
-            href={pdfSrc(voce.pdf_filename)}
-            target="_blank"
-            rel="noreferrer"
-            className="btn-black"
-          >
-            Sfoglia catalogo
-          </a>
+      </div>
+
+      {/* Pannello dettaglio */}
+      {open && !editing && (
+        <div style={{ borderTop: '1px solid #eee', padding: '10px 14px', background: '#fafafa' }}>
+          {/* Classificazione */}
+          {(voce.fase || voce.materiale || voce.tipologia || voce.ambiente || voce.fascia) && (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
+              {(['fase', 'materiale', 'tipologia', 'ambiente', 'fascia'] as const)
+                .filter(k => voce[k])
+                .map(k => (
+                  <span key={k} style={{ fontSize: 11, background: '#f0f4ff', border: '1px solid #b0c0e0', borderRadius: 3, padding: '1px 7px' }}>
+                    <span style={{ color: '#666' }}>{k}: </span>
+                    <b style={{ color: '#2a2a6e' }}>{voce[k]}</b>
+                  </span>
+                ))}
+            </div>
+          )}
+          {/* Flags catalogo */}
+          {classAtivi.length > 0 && (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 6 }}>
+              {classAtivi.map(l => (
+                <span key={l} style={{ fontSize: 11, background: '#fff7e0', border: '1px solid #c8960c', borderRadius: 3, padding: '1px 7px', color: '#7a5000' }}>{l}</span>
+              ))}
+            </div>
+          )}
+          {/* Flags modello */}
+          {modAtivi.length > 0 && (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 6 }}>
+              {modAtivi.map(l => (
+                <span key={l} style={{ fontSize: 11, background: '#e8f5e9', border: '1px solid #4caf50', borderRadius: 3, padding: '1px 7px', color: '#1b5e20' }}>{l}</span>
+              ))}
+            </div>
+          )}
+          {/* Descrizione */}
+          {voce.descrizione && (
+            <p style={{ fontSize: 12, color: '#555', lineHeight: 1.6, margin: '4px 0 8px', whiteSpace: 'pre-wrap' }}>
+              {voce.descrizione}
+            </p>
+          )}
+          {/* Azioni staff */}
           {isStaff && (
-            <>
-              <button onClick={() => setEditing(true)} className="btn-gray">
-                Modifica
-              </button>
-              <form action={async fd => {
+            <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+              <button onClick={() => setEditing(true)} className="btn-gray" style={{ flex: 1, fontSize: 12 }}>Modifica</button>
+              <form style={{ flex: 1 }} action={async fd => {
                 startT(async () => { await deleteVoce(null, fd); router.refresh() })
               }}>
                 <input type="hidden" name="id" value={voce.id} />
                 <button type="submit" disabled={pending} className="btn-red"
+                  style={{ width: '100%', fontSize: 12 }}
                   onClick={e => { if (!confirm('Eliminare questa voce e il PDF allegato?')) e.preventDefault() }}>
                   Elimina
                 </button>
               </form>
-            </>
+            </div>
           )}
         </div>
-      </div>
-      {isStaff && (
-        <ListinoVoceForm voceId={voce.id} current={voce.listino_categoria} listiniCategorie={listiniCategorie} />
       )}
-    </div>
-  )
-}
 
-// ─── Accordion categoria ──────────────────────────────────────────────────────
-
-function CategoriaAccordion({ cat, isStaff, listiniCategorie }: { cat: Categoria; isStaff: boolean; listiniCategorie: string[] }) {
-  const [open, setOpen]       = useState(false)
-  const [addOpen, setAddOpen] = useState(false)
-  const [pending, startT]     = useTransition()
-  const router                = useRouter()
-
-  return (
-    <div style={{ border: '1px solid #ddd', borderRadius: 8, marginBottom: 10, overflow: 'hidden' }}>
-      {/* Header */}
-      <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '12px 18px', background: '#2a2a3e', cursor: 'pointer',
-      }} onClick={() => setOpen(o => !o)}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <span style={{ color: '#c8960c', fontWeight: 700, fontSize: 15 }}>{cat.nome}</span>
-          <span style={{ fontSize: 12, color: '#888', background: '#1a1a2e', borderRadius: 10, padding: '1px 8px' }}>
-            {cat.voci.length} {cat.voci.length === 1 ? 'catalogo' : 'cataloghi'}
-          </span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} onClick={e => e.stopPropagation()}>
-          {isStaff && (
-            <>
-              <button
-                className="btn-green"
-                onClick={() => { setOpen(true); setAddOpen(a => !a) }}
-              >
-                + Voce
-              </button>
-              <form style={{ display: 'contents' }} action={async fd => {
-                startT(async () => { await deleteCategoria(null, fd); router.refresh() })
-              }}>
-                <input type="hidden" name="id" value={cat.id} />
-                <button type="submit" disabled={pending} className="btn-red"
-                  onClick={e => { if (!confirm(`Eliminare la categoria "${cat.nome}" e tutti i suoi cataloghi?`)) e.preventDefault() }}>
-                  Elimina cat.
-                </button>
-              </form>
-            </>
-          )}
-          <span style={{ color: '#c8960c', fontSize: 18, fontWeight: 700, minWidth: 20, textAlign: 'center' }}>
-            {open ? '▲' : '▼'}
-          </span>
-        </div>
-      </div>
-
-      {/* Contenuto */}
-      {open && (
-        <div style={{ background: '#fafafa' }}>
-          {isStaff && (
-            <div style={{ padding: '8px 14px', borderBottom: '1px solid #eee', background: '#f2f2f8' }}>
-              <ListinoCategoriaForm key={cat.listino_categoria ?? ''} catId={cat.id} current={cat.listino_categoria} listiniCategorie={listiniCategorie} />
-            </div>
-          )}
-          {isStaff && addOpen && (
-            <div style={{ padding: '12px 14px', borderBottom: '1px solid #eee' }}>
-              <NuovaVoceForm categoriaId={cat.id} onDone={() => setAddOpen(false)} />
-            </div>
-          )}
-          {cat.voci.length === 0 && !addOpen ? (
-            <div style={{ padding: '14px 18px', color: '#aaa', fontSize: 13 }}>
-              Nessun catalogo. {isStaff ? 'Aggiungi una voce con "+ Voce".' : ''}
-            </div>
-          ) : (
-            cat.voci.map(v => <VoceRow key={v.id} voce={v} isStaff={isStaff} listiniCategorie={listiniCategorie} />)
-          )}
+      {/* Form modifica */}
+      {open && editing && isStaff && (
+        <div style={{ borderTop: '1px solid #eee', padding: '0 14px 14px' }}>
+          <VoceEditForm voce={voce} onDone={() => { setEditing(false) }} />
         </div>
       )}
     </div>
@@ -502,29 +476,35 @@ function CategoriaAccordion({ cat, isStaff, listiniCategorie }: { cat: Categoria
 
 // ─── Componente principale ────────────────────────────────────────────────────
 
-export default function CataloghiClient({ categorie, isStaff, listiniCategorie }: { categorie: Categoria[]; isStaff: boolean; listiniCategorie: string[] }) {
-  const [nuovaCategoria, setNuovaCategoria] = useState(false)
+export default function CataloghiClient({
+  voci, isStaff, percorsiPerVoce,
+}: {
+  voci: Voce[]
+  isStaff: boolean
+  percorsiPerVoce: Record<number, Percorso[]>
+}) {
+  const [addOpen, setAddOpen] = useState(false)
 
   return (
     <div>
       {isStaff && (
-        <div style={{ marginBottom: 20 }}>
-          {nuovaCategoria ? (
-            <NuovaCategoriaForm onDone={() => setNuovaCategoria(false)} />
+        <div style={{ marginBottom: 12 }}>
+          {addOpen ? (
+            <NuovaVoceForm onDone={() => setAddOpen(false)} />
           ) : (
-            <button className="btn-green" onClick={() => setNuovaCategoria(true)}>
-              + Nuova categoria
-            </button>
+            <button className="btn-green" onClick={() => setAddOpen(true)}>+ Nuova voce</button>
           )}
         </div>
       )}
 
-      {categorie.length === 0 ? (
+      {voci.length === 0 ? (
         <p style={{ color: '#aaa', fontSize: 13 }}>
-          {isStaff ? 'Nessuna categoria. Creane una con "+ Nuova categoria".' : 'Nessun catalogo disponibile.'}
+          {isStaff ? 'Nessuna voce. Aggiungine una con "+ Nuova voce".' : 'Nessun catalogo disponibile.'}
         </p>
       ) : (
-        categorie.map(c => <CategoriaAccordion key={c.id} cat={c} isStaff={isStaff} listiniCategorie={listiniCategorie} />)
+        voci.map(v => (
+          <VoceRow key={v.id} voce={v} isStaff={isStaff} percorsi={percorsiPerVoce[v.id] ?? []} />
+        ))
       )}
 
       {isStaff && <GestioneBlob prefix="cataloghi/" label="Gestione Blob — Cataloghi" />}

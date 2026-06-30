@@ -6,6 +6,7 @@ import { getConnection } from '@/lib/db'
 import { revalidatePath } from 'next/cache'
 import { readSettings } from '@/lib/settings'
 import { hasPageAccess } from '@/lib/permissions'
+import { syncListinoPercorsi, ensurePercorsiTables } from '@/lib/percorsi'
 
 async function checkAccess() {
   const cookieStore = await cookies()
@@ -72,6 +73,12 @@ async function ensureTable() {
   await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_8  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
   await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_9  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
   await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_10 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN sottocategoria VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN fase          VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN materiale     VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN tipologia     VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN ambiente      VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN fascia        VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
   await db.end()
 }
 
@@ -82,9 +89,15 @@ export async function addArticolo(_: AddResult | null, fd: FormData): Promise<Ad
   await checkAccess()
 
   const categoria       = (fd.get('categoria')       as string)?.trim()
+  const sottocategoria  = (fd.get('sottocategoria')  as string)?.trim() || null
+  const fase            = (fd.get('fase')            as string)?.trim() || null
+  const materiale       = (fd.get('materiale')       as string)?.trim() || null
+  const tipologia       = (fd.get('tipologia')       as string)?.trim() || null
+  const ambiente        = (fd.get('ambiente')        as string)?.trim() || null
   const produttore      = (fd.get('produttore')      as string)?.trim() ?? ''
   const serie           = (fd.get('serie')           as string)?.trim() ?? ''
   const descrizione     = (fd.get('descrizione')     as string)?.trim()
+  const fascia          = (fd.get('fascia')          as string)?.trim() || null
   const unita           = (fd.get('unita')           as string)?.trim()
   const prezzo_acquisto = parseFloat((fd.get('prezzo_acquisto') as string) ?? '0')
   const prezzo_vendita  = parseFloat((fd.get('prezzo_vendita')  as string) ?? '0')
@@ -106,9 +119,11 @@ export async function addArticolo(_: AddResult | null, fd: FormData): Promise<Ad
   const db = await getConnection()
   try {
     const [ins] = await db.execute(
-      'INSERT INTO listini (categoria, produttore, serie, descrizione, unita, prezzo_acquisto, prezzo_vendita, note, fornitore_id, max_acquistabile, sconto_articolo, costante, abbr, minimo) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-      [categoria, produttore, serie, descrizione, unita, prezzo_acquisto, prezzo_vendita, note, fornitore_id, max_acquistabile, sconto_articolo, costante, abbr, minimo]
+      'INSERT INTO listini (categoria, sottocategoria, fase, materiale, tipologia, ambiente, produttore, serie, descrizione, fascia, unita, prezzo_acquisto, prezzo_vendita, note, fornitore_id, max_acquistabile, sconto_articolo, costante, abbr, minimo) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+      [categoria, sottocategoria, fase, materiale, tipologia, ambiente, produttore, serie, descrizione, fascia, unita, prezzo_acquisto, prezzo_vendita, note, fornitore_id, max_acquistabile, sconto_articolo, costante, abbr, minimo]
     ) as [{ insertId: number }, unknown]
+    await ensurePercorsiTables(db).catch(() => {})
+    await syncListinoPercorsi(db, ins.insertId, categoria, sottocategoria).catch(() => {})
     revalidatePath('/listini')
     return { ok: true, id: ins.insertId }
   } finally { await db.end() }
@@ -119,9 +134,15 @@ export async function updateArticolo(_: MutResult | null, fd: FormData): Promise
 
   const id              = parseInt(fd.get('id') as string)
   const categoria       = (fd.get('categoria')       as string)?.trim()
+  const sottocategoria  = (fd.get('sottocategoria')  as string)?.trim() || null
+  const fase            = (fd.get('fase')            as string)?.trim() || null
+  const materiale       = (fd.get('materiale')       as string)?.trim() || null
+  const tipologia       = (fd.get('tipologia')       as string)?.trim() || null
+  const ambiente        = (fd.get('ambiente')        as string)?.trim() || null
   const produttore      = (fd.get('produttore')      as string)?.trim() ?? ''
   const serie           = (fd.get('serie')           as string)?.trim() ?? ''
   const descrizione     = (fd.get('descrizione')     as string)?.trim()
+  const fascia          = (fd.get('fascia')          as string)?.trim() || null
   const unita           = (fd.get('unita')           as string)?.trim()
   const prezzo_acquisto = parseFloat((fd.get('prezzo_acquisto') as string) ?? '0')
   const prezzo_vendita  = parseFloat((fd.get('prezzo_vendita')  as string) ?? '0')
@@ -143,9 +164,11 @@ export async function updateArticolo(_: MutResult | null, fd: FormData): Promise
   const db = await getConnection()
   try {
     await db.execute(
-      'UPDATE listini SET categoria=?, produttore=?, serie=?, descrizione=?, unita=?, prezzo_acquisto=?, prezzo_vendita=?, note=?, fornitore_id=?, max_acquistabile=?, sconto_articolo=?, costante=?, abbr=?, minimo=? WHERE id=?',
-      [categoria, produttore, serie, descrizione, unita, prezzo_acquisto, prezzo_vendita, note, fornitore_id, max_acquistabile, sconto_articolo, costante, abbr, minimo, id]
+      'UPDATE listini SET categoria=?, sottocategoria=?, fase=?, materiale=?, tipologia=?, ambiente=?, produttore=?, serie=?, descrizione=?, fascia=?, unita=?, prezzo_acquisto=?, prezzo_vendita=?, note=?, fornitore_id=?, max_acquistabile=?, sconto_articolo=?, costante=?, abbr=?, minimo=? WHERE id=?',
+      [categoria, sottocategoria, fase, materiale, tipologia, ambiente, produttore, serie, descrizione, fascia, unita, prezzo_acquisto, prezzo_vendita, note, fornitore_id, max_acquistabile, sconto_articolo, costante, abbr, minimo, id]
     )
+    await ensurePercorsiTables(db).catch(() => {})
+    await syncListinoPercorsi(db, id, categoria, sottocategoria).catch(() => {})
     revalidatePath('/listini')
     return { ok: true }
   } finally { await db.end() }
@@ -199,6 +222,7 @@ export async function deleteArticolo(_: MutResult | null, fd: FormData): Promise
   await ensureTable()
   const db = await getConnection()
   try {
+    await db.execute(`DELETE FROM listini_percorsi WHERE listino_id = ?`, [id]).catch(() => {})
     await db.execute('DELETE FROM listini WHERE id=?', [id])
     revalidatePath('/listini')
     return { ok: true }
@@ -273,6 +297,12 @@ export async function cloneArticolo(_: AddResult | null, fd: FormData): Promise<
        FROM listini WHERE id=?`,
       [sourceId]
     ) as [{ insertId: number }, unknown]
+    await ensurePercorsiTables(db).catch(() => {})
+    await db.execute(
+      `INSERT IGNORE INTO listini_percorsi (listino_id, categoria, sottocategoria)
+       SELECT ?, categoria, sottocategoria FROM listini_percorsi WHERE listino_id = ?`,
+      [ins.insertId, sourceId]
+    ).catch(() => {})
     revalidatePath('/area-lavoro/listini')
     return { ok: true, id: ins.insertId }
   } finally { await db.end() }

@@ -30,8 +30,33 @@ export type ArticoloListino = {
   filtro_2?: number
   filtro_3?: number
   filtro_4?: number
+  sottocategoria?: string | null
+  fase?: string | null
+  materiale?: string | null
+  tipologia?: string | null
+  ambiente?: string | null
+  fascia?: string | null
+  categoria?: string | null
 }
 
+export type ConfirmData = {
+  listinoId: number
+  larghezza?: number
+  altezza?: number
+  quantita?: number
+  piano?: number
+  km?: number
+  peso?: number
+  colore?: string
+  note?: string
+}
+
+const FILTRI_MODELLO: { label: string; key: 'filtro_1' | 'filtro_2' | 'filtro_3' | 'filtro_4' }[] = [
+  { label: '1 Anta',    key: 'filtro_1' },
+  { label: '2 Ante',   key: 'filtro_2' },
+  { label: '3+ Ante',  key: 'filtro_3' },
+  { label: 'Sopraluce', key: 'filtro_4' },
+]
 
 export default function AggiungiArticoloForm({
   articoli,
@@ -44,6 +69,12 @@ export default function AggiungiArticoloForm({
   preventivoClienteBaseHref = '/area-clienti/preventivi',
   submitLabel = 'Aggiungi al carrello',
   isApp,
+  hideClassificationFilters = false,
+  lockedCat,
+  lockedSottocat,
+  onSottocatChange,
+  onConfirm,
+  onClose,
 }: {
   articoli: ArticoloListino[]
   isStaff?: boolean
@@ -55,12 +86,25 @@ export default function AggiungiArticoloForm({
   preventivoClienteBaseHref?: string
   submitLabel?: string
   isApp?: boolean
+  hideClassificationFilters?: boolean
+  lockedCat?: string
+  lockedSottocat?: string
+  onSottocatChange?: (val: string) => void
+  onConfirm?: (data: ConfirmData) => Promise<CartResult>
+  onClose?: () => void
 }) {
   const router = useRouter()
   const [step, setStep] = useState<'select' | 'detail'>('select')
+  const [sottocatFiltro, setSottocatFiltro] = useState('')
+  const [faseFiltro, setFaseFiltro]         = useState('')
+  const [materialeFiltro, setMaterialeFiltro] = useState('')
+  const [tipologiaFiltro, setTipologiaFiltro] = useState('')
+  const [ambienteFiltro, setAmbienteFiltro] = useState('')
+  const [fasciaFiltro, setFasciaFiltro]     = useState('')
   const [produttoreFiltro, setProduttoreFiltro] = useState('')
   const [serieFiltro, setSerieFiltro] = useState('')
-  const [ricerca, setRicerca] = useState('')
+  const [catFiltro, setCatFiltro] = useState('')
+  const [filtriModelloAttivi, setFiltriModelloAttivi] = useState<Set<string>>(new Set())
   const [schemaFiltro, setSchemaFiltro] = useState<string | null>(null)
   const [selectedId, setSelectedId] = useState<number>(articoli[0]?.id ?? 0)
   const [result, setResult] = useState<CartResult | null>(null)
@@ -102,14 +146,30 @@ export default function AggiungiArticoloForm({
       : [cartOpt, ...preventiviBozza.map(prefixed)]
   }, [mostraDestinazione, preventiviBozza, destId])
 
+  // cascata classificazione
+  const catOpt       = useMemo(() => [...new Set(articoli.map(a => a.categoria).filter(Boolean))].sort() as string[], [articoli])
+  const postCat      = useMemo(() => catFiltro ? articoli.filter(a => a.categoria === catFiltro) : articoli, [articoli, catFiltro])
+  const sottocatOpt  = useMemo(() => [...new Set(postCat.map(a => a.sottocategoria).filter(Boolean))].sort() as string[], [postCat])
+  const postSottocat = useMemo(() => sottocatFiltro ? postCat.filter(a => a.sottocategoria === sottocatFiltro) : postCat, [postCat, sottocatFiltro])
+  const faseOpt      = useMemo(() => [...new Set(postSottocat.map(a => a.fase).filter(Boolean))].sort() as string[], [postSottocat])
+  const postFase     = useMemo(() => faseFiltro ? postSottocat.filter(a => a.fase === faseFiltro) : postSottocat, [postSottocat, faseFiltro])
+  const matOpt       = useMemo(() => [...new Set(postFase.map(a => a.materiale).filter(Boolean))].sort() as string[], [postFase])
+  const postMat      = useMemo(() => materialeFiltro ? postFase.filter(a => a.materiale === materialeFiltro) : postFase, [postFase, materialeFiltro])
+  const tipoOpt      = useMemo(() => [...new Set(postMat.map(a => a.tipologia).filter(Boolean))].sort() as string[], [postMat])
+  const postTipo     = useMemo(() => tipologiaFiltro ? postMat.filter(a => a.tipologia === tipologiaFiltro) : postMat, [postMat, tipologiaFiltro])
+  const ambOpt       = useMemo(() => [...new Set(postTipo.map(a => a.ambiente).filter(Boolean))].sort() as string[], [postTipo])
+  const postAmb      = useMemo(() => ambienteFiltro ? postTipo.filter(a => a.ambiente === ambienteFiltro) : postTipo, [postTipo, ambienteFiltro])
+  const fasciaOpt    = useMemo(() => [...new Set(postAmb.map(a => a.fascia).filter(Boolean))].sort() as string[], [postAmb])
+  const postClassifica = useMemo(() => fasciaFiltro ? postAmb.filter(a => a.fascia === fasciaFiltro) : postAmb, [postAmb, fasciaFiltro])
+
   const produttori = useMemo(
-    () => [...new Set(articoli.map(a => a.produttore))].filter(Boolean).sort(),
-    [articoli]
+    () => [...new Set(postClassifica.map(a => a.produttore))].filter(Boolean).sort(),
+    [postClassifica]
   )
 
   const serie = useMemo(
-    () => [...new Set(articoli.map(a => a.serie).filter(Boolean))].sort() as string[],
-    [articoli]
+    () => [...new Set(postClassifica.map(a => a.serie).filter(Boolean))].sort() as string[],
+    [postClassifica]
   )
 
   const labelOf = (a: ArticoloListino) => {
@@ -135,20 +195,25 @@ export default function AggiungiArticoloForm({
   }
 
   const artBase = useMemo(() => {
-    let lista = articoli
+    let lista = postClassifica
     if (produttoreFiltro) lista = lista.filter(a => a.produttore === produttoreFiltro)
     if (serieFiltro) lista = lista.filter(a => a.serie === serieFiltro)
-    if (ricerca.trim()) {
-      const q = ricerca.trim().toLowerCase()
-      lista = lista.filter(a =>
-        [a.descrizione, a.produttore, a.serie, a.unita].some(v => v?.toLowerCase().includes(q))
-      )
-    }
     return lista
-  }, [articoli, produttoreFiltro, serieFiltro, ricerca])
+  }, [postClassifica, produttoreFiltro, serieFiltro])
+
+  const haFiltriModello = useMemo(
+    () => FILTRI_MODELLO.some(f => artBase.some(a => (a[f.key] ?? 0) === 1)),
+    [artBase]
+  )
 
   const artFiltrati = useMemo(() => {
     let lista = artBase
+    if (filtriModelloAttivi.size > 0) {
+      lista = lista.filter(a => [...filtriModelloAttivi].every(lbl => {
+        const f = FILTRI_MODELLO.find(f => f.label === lbl)
+        return f && (a[f.key] ?? 0) === 1
+      }))
+    }
     if (schemaFiltro) lista = lista.filter(a => a.schema_url === schemaFiltro)
     const seen = new Set<string>()
     return lista.filter(a => {
@@ -157,24 +222,36 @@ export default function AggiungiArticoloForm({
       seen.add(lbl)
       return true
     })
-  }, [artBase, schemaFiltro])
+  }, [artBase, schemaFiltro, filtriModelloAttivi])
 
   const thumbnailsData = useMemo(() => {
-    const map = new Map<string, { arts: ArticoloListino[] }>()
-    for (const a of artBase) {
+    let base = artBase
+    if (filtriModelloAttivi.size > 0) {
+      base = base.filter(a => [...filtriModelloAttivi].every(lbl => {
+        const f = FILTRI_MODELLO.find(f => f.label === lbl)
+        return f && (a[f.key] ?? 0) === 1
+      }))
+    }
+    const map = new Map<string, number>()
+    for (const a of base) {
       if (!a.schema_url) continue
-      const entry = map.get(a.schema_url) ?? { arts: [] }
-      entry.arts.push(a)
-      map.set(a.schema_url, entry)
+      map.set(a.schema_url, (map.get(a.schema_url) ?? 0) + 1)
     }
     return [...map.entries()]
-      .map(([url, { arts }]) => ({ url, count: arts.length, singleId: arts.length === 1 ? arts[0].id : null }))
+      .map(([url, count]) => ({ url, count }))
       .sort((a, b) => b.count - a.count)
-  }, [artBase])
+  }, [artBase, filtriModelloAttivi])
 
   useEffect(() => {
     setSchemaFiltro(null)
-  }, [produttoreFiltro, serieFiltro, ricerca])
+    setFiltriModelloAttivi(new Set())
+  }, [sottocatFiltro, faseFiltro, materialeFiltro, tipologiaFiltro, ambienteFiltro, fasciaFiltro, produttoreFiltro, serieFiltro])
+
+  useEffect(() => {
+    setSottocatFiltro(''); setFaseFiltro(''); setMaterialeFiltro(''); setTipologiaFiltro('')
+    setAmbienteFiltro(''); setFasciaFiltro(''); setProduttoreFiltro(''); setSerieFiltro('')
+    setSchemaFiltro(null); setFiltriModelloAttivi(new Set())
+  }, [catFiltro])
 
   useEffect(() => {
     setSelectedId(artFiltrati[0]?.id ?? 0)
@@ -182,6 +259,26 @@ export default function AggiungiArticoloForm({
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    if (onConfirm && selected) {
+      const formData = new FormData(e.currentTarget)
+      const data: ConfirmData = {
+        listinoId: selected.id,
+        larghezza: parseFloat(formData.get('larghezza') as string) || undefined,
+        altezza:   parseFloat(formData.get('altezza')   as string) || undefined,
+        quantita:  parseFloat(formData.get('quantita')  as string) || undefined,
+        piano:     parseFloat(formData.get('piano')     as string) || undefined,
+        km:        parseFloat(formData.get('km')        as string) || undefined,
+        peso:      parseFloat(formData.get('peso')      as string) || undefined,
+        colore:    (formData.get('colore') as string)   || undefined,
+        note:      (formData.get('note')   as string)   || undefined,
+      }
+      startTransition(async () => {
+        const res = await onConfirm(data)
+        setResult(res)
+        if (res.ok) { setStep('select'); onClose?.() }
+      })
+      return
+    }
     const formData = new FormData(e.currentTarget)
     const goToCart = !mostraDestinazione || destId === 'cart'
     if (!goToCart) formData.set('preventivo_id', destId)
@@ -223,6 +320,11 @@ export default function AggiungiArticoloForm({
       background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 10,
       padding: isApp ? '20px 4px 0' : '20px 24px',
     }}>
+      {onClose && (
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 4 }}>
+          <button type="button" onClick={onClose} className={b('btn-red', isApp)} style={{ width: 32, height: 32, fontSize: 16, padding: 0, borderRadius: '50%', lineHeight: 1 }}>✕</button>
+        </div>
+      )}
       {parentPendente && (
         <div style={{
           background: '#fff8e1', border: '1px solid #f0b429', borderRadius: 7,
@@ -250,25 +352,108 @@ export default function AggiungiArticoloForm({
 
       {step === 'select' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {/* Filtri a cascata */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {!hideClassificationFilters && (lockedCat || catOpt.length > 1) && (
+              <div>
+                <label className="testo-articoli" style={{ display: 'block', marginBottom: 3 }}>Categoria</label>
+                {lockedCat ? (
+                  <select disabled value={lockedCat} style={{ ...inpStyle, opacity: 0.6, cursor: 'not-allowed' }}>
+                    <option value={lockedCat}>{lockedCat}</option>
+                  </select>
+                ) : (
+                  <SelectLookup value={catFiltro} onChange={v => setCatFiltro(v)} options={[{ value: '', label: '— Tutti —' }, ...catOpt.map(v => ({ value: v, label: v }))]} style={inpStyle} />
+                )}
+              </div>
+            )}
+            {!hideClassificationFilters && (
+              <>
+                <div>
+                  <label className="testo-articoli" style={{ display: 'block', marginBottom: 3 }}>Sottocategoria</label>
+                  {lockedSottocat ? (
+                    <select disabled value={lockedSottocat} style={{ ...inpStyle, opacity: 0.6, cursor: 'not-allowed' }}>
+                      <option value={lockedSottocat}>{lockedSottocat}</option>
+                    </select>
+                  ) : (
+                    <SelectLookup value={sottocatFiltro} onChange={v => { setSottocatFiltro(v); setFaseFiltro(''); setMaterialeFiltro(''); setTipologiaFiltro(''); setAmbienteFiltro(''); setFasciaFiltro(''); setProduttoreFiltro(''); setSerieFiltro(''); onSottocatChange?.(v) }} options={[{ value: '', label: '— Tutte —' }, ...sottocatOpt.map(v => ({ value: v, label: v }))]} style={inpStyle} />
+                  )}
+                </div>
+                <div>
+                  <label className="testo-articoli" style={{ display: 'block', marginBottom: 3 }}>Fase</label>
+                  <SelectLookup value={faseFiltro} onChange={v => { setFaseFiltro(v); setMaterialeFiltro(''); setTipologiaFiltro(''); setAmbienteFiltro(''); setFasciaFiltro(''); setProduttoreFiltro(''); setSerieFiltro('') }} options={[{ value: '', label: '— Tutte —' }, ...faseOpt.map(v => ({ value: v, label: v }))]} style={inpStyle} />
+                </div>
+                <div>
+                  <label className="testo-articoli" style={{ display: 'block', marginBottom: 3 }}>Materiale</label>
+                  <SelectLookup value={materialeFiltro} onChange={v => { setMaterialeFiltro(v); setTipologiaFiltro(''); setAmbienteFiltro(''); setFasciaFiltro(''); setProduttoreFiltro(''); setSerieFiltro('') }} options={[{ value: '', label: '— Tutti —' }, ...matOpt.map(v => ({ value: v, label: v }))]} style={inpStyle} />
+                </div>
+                <div>
+                  <label className="testo-articoli" style={{ display: 'block', marginBottom: 3 }}>Tipologia</label>
+                  <SelectLookup value={tipologiaFiltro} onChange={v => { setTipologiaFiltro(v); setAmbienteFiltro(''); setFasciaFiltro(''); setProduttoreFiltro(''); setSerieFiltro('') }} options={[{ value: '', label: '— Tutte —' }, ...tipoOpt.map(v => ({ value: v, label: v }))]} style={inpStyle} />
+                </div>
+                <div>
+                  <label className="testo-articoli" style={{ display: 'block', marginBottom: 3 }}>Ambiente</label>
+                  <SelectLookup value={ambienteFiltro} onChange={v => { setAmbienteFiltro(v); setFasciaFiltro(''); setProduttoreFiltro(''); setSerieFiltro('') }} options={[{ value: '', label: '— Tutti —' }, ...ambOpt.map(v => ({ value: v, label: v }))]} style={inpStyle} />
+                </div>
+                <div>
+                  <label className="testo-articoli" style={{ display: 'block', marginBottom: 3 }}>Fascia</label>
+                  <SelectLookup value={fasciaFiltro} onChange={v => { setFasciaFiltro(v); setProduttoreFiltro(''); setSerieFiltro('') }} options={[{ value: '', label: '— Tutte —' }, ...fasciaOpt.map(v => ({ value: v, label: v }))]} style={inpStyle} />
+                </div>
+              </>
+            )}
+            <div>
+              <label className="testo-articoli" style={{ display: 'block', marginBottom: 3 }}>Marca</label>
+              <SelectLookup value={produttoreFiltro} onChange={v => { setProduttoreFiltro(v); setSerieFiltro('') }} options={[{ value: '', label: '— Tutti —' }, ...produttori.map(p => ({ value: p, label: p }))]} style={inpStyle} />
+            </div>
+            <div>
+              <label className="testo-articoli" style={{ display: 'block', marginBottom: 3 }}>Serie</label>
+              <SelectLookup value={serieFiltro} onChange={setSerieFiltro} options={[{ value: '', label: '— Tutte —' }, ...serie.map(s => ({ value: s, label: s }))]} style={inpStyle} />
+            </div>
+          </div>
+          {/* Linguette filtro modello */}
+          {haFiltriModello && (() => {
+            const H = 28, THUMB = 22
+            const chipsDisponibili = FILTRI_MODELLO.filter(f => artBase.some(a => (a[f.key] ?? 0) === 1))
+            return (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#fff', border: '1px solid #d0d0d0', borderRadius: 10, padding: '6px 12px', overflow: 'hidden' }}>
+                <button type="button" disabled={filtriModelloAttivi.size === 0 && !schemaFiltro}
+                  className={`${filtriModelloAttivi.size > 0 || schemaFiltro ? 'btn-red' : 'btn-gray'} btn-icon fs-11`}
+                  style={{ flexShrink: 0 }}
+                  onClick={() => { setFiltriModelloAttivi(new Set()); setSchemaFiltro(null) }}
+                >✕</button>
+                <div style={{ width: 1, height: 20, background: '#ddd', flexShrink: 0, margin: '0 10px' }} />
+                <div style={{ display: 'flex', gap: 6, overflowX: 'auto', WebkitOverflowScrolling: 'touch' as const, paddingBottom: 2 }}>
+                  {chipsDisponibili.map(f => {
+                    const attiva = filtriModelloAttivi.has(f.label)
+                    const W = Math.max(THUMB + 8 + f.label.length * 7, 90)
+                    return (
+                      <div key={f.label} role="button" tabIndex={0}
+                        onClick={() => {
+                          setFiltriModelloAttivi(prev => { const n = new Set(prev); n.has(f.label) ? n.delete(f.label) : n.add(f.label); return n })
+                          setSchemaFiltro(null)
+                        }}
+                        onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setFiltriModelloAttivi(prev => { const n = new Set(prev); n.has(f.label) ? n.delete(f.label) : n.add(f.label); return n }); setSchemaFiltro(null) } }}
+                        style={{ position: 'relative', width: W, height: H, borderRadius: H / 2, flexShrink: 0, background: attiva ? '#1e5c1e' : '#3a3a3a', transition: 'background 0.2s', cursor: 'pointer', userSelect: 'none' }}
+                      >
+                        <span style={{ position: 'absolute', left: 8, top: 0, bottom: 0, display: 'flex', alignItems: 'center', fontSize: 10, fontFamily: 'inherit', fontWeight: 700, color: attiva ? '#7dda7d' : 'transparent', transition: 'color 0.2s', whiteSpace: 'nowrap', pointerEvents: 'none' }}>{f.label}</span>
+                        <span style={{ position: 'absolute', right: 8, top: 0, bottom: 0, display: 'flex', alignItems: 'center', fontSize: 10, fontFamily: 'inherit', fontWeight: 400, color: attiva ? 'transparent' : '#aaaaaa', transition: 'color 0.2s', whiteSpace: 'nowrap', pointerEvents: 'none' }}>{f.label}</span>
+                        <div style={{ position: 'absolute', width: THUMB, height: THUMB, borderRadius: '50%', background: '#fff', top: (H - THUMB) / 2, left: attiva ? W - THUMB - 3 : 3, transition: 'left 0.2s', boxShadow: '0 1px 4px rgba(0,0,0,0.5)' }} />
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )
+          })()}
           {/* Griglia schema */}
           {thumbnailsData.length > 0 && (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: 8 }}>
-              {thumbnailsData.map(({ url, count, singleId }) => {
+              {thumbnailsData.map(({ url, count }) => {
                 const isSelected = schemaFiltro === url
                 return (
                   <button
                     key={url}
                     type="button"
-                    onClick={() => {
-                      if (singleId !== null) {
-                        setSelectedId(singleId)
-                        setSchemaFiltro(null)
-                        setResult(null)
-                        setStep('detail')
-                      } else {
-                        setSchemaFiltro(isSelected ? null : url)
-                      }
-                    }}
+                    onClick={() => setSchemaFiltro(isSelected ? null : url)}
                     title={count > 1 ? `${count} articoli` : undefined}
                     style={{
                       padding: 0, background: '#fff', cursor: 'pointer',
@@ -283,69 +468,42 @@ export default function AggiungiArticoloForm({
               })}
             </div>
           )}
-          {/* Filtri */}
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            {produttori.length >= 2 && (
-              <div style={{ flex: '1 1 150px' }}>
-                <label className="testo-articoli" style={{ display: 'block', marginBottom: 3 }}>Produttore</label>
-                <SelectLookup value={produttoreFiltro} onChange={setProduttoreFiltro} options={[{ value: '', label: '— Tutti —' }, ...produttori.map(p => ({ value: p, label: p }))]} style={inpStyle} />
-              </div>
-            )}
-            {serie.length >= 2 && (
-              <div style={{ flex: '1 1 150px' }}>
-                <label className="testo-articoli" style={{ display: 'block', marginBottom: 3 }}>Serie</label>
-                <SelectLookup value={serieFiltro} onChange={setSerieFiltro} options={[{ value: '', label: '— Tutte —' }, ...serie.map(s => ({ value: s, label: s }))]} style={inpStyle} />
-              </div>
-            )}
-            <div style={{ flex: '2 1 200px' }}>
-              <label className="testo-articoli" style={{ display: 'block', marginBottom: 3 }}>Cerca per descrizione</label>
-              <input
-                type="text"
-                value={ricerca}
-                onChange={e => setRicerca(e.target.value)}
-                placeholder="es. porta finestra, vasistas…"
+          {/* Selezione articolo */}
+          <div>
+            <label className="testo-articoli" style={{ display: 'block', marginBottom: 3 }}>
+              Articolo{artFiltrati.length !== articoli.length ? ` (${artFiltrati.length} di ${articoli.length})` : ''}
+            </label>
+            {artFiltrati.length === 0 ? (
+              <p className="testo-articoli" style={{ margin: 0 }}>Nessun articolo trovato.</p>
+            ) : (
+              <SelectLookup
+                value={String(selectedId)}
+                onChange={v => { setSelectedId(Number(v)); if (!v) setSchemaFiltro(null) }}
+                options={artFiltrati.map(a => ({ value: String(a.id), label: labelOf(a) }))}
                 style={inpStyle}
               />
-            </div>
+            )}
           </div>
-          {/* Selezione articolo */}
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end' }}>
-            <div style={{ flex: '2 1 260px' }}>
-              <label className="testo-articoli" style={{ display: 'block', marginBottom: 3 }}>
-                Articolo{artFiltrati.length !== articoli.length ? ` (${artFiltrati.length} di ${articoli.length})` : ''}
-              </label>
-              {artFiltrati.length === 0 ? (
-                <p className="testo-articoli" style={{ margin: 0 }}>Nessun articolo trovato.</p>
-              ) : (
+          {artFiltrati.length > 0 && (
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center', justifyContent: isApp ? 'center' : undefined, marginTop: isApp ? 6 : undefined, marginBottom: isApp ? 14 : undefined }}>
+              <button
+                type="button"
+                onClick={() => { setResult(null); setStep('detail') }}
+                className={b('btn-green', isApp)}
+                style={{ padding: '0 22px', fontSize: 13, flexShrink: 0 }}
+              >
+                {onConfirm ? 'Avanti →' : mostraDestinazione ? 'Aggiungi a:' : '+ Aggiungi a simulazione'}
+              </button>
+              {mostraDestinazione && (
                 <SelectLookup
-                  value={String(selectedId)}
-                  onChange={v => setSelectedId(Number(v))}
-                  options={artFiltrati.map(a => ({ value: String(a.id), label: labelOf(a) }))}
-                  style={inpStyle}
+                  value={destId}
+                  onChange={setDestId}
+                  options={destOptions}
+                  style={{ flex: 1, fontSize: 12, padding: '4px 8px', border: '1px solid #ccc', borderRadius: 4, fontFamily: 'inherit', minWidth: 0 }}
                 />
               )}
             </div>
-            {artFiltrati.length > 0 && (
-              <div style={{ flex: '0 0 100%', display: 'flex', gap: 8, alignItems: 'center', justifyContent: isApp ? 'center' : undefined, marginTop: isApp ? 6 : undefined, marginBottom: isApp ? 14 : undefined }}>
-                <button
-                  type="button"
-                  onClick={() => { setResult(null); setStep('detail') }}
-                  className={b('btn-green', isApp)}
-                  style={{ padding: '0 22px', fontSize: 13, flexShrink: 0 }}
-                >
-                  {mostraDestinazione ? 'Aggiungi a:' : '+ Aggiungi a simulazione'}
-                </button>
-                {mostraDestinazione && (
-                  <SelectLookup
-                    value={destId}
-                    onChange={setDestId}
-                    options={destOptions}
-                    style={{ flex: 1, fontSize: 12, padding: '4px 8px', border: '1px solid #ccc', borderRadius: 4, fontFamily: 'inherit', minWidth: 0 }}
-                  />
-                )}
-              </div>
-            )}
-          </div>
+          )}
         </div>
       )}
 
@@ -396,10 +554,23 @@ export default function AggiungiArticoloForm({
             )}
           </div>
 
+          {selected.richiede_tipo_colore === 1 && (
+            <label className="testo-articoli" style={lbl}>
+              Colore
+              <input name="colore" type="text" placeholder="es. Bianco RAL 9010" style={inpStyle} />
+            </label>
+          )}
+          {onConfirm && (
+            <label className="testo-articoli" style={lbl}>
+              Note
+              <textarea name="note" rows={2} style={{ ...inpStyle, resize: 'vertical' as const }} />
+            </label>
+          )}
+
           <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginTop: 8, marginBottom: 8 }}>
             <button
               type="button"
-              onClick={() => setStep('select')}
+              onClick={() => { onClose ? onClose() : setStep('select') }}
               className={b('btn-red', isApp)}
               style={{ minWidth: 120, fontSize: 13 }}
             >
@@ -413,9 +584,11 @@ export default function AggiungiArticoloForm({
             >
               {isPending
                 ? 'Aggiunta…'
-                : mostraDestinazione && destId !== 'cart'
-                  ? 'Aggiungi al preventivo'
-                  : submitLabel}
+                : onConfirm
+                  ? (submitLabel ?? 'Conferma')
+                  : mostraDestinazione && destId !== 'cart'
+                    ? 'Aggiungi al preventivo'
+                    : submitLabel}
             </button>
           </div>
         </form>

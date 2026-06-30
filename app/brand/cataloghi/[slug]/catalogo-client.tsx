@@ -7,7 +7,7 @@ import { b } from '@/lib/btn'
 
 pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`
 
-type Voce = { id: number; nome: string; serie?: string; pdf_filename: string; pdf_label: string; listino_categoria: string | null; descrizione?: string | null; filtro_battente?: number; filtro_scorrevole?: number; filtro_taglio_termico?: number; filtro_taglio_freddo?: number; filtro_economico?: number; filtro_fascia_alta?: number }
+type Voce = { id: number; nome: string; serie?: string; pdf_filename: string; pdf_label: string; descrizione?: string | null; filtro_battente?: number; filtro_scorrevole?: number; filtro_taglio_termico?: number; filtro_taglio_freddo?: number; filtro_economico?: number; filtro_fascia_alta?: number }
 
 function pdfSrc(filename: string): string {
   return filename.startsWith('https://') ? filename : `/uploads/cataloghi/${filename}`
@@ -162,11 +162,9 @@ function PdfThumbnail({ pdfFilename, width = 160 }: { pdfFilename: string; width
   )
 }
 
-export default function CatalogoClient({ voci, onSelect, categorySlug, basePath = '/brand/cataloghi', isApp }: {
+export default function CatalogoClient({ voci, onSelect, isApp }: {
   voci: Voce[]
   onSelect?: (v: Voce | null) => void
-  categorySlug?: string
-  basePath?: string
   isApp?: boolean
 }) {
   const [selected, setSelected] = useState<Voce | null>(null)
@@ -214,51 +212,31 @@ export default function CatalogoClient({ voci, onSelect, categorySlug, basePath 
         </div>
       )}
 
-      {categorySlug ? (
-        <Link href={`${basePath}/${categorySlug}/${v.id}`} style={{ ...cardBase, border: '1px solid #c8960c', display: 'block', padding: '14px 16px' }}>
-          <div style={{ float: 'left', width: 80, marginRight: 14, marginBottom: 4, borderRadius: 3, overflow: 'hidden', border: '1px solid #e8e8e8', flexShrink: 0 }}>
-            <PdfThumbnail pdfFilename={v.pdf_filename} width={80} />
-          </div>
-          <span className="fs-14" style={{ fontWeight: 700, lineHeight: 1.4, color: '#1a1a1a', display: 'block' }}>
-            {v.pdf_label || v.nome}
-          </span>
-          {v.pdf_label && v.nome !== v.pdf_label && (
-            <span className="fs-12" style={{ color: '#888', display: 'block' }}>{v.nome}</span>
-          )}
-          {v.descrizione && (
-            <span className="fs-12" style={{ color: '#555', lineHeight: 1.6, display: 'block' }}>
-              {v.descrizione}
-            </span>
-          )}
-          <div style={{ clear: 'both' }} />
-        </Link>
-      ) : (
-        <div
-          role="button"
-          tabIndex={0}
-          onClick={() => handleSelect(selected?.id === v.id ? null : v)}
-          onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') handleSelect(selected?.id === v.id ? null : v) }}
-          style={{ ...cardBase, border: selected?.id === v.id ? '2px solid #c8960c' : '1px solid #c8960c', display: 'block', padding: '14px 16px', cursor: 'pointer' }}
-        >
-          <div style={{ float: 'left', width: 80, marginRight: 14, marginBottom: 4, borderRadius: 3, overflow: 'hidden', border: '1px solid #e8e8e8' }}>
-            <PdfThumbnail pdfFilename={v.pdf_filename} width={80} />
-          </div>
-          <span className="fs-14" style={{ fontWeight: 700, lineHeight: 1.4, color: '#1a1a1a', display: 'block' }}>
-            {v.pdf_label || v.nome}
-          </span>
-          {v.pdf_label && v.nome !== v.pdf_label && (
-            <span className="fs-12" style={{ color: '#888', display: 'block' }}>{v.nome}</span>
-          )}
-          {v.descrizione && (
-            <span className="fs-12" style={{ color: '#555', lineHeight: 1.6, display: 'block' }}>
-              {v.descrizione}
-            </span>
-          )}
-          <div style={{ clear: 'both' }} />
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={() => handleSelect(selected?.id === v.id ? null : v)}
+        onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') handleSelect(selected?.id === v.id ? null : v) }}
+        style={{ ...cardBase, border: selected?.id === v.id ? '2px solid #c8960c' : '1px solid #c8960c', display: 'block', padding: '14px 16px', cursor: 'pointer' }}
+      >
+        <div style={{ float: 'left', width: 80, marginRight: 14, marginBottom: 4, borderRadius: 3, overflow: 'hidden', border: '1px solid #e8e8e8' }}>
+          <PdfThumbnail pdfFilename={v.pdf_filename} width={80} />
         </div>
-      )}
+        <span className="fs-14" style={{ fontWeight: 700, lineHeight: 1.4, color: '#1a1a1a', display: 'block' }}>
+          {v.pdf_label || v.nome}
+        </span>
+        {v.pdf_label && v.nome !== v.pdf_label && (
+          <span className="fs-12" style={{ color: '#888', display: 'block' }}>{v.nome}</span>
+        )}
+        {v.descrizione && (
+          <span className="fs-12" style={{ color: '#555', lineHeight: 1.6, display: 'block' }}>
+            {v.descrizione}
+          </span>
+        )}
+        <div style={{ clear: 'both' }} />
+      </div>
 
-      {!categorySlug && selected && (
+      {selected && (
         <PdfViewer key={selected.id} voce={selected} onClose={() => handleSelect(null)} isApp={isApp} />
       )}
     </div>
