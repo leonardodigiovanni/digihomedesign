@@ -1082,7 +1082,7 @@ function ScontoClienteEditor({ preventivoId, currentPct, isApp }: { preventivoId
 
 // ─── Modale Modifica Articolo (staff) ────────────────────────────────────────
 
-function ModificaArticoloModal({ articolo, parentArt, children = [], listini, onClose, isStaff = true, isApp }: {
+function ModificaArticoloModal({ articolo, parentArt, children = [], listini, onClose, isStaff = true, isApp, percorsiPerListino = {} }: {
   articolo: Articolo
   parentArt?: Articolo | null
   children?: Articolo[]
@@ -1090,6 +1090,7 @@ function ModificaArticoloModal({ articolo, parentArt, children = [], listini, on
   onClose: () => void
   isStaff?: boolean
   isApp?: boolean
+  percorsiPerListino?: Record<number, PercorsoEntry[]>
 }) {
   const router = useRouter()
   const [pending, startT] = useTransition()
@@ -2348,6 +2349,7 @@ export default function PreventivoClient({
           onClose={() => setEditArticolo(null)}
           isStaff={isStaff}
           isApp={isApp}
+          percorsiPerListino={percorsiPerListino}
         />
       )}
 
