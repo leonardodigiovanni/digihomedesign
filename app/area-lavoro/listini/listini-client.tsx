@@ -804,6 +804,8 @@ function PercorsiPanel({ percorsi, listinoId }: { percorsi: Percorso[]; listinoI
   const [sottoInput, setSottoInput] = useState('')
   const [adding, setAdding] = useState(false)
   const [removing, setRemoving] = useState<number | null>(null)
+  const [isDragOver, setIsDragOver] = useState(false)
+  const [dropping, setDropping] = useState(false)
 
   async function handleAdd() {
     if (!catInput.trim()) return
@@ -818,6 +820,17 @@ function PercorsiPanel({ percorsi, listinoId }: { percorsi: Percorso[]; listinoI
     router.refresh()
     setRemoving(null)
   }
+  async function handleDrop(e: React.DragEvent) {
+    e.preventDefault()
+    setIsDragOver(false)
+    try {
+      const { categoria, sottocategoria } = JSON.parse(e.dataTransfer.getData('percorso'))
+      setDropping(true)
+      await addPercorsoListino(listinoId, categoria, sottocategoria)
+      router.refresh()
+    } catch {}
+    setDropping(false)
+  }
 
   const chip: React.CSSProperties = {
     borderRadius: 3, padding: '2px 5px', fontSize: 10, fontWeight: 600, whiteSpace: 'nowrap',
@@ -826,12 +839,38 @@ function PercorsiPanel({ percorsi, listinoId }: { percorsi: Percorso[]; listinoI
     fontSize: 10, padding: '2px 4px', border: '1px solid #ccc', borderRadius: 3, width: 70,
   }
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: '3px 4px', alignItems: 'center' }}>
+    <div
+      onDragOver={e => { e.preventDefault(); setIsDragOver(true) }}
+      onDragLeave={() => setIsDragOver(false)}
+      onDrop={handleDrop}
+      style={{
+        display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: '3px 4px', alignItems: 'center',
+        borderRadius: 4, padding: isDragOver ? 3 : 0,
+        background: isDragOver ? '#fffde7' : undefined,
+        outline: isDragOver ? '2px dashed #f9a825' : undefined,
+        opacity: dropping ? 0.6 : 1,
+      }}
+    >
       {percorsi.length === 0 && null}
       {percorsi.map(p => (
         <React.Fragment key={p.id}>
-          <span style={{ ...chip, background: '#e8e8f8' }}>{p.categoria}</span>
-          <span style={{ ...chip, background: '#e8f0e8' }}>{p.sottocategoria}</span>
+          <span
+            draggable
+            onDragStart={e => {
+              e.dataTransfer.setData('percorso', JSON.stringify({ categoria: p.categoria, sottocategoria: p.sottocategoria }))
+              e.dataTransfer.effectAllowed = 'copy'
+            }}
+            style={{ ...chip, background: '#e8e8f8', cursor: 'grab' }}
+            title={`Trascina su un'altra voce per copiare: ${p.categoria} / ${p.sottocategoria || '(wildcard)'}`}
+          >{p.categoria}</span>
+          <span
+            draggable
+            onDragStart={e => {
+              e.dataTransfer.setData('percorso', JSON.stringify({ categoria: p.categoria, sottocategoria: p.sottocategoria }))
+              e.dataTransfer.effectAllowed = 'copy'
+            }}
+            style={{ ...chip, background: '#e8f0e8', cursor: 'grab' }}
+          >{p.sottocategoria}</span>
           <button onClick={() => handleRemove(p.id)} disabled={removing === p.id}
             style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#c62828', fontSize: 12, padding: 0, lineHeight: 1, fontWeight: 700 }}>
             ✕
