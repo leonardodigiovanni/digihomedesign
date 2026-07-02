@@ -2019,7 +2019,7 @@ export default function PreventivoClient({
                         : false
 
                       const rootSerie = rootListino?.serie ?? ''
-                      const hasOptionalCaratteristiche = !useTypeGaps && canEdit && listini.some(l =>
+                      const hasOptionalCaratteristiche = canEdit && listini.some(l =>
                         l.caratteristica === 1 &&
                         matchesPercorsi(l.id, l.categoria ?? '', root.listino_id ?? 0, root.tipo_prodotto, percorsiPerListino) &&
                         (!l.produttore || l.produttore === root.marca) &&
@@ -2030,40 +2030,41 @@ export default function PreventivoClient({
                       const expandBg    = isExpanded ? (hasLacune ? '#fdecea' : '#d6ecd6') : undefined
 
                       // gap rows
-                      let gapRows: React.ReactNode
-                      if (canEdit && useTypeGaps) {
-                        const showC  = needsC  && !cl.some(l => (l?.richiede_tipo_colore     ?? 0) === 1)
-                        const showCA = needsCA && !cl.some(l => (l?.richiede_tipo_colore_acc ?? 0) === 1)
-                        const showV  = needsV  && !cl.some(l => (l?.richiede_tipo_vetro      ?? 0) === 1)
-                        const showM  = needsM  && !cl.some(l => (l?.richiede_tipo_montaggio  ?? 0) === 1)
-                        gapRows = (showC || showCA || showV || showM) ? (
-                          <tr style={{ background: '#ffffff' }}>
-                            <td colSpan={canEdit ? 4 : 3} style={{ padding: 8, borderBottom: '1px solid #333', borderRight: 'none', textAlign: 'left', background: '#ffffff' }}>
-                              <div style={{ display: 'flex', gap: 8 }}>
-                                {showC  && <button onClick={() => openCaratteristica(root.id, undefined, 'tipo_colore')}     style={{ flex: 1, height: 42, padding: '0 10px', borderRadius: 21, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', border: 'none', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>+ Colore</button>}
-                                {showCA && <button onClick={() => openCaratteristica(root.id, undefined, 'tipo_colore_acc')} style={{ flex: 1, height: 42, padding: '0 10px', borderRadius: 21, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', border: 'none', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>+ Accessori</button>}
-                                {showV  && <button onClick={() => openCaratteristica(root.id, undefined, 'tipo_vetro')}      style={{ flex: 1, height: 42, padding: '0 10px', borderRadius: 21, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', border: 'none', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>+ Vetro</button>}
-                                {showM  && <button onClick={() => openCaratteristica(root.id, undefined, 'tipo_montaggio')}  style={{ flex: 1, height: 42, padding: '0 10px', borderRadius: 21, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', border: 'none', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>+ Montaggio</button>}
-                              </div>
-                            </td>
-                          </tr>
-                        ) : null
-                      } else {
-                        gapRows = hasOptionalCaratteristiche ? (
-                          <tr style={{ background: '#ffffff' }}>
-                            <td style={{ padding: '4px', textAlign: 'center' }}>
-                              <button onClick={() => openCaratteristica(root.id)} className={`${b('btn-pink', isApp)} btn-icon`} style={{ border: 'none' }}>
-                                <span style={{ position: 'relative', zIndex: 1, fontSize: 22, lineHeight: 1, fontWeight: 300 }}>+</span>
-                              </button>
-                            </td>
-                            <td colSpan={canEdit ? 3 : 2} style={{ padding: '4px 8px', borderRight: 'none' }}>
-                              <span style={{ fontSize: 11, color: '#555' }}>
-                                Aggiungi elemento (opzionale)
-                              </span>
-                            </td>
-                          </tr>
-                        ) : null
-                      }
+                      const showC  = needsC  && !cl.some(l => (l?.richiede_tipo_colore     ?? 0) === 1)
+                      const showCA = needsCA && !cl.some(l => (l?.richiede_tipo_colore_acc ?? 0) === 1)
+                      const showV  = needsV  && !cl.some(l => (l?.richiede_tipo_vetro      ?? 0) === 1)
+                      const showM  = needsM  && !cl.some(l => (l?.richiede_tipo_montaggio  ?? 0) === 1)
+                      const showTypeGapRow = canEdit && useTypeGaps && (showC || showCA || showV || showM)
+                      const gapRows: React.ReactNode = (showTypeGapRow || hasOptionalCaratteristiche) ? (
+                        <>
+                          {showTypeGapRow && (
+                            <tr style={{ background: '#ffffff' }}>
+                              <td colSpan={canEdit ? 4 : 3} style={{ padding: 8, borderBottom: '1px solid #333', borderRight: 'none', textAlign: 'left', background: '#ffffff' }}>
+                                <div style={{ display: 'flex', gap: 8 }}>
+                                  {showC  && <button onClick={() => openCaratteristica(root.id, undefined, 'tipo_colore')}     style={{ flex: 1, height: 42, padding: '0 10px', borderRadius: 21, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', border: 'none', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>+ Colore</button>}
+                                  {showCA && <button onClick={() => openCaratteristica(root.id, undefined, 'tipo_colore_acc')} style={{ flex: 1, height: 42, padding: '0 10px', borderRadius: 21, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', border: 'none', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>+ Accessori</button>}
+                                  {showV  && <button onClick={() => openCaratteristica(root.id, undefined, 'tipo_vetro')}      style={{ flex: 1, height: 42, padding: '0 10px', borderRadius: 21, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', border: 'none', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>+ Vetro</button>}
+                                  {showM  && <button onClick={() => openCaratteristica(root.id, undefined, 'tipo_montaggio')}  style={{ flex: 1, height: 42, padding: '0 10px', borderRadius: 21, fontSize: 13, fontWeight: 700, fontFamily: 'inherit', whiteSpace: 'nowrap', border: 'none', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>+ Montaggio</button>}
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                          {hasOptionalCaratteristiche && (
+                            <tr style={{ background: '#ffffff' }}>
+                              <td style={{ padding: '4px', textAlign: 'center' }}>
+                                <button onClick={() => openCaratteristica(root.id)} className={`${b('btn-pink', isApp)} btn-icon`} style={{ border: 'none' }}>
+                                  <span style={{ position: 'relative', zIndex: 1, fontSize: 22, lineHeight: 1, fontWeight: 300 }}>+</span>
+                                </button>
+                              </td>
+                              <td colSpan={canEdit ? 3 : 2} style={{ padding: '4px 8px', borderRight: 'none' }}>
+                                <span style={{ fontSize: 11, color: '#555' }}>
+                                  Aggiungi elemento (opzionale)
+                                </span>
+                              </td>
+                            </tr>
+                          )}
+                        </>
+                      ) : null
 
                       return (
                         <React.Fragment key={root.id}>
