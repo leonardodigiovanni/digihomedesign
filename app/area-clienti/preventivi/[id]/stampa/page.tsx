@@ -1312,11 +1312,11 @@ async function buildStampaData(opts: {
   })
 
   blocks.push({ html: riepilogoIntroHtml() })
-  blocks.push({ html: riepilogoTableHeaderHtml() })
+  blocks.push({ html: riepilogoChiusuraHtml() })
+  blocks.push({ html: riepilogoTableHeaderHtml(), forceNewPage: true })
   roots.forEach((p, i) => blocks.push({ html: riepilogoTableRowHtml(p, i) }))
   blocks.push({ html: totaleBoxHtml(artRows, totale, scontoClientePct, hasArticoliDaDefinire) })
   blocks.push({ html: riepilogoNotaHtml() })
-  blocks.push({ html: riepilogoChiusuraHtml() })
   if (noteRaw) {
     const righe = noteRaw.split('\n')
     const righeHtml = righe.map(r => {
