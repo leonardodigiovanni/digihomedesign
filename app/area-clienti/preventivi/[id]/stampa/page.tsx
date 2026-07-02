@@ -788,7 +788,7 @@ function riepilogoTableRowHtml(p: Record<string, unknown>, idx: number): string 
 }
 
 function riepilogoNotaHtml(): string {
-  return `<div style="font-size:10px;margin-top:8px;padding:8px 12px;background:#f5f5f5;border:1px solid #ddd;line-height:1.5;color:#555;">
+  return `<div style="font-size:9px;margin-top:6px;margin-bottom:4px;padding:4px 10px;background:#f5f5f5;border:1px solid #ddd;line-height:1.4;color:#888;">
   <strong>Nota:</strong> Per alcuni articoli in elenco è fornita una scheda di dettaglio delle caratteristiche tecniche e specifiche di acquisto nel seguito del documento.
 </div>`
 }
@@ -1315,8 +1315,8 @@ async function buildStampaData(opts: {
   blocks.push({ html: riepilogoChiusuraHtml() })
   blocks.push({ html: riepilogoTableHeaderHtml(), forceNewPage: true })
   roots.forEach((p, i) => blocks.push({ html: riepilogoTableRowHtml(p, i) }))
-  blocks.push({ html: totaleBoxHtml(artRows, totale, scontoClientePct, hasArticoliDaDefinire) })
   blocks.push({ html: riepilogoNotaHtml() })
+  blocks.push({ html: totaleBoxHtml(artRows, totale, scontoClientePct, hasArticoliDaDefinire) })
   if (noteRaw) {
     const righe = noteRaw.split('\n')
     const righeHtml = righe.map(r => {
