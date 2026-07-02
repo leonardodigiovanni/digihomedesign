@@ -1355,8 +1355,8 @@ async function buildStampaData(opts: {
       : scontoArt !== 0 && prezzoBase > 0
       ? `<span style="color:#aaa;text-decoration:line-through;font-size:10.5px;">€ ${fmt(prezzoBase)}</span> <span style="color:${scontoColor};font-size:10.5px;">${scontoLabel}</span> <span style="display:block;font-size:10.5px;font-weight:bold;color:#111;">€ ${prezzo > 0 ? fmt(prezzo) : '—'}</span>`
       : `<span style="font-size:10.5px;font-weight:bold;color:#111;">€ ${prezzo > 0 ? fmt(prezzo) : '—'}</span>`
-    const FIRST_CHUNK = 19
-    const NEXT_CHUNK  = 20
+    const FIRST_CHUNK = 6
+    const NEXT_CHUNK  = 6
     const barColor    = colorMap.get(id)
     const barColorAcc = colorAccMap.get(id)
     if (children.length <= FIRST_CHUNK) {
