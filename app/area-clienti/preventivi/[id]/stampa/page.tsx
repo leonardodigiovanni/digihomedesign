@@ -568,17 +568,17 @@ function caratteristicheHTML(children: Record<string, unknown>[], parentPrezzo: 
       }
     }
     return `<div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid #ececec;">
-      <div style="width:40px;height:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+      <div style="width:80px;height:56px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
         ${fotoUrl
-          ? `<div style="position:relative;width:40px;height:28px;"><img src="${fotoAttr}" alt="" style="max-width:40px;max-height:28px;object-fit:contain;display:block;${n(c.escluso) === 1 ? 'opacity:0.4;' : ''}"/>${n(c.escluso) === 1 ? `<img src="/images/app/escluso.png" alt="ESCLUSO" style="position:absolute;top:-20%;left:-20%;width:140%;height:140%;object-fit:contain;pointer-events:none;"/>` : ''}</div>`
-          : `<div style="width:40px;height:28px;background:#ececec;border-radius:2px;"></div>`}
+          ? `<div style="position:relative;width:80px;height:56px;"><img src="${fotoAttr}" alt="" style="max-width:80px;max-height:56px;object-fit:contain;display:block;${n(c.escluso) === 1 ? 'opacity:0.4;' : ''}"/>${n(c.escluso) === 1 ? `<img src="/images/app/escluso.png" alt="ESCLUSO" style="position:absolute;top:-20%;left:-20%;width:140%;height:140%;object-fit:contain;pointer-events:none;"/>` : ''}</div>`
+          : `<div style="width:80px;height:56px;background:#ececec;border-radius:2px;"></div>`}
       </div>
       <div style="flex:1;font-size:10.5px;color:#333;line-height:1.4;">${label || 'Caratteristica'}</div>
       <div style="text-align:right;">${prezzoCell}</div>
     </div>`
   }).join('\n')
   const caratHeader = children.length > 0
-    ? `<div style="font-size:9px;font-weight:bold;color:#999;text-transform:uppercase;letter-spacing:.05em;margin-top:3px;margin-bottom:2px;">Caratteristiche incluse</div>`
+    ? `<div style="font-size:9px;font-weight:bold;color:#999;text-transform:uppercase;letter-spacing:.05em;margin-top:3px;margin-bottom:2px;">Caratteristiche/composizione</div>`
     : ''
   return `<div style="border-top:1px solid #d0d0d0;background:#f5f5f5;padding:4px 10px 5px;">
   <div style="display:flex;align-items:center;gap:8px;padding:2px 0;border-bottom:1px solid #ececec;">
@@ -627,10 +627,10 @@ function caratteristichePreviewHTML(children: Record<string, unknown>[], parentP
       prezzoCell = `<div style="font-size:10.5px;font-weight:bold;color:#111;white-space:nowrap;">+ € ${fmt(Math.abs(contrib))}</div>`
     }
     return `<div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid #ececec;">
-      <div style="width:40px;height:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+      <div style="width:80px;height:56px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
         ${fotoUrl
-          ? `<div style="position:relative;width:40px;height:28px;"><img src="${fotoAttr}" alt="" style="max-width:40px;max-height:28px;object-fit:contain;display:block;${n(c.escluso) === 1 ? 'opacity:0.4;' : ''}"/>${n(c.escluso) === 1 ? `<img src="/images/app/escluso.png" alt="ESCLUSO" style="position:absolute;top:-20%;left:-20%;width:140%;height:140%;object-fit:contain;pointer-events:none;"/>` : ''}</div>`
-          : `<div style="width:40px;height:28px;background:#ececec;border-radius:2px;"></div>`}
+          ? `<div style="position:relative;width:80px;height:56px;"><img src="${fotoAttr}" alt="" style="max-width:80px;max-height:56px;object-fit:contain;display:block;${n(c.escluso) === 1 ? 'opacity:0.4;' : ''}"/>${n(c.escluso) === 1 ? `<img src="/images/app/escluso.png" alt="ESCLUSO" style="position:absolute;top:-20%;left:-20%;width:140%;height:140%;object-fit:contain;pointer-events:none;"/>` : ''}</div>`
+          : `<div style="width:80px;height:56px;background:#ececec;border-radius:2px;"></div>`}
       </div>
       <div style="flex:1;font-size:10.5px;color:#333;line-height:1.4;">${label || 'Caratteristica'}</div>
       <div style="text-align:right;">${prezzoCell}</div>
@@ -641,7 +641,7 @@ function caratteristichePreviewHTML(children: Record<string, unknown>[], parentP
     <div style="flex:1;font-size:10.5px;color:#333;line-height:1.4;">Subtotale indicativo</div>
     <div style="font-size:10.5px;white-space:nowrap;text-align:right;">${prezzoHTML}</div>
   </div>
-  <div style="font-size:9px;font-weight:bold;color:#999;text-transform:uppercase;letter-spacing:.05em;margin-top:3px;margin-bottom:2px;">Caratteristiche incluse</div>
+  <div style="font-size:9px;font-weight:bold;color:#999;text-transform:uppercase;letter-spacing:.05em;margin-top:3px;margin-bottom:2px;">Caratteristiche/composizione</div>
   ${righe}
   ${children.length > maxN ? `<div style="font-size:9px;color:#999;font-style:italic;margin-top:4px;">continua nella pagina successiva…</div>` : ''}
 </div>`
@@ -794,10 +794,12 @@ function riepilogoNotaHtml(): string {
 }
 
 function riepilogoChiusuraHtml(): string {
-  return `<div style="font-size:12px;color:#333;line-height:1.6;margin-top:10px;margin-bottom:10px;">
-  <div style="margin-bottom:2px;">Restando a Sua completa disposizione per qualsiasi chiarimento o approfondimento, porgiamo</div>
-  <div style="font-weight:bold;">Cordiali saluti</div>
-  <img src="/images/carrello/sigla.png" style="height:130px;display:block;margin-top:-40px;" />
+  return `<div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:8px;margin-bottom:8px;">
+  <div style="font-size:12px;color:#333;line-height:1.6;">
+    <div style="margin-bottom:2px;">Restando a Sua completa disposizione per qualsiasi chiarimento o approfondimento, porgiamo</div>
+    <div style="font-weight:bold;">Cordiali saluti</div>
+  </div>
+  <img src="/images/carrello/sigla.png" style="height:72px;flex-shrink:0;" />
 </div>`
 }
 
@@ -1314,7 +1316,9 @@ async function buildStampaData(opts: {
   blocks.push({ html: riepilogoIntroHtml() })
   blocks.push({ html: riepilogoTableHeaderHtml() })
   roots.forEach((p, i) => blocks.push({ html: riepilogoTableRowHtml(p, i) }))
-  blocks.push({ html: totaleBoxHtml(artRows, totale, scontoClientePct, hasArticoliDaDefinire) + riepilogoNotaHtml() + riepilogoChiusuraHtml() })
+  blocks.push({ html: totaleBoxHtml(artRows, totale, scontoClientePct, hasArticoliDaDefinire) })
+  blocks.push({ html: riepilogoNotaHtml() })
+  blocks.push({ html: riepilogoChiusuraHtml() })
   if (noteRaw) {
     const righe = noteRaw.split('\n')
     const righeHtml = righe.map(r => {
