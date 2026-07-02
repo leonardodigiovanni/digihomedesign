@@ -841,12 +841,10 @@ function riepilogoHTML(roots: ArtRow[], totale: string, hasDaDefinire = false): 
   </tbody>
 </table>
 ${totaleNoteHtml(totale, hasDaDefinire)}
-<div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:8px;margin-bottom:8px;">
-  <div style="font-size:12px;color:#333;line-height:1.6;">
-    <div style="margin-bottom:2px;">Restando a Sua completa disposizione per qualsiasi chiarimento o approfondimento, porgiamo</div>
-    <div style="font-weight:bold;">Cordiali saluti</div>
-  </div>
-  <img src="/images/carrello/sigla.png" style="height:72px;flex-shrink:0;" />
+<div style="font-size:12px;color:#333;line-height:1.6;margin-top:10px;margin-bottom:6px;">
+  <div style="margin-bottom:2px;">Restando a Sua completa disposizione per qualsiasi chiarimento o approfondimento, porgiamo</div>
+  <div style="font-weight:bold;">Cordiali saluti</div>
+  <img src="/images/carrello/sigla.png" style="height:90px;display:block;margin-top:-20px;" />
 </div>
 <div style="position:absolute;bottom:${PAD_BOT}px;left:${PAD_SIDE}px;right:${PAD_SIDE}px;">
   <div style="font-size:10px;padding:6px 12px;background:#f5f5f5;border:1px solid #ddd;line-height:1.5;color:#555;">
