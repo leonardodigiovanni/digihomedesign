@@ -440,7 +440,14 @@ function ArticoloForm({
     if (parentId !== null) {
       const rootSerie = listini.find(l => l.id === parentArt?.listino_id)?.serie ?? ''
       let filtered = listini.filter(l =>
-        (gapTypeFilter !== null ? l.principale === 0 : l.caratteristica === 1) &&
+        (gapTypeFilter !== null
+          ? l.principale === 0
+          : l.caratteristica === 1 &&
+            (l.richiede_tipo_colore ?? 0) === 0 &&
+            (l.richiede_tipo_colore_acc ?? 0) === 0 &&
+            (l.richiede_tipo_vetro ?? 0) === 0 &&
+            (l.richiede_tipo_montaggio ?? 0) === 0
+        ) &&
         matchesPercorsi(l.id, l.categoria ?? '', parentArt?.listino_id ?? 0, parentArt?.tipo_prodotto ?? '', percorsiPerListino) &&
         (!l.produttore || l.produttore === (parentArt?.marca ?? '')) &&
         (!l.serie      || l.serie      === rootSerie)
