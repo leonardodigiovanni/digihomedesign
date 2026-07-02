@@ -751,7 +751,7 @@ function riepilogoIntroHtml(): string {
   <div style="margin-bottom:6px;">Per noi il cliente è al centro di ogni progetto.</div>
   <div style="margin-bottom:6px;">Per questo motivo, entrando a far parte della nostra rete clienti, Le verrà assegnato un codice referral personale che Le consentirà di accedere a vantaggi esclusivi, premi fedeltà, offerte promozionali dedicate e iniziative riservate.</div>
   <div style="margin-bottom:6px;">Il nostro impegno è quello di accompagnarLa nel tempo con professionalità, disponibilità e proposte sempre innovative, affinché possa sentirsi seguito e valorizzato in ogni fase della collaborazione.</div>
-  <div style="margin-bottom:14px;">Con piacere, di seguito Le sottoponiamo l'elenco degli articoli e delle soluzioni da Lei richieste nella presente offerta economica, da intendersi IVA esclusa.</div>
+  <div style="margin-bottom:14px;">Con piacere, di seguito Le sottoponiamo l'elenco degli articoli e delle soluzioni da Lei richieste e la nostra offerta economica, da intendersi IVA esclusa.</div>
 </div>`
 }
 
