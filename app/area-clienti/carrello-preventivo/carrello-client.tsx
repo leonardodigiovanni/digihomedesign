@@ -978,11 +978,11 @@ export default function CarrelloClient({
                                     <img
                                       src={child.foto_url.startsWith('http') ? child.foto_url : child.foto_url.startsWith('/') ? child.foto_url : `/${child.foto_url}`}
                                       alt=""
-                                      style={{ width: 42, height: 42, objectFit: 'cover', borderRadius: 4, display: 'block', opacity: child.escluso === 1 ? 0.6 : 1 }}
+                                      style={{ width: 42, height: 42, objectFit: 'cover', borderRadius: 4, display: 'block', opacity: child.escluso === 1 ? 0.4 : 1 }}
                                     />
                                     {child.escluso === 1 && (
                                       // eslint-disable-next-line @next/next/no-img-element
-                                      <img src="/images/app/escluso.png" alt="ESCLUSO" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', pointerEvents: 'none' }} />
+                                      <img src="/images/app/escluso.png" alt="ESCLUSO" style={{ position: 'absolute', top: '-20%', left: '-20%', width: '140%', height: '140%', objectFit: 'contain', pointerEvents: 'none' }} />
                                     )}
                                   </div>
                                 )}
@@ -1247,11 +1247,11 @@ export default function CarrelloClient({
                 <img
                   src={previewArt.foto_url.startsWith('http') ? previewArt.foto_url : previewArt.foto_url.startsWith('/') ? previewArt.foto_url : `/${previewArt.foto_url}`}
                   alt={previewArt.descrizione}
-                  style={{ maxWidth: '100%', maxHeight: '100vh', objectFit: 'contain', display: 'block', opacity: previewArt.escluso === 1 ? 0.6 : 1 }}
+                  style={{ maxWidth: '100%', maxHeight: '100vh', objectFit: 'contain', display: 'block', opacity: previewArt.escluso === 1 ? 0.4 : 1 }}
                 />
                 {previewArt.escluso === 1 && (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src="/images/app/escluso.png" alt="ESCLUSO" style={{ position: 'absolute', top: '10%', left: '10%', width: '80%', height: '80%', objectFit: 'contain', pointerEvents: 'none' }} />
+                  <img src="/images/app/escluso.png" alt="ESCLUSO" style={{ position: 'absolute', top: '-20%', left: '-20%', width: '140%', height: '140%', objectFit: 'contain', pointerEvents: 'none' }} />
                 )}
               </div>
             ) : null}

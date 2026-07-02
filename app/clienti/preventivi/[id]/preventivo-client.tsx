@@ -1832,7 +1832,7 @@ export default function PreventivoClient({
             onClick={() => setShowInoltra(true)}
             disabled={!tuttiSanati}
             className={!tuttiSanati ? b('btn-gray', isApp) : b('btn-black', isApp)}
-            style={{ flex: 1, minWidth: 'max-content', padding: '0 22px', fontSize: 13, fontFamily: 'inherit', opacity: !tuttiSanati ? 0.5 : 1 }}
+            style={{ flex: 1, minWidth: 'max-content', padding: '0 22px', fontSize: 13, fontFamily: 'inherit', opacity: !tuttiSanati ? 0.4 : 1 }}
             title={!tuttiSanati ? 'Completa tutte le caratteristiche prima di inviare' : undefined}
           >
             <span className={tuttiSanati ? 'animato' : ''}>Inoltra richiesta</span>
@@ -1855,7 +1855,7 @@ export default function PreventivoClient({
             onClick={handleInvia}
             disabled={inviaPending || !tuttiSanati}
             className={inviaPending || !tuttiSanati ? b('btn-gray', isApp) : b('btn-black', isApp)}
-            style={{ flex: 1, minWidth: 'max-content', padding: '0 22px', fontSize: 13, fontFamily: 'inherit', opacity: !tuttiSanati ? 0.5 : 1 }}
+            style={{ flex: 1, minWidth: 'max-content', padding: '0 22px', fontSize: 13, fontFamily: 'inherit', opacity: !tuttiSanati ? 0.4 : 1 }}
             title={!tuttiSanati ? 'Completa tutte le caratteristiche prima di inviare' : undefined}
           >
             {inviaPending ? 'Invio…' : 'Invia al cliente'}
@@ -2171,11 +2171,11 @@ export default function PreventivoClient({
                                     <img
                                       src={child.listino_foto_url.startsWith('http') ? child.listino_foto_url : child.listino_foto_url.startsWith('/') ? child.listino_foto_url : `/${child.listino_foto_url}`}
                                       alt=""
-                                      style={{ width: 42, height: 42, objectFit: 'cover', borderRadius: 4, display: 'block', opacity: child.listino_escluso === 1 ? 0.6 : 1 }}
+                                      style={{ width: 42, height: 42, objectFit: 'cover', borderRadius: 4, display: 'block', opacity: child.listino_escluso === 1 ? 0.4 : 1 }}
                                     />
                                     {child.listino_escluso === 1 && (
                                       // eslint-disable-next-line @next/next/no-img-element
-                                      <img src="/images/app/escluso.png" alt="ESCLUSO" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', pointerEvents: 'none' }} />
+                                      <img src="/images/app/escluso.png" alt="ESCLUSO" style={{ position: 'absolute', top: '-20%', left: '-20%', width: '140%', height: '140%', objectFit: 'contain', pointerEvents: 'none' }} />
                                     )}
                                   </div>
                                 )}
@@ -2400,11 +2400,11 @@ export default function PreventivoClient({
                 <img
                   src={previewArt.listino_foto_url.startsWith('http') ? previewArt.listino_foto_url : previewArt.listino_foto_url.startsWith('/') ? previewArt.listino_foto_url : `/${previewArt.listino_foto_url}`}
                   alt={previewArt.modello}
-                  style={{ maxWidth: '100%', maxHeight: '100vh', objectFit: 'contain', display: 'block', opacity: previewArt.listino_escluso === 1 ? 0.6 : 1 }}
+                  style={{ maxWidth: '100%', maxHeight: '100vh', objectFit: 'contain', display: 'block', opacity: previewArt.listino_escluso === 1 ? 0.4 : 1 }}
                 />
                 {previewArt.listino_escluso === 1 && (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src="/images/app/escluso.png" alt="ESCLUSO" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', pointerEvents: 'none' }} />
+                  <img src="/images/app/escluso.png" alt="ESCLUSO" style={{ position: 'absolute', top: '-20%', left: '-20%', width: '140%', height: '140%', objectFit: 'contain', pointerEvents: 'none' }} />
                 )}
               </div>
             ) : null}

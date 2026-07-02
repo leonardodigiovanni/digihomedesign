@@ -570,7 +570,7 @@ function caratteristicheHTML(children: Record<string, unknown>[], parentPrezzo: 
     return `<div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid #ececec;">
       <div style="width:40px;height:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
         ${fotoUrl
-          ? `<div style="position:relative;width:40px;height:28px;"><img src="${fotoAttr}" alt="" style="max-width:40px;max-height:28px;object-fit:contain;display:block;${n(c.escluso) === 1 ? 'opacity:0.6;' : ''}"/>${n(c.escluso) === 1 ? `<img src="/images/app/escluso.png" alt="ESCLUSO" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;"/>` : ''}</div>`
+          ? `<div style="position:relative;width:40px;height:28px;"><img src="${fotoAttr}" alt="" style="max-width:40px;max-height:28px;object-fit:contain;display:block;${n(c.escluso) === 1 ? 'opacity:0.4;' : ''}"/>${n(c.escluso) === 1 ? `<img src="/images/app/escluso.png" alt="ESCLUSO" style="position:absolute;top:-20%;left:-20%;width:140%;height:140%;object-fit:contain;pointer-events:none;"/>` : ''}</div>`
           : `<div style="width:40px;height:28px;background:#ececec;border-radius:2px;"></div>`}
       </div>
       <div style="flex:1;font-size:10.5px;color:#333;line-height:1.4;">${label || 'Caratteristica'}</div>
@@ -629,7 +629,7 @@ function caratteristichePreviewHTML(children: Record<string, unknown>[], parentP
     return `<div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid #ececec;">
       <div style="width:40px;height:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
         ${fotoUrl
-          ? `<div style="position:relative;width:40px;height:28px;"><img src="${fotoAttr}" alt="" style="max-width:40px;max-height:28px;object-fit:contain;display:block;${n(c.escluso) === 1 ? 'opacity:0.6;' : ''}"/>${n(c.escluso) === 1 ? `<img src="/images/app/escluso.png" alt="ESCLUSO" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;"/>` : ''}</div>`
+          ? `<div style="position:relative;width:40px;height:28px;"><img src="${fotoAttr}" alt="" style="max-width:40px;max-height:28px;object-fit:contain;display:block;${n(c.escluso) === 1 ? 'opacity:0.4;' : ''}"/>${n(c.escluso) === 1 ? `<img src="/images/app/escluso.png" alt="ESCLUSO" style="position:absolute;top:-20%;left:-20%;width:140%;height:140%;object-fit:contain;pointer-events:none;"/>` : ''}</div>`
           : `<div style="width:40px;height:28px;background:#ececec;border-radius:2px;"></div>`}
       </div>
       <div style="flex:1;font-size:10.5px;color:#333;line-height:1.4;">${label || 'Caratteristica'}</div>
@@ -725,7 +725,7 @@ function articoloBlockHTML(parent: Record<string, unknown>, children: Record<str
     </div>` : ''}
     <div style="width:156px;flex-shrink:0;border-left:1px solid #e0e0e0;padding:6px;display:flex;align-items:center;justify-content:center;background:#fcfcfc;">
       ${fotoUrl
-        ? `<div style="position:relative;width:100%;height:124px;display:flex;align-items:center;justify-content:center;"><img src="${fotoAttr}" alt="Scheda tecnica" style="display:block;max-width:100%;max-height:124px;object-fit:contain;margin:0 auto;${n(parent.escluso) === 1 ? 'opacity:0.6;' : ''}" />${n(parent.escluso) === 1 ? `<img src="/images/app/escluso.png" alt="ESCLUSO" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;"/>` : ''}</div>`
+        ? `<div style="position:relative;width:100%;height:124px;display:flex;align-items:center;justify-content:center;"><img src="${fotoAttr}" alt="Scheda tecnica" style="display:block;max-width:100%;max-height:124px;object-fit:contain;margin:0 auto;${n(parent.escluso) === 1 ? 'opacity:0.4;' : ''}" />${n(parent.escluso) === 1 ? `<img src="/images/app/escluso.png" alt="ESCLUSO" style="position:absolute;top:-20%;left:-20%;width:140%;height:140%;object-fit:contain;pointer-events:none;"/>` : ''}</div>`
         : `<div style="font-size:10px;color:#b0b0b0;text-align:center;">Nessuna immagine<br/>scheda tecnica</div>`}
     </div>
   </div>

@@ -796,11 +796,11 @@ function ImgCell({ artId, url, tipo, alt, escluso }: { artId: number; url: strin
   return (
     <div style={{ position: 'relative', width: '100%', height: 90 }}>
       {url
-        ? <img src={url} alt={alt} style={{ display: 'block', width: '100%', height: 90, objectFit: 'contain', background: '#f5f5f5', borderRadius: 3, opacity: escluso ? 0.6 : 1 }} />
+        ? <img src={url} alt={alt} style={{ display: 'block', width: '100%', height: 90, objectFit: 'contain', background: '#f5f5f5', borderRadius: 3, opacity: escluso ? 0.4 : 1 }} />
         : <div style={{ width: '100%', height: 90, background: '#f5f5f5', borderRadius: 3 }} />
       }
       {url && escluso && (
-        <img src="/images/app/escluso.png" alt="ESCLUSO" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', pointerEvents: 'none' }} />
+        <img src="/images/app/escluso.png" alt="ESCLUSO" style={{ position: 'absolute', top: '-20%', left: '-20%', width: '140%', height: '140%', objectFit: 'contain', pointerEvents: 'none' }} />
       )}
       {url && (
         <form style={{ position: 'absolute', top: 2, right: 2 }} action={async fd => {
