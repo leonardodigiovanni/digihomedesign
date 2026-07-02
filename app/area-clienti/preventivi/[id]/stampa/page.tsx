@@ -570,7 +570,7 @@ function caratteristicheHTML(children: Record<string, unknown>[], parentPrezzo: 
     return `<div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid #ececec;">
       <div style="width:80px;height:56px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
         ${fotoUrl
-          ? `<div style="position:relative;width:80px;height:56px;"><img src="${fotoAttr}" alt="" style="max-width:80px;max-height:56px;object-fit:contain;display:block;${n(c.escluso) === 1 ? 'opacity:0.4;' : ''}"/>${n(c.escluso) === 1 ? `<img src="/images/app/escluso.png" alt="ESCLUSO" style="position:absolute;top:-20%;left:-20%;width:140%;height:140%;object-fit:contain;pointer-events:none;"/>` : ''}</div>`
+          ? `<div style="position:relative;width:80px;height:56px;"><img src="${fotoAttr}" alt="" style="max-width:80px;max-height:56px;object-fit:contain;display:block;border:1px solid #ccc;${n(c.escluso) === 1 ? 'opacity:0.4;' : ''}"/>${n(c.escluso) === 1 ? `<img src="/images/app/escluso.png" alt="ESCLUSO" style="position:absolute;top:-20%;left:-20%;width:140%;height:140%;object-fit:contain;pointer-events:none;"/>` : ''}</div>`
           : `<div style="width:80px;height:56px;background:#ececec;border-radius:2px;"></div>`}
       </div>
       <div style="flex:1;font-size:10.5px;color:#333;line-height:1.4;">${label || 'Caratteristica'}</div>
@@ -629,7 +629,7 @@ function caratteristichePreviewHTML(children: Record<string, unknown>[], parentP
     return `<div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid #ececec;">
       <div style="width:80px;height:56px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
         ${fotoUrl
-          ? `<div style="position:relative;width:80px;height:56px;"><img src="${fotoAttr}" alt="" style="max-width:80px;max-height:56px;object-fit:contain;display:block;${n(c.escluso) === 1 ? 'opacity:0.4;' : ''}"/>${n(c.escluso) === 1 ? `<img src="/images/app/escluso.png" alt="ESCLUSO" style="position:absolute;top:-20%;left:-20%;width:140%;height:140%;object-fit:contain;pointer-events:none;"/>` : ''}</div>`
+          ? `<div style="position:relative;width:80px;height:56px;"><img src="${fotoAttr}" alt="" style="max-width:80px;max-height:56px;object-fit:contain;display:block;border:1px solid #ccc;${n(c.escluso) === 1 ? 'opacity:0.4;' : ''}"/>${n(c.escluso) === 1 ? `<img src="/images/app/escluso.png" alt="ESCLUSO" style="position:absolute;top:-20%;left:-20%;width:140%;height:140%;object-fit:contain;pointer-events:none;"/>` : ''}</div>`
           : `<div style="width:80px;height:56px;background:#ececec;border-radius:2px;"></div>`}
       </div>
       <div style="flex:1;font-size:10.5px;color:#333;line-height:1.4;">${label || 'Caratteristica'}</div>
