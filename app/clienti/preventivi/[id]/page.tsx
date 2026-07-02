@@ -142,7 +142,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       ORDER BY COALESCE(lp.categoria, l.categoria), l.produttore, l.serie, l.descrizione
     `) as [Record<string, unknown>[], unknown]
 
-    const listini: ListinoItem[] = (listiniRows as Record<string, unknown>[]).map(l => ({
+    const _listiniAll: ListinoItem[] = (listiniRows as Record<string, unknown>[]).map(l => ({
       id: Number(l.id),
       categoria: String(l.categoria ?? ''),
       sottocategoria: l.sottocategoria ? String(l.sottocategoria) : null,
@@ -172,6 +172,12 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       filtro_4: Number(l.filtro_4 ?? 0),
       schema_url: l.schema_url != null ? String(l.schema_url) : null,
     }))
+    const _seenListiniIds = new Set<number>()
+    const listini: ListinoItem[] = _listiniAll.filter(l => {
+      if (_seenListiniIds.has(l.id)) return false
+      _seenListiniIds.add(l.id)
+      return true
+    })
 
     // Percorsi per articoli preventivo + listini (per matching per coppie)
     let percorsiPerListino: Record<number, { categoria: string; sottocategoria: string }[]> = {}

@@ -213,9 +213,10 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       }
     } catch {}
 
+    const _seenIds = new Set<number>()
     let listini: ListinoItem[]
     if (isStaff) {
-      listini = allListini.map(l => ({ ...l }))
+      listini = allListini.filter(l => { if (_seenIds.has(l.id)) return false; _seenIds.add(l.id); return true }).map(l => ({ ...l }))
     } else {
       const best = new Map<string, RawListino>()
       for (const l of allListini) {
