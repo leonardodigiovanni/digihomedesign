@@ -91,6 +91,7 @@ export type ArticoloCarrello = {
   abbr?: string
   profilo_mm?: number
   foto_url?: string | null
+  escluso?: number
   bar_color?: string | null
   bar_color_acc?: string | null
 }
@@ -972,12 +973,18 @@ export default function CarrelloClient({
                             <tr key={child.index} style={{ background: '#ffffff' }}>
                               <td style={{ ...tdS, padding: 4, textAlign: 'center' }}>
                                 {child.foto_url && (
-                                  // eslint-disable-next-line @next/next/no-img-element
-                                  <img
-                                    src={child.foto_url.startsWith('http') ? child.foto_url : child.foto_url.startsWith('/') ? child.foto_url : `/${child.foto_url}`}
-                                    alt=""
-                                    style={{ width: 42, height: 42, objectFit: 'cover', borderRadius: 4, display: 'block', margin: '0 auto' }}
-                                  />
+                                  <div style={{ position: 'relative', width: 42, height: 42, margin: '0 auto' }}>
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img
+                                      src={child.foto_url.startsWith('http') ? child.foto_url : child.foto_url.startsWith('/') ? child.foto_url : `/${child.foto_url}`}
+                                      alt=""
+                                      style={{ width: 42, height: 42, objectFit: 'cover', borderRadius: 4, display: 'block', opacity: child.escluso === 1 ? 0.6 : 1 }}
+                                    />
+                                    {child.escluso === 1 && (
+                                      // eslint-disable-next-line @next/next/no-img-element
+                                      <img src="/images/app/escluso.png" alt="ESCLUSO" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', pointerEvents: 'none' }} />
+                                    )}
+                                  </div>
                                 )}
                               </td>
                               <td style={{ ...tdS, paddingLeft: 8, textAlign: 'left' }}>
@@ -1235,12 +1242,18 @@ export default function CarrelloClient({
                 maxHeight="100vh"
               />
             ) : previewArt.foto_url ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={previewArt.foto_url.startsWith('http') ? previewArt.foto_url : previewArt.foto_url.startsWith('/') ? previewArt.foto_url : `/${previewArt.foto_url}`}
-                alt={previewArt.descrizione}
-                style={{ maxWidth: '100%', maxHeight: '100vh', objectFit: 'contain', display: 'block' }}
-              />
+              <div style={{ position: 'relative', display: 'inline-block', maxWidth: '100%' }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={previewArt.foto_url.startsWith('http') ? previewArt.foto_url : previewArt.foto_url.startsWith('/') ? previewArt.foto_url : `/${previewArt.foto_url}`}
+                  alt={previewArt.descrizione}
+                  style={{ maxWidth: '100%', maxHeight: '100vh', objectFit: 'contain', display: 'block', opacity: previewArt.escluso === 1 ? 0.6 : 1 }}
+                />
+                {previewArt.escluso === 1 && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src="/images/app/escluso.png" alt="ESCLUSO" style={{ position: 'absolute', top: '10%', left: '10%', width: '80%', height: '80%', objectFit: 'contain', pointerEvents: 'none' }} />
+                )}
+              </div>
             ) : null}
           </div>
           <p style={{ position: 'absolute', bottom: 16, left: 0, right: 0, textAlign: 'center', margin: 0, fontSize: 14, color: '#bbb', fontStyle: 'italic', pointerEvents: 'none' }}>

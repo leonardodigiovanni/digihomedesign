@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useActionState, useTransition, useRef, useEffect, useContext, createContext } from 'react'
 import SelectLookup from '@/components/select-lookup'
 import { useRouter } from 'next/navigation'
-import { addArticolo, updateArticolo, deleteArticolo, cloneArticolo, toggleDisponibile, togglePreventivabile, toggleAcquistabile, togglePrincipale, toggleCaratteristica, toggleColonnaBooleana, updateSchedaTecnica, clearImmagine, type MutResult, type AddResult } from './actions'
+import { addArticolo, updateArticolo, deleteArticolo, cloneArticolo, toggleDisponibile, togglePreventivabile, toggleAcquistabile, togglePrincipale, toggleCaratteristica, toggleEscluso, toggleColonnaBooleana, updateSchedaTecnica, clearImmagine, type MutResult, type AddResult } from './actions'
 import { addPercorsoListino, removePercorsoListino, type Percorso } from '@/lib/percorsi'
 
 // ─── Tipi ─────────────────────────────────────────────────────────────────────
@@ -67,18 +67,19 @@ export type Articolo = {
   filtro_8: number
   filtro_9: number
   filtro_10: number
+  escluso: number
 }
 
 // ─── Visibilità colonne ────────────────────────────────────────────────────────
 
-const COL_KEYS = ['percorsi','cat','fase','mat','tipo','amb','descr','fascia','prod','serie','forn','schema','foto','unita','minimo','p_acq','p_vnd','costante','abbr','sconto','margine','note','richiede','filtri','azioni'] as const
+const COL_KEYS = ['percorsi','cat','fase','mat','tipo','amb','descr','fascia','prod','serie','forn','schema','foto','escluso','unita','minimo','p_acq','p_vnd','costante','abbr','sconto','margine','note','richiede','filtri','azioni'] as const
 type ColKey = typeof COL_KEYS[number]
 
 const COL_LABELS: Record<ColKey, string> = {
   percorsi: 'Percorsi', cat: 'Categoria',
   fase: 'Fase', mat: 'Materiale', tipo: 'Tipologia', amb: 'Ambiente',
   descr: 'Descriz.', fascia: 'Fascia', prod: 'Marca', serie: 'Serie', forn: 'Fornitore',
-  schema: 'Schema', foto: 'Foto', unita: 'Unità',
+  schema: 'Schema', foto: 'Foto', escluso: 'Escluso', unita: 'Unità',
   minimo: 'Minimo', p_acq: 'P.Acq', p_vnd: 'P.Vnd', costante: 'Cost.',
   abbr: 'Abbr', sconto: 'Sconto', margine: 'Margine', note: 'Note',
   richiede: 'Richiede…', filtri: 'Filtri', azioni: 'Azioni',
@@ -88,7 +89,7 @@ const COL_DEFAULT: Record<ColKey, boolean> = {
   percorsi: true, cat: true,
   fase: true, mat: true, tipo: true, amb: true,
   descr: true, fascia: true, prod: true, serie: true, forn: true,
-  schema: true, foto: true, unita: true,
+  schema: true, foto: true, escluso: true, unita: true,
   minimo: false, p_acq: true, p_vnd: true, costante: false,
   abbr: false, sconto: true, margine: true, note: true,
   richiede: true, filtri: true, azioni: true,
@@ -768,15 +769,39 @@ function ToggleCaratteristicaBtn({ art }: { art: Articolo }) {
   )
 }
 
-function ImgCell({ artId, url, tipo, alt }: { artId: number; url: string | null; tipo: 'schema' | 'foto'; alt: string }) {
+function ToggleEsclusoBtn({ art }: { art: Articolo }) {
+  const [, startT] = React.useTransition()
+  const router = useRouter()
+  const val = art.escluso === 1
+  return (
+    <form style={{ display: 'contents' }} action={async fd => {
+      startT(async () => { await toggleEscluso(null, fd); router.refresh() })
+    }}>
+      <input type="hidden" name="id" value={art.id} />
+      <button type="submit" style={{
+        padding: '2px 8px', fontSize: 10, fontWeight: 700, borderRadius: 3,
+        border: 'none', cursor: 'pointer', fontFamily: 'inherit',
+        background: val ? '#b71c1c' : '#aaa',
+        color: '#fff', whiteSpace: 'nowrap', minWidth: 62, textAlign: 'center',
+      }}>
+        {val ? 'Escluso' : 'Incluso'}
+      </button>
+    </form>
+  )
+}
+
+function ImgCell({ artId, url, tipo, alt, escluso }: { artId: number; url: string | null; tipo: 'schema' | 'foto'; alt: string; escluso?: boolean }) {
   const [, startT] = React.useTransition()
   const router = useRouter()
   return (
     <div style={{ position: 'relative', width: '100%', height: 90 }}>
       {url
-        ? <img src={url} alt={alt} style={{ display: 'block', width: '100%', height: 90, objectFit: 'contain', background: '#f5f5f5', borderRadius: 3 }} />
+        ? <img src={url} alt={alt} style={{ display: 'block', width: '100%', height: 90, objectFit: 'contain', background: '#f5f5f5', borderRadius: 3, opacity: escluso ? 0.6 : 1 }} />
         : <div style={{ width: '100%', height: 90, background: '#f5f5f5', borderRadius: 3 }} />
       }
+      {url && escluso && (
+        <img src="/images/app/escluso.png" alt="ESCLUSO" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', pointerEvents: 'none' }} />
+      )}
       {url && (
         <form style={{ position: 'absolute', top: 2, right: 2 }} action={async fd => {
           startT(async () => { await clearImmagine(null, fd); router.refresh() })
@@ -932,7 +957,10 @@ function RigaNormale({ art, percorsi, onEdit, onScheda, onDelete, onAction, pend
         <ImgCell artId={art.id} url={art.schema_url} tipo="schema" alt="schema" />
       </td>
       <td style={{ ...td, padding: 4, width: 140, minWidth: 120, ...vis('foto') }}>
-        <ImgCell artId={art.id} url={art.foto_url} tipo="foto" alt={art.descrizione} />
+        <ImgCell artId={art.id} url={art.foto_url} tipo="foto" alt={art.descrizione} escluso={art.escluso === 1} />
+      </td>
+      <td style={{ ...td, textAlign: 'center', ...vis('escluso') }} onClick={e => e.stopPropagation()}>
+        <ToggleEsclusoBtn art={art} />
       </td>
       <td style={{ ...td, textAlign: 'center', color: '#666', ...vis('unita') }}>{art.unita}</td>
       <td style={{ ...td, textAlign: 'center', color: '#666', ...vis('minimo') }}>{art.minimo ?? ''}</td>
@@ -1067,6 +1095,7 @@ function RigaEdit({ art, categorie, produttori, fornitori, onDone, onSaved }: {
       </td>
       <td style={{ ...tde, ...vis('schema') }} />
       <td style={{ ...tde, ...vis('foto') }} />
+      <td style={{ ...tde, ...vis('escluso') }} />
       <td style={{ ...tde, ...vis('unita') }}>
         {unitaCustom ? (
           <input name="unita" defaultValue={art.unita} required style={{ ...inp, width: 60 }}
@@ -1321,6 +1350,7 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino 
                   <th style={{ ...thS, ...thVis('forn') }}>Fornitore</th>
                   <th style={{ ...thS, width: 140, ...thVis('schema') }}>Schema</th>
                   <th style={{ ...thS, width: 140, ...thVis('foto') }}>Foto prodotto</th>
+                  <th style={{ ...thS, textAlign: 'center', ...thVis('escluso') }}>Escluso</th>
                   <th style={{ ...thS, textAlign: 'center', ...thVis('unita') }}>Unità</th>
                   <th style={{ ...thS, textAlign: 'center', color: '#b0bec5', fontSize: 10, ...thVis('minimo') }}>Minimo</th>
                   <th style={{ ...thS, textAlign: 'right', color: '#90caf9', ...thVis('p_acq') }}>P. Acquisto €</th>

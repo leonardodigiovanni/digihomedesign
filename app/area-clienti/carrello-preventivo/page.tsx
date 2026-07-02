@@ -42,14 +42,14 @@ async function getArticoliDaCookie(cart: CartItem[]) {
   // include tutti gli item con id > 0 (sia articoli principali che figli/caratteristiche)
   const allValidIds = [...new Set(normalized.filter(i => (i.id ?? 0) > 0).map(i => i.id!))]
 
-  let rows: { id: number; categoria: string; produttore: string; serie: string; descrizione: string; unita: string; prezzo_vendita: number; sconto_articolo: number; costante: number; richiede_larghezza: number; richiede_altezza: number; richiede_quantita: number; richiede_tipo_colore: number; richiede_tipo_colore_acc: number; richiede_tipo_vetro: number; richiede_tipo_montaggio: number; minimo: number | null; abbr: string | null; profilo_frontale_mm: number | null; foto_url: string | null }[] = []
+  let rows: { id: number; categoria: string; produttore: string; serie: string; descrizione: string; unita: string; prezzo_vendita: number; sconto_articolo: number; costante: number; richiede_larghezza: number; richiede_altezza: number; richiede_quantita: number; richiede_tipo_colore: number; richiede_tipo_colore_acc: number; richiede_tipo_vetro: number; richiede_tipo_montaggio: number; minimo: number | null; abbr: string | null; profilo_frontale_mm: number | null; foto_url: string | null; escluso: number }[] = []
 
   if (allValidIds.length > 0) {
     const db = await getConnection()
     try {
       const ph = allValidIds.map(() => '?').join(',')
       const [r] = await db.query(
-        `SELECT id, categoria, produttore, serie, descrizione, unita, prezzo_vendita, sconto_articolo, costante, richiede_larghezza, richiede_altezza, richiede_quantita, richiede_tipo_colore, richiede_tipo_colore_acc, richiede_tipo_vetro, richiede_tipo_montaggio, minimo, abbr, profilo_frontale_mm, foto_url FROM listini WHERE id IN (${ph})`,
+        `SELECT id, categoria, produttore, serie, descrizione, unita, prezzo_vendita, sconto_articolo, costante, richiede_larghezza, richiede_altezza, richiede_quantita, richiede_tipo_colore, richiede_tipo_colore_acc, richiede_tipo_vetro, richiede_tipo_montaggio, minimo, abbr, profilo_frontale_mm, foto_url, escluso FROM listini WHERE id IN (${ph})`,
         allValidIds
       ) as [typeof rows, unknown]
       rows = r
@@ -74,6 +74,7 @@ async function getArticoliDaCookie(cart: CartItem[]) {
         tipo: 'caratteristica' as const,
         desc: item.desc,
         foto_url: artCar?.foto_url ?? null,
+        escluso: Number(artCar?.escluso ?? 0),
         bar_color: null as string | null,
         bar_color_acc: null as string | null,
       }
@@ -111,6 +112,7 @@ async function getArticoliDaCookie(cart: CartItem[]) {
       abbr: art.abbr ?? '',
       profilo_mm: art.profilo_frontale_mm ?? 80,
       foto_url: art.foto_url ?? null,
+      escluso: Number(art.escluso ?? 0),
       bar_color: null as string | null,
       bar_color_acc: null as string | null,
     }

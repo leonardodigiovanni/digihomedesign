@@ -79,6 +79,7 @@ async function ensureTable() {
   await db.execute(`ALTER TABLE listini ADD COLUMN tipologia     VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
   await db.execute(`ALTER TABLE listini ADD COLUMN ambiente      VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
   await db.execute(`ALTER TABLE listini ADD COLUMN fascia        VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN escluso       TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
   await db.end()
 }
 
@@ -250,6 +251,19 @@ export async function toggleCaratteristica(_: MutResult | null, fd: FormData): P
   const db = await getConnection()
   try {
     await db.execute('UPDATE listini SET caratteristica = 1 - caratteristica WHERE id=?', [id])
+    revalidatePath('/area-lavoro/listini')
+    return { ok: true }
+  } finally { await db.end() }
+}
+
+export async function toggleEscluso(_: MutResult | null, fd: FormData): Promise<MutResult> {
+  await checkAccess()
+  const id = parseInt(fd.get('id') as string)
+  if (isNaN(id)) return { ok: false, error: 'ID non valido.' }
+  await ensureTable()
+  const db = await getConnection()
+  try {
+    await db.execute('UPDATE listini SET escluso = 1 - escluso WHERE id=?', [id])
     revalidatePath('/area-lavoro/listini')
     return { ok: true }
   } finally { await db.end() }

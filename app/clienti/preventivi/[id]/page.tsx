@@ -48,7 +48,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     }
 
     const [artRows] = await db.query(
-      `SELECT pa.*, l.abbr, l.profilo_frontale_mm, l.foto_url AS listino_foto_url, l.richiede_tipo_colore_acc
+      `SELECT pa.*, l.abbr, l.profilo_frontale_mm, l.foto_url AS listino_foto_url, l.richiede_tipo_colore_acc, l.escluso AS listino_escluso
        FROM preventivo_articoli pa
        LEFT JOIN listini l ON l.id = pa.listino_id
        WHERE pa.preventivo_id = ? ORDER BY COALESCE(pa.parent_id, pa.id) ASC, pa.ordine ASC, pa.id ASC`,
@@ -80,6 +80,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       abbr: a.abbr != null ? String(a.abbr) : '',
       profilo_mm: a.profilo_frontale_mm != null ? Number(a.profilo_frontale_mm) : 80,
       listino_foto_url: a.listino_foto_url != null ? String(a.listino_foto_url) : '',
+      listino_escluso: Number(a.listino_escluso ?? 0),
       bar_color: null,
       bar_color_acc: null,
     }))

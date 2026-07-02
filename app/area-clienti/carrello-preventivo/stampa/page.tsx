@@ -40,6 +40,7 @@ export type ArtRow = {
   richiede_tipo_montaggio?: number
   minimo: number | null
   trasmittanza_uw: number | null
+  escluso?: number
 }
 
 export function calcolaPrezzo(a: ArtRow, allArts?: ArtRow[]): number {
@@ -668,7 +669,7 @@ function caratteristicheHTML(children: ArtRow[], allArts: ArtRow[], parentPrezzo
     return `<div style="display:flex;align-items:center;gap:8px;padding:2px 0;border-bottom:1px solid #ececec;">
       <div style="width:40px;height:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
         ${fotoUrl
-          ? `<img src="${fotoAttr}" alt="" style="max-width:40px;max-height:28px;object-fit:contain;display:block;border:1px solid #888;"/>`
+          ? `<div style="position:relative;width:40px;height:28px;"><img src="${fotoAttr}" alt="" style="max-width:40px;max-height:28px;object-fit:contain;display:block;border:1px solid #888;${c.escluso === 1 ? 'opacity:0.6;' : ''}"/>${c.escluso === 1 ? `<img src="/images/app/escluso.png" alt="ESCLUSO" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;"/>` : ''}</div>`
           : `<div style="width:40px;height:28px;background:#ececec;border-radius:2px;"></div>`}
       </div>
       <div style="flex:1;font-size:10.5px;color:#333;line-height:1.4;">${label || 'Caratteristica'}</div>
@@ -710,7 +711,7 @@ function caratteristichePreviewHTML(children: ArtRow[], allArts: ArtRow[], paren
     return `<div style="display:flex;align-items:center;gap:8px;padding:2px 0;border-bottom:1px solid #ececec;">
       <div style="width:40px;height:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
         ${fotoUrl
-          ? `<img src="${fotoAttr}" alt="" style="max-width:40px;max-height:28px;object-fit:contain;display:block;border:1px solid #888;"/>`
+          ? `<div style="position:relative;width:40px;height:28px;"><img src="${fotoAttr}" alt="" style="max-width:40px;max-height:28px;object-fit:contain;display:block;border:1px solid #888;${c.escluso === 1 ? 'opacity:0.6;' : ''}"/>${c.escluso === 1 ? `<img src="/images/app/escluso.png" alt="ESCLUSO" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;"/>` : ''}</div>`
           : `<div style="width:40px;height:28px;background:#ececec;border-radius:2px;"></div>`}
       </div>
       <div style="flex:1;font-size:10.5px;color:#333;line-height:1.4;">${label || 'Caratteristica'}</div>
@@ -780,7 +781,10 @@ function articoloBlockHTML(parent: ArtRow, children: ArtRow[], allArts: ArtRow[]
       ${disegnoSVGAbbr(parent.abbr, parent.larghezza_cm, parent.altezza_cm, profiloMm, barColor, barColorAcc)}
     </div>` : ''}
     ${fotoUrl ? `<div style="width:156px;flex-shrink:0;border-left:1px solid #e0e0e0;padding:6px;display:flex;align-items:center;justify-content:center;background:#fcfcfc;">
-      <img src="${fotoAttr}" alt="Foto" style="display:block;max-width:100%;max-height:124px;object-fit:contain;margin:0 auto;" />
+      <div style="position:relative;width:100%;height:124px;display:flex;align-items:center;justify-content:center;">
+        <img src="${fotoAttr}" alt="Foto" style="display:block;max-width:100%;max-height:124px;object-fit:contain;margin:0 auto;${parent.escluso === 1 ? 'opacity:0.6;' : ''}" />
+        ${parent.escluso === 1 ? `<img src="/images/app/escluso.png" alt="ESCLUSO" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;"/>` : ''}
+      </div>
     </div>` : `<div style="width:156px;flex-shrink:0;border-left:1px solid #e0e0e0;padding:6px;display:flex;align-items:center;justify-content:center;background:#fcfcfc;">
       <div style="font-size:10px;color:#b0b0b0;text-align:center;">Nessuna immagine<br/>scheda tecnica</div>
     </div>`}
@@ -1065,9 +1069,9 @@ export default async function Page() {
     const ids = cart.map(i => i.id)
     const ph  = ids.map(() => '?').join(',')
     const [rows] = await db.query(
-      `SELECT id, categoria, produttore, serie, descrizione, unita, prezzo_vendita, sconto_articolo, costante, foto_url, profilo_frontale_mm, abbr, richiede_larghezza, richiede_altezza, richiede_tipo_colore, richiede_tipo_colore_acc, richiede_tipo_vetro, richiede_tipo_montaggio, trasmittanza_uw, minimo FROM listini WHERE id IN (${ph})`,
+      `SELECT id, categoria, produttore, serie, descrizione, unita, prezzo_vendita, sconto_articolo, costante, foto_url, profilo_frontale_mm, abbr, richiede_larghezza, richiede_altezza, richiede_tipo_colore, richiede_tipo_colore_acc, richiede_tipo_vetro, richiede_tipo_montaggio, trasmittanza_uw, minimo, escluso FROM listini WHERE id IN (${ph})`,
       ids
-    ) as [{ id: number; categoria: string; produttore: string; serie: string; descrizione: string; unita: string; prezzo_vendita: number; sconto_articolo: number; costante: number; foto_url: string | null; profilo_frontale_mm: number | null; abbr: string | null; richiede_larghezza: number | null; richiede_altezza: number | null; richiede_tipo_colore: number | null; richiede_tipo_colore_acc: number | null; richiede_tipo_vetro: number | null; richiede_tipo_montaggio: number | null; minimo: number | null; trasmittanza_uw: number | null }[], unknown]
+    ) as [{ id: number; categoria: string; produttore: string; serie: string; descrizione: string; unita: string; prezzo_vendita: number; sconto_articolo: number; costante: number; foto_url: string | null; profilo_frontale_mm: number | null; abbr: string | null; richiede_larghezza: number | null; richiede_altezza: number | null; richiede_tipo_colore: number | null; richiede_tipo_colore_acc: number | null; richiede_tipo_vetro: number | null; richiede_tipo_montaggio: number | null; minimo: number | null; trasmittanza_uw: number | null; escluso: number | null }[], unknown]
 
     let rootIdx = 0
     arts = cart.map((item) => {
@@ -1100,6 +1104,7 @@ export default async function Page() {
         richiede_tipo_montaggio:  Number(r.richiede_tipo_montaggio  ?? 0),
         minimo: r.minimo != null ? Number(r.minimo) : null,
         trasmittanza_uw: r.trasmittanza_uw != null ? Number(r.trasmittanza_uw) : null,
+        escluso: Number(r.escluso ?? 0),
       }
     }).filter(x => x !== null) as ArtRow[]
 

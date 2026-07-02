@@ -74,6 +74,7 @@ async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[]
     await db.execute(`ALTER TABLE listini ADD COLUMN tipologia     VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
     await db.execute(`ALTER TABLE listini ADD COLUMN ambiente      VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
     await db.execute(`ALTER TABLE listini ADD COLUMN fascia        VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN escluso       TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
 
     const [rows] = await db.query(`
       SELECT l.id, l.categoria, l.sottocategoria, l.fase, l.materiale, l.tipologia, l.ambiente, l.produttore, l.descrizione, l.fascia, l.unita,
@@ -84,7 +85,7 @@ async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[]
              l.Filtro_1, l.Filtro_2, l.Filtro_3, l.Filtro_4, l.Filtro_5,
              l.Filtro_6, l.Filtro_7, l.Filtro_8, l.Filtro_9, l.Filtro_10,
              l.updated_at, l.foto_url, l.schema_url, l.profilo_frontale_mm, l.profilo_profondita_mm,
-             l.trasmittanza_uw, l.fornitore_id,
+             l.trasmittanza_uw, l.fornitore_id, l.escluso,
              COALESCE(f.ragione_sociale, '') AS fornitore_nome
       FROM listini l
       LEFT JOIN fornitori f ON f.id = l.fornitore_id
@@ -142,6 +143,7 @@ async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[]
       tipologia:             r.tipologia      ? String(r.tipologia)      : null,
       ambiente:              r.ambiente       ? String(r.ambiente)       : null,
       fascia:                r.fascia         ? String(r.fascia)         : null,
+      escluso:               Number(r.escluso ?? 0),
     })) as Articolo[]
     const fornitori = (forniRows as Record<string, unknown>[]).map(r => ({
       id: Number(r.id),
