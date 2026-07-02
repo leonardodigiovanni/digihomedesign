@@ -528,7 +528,7 @@ function caratteristicheHTML(children: Record<string, unknown>[], parentPrezzo: 
     const marca      = s(c.marca)
     const modello    = s(c.modello)
     const nota       = s(c.note)
-    const label      = [marca, modello].filter(Boolean).join(' ') + (nota ? ` (${nota})` : '')
+    const label      = (modello || '') + (nota ? ` (${nota})` : '')
     const contrib    = n(c.prezzo_totale)
     const prezzoBase = n(c.prezzo_base)
     const scontoPct  = n(c.sconto_articolo_pct)
@@ -701,7 +701,7 @@ function articoloBlockHTML(parent: Record<string, unknown>, children: Record<str
     : `<span style="font-size:10.5px;font-weight:bold;color:#111;">€ ${prezzo > 0 ? fmt(prezzo) : '—'}</span>`
 
   const righe: string[] = []
-  if (marca || modello) righe.push(`<span style="color:#555;">${abbr ? 'Profilo:' : 'Articolo:'}</span> ${[marca, modello].filter(Boolean).join(' — ')}`)
+  if (modello) righe.push(`<span style="color:#555;">${abbr ? 'Profilo:' : 'Articolo:'}</span> ${modello}`)
   if (colore)                     righe.push(`<span style="color:#555;">Colore:</span> ${colore}`)
   if (h > 0 || l > 0)            righe.push(`<span style="color:#555;">Dimensioni:</span> ${l} × ${h} cm`)
   if (abbr && anteRaw > 1)        righe.push(`<span style="color:#555;">N° ante:</span> ${anteRaw}`)
