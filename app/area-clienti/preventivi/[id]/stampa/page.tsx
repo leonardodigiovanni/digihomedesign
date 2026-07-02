@@ -1314,9 +1314,7 @@ async function buildStampaData(opts: {
   blocks.push({ html: riepilogoIntroHtml() })
   blocks.push({ html: riepilogoTableHeaderHtml() })
   roots.forEach((p, i) => blocks.push({ html: riepilogoTableRowHtml(p, i) }))
-  blocks.push({ html: totaleBoxHtml(artRows, totale, scontoClientePct, hasArticoliDaDefinire) })
-
-  blocks.push({ html: riepilogoNotaHtml() + riepilogoChiusuraHtml() })
+  blocks.push({ html: totaleBoxHtml(artRows, totale, scontoClientePct, hasArticoliDaDefinire) + riepilogoNotaHtml() + riepilogoChiusuraHtml() })
   if (noteRaw) {
     const righe = noteRaw.split('\n')
     const righeHtml = righe.map(r => {
