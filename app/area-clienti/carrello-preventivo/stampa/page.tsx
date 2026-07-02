@@ -661,7 +661,7 @@ function caratteristicheHTML(children: ArtRow[], allArts: ArtRow[], parentPrezzo
       ? (fotoRaw.startsWith('http://') || fotoRaw.startsWith('https://') || fotoRaw.startsWith('/') ? fotoRaw : `/${fotoRaw.replace(/^\/+/, '')}`)
       : ''
     const fotoAttr = fotoUrl.replace(/"/g, '%22')
-    const label = [c.categoria, [c.produttore, c.descrizione].filter(Boolean).join(' ')].filter(Boolean).join(': ')
+    const label = c.descrizione || ''
     const isIncluso = contrib === 0 && (c.sconto_articolo ?? 0) !== 100
     const prezzoHtml = isIncluso
       ? `<div style="font-size:10.5px;font-style:italic;color:#555;white-space:nowrap;">Incluso</div>`
@@ -703,7 +703,7 @@ function caratteristichePreviewHTML(children: ArtRow[], allArts: ArtRow[], paren
       ? (fotoRaw.startsWith('http://') || fotoRaw.startsWith('https://') || fotoRaw.startsWith('/') ? fotoRaw : `/${fotoRaw.replace(/^\/+/, '')}`)
       : ''
     const fotoAttr = fotoUrl.replace(/"/g, '%22')
-    const label = [c.categoria, [c.produttore, c.descrizione].filter(Boolean).join(' ')].filter(Boolean).join(': ')
+    const label = c.descrizione || ''
     const isIncluso = contrib === 0 && (c.sconto_articolo ?? 0) !== 100
     const prezzoHtml = isIncluso
       ? `<div style="font-size:10.5px;font-style:italic;color:#555;white-space:nowrap;">Incluso</div>`
@@ -797,11 +797,12 @@ function articoloBlockHTML(parent: ArtRow, children: ArtRow[], allArts: ArtRow[]
 function riepilogoHTML(roots: ArtRow[], totale: string, hasDaDefinire = false): string {
   const rows = roots.map(r => {
     const dims = r.larghezza_cm > 0 && r.altezza_cm > 0 ? `${r.larghezza_cm}×${r.altezza_cm} cm` : '—'
-    const serieLabel = [r.produttore, r.serie || r.descrizione].filter(Boolean).join(' ')
     return `<tr>
       <td style="padding:3px 8px;border:1px solid #ddd;font-size:10px;text-align:center;">Rif#${String(r.idx + 1).padStart(3, '0')}</td>
       <td style="padding:3px 8px;border:1px solid #ddd;font-size:10px;">${r.categoria}</td>
-      <td style="padding:3px 8px;border:1px solid #ddd;font-size:10px;">${serieLabel}</td>
+      <td style="padding:3px 8px;border:1px solid #ddd;font-size:10px;">${r.produttore}</td>
+      <td style="padding:3px 8px;border:1px solid #ddd;font-size:10px;">${r.serie}</td>
+      <td style="padding:3px 8px;border:1px solid #ddd;font-size:10px;">${r.descrizione}</td>
       <td style="padding:3px 8px;border:1px solid #ddd;font-size:10px;text-align:center;white-space:nowrap;">${dims}</td>
       <td style="padding:3px 8px;border:1px solid #ddd;font-size:10px;text-align:center;">${r.quantita}</td>
     </tr>`
@@ -828,7 +829,9 @@ function riepilogoHTML(roots: ArtRow[], totale: string, hasDaDefinire = false): 
     <tr style="background:#f0f0f0;">
       <th style="padding:4px 8px;border:1px solid #ddd;font-size:10px;width:28px;">Rif.</th>
       <th style="padding:4px 8px;border:1px solid #ddd;font-size:10px;text-align:left;">Categoria</th>
-      <th style="padding:4px 8px;border:1px solid #ddd;font-size:10px;text-align:left;">Produttore / Serie</th>
+      <th style="padding:4px 8px;border:1px solid #ddd;font-size:10px;text-align:left;">Marca</th>
+      <th style="padding:4px 8px;border:1px solid #ddd;font-size:10px;text-align:left;">Serie/Modello</th>
+      <th style="padding:4px 8px;border:1px solid #ddd;font-size:10px;text-align:left;">Descrizione articolo</th>
       <th style="padding:4px 8px;border:1px solid #ddd;font-size:10px;">L×H</th>
       <th style="padding:4px 8px;border:1px solid #ddd;font-size:10px;">Qtà</th>
     </tr>

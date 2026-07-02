@@ -758,10 +758,11 @@ function riepilogoIntroHtml(): string {
 function riepilogoTableHeaderHtml(): string {
   return `<div style="display:flex;background:#f0f0f0;border:1px solid #ddd;font-size:10px;font-weight:bold;box-sizing:border-box;">
   <div style="flex:0 0 6%;padding:4px 8px;border-right:1px solid #ddd;text-align:center;box-sizing:border-box;">Rif.</div>
-  <div style="flex:0 0 20%;padding:4px 8px;border-right:1px solid #ddd;box-sizing:border-box;">Tipo</div>
-  <div style="flex:0 0 17%;padding:4px 8px;border-right:1px solid #ddd;box-sizing:border-box;">Marca</div>
-  <div style="flex:0 0 35%;padding:4px 8px;border-right:1px solid #ddd;box-sizing:border-box;">Modello/Descrizione</div>
-  <div style="flex:0 0 14%;padding:4px 8px;border-right:1px solid #ddd;text-align:center;box-sizing:border-box;">L×H</div>
+  <div style="flex:0 0 18%;padding:4px 8px;border-right:1px solid #ddd;box-sizing:border-box;">Categoria</div>
+  <div style="flex:0 0 13%;padding:4px 8px;border-right:1px solid #ddd;box-sizing:border-box;">Marca</div>
+  <div style="flex:0 0 12%;padding:4px 8px;border-right:1px solid #ddd;box-sizing:border-box;">Serie/Modello</div>
+  <div style="flex:0 0 27%;padding:4px 8px;border-right:1px solid #ddd;box-sizing:border-box;">Descrizione articolo</div>
+  <div style="flex:0 0 16%;padding:4px 8px;border-right:1px solid #ddd;text-align:center;box-sizing:border-box;">L×H</div>
   <div style="flex:0 0 8%;padding:4px 8px;text-align:center;box-sizing:border-box;">Qtà</div>
 </div>`
 }
@@ -769,6 +770,7 @@ function riepilogoTableHeaderHtml(): string {
 function riepilogoTableRowHtml(p: Record<string, unknown>, idx: number): string {
   const tipo    = s(p.listino_categoria) || s(p.tipo_prodotto)
   const marca   = s(p.marca)
+  const serie   = s(p.serie)
   const modello = s(p.modello)
   const l = n(p.larghezza_cm), h = n(p.altezza_cm)
   const dims = l > 0 && h > 0 ? `${l}×${h} cm` : '—'
@@ -776,10 +778,11 @@ function riepilogoTableRowHtml(p: Record<string, unknown>, idx: number): string 
   const bg = idx % 2 === 1 ? 'background:#fafafa;' : ''
   return `<div style="display:flex;font-size:10px;border:1px solid #ddd;border-top:none;box-sizing:border-box;${bg}">
   <div style="flex:0 0 6%;padding:3px 8px;border-right:1px solid #ddd;text-align:center;box-sizing:border-box;">#${idx + 1}</div>
-  <div style="flex:0 0 20%;padding:3px 8px;border-right:1px solid #ddd;box-sizing:border-box;">${tipo}</div>
-  <div style="flex:0 0 17%;padding:3px 8px;border-right:1px solid #ddd;box-sizing:border-box;">${marca}</div>
-  <div style="flex:0 0 35%;padding:3px 8px;border-right:1px solid #ddd;box-sizing:border-box;">${modello}</div>
-  <div style="flex:0 0 14%;padding:3px 8px;border-right:1px solid #ddd;text-align:center;white-space:nowrap;box-sizing:border-box;">${dims}</div>
+  <div style="flex:0 0 18%;padding:3px 8px;border-right:1px solid #ddd;box-sizing:border-box;">${tipo}</div>
+  <div style="flex:0 0 13%;padding:3px 8px;border-right:1px solid #ddd;box-sizing:border-box;">${marca}</div>
+  <div style="flex:0 0 12%;padding:3px 8px;border-right:1px solid #ddd;box-sizing:border-box;">${serie}</div>
+  <div style="flex:0 0 27%;padding:3px 8px;border-right:1px solid #ddd;box-sizing:border-box;">${modello}</div>
+  <div style="flex:0 0 16%;padding:3px 8px;border-right:1px solid #ddd;text-align:center;white-space:nowrap;box-sizing:border-box;">${dims}</div>
   <div style="flex:0 0 8%;padding:3px 8px;text-align:center;box-sizing:border-box;">${qtà}</div>
 </div>`
 }
