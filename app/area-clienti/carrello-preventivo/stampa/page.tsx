@@ -768,7 +768,7 @@ function articoloBlockHTML(parent: ArtRow, children: ArtRow[], allArts: ArtRow[]
 
   return `<div style="border:1px solid #d0d0d0;border-radius:4px;margin-bottom:6px;overflow:hidden;page-break-inside:avoid;break-inside:avoid;">
   <div style="background:#111;color:#fff;padding:3px 12px;font-size:11px;font-weight:bold;letter-spacing:.05em;">
-    Rif#${String(parent.idx + 1).padStart(3, '0')} &nbsp; ${parent.categoria.toUpperCase()}
+    Rif#${String(parent.idx + 1).padStart(3, '0')} &nbsp; ${[String(parent.categoria||''), String(parent.produttore||''), String(parent.serie||'')].filter(Boolean).join(' · ').toUpperCase()}
   </div>
   <div style="display:flex;">
     <div style="flex:1;padding:5px 10px;font-size:11.5px;line-height:1.5;display:flex;flex-direction:column;">

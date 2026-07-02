@@ -66,6 +66,7 @@ export type Articolo = {
   profilo_mm: number
   listino_foto_url: string
   listino_escluso?: number
+  listino_categoria: string
   bar_color: string | null
   bar_color_acc: string | null
 }
@@ -1935,10 +1936,11 @@ export default function PreventivoClient({
         for (const group of groups) {
           const root = group[0]
           const serie = listini.find(l => l.id === root.listino_id)?.serie ?? ''
-          const key = `${root.tipo_prodotto}||${root.marca}||${serie}`
+          const categoria = root.listino_categoria || root.tipo_prodotto
+          const key = `${categoria}||${root.marca}||${serie}`
           let cg = catGroups.find(c => c.key === key)
           if (!cg) {
-            cg = { key, label: [root.tipo_prodotto, root.marca, serie].filter(Boolean).join(' · '), groups: [] }
+            cg = { key, label: [categoria, root.marca, serie].filter(Boolean).join(' · '), groups: [] }
             catGroups.push(cg)
           }
           cg.groups.push(group)

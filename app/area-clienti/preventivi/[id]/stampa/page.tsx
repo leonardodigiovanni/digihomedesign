@@ -711,7 +711,7 @@ function articoloBlockHTML(parent: Record<string, unknown>, children: Record<str
 
   return `<div style="border:1px solid #d0d0d0;border-radius:4px;margin-bottom:6px;overflow:hidden;page-break-inside:avoid;break-inside:avoid;">
   <div style="background:#111;color:#fff;padding:3px 12px;font-size:11px;font-weight:bold;letter-spacing:.05em;">
-    Rif#${String(idx + 1).padStart(3, '0')} &nbsp; ${tipo.toUpperCase()}
+    Rif#${String(idx + 1).padStart(3, '0')} &nbsp; ${[s(parent.listino_categoria) || tipo, marca, serie].filter(Boolean).join(' · ').toUpperCase()}
   </div>
   <div style="display:flex;">
     <div style="flex:1;padding:5px 10px;font-size:11.5px;line-height:1.5;display:flex;flex-direction:column;">
@@ -1249,7 +1249,7 @@ async function buildStampaData(opts: {
 
   const roots = artRows.filter(a => a.parent_id == null)
   // Ordina roots come l'UI: raggruppati per tipo+marca+serie, ordine prima apparizione
-  const _catKey = (p: Record<string, unknown>) => `${s(p.tipo_prodotto)}||${s(p.marca)}||${s(p.serie)}`
+  const _catKey = (p: Record<string, unknown>) => `${s(p.listino_categoria) || s(p.tipo_prodotto)}||${s(p.marca)}||${s(p.serie)}`
   const _keyOrder: string[] = []
   for (const p of roots) { const k = _catKey(p); if (!_keyOrder.includes(k)) _keyOrder.push(k) }
   roots.sort((a, b) => { const ka = _keyOrder.indexOf(_catKey(a)), kb = _keyOrder.indexOf(_catKey(b)); return ka !== kb ? ka - kb : n(a.id) - n(b.id) })
@@ -1364,7 +1364,7 @@ async function buildStampaData(opts: {
       let offset = FIRST_CHUNK
       while (offset < children.length) {
         const chunk = children.slice(offset, offset + NEXT_CHUNK)
-        blocks.push({ html: caratteristicheWrapperHTML(chunk, prezzo, i, prezzoHTML, s(p.tipo_prodotto), scontoArt, children) })
+        blocks.push({ html: caratteristicheWrapperHTML(chunk, prezzo, i, prezzoHTML, [s(p.listino_categoria) || s(p.tipo_prodotto), s(p.marca), s(p.serie)].filter(Boolean).join(' · '), scontoArt, children) })
         offset += NEXT_CHUNK
       }
     }
@@ -1430,7 +1430,7 @@ export async function loadData(prevId: number, username: string, isStaff: boolea
               l.profilo_frontale_mm AS profilo_mm, l.foto_url AS foto_url, l.abbr AS abbr,
               l.richiede_tipo_colore, l.richiede_tipo_colore_acc, l.richiede_tipo_vetro, l.richiede_tipo_montaggio,
               l.trasmittanza_uw AS trasmittanza_uw,
-              l.serie AS serie, l.escluso AS escluso
+              l.serie AS serie, l.categoria AS listino_categoria, l.escluso AS escluso
        FROM preventivo_articoli pa
        LEFT JOIN listini l ON pa.listino_id = l.id
        WHERE pa.preventivo_id = ?
