@@ -2030,6 +2030,10 @@ export default function PreventivoClient({
                       const rootSerie = rootListino?.serie ?? ''
                       const hasOptionalCaratteristiche = canEdit && listini.some(l =>
                         l.caratteristica === 1 &&
+                        (l.richiede_tipo_colore     ?? 0) === 0 &&
+                        (l.richiede_tipo_colore_acc ?? 0) === 0 &&
+                        (l.richiede_tipo_vetro      ?? 0) === 0 &&
+                        (l.richiede_tipo_montaggio  ?? 0) === 0 &&
                         matchesPercorsi(l.id, l.categoria ?? '', root.listino_id ?? 0, root.tipo_prodotto, percorsiPerListino) &&
                         (!l.produttore || l.produttore === root.marca) &&
                         (!l.serie      || l.serie      === rootSerie)
