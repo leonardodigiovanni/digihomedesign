@@ -528,7 +528,7 @@ function caratteristicheHTML(children: Record<string, unknown>[], parentPrezzo: 
     const marca      = s(c.marca)
     const modello    = s(c.modello)
     const nota       = s(c.note)
-    const label      = [tipo, [marca, modello].filter(Boolean).join(' ')].filter(Boolean).join(': ') + (nota ? ` (${nota})` : '')
+    const label      = [marca, modello].filter(Boolean).join(' ') + (nota ? ` (${nota})` : '')
     const contrib    = n(c.prezzo_totale)
     const prezzoBase = n(c.prezzo_base)
     const scontoPct  = n(c.sconto_articolo_pct)
@@ -605,7 +605,7 @@ function caratteristichePreviewHTML(children: Record<string, unknown>[], parentP
     const marca   = s(c.marca)
     const modello = s(c.modello)
     const nota    = s(c.note)
-    const label   = [tipo, [marca, modello].filter(Boolean).join(' ')].filter(Boolean).join(': ') + (nota ? ` (${nota})` : '')
+    const label   = [marca, modello].filter(Boolean).join(' ') + (nota ? ` (${nota})` : '')
     const contrib    = n(c.prezzo_totale)
     const prezzoBase = n(c.prezzo_base)
     const scontoPct  = n(c.sconto_articolo_pct)
@@ -701,7 +701,7 @@ function articoloBlockHTML(parent: Record<string, unknown>, children: Record<str
     : `<span style="font-size:10.5px;font-weight:bold;color:#111;">€ ${prezzo > 0 ? fmt(prezzo) : '—'}</span>`
 
   const righe: string[] = []
-  if (abbr && (marca || modello)) righe.push(`<span style="color:#555;">Profilo:</span> ${[marca, modello].filter(Boolean).join(' — ')}`)
+  if (marca || modello) righe.push(`<span style="color:#555;">${abbr ? 'Profilo:' : 'Articolo:'}</span> ${[marca, modello].filter(Boolean).join(' — ')}`)
   if (colore)                     righe.push(`<span style="color:#555;">Colore:</span> ${colore}`)
   if (h > 0 || l > 0)            righe.push(`<span style="color:#555;">Dimensioni:</span> ${l} × ${h} cm`)
   if (abbr && anteRaw > 1)        righe.push(`<span style="color:#555;">N° ante:</span> ${anteRaw}`)
@@ -767,7 +767,7 @@ function riepilogoTableHeaderHtml(): string {
 }
 
 function riepilogoTableRowHtml(p: Record<string, unknown>, idx: number): string {
-  const tipo    = s(p.tipo_prodotto)
+  const tipo    = s(p.listino_categoria) || s(p.tipo_prodotto)
   const marca   = s(p.marca)
   const modello = s(p.modello)
   const l = n(p.larghezza_cm), h = n(p.altezza_cm)
