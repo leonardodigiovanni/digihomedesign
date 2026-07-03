@@ -214,6 +214,19 @@ export async function toggleAcquistabile(_: MutResult | null, fd: FormData): Pro
   } finally { await db.end() }
 }
 
+export async function toggleComputabile(_: MutResult | null, fd: FormData): Promise<MutResult> {
+  await checkAccess()
+  const id = parseInt(fd.get('id') as string)
+  if (isNaN(id)) return { ok: false, error: 'ID non valido.' }
+  await ensureTable()
+  const db = await getConnection()
+  try {
+    await db.execute('UPDATE listini SET computabile = 1 - computabile WHERE id=?', [id])
+    revalidatePath('/area-lavoro/listini')
+    return { ok: true }
+  } finally { await db.end() }
+}
+
 export async function deleteArticolo(_: MutResult | null, fd: FormData): Promise<MutResult> {
   await checkAccess()
 

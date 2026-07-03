@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useActionState, useTransition, useRef, useEffect, useContext, createContext } from 'react'
 import SelectLookup from '@/components/select-lookup'
 import { useRouter } from 'next/navigation'
-import { addArticolo, updateArticolo, deleteArticolo, cloneArticolo, toggleDisponibile, togglePreventivabile, toggleAcquistabile, togglePrincipale, toggleCaratteristica, toggleEscluso, toggleColonnaBooleana, updateSchedaTecnica, clearImmagine, type MutResult, type AddResult } from './actions'
+import { addArticolo, updateArticolo, deleteArticolo, cloneArticolo, toggleDisponibile, togglePreventivabile, toggleAcquistabile, toggleComputabile, togglePrincipale, toggleCaratteristica, toggleEscluso, toggleColonnaBooleana, updateSchedaTecnica, clearImmagine, type MutResult, type AddResult } from './actions'
 import { addPercorsoListino, removePercorsoListino, type Percorso } from '@/lib/percorsi'
 
 // ─── Tipi ─────────────────────────────────────────────────────────────────────
@@ -68,6 +68,7 @@ export type Articolo = {
   filtro_9: number
   filtro_10: number
   escluso: number
+  computabile: number
 }
 
 // ─── Visibilità colonne ────────────────────────────────────────────────────────
@@ -704,6 +705,27 @@ function ToggleAcquistabileBtn({ art }: { art: Articolo }) {
   )
 }
 
+function ToggleComputabileBtn({ art }: { art: Articolo }) {
+  const [, startT] = React.useTransition()
+  const router = useRouter()
+  const val = art.computabile === 1
+  return (
+    <form style={{ display: 'contents' }} action={async fd => {
+      startT(async () => { await toggleComputabile(null, fd); router.refresh() })
+    }}>
+      <input type="hidden" name="id" value={art.id} />
+      <button type="submit" style={{
+        padding: '2px 8px', fontSize: 10, fontWeight: 700, borderRadius: 3,
+        border: 'none', cursor: 'pointer', fontFamily: 'inherit',
+        background: val ? '#00838f' : '#aaa',
+        color: '#fff', whiteSpace: 'nowrap', minWidth: 64, textAlign: 'center',
+      }}>
+        {val ? 'Comput.' : 'No comp.'}
+      </button>
+    </form>
+  )
+}
+
 function TogglePrincipaleBtn({ art }: { art: Articolo }) {
   const [, startT] = React.useTransition()
   const router = useRouter()
@@ -1016,6 +1038,7 @@ function RigaNormale({ art, percorsi, onEdit, onScheda, onDelete, onAction, pend
           <ToggleDisponibileBtn art={art} />
           <TogglePreventivabileBtn art={art} />
           <ToggleAcquistabileBtn art={art} />
+          <ToggleComputabileBtn art={art} />
           <TogglePrincipaleBtn art={art} />
           <ToggleCaratteristicaBtn art={art} />
           <button onClick={onScheda} style={{
