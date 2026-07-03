@@ -182,8 +182,9 @@ export const cardColors = [
 export const areaClientiPages: NavPage[] = [
   { id: 50, label: 'Ordini',     href: '/area-clienti/ordini'     },
   { id: 51, label: 'Cantieri',   href: '/area-clienti/cantieri'   },
-  { id: 52, label: 'Preventivi', href: '/area-clienti/preventivi' },
-  { id: 53, label: 'Documenti',  href: '/area-clienti/documenti'  },
+  { id: 52, label: 'Preventivi',    href: '/area-clienti/preventivi'    },
+  { id: 54, label: 'Computometri', href: '/area-clienti/computometrici' },
+  { id: 53, label: 'Documenti',    href: '/area-clienti/documenti'      },
   { id: 55, label: 'Avvisi',     href: '/area-clienti/avvisi'     },
 ]
 
