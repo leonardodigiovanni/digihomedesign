@@ -1,0 +1,13 @@
+User-agent: *
+Disallow: /area-clienti/
+Disallow: /area-lavoro/
+Disallow: /app/
+Disallow: /clienti/
+Disallow: /registrazione/
+Disallow: /settings/
+Disallow: /magazzino/
+Disallow: /fatture/
+Disallow: /bilancio/
+Allow: /
+
+Sitemap: https://www.digi-home-design.com/sitemap.xml
