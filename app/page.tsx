@@ -63,7 +63,7 @@ export default async function Page() {
             <span className="testo-cta"><span className="animato">Computo metrico</span></span>
           </Link>
           <Link href={ctaCantiere} className="cta-home-btn">
-            <div><Image src="/images/cta/cantieri-online-t.png" alt="Cantiere" width={130} height={130} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} /></div>
+            <div><Image src="/images/cta/cantiere-online.png" alt="Cantiere" width={130} height={130} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} /></div>
             <span className="testo-cta"><span className="animato">Foto/Video Cantiere</span></span>
           </Link>
           <Link href="/app-download" className="cta-home-btn cta-home-btn-app">
