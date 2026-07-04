@@ -792,6 +792,7 @@ function CategoryDropdown({
   isActive: (href: string) => boolean
   linkStyle: (href: string) => React.CSSProperties
 }) {
+  const router = useRouter()
   const [open, setOpen] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
   const triggerRef = useRef<HTMLDivElement>(null)
@@ -834,7 +835,7 @@ function CategoryDropdown({
   return (
     <div ref={triggerRef} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
       <button
-        onClick={() => setOpen(o => !o)}
+        onClick={() => { router.push(group.href); setOpen(true) }}
         className="nav-link testo-nav-bar"
         style={{
           ...linkStyle(group.href),
