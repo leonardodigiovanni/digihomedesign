@@ -835,7 +835,7 @@ function CategoryDropdown({
   return (
     <div ref={triggerRef} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
       <button
-        onClick={() => { router.push(group.href); setOpen(true) }}
+        onClick={() => { if (!open) router.push(group.href); setOpen(o => !o) }}
         className="nav-link testo-nav-bar"
         style={{
           ...linkStyle(group.href),
