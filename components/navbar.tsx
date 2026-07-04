@@ -195,7 +195,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
         )}
         <div className="nav-scroll-inner" ref={innerRef}>
           <Link href="/" className="nav-link testo-nav-bar" style={{ ...linkStyle('/'), display: 'inline-flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', gap: 2, marginLeft: 8, position: 'relative' }} aria-label="Home">
-            <img src="/images/header/home.png" alt="Home" style={{ height: 34, width: 34, display: 'block', objectFit: 'contain', marginTop: -10 }} />
+            <img src="/images/header/home.png" alt="Home" style={{ height: 30, width: 30, display: 'block', objectFit: 'contain', marginTop: -12 }} />
             <span style={{ position: 'absolute', bottom: 10, left: '50%', transform: 'translateX(-50%)', display: 'block', width: 30, height: 3, background: isActive('/') ? '#111' : 'transparent' }} />
           </Link>
 
