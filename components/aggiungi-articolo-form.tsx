@@ -2,6 +2,7 @@
 import { b } from '@/lib/btn'
 
 import { useState, useEffect, useMemo, useTransition, useRef } from 'react'
+import { usePreventiviAbilitato } from '@/lib/preventivi-flag-context'
 import SelectLookup from '@/components/select-lookup'
 import { useRouter } from 'next/navigation'
 import { aggiungiAlCarrello, aggiungiAlPreventivoDaCatalogo, annullaParentPendente, type CartResult, type PreventivoDestOption } from '@/app/brand/cataloghi/actions'
@@ -93,6 +94,7 @@ export default function AggiungiArticoloForm({
   onConfirm?: (data: ConfirmData) => Promise<CartResult>
   onClose?: () => void
 }) {
+  const preventiviAbilitato = usePreventiviAbilitato()
   const router = useRouter()
   const [step, setStep] = useState<'select' | 'detail'>('select')
   const [sottocatFiltro, setSottocatFiltro] = useState('')
@@ -315,6 +317,8 @@ export default function AggiungiArticoloForm({
     annullaParentPendente().then(() => { window.location.href = carrelloHref })
   }
 
+  if (!preventiviAbilitato) return null
+
   return (
     <div style={{
       background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 10,
@@ -354,7 +358,7 @@ export default function AggiungiArticoloForm({
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {/* Filtri a cascata */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {!hideClassificationFilters && (lockedCat || catOpt.length > 1) && (
+            {!hideClassificationFilters && (lockedCat || catOpt.length > 0) && (
               <div>
                 <label className="testo-articoli" style={{ display: 'block', marginBottom: 3 }}>Categoria</label>
                 {lockedCat ? (

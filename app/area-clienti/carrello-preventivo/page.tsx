@@ -7,6 +7,7 @@ import CarrelloClient, { type ArticoloCarrello, type CaratteristicaListino, type
 import { decompressCart } from '@/lib/cart-cookie'
 import { extractAvgColor, colorFromDesc } from '@/lib/extract-color'
 import { ensurePercorsiTables } from '@/lib/percorsi'
+import { readSettings } from '@/lib/settings'
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = { title: 'Carrello Preventivo' }
@@ -249,6 +250,10 @@ export default async function Page() {
   const digiCart = cookieStore.get('digi_cart')?.value ?? ''
 
   const isStaff = role === 'admin' || role === 'dipendente' || role === 'direttore'
+  if (!isStaff) {
+    const { rolePermissions } = await readSettings()
+    if (!(rolePermissions['cliente'] ?? []).includes(52)) redirect('/aiuto/guida-preventivo')
+  }
 
   const cart = decompressCart(digiCart)
 

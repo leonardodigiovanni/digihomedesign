@@ -16,6 +16,7 @@ import PwaRegister from '@/components/pwa-register'
 import CookieBanner from '@/components/cookie-banner'
 import ManutenzioneWatcher from '@/components/manutenzione-watcher'
 import MainWrapper from '@/components/main-wrapper'
+import { PreventiviProvider } from '@/lib/preventivi-flag-context'
 import './globals.css'
 
 export const viewport: Viewport = {
@@ -223,6 +224,8 @@ export default async function RootLayout({
     : {}
 
   const inManutenzione = settings.manutenzione && role !== 'admin'
+  const isStaffLayout  = role === 'admin' || role === 'dipendente' || role === 'direttore'
+  const preventiviAbilitato = isStaffLayout || (rolePermissions['cliente'] ?? []).includes(52)
 
   const STAFF_PREFIXES = ['/area-lavoro', '/clienti', '/amministrazione', '/disegno']
   const isStaffPage = STAFF_PREFIXES.some(p => pathname.startsWith(p))
@@ -291,15 +294,17 @@ export default async function RootLayout({
         </div>
 
         <MainWrapper role={role ?? ''}>
-          {inManutenzione ? (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '50vh', gap: 20, textAlign: 'center' }}>
-              <Image src="/images/manutenzione/sito_manutenzione.png" alt="Manutenzione" width={108} height={108} priority style={{ objectFit: 'contain' }} />
-              <p className="fs-28" style={{ fontWeight: 600, color: '#444', maxWidth: 600, lineHeight: 1.6, margin: 0, textAlign: 'center' }}>
-                Stiamo lavorando per migliorare il sito.<br />
-                Torneremo online al più presto. Ci scusiamo per il disagio.
-              </p>
-            </div>
-          ) : children}
+          <PreventiviProvider abilitato={preventiviAbilitato}>
+            {inManutenzione ? (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '50vh', gap: 20, textAlign: 'center' }}>
+                <Image src="/images/manutenzione/sito_manutenzione.png" alt="Manutenzione" width={108} height={108} priority style={{ objectFit: 'contain' }} />
+                <p className="fs-28" style={{ fontWeight: 600, color: '#444', maxWidth: 600, lineHeight: 1.6, margin: 0, textAlign: 'center' }}>
+                  Stiamo lavorando per migliorare il sito.<br />
+                  Torneremo online al più presto. Ci scusiamo per il disagio.
+                </p>
+              </div>
+            ) : children}
+          </PreventiviProvider>
         </MainWrapper>
 
         {!inManutenzione && <SitemapSection disabledPages={settings.disabledPages} />}

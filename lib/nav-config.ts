@@ -219,6 +219,7 @@ export const clientiDipendentiPages: NavPage[] = [
   { id: 35, label: 'Ordini Ricevuti',    href: '/area-lavoro/ordini-ricevuti'      },
   { id: 28, label: 'Cantieri',           href: '/area-lavoro/cantieri'             },
   { id: 60, label: 'Preventivi',         href: '/clienti/preventivi'               },
+  { id: 57, label: 'Computometri',       href: '/clienti/computometrici'           },
   { id: 61, label: 'Documenti',          href: '/clienti/documenti'                },
   { id: 56, label: 'Avvisi',             href: '/area-clienti/avvisi'              },
 ]

@@ -29,10 +29,14 @@ export default async function Page() {
   const cookieStore = await cookies()
   const username = cookieStore.get('session_user')?.value
   const role = cookieStore.get('session_role')?.value ?? ''
-  const ctaPreventivi = role ? '/area-clienti/preventivi' : '/brand/cataloghi'
-  const ctaCantiere   = role ? '/area-clienti/cantieri' : '/aiuto/guida-cantiere'
+  const ctaCantiere = role ? '/area-clienti/cantieri' : '/aiuto/guida-cantiere'
 
-  const { disabledPages } = await readSettings()
+  const { disabledPages, rolePermissions } = await readSettings()
+  const isStaff             = role === 'admin' || role === 'dipendente' || role === 'direttore'
+  const preventiviFlag      = isStaff || (rolePermissions['cliente'] ?? []).includes(52)
+  const computometricoFlag  = isStaff || (rolePermissions['cliente'] ?? []).includes(54)
+  const ctaPreventivi       = preventiviFlag     ? (role ? '/area-clienti/preventivi' : '/brand/cataloghi')                         : '/aiuto/guida-preventivo'
+  const ctaComputometrico   = computometricoFlag ? (role ? '/area-clienti/computometrici' : '/area-clienti/carrello-computometrico') : '/aiuto/guida-computometrico'
   const disabledHrefs = new Set(
     categoryGroups.flatMap(g => g.pages)
       .filter(p => disabledPages.includes(p.id))
@@ -57,6 +61,10 @@ export default async function Page() {
           <Link href={ctaCantiere} className="cta-home-btn">
             <div><Image src="/images/cta/cantieri-online-t.png" alt="Cantiere" width={130} height={130} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} /></div>
             <span className="testo-cta"><span className="animato">Foto/Video Cantiere</span></span>
+          </Link>
+          <Link href={ctaComputometrico} className="cta-home-btn">
+            <div><Image src="/images/cta/cantieri-online-t.png" alt="Computometrico" width={130} height={130} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} /></div>
+            <span className="testo-cta"><span className="animato">Computo metrico</span></span>
           </Link>
           <Link href="/app-download" className="cta-home-btn cta-home-btn-app">
             <div><Image src="/images/cta/digi-home-design-srl-app.png" alt="App" width={70} height={70} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} unoptimized /></div>

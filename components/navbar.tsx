@@ -24,6 +24,14 @@ interface NavbarProps {
 export default function Navbar({ role, disabledPages = [], rolePermissions = {}, username, registrazioniDisabilitate, bannerAbilitato = false, cartCount = 0, cartAcquistiCount = 0, unreadEmailCount = 0, unreadAvvisiCount = 0, clienteAbilitato = true }: NavbarProps) {
   const [menuOpen, setMenuOpen]       = useState(false)
   const [liveAvvisiCount, setLiveAvvisiCount] = useState(unreadAvvisiCount)
+  const [computoCount, setComputoCount] = useState(0)
+
+  useEffect(() => {
+    try { setComputoCount(parseInt(localStorage.getItem('computo_count') ?? '0', 10) || 0) } catch {}
+    function handle(e: Event) { setComputoCount((e as CustomEvent<{ count: number }>).detail.count) }
+    window.addEventListener('computo-count-changed', handle)
+    return () => window.removeEventListener('computo-count-changed', handle)
+  }, [])
 
   useEffect(() => {
     function handle(e: Event) {
@@ -144,6 +152,10 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
   const fornitoriItems     = visibleFornitoriPages(role, rolePermissions, disabledPages)
   const clientiItems       = visibleClientiPages(role, rolePermissions, disabledPages)
 
+  const isStaff = role === 'admin' || role === 'dipendente' || role === 'direttore'
+  const preventiviAbilitato     = isStaff || (rolePermissions['cliente'] ?? []).includes(52)
+  const computometricoAbilitato = !!username && (isStaff || (rolePermissions['cliente'] ?? []).includes(54))
+
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/'
     return pathname === href || pathname.startsWith(href + '/')
@@ -181,10 +193,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
         )}
         <div className="nav-scroll-inner" ref={innerRef}>
           <Link href="/" className="nav-link testo-nav-bar" style={{ ...linkStyle('/'), display: 'inline-flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', gap: 2, marginLeft: 8, position: 'relative' }} aria-label="Home">
-            <svg xmlns="http://www.w3.org/2000/svg" width="34" height="28" viewBox="0 0 24 24" preserveAspectRatio="none" fill="none" stroke="#000" strokeWidth="1.2" strokeLinecap="square" strokeLinejoin="miter" style={{ marginTop: -6 }}>
-              <path d="M3 9.5 L12 3 L16.5 6.3 L16.5 3.5 L18 3.5 L18 7.3 L21 9.5 V18.25 M3 18.25 V9.5"/>
-              <text x="12" y="18" textAnchor="middle" fontSize="11" fontWeight="500" fill="#111" stroke="none" fontFamily="system-ui,sans-serif" strokeWidth="0">DG</text>
-            </svg>
+            <img src="/images/header/home.png" alt="Home" style={{ height: 34, width: 34, display: 'block', objectFit: 'contain', marginTop: -10 }} />
             <span style={{ position: 'absolute', bottom: 10, left: '50%', transform: 'translateX(-50%)', display: 'block', width: 30, height: 3, background: isActive('/') ? '#111' : 'transparent' }} />
           </Link>
 
@@ -250,7 +259,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
               !disabledPages.includes(p.id) &&
               (allowed === undefined || allowed.includes(p.id))
             )
-            const items = clienteAbilitato ? allItems : allItems.filter(p => p.href === '/area-clienti/preventivi')
+            const items = clienteAbilitato ? allItems : allItems.filter(p => p.id === 52 || p.id === 54)
             return items.length > 0 ? <><NavSep /><AreaClientiDropdown items={items} isActive={isActive} linkStyle={linkStyle} unreadAvvisiCount={liveAvvisiCount} /></> : null
           })()}
 
@@ -282,9 +291,30 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
         </div>{/* fine nav-scroll */}
 
         {/* Icone carrello — sempre visibili, non scorrono */}
-        {(cartCount > 0 || cartAcquistiCount > 0) && (
+        {(cartCount > 0 || cartAcquistiCount > 0 || computoCount > 0 || !!username) && (
         <div style={{ flexShrink: 0, paddingRight: 4, paddingLeft: 8, borderLeft: '1px solid #e8d89a', display: 'flex', alignItems: 'center', gap: 8 }}>
-          {cartCount > 0 && (
+          {computoCount > 0 && computometricoAbilitato && (
+          <Link
+            href="/area-clienti/carrello-computometrico"
+            title="Computo metrico"
+            className="cart-btn"
+            style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 41, height: 41, marginTop: 1, textDecoration: 'none' }}
+          >
+            <img src="/images/carrello/carrello-computometrici.png" alt="Computo metrico" style={{ height: 41, width: 41, display: 'block', objectFit: 'contain' }} />
+            {computoCount > 0 && (
+              <span style={{
+                position: 'absolute', top: 4, right: 1,
+                background: '#1a9e2a', color: '#fff', borderRadius: '50%',
+                minWidth: 18, height: 18, fontSize: 11, fontWeight: 700,
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                padding: '0 4px',
+              }}>
+                {computoCount > 99 ? '99+' : computoCount}
+              </span>
+            )}
+          </Link>
+          )}
+          {cartCount > 0 && preventiviAbilitato && (
           <Link
             href="/area-clienti/carrello-preventivo"
             title="Carrello preventivo"
@@ -345,7 +375,28 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
           )}
         </button>
         <div style={{ marginLeft: 'auto', paddingRight: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
-          {cartCount > 0 && (
+          {computoCount > 0 && computometricoAbilitato && (
+          <Link
+            href="/area-clienti/carrello-computometrico"
+            title="Computo metrico"
+            className="cart-btn"
+            style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 41, height: 41, marginTop: 1, textDecoration: 'none' }}
+          >
+            <img src="/images/carrello/carrello-computometrici.png" alt="Computo metrico" style={{ height: 41, width: 41, display: 'block', objectFit: 'contain' }} />
+            {computoCount > 0 && (
+              <span style={{
+                position: 'absolute', top: 4, right: 1,
+                background: '#1a9e2a', color: '#fff', borderRadius: '50%',
+                minWidth: 18, height: 18, fontSize: 11, fontWeight: 700,
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                padding: '0 4px',
+              }}>
+                {computoCount > 99 ? '99+' : computoCount}
+              </span>
+            )}
+          </Link>
+          )}
+          {cartCount > 0 && preventiviAbilitato && (
           <Link
             href="/area-clienti/carrello-preventivo"
             title="Carrello preventivo"
@@ -428,7 +479,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
               !disabledPages.includes(p.id) &&
               (allowed === undefined || allowed.includes(p.id))
             )
-            const items = clienteAbilitato ? allItems : allItems.filter(p => p.href === '/area-clienti/preventivi')
+            const items = clienteAbilitato ? allItems : allItems.filter(p => p.id === 52 || p.id === 54)
             return items.length > 0 ? (
               <>
                 <div className="nav-mobile-section">Area Personale</div>
