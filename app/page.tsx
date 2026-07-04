@@ -56,7 +56,7 @@ export default async function Page() {
         <div className="home-hero-cta">
           <Link href={ctaPreventivi} className="cta-home-btn">
             <div><Image src="/images/cta/preventivo-online.png" alt="Preventivo" width={130} height={130} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} /></div>
-            <span className="testo-cta"><span className="animato">Preventivo Online</span></span>
+            <span className="testo-cta"><span className="animato">Preventivo Serramenti & Porte</span></span>
           </Link>
           <Link href={ctaComputometrico} className="cta-home-btn">
             <div><Image src="/images/cta/computometrico-online.png" alt="Computometrico" width={130} height={130} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} /></div>
