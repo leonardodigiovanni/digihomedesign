@@ -55,32 +55,32 @@ export default async function Page() {
       <div className="home-hero">
         <div className="home-hero-cta">
           <Link href={ctaPreventivi} className="cta-home-btn">
-            <div><Image src="/images/cta/preventivo-online.png" alt="Preventivo" width={130} height={130} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} /></div>
-            <span className="testo-cta">
-              <span className="animato">Preventivo Gratis Online</span>
-              <span>Porte &amp; Serramenti</span>
-            </span>
+            <div className="cta-row">
+              <div><Image src="/images/cta/preventivo-online.png" alt="Preventivo" width={130} height={130} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} /></div>
+              <span className="testo-cta"><span className="animato">Preventivo<br />Online &amp; Gratis</span></span>
+            </div>
+            <span className="cta-sub">Porte &amp; Serramenti</span>
           </Link>
           <Link href={ctaComputometrico} className="cta-home-btn">
-            <div><Image src="/images/cta/computometrico-online.png" alt="Computometrico" width={130} height={130} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} /></div>
-            <span className="testo-cta">
-              <span className="animato">Computo Metrico Gratis Online</span>
-              <span>Edilizia &amp; Strutture &amp; Scale &amp; Recinzioni</span>
-            </span>
+            <div className="cta-row">
+              <div><Image src="/images/cta/computometrico-online.png" alt="Computometrico" width={130} height={130} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} /></div>
+              <span className="testo-cta"><span className="animato">Computo Metrico<br />Online &amp; Gratis</span></span>
+            </div>
+            <span className="cta-sub">Edilizia &amp; Strutture &amp; Scale &amp; Recinzioni</span>
           </Link>
           <Link href={ctaCantiere} className="cta-home-btn">
-            <div><Image src="/images/cta/cantiere-online.png" alt="Cantiere" width={130} height={130} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} /></div>
-            <span className="testo-cta">
-              <span className="animato">Cantiere Online</span>
-              <span>Foto &amp; Video</span>
-            </span>
+            <div className="cta-row">
+              <div><Image src="/images/cta/cantiere-online.png" alt="Cantiere" width={130} height={130} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} /></div>
+              <span className="testo-cta"><span className="animato">Segui il cantiere<br />Online &amp; Gratis</span></span>
+            </div>
+            <span className="cta-sub">Foto &amp; Video</span>
           </Link>
           <Link href="/app-download" className="cta-home-btn cta-home-btn-app">
-            <div><Image src="/images/cta/digi-home-design-srl-app.png" alt="App" width={70} height={70} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} unoptimized /></div>
-            <span className="testo-cta">
-              <span className="animato">Servizi Gratis Online</span>
-              <span>Download DIGI App</span>
-            </span>
+            <div className="cta-row">
+              <div><Image src="/images/cta/digi-home-design-srl-app.png" alt="App" width={70} height={70} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} unoptimized /></div>
+              <span className="testo-cta"><span className="animato">Utilizza i nostri Servizi<br />Online &amp; Gratis</span></span>
+            </div>
+            <span className="cta-sub">Download DIGIApp</span>
           </Link>
         </div>
         <div className="home-hero-text" style={{ borderRadius: 20, background: '#fff' }}>
