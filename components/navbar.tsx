@@ -43,8 +43,9 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
   const [sectionOpen, setSectionOpen] = useState(false)
   const [canLeft,  setCanLeft]  = useState(false)
   const [canRight, setCanRight] = useState(false)
-  const router      = useRouter()
-  const pathname    = usePathname()
+  const router              = useRouter()
+  const pathname            = usePathname()
+  const skipSectionClose    = useRef(false)
   const dropRef     = useRef<HTMLDivElement>(null)
   const scrollRef   = useRef<HTMLDivElement>(null)
   const innerRef    = useRef<HTMLDivElement>(null)
@@ -109,7 +110,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
   // Chiudi tutto al cambio pagina e resetta scroll
   useEffect(() => {
     setMenuOpen(false)
-    setSectionOpen(false)
+    if (skipSectionClose.current) { skipSectionClose.current = false } else { setSectionOpen(false) }
     scrollPos.current = 0
     if (innerRef.current) innerRef.current.style.marginLeft = '0'
     updateArrows()
@@ -202,7 +203,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             <><NavSep />
             <div ref={dropRef} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
               <button
-                onClick={() => { if (!sectionOpen) router.push('/brand'); setSectionOpen(o => !o) }}
+                onClick={() => { if (!sectionOpen) { skipSectionClose.current = true; router.push('/brand') } setSectionOpen(o => !o) }}
                 className="nav-link testo-nav-bar"
                 style={{ ...linkStyle('/brand'), gap: 4 }}
               >
