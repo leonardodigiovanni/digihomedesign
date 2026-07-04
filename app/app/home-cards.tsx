@@ -93,12 +93,12 @@ function CardSimulazione({ manutenzione, loggedIn }: { manutenzione: boolean; lo
   )
 }
 
-export default function HomeCards({ loggedIn, manutenzione }: { loggedIn: boolean; manutenzione: boolean }) {
+export default function HomeCards({ loggedIn, manutenzione, preventiviAbilitato }: { loggedIn: boolean; manutenzione: boolean; preventiviAbilitato: boolean }) {
   return (
     <>
       <Card titolo="Cataloghi" corpo={SEZIONI[0].corpo} protetto={false} loggedIn={loggedIn} />
-      <CardSimulazione manutenzione={manutenzione} loggedIn={loggedIn} />
-      {SEZIONI.slice(1).map(s => <Card key={s.titolo} titolo={s.titolo} corpo={s.corpo} protetto={s.protetto} loggedIn={loggedIn} />)}
+      {preventiviAbilitato && <CardSimulazione manutenzione={manutenzione} loggedIn={loggedIn} />}
+      {SEZIONI.slice(1).filter(s => s.titolo !== 'Preventivi' || preventiviAbilitato).map(s => <Card key={s.titolo} titolo={s.titolo} corpo={s.corpo} protetto={s.protetto} loggedIn={loggedIn} />)}
     </>
   )
 }

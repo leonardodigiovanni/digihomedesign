@@ -102,8 +102,11 @@ export default async function AppPreventivoPage() {
   const username = cookieStore.get('session_user')?.value ?? ''
   if (!username) redirect('/app/login')
 
+  const { manutenzione, rolePermissions } = await readSettings()
+  const isStaffRole = role === 'admin' || role === 'dipendente' || role === 'direttore'
+  if (!isStaffRole && !(rolePermissions['cliente'] ?? []).includes(52)) redirect('/app')
+
   const { preventivi, isStaff } = await getData(role, username)
-  const { manutenzione } = await readSettings()
 
   const cartRaw = cookieStore.get('digi_cart')?.value ?? ''
   const cartNonVuoto = decompressCart(cartRaw).filter(i => i.parent == null).length > 0

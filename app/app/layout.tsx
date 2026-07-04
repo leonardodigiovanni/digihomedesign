@@ -12,6 +12,7 @@ import { decompressCart } from '@/lib/cart-cookie'
 import { getConnection } from '@/lib/db'
 import { readSettings } from '@/lib/settings'
 import ManutenzioneWatcher from '@/components/manutenzione-watcher'
+import { PreventiviProvider } from '@/lib/preventivi-flag-context'
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies()
@@ -20,7 +21,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const preventivoCartCount = decompressCart(cookieStore.get('digi_cart')?.value ?? '').filter(i => i.parent == null).length
   const acquistiCartCount   = decompressCart(cookieStore.get('digi_cart_acquisti')?.value ?? '').filter(i => i.parent == null).length
 
-  const { manutenzione } = await readSettings()
+  const { manutenzione, rolePermissions } = await readSettings()
+  const isStaff = role === 'admin' || role === 'dipendente' || role === 'direttore'
+  const preventiviAbilitato = isStaff || (rolePermissions['cliente'] ?? []).includes(52)
 
   let avvisiUnreadCount = 0
   if (username && role === 'cliente') {
@@ -57,12 +60,14 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       </header>
 
       {/* Contenuto pagina + action bar */}
-      <ActionBarProvider>
-        <main className="app-content">
-          {children}
-        </main>
-        <AppActionBar />
-      </ActionBarProvider>
+      <PreventiviProvider abilitato={preventiviAbilitato}>
+        <ActionBarProvider>
+          <main className="app-content">
+            {children}
+          </main>
+          <AppActionBar />
+        </ActionBarProvider>
+      </PreventiviProvider>
 
       {role === 'cliente' && <AvvisiNotifier />}
       <ManutenzioneWatcher manutenzione={manutenzione} role={role} dest="/app" />
@@ -82,7 +87,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           Sito in manutenzione — torna più tardi.<br />Ci scusiamo per il disagio.
         </div>
       ) : (
-        <AppBottomNav username={username} preventivoCartCount={preventivoCartCount} acquistiCartCount={acquistiCartCount} avvisiUnreadCount={avvisiUnreadCount} manutenzione={manutenzione} />
+        <AppBottomNav username={username} preventivoCartCount={preventivoCartCount} acquistiCartCount={acquistiCartCount} avvisiUnreadCount={avvisiUnreadCount} manutenzione={manutenzione} preventiviAbilitato={preventiviAbilitato} />
       )}
 
       <Script id="sw-register" strategy="afterInteractive">{`

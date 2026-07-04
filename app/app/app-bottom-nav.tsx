@@ -139,12 +139,14 @@ export default function AppBottomNav({
   acquistiCartCount = 0,
   avvisiUnreadCount = 0,
   manutenzione = false,
+  preventiviAbilitato = true,
 }: {
   username: string | null
   preventivoCartCount?: number
   acquistiCartCount?: number
   avvisiUnreadCount?: number
   manutenzione?: boolean
+  preventiviAbilitato?: boolean
 }) {
   const pathname = usePathname()
   const [avvisiCount, setAvvisiCount] = useState(avvisiUnreadCount)
@@ -164,8 +166,8 @@ export default function AppBottomNav({
     { href: '/app',                   label: 'Home',             node: <HomeSvg /> },
     { href: '/app/cataloghi',         label: 'Cataloghi',        node: <CataloghiSvg /> },
     ...(acquistiCartCount   > 0 ? [{ href: '/app/carrello-acquisti',   label: 'Carrello acquisti',  node: <CarrelloIcon count={acquistiCartCount} /> }] : []),
-    ...(preventivoCartCount > 0 ? [{ href: '/app/carrello-preventivo', label: 'Simulazione',  node: <PreventivatoreIcon count={preventivoCartCount} /> }] : []),
-    { href: '/app/preventivo',        label: 'Preventivi',       node: (
+    ...(preventiviAbilitato && preventivoCartCount > 0 ? [{ href: '/app/carrello-preventivo', label: 'Simulazione',  node: <PreventivatoreIcon count={preventivoCartCount} /> }] : []),
+    ...(preventiviAbilitato ? [{ href: '/app/preventivo',        label: 'Preventivi',       node: (
         <div style={GOLD}>
           <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="5" y="3" width="14" height="18" fill="#d4a010"/>
@@ -177,7 +179,7 @@ export default function AppBottomNav({
             <polygon points="17.5,16.5 18.5,17.5 17,18" fill="#555" stroke="none"/>
           </svg>
         </div>
-      ) },
+      ) }] : []),
     { href: '/app/cantiere',          label: 'Cantieri',         node: (
         <div style={GOLD}>
           <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
@@ -198,7 +200,7 @@ export default function AppBottomNav({
   ] : [
     { href: '/app',                   label: 'Home',             node: <HomeSvg /> },
     { href: '/app/cataloghi',         label: 'Cataloghi',        node: <CataloghiSvg /> },
-    ...(preventivoCartCount > 0 ? [{ href: '/app/carrello-preventivo', label: 'Simulazione',  node: <PreventivatoreIcon count={preventivoCartCount} /> }] : []),
+    ...(preventiviAbilitato && preventivoCartCount > 0 ? [{ href: '/app/carrello-preventivo', label: 'Simulazione',  node: <PreventivatoreIcon count={preventivoCartCount} /> }] : []),
     { href: '/app/contatti',          label: 'Contatti',         node: <ContattiSvg /> },
   ]
 

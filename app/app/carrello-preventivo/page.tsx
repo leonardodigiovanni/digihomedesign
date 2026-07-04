@@ -1,11 +1,13 @@
 import Link from 'next/link'
 import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import type { Metadata } from 'next'
 import CarrelloClient, { type ArticoloCarrello, type CaratteristicaListino, type ListinoItem } from '@/app/area-clienti/carrello-preventivo/carrello-client'
 import { decompressCart } from '@/lib/cart-cookie'
 import { extractAvgColor, colorFromDesc } from '@/lib/extract-color'
 import { ensurePercorsiTables } from '@/lib/percorsi'
+import { readSettings } from '@/lib/settings'
 import SetActionBar from '@/app/app/set-action-bar'
 
 export const dynamic = 'force-dynamic'
@@ -111,6 +113,12 @@ export default async function Page() {
   const role     = cookieStore.get('session_role')?.value ?? ''
   const username = cookieStore.get('session_user')?.value ?? ''
   const digiCart = cookieStore.get('digi_cart')?.value ?? ''
+
+  const isStaff = role === 'admin' || role === 'dipendente' || role === 'direttore'
+  if (!isStaff) {
+    const { rolePermissions } = await readSettings()
+    if (!(rolePermissions['cliente'] ?? []).includes(52)) redirect('/app')
+  }
 
   const cart = decompressCart(digiCart)
   const articoli = await getArticoliDaCookie(cart)
