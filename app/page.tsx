@@ -64,7 +64,7 @@ export default async function Page() {
           </Link>
           <Link href={ctaCantiere} className="cta-home-btn">
             <div><Image src="/images/cta/cantiere-online.png" alt="Cantiere" width={130} height={130} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} /></div>
-            <span className="testo-cta"><span className="animato">Foto/Video Cantiere</span></span>
+            <span className="testo-cta"><span className="animato">Foto & Video Cantiere</span></span>
           </Link>
           <Link href="/app-download" className="cta-home-btn cta-home-btn-app">
             <div><Image src="/images/cta/digi-home-design-srl-app.png" alt="App" width={70} height={70} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} unoptimized /></div>
