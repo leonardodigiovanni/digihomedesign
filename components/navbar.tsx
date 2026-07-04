@@ -43,6 +43,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
   const [sectionOpen, setSectionOpen] = useState(false)
   const [canLeft,  setCanLeft]  = useState(false)
   const [canRight, setCanRight] = useState(false)
+  const router      = useRouter()
   const pathname    = usePathname()
   const dropRef     = useRef<HTMLDivElement>(null)
   const scrollRef   = useRef<HTMLDivElement>(null)
@@ -201,7 +202,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             <><NavSep />
             <div ref={dropRef} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
               <button
-                onClick={() => setSectionOpen(o => !o)}
+                onClick={() => { if (!sectionOpen) router.push('/brand'); setSectionOpen(o => !o) }}
                 className="nav-link testo-nav-bar"
                 style={{ ...linkStyle('/brand'), gap: 4 }}
               >
