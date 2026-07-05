@@ -13,13 +13,13 @@ import AggiungiArticoloAcquistoForm from '@/components/aggiungi-articolo-acquist
 import type { ArticoloListinoAcquisto } from '@/components/aggiungi-articolo-acquisto-form'
 
 export const metadata: Metadata = {
-  title: 'Persiane a Palermo â€” Alluminio, PVC e Legno su Misura',
-  description: 'Persiane a Palermo su misura: persiane in alluminio, PVC e legno per oscuramento, ventilazione e protezione solare. A battente, scorrevoli e a pannelli.',
+  title: 'Persiane in Alluminio a Palermo â€” Su Misura per Ogni Apertura',
+  description: 'Persiane in alluminio a Palermo su misura: a battente, scorrevoli, a pannelli e a libro. Profili verniciati a polvere in ogni colore RAL, stecche fisse o orientabili.',
   alternates: { canonical: 'https://www.digi-home-design.com/serramenti/persiane-in-alluminio' },
   robots: { index: true, follow: true },
   openGraph: {
-    title: 'Persiane a Palermo â€” Alluminio, PVC e Legno su Misura',
-    description: 'Persiane a Palermo su misura: persiane in alluminio, PVC e legno per oscuramento, ventilazione e protezione solare. A battente, scorrevoli e a pannelli.',
+    title: 'Persiane in Alluminio a Palermo â€” Su Misura per Ogni Apertura',
+    description: 'Persiane in alluminio a Palermo su misura: a battente, scorrevoli, a pannelli e a libro. Profili verniciati a polvere in ogni colore RAL, stecche fisse o orientabili.',
     url: 'https://www.digi-home-design.com/serramenti/persiane-in-alluminio',
     type: 'website',
   },
@@ -131,9 +131,9 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Persiane
+        <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Persiane in Alluminio
       </p>
-      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Persiane a Palermo</h1>
+      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Persiane in Alluminio a Palermo</h1>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
         <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '16px' }}>
@@ -157,10 +157,10 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Forniamo e installiamo <strong>persiane su misura a Palermo</strong> in alluminio, PVC e legno: persiane a battente con stecche orientabili o fisse, scorrevoli su binario laterale, a pannelli e a libro. Le persiane proteggono dall&apos;irraggiamento solare estivo â€” fondamentale in Sicilia â€” garantendo allo stesso tempo ventilazione e oscuramento regolabile.
+              Forniamo e installiamo <strong>persiane in alluminio su misura a Palermo</strong>: a battente con stecche orientabili o fisse, scorrevoli su binario laterale, a pannelli e a libro. Le persiane proteggono dall&apos;irraggiamento solare estivo â€” fondamentale in Sicilia â€” garantendo allo stesso tempo ventilazione e oscuramento regolabile.
             </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Le persiane in alluminio sono la soluzione piÃ¹ diffusa per durata e assenza di manutenzione: profili estrusi verniciati a polvere in qualsiasi colore RAL con stecche a 45Â° o 90Â°. Le persiane in legno â€” larice, abete o iroko â€” offrono un aspetto piÃ¹ tradizionale e sono trattate con impregnante o vernice per resistere alle intemperie.
+              I profili in alluminio estruso vengono verniciati a polvere in qualsiasi colore RAL, con stecche orientate a 45Â° o 90Â°: una soluzione che garantisce lunga durata e assenza di manutenzione.
             </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
               Ogni persiana viene misurata sul posto e realizzata su misura con accessori di chiusura inclusi. Contattaci per un preventivo gratuito.
