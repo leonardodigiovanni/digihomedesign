@@ -1,0 +1,641 @@
+%PDF-1.3
+%ºß¬à
+3 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 4 0 R
+>>
+endobj
+4 0 obj
+<<
+/Length 5271
+>>
+stream
+0.5670000000000001 w
+0 G
+BT
+/F2 18 Tf
+20.6999999999999993 TL
+0 g
+51.0236220472441033 785.1970866141732586 Td
+(Privacy Policy & Cookie Policy) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0.471 g
+51.0236220472441033 762.5199212598424765 Td
+(Ultimo aggiornamento: giugno 2026) Tj
+ET
+BT
+/F2 12.5 Tf
+14.3749999999999982 TL
+0. g
+51.0236220472441033 734.1734645669291695 Td
+(1. Titolare del trattamento) Tj
+ET
+BT
+/F1 10.5 Tf
+12.0749999999999993 TL
+0. g
+51.0236220472441033 717.1655905511811397 Td
+(DIGI Home Design S.R.L.) Tj
+ET
+BT
+/F1 10.5 Tf
+12.0749999999999993 TL
+0. g
+51.0236220472441033 694.4884251968503577 Td
+(Sede legale: Palermo \(PA\)) Tj
+T* (P.IVA: 07407080824) Tj
+T* (Email: info@digi-home-design.com) Tj
+T* (PEC: digi_home_design_srl@namirialpec.it) Tj
+T* (Telefono: +39 351 871 6731) Tj
+ET
+BT
+/F2 12.5 Tf
+14.3749999999999982 TL
+0. g
+51.0236220472441033 615.1183464566928478 Td
+(2. Dati raccolti e finalità) Tj
+ET
+BT
+/F1 10.5 Tf
+12.0749999999999993 TL
+0. g
+51.0236220472441033 598.1104724409448181 Td
+(Il sito raccoglie i seguenti dati personali esclusivamente per le finalità indicate:) Tj
+ET
+BT
+/F1 10.5 Tf
+12.0749999999999993 TL
+0. g
+56.6929133858267775 575.4333070866141497 Td
+(•  Dati di registrazione \(username, nome, cognome, email, numero di cellulare, password\): creazione e) Tj
+T* (gestione dell'account utente.) Tj
+ET
+BT
+/F1 10.5 Tf
+12.0749999999999993 TL
+0. g
+56.6929133858267775 541.4175590551180903 Td
+(•  Dati anagrafici aggiuntivi \(data e luogo di nascita\): richiesti nella registrazione completa per) Tj
+T* (l'emissione di documenti commerciali.) Tj
+ET
+BT
+/F1 10.5 Tf
+12.0749999999999993 TL
+0. g
+56.6929133858267775 507.4018110236219741 Td
+(•  Dati di navigazione: indirizzi IP e log del server, raccolti automaticamente per motivi di sicurezza e) Tj
+T* (debugging. Non vengono condivisi con terzi né utilizzati per profilazione.) Tj
+ET
+BT
+/F1 10.5 Tf
+12.0749999999999993 TL
+0. g
+56.6929133858267775 473.3860629921259147 Td
+(•  Contenuti caricati \(immagini, file\): archiviati su Vercel Blob Storage per la gestione del catalogo) Tj
+T* (prodotti.) Tj
+ET
+BT
+/F2 12.5 Tf
+14.3749999999999982 TL
+0. g
+51.0236220472441033 433.7010236220471597 Td
+(3. Cookie utilizzati) Tj
+ET
+BT
+/F1 10.5 Tf
+12.0749999999999993 TL
+0. g
+51.0236220472441033 416.69314960629913 Td
+(Questo sito utilizza esclusivamente cookie tecnici, necessari al funzionamento del servizio. Non vengono) Tj
+T* (utilizzati cookie di profilazione, di tracciamento pubblicitario o di analisi di terze parti.) Tj
+ET
+0.78 0.59 0.05 RG
+0.8503937007874016 w
+51.0236220472441033 379.8427559055117513 m
+544.2563779527558836 379.8427559055117513 l
+S
+BT
+/F2 9.5 Tf
+10.9249999999999989 TL
+0. g
+51.0236220472441033 362.8348818897637216 Td
+(Nome            Tipo                          Finalità                                                Durata) Tj
+ET
+0.78 0.59 0.05 RG
+0.8503937007874016 w
+51.0236220472441033 345.8270078740156919 m
+544.2563779527558836 345.8270078740156919 l
+S
+BT
+/F1 9.5 Tf
+10.9249999999999989 TL
+0. g
+51.0236220472441033 328.8191338582676053 Td
+(session_user    Tecnico — autenticazione      Mantiene la sessione dell'utente autenticato          8 ore \(rinnovato ad) Tj
+T* (ogni attività\)) Tj
+ET
+BT
+/F1 9.5 Tf
+10.9249999999999989 TL
+0. g
+51.0236220472441033 299.0553543307086102 Td
+(session_role    Tecnico — autenticazione      Memorizza il ruolo dell'utente per controllo accessi   8 ore \(rinnovato ad) Tj
+T* (ogni attività\)) Tj
+ET
+BT
+/F1 9.5 Tf
+10.9249999999999989 TL
+0. g
+51.0236220472441033 269.2915748031495013 Td
+(digi_cart       Tecnico — funzionale          Mantiene i contenuti del carrello preventivi           Sessione browser) Tj
+ET
+BT
+/F1 9.5 Tf
+10.9249999999999989 TL
+0. g
+51.0236220472441033 252.2837007874014716 Td
+(digi_cart_acquisti  Tecnico — funzionale      Mantiene i contenuti del carrello acquisti             Sessione browser) Tj
+ET
+BT
+/F1 9.5 Tf
+10.9249999999999989 TL
+0. g
+51.0236220472441033 235.2758267716534419 Td
+(profilo_incompleto  Tecnico — funzionale      Indica che il profilo utente richiede completamento    Sessione browser) Tj
+ET
+BT
+/F1 9.5 Tf
+10.9249999999999989 TL
+0. g
+51.0236220472441033 218.2679527559054122 Td
+(cookie_consent  Tecnico — preferenze          Salva la scelta dell'utente sulle preferenze cookie    12 mesi) Tj
+ET
+BT
+/F1 9.5 Tf
+10.9249999999999989 TL
+0. g
+51.0236220472441033 201.2600787401573825 Td
+(_digi_analytics Analitico \(opzionale\)         Attivato solo con consenso; analisi statistica anonima 12 mesi \(solo se) Tj
+T* (consenso "Accetta tutto"\)) Tj
+ET
+0.78 0.59 0.05 RG
+0.8503937007874016 w
+51.0236220472441033 171.4962992125983305 m
+544.2563779527558836 171.4962992125983305 l
+S
+BT
+/F1 10.5 Tf
+12.0749999999999993 TL
+0. g
+51.0236220472441033 154.4884251968503577 Td
+(Poiché vengono utilizzati solo cookie tecnici, non è richiesto il consenso ai sensi dell'art. 122 del D.Lgs.) Tj
+T* (196/2003 e delle Linee guida del Garante Privacy del 10 giugno 2021.) Tj
+ET
+BT
+/F2 12.5 Tf
+14.3749999999999982 TL
+0. g
+51.0236220472441033 117.6380314960629221 Td
+(4. Base giuridica del trattamento) Tj
+ET
+BT
+/F1 10.5 Tf
+12.0749999999999993 TL
+0. g
+56.6929133858267775 100.6301574803148924 Td
+(•  Esecuzione del contratto \(art. 6, par. 1, lett. b GDPR\): per la gestione dell'account, dei preventivi e) Tj
+T* (degli ordini.) Tj
+ET
+endstream
+endobj
+5 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 6 0 R
+>>
+endobj
+6 0 obj
+<<
+/Length 4925
+>>
+stream
+0.8503937007874016 w
+0.78 0.59 0.05 RG
+BT
+/F1 10.5 Tf
+12.0749999999999993 TL
+0. g
+56.6929133858267775 785.1970866141732586 Td
+(•  Legittimo interesse \(art. 6, par. 1, lett. f GDPR\): per la sicurezza del servizio e la prevenzione di) Tj
+T* (accessi non autorizzati.) Tj
+ET
+BT
+/F1 10.5 Tf
+12.0749999999999993 TL
+0. g
+56.6929133858267775 751.1813385826771992 Td
+(•  Obbligo legale \(art. 6, par. 1, lett. c GDPR\): per la conservazione dei documenti fiscali nei termini di) Tj
+T* (legge.) Tj
+ET
+BT
+/F2 12.5 Tf
+14.3749999999999982 TL
+0. g
+51.0236220472441033 711.4962992125983874 Td
+(5. Terze parti coinvolte nel trattamento) Tj
+ET
+0.78 0.59 0.05 RG
+0.8503937007874016 w
+51.0236220472441033 694.4884251968503577 m
+544.2563779527558836 694.4884251968503577 l
+S
+BT
+/F2 9.5 Tf
+10.9249999999999989 TL
+0. g
+51.0236220472441033 677.480551181102328 Td
+(Fornitore                  Servizio                              Dati trasmessi) Tj
+ET
+0.78 0.59 0.05 RG
+0.8503937007874016 w
+51.0236220472441033 660.4726771653542983 m
+544.2563779527558836 660.4726771653542983 l
+S
+BT
+/F1 9.5 Tf
+10.9249999999999989 TL
+0. g
+51.0236220472441033 643.4648031496062686 Td
+(Twilio Inc.                 Invio SMS per verifica OTP            Numero di cellulare, testo del messaggio) Tj
+ET
+BT
+/F1 9.5 Tf
+10.9249999999999989 TL
+0. g
+51.0236220472441033 626.4569291338582389 Td
+(Resend / SMTP provider      Invio email transazionali             Indirizzo email, contenuto del messaggio) Tj
+ET
+BT
+/F1 9.5 Tf
+10.9249999999999989 TL
+0. g
+51.0236220472441033 609.4490551181102092 Td
+(Vercel Inc.                 Hosting applicazione e storage file   Dati di navigazione, file caricati) Tj
+ET
+0.78 0.59 0.05 RG
+0.8503937007874016 w
+51.0236220472441033 592.4411811023621794 m
+544.2563779527558836 592.4411811023621794 l
+S
+BT
+/F1 10.5 Tf
+12.0749999999999993 TL
+0. g
+51.0236220472441033 575.4333070866141497 Td
+(Tutti i fornitori operano come responsabili del trattamento ai sensi dell'art. 28 GDPR e garantiscono) Tj
+T* (adeguate misure di sicurezza. I dati non vengono venduti né ceduti a terzi per finalità di marketing.) Tj
+ET
+BT
+/F2 12.5 Tf
+14.3749999999999982 TL
+0. g
+51.0236220472441033 538.5829133858267141 Td
+(6. Conservazione dei dati) Tj
+ET
+BT
+/F1 10.5 Tf
+12.0749999999999993 TL
+0. g
+56.6929133858267775 521.5750393700786844 Td
+(•  Dati dell'account: conservati per tutta la durata del rapporto contrattuale e per 10 anni successivi per) Tj
+T* (obblighi fiscali.) Tj
+ET
+BT
+/F1 10.5 Tf
+12.0749999999999993 TL
+0. g
+56.6929133858267775 487.559291338582625 Td
+(•  Log di navigazione: eliminati entro 12 mesi.) Tj
+ET
+BT
+/F1 10.5 Tf
+12.0749999999999993 TL
+0. g
+56.6929133858267775 467.716771653543276 Td
+(•  Dati OTP \(verifica SMS/email\): eliminati automaticamente entro 15 minuti o al completamento della) Tj
+T* (verifica.) Tj
+ET
+BT
+/F2 12.5 Tf
+14.3749999999999982 TL
+0. g
+51.0236220472441033 428.0317322834645211 Td
+(7. Diritti dell'interessato) Tj
+ET
+BT
+/F1 10.5 Tf
+12.0749999999999993 TL
+0. g
+51.0236220472441033 411.0238582677164914 Td
+(Ai sensi degli artt. 15–22 GDPR, l'interessato ha il diritto di:) Tj
+ET
+BT
+/F1 10.5 Tf
+12.0749999999999993 TL
+0. g
+56.6929133858267775 388.3466929133857661 Td
+(•  Accedere ai propri dati personali) Tj
+ET
+BT
+/F1 10.5 Tf
+12.0749999999999993 TL
+0. g
+56.6929133858267775 368.5041732283464171 Td
+(•  Richiederne la rettifica o la cancellazione) Tj
+ET
+BT
+/F1 10.5 Tf
+12.0749999999999993 TL
+0. g
+56.6929133858267775 348.6616535433070112 Td
+(•  Opporsi al trattamento o richiederne la limitazione) Tj
+ET
+BT
+/F1 10.5 Tf
+12.0749999999999993 TL
+0. g
+56.6929133858267775 328.8191338582676053 Td
+(•  Richiedere la portabilità dei dati) Tj
+ET
+BT
+/F1 10.5 Tf
+12.0749999999999993 TL
+0. g
+56.6929133858267775 308.9766141732283131 Td
+(•  Proporre reclamo all'autorità di controllo \(Garante Privacy — www.garanteprivacy.it\)) Tj
+ET
+BT
+/F1 10.5 Tf
+12.0749999999999993 TL
+0. g
+51.0236220472441033 283.4648031496062686 Td
+(Per esercitare questi diritti scrivere a: info@digi-home-design.com) Tj
+ET
+BT
+/F2 12.5 Tf
+14.3749999999999982 TL
+0. g
+51.0236220472441033 260.7876377952754865 Td
+(8. Sicurezza) Tj
+ET
+BT
+/F1 10.5 Tf
+12.0749999999999993 TL
+0. g
+51.0236220472441033 243.7797637795274568 Td
+(I dati sono archiviati su server protetti. Le comunicazioni tra browser e server avvengono tramite protocollo) Tj
+T* (HTTPS con cifratura TLS. I cookie di sessione sono impostati con flag HttpOnly per prevenire accessi da) Tj
+T* (codice JavaScript.) Tj
+ET
+BT
+/F2 12.5 Tf
+14.3749999999999982 TL
+0. g
+51.0236220472441033 192.7561417322833677 Td
+(9. Modifiche alla presente informativa) Tj
+ET
+BT
+/F1 10.5 Tf
+12.0749999999999993 TL
+0. g
+51.0236220472441033 175.748267716535338 Td
+(Il Titolare si riserva il diritto di aggiornare questa informativa. Le modifiche sostanziali saranno comunicate) Tj
+T* (agli utenti registrati via email. La versione aggiornata è sempre disponibile sul sito, alla pagina Privacy) Tj
+T* (Policy & Cookie Policy.) Tj
+ET
+endstream
+endobj
+1 0 obj
+<</Type /Pages
+/Kids [3 0 R 5 0 R ]
+/Count 2
+>>
+endobj
+7 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+8 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica-Bold
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+9 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica-Oblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+10 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica-BoldOblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+11 0 obj
+<<
+/Type /Font
+/BaseFont /Courier
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+12 0 obj
+<<
+/Type /Font
+/BaseFont /Courier-Bold
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+13 0 obj
+<<
+/Type /Font
+/BaseFont /Courier-Oblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+14 0 obj
+<<
+/Type /Font
+/BaseFont /Courier-BoldOblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+15 0 obj
+<<
+/Type /Font
+/BaseFont /Times-Roman
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+16 0 obj
+<<
+/Type /Font
+/BaseFont /Times-Bold
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+17 0 obj
+<<
+/Type /Font
+/BaseFont /Times-Italic
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+18 0 obj
+<<
+/Type /Font
+/BaseFont /Times-BoldItalic
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+19 0 obj
+<<
+/Type /Font
+/BaseFont /ZapfDingbats
+/Subtype /Type1
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+20 0 obj
+<<
+/Type /Font
+/BaseFont /Symbol
+/Subtype /Type1
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+2 0 obj
+<<
+/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]
+/Font <<
+/F1 7 0 R
+/F2 8 0 R
+/F3 9 0 R
+/F4 10 0 R
+/F5 11 0 R
+/F6 12 0 R
+/F7 13 0 R
+/F8 14 0 R
+/F9 15 0 R
+/F10 16 0 R
+/F11 17 0 R
+/F12 18 0 R
+/F13 19 0 R
+/F14 20 0 R
+>>
+/XObject <<
+>>
+>>
+endobj
+21 0 obj
+<<
+/Producer (jsPDF 4.2.1)
+/CreationDate (D:20260705231522+02'00')
+>>
+endobj
+22 0 obj
+<<
+/Type /Catalog
+/Pages 1 0 R
+/OpenAction [3 0 R /FitH null]
+/PageLayout /OneColumn
+>>
+endobj
+xref
+0 23
+0000000000 65535 f 
+0000010589 00000 n 
+0000012414 00000 n 
+0000000015 00000 n 
+0000000152 00000 n 
+0000005475 00000 n 
+0000005612 00000 n 
+0000010652 00000 n 
+0000010777 00000 n 
+0000010907 00000 n 
+0000011040 00000 n 
+0000011178 00000 n 
+0000011302 00000 n 
+0000011431 00000 n 
+0000011563 00000 n 
+0000011699 00000 n 
+0000011827 00000 n 
+0000011954 00000 n 
+0000012083 00000 n 
+0000012216 00000 n 
+0000012318 00000 n 
+0000012664 00000 n 
+0000012750 00000 n 
+trailer
+<<
+/Size 23
+/Root 22 0 R
+/Info 21 0 R
+/ID [ <9E3FBC57DFFE000DAA5F2FC2BC5F7E9B> <9E3FBC57DFFE000DAA5F2FC2BC5F7E9B> ]
+>>
+startxref
+12854
+%%EOF

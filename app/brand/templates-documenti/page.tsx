@@ -25,8 +25,7 @@ export default function Page() {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         {[
-          { label: 'Privacy Policy',                        file: 'privacy-policy.pdf'                    },
-          { label: 'Cookie Policy',                         file: 'cookie-policy.pdf'                     },
+          { label: 'Privacy Policy & Cookie Policy',        file: 'privacy-cookie-policy.pdf'              },
           { label: 'Consenso Marketing Newsletter e SMS',   file: 'consenso-marketing-newsletter-sms.pdf' },
         ].map(d => (
           <a

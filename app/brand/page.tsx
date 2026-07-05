@@ -1,5 +1,7 @@
 ﻿import Link from 'next/link'
 import type { Metadata } from 'next'
+import { readSettings } from '@/lib/settings'
+import { clientPages } from '@/lib/nav-config'
 
 export const metadata: Metadata = {
   title: 'Brand — Digi Home Design Palermo',
@@ -16,15 +18,21 @@ export const metadata: Metadata = {
 
 const pages = [
   { label: 'Storia',                href: '/brand/storia',                desc: 'Le radici artigianali della nostra azienda, nata da poco ma con un grande bagaglio di conoscenza, a partire dal 1960.' },
-  // { label: 'Galleria',           href: '/brand/galleria',              desc: 'Foto e video dei nostri lavori completati: ristrutturazioni, serramenti e molto altro.' }, // id 6 — disabilitata da admin
+  { label: 'Galleria',              href: '/brand/galleria',              desc: 'Foto e video dei nostri lavori completati: ristrutturazioni, serramenti e molto altro.' },
   { label: 'Contatti',              href: '/brand/contatti',              desc: 'Dove siamo, come raggiungerci e tutti i recapiti per richiedere un preventivo.' },
-  // { label: 'Partners',           href: '/brand/partners',              desc: 'I brand e i fornitori con cui collaboriamo per garantire qualità e affidabilità.' }, // id 37 — disabilitata da admin
+  { label: 'Partners',              href: '/brand/partners',              desc: 'I brand e i fornitori con cui collaboriamo per garantire qualità e affidabilità.' },
   { label: 'Cataloghi',             href: '/brand/cataloghi',             desc: 'Sfoglia i cataloghi dei prodotti disponibili: serramenti, porte, arredi e altro e componi il tuo preventivo senza registrazione.' },
   { label: 'Condizioni di Vendita', href: '/brand/condizioni-di-vendita', desc: 'Termini e condizioni che regolano i nostri contratti di fornitura e posa.' },
-  // { label: 'Templates Documenti',href: '/brand/templates-documenti',   desc: 'Modelli di documenti standard per preventivi, contratti e verbali di cantiere.' }, // id 40 — disabilitata da admin
+  { label: 'Documenti Legali',      href: '/brand/templates-documenti',   desc: 'Documenti legali ufficiali: Privacy Policy & Cookie Policy e Consenso Marketing, Newsletter e SMS, scaricabili in PDF.' },
 ]
 
-export default function Page() {
+export default async function Page() {
+  const { disabledPages } = await readSettings()
+  const disabledHrefs = new Set(
+    clientPages.filter(p => disabledPages.includes(p.id)).map(p => p.href)
+  )
+  const ok = (href: string) => !disabledHrefs.has(href)
+
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
@@ -37,7 +45,7 @@ export default function Page() {
         <p className="testo-articoli" style={{ margin: 0 }}>Tutto quello che riguarda Digi Home Design: la nostra storia, i lavori realizzati, come contattarci, i partner con cui lavoriamo e la documentazione ufficiale.</p>
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20 }}>
-        {pages.map(p => (
+        {pages.filter(p => ok(p.href)).map(p => (
           <Link
             key={p.href}
             href={p.href}
