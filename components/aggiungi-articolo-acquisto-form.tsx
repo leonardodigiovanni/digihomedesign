@@ -89,7 +89,7 @@ export default function AggiungiArticoloAcquistoForm({ articoli, isApp }: { arti
             onClick={() => { if (!esaurito) setStep('detail') }}
             disabled={esaurito}
             className={b('btn-green', isApp)}
-            style={{ ...(isApp ? { alignSelf: 'center', marginTop: 6, marginBottom: 14 } : { height: 42, borderRadius: 21, flexShrink: 0 }), padding: '0 22px', fontSize: 13, fontWeight: 600, fontFamily: 'monospace', whiteSpace: 'nowrap', opacity: esaurito ? 0.5 : 1 }}
+            style={{ ...(isApp ? { alignSelf: 'center', marginTop: 6, marginBottom: 14 } : { height: 42, borderRadius: 21, flexShrink: 0 }), padding: '0 22px', fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap', opacity: esaurito ? 0.5 : 1 }}
           >
             {esaurito ? 'Esaurito' : '+ Aggiungi ad acquisti'}
           </button>
@@ -170,11 +170,11 @@ export default function AggiungiArticoloAcquistoForm({ articoli, isApp }: { arti
               type="button"
               onClick={() => setStep('select')}
               className={b('btn-red', isApp)}
-              style={{ flex: 1, ...(isApp ? {} : { height: 42, borderRadius: 21 }), fontSize: 13, fontFamily: 'monospace' }}
+              style={{ flex: 1, ...(isApp ? {} : { height: 42, borderRadius: 21 }), fontSize: 13 }}
             >
               Annulla
             </button>
-            <button type="submit" disabled={isPending} className={isPending ? b('btn-gray', isApp) : b('btn-green', isApp)} style={{ flex: 1, ...(isApp ? {} : { height: 42, borderRadius: 21 }), fontSize: 13, fontWeight: 600, fontFamily: 'monospace' }}>
+            <button type="submit" disabled={isPending} className={isPending ? b('btn-gray', isApp) : b('btn-green', isApp)} style={{ flex: 1, ...(isApp ? {} : { height: 42, borderRadius: 21 }), fontSize: 13, fontWeight: 600 }}>
               {isPending ? 'Aggiunta…' : 'Acquista'}
             </button>
           </div>

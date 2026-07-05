@@ -178,8 +178,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
     background: 'none',
     border: 'none',
     cursor: 'pointer',
-    fontFamily: 'monospace',
-  })
+    })
 
   return (
     <nav className="class_gold_D_safe" style={{ borderBottom: '1px solid #c8960c', flexShrink: 0 }}>

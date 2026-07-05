@@ -66,7 +66,7 @@ function renderPrezzo(value: number) {
   const s = fmt(value)
   const idx = s.lastIndexOf(',')
   return (
-    <div style={{ display: 'flex', alignItems: 'baseline', fontFamily: 'monospace', fontSize: 12 }}>
+    <div style={{ display: 'flex', alignItems: 'baseline', fontSize: 12 }}>
       <span style={{ flex: 1, textAlign: 'right' }}>{s.slice(0, idx)}</span>
       <span>{s.slice(idx)}</span>
     </div>
@@ -209,14 +209,12 @@ export default function CarrelloComputometricoClient({
     padding: '8px 8px', fontSize: 12, fontWeight: 700, color: '#1a1a1a',
     textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.06em',
     borderBottom: '1px solid #222', whiteSpace: 'nowrap',
-    fontFamily: 'monospace',
-  }
+    }
   const tdS: React.CSSProperties = {
     padding: '2px 8px', fontSize: 12, color: '#1a1a1a',
     borderBottom: '1px solid #333', verticalAlign: 'middle',
     overflow: 'hidden', wordBreak: 'break-word',
-    fontFamily: 'monospace',
-  }
+    }
   const inpS: React.CSSProperties = {
     width: '100%', padding: '7px 10px', border: '1px solid #ddd', borderRadius: 6,
     fontSize: 14, fontFamily: 'inherit', boxSizing: 'border-box',
@@ -319,7 +317,7 @@ export default function CarrelloComputometricoClient({
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: '100%' }}>
             {gruppi.map(g => (
               <div key={g.key} style={{ background: '#fff', border: '1px solid #222', borderRadius: 8, overflow: 'hidden', width: '100%', boxSizing: 'border-box' }}>
-                <div style={{ background: '#fff', padding: '6px 14px', borderBottom: '1px solid #222', fontSize: 12, fontWeight: 700, color: '#1a1a1a', fontFamily: 'monospace' }}>
+                <div style={{ background: '#fff', padding: '6px 14px', borderBottom: '1px solid #222', fontSize: 12, fontWeight: 700, color: '#1a1a1a' }}>
                   {g.label}
                 </div>
                 <table className="carrello-table" style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
@@ -380,7 +378,7 @@ export default function CarrelloComputometricoClient({
                                 </div>
                                 <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px', whiteSpace: 'nowrap' }}>
                                   {r.totale_riga === 0
-                                    ? <span style={{ fontSize: 10, fontStyle: 'italic', color: '#c77700', fontFamily: 'monospace' }}>Da def.</span>
+                                    ? <span style={{ fontSize: 10, fontStyle: 'italic', color: '#c77700' }}>Da def.</span>
                                     : renderPrezzo(isExpanded ? r.totale_riga : r.totale_riga + children.reduce((s, c) => s + c.totale_riga, 0))
                                   }
                                 </div>
@@ -443,7 +441,7 @@ export default function CarrelloComputometricoClient({
                                   <span style={{ position: 'relative', zIndex: 1, fontSize: 22, lineHeight: 1, fontWeight: 300 }}>+</span>
                                 </button>
                               </td>
-                              <td colSpan={3} style={{ padding: '4px 8px', borderBottom: '1px solid #333', fontSize: 11, color: '#555', fontFamily: 'monospace' }}>
+                              <td colSpan={3} style={{ padding: '4px 8px', borderBottom: '1px solid #333', fontSize: 11, color: '#555' }}>
                                 Aggiungi elemento opzionale
                               </td>
                             </tr>
@@ -459,8 +457,8 @@ export default function CarrelloComputometricoClient({
             {/* Totale */}
             <div style={{ background: '#fff', border: '1px solid #222', borderRadius: 8, padding: '12px 20px', display: 'flex', flexDirection: 'column', gap: 4, color: '#1a1a1a' }}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <span style={{ flex: 1, fontSize: 12, color: '#1a1a1a', fontFamily: 'monospace', fontWeight: 700 }}>Stima computo (escluso IVA):</span>
-                <span style={{ fontSize: 12, fontWeight: 700, color: '#1a1a1a', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>{`€ ${fmt(totale)}`}</span>
+                <span style={{ flex: 1, fontSize: 12, color: '#1a1a1a', fontWeight: 700 }}>Stima computo (escluso IVA):</span>
+                <span style={{ fontSize: 12, fontWeight: 700, color: '#1a1a1a', whiteSpace: 'nowrap' }}>{`€ ${fmt(totale)}`}</span>
               </div>
             </div>
           </div>
@@ -469,13 +467,13 @@ export default function CarrelloComputometricoClient({
         <div style={{ background: '#e8e8e8', borderRadius: 6, overflow: 'hidden', border: '1px solid #9b1c1c' }}>
           <div style={{ padding: '5px 10px', display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ flex: 1, height: 1, background: 'rgba(150,0,0,0.3)' }} />
-            <span style={{ fontSize: 10, fontWeight: 800, color: '#9b1c1c', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
+            <span style={{ fontSize: 10, fontWeight: 800, color: '#9b1c1c', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
               Computo vuoto
             </span>
             <div style={{ flex: 1, height: 1, background: 'rgba(150,0,0,0.3)' }} />
           </div>
           <div style={{ background: '#f0f0f0', padding: '5px 10px', textAlign: 'center' }}>
-            <p style={{ fontSize: 10, fontWeight: 600, margin: 0, color: '#9b1c1c', textTransform: 'uppercase', textAlign: 'center', fontFamily: 'monospace' }}>
+            <p style={{ fontSize: 10, fontWeight: 600, margin: 0, color: '#9b1c1c', textTransform: 'uppercase', textAlign: 'center' }}>
               Aggiungi articoli dal bottone qui sopra.
             </p>
           </div>
@@ -486,17 +484,17 @@ export default function CarrelloComputometricoClient({
       {righe.length > 0 && (
         <div style={{ background: '#fff', border: '1px solid #222', borderRadius: 10, padding: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            <label style={{ fontSize: 13, fontWeight: 600, color: '#1a1a1a', fontFamily: 'monospace' }}>Descrizione stima (opzionale)</label>
+            <label style={{ fontSize: 13, fontWeight: 600, color: '#1a1a1a' }}>Descrizione stima (opzionale)</label>
             <input
               type="text"
               value={descrizione}
               onChange={e => setDescrizione(e.target.value)}
               placeholder="es. Ristrutturazione appartamento via Roma"
-              style={{ padding: '7px 10px', border: '1px solid #ddd', borderRadius: 6, fontSize: 13, fontFamily: 'monospace' }}
+              style={{ padding: '7px 10px', border: '1px solid #ddd', borderRadius: 6, fontSize: 13 }}
             />
           </div>
           {saveError && (
-            <p style={{ fontSize: 13, color: '#c0392b', margin: 0, fontFamily: 'monospace' }}>{saveError}</p>
+            <p style={{ fontSize: 13, color: '#c0392b', margin: 0 }}>{saveError}</p>
           )}
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
             {isLoggedIn ? (

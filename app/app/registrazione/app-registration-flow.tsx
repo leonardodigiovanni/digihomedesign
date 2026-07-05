@@ -10,7 +10,7 @@ const inp: React.CSSProperties = {
   width: '100%', boxSizing: 'border-box',
   padding: '10px 12px', fontSize: 15,
   border: '1px solid #ccc', borderRadius: 8,
-  fontFamily: 'monospace', background: '#fff',
+  background: '#fff',
 }
 
 export default function AppRegistrationFlow({ redirectTo }: { redirectTo: string }) {
@@ -60,10 +60,10 @@ export default function AppRegistrationFlow({ redirectTo }: { redirectTo: string
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         <div className="sfondo-riquadri-app" style={{ border: '1px solid #222', borderRadius: 10, padding: 16 }}>
-          <p style={{ margin: '0 0 4px', fontSize: 13, fontWeight: 700, fontFamily: 'monospace' }}>
+          <p style={{ margin: '0 0 4px', fontSize: 13, fontWeight: 700 }}>
             Verifica cellulare
           </p>
-          <p style={{ margin: '0 0 14px', fontSize: 12, color: '#555', fontFamily: 'monospace' }}>
+          <p style={{ margin: '0 0 14px', fontSize: 12, color: '#555' }}>
             Abbiamo inviato un codice SMS al numero indicato. Inseriscilo qui sotto.
           </p>
           <form onSubmit={handleVerify} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -77,19 +77,19 @@ export default function AppRegistrationFlow({ redirectTo }: { redirectTo: string
               style={{ ...inp, letterSpacing: '0.2em', textAlign: 'center', fontSize: 22 }}
             />
             {smsError && (
-              <p style={{ margin: 0, fontSize: 12, color: '#c00', fontFamily: 'monospace' }}>{smsError}</p>
+              <p style={{ margin: 0, fontSize: 12, color: '#c00' }}>{smsError}</p>
             )}
             <button type="submit" disabled={smsPending} className={smsPending ? 'btn-gray-app' : 'btn-green-app'}
-              style={{ fontSize: 15, fontFamily: 'monospace' }}>
+              style={{ fontSize: 15 }}>
               {smsPending ? 'Verifica…' : 'Verifica e accedi'}
             </button>
           </form>
           <button type="button" onClick={handleResend}
-            style={{ marginTop: 12, background: 'none', border: 'none', color: '#555', fontSize: 12, fontFamily: 'monospace', cursor: 'pointer', padding: 0, textDecoration: 'underline' }}>
+            style={{ marginTop: 12, background: 'none', border: 'none', color: '#555', fontSize: 12, cursor: 'pointer', padding: 0, textDecoration: 'underline' }}>
             Non hai ricevuto il codice? Reinvia SMS
           </button>
           {resendMsg && (
-            <p style={{ margin: '8px 0 0', fontSize: 12, color: '#1e4d2b', fontFamily: 'monospace' }}>{resendMsg}</p>
+            <p style={{ margin: '8px 0 0', fontSize: 12, color: '#1e4d2b' }}>{resendMsg}</p>
           )}
         </div>
       </div>
@@ -99,22 +99,22 @@ export default function AppRegistrationFlow({ redirectTo }: { redirectTo: string
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <div className="sfondo-riquadri-app" style={{ border: '1px solid #222', borderRadius: 10, padding: 16 }}>
-        <p style={{ margin: '0 0 14px', fontSize: 13, fontWeight: 700, fontFamily: 'monospace' }}>
+        <p style={{ margin: '0 0 14px', fontSize: 13, fontWeight: 700 }}>
           Crea il tuo account
         </p>
         <form action={startAction} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <div>
-            <label style={{ fontSize: 11, fontWeight: 600, color: '#666', fontFamily: 'monospace', textTransform: 'uppercase', display: 'block', marginBottom: 4 }}>
+            <label style={{ fontSize: 11, fontWeight: 600, color: '#666', textTransform: 'uppercase', display: 'block', marginBottom: 4 }}>
               Username *
             </label>
             <input name="username" type="text" required autoComplete="username" style={inp} value={username} onChange={e => setUsername(e.target.value)} />
           </div>
           <div>
-            <label style={{ fontSize: 11, fontWeight: 600, color: '#666', fontFamily: 'monospace', textTransform: 'uppercase', display: 'block', marginBottom: 4 }}>
+            <label style={{ fontSize: 11, fontWeight: 600, color: '#666', textTransform: 'uppercase', display: 'block', marginBottom: 4 }}>
               Cellulare *
             </label>
             <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #ccc', borderRadius: 8, background: '#fff', overflow: 'hidden' }}>
-              <span style={{ padding: '10px 10px 10px 12px', fontSize: 15, fontFamily: 'monospace', color: '#333', whiteSpace: 'nowrap', userSelect: 'none' }}>+39</span>
+              <span style={{ padding: '10px 10px 10px 12px', fontSize: 15, color: '#333', whiteSpace: 'nowrap', userSelect: 'none' }}>+39</span>
               <input
                 type="tel"
                 inputMode="numeric"
@@ -132,28 +132,28 @@ export default function AppRegistrationFlow({ redirectTo }: { redirectTo: string
             <input type="hidden" name="cellulare" value={`+39${cellulare}`} />
           </div>
           <div>
-            <label style={{ fontSize: 11, fontWeight: 600, color: '#666', fontFamily: 'monospace', textTransform: 'uppercase', display: 'block', marginBottom: 4 }}>
+            <label style={{ fontSize: 11, fontWeight: 600, color: '#666', textTransform: 'uppercase', display: 'block', marginBottom: 4 }}>
               Password *
             </label>
             <input name="password" type="password" required autoComplete="new-password" style={inp} value={password} onChange={e => setPassword(e.target.value)} />
             {password && validatePassword(password) && (
-              <p style={{ margin: '4px 0 0', fontSize: 11, color: '#c00', fontFamily: 'monospace' }}>{validatePassword(password)}</p>
+              <p style={{ margin: '4px 0 0', fontSize: 11, color: '#c00' }}>{validatePassword(password)}</p>
             )}
           </div>
           <div>
-            <label style={{ fontSize: 11, fontWeight: 600, color: '#666', fontFamily: 'monospace', textTransform: 'uppercase', display: 'block', marginBottom: 4 }}>
+            <label style={{ fontSize: 11, fontWeight: 600, color: '#666', textTransform: 'uppercase', display: 'block', marginBottom: 4 }}>
               Conferma password *
             </label>
             <input name="password2" type="password" required autoComplete="new-password" style={inp} value={password2} onChange={e => setPassword2(e.target.value)} />
             {password2 && password !== password2 && (
-              <p style={{ margin: '4px 0 0', fontSize: 11, color: '#c00', fontFamily: 'monospace' }}>Le password non coincidono.</p>
+              <p style={{ margin: '4px 0 0', fontSize: 11, color: '#c00' }}>Le password non coincidono.</p>
             )}
           </div>
           {startResult && !startResult.ok && (
-            <p style={{ margin: 0, fontSize: 12, color: '#c00', fontFamily: 'monospace' }}>{startResult.error}</p>
+            <p style={{ margin: 0, fontSize: 12, color: '#c00' }}>{startResult.error}</p>
           )}
           <button type="submit" disabled={startPending} className={startPending ? 'btn-gray-app' : 'btn-green-app'}
-            style={{ fontSize: 15, fontFamily: 'monospace' }}>
+            style={{ fontSize: 15 }}>
             {startPending ? 'Invio codice…' : 'Continua →'}
           </button>
         </form>

@@ -232,7 +232,7 @@ function VoceEditForm({ voce, onDone }: { voce: Voce; onDone: () => void }) {
         <div style={{ gridColumn: '1 / -1' }}>
           <label style={lbl}>PDF attuale</label>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-            <span style={{ fontSize: 12, color: '#333', fontFamily: 'monospace', wordBreak: 'break-all' }}>
+            <span style={{ fontSize: 12, color: '#333', wordBreak: 'break-all' }}>
               {decodeURIComponent(voce.pdf_filename.split('/').pop() ?? voce.pdf_filename)}
             </span>
             <a href={pdfSrc(voce.pdf_filename)} target="_blank" rel="noreferrer"
@@ -261,8 +261,7 @@ function VoceEditForm({ voce, onDone }: { voce: Voce; onDone: () => void }) {
               {!blobLoading && blobList.length === 0 && <div style={{ padding: '8px 12px', fontSize: 12, color: '#888' }}>Nessun file su Blob.</div>}
               {blobList.map(b => (
                 <div key={b.url} onClick={() => setBlobScelto(b.url)} style={{
-                  padding: '6px 12px', cursor: 'pointer', fontSize: 12, fontFamily: 'monospace',
-                  background: blobScelto === b.url ? '#fffbe6' : 'transparent',
+                  padding: '6px 12px', cursor: 'pointer', fontSize: 12, background: blobScelto === b.url ? '#fffbe6' : 'transparent',
                   borderLeft: blobScelto === b.url ? '3px solid #c8960c' : '3px solid transparent',
                   borderBottom: '1px solid #f0f0f0',
                 }}>{b.nome}</div>

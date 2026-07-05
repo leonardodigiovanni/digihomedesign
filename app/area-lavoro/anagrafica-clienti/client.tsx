@@ -323,15 +323,15 @@ export default function AnagraficaClientiClient({ clienti, role }: { clienti: Cl
                   <td style={{ ...tdStyle, fontSize: 12 }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'center' }}>
                       <span style={{ color: '#555' }}>{c.pec || <span style={{ color: '#ccc' }}>—</span>}</span>
-                      {c.codice_sdi && <span style={{ fontFamily: 'monospace', color: '#888', letterSpacing: '0.08em' }}>{c.codice_sdi}</span>}
+                      {c.codice_sdi && <span style={{ color: '#888', letterSpacing: '0.08em' }}>{c.codice_sdi}</span>}
                     </div>
                   </td>
                   <td style={{ ...tdStyle, fontSize: 12 }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'center' }}>
                       {c.codice_fiscale
-                        ? <span style={{ fontFamily: 'monospace', color: '#555', letterSpacing: '0.06em' }}>{c.codice_fiscale}</span>
+                        ? <span style={{ color: '#555', letterSpacing: '0.06em' }}>{c.codice_fiscale}</span>
                         : <span style={{ color: '#ccc' }}>—</span>}
-                      {c.partita_iva && <span style={{ fontFamily: 'monospace', color: '#888', letterSpacing: '0.06em' }}>P.IVA {c.partita_iva}</span>}
+                      {c.partita_iva && <span style={{ color: '#888', letterSpacing: '0.06em' }}>P.IVA {c.partita_iva}</span>}
                     </div>
                   </td>
                   <td style={tdStyle}>

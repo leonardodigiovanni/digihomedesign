@@ -54,7 +54,7 @@ a:active, a:active img, a:focus img {
 }
 
 .testo-titoli {
-  font-family: monospace;
+  font-family: var(--font-sans), sans-serif;
   font-size: 24px;
   font-weight: 700;
   text-transform: uppercase;
@@ -68,7 +68,7 @@ a:active, a:active img, a:focus img {
 }
 
 .testo-articoli {
-  font-family: monospace;
+  font-family: var(--font-sans), sans-serif;
   font-size: 13px;
   font-weight: 300;
   /*text-transform: uppercase;*/
@@ -123,7 +123,7 @@ a:active, a:active img, a:focus img {
 }
 
 /* ── Navbar items ── */
-.testo-nav-bar {  color: black;  font-size: 13px;  font-family: monospace;  text-transform: uppercase;}
+.testo-nav-bar {  color: black;  font-size: 13px;  font-family: var(--font-sans), sans-serif;  text-transform: uppercase;}
 
 /* ── Navbar ── */
 .nav-bar {
@@ -268,7 +268,7 @@ body {
 }
 
 body {
-  font-family: monospace;
+  font-family: var(--font-sans), sans-serif;
   font-size: 18px;
   min-height: 100vh;
   display: flex;
@@ -368,10 +368,10 @@ body {
 }
 .testo-cta {
   font-size: 13px;
-  font-family: monospace;
+  font-family: var(--font-sans), sans-serif;
 }
 .testo-indice {
-  font-family: monospace;
+  font-family: var(--font-sans), sans-serif;
   font-size: 11px;
   font-weight: 300;
   letter-spacing: 1px;
@@ -1263,7 +1263,7 @@ body {
   border-radius: 16px;
   font-size: 13px;
   font-weight: 700;
-  font-family: monospace;
+  font-family: var(--font-sans), sans-serif;
   line-height: 1.2;
   white-space: normal;
   word-break: normal;
@@ -1444,7 +1444,7 @@ body {
   font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
-  font-family: monospace;
+  font-family: var(--font-sans), sans-serif;
   white-space: normal;
   word-break: normal;
   overflow-wrap: normal;
@@ -1610,7 +1610,7 @@ body {
 
 .nav-dropdown-link {
   display: block;
-  font-family: monospace;
+  font-family: var(--font-sans), sans-serif;
   font-size: 13px;
   font-weight: 500;
   color: #111;
@@ -1659,7 +1659,7 @@ body {
 /* ─── Mobile nav links ───────────────────────────────────────────────────── */
 .nav-mobile-link {
   display: block;
-  font-family: monospace;
+  font-family: var(--font-sans), sans-serif;
   font-size: 13px;
   font-weight: 500;
   color: #111;
@@ -1711,7 +1711,7 @@ body {
   gap: 8px;
   padding: 14px 16px 5px 12px;
   margin-top: 2px;
-  font-family: monospace;
+  font-family: var(--font-sans), sans-serif;
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.12em;

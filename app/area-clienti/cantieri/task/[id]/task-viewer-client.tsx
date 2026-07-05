@@ -246,7 +246,7 @@ export default function TaskViewerClient({ task, media }: { task: Task; media: M
             </div>
           </div>
           {media.length > 0 && (
-            <div style={{ fontSize: 20, fontWeight: 800, color: '#c8960c', letterSpacing: '0.06em', fontFamily: 'monospace' }}>
+            <div style={{ fontSize: 20, fontWeight: 800, color: '#c8960c', letterSpacing: '0.06em' }}>
               {current + 1} / {media.length}
             </div>
           )}

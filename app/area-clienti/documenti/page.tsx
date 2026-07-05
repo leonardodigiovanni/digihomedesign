@@ -102,18 +102,16 @@ export default async function Page() {
     padding: '9px 14px', fontSize: 11, fontWeight: 700, color: '#7a6000',
     textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.06em',
     background: '#fff', borderBottom: '1px solid #c8960c', whiteSpace: 'nowrap',
-    fontFamily: 'monospace',
-  }
+    }
   const tdStyle: React.CSSProperties = {
     padding: '10px 14px', fontSize: 13, color: '#333',
     borderBottom: '1px solid #c8960c', verticalAlign: 'middle',
-    fontFamily: 'monospace',
-  }
+    }
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       <div>
         <h2 className="effetto-3d" style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Documenti</h2>
-        <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0', fontFamily: 'monospace' }}>
+        <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0' }}>
           {isStaff ? 'Tutti i documenti caricati.' : 'I documenti condivisi con te.'}
         </p>
       </div>
@@ -123,7 +121,7 @@ export default async function Page() {
 
       {/* ── TABELLA ── */}
       {documenti.length === 0 ? (
-        <p style={{ color: '#aaa', fontSize: 14, fontFamily: 'monospace' }}>Nessun documento disponibile.</p>
+        <p style={{ color: '#aaa', fontSize: 14 }}>Nessun documento disponibile.</p>
       ) : (
         <div style={{
           overflowX: 'auto', overflowY: 'hidden', borderRadius: '8px 8px 0 0', border: '1px solid #c8960c',
@@ -176,7 +174,7 @@ export default async function Page() {
           </table>
         </div>
       )}
-      <div className="IsDebug fs-11" style={{marginTop:8}}>pagina revisionata</div>
+      <div className="IsDebug fs-11" style={{marginTop:8 }}>pagina revisionata</div>
     </div>
   )
 }

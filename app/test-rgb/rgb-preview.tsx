@@ -25,7 +25,7 @@ export default function RgbPreview() {
             setG(parseInt(h.slice(3,5),16))
             setB(parseInt(h.slice(5,7),16))
           }} style={{ width: 48, height: 48, border: 'none', cursor: 'pointer', borderRadius: 8 }} />
-          <span style={{ fontFamily: 'monospace', fontSize: 14, minWidth: 222, display: 'inline-block' }}>{hex.toUpperCase()} — rgb({r},{g},{b})</span>
+          <span style={{ fontSize: 14, minWidth: 222, display: 'inline-block' }}>{hex.toUpperCase()} — rgb({r},{g},{b})</span>
         </div>
         {[
           { label: 'R', val: r, set: setR },

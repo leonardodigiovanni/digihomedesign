@@ -90,8 +90,7 @@ export default function VoceViewerInner({ voce, backHref }: { voce: Voce; backHr
               style={{
                 display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
                 height: 34, padding: '0 16px', borderRadius: 17,
-                textDecoration: 'none', whiteSpace: 'nowrap', fontFamily: 'monospace',
-              }}
+                textDecoration: 'none', whiteSpace: 'nowrap', }}
             >
               Scarica
             </a>
@@ -118,7 +117,7 @@ export default function VoceViewerInner({ voce, backHref }: { voce: Voce; backHr
         background: 'rgba(0,0,0,0.5)', borderRadius: 20, padding: '8px 5px', zIndex: 10,
         pointerEvents: 'auto',
       }}>
-        <span style={{ fontSize: 9, color: '#fff', fontFamily: 'monospace', lineHeight: 1 }}>{Math.round(scale * 100)}%</span>
+        <span style={{ fontSize: 9, color: '#fff', lineHeight: 1 }}>{Math.round(scale * 100)}%</span>
         <input
           type="range"
           min={50} max={300} step={25}

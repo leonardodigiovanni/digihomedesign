@@ -80,7 +80,7 @@ export default function AvvisiNotifier() {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ fontSize: 20 }}>🔔</span>
-            <span style={{ fontSize: 14, fontWeight: 700, color: '#222', fontFamily: 'monospace' }}>
+            <span style={{ fontSize: 14, fontWeight: 700, color: '#222' }}>
               Hai ricevuto un avviso
             </span>
           </div>
@@ -126,7 +126,7 @@ export default function AvvisiNotifier() {
           <div style={{ maxWidth: 600, width: '100%', textAlign: 'center' }}>
             <p style={{ margin: 0, fontSize: 16, color: '#333', lineHeight: 1.8, whiteSpace: 'pre-wrap' }}>{preview.testo}</p>
           </div>
-          <p style={{ position: 'absolute', bottom: 16, left: 0, right: 0, textAlign: 'center', margin: 0, fontSize: 11, color: '#bbb', fontStyle: 'italic', fontFamily: 'monospace' }}>
+          <p style={{ position: 'absolute', bottom: 16, left: 0, right: 0, textAlign: 'center', margin: 0, fontSize: 11, color: '#bbb', fontStyle: 'italic' }}>
             {isTouch ? 'Tocca per chiudere' : 'Clicca per chiudere'}
           </p>
         </div>

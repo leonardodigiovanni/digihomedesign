@@ -12,14 +12,14 @@ const inp: React.CSSProperties = {
   width: '100%', boxSizing: 'border-box',
   padding: '10px 12px', fontSize: 15,
   border: '1px solid #ccc', borderRadius: 8,
-  fontFamily: 'monospace', background: '#fff',
+  background: '#fff',
 }
 const inpDisabled: React.CSSProperties = {
   ...inp, background: '#f0f0f0', color: '#888', cursor: 'not-allowed',
 }
 const lbl: React.CSSProperties = {
   fontSize: 11, fontWeight: 600, color: '#666',
-  fontFamily: 'monospace', textTransform: 'uppercase',
+  textTransform: 'uppercase',
   display: 'block', marginBottom: 4,
 }
 
@@ -113,9 +113,9 @@ export default function CompletaForm({ user }: { user: UserData }) {
     return (
       <div className="sfondo-riquadri-app" style={{ border: '1px solid #1e4d2b', borderRadius: 10, padding: 20, textAlign: 'center' }}>
         <p style={{ margin: '0 0 8px', fontSize: 20 }}>✓</p>
-        <p style={{ margin: '0 0 4px', fontSize: 14, fontWeight: 700, fontFamily: 'monospace' }}>Profilo aggiornato!</p>
-        <p style={{ margin: '0 0 16px', fontSize: 12, color: '#555', fontFamily: 'monospace' }}>I tuoi dati sono stati salvati.</p>
-        <button className="btn-green-app" style={{ fontSize: 14, fontFamily: 'monospace' }}
+        <p style={{ margin: '0 0 4px', fontSize: 14, fontWeight: 700 }}>Profilo aggiornato!</p>
+        <p style={{ margin: '0 0 16px', fontSize: 12, color: '#555' }}>I tuoi dati sono stati salvati.</p>
+        <button className="btn-green-app" style={{ fontSize: 14 }}
           onClick={() => router.replace('/app')}>
           Torna alla home
         </button>
@@ -128,8 +128,8 @@ export default function CompletaForm({ user }: { user: UserData }) {
   if (phase === 'email-otp') {
     return (
       <div className="sfondo-riquadri-app" style={{ border: '1px solid #222', borderRadius: 10, padding: 16 }}>
-        <p style={{ margin: '0 0 4px', fontSize: 13, fontWeight: 700, fontFamily: 'monospace' }}>Verifica email</p>
-        <p style={{ margin: '0 0 14px', fontSize: 12, color: '#555', fontFamily: 'monospace' }}>
+        <p style={{ margin: '0 0 4px', fontSize: 13, fontWeight: 700 }}>Verifica email</p>
+        <p style={{ margin: '0 0 14px', fontSize: 12, color: '#555' }}>
           Abbiamo inviato un codice alla nuova email. Inseriscilo qui sotto.
         </p>
         <form onSubmit={handleEmailVerify} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -138,10 +138,10 @@ export default function CompletaForm({ user }: { user: UserData }) {
             value={emailCode} onChange={e => setEmailCode(e.target.value)}
             style={{ ...inp, letterSpacing: '0.2em', textAlign: 'center', fontSize: 22 }}
           />
-          {emailError && <p style={{ margin: 0, fontSize: 12, color: '#c00', fontFamily: 'monospace' }}>{emailError}</p>}
+          {emailError && <p style={{ margin: 0, fontSize: 12, color: '#c00' }}>{emailError}</p>}
           <button type="submit" disabled={emailPending}
             className={emailPending ? 'btn-gray-app' : 'btn-green-app'}
-            style={{ fontSize: 15, fontFamily: 'monospace' }}>
+            style={{ fontSize: 15 }}>
             {emailPending ? 'Verifica…' : 'Verifica email →'}
           </button>
         </form>
@@ -150,10 +150,10 @@ export default function CompletaForm({ user }: { user: UserData }) {
           setEmailMsg('')
           const res = await reinviaEmailCompletamento(pendingId)
           setEmailMsg(res.ok ? 'Nuovo codice inviato.' : res.error)
-        }} style={{ marginTop: 10, background: 'none', border: 'none', color: '#555', fontSize: 12, fontFamily: 'monospace', cursor: 'pointer', padding: 0, textDecoration: 'underline' }}>
+        }} style={{ marginTop: 10, background: 'none', border: 'none', color: '#555', fontSize: 12, cursor: 'pointer', padding: 0, textDecoration: 'underline' }}>
           Non hai ricevuto il codice? Reinvia
         </button>
-        {emailMsg && <p style={{ margin: '6px 0 0', fontSize: 12, color: '#1e4d2b', fontFamily: 'monospace' }}>{emailMsg}</p>}
+        {emailMsg && <p style={{ margin: '6px 0 0', fontSize: 12, color: '#1e4d2b' }}>{emailMsg}</p>}
       </div>
     )
   }
@@ -163,8 +163,8 @@ export default function CompletaForm({ user }: { user: UserData }) {
   if (phase === 'sms-otp') {
     return (
       <div className="sfondo-riquadri-app" style={{ border: '1px solid #222', borderRadius: 10, padding: 16 }}>
-        <p style={{ margin: '0 0 4px', fontSize: 13, fontWeight: 700, fontFamily: 'monospace' }}>Verifica cellulare</p>
-        <p style={{ margin: '0 0 14px', fontSize: 12, color: '#555', fontFamily: 'monospace' }}>
+        <p style={{ margin: '0 0 4px', fontSize: 13, fontWeight: 700 }}>Verifica cellulare</p>
+        <p style={{ margin: '0 0 14px', fontSize: 12, color: '#555' }}>
           Abbiamo inviato un codice SMS al nuovo numero. Inseriscilo qui sotto.
         </p>
         <form onSubmit={handleSmsVerify} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -173,10 +173,10 @@ export default function CompletaForm({ user }: { user: UserData }) {
             value={smsCode} onChange={e => setSmsCode(e.target.value)}
             style={{ ...inp, letterSpacing: '0.2em', textAlign: 'center', fontSize: 22 }}
           />
-          {smsError && <p style={{ margin: 0, fontSize: 12, color: '#c00', fontFamily: 'monospace' }}>{smsError}</p>}
+          {smsError && <p style={{ margin: 0, fontSize: 12, color: '#c00' }}>{smsError}</p>}
           <button type="submit" disabled={smsPending}
             className={smsPending ? 'btn-gray-app' : 'btn-green-app'}
-            style={{ fontSize: 15, fontFamily: 'monospace' }}>
+            style={{ fontSize: 15 }}>
             {smsPending ? 'Verifica…' : 'Verifica e salva →'}
           </button>
         </form>
@@ -185,10 +185,10 @@ export default function CompletaForm({ user }: { user: UserData }) {
           setSmsMsg('')
           const res = await reinviaSmsCompletamento(pendingId)
           setSmsMsg(res.ok ? 'Nuovo codice inviato via SMS.' : res.error)
-        }} style={{ marginTop: 10, background: 'none', border: 'none', color: '#555', fontSize: 12, fontFamily: 'monospace', cursor: 'pointer', padding: 0, textDecoration: 'underline' }}>
+        }} style={{ marginTop: 10, background: 'none', border: 'none', color: '#555', fontSize: 12, cursor: 'pointer', padding: 0, textDecoration: 'underline' }}>
           Non hai ricevuto il codice? Reinvia SMS
         </button>
-        {smsMsg && <p style={{ margin: '6px 0 0', fontSize: 12, color: '#1e4d2b', fontFamily: 'monospace' }}>{smsMsg}</p>}
+        {smsMsg && <p style={{ margin: '6px 0 0', fontSize: 12, color: '#1e4d2b' }}>{smsMsg}</p>}
       </div>
     )
   }
@@ -198,7 +198,7 @@ export default function CompletaForm({ user }: { user: UserData }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <div className="sfondo-riquadri-app" style={{ border: '1px solid #222', borderRadius: 10, padding: 16 }}>
-        <p style={{ margin: '0 0 14px', fontSize: 13, fontWeight: 700, fontFamily: 'monospace' }}>
+        <p style={{ margin: '0 0 14px', fontSize: 13, fontWeight: 700 }}>
           Completa il tuo profilo
         </p>
         <form action={avviaAction} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -249,7 +249,7 @@ export default function CompletaForm({ user }: { user: UserData }) {
             ) : (
               <>
                 <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #ccc', borderRadius: 8, background: '#fff', overflow: 'hidden' }}>
-                  <span style={{ padding: '10px 10px 10px 12px', fontSize: 15, fontFamily: 'monospace', color: '#333', whiteSpace: 'nowrap', userSelect: 'none' }}>+39</span>
+                  <span style={{ padding: '10px 10px 10px 12px', fontSize: 15, color: '#333', whiteSpace: 'nowrap', userSelect: 'none' }}>+39</span>
                   <input
                     type="tel" inputMode="numeric"
                     style={{ ...inp, border: 'none', borderRadius: 0, paddingLeft: 4, flex: 1 }}
@@ -268,18 +268,18 @@ export default function CompletaForm({ user }: { user: UserData }) {
           </div>
 
           {avviaResult && !avviaResult.ok && (
-            <p style={{ margin: 0, fontSize: 12, color: '#c00', fontFamily: 'monospace' }}>{avviaResult.error}</p>
+            <p style={{ margin: 0, fontSize: 12, color: '#c00' }}>{avviaResult.error}</p>
           )}
 
           <div style={{ display: 'flex', gap: 8 }}>
             <button type="submit" disabled={avviaPending || !isDirty}
               className={isDirty && !avviaPending ? 'btn-black-app' : 'btn-gray-app'}
-              style={{ flex: 1, fontSize: 15, fontFamily: 'monospace' }}>
+              style={{ flex: 1, fontSize: 15 }}>
               {avviaPending ? 'Salvataggio…' : 'Salva'}
             </button>
             <button type="button"
               className="btn-orange-app"
-              style={{ flex: 1, fontSize: 15, fontFamily: 'monospace' }}
+              style={{ flex: 1, fontSize: 15 }}
               onClick={async () => {
                 await saltaProfilo()
                 router.replace('/app')

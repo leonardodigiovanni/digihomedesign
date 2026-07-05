@@ -6,7 +6,7 @@ export default function CookiePrefsLink() {
       onClick={() => window.dispatchEvent(new CustomEvent('open-cookie-banner'))}
       style={{
         background: 'none', border: 'none', cursor: 'pointer',
-        fontSize: 10, fontFamily: 'monospace', color: '#666',
+        fontSize: 10, color: '#666',
         textDecoration: 'underline', padding: 0,
       }}
     >

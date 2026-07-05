@@ -75,8 +75,8 @@ export default async function Page() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxWidth: 640 }}>
 
         <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '16px 20px' }}>
-          <p style={{ margin: '0 0 2px', fontSize: 11, color: '#888', fontFamily: 'monospace', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Riepilogo ordine</p>
-          <p style={{ margin: 0, fontSize: 15, fontWeight: 700, fontFamily: 'monospace' }}>{clienteNome}</p>
+          <p style={{ margin: '0 0 2px', fontSize: 11, color: '#888', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Riepilogo ordine</p>
+          <p style={{ margin: 0, fontSize: 15, fontWeight: 700 }}>{clienteNome}</p>
         </div>
 
         <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, overflow: 'hidden' }}>
@@ -89,15 +89,15 @@ export default async function Page() {
             return (
               <div key={i} style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, padding: '10px 16px', borderBottom: i < articoli.length - 1 ? '1px solid #f0e0a0' : 'none' }}>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, fontFamily: 'monospace', color: '#1a1a1a' }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#1a1a1a' }}>
                     {a.produttore ? `${a.produttore} â€” ` : ''}{a.descrizione}
                   </div>
-                  <div style={{ fontSize: 11, color: '#888', fontFamily: 'monospace', marginTop: 1 }}>
+                  <div style={{ fontSize: 11, color: '#888', marginTop: 1 }}>
                     {[`${a.quantita} ${a.unita}`, ...dims].join(' Â· ')}
                   </div>
-                  {a.note && <div style={{ fontSize: 11, color: '#aaa', fontFamily: 'monospace', fontStyle: 'italic' }}>{a.note}</div>}
+                  {a.note && <div style={{ fontSize: 11, color: '#aaa', fontStyle: 'italic' }}>{a.note}</div>}
                 </div>
-                <div style={{ fontFamily: 'monospace', fontSize: 14, fontWeight: 700, whiteSpace: 'nowrap', color: '#1a1a1a' }}>
+                <div style={{ fontSize: 14, fontWeight: 700, whiteSpace: 'nowrap', color: '#1a1a1a' }}>
                   â‚¬ {fmt(a.sub)}
                 </div>
               </div>
@@ -106,12 +106,12 @@ export default async function Page() {
         </div>
 
         <div style={{ background: '#fff', border: '1px solid #c9a84c', borderRadius: 10, padding: '12px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-          <span style={{ fontSize: 15, fontWeight: 700, fontFamily: 'monospace', color: '#1a1a1a' }}>Totale</span>
-          <span style={{ fontSize: 20, fontWeight: 700, fontFamily: 'monospace', color: '#1a1a1a' }}>â‚¬ {fmt(totale)}</span>
+          <span style={{ fontSize: 15, fontWeight: 700, color: '#1a1a1a' }}>Totale</span>
+          <span style={{ fontSize: 20, fontWeight: 700, color: '#1a1a1a' }}>â‚¬ {fmt(totale)}</span>
         </div>
 
         <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <p style={{ fontSize: 11, color: '#888', margin: 0, fontFamily: 'monospace' }}>
+          <p style={{ fontSize: 11, color: '#888', margin: 0 }}>
             Pagamenti sicuri gestiti da Stripe. I tuoi dati di pagamento non vengono mai memorizzati sul nostro sito.
           </p>
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>

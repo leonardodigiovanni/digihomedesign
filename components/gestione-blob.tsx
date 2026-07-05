@@ -56,7 +56,7 @@ export default function GestioneBlob({ prefix, label }: { prefix: string; label?
           {!loading && blobs.length === 0 && <div style={{ fontSize: 12, color: '#888' }}>Nessun file su Vercel Blob.</div>}
           {blobs.map(b => (
             <div key={b.url} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', borderBottom: '1px solid #f0f0f0' }}>
-              <span style={{ flex: 1, fontSize: 12, fontFamily: 'monospace', wordBreak: 'break-all', color: '#333' }}>
+              <span style={{ flex: 1, fontSize: 12, wordBreak: 'break-all', color: '#333' }}>
                 {b.nome}
               </span>
               <span style={{ fontSize: 11, color: '#aaa', flexShrink: 0 }}>{fmt(b.size)}</span>

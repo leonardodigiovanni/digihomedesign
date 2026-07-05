@@ -41,7 +41,7 @@ function InlineLoginForm({ redirectTo }: { redirectTo?: string }) {
           placeholder="Username"
           autoComplete="username"
           required
-          style={{ padding: '4px 8px', fontSize: 13, border: '1px solid #ccc', borderRadius: 4, width: 110, fontFamily: 'monospace' }}
+          style={{ padding: '4px 8px', fontSize: 13, border: '1px solid #ccc', borderRadius: 4, width: 110 }}
         />
         <input
           name="password"
@@ -49,7 +49,7 @@ function InlineLoginForm({ redirectTo }: { redirectTo?: string }) {
           placeholder="Password"
           autoComplete="current-password"
           required
-          style={{ padding: '4px 8px', fontSize: 13, border: '1px solid #ccc', borderRadius: 4, width: 110, fontFamily: 'monospace' }}
+          style={{ padding: '4px 8px', fontSize: 13, border: '1px solid #ccc', borderRadius: 4, width: 110 }}
         />
         <button
           type="submit"
@@ -85,7 +85,7 @@ export function DropdownLoginForm({ registrazioniDisabilitate, redirectTo, isApp
         placeholder="Username"
         autoComplete="username"
         required
-        style={{ padding: '6px 8px', fontSize: 13, border: '1px solid #ccc', borderRadius: 4, fontFamily: 'monospace' }}
+        style={{ padding: '6px 8px', fontSize: 13, border: '1px solid #ccc', borderRadius: 4 }}
       />
       <input
         name="password"
@@ -93,7 +93,7 @@ export function DropdownLoginForm({ registrazioniDisabilitate, redirectTo, isApp
         placeholder="Password"
         autoComplete="current-password"
         required
-        style={{ padding: '6px 8px', fontSize: 13, border: '1px solid #ccc', borderRadius: 4, fontFamily: 'monospace' }}
+        style={{ padding: '6px 8px', fontSize: 13, border: '1px solid #ccc', borderRadius: 4 }}
       />
       <button
         type="submit"
@@ -116,7 +116,7 @@ export function DropdownLoginForm({ registrazioniDisabilitate, redirectTo, isApp
           <hr style={{ border: 'none', borderTop: '1px solid #eee', margin: '2px 0' }} />
           <a
             href={`${isApp ? '/app/registrazione' : '/registrazione'}${redirectTo ? `?from=${encodeURIComponent(redirectTo)}` : ''}`}
-            style={{ fontSize: 12, color: '#555', textDecoration: 'none', textAlign: 'center', fontFamily: 'monospace' }}
+            style={{ fontSize: 12, color: '#555', textDecoration: 'none', textAlign: 'center' }}
           >
             Non hai un account? <strong>Registrati</strong>
           </a>
@@ -125,7 +125,7 @@ export function DropdownLoginForm({ registrazioniDisabilitate, redirectTo, isApp
       <hr style={{ border: 'none', borderTop: '1px solid #eee', margin: '2px 0' }} />
       <a
         href={isApp ? '/app/recupero-password' : '/recupero-password'}
-        style={{ fontSize: 12, color: '#555', textDecoration: 'none', textAlign: 'center', fontFamily: 'monospace' }}
+        style={{ fontSize: 12, color: '#555', textDecoration: 'none', textAlign: 'center' }}
       >
         Non ricordi le credenziali? <strong>Recuperale</strong>
       </a>
@@ -179,7 +179,7 @@ export default function HeaderAuth({ username, registrazioniDisabilitate, forceD
       <div ref={wrapperRef} style={{ position: 'relative' }}>
         <span
           onClick={() => setIsOpen(v => !v)}
-          style={{ fontSize: 10, color: '#fff', fontFamily: 'monospace', opacity: 0.75, cursor: 'pointer', userSelect: 'none', display: 'flex', alignItems: 'center', gap: 3 }}
+          style={{ fontSize: 10, color: '#fff', opacity: 0.75, cursor: 'pointer', userSelect: 'none', display: 'flex', alignItems: 'center', gap: 3 }}
         >
           {username} {isOpen ? '▴' : '▾'}
         </span>
@@ -226,7 +226,7 @@ export default function HeaderAuth({ username, registrazioniDisabilitate, forceD
         <>
           <a
             href="/registrazione"
-            style={{ fontSize: 13, color: '#555', textDecoration: 'none', whiteSpace: 'nowrap', fontFamily: 'monospace' }}
+            style={{ fontSize: 13, color: '#555', textDecoration: 'none', whiteSpace: 'nowrap' }}
           >
             Registrati
           </a>

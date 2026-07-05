@@ -19,12 +19,10 @@ type Documento = {
 const thStyle: React.CSSProperties = {
   padding: '9px 14px', fontSize: 14, fontWeight: 700, color: '#1a1a1a',
   textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.06em',
-  borderBottom: '1px solid #333', whiteSpace: 'nowrap', fontFamily: 'monospace',
-}
+  borderBottom: '1px solid #333', whiteSpace: 'nowrap', }
 const tdStyle: React.CSSProperties = {
   padding: '10px 14px', fontSize: 14, color: '#333',
-  borderBottom: '1px solid #333', verticalAlign: 'middle', fontFamily: 'monospace',
-}
+  borderBottom: '1px solid #333', verticalAlign: 'middle', }
 
 export default function DocumentiClient({ documenti, isStaff }: { documenti: Documento[]; isStaff: boolean }) {
   const [filtro, setFiltro] = useState('')
@@ -53,7 +51,7 @@ export default function DocumentiClient({ documenti, isStaff }: { documenti: Doc
       )}
 
       {lista.length === 0 ? (
-        <p style={{ color: '#aaa', fontSize: 14, fontFamily: 'monospace' }}>Nessun documento disponibile.</p>
+        <p style={{ color: '#aaa', fontSize: 14 }}>Nessun documento disponibile.</p>
       ) : (
         <div style={{ overflowX: 'auto', overflowY: 'hidden', borderRadius: '8px 8px 0 0', border: '1px solid #222', boxShadow: '0 2px 8px rgba(0,0,0,0.18)' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>

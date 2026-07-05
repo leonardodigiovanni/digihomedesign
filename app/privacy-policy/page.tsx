@@ -4,16 +4,16 @@ import Link from 'next/link'
 export const metadata: Metadata = { title: 'Privacy Policy & Cookie Policy — DIGI Home Design' }
 
 const h2: React.CSSProperties = {
-  fontSize: 15, fontWeight: 700, margin: '28px 0 8px', fontFamily: 'monospace', color: '#1a1a1a',
+  fontSize: 15, fontWeight: 700, margin: '28px 0 8px', color: '#1a1a1a',
 }
 const p: React.CSSProperties = {
-  fontSize: 13, lineHeight: 1.7, margin: '0 0 10px', fontFamily: 'monospace', color: '#333',
+  fontSize: 13, lineHeight: 1.7, margin: '0 0 10px', color: '#333',
 }
 const li: React.CSSProperties = {
-  fontSize: 13, lineHeight: 1.7, fontFamily: 'monospace', color: '#333', marginBottom: 4,
+  fontSize: 13, lineHeight: 1.7, color: '#333', marginBottom: 4,
 }
 const tableStyle: React.CSSProperties = {
-  width: '100%', borderCollapse: 'collapse', fontSize: 12, fontFamily: 'monospace', marginBottom: 16,
+  width: '100%', borderCollapse: 'collapse', fontSize: 12, marginBottom: 16,
 }
 const th: React.CSSProperties = {
   textAlign: 'left', padding: '6px 8px', borderBottom: '2px solid #c8960c',
@@ -27,7 +27,7 @@ export default function Page() {
   return (
     <div style={{ padding: '0 0 80px' }}>
 
-      <h1 style={{ fontSize: 22, fontWeight: 700, fontFamily: 'monospace', marginBottom: 4 }}>
+      <h1 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>
         Privacy Policy &amp; Cookie Policy
       </h1>
       <p style={{ ...p, color: '#888', marginBottom: 32 }}>
@@ -203,7 +203,7 @@ export default function Page() {
       </p>
 
       <div style={{ marginTop: 40, paddingTop: 20, borderTop: '1px solid #eee' }}>
-        <Link href="/" style={{ fontSize: 12, fontFamily: 'monospace', color: '#888', textDecoration: 'underline' }}>
+        <Link href="/" style={{ fontSize: 12, color: '#888', textDecoration: 'underline' }}>
           ← Torna alla home
         </Link>
       </div>

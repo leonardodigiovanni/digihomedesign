@@ -209,7 +209,7 @@ function BgColorPanel({
               }}>
                 <div style={{ position: 'absolute', inset: 0, background: previewBg }} />
               </div>
-              <span style={{ fontSize: 12, color: '#888', fontFamily: 'monospace' }}>
+              <span style={{ fontSize: 12, color: '#888' }}>
                 rgba({color.r}, {color.g}, {color.b}, {(color.a / 100).toFixed(2)})<br />{hex} / {color.a}%
               </span>
             </div>

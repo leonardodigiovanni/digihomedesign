@@ -1720,13 +1720,11 @@ export default function PreventivoClient({
     padding: '8px 8px', fontSize: 12, fontWeight: 700, color: '#1a1a1a',
     textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.06em',
     borderBottom: '1px solid #222', whiteSpace: 'nowrap',
-    fontFamily: 'monospace',
-  }
+    }
   const tdS: React.CSSProperties = {
     padding: '2px 8px', fontSize: 12, color: '#1a1a1a',
     borderBottom: '1px solid #222', verticalAlign: 'middle',
-    overflow: 'hidden', wordBreak: 'break-word', fontFamily: 'monospace',
-  }
+    overflow: 'hidden', wordBreak: 'break-word', }
 
   const VERDE = '#fff'
   const ROSA  = 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)'
@@ -1735,7 +1733,7 @@ export default function PreventivoClient({
     const s = fmt(value)
     const idx = s.lastIndexOf(',')
     return (
-      <div style={{ display: 'flex', alignItems: 'baseline', fontFamily: 'monospace', fontSize: 12 }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', fontSize: 12 }}>
         <span style={{ flex: 1, textAlign: 'right' }}>{s.slice(0, idx)}</span>
         <span>{s.slice(idx)}</span>
       </div>
@@ -1972,7 +1970,7 @@ export default function PreventivoClient({
               const groupBg = groupComplete ? VERDE : ROSA
               return (
               <div key={cg.key} style={{ background: groupBg, border: '1px solid #222', borderRadius: 8, overflow: 'hidden', width: '100%', boxSizing: 'border-box' }}>
-                <div style={{ padding: '6px 14px', background: VERDE, borderBottom: '1px solid #222', fontSize: 12, fontWeight: 700, color: '#1a1a1a', fontFamily: 'monospace' }}>
+                <div style={{ padding: '6px 14px', background: VERDE, borderBottom: '1px solid #222', fontSize: 12, fontWeight: 700, color: '#1a1a1a' }}>
                   {cg.label}
                 </div>
                 <table className={`carrello-table${canEdit ? '' : ' no-edit-col'}`} style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
@@ -2126,7 +2124,7 @@ export default function PreventivoClient({
                                   {isExpanded ? (
                                     <>
                                       {root.sconto_articolo_pct !== 0 && (
-                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, fontFamily: 'monospace' }}>
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0 }}>
                                           {root.prezzo_pre_sconto > 0 && (
                                             <span style={{ color: '#aaa', fontSize: 11, textDecoration: 'line-through' }}>{fmt(root.prezzo_pre_sconto)}</span>
                                           )}
@@ -2149,7 +2147,7 @@ export default function PreventivoClient({
                                     if (netto === 0) return <span style={{ fontSize: 11, color: '#c77700', fontStyle: 'italic' }}>Da definire</span>
                                     return (
                                       <>
-                                        {hasDiff && <span style={{ color: '#aaa', fontSize: 11, textDecoration: 'line-through', fontFamily: 'monospace' }}>{fmt(lordo)}</span>}
+                                        {hasDiff && <span style={{ color: '#aaa', fontSize: 11, textDecoration: 'line-through' }}>{fmt(lordo)}</span>}
                                         {renderPrezzo(netto)}
                                       </>
                                     )
@@ -2216,7 +2214,7 @@ export default function PreventivoClient({
                                   ) : (
                                     <>
                                       {child.sconto_articolo_pct !== 0 && (
-                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, fontFamily: 'monospace' }}>
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0 }}>
                                           {child.prezzo_pre_sconto !== 0 && (
                                             <span style={{ color: '#aaa', fontSize: 11, textDecoration: 'line-through' }}>{fmt(Math.abs(child.prezzo_pre_sconto))}</span>
                                           )}
@@ -2293,8 +2291,8 @@ export default function PreventivoClient({
 
         const row = (label: string, value: string, opts?: { color?: string; bold?: boolean; separator?: boolean; large?: boolean }) => (
           <div style={{ display: 'flex', alignItems: 'center', width: '100%', ...(opts?.separator ? { borderTop: '1px solid #333', paddingTop: 6, marginTop: 2 } : {}) }}>
-            <span style={{ flex: 1, fontSize: 12, fontWeight: 700, color: opts?.color ?? '#1a1a1a', fontFamily: 'monospace' }}>{label}</span>
-            <span style={{ fontSize: 12, fontWeight: 700, color: opts?.color ?? '#1a1a1a', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>{value}</span>
+            <span style={{ flex: 1, fontSize: 12, fontWeight: 700, color: opts?.color ?? '#1a1a1a' }}>{label}</span>
+            <span style={{ fontSize: 12, fontWeight: 700, color: opts?.color ?? '#1a1a1a', whiteSpace: 'nowrap' }}>{value}</span>
           </div>
         )
 
@@ -2314,7 +2312,7 @@ export default function PreventivoClient({
               { bold: true, large: true, color: '#111', separator: true }
             )}
             {hasArticoliDaDefinire && (
-              <div style={{ textAlign: 'right', fontSize: 11, color: '#c77700', fontStyle: 'italic', fontFamily: 'monospace', marginTop: 1 }}>
+              <div style={{ textAlign: 'right', fontSize: 11, color: '#c77700', fontStyle: 'italic', marginTop: 1 }}>
                 + Prezzi da definire
               </div>
             )}

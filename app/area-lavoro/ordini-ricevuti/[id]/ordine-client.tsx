@@ -12,7 +12,7 @@ function fmt(n: number): string { return Number(n).toFixed(2) }
 
 function renderPrezzo(cents: number, opts?: { strike?: number; pct?: number }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', fontFamily: 'monospace', gap: 1 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1 }}>
       {opts?.strike !== undefined && Math.abs(opts.strike - cents) >= 1 && (
         <span style={{ color: '#aaa', fontSize: 14, textDecoration: 'line-through' }}>€&nbsp;{e(opts.strike)}</span>
       )}
@@ -42,13 +42,11 @@ export default function OrdineClient({ ordine, articoli }: { ordine: OrdineInfo;
     padding: '8px 8px', fontSize: 14, fontWeight: 700, color: '#1a1a1a',
     textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.06em',
     background: '#fff', borderBottom: '1px solid #c8960c', whiteSpace: 'nowrap',
-    fontFamily: 'monospace',
-  }
+    }
   const tdS: React.CSSProperties = {
     padding: '2px 8px', fontSize: 14, color: '#333',
     borderBottom: '1px solid #c8960c', verticalAlign: 'middle',
-    overflow: 'hidden', wordBreak: 'break-word', fontFamily: 'monospace',
-  }
+    overflow: 'hidden', wordBreak: 'break-word', }
 
   // Raggruppa per categoria·produttore·serie
   type Gruppo = { label: string; groups: OrdineArticolo[][] }
@@ -253,8 +251,8 @@ export default function OrdineClient({ ordine, articoli }: { ordine: OrdineInfo;
       {importoOrdineCents > 0 && (() => {
         const row = (label: string, value: string, opts?: { color?: string; bold?: boolean; separator?: boolean; large?: boolean }) => (
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, ...(opts?.separator ? { borderTop: '1px solid #dde3ed', paddingTop: 6, marginTop: 2 } : {}) }}>
-            <span style={{ fontSize: 14, color: opts?.color ?? '#555', fontWeight: opts?.bold ? 600 : 400, fontFamily: 'monospace' }}>{label}</span>
-            <span style={{ fontSize: 14, fontWeight: opts?.bold ? 700 : 400, color: opts?.color ?? '#444', minWidth: 110, textAlign: 'right', fontFamily: 'monospace' }}>{value}</span>
+            <span style={{ fontSize: 14, color: opts?.color ?? '#555', fontWeight: opts?.bold ? 600 : 400 }}>{label}</span>
+            <span style={{ fontSize: 14, fontWeight: opts?.bold ? 700 : 400, color: opts?.color ?? '#444', minWidth: 110, textAlign: 'right' }}>{value}</span>
           </div>
         )
         const hasScontiArt = scontiArticoliCents >= 1

@@ -14,7 +14,6 @@ const brandPages = clientPages.map(p => ({ label: p.label, href: p.href }))
 
 const headingStyle: React.CSSProperties = {
   fontWeight: 700,
-  fontFamily: 'monospace',
   letterSpacing: '0.08em',
   textTransform: 'uppercase',
   marginBottom: 8,
@@ -22,7 +21,6 @@ const headingStyle: React.CSSProperties = {
 }
 
 const linkStyle: React.CSSProperties = {
-  fontFamily: 'monospace',
   display: 'flex',
   alignItems: 'center',
   gap: 4,
@@ -76,7 +74,7 @@ export default function SitemapSection({ disabledPages }: { disabledPages: numbe
       background: '#1c1c1c',
     }}>
       <div style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.7)' }}>
-        <p className="fs-10" style={{ fontWeight: 700, fontFamily: 'monospace', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#fff', marginBottom: 18, marginTop: 0 }}>
+        <p className="fs-10" style={{ fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#fff', marginBottom: 18, marginTop: 0 }}>
           Indice pagine
         </p>
 

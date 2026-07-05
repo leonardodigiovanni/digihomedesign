@@ -97,7 +97,7 @@ function PdfViewer({ voce, onClose, isApp }: { voce: Voce; onClose: () => void; 
           </div>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexShrink: 0 }}>
             <a href={pdfSrc(voce.pdf_filename)} download className={`${b('btn-black', isApp)} fs-13`}
-              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: 34, padding: '0 16px', borderRadius: 17, textDecoration: 'none', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
+              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: 34, padding: '0 16px', borderRadius: 17, textDecoration: 'none', whiteSpace: 'nowrap' }}>
               Scarica
             </a>
             <button onClick={onClose} title="Chiudi" className={`${b('btn-red btn-icon', isApp)} fs-13`}
@@ -112,7 +112,7 @@ function PdfViewer({ voce, onClose, isApp }: { voce: Voce; onClose: () => void; 
         display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
         background: 'rgba(0,0,0,0.5)', borderRadius: 20, padding: '8px 5px', zIndex: 10,
       }}>
-        <span style={{ fontSize: 9, color: '#fff', fontFamily: 'monospace', lineHeight: 1 }}>{Math.round(scale * 100)}%</span>
+        <span style={{ fontSize: 9, color: '#fff', lineHeight: 1 }}>{Math.round(scale * 100)}%</span>
         <input type="range" min={50} max={300} step={25} value={Math.round(scale * 100)}
           onChange={e => setScale(Number(e.target.value) / 100)}
           style={{ writingMode: 'vertical-lr', direction: 'rtl', WebkitAppearance: 'slider-vertical', width: 16, height: 100, cursor: 'pointer', accentColor: '#c8960c' } as React.CSSProperties}

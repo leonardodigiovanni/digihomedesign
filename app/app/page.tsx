@@ -19,7 +19,7 @@ export default async function AppHomePage() {
       )}
       <HomeCards loggedIn={!!username} manutenzione={manutenzione} preventiviAbilitato={preventiviAbilitato} />
       <p style={{ textAlign: 'center', marginTop: 24, paddingBottom: 8 }}>
-        <a href="/app/privacy-policy" style={{ fontSize: 10, fontFamily: 'monospace', color: '#555', textDecoration: 'underline' }}>
+        <a href="/app/privacy-policy" style={{ fontSize: 10, color: '#555', textDecoration: 'underline' }}>
           Privacy Policy &amp; Cookie Policy
         </a>
       </p>

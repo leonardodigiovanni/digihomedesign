@@ -9,11 +9,11 @@ const inp: React.CSSProperties = {
   width: '100%', boxSizing: 'border-box',
   padding: '10px 12px', fontSize: 15,
   border: '1px solid #ccc', borderRadius: 8,
-  fontFamily: 'monospace', background: '#fff',
+  background: '#fff',
 }
 const lbl: React.CSSProperties = {
   fontSize: 11, fontWeight: 600, color: '#666',
-  fontFamily: 'monospace', textTransform: 'uppercase',
+  textTransform: 'uppercase',
   display: 'block', marginBottom: 4,
 }
 const card: React.CSSProperties = {
@@ -85,9 +85,9 @@ export default function RecuperoFormSito() {
     return (
       <div style={{ ...card, textAlign: 'center' }}>
         <p style={{ margin: '0 0 8px', fontSize: 20 }}>✓</p>
-        <p style={{ margin: '0 0 4px', fontSize: 14, fontWeight: 700, fontFamily: 'monospace' }}>Password aggiornata!</p>
-        <p style={{ margin: '0 0 16px', fontSize: 12, color: '#555', fontFamily: 'monospace' }}>Ora puoi accedere con la nuova password.</p>
-        <button className="btn-green" style={{ fontSize: 14, fontFamily: 'monospace' }}
+        <p style={{ margin: '0 0 4px', fontSize: 14, fontWeight: 700 }}>Password aggiornata!</p>
+        <p style={{ margin: '0 0 16px', fontSize: 12, color: '#555' }}>Ora puoi accedere con la nuova password.</p>
+        <button className="btn-green" style={{ fontSize: 14 }}
           onClick={() => router.replace('/')}>
           Torna alla home
         </button>
@@ -98,8 +98,8 @@ export default function RecuperoFormSito() {
   if (phase === 'password') {
     return (
       <div style={card}>
-        <p style={{ margin: '0 0 4px', fontSize: 13, fontWeight: 700, fontFamily: 'monospace' }}>Nuova password</p>
-        <p style={{ margin: '0 0 14px', fontSize: 12, color: '#555', fontFamily: 'monospace' }}>
+        <p style={{ margin: '0 0 4px', fontSize: 13, fontWeight: 700 }}>Nuova password</p>
+        <p style={{ margin: '0 0 14px', fontSize: 12, color: '#555' }}>
           Scegli una password con almeno 8 caratteri, una maiuscola, una minuscola, un numero e un simbolo.
         </p>
         <form onSubmit={handlePassword} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -119,10 +119,10 @@ export default function RecuperoFormSito() {
             <input type="password" required autoComplete="new-password"
               value={pw2} onChange={e => { setPw2(e.target.value); setPwError('') }} style={inp} />
           </div>
-          {pwError && <p style={{ margin: 0, fontSize: 12, color: '#c00', fontFamily: 'monospace' }}>{pwError}</p>}
+          {pwError && <p style={{ margin: 0, fontSize: 12, color: '#c00' }}>{pwError}</p>}
           <button type="submit" disabled={pwPending}
             className={pwPending ? 'btn-gray' : 'btn-black'}
-            style={{ fontSize: 15, fontFamily: 'monospace' }}>
+            style={{ fontSize: 15 }}>
             {pwPending ? 'Salvataggio…' : 'Salva password'}
           </button>
         </form>
@@ -133,8 +133,8 @@ export default function RecuperoFormSito() {
   if (phase === 'otp') {
     return (
       <div style={card}>
-        <p style={{ margin: '0 0 4px', fontSize: 13, fontWeight: 700, fontFamily: 'monospace' }}>Verifica cellulare</p>
-        <p style={{ margin: '0 0 14px', fontSize: 12, color: '#555', fontFamily: 'monospace' }}>
+        <p style={{ margin: '0 0 4px', fontSize: 13, fontWeight: 700 }}>Verifica cellulare</p>
+        <p style={{ margin: '0 0 14px', fontSize: 12, color: '#555' }}>
           Abbiamo inviato un codice SMS al numero indicato. Inseriscilo qui sotto.
         </p>
         <form onSubmit={handleOtp} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -143,10 +143,10 @@ export default function RecuperoFormSito() {
             value={otpCode} onChange={e => { setOtpCode(e.target.value); setOtpError('') }}
             style={{ ...inp, letterSpacing: '0.2em', textAlign: 'center', fontSize: 22 }}
           />
-          {otpError && <p style={{ margin: 0, fontSize: 12, color: '#c00', fontFamily: 'monospace' }}>{otpError}</p>}
+          {otpError && <p style={{ margin: 0, fontSize: 12, color: '#c00' }}>{otpError}</p>}
           <button type="submit" disabled={otpPending}
             className={otpPending ? 'btn-gray' : 'btn-green'}
-            style={{ fontSize: 15, fontFamily: 'monospace' }}>
+            style={{ fontSize: 15 }}>
             {otpPending ? 'Verifica…' : 'Verifica →'}
           </button>
         </form>
@@ -155,10 +155,10 @@ export default function RecuperoFormSito() {
           setReinvioMsg('')
           const res = await reinviaRecupero(pendingId)
           setReinvioMsg(res.ok ? 'Nuovo codice inviato via SMS.' : res.error)
-        }} style={{ marginTop: 10, background: 'none', border: 'none', color: '#555', fontSize: 12, fontFamily: 'monospace', cursor: 'pointer', padding: 0, textDecoration: 'underline' }}>
+        }} style={{ marginTop: 10, background: 'none', border: 'none', color: '#555', fontSize: 12, cursor: 'pointer', padding: 0, textDecoration: 'underline' }}>
           Non hai ricevuto il codice? Reinvia
         </button>
-        {reinvioMsg && <p style={{ margin: '6px 0 0', fontSize: 12, color: '#1e4d2b', fontFamily: 'monospace' }}>{reinvioMsg}</p>}
+        {reinvioMsg && <p style={{ margin: '6px 0 0', fontSize: 12, color: '#1e4d2b' }}>{reinvioMsg}</p>}
       </div>
     )
   }
@@ -166,15 +166,15 @@ export default function RecuperoFormSito() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <div style={card}>
-        <p style={{ margin: '0 0 4px', fontSize: 13, fontWeight: 700, fontFamily: 'monospace' }}>Recupera credenziali</p>
-        <p style={{ margin: '0 0 14px', fontSize: 12, color: '#555', fontFamily: 'monospace' }}>
+        <p style={{ margin: '0 0 4px', fontSize: 13, fontWeight: 700 }}>Recupera credenziali</p>
+        <p style={{ margin: '0 0 14px', fontSize: 12, color: '#555' }}>
           Inserisci il numero di cellulare associato al tuo account. Ti invieremo un codice SMS.
         </p>
         <form action={avviaAction} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <div>
             <label style={lbl}>Cellulare *</label>
             <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #ccc', borderRadius: 8, background: '#fff', overflow: 'hidden' }}>
-              <span style={{ padding: '10px 10px 10px 12px', fontSize: 15, fontFamily: 'monospace', color: '#333', whiteSpace: 'nowrap', userSelect: 'none' }}>+39</span>
+              <span style={{ padding: '10px 10px 10px 12px', fontSize: 15, color: '#333', whiteSpace: 'nowrap', userSelect: 'none' }}>+39</span>
               <input
                 type="tel" inputMode="numeric" required
                 style={{ ...inp, border: 'none', borderRadius: 0, paddingLeft: 4, flex: 1 }}
@@ -188,11 +188,11 @@ export default function RecuperoFormSito() {
             <input type="hidden" name="cellulare" value={celInput ? `+39${celInput}` : ''} />
           </div>
           {avviaResult && !avviaResult.ok && (
-            <p style={{ margin: 0, fontSize: 12, color: '#c00', fontFamily: 'monospace' }}>{avviaResult.error}</p>
+            <p style={{ margin: 0, fontSize: 12, color: '#c00' }}>{avviaResult.error}</p>
           )}
           <button type="submit" disabled={avviaPending}
             className={avviaPending ? 'btn-gray' : 'btn-black'}
-            style={{ fontSize: 15, fontFamily: 'monospace' }}>
+            style={{ fontSize: 15 }}>
             {avviaPending ? 'Invio codice…' : 'Invia codice →'}
           </button>
         </form>

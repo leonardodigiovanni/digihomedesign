@@ -29,8 +29,7 @@ export default function AppLoginPage() {
         position: 'fixed', top: '50%', left: '50%',
         transform: `translate(-50%, -50%) scale(${toastVisible ? 1 : 0.92})`,
         background: '#b00000', color: '#fff', borderRadius: 12,
-        padding: '20px 28px', fontSize: 14, fontFamily: 'monospace',
-        zIndex: 9999, pointerEvents: 'none', textAlign: 'center',
+        padding: '20px 28px', fontSize: 14, zIndex: 9999, pointerEvents: 'none', textAlign: 'center',
         maxWidth: '80vw', lineHeight: 1.5,
         boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
         opacity: toastVisible ? 1 : 0,
@@ -73,13 +72,13 @@ export default function AppLoginPage() {
         </button>
       </form>
 
-      <p style={{ textAlign: 'center', marginTop: 24, fontSize: 13, fontFamily: 'monospace', color: '#555' }}>
+      <p style={{ textAlign: 'center', marginTop: 24, fontSize: 13, color: '#555' }}>
         Non hai un account?{' '}
         <Link href="/app/registrazione" style={{ color: '#333', fontWeight: 700, textDecoration: 'underline' }}>
           Registrati
         </Link>
       </p>
-      <p style={{ textAlign: 'center', marginTop: 10, fontSize: 13, fontFamily: 'monospace', color: '#555' }}>
+      <p style={{ textAlign: 'center', marginTop: 10, fontSize: 13, color: '#555' }}>
         Non ricordi le credenziali?{' '}
         <Link href="/app/recupero-password" style={{ color: '#333', fontWeight: 700, textDecoration: 'underline' }}>
           Recuperale

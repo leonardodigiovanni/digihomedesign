@@ -101,14 +101,14 @@ export default function WebAuthnRegisterPrompt({ username, hasCredential }: Prop
         gap: 10,
       }}
     >
-      <p style={{ margin: 0, fontSize: 13, fontFamily: 'monospace', color: '#e8d5a0', fontWeight: 700 }}>
+      <p style={{ margin: 0, fontSize: 13, color: '#e8d5a0', fontWeight: 700 }}>
         Accedi più velocemente senza digitare la password.
       </p>
-      <p style={{ margin: 0, fontSize: 12, fontFamily: 'monospace', color: '#bbb' }}>
+      <p style={{ margin: 0, fontSize: 12, color: '#bbb' }}>
         Registra il biometrico del tuo dispositivo.
       </p>
       {error && (
-        <p style={{ margin: 0, fontSize: 11, color: '#f5a0a0', fontFamily: 'monospace' }}>{error}</p>
+        <p style={{ margin: 0, fontSize: 11, color: '#f5a0a0' }}>{error}</p>
       )}
       <button
         type="button"

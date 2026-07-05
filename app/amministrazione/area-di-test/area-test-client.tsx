@@ -267,7 +267,7 @@ export default function AreaTestClient({ flatRows, pv2 }: { flatRows: FlatRow[];
                 <tbody>
                   {flatRows.map((r, i) => (
                     <tr key={`${r.id}-${i}`} style={{ background: i % 2 === 0 ? '#fff' : '#fafafa' }}>
-                      <td style={{ ...tdS, color: '#888', fontFamily: 'monospace' }}>{r.id}</td>
+                      <td style={{ ...tdS, color: '#888' }}>{r.id}</td>
                       <td style={tdS}>{r.categoria || <span style={{ color: '#ccc' }}>—</span>}</td>
                       <td style={tdS}>{r.sottocategoria || <span style={{ color: '#ccc' }}>—</span>}</td>
                       <td style={tdS}>{r.fase || <span style={{ color: '#ccc' }}>—</span>}</td>
@@ -309,7 +309,7 @@ export default function AreaTestClient({ flatRows, pv2 }: { flatRows: FlatRow[];
                 <tbody>
                   {pv2.map(r => (
                     <tr key={r.id}>
-                      <td style={{ ...tdS, fontFamily: 'monospace', color: '#888' }}>{r.id}</td>
+                      <td style={{ ...tdS, color: '#888' }}>{r.id}</td>
                       <td style={tdS}>{r.articolo}</td>
                       <td style={tdS}>{r.fase}</td>
                       <td style={tdS}>{r.marca}</td>

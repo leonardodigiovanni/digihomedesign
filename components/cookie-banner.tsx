@@ -32,14 +32,14 @@ function Toggle({ checked, disabled }: { checked: boolean; disabled?: boolean })
       <span style={{
         position: 'absolute', left: 8, top: 0, bottom: 0,
         display: 'flex', alignItems: 'center',
-        fontSize: 9, fontFamily: 'monospace', fontWeight: 700, letterSpacing: 0.5,
+        fontSize: 9, fontWeight: 700, letterSpacing: 0.5,
         color: checked ? '#7dda7d' : 'transparent',
         transition: 'color 0.2s',
       }}>SI</span>
       <span style={{
         position: 'absolute', right: 8, top: 0, bottom: 0,
         display: 'flex', alignItems: 'center',
-        fontSize: 9, fontFamily: 'monospace', fontWeight: 700, letterSpacing: 0.5,
+        fontSize: 9, fontWeight: 700, letterSpacing: 0.5,
         color: checked ? 'transparent' : '#aaaaaa',
         transition: 'color 0.2s',
       }}>NO</span>
@@ -95,7 +95,7 @@ export default function CookieBanner() {
   if (!visible) return null
 
   const btnStyle: React.CSSProperties = {
-    fontSize: 12, fontFamily: 'monospace', padding: '0 16px', height: 34,
+    fontSize: 12, padding: '0 16px', height: 34,
     flex: 1, minWidth: 110,
   }
 
@@ -115,17 +115,17 @@ export default function CookieBanner() {
           maxHeight: '80vh',
           overflowY: 'auto',
         }}>
-          <p style={{ margin: '0 0 18px', fontSize: 13, fontFamily: 'monospace', color: '#c8960c', fontWeight: 700 }}>
+          <p style={{ margin: '0 0 18px', fontSize: 13, color: '#c8960c', fontWeight: 700 }}>
             Gestisci preferenze cookie
           </p>
 
           {/* Cookie Tecnici */}
           <div style={rowStyle}>
             <div style={{ flex: 1 }}>
-              <p style={{ margin: '0 0 3px', fontSize: 12, fontFamily: 'monospace', color: '#eee', fontWeight: 700 }}>
+              <p style={{ margin: '0 0 3px', fontSize: 12, color: '#eee', fontWeight: 700 }}>
                 Cookie Tecnici
               </p>
-              <p style={{ margin: 0, fontSize: 11, fontFamily: 'monospace', color: '#666', lineHeight: 1.6 }}>
+              <p style={{ margin: 0, fontSize: 11, color: '#666', lineHeight: 1.6 }}>
                 Necessari al funzionamento del sito: login, carrello, sessione. Non possono essere disattivati.
               </p>
             </div>
@@ -135,10 +135,10 @@ export default function CookieBanner() {
           {/* Cookie Analitici */}
           <div style={rowStyle}>
             <div style={{ flex: 1 }}>
-              <p style={{ margin: '0 0 3px', fontSize: 12, fontFamily: 'monospace', color: '#eee', fontWeight: 700 }}>
+              <p style={{ margin: '0 0 3px', fontSize: 12, color: '#eee', fontWeight: 700 }}>
                 Cookie Analitici
               </p>
-              <p style={{ margin: 0, fontSize: 11, fontFamily: 'monospace', color: '#555', lineHeight: 1.6 }}>
+              <p style={{ margin: 0, fontSize: 11, color: '#555', lineHeight: 1.6 }}>
                 Questo sito non utilizza attualmente cookie analitici di terze parti.
               </p>
             </div>
@@ -148,10 +148,10 @@ export default function CookieBanner() {
           {/* Cookie Profilazione */}
           <div style={{ ...rowStyle, borderBottom: 'none', marginBottom: 20 }}>
             <div style={{ flex: 1 }}>
-              <p style={{ margin: '0 0 3px', fontSize: 12, fontFamily: 'monospace', color: '#eee', fontWeight: 700 }}>
+              <p style={{ margin: '0 0 3px', fontSize: 12, color: '#eee', fontWeight: 700 }}>
                 Cookie di Profilazione e Marketing
               </p>
-              <p style={{ margin: 0, fontSize: 11, fontFamily: 'monospace', color: '#555', lineHeight: 1.6 }}>
+              <p style={{ margin: 0, fontSize: 11, color: '#555', lineHeight: 1.6 }}>
                 Questo sito non utilizza attualmente cookie di profilazione o marketing.
               </p>
             </div>
@@ -179,7 +179,7 @@ export default function CookieBanner() {
         }}>
           <p style={{
             flex: '1 1 260px', margin: 0,
-            fontSize: 12, fontFamily: 'monospace', color: '#ccc', lineHeight: 1.6,
+            fontSize: 12, color: '#ccc', lineHeight: 1.6,
           }}>
             Usiamo cookie tecnici essenziali per il funzionamento del sito (login, carrello, sessione). Con il tuo consenso possiamo attivare anche cookie analitici e di marketing.{' '}
             <Link href="/privacy-policy" style={{ color: '#c8960c', textDecoration: 'underline' }}>

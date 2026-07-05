@@ -142,7 +142,7 @@ function LoginBanner({ hasLacune, cataloghiHref = '/brand/cataloghi', isApp }: {
 
   return (
     <div className="sfondo-riquadri-app" style={{ border: '1px solid #222', borderRadius: 10, padding: 12 }}>
-      <p style={{ fontSize: 14, color: '#1a1a1a', margin: '0 0 14px', lineHeight: 1.6, textAlign: 'justify', fontFamily: 'monospace' }}>
+      <p style={{ fontSize: 14, color: '#1a1a1a', margin: '0 0 14px', lineHeight: 1.6, textAlign: 'justify' }}>
         <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style={{ display: 'inline', verticalAlign: 'middle', marginRight: 6, flexShrink: 0 }}><path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z"/></svg>I clienti registrati ricevono sempre degli sconti. Accedi o registrati, salva il carrello come preventivo e scopri il prezzo finale con i tuoi sconti.
       </p>
       <div className={isApp ? undefined : 'btn-grid-4'} style={isApp ? { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, maxWidth: 360, margin: '0 auto' } : undefined}>
@@ -150,7 +150,7 @@ function LoginBanner({ hasLacune, cataloghiHref = '/brand/cataloghi', isApp }: {
           <button
             onClick={() => setOpen(v => !v)}
             className={open ? b('btn-orange', isApp) : b('btn-black', isApp)}
-            style={{ width: '100%', padding: '0 8px', fontSize: 14, fontFamily: 'monospace' }}
+            style={{ width: '100%', padding: '0 8px', fontSize: 14 }}
           >
             {open ? 'Chiudi ▴' : 'Accedi ▾'}
           </button>
@@ -236,7 +236,7 @@ export default function CarrelloClient({
     const s = fmt(value)
     const idx = s.lastIndexOf(',')
     return (
-      <div style={{ display: 'flex', alignItems: 'baseline', fontFamily: 'monospace', fontSize: 12 }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', fontSize: 12 }}>
         <span style={{ flex: 1, textAlign: 'right' }}>{s.slice(0, idx)}</span>
         <span>{s.slice(idx)}</span>
       </div>
@@ -465,14 +465,12 @@ export default function CarrelloClient({
     padding: '8px 8px', fontSize: 12, fontWeight: 700, color: '#1a1a1a',
     textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.06em',
     borderBottom: '1px solid #222', whiteSpace: 'nowrap',
-    fontFamily: 'monospace',
-  }
+    }
   const tdS: React.CSSProperties = {
     padding: '2px 8px', fontSize: 12, color: '#1a1a1a',
     borderBottom: '1px solid #333', verticalAlign: 'middle',
     overflow: 'hidden', wordBreak: 'break-word',
-    fontFamily: 'monospace',
-  }
+    }
 
   const VERDE     = 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)'
   const inpS: React.CSSProperties = {
@@ -756,7 +754,7 @@ export default function CarrelloClient({
           })()}
 
           {isEdit && editError && (
-            <p style={{ fontSize: 14, color: '#c0392b', margin: '0 0 8px', fontFamily: 'monospace' }}>{editError}</p>
+            <p style={{ fontSize: 14, color: '#c0392b', margin: '0 0 8px' }}>{editError}</p>
           )}
           <div style={{ display: 'flex', gap: 10, justifyContent: 'center', marginTop: 4 }}>
             <button type="button" onClick={onClose} className={b('btn-orange', isApp)}
@@ -855,7 +853,7 @@ export default function CarrelloClient({
               return (
               <div key={cg.key} className={groupComplete ? undefined : 'sfondo-orange-app'} style={{ background: groupComplete ? '#fff' : undefined, border: '1px solid #222', borderRadius: 8, overflow: 'hidden', width: '100%', boxSizing: 'border-box' }}>
                 {/* Label gruppo */}
-                <div style={{ background: '#fff', padding: '6px 14px', borderBottom: '1px solid #222', fontSize: 12, fontWeight: 700, color: '#1a1a1a', fontFamily: 'monospace' }}>
+                <div style={{ background: '#fff', padding: '6px 14px', borderBottom: '1px solid #222', fontSize: 12, fontWeight: 700, color: '#1a1a1a' }}>
                   {cg.label}
                 </div>
                 <table className="carrello-table" style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
@@ -944,8 +942,8 @@ export default function CarrelloClient({
                                 <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px', whiteSpace: 'nowrap' }}>
                                   {calcolaPrezzo(root, articoli) === 0
                                     ? ((root.sconto_articolo ?? 0) === 100
-                                        ? <span style={{ fontSize: 10, fontStyle: 'italic', color: '#2e7d32', fontFamily: 'monospace' }}>Omaggio</span>
-                                        : <span style={{ fontSize: 10, fontStyle: 'italic', color: '#c77700', fontFamily: 'monospace' }}>Da def.</span>
+                                        ? <span style={{ fontSize: 10, fontStyle: 'italic', color: '#2e7d32' }}>Omaggio</span>
+                                        : <span style={{ fontSize: 10, fontStyle: 'italic', color: '#c77700' }}>Da def.</span>
                                       )
                                     : renderPrezzo(isExpanded
                                         ? calcolaPrezzo(root, articoli)
@@ -1094,11 +1092,11 @@ export default function CarrelloClient({
             {/* Totale */}
             <div style={{ background: '#fff', border: '1px solid #222', borderRadius: 8, padding: '12px 20px', display: 'flex', flexDirection: 'column', gap: 4, color: '#1a1a1a' }}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <span style={{ flex: 1, fontSize: 12, color: '#1a1a1a', fontFamily: 'monospace', fontWeight: 700 }}>Listino (escluso IVA):</span>
-                <span style={{ fontSize: 12, fontWeight: 700, color: '#1a1a1a', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>{`€ ${fmt(totale)}`}</span>
+                <span style={{ flex: 1, fontSize: 12, color: '#1a1a1a', fontWeight: 700 }}>Listino (escluso IVA):</span>
+                <span style={{ fontSize: 12, fontWeight: 700, color: '#1a1a1a', whiteSpace: 'nowrap' }}>{`€ ${fmt(totale)}`}</span>
               </div>
               {hasDaDefinire && (
-                <div style={{ textAlign: 'right', fontSize: 11, color: '#c77700', fontStyle: 'italic', fontFamily: 'monospace' }}>
+                <div style={{ textAlign: 'right', fontSize: 11, color: '#c77700', fontStyle: 'italic' }}>
                   + Prezzi da definire
                 </div>
               )}
@@ -1113,16 +1111,16 @@ export default function CarrelloClient({
         <div style={{ background: '#e8e8e8', borderRadius: 6, overflow: 'hidden', border: '1px solid #9b1c1c' }}>
           <div style={{ padding: '5px 10px', display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ flex: 1, height: 1, background: 'rgba(150,0,0,0.3)' }} />
-            <span style={{ fontSize: 10, fontWeight: 800, color: '#9b1c1c', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
+            <span style={{ fontSize: 10, fontWeight: 800, color: '#9b1c1c', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
               Carrello vuoto
             </span>
             <div style={{ flex: 1, height: 1, background: 'rgba(150,0,0,0.3)' }} />
           </div>
           <div style={{ background: '#f0f0f0', padding: '5px 10px', textAlign: 'center' }}>
-            <p style={{ fontSize: 10, fontWeight: 600, margin: 0, color: '#9b1c1c', textTransform: 'uppercase', textAlign: 'center', fontFamily: 'monospace' }}>
+            <p style={{ fontSize: 10, fontWeight: 600, margin: 0, color: '#9b1c1c', textTransform: 'uppercase', textAlign: 'center' }}>
               Aggiungi articoli dal bottone qui sopra oppure sfoglia i cataloghi.
             </p>
-            {!isApp && <a href={cataloghiHref} style={{ color: '#9b1c1c', fontWeight: 700, fontSize: 10, fontFamily: 'monospace' }}>
+            {!isApp && <a href={cataloghiHref} style={{ color: '#9b1c1c', fontWeight: 700, fontSize: 10 }}>
               Vai ai cataloghi →
             </a>}
           </div>
@@ -1131,13 +1129,13 @@ export default function CarrelloClient({
         <div style={{ background: '#e8e8e8', borderRadius: 6, overflow: 'hidden', border: '1px solid #9b1c1c' }}>
           <div style={{ padding: '5px 10px', display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ flex: 1, height: 1, background: 'rgba(150,0,0,0.3)' }} />
-            <span style={{ fontSize: 10, fontWeight: 800, color: '#9b1c1c', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
+            <span style={{ fontSize: 10, fontWeight: 800, color: '#9b1c1c', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
               Dati incompleti
             </span>
             <div style={{ flex: 1, height: 1, background: 'rgba(150,0,0,0.3)' }} />
           </div>
           <div style={{ background: '#f0f0f0', padding: '5px 10px' }}>
-            <p style={{ fontSize: 10, fontWeight: 600, margin: 0, color: '#9b1c1c', textTransform: 'uppercase', textAlign: 'justify', fontFamily: 'monospace' }}>
+            <p style={{ fontSize: 10, fontWeight: 600, margin: 0, color: '#9b1c1c', textTransform: 'uppercase', textAlign: 'justify' }}>
               Alcuni articoli hanno caratteristiche mancanti. Completali prima di procedere con la stampa o il salvataggio del preventivo.
             </p>
           </div>
@@ -1147,7 +1145,7 @@ export default function CarrelloClient({
         <div style={{ background: '#e8e8e8', borderRadius: 6, overflow: 'hidden', border: '1px solid #9b1c1c' }}>
           <div style={{ padding: '5px 10px', display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ flex: 1, height: 1, background: 'rgba(150,0,0,0.3)' }} />
-            <span style={{ fontSize: 9, fontWeight: 800, color: '#9b1c1c', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
+            <span style={{ fontSize: 9, fontWeight: 800, color: '#9b1c1c', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
               Prezzo da scontare
             </span>
             <div style={{ flex: 1, height: 1, background: 'rgba(150,0,0,0.3)' }} />
@@ -1158,13 +1156,13 @@ export default function CarrelloClient({
         <div style={{ background: '#e8e8e8', borderRadius: 6, overflow: 'hidden', border: '1px solid #1e4d2b' }}>
           <div style={{ padding: '5px 10px', display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ flex: 1, height: 1, background: 'rgba(0,100,0,0.3)' }} />
-            <span style={{ fontSize: 9, fontWeight: 800, color: '#1e4d2b', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
+            <span style={{ fontSize: 9, fontWeight: 800, color: '#1e4d2b', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
               Applica gli sconti
             </span>
             <div style={{ flex: 1, height: 1, background: 'rgba(0,100,0,0.3)' }} />
           </div>
           <div style={{ background: '#f0f0f0', padding: '5px 10px' }}>
-            <p style={{ fontSize: 9, fontWeight: 600, margin: 0, color: '#1e4d2b', textTransform: 'uppercase', textAlign: 'center', fontFamily: 'monospace', letterSpacing: '0.04em' }}>
+            <p style={{ fontSize: 9, fontWeight: 600, margin: 0, color: '#1e4d2b', textTransform: 'uppercase', textAlign: 'center', letterSpacing: '0.04em' }}>
               Salva il carrello del simulatore come preventivo e scopri il prezzo finale con i tuoi sconti.
             </p>
           </div>
@@ -1175,18 +1173,18 @@ export default function CarrelloClient({
         <div style={{ background: '#e8e8e8', borderRadius: 6, overflow: 'hidden', border: '1px solid #1e4d2b', padding: '3px 10px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ flex: 1, height: 1, background: 'rgba(0,100,0,0.3)' }} />
-            <span style={{ fontSize: 9, fontWeight: 800, color: '#1e4d2b', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>Complimenti!</span>
+            <span style={{ fontSize: 9, fontWeight: 800, color: '#1e4d2b', letterSpacing: '0.12em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>Complimenti!</span>
             <div style={{ flex: 1, height: 1, background: 'rgba(0,100,0,0.3)' }} />
           </div>
-          <p style={{ fontSize: 9, fontWeight: 400, color: '#1e4d2b', letterSpacing: '0.12em', textTransform: 'uppercase', textAlign: 'center', margin: '2px 0', lineHeight: 1.2, fontFamily: 'monospace' }}>I dati del preventivo sono completi.</p>
-          <p style={{ fontSize: 9, fontWeight: 600, margin: '2px 0', color: '#1e4d2b', textTransform: 'uppercase', textAlign: 'center', fontFamily: 'monospace', lineHeight: 1.2 }}>Accedi per applicare gli sconti.</p>
-          <p style={{ fontSize: 9, fontWeight: 600, margin: '2px 0', color: '#1e4d2b', textTransform: 'uppercase', textAlign: 'center', fontFamily: 'monospace', lineHeight: 1.2 }}>Salva il preventivo e recuperalo quando vuoi.</p>
+          <p style={{ fontSize: 9, fontWeight: 400, color: '#1e4d2b', letterSpacing: '0.12em', textTransform: 'uppercase', textAlign: 'center', margin: '2px 0', lineHeight: 1.2 }}>I dati del preventivo sono completi.</p>
+          <p style={{ fontSize: 9, fontWeight: 600, margin: '2px 0', color: '#1e4d2b', textTransform: 'uppercase', textAlign: 'center', lineHeight: 1.2 }}>Accedi per applicare gli sconti.</p>
+          <p style={{ fontSize: 9, fontWeight: 600, margin: '2px 0', color: '#1e4d2b', textTransform: 'uppercase', textAlign: 'center', lineHeight: 1.2 }}>Salva il preventivo e recuperalo quando vuoi.</p>
         </div>
       )}
 
       {/* Barra azioni */}
       <div style={{ background: '#fff', border: '1px solid #222', borderRadius: 10, padding: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <p style={{ fontSize: 14, color: '#1a1a1a', margin: 0, fontFamily: 'monospace' }}>
+        <p style={{ fontSize: 14, color: '#1a1a1a', margin: 0 }}>
           {isLoggedIn
             ? <><svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style={{ display: 'inline', verticalAlign: 'middle', marginRight: 6, flexShrink: 0 }}><path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z"/></svg>Se non procedi al trasferimento nella tua area personale, ti consigliamo di scaricare il pdf o stamparlo perché non verrà salvato nel nostro sistema.</>
             : <><svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style={{ display: 'inline', verticalAlign: 'middle', marginRight: 6, flexShrink: 0 }}><path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z"/></svg>Genera il PDF del preventivo perché, se non lo salvi, non sarà recuperabile successivamente.</>}
@@ -1201,12 +1199,12 @@ export default function CarrelloClient({
           )}
           <button type="button" onClick={handleGeneraPDF} disabled={hasLacuneAperte || articoli.length === 0}
             className={(hasLacuneAperte || articoli.length === 0) ? b('btn-gray', isApp) : b('btn-black', isApp)}
-            style={{ flex: 1, minWidth: 200, padding: '0 8px', fontSize: 14, fontFamily: 'monospace' }}>
+            style={{ flex: 1, minWidth: 200, padding: '0 8px', fontSize: 14 }}>
             <span className={(hasLacuneAperte || articoli.length === 0) ? undefined : 'animato'}>Genera PDF</span>
           </button>
           <button type="button" onClick={handleSvuota} disabled={clearPending || articoli.length === 0}
             className={(clearPending || articoli.length === 0) ? b('btn-gray', isApp) : b('btn-red', isApp)}
-            style={{ flex: 1, minWidth: 200, padding: '0 8px', fontSize: 14, fontFamily: 'monospace' }}>
+            style={{ flex: 1, minWidth: 200, padding: '0 8px', fontSize: 14 }}>
             {clearPending ? 'Svuotamento…' : 'Svuota carrello'}
           </button>
         </div>

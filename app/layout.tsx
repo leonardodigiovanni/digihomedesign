@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next'
+import { Inter } from 'next/font/google'
 import { cookies, headers } from 'next/headers'
 import Header from '@/components/header'
 import Navbar from '@/components/navbar'
@@ -25,6 +26,12 @@ export const viewport: Viewport = {
   maximumScale: 1,
   themeColor: '#1c1c1c',
 }
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-sans',
+  display: 'swap',
+})
 
 const BASE_URL = process.env.NODE_ENV === 'production'
   ? 'https://www.digi-home-design.com'
@@ -118,7 +125,7 @@ export default async function RootLayout({
   // Per le rotte /app/* restituiamo solo html+body con il children (app-shell)
   if (isAppRoute) {
     return (
-      <html lang="it">
+      <html lang="it" className={inter.variable}>
         <body>
           <PwaRegister />
           {children}
@@ -236,7 +243,7 @@ export default async function RootLayout({
   const bannerCircolare = settings.bannerCircolare
 
   return (
-    <html lang="it">
+    <html lang="it" className={inter.variable}>
       <body style={isPageEffect ? {} : { background: `rgba(${pageBg.r}, ${pageBg.g}, ${pageBg.b}, ${pageBg.a / 100})` }}>
 
         {/* Sfondo pagina con effetto (fixed, sotto tutto) */}

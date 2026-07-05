@@ -194,7 +194,7 @@ export default function Footer({
         {/* Dati aziendali */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 16 }}>
           {infoRows.map(({ label, value }) => (
-            <div key={label} className="testo-articoli" style={{ lineHeight: 1.5, fontFamily: 'monospace', fontSize: 11 }}>
+            <div key={label} className="testo-articoli" style={{ lineHeight: 1.5, fontSize: 11 }}>
               <span>{label}:</span> {value}
             </div>
           ))}
@@ -226,16 +226,16 @@ export default function Footer({
 
     {/* Ultima riga nera */}
     <div className="subfooter-bar" style={{ background: '#000', padding: '10px 24px' }}>
-      <p className="testo-indice" style={{ textAlign: 'center', margin: 0, fontFamily: 'monospace', fontSize: 10 }}>
+      <p className="testo-indice" style={{ textAlign: 'center', margin: 0, fontSize: 10 }}>
         © 2026  -  DIGI Home Design S.R.L.
       </p>
       <Image src="/images/footer/oooooo.png" alt="logo" width={34} height={22} id="subfooter-logo" unoptimized style={{ display: 'block' }} />
-      <p className="testo-indice" style={{ textAlign: 'center', margin: 0, fontFamily: 'monospace', fontSize: 10 }}>
+      <p className="testo-indice" style={{ textAlign: 'center', margin: 0, fontSize: 10 }}>
         Tutti i diritti sono riservati all&apos;autore
       </p>
     </div>
     <div style={{ background: '#000', borderTop: '1px solid #222', padding: '8px 24px', display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
-      <a href="/privacy-policy" style={{ fontSize: 10, fontFamily: 'monospace', color: '#666', textDecoration: 'underline' }}>
+      <a href="/privacy-policy" style={{ fontSize: 10, color: '#666', textDecoration: 'underline' }}>
         Privacy Policy &amp; Cookie Policy
       </a>
       <CookiePrefsLink />

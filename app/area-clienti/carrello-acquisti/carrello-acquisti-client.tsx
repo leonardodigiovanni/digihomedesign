@@ -145,7 +145,7 @@ export default function CarrelloAcquistiClient({
     const s = fmt(value)
     const idx = s.lastIndexOf(',')
     return (
-      <div style={{ display: 'flex', alignItems: 'baseline', fontFamily: 'monospace', fontSize: 12 }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', fontSize: 12 }}>
         <span style={{ flex: 1, textAlign: 'right' }}>{s.slice(0, idx)}</span>
         <span>{s.slice(idx)}</span>
       </div>
@@ -285,14 +285,12 @@ export default function CarrelloAcquistiClient({
   const thS: React.CSSProperties = {
     padding: '8px 8px', fontSize: 12, fontWeight: 700, color: '#1a1a1a',
     textAlign: 'left', borderBottom: '1px solid #222',
-    whiteSpace: 'nowrap', fontFamily: 'monospace',
-  }
+    whiteSpace: 'nowrap', }
   const tdS: React.CSSProperties = {
     padding: '2px 8px', fontSize: 12, color: '#1a1a1a',
     borderBottom: '1px solid #222', verticalAlign: 'middle',
     overflow: 'hidden', wordBreak: 'break-word',
-    fontFamily: 'monospace',
-  }
+    }
   const VERDE = 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)'
   const ROSA  = 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)'
   const inpS: React.CSSProperties = {
@@ -498,7 +496,7 @@ export default function CarrelloAcquistiClient({
             )}
           </div>
           {editError && (
-            <p style={{ fontSize: 14, color: '#c0392b', margin: '0 0 8px', fontFamily: 'monospace' }}>{editError}</p>
+            <p style={{ fontSize: 14, color: '#c0392b', margin: '0 0 8px' }}>{editError}</p>
           )}
           <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 4 }}>
             <button type="button" onClick={onClose} className={b('btn-orange', isApp)}
@@ -585,7 +583,7 @@ export default function CarrelloAcquistiClient({
             return (
             <div key={cg.key} style={{ background: groupBg, border: '1px solid #222', borderRadius: 8, overflow: 'hidden', width: '100%', boxSizing: 'border-box' }}>
               {/* Label gruppo */}
-              <div style={{ padding: '6px 14px', background: VERDE, borderBottom: '1px solid #222', fontSize: 12, fontWeight: 700, color: '#1a1a1a', fontFamily: 'monospace' }}>
+              <div style={{ padding: '6px 14px', background: VERDE, borderBottom: '1px solid #222', fontSize: 12, fontWeight: 700, color: '#1a1a1a' }}>
                 {cg.label}
               </div>
               <table className="carrello-table" style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
@@ -753,25 +751,25 @@ export default function CarrelloAcquistiClient({
                               <div style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: 10 }}>
                                 {showColore && (
                                   <button type="button" onClick={() => handleAggiungiLacuna(root, 'tipo_colore')}
-                                    style={{ height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, fontFamily: 'monospace', whiteSpace: 'nowrap', borderRadius: 21, border: '1px solid #000', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>
+                                    style={{ height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, whiteSpace: 'nowrap', borderRadius: 21, border: '1px solid #000', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>
                                     + Colore
                                   </button>
                                 )}
                                 {showColoreAcc && (
                                   <button type="button" onClick={() => handleAggiungiLacuna(root, 'tipo_colore_acc')}
-                                    style={{ height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, fontFamily: 'monospace', whiteSpace: 'nowrap', borderRadius: 21, border: '1px solid #000', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>
+                                    style={{ height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, whiteSpace: 'nowrap', borderRadius: 21, border: '1px solid #000', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>
                                     + Accessori
                                   </button>
                                 )}
                                 {showVetro && (
                                   <button type="button" onClick={() => handleAggiungiLacuna(root, 'tipo_vetro')}
-                                    style={{ height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, fontFamily: 'monospace', whiteSpace: 'nowrap', borderRadius: 21, border: '1px solid #000', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>
+                                    style={{ height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, whiteSpace: 'nowrap', borderRadius: 21, border: '1px solid #000', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>
                                     + Vetro
                                   </button>
                                 )}
                                 {showMontaggio && (
                                   <button type="button" onClick={() => handleAggiungiLacuna(root, 'tipo_montaggio')}
-                                    style={{ height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, fontFamily: 'monospace', whiteSpace: 'nowrap', borderRadius: 21, border: '1px solid #000', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>
+                                    style={{ height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, whiteSpace: 'nowrap', borderRadius: 21, border: '1px solid #000', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>
                                     + Montaggio
                                   </button>
                                 )}
@@ -796,8 +794,8 @@ export default function CarrelloAcquistiClient({
               function row(label: string, val: string, opts?: { color?: string; separator?: boolean }) {
                 return (
                   <div style={{ display: 'flex', alignItems: 'center', width: '100%', ...(opts?.separator ? { borderTop: '1px solid #333', paddingTop: 6, marginTop: 2 } : {}) }}>
-                    <span style={{ flex: 1, fontSize: 12, fontWeight: 700, color: opts?.color ?? '#1a1a1a', fontFamily: 'monospace' }}>{label}</span>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: opts?.color ?? '#1a1a1a', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>{val}</span>
+                    <span style={{ flex: 1, fontSize: 12, fontWeight: 700, color: opts?.color ?? '#1a1a1a' }}>{label}</span>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: opts?.color ?? '#1a1a1a', whiteSpace: 'nowrap' }}>{val}</span>
                   </div>
                 )
               }
@@ -820,7 +818,7 @@ export default function CarrelloAcquistiClient({
       </div>
 
       {articoli.some(a => a.unita === 'mq' || a.unita === 'ml') && (
-        <p style={{ fontSize: 14, color: '#1a1a1a', margin: 0, fontFamily: 'monospace' }}>
+        <p style={{ fontSize: 14, color: '#1a1a1a', margin: 0 }}>
           * Per articoli a m² o m lin. il subtotale è calcolato sul prezzo unitario di listino. Il prezzo finale dipenderà dalle dimensioni effettive.
         </p>
       )}
@@ -828,12 +826,12 @@ export default function CarrelloAcquistiClient({
       {/* Barra azioni */}
       <div style={{ background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 10, padding: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
         {hasLacuneAperte && (
-          <p style={{ fontSize: 14, color: '#c0392b', margin: 0, fontFamily: 'monospace', fontWeight: 600 }}>
+          <p style={{ fontSize: 14, color: '#c0392b', margin: 0, fontWeight: 600 }}>
             Completa le caratteristiche mancanti (articoli in rosso) prima di procedere al pagamento.
           </p>
         )}
         {isLoggedIn && !hasLacuneAperte && (
-          <p style={{ fontSize: 14, color: '#1a1a1a', margin: 0, fontFamily: 'monospace' }}>
+          <p style={{ fontSize: 14, color: '#1a1a1a', margin: 0 }}>
             Pagamenti sicuri gestiti da Stripe. I tuoi dati di pagamento non vengono mai memorizzati sul nostro sito.
           </p>
         )}
@@ -847,7 +845,7 @@ export default function CarrelloAcquistiClient({
                 : toggleLoginPanel
               }
               className={hasLacuneAperte ? b('btn-gray', isApp) : showLoginPanel ? b('btn-orange', isApp) : b('btn-green', isApp)}
-              style={{ width: '100%', padding: '0 8px', fontSize: 14, fontFamily: 'monospace' }}>
+              style={{ width: '100%', padding: '0 8px', fontSize: 14 }}>
               {!isLoggedIn && showLoginPanel ? 'Chiudi ▴' : 'Paga ora'}
             </button>
             {!isLoggedIn && showLoginPanel && (
@@ -864,12 +862,12 @@ export default function CarrelloAcquistiClient({
             )}
           </div>
           <a href={stampaHref} className={b('btn-black', isApp)}
-            style={{ flex: 1, minWidth: 140, padding: '0 8px', fontSize: 14, textDecoration: 'none', fontFamily: 'monospace' }}>
+            style={{ flex: 1, minWidth: 140, padding: '0 8px', fontSize: 14, textDecoration: 'none' }}>
             Stampa memo
           </a>
           <button type="button" onClick={handleSvuota} disabled={clearPending}
             className={clearPending ? b('btn-gray', isApp) : b('btn-red', isApp)}
-            style={{ flex: 1, minWidth: 140, padding: '0 8px', fontSize: 14, fontFamily: 'monospace' }}>
+            style={{ flex: 1, minWidth: 140, padding: '0 8px', fontSize: 14 }}>
             {clearPending ? 'Svuotamento…' : 'Svuota carrello'}
           </button>
         </div>
@@ -879,7 +877,7 @@ export default function CarrelloAcquistiClient({
         <div style={{ background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 10, padding: 12, display: 'flex', flexDirection: 'column', gap: 10 }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
             <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" style={{ display: 'inline', verticalAlign: 'middle', marginRight: 6, flexShrink: 0, marginTop: 2 }}><path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z"/></svg>
-            <p style={{ margin: 0, fontSize: 14, color: '#1a1a1a', fontFamily: 'monospace', lineHeight: 1.5 }}>
+            <p style={{ margin: 0, fontSize: 14, color: '#1a1a1a', lineHeight: 1.5 }}>
               Per procedere all&apos;acquisto è necessario essere un utente registrato.
             </p>
           </div>
@@ -888,7 +886,7 @@ export default function CarrelloAcquistiClient({
               <button type="button"
                 onClick={() => setShowAccediPanel(v => !v)}
                 className={showAccediPanel ? b('btn-orange', isApp) : b('btn-black', isApp)}
-                style={{ width: '100%', padding: '0 8px', fontSize: 14, fontFamily: 'monospace' }}>
+                style={{ width: '100%', padding: '0 8px', fontSize: 14 }}>
                 {showAccediPanel ? 'Chiudi ▴' : 'Accedi ▾'}
               </button>
               {showAccediPanel && (
@@ -905,7 +903,7 @@ export default function CarrelloAcquistiClient({
               )}
             </div>
             <a href="/registrazione" className={b('btn-black', isApp)}
-              style={{ flex: 1, minWidth: 140, padding: '0 8px', fontSize: 14, textDecoration: 'none', fontFamily: 'monospace' }}>
+              style={{ flex: 1, minWidth: 140, padding: '0 8px', fontSize: 14, textDecoration: 'none' }}>
               Registrati
             </a>
           </div>

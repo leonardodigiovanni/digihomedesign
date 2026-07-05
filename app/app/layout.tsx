@@ -52,7 +52,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <InstallBtn />
         <div className="app-topbar-user">
           {username ? (
-            <span style={{ fontSize: 10, color: '#fff', fontFamily: 'monospace', opacity: 0.75, pointerEvents: 'none', userSelect: 'none' }}>{username}</span>
+            <span style={{ fontSize: 10, color: '#fff', opacity: 0.75, pointerEvents: 'none', userSelect: 'none' }}>{username}</span>
           ) : (
             <AccediBtn />
           )}
@@ -79,7 +79,6 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           padding: '12px 16px',
           textAlign: 'center',
           fontSize: 12,
-          fontFamily: 'monospace',
           fontWeight: 600,
           color: '#3a1f00',
           letterSpacing: '0.02em',

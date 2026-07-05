@@ -73,7 +73,7 @@ function PasswordCell({ user }: { user: User }) {
   if (!editing) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-        <span style={{ fontFamily: 'monospace', fontSize: 13, color: '#444', background: '#f5f5f5', padding: '2px 8px', borderRadius: 4 }}>
+        <span style={{ fontSize: 13, color: '#444', background: '#f5f5f5', padding: '2px 8px', borderRadius: 4 }}>
           {user.password}
         </span>
         <button onClick={() => setEditing(true)}
@@ -89,7 +89,7 @@ function PasswordCell({ user }: { user: User }) {
       <input type="hidden" name="username" value={user.username} />
       <input name="password" type="text" value={val} onChange={e => setVal(e.target.value)}
         autoFocus required minLength={4}
-        style={{ width: 130, padding: '4px 8px', fontSize: 13, border: '1px solid #4a8fa8', borderRadius: 4, fontFamily: 'monospace' }} />
+        style={{ width: 130, padding: '4px 8px', fontSize: 13, border: '1px solid #4a8fa8', borderRadius: 4 }} />
       <button type="submit" disabled={pending} className={pending ? 'btn-gray' : 'btn-green'}
         style={{ padding: '3px 10px', fontSize: 12, borderRadius: 4, fontFamily: 'inherit' }}>
         {pending ? '…' : '✓'}
