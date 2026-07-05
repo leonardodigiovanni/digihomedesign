@@ -328,13 +328,13 @@ body {
   transition: transform 0.15s, box-shadow 0.15s;
 }
 .home-hero-cards .page-card {
-  flex: 0 0 320px !important;
-  width: 320px !important;
+  flex: 0 0 480px !important;
+  width: 480px !important;
   scroll-snap-align: start;
 }
 .home-hero-cards .page-card > div:first-child {
-  height: 198px !important;
-  min-height: 198px !important;
+  height: 297px !important;
+  min-height: 297px !important;
   flex: none !important;
 }
 .page-card > div:last-child {

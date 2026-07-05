@@ -48,8 +48,8 @@ export default async function Page() {
     <>
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 16, marginBottom: 16 }}>
       <p style={{ textAlign: 'center', margin: 0, padding: 0, lineHeight: 1 }}>
-      <span className="testo-titoli" style={{ display: 'block' }}>Infissi Verande</span>
-      <span className="testo-titoli" style={{ display: 'block' }}>Persiane Porte</span>
+      <span className="testo-titoli" style={{ display: 'block' }}>Infissi &middot; Verande</span>
+      <span className="testo-titoli" style={{ display: 'block' }}>Persiane &middot; Porte</span>
       <span className="testo-titoli" style={{ display: 'block' }}>Ristrutturazioni</span>
       </p>
       <div className="home-hero">
@@ -170,7 +170,7 @@ export default async function Page() {
         {/* ── Serramenti ── */}
         {ok('/serramenti/infissi-in-alluminio') && (
         <Link href="/serramenti/infissi-in-alluminio" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/infissi-in-alluminio/photo_2026-04-15_23-14-30.jpg" alt="Infissi in Alluminio" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/infissi-in-alluminio/porta-finestra-2-ante.jpg" alt="Infissi in Alluminio" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Infissi in Alluminio</span></div>
         </Link>
         )}
@@ -182,7 +182,7 @@ export default async function Page() {
         )}
         {ok('/serramenti/verande-in-alluminio') && (
         <Link href="/serramenti/verande-in-alluminio" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/casa-ristrutturata-3.jpg" alt="Verande in Alluminio" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/verande-in-alluminio/veranda.png" alt="Verande in Alluminio" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Verande in Alluminio</span></div>
         </Link>
         )}
@@ -196,41 +196,35 @@ export default async function Page() {
         */}
         {ok('/serramenti/persiane-in-alluminio') && (
         <Link href="/serramenti/persiane-in-alluminio" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/casa-ristrutturata-5.jpg" alt="Persiane in Alluminio" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/persiane-in-alluminio/persiana-alluminio.png" alt="Persiane in Alluminio" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Persiane in Alluminio</span></div>
         </Link>
         )}
         {ok('/serramenti/imbotti') && (
         <Link href="/serramenti/imbotti" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/casa-ristrutturata-6.jpg" alt="Imbotti in Alluminio" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/imbotti-in-alluminio/imbotto.png" alt="Imbotti in Alluminio" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Imbotti in Alluminio</span></div>
         </Link>
         )}
         {ok('/serramenti/tapparelle-manuali') && (
         <Link href="/serramenti/tapparelle-manuali" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/casa-ristrutturata-7.jpg" alt="Tapparelle Manuali" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/tapparelle-manuali/tapparelle.jpg" alt="Tapparelle Manuali" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Tapparelle Manuali</span></div>
         </Link>
         )}
+        {/*
         {ok('/serramenti/tapparelle-motorizzate') && (
         <Link href="/serramenti/tapparelle-motorizzate" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
           <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/casa-ristrutturata-8.jpg" alt="Tapparelle Motorizzate" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Tapparelle Motorizzate</span></div>
         </Link>
         )}
+        */}
         {/*
         {ok('/serramenti/veneziane') && (
         <Link href="/serramenti/veneziane" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
           <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/casa-ristrutturata-1.jpg" alt="Veneziane" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Veneziane</span></div>
-        </Link>
-        )}
-        */}
-        {/*
-        {ok('/serramenti/vetrine') && (
-        <Link href="/serramenti/vetrine" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/casa-ristrutturata-2.jpg" alt="Vetrine" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
-          <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Vetrine</span></div>
         </Link>
         )}
         */}
@@ -244,13 +238,25 @@ export default async function Page() {
         */}
         {ok('/serramenti/zanzariere') && (
         <Link href="/serramenti/zanzariere" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/casa-ristrutturata-4.jpg" alt="Zanzariere" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/zanzariere/zanzariera%20sc.jpg" alt="Zanzariere" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Zanzariere</span></div>
+        </Link>
+        )}
+        {ok('/serramenti/vetrate') && (
+        <Link href="/serramenti/vetrate" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/vetrate/vetrata.jpg" alt="Vetrate" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Vetrate</span></div>
+        </Link>
+        )}
+        {ok('/serramenti/pergole-bioclimatiche') && (
+        <Link href="/serramenti/pergole-bioclimatiche" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/pergole-bioclimatiche/pergole.jpg" alt="Pergole Bioclimatiche" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Pergole Bioclimatiche</span></div>
         </Link>
         )}
         {ok('/serramenti/box-doccia') && (
         <Link href="/serramenti/box-doccia" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/casa-ristrutturata-5.jpg" alt="Box Doccia" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/box-doccia/box-doccia.png" alt="Box Doccia" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Box Doccia</span></div>
         </Link>
         )}

@@ -13,14 +13,14 @@ import AggiungiArticoloAcquistoForm from '@/components/aggiungi-articolo-acquist
 import type { ArticoloListinoAcquisto } from '@/components/aggiungi-articolo-acquisto-form'
 
 export const metadata: Metadata = {
-  title: 'Vetrine Commerciali a Palermo â€” Alluminio su Misura per Negozi',
-  description: 'Vetrine commerciali a Palermo in alluminio su misura: ingressi con porta e vetrina fissa, sistemi scorrevoli e pieghevoli per negozi, show-room e ristoranti.',
-  alternates: { canonical: 'https://www.digi-home-design.com/serramenti/vetrine' },
+  title: 'Pergole Bioclimatiche a Palermo — Lamelle Orientabili su Misura',
+  description: 'Pergole bioclimatiche a Palermo in alluminio su misura: lamelle orientabili motorizzate, chiusure laterali in vetro, per vivere l\'esterno in ogni stagione.',
+  alternates: { canonical: 'https://www.digi-home-design.com/serramenti/pergole-bioclimatiche' },
   robots: { index: true, follow: true },
   openGraph: {
-    title: 'Vetrine Commerciali a Palermo â€” Alluminio su Misura per Negozi',
-    description: 'Vetrine commerciali a Palermo in alluminio su misura: ingressi con porta e vetrina fissa, sistemi scorrevoli e pieghevoli per negozi, show-room e ristoranti.',
-    url: 'https://www.digi-home-design.com/serramenti/vetrine',
+    title: 'Pergole Bioclimatiche a Palermo — Lamelle Orientabili su Misura',
+    description: 'Pergole bioclimatiche a Palermo in alluminio su misura: lamelle orientabili motorizzate, chiusure laterali in vetro, per vivere l\'esterno in ogni stagione.',
+    url: 'https://www.digi-home-design.com/serramenti/pergole-bioclimatiche',
     type: 'website',
   },
 }
@@ -87,7 +87,7 @@ async function getCatalogoData(nomeCategoria: string, sottocatSlug: string) {
 }
 
 export default async function Page() {
-  const catalogo = await getCatalogoData('serramenti', 'vetrine')
+  const catalogo = await getCatalogoData('serramenti', 'pergole-bioclimatiche')
   const cookieStore = await cookies()
   const role = cookieStore.get('session_role')?.value ?? ''
   const isStaff = role === 'admin' || role === 'dipendente'
@@ -122,7 +122,7 @@ export default async function Page() {
         const parts = [p.numero || `#${p.id}`]
         if (p.cliente_nome) parts.push(p.cliente_nome)
         if (p.descrizione) parts.push(p.descrizione)
-        return { id: p.id, label: parts.join(' â€” ') }
+        return { id: p.id, label: parts.join(' — ') }
       })
     } catch {}
     finally { await db2.end() }
@@ -131,9 +131,9 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Vetrine
+        <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Pergole Bioclimatiche
       </p>
-      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Vetrine Commerciali a Palermo</h1>
+      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Pergole Bioclimatiche a Palermo</h1>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
         <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '16px' }}>
@@ -157,10 +157,10 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Progettiamo e installiamo <strong>vetrine commerciali a Palermo</strong> su misura per negozi, show-room, ristoranti, banche e uffici: sistemi in alluminio strutturale con vetro stratificato di sicurezza, ingressi con porta a battente o scorrevole automatica, facciate continue vetrate e sistemi a libro per l&apos;apertura totale del fronte su strada.
+              Progettiamo e installiamo <strong>pergole bioclimatiche a Palermo</strong> su misura per terrazzi, giardini e spazi commerciali: struttura in alluminio con lamelle orientabili motorizzate per regolare luce e ventilazione, canaline di scolo integrate per la pioggia e chiusure laterali in vetro scorrevole o zip screen.
             </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              I profili in alluminio sono disponibili in sezione sottile per la massima visibilitÃ  del prodotto esposto, con finitura in qualsiasi colore RAL o anodizzatura. Il vetro viene scelto in base alle esigenze di sicurezza (stratificato 33.1 o 44.2), isolamento termico e resistenza al vento (calcolo NTC 2018).
+              Ogni pergola è dotata di sistema di controllo motorizzato (telecomando, app o integrazione domotica) per l&apos;apertura e chiusura delle lamelle, oltre a illuminazione LED integrata e opzioni di riscaldamento e sensori pioggia/vento.
             </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
               Ogni progetto viene accompagnato da un disegno tecnico in pianta e prospetto per l&apos;approvazione prima della produzione. Contattaci per un sopralluogo gratuito a Palermo e provincia.
@@ -178,7 +178,7 @@ export default async function Page() {
             cartNonVuoto={cartNonVuoto}
             submitLabel="Conferma"
             fixedCat="serramenti"
-            fixedSottocat="vetrine"
+            fixedSottocat="pergole-bioclimatiche"
           />
         )}
 
@@ -195,7 +195,7 @@ export default async function Page() {
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>{(() => {
         const cerca = catalogo
           ? `${catalogo.categoria.nome}`
-          : 'serramenti/vetrine/non trovata'
+          : 'serramenti/pergole-bioclimatiche/non trovata'
         const trova = catalogo && catalogo.voci.length > 0
           ? catalogo.voci.map(v => `(${v.nome}:${v.serie}:${v.pdf_label})/${v.sottocategoria ?? 'nessuno'}`).join('+')
           : 'nessuno'
@@ -204,4 +204,3 @@ export default async function Page() {
     </div>
   )
 }
-
