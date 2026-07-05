@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import type { Metadata } from 'next'
 
-export const metadata: Metadata = { title: 'Computometrici' }
+export const metadata: Metadata = { title: 'Computi Metrici' }
 
 type Computometrico = {
   id: number
@@ -109,9 +109,9 @@ export default async function Page() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
         <div>
-          <h2 className="effetto-3d" style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Computometrici</h2>
+          <h2 className="effetto-3d" style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Computi Metrici</h2>
           <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0' }}>
-            {isStaff ? 'Tutti i computometrici emessi.' : 'Le stime computometriche associate al tuo account.'}
+            {isStaff ? 'Tutti i computi metrici emessi.' : 'Le stime dei computi metrici associate al tuo account.'}
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -122,7 +122,7 @@ export default async function Page() {
       </div>
 
       {items.length === 0 ? (
-        <p style={{ color: '#aaa', fontSize: 14 }}>Nessun computometrico trovato.</p>
+        <p style={{ color: '#aaa', fontSize: 14 }}>Nessun computo metrico trovato.</p>
       ) : (
         <div style={{
           overflowX: 'auto', overflowY: 'hidden', borderRadius: '8px 8px 0 0',

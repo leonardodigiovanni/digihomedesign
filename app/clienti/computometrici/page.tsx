@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import type { Metadata } from 'next'
 
-export const metadata: Metadata = { title: 'Computometri Clienti' }
+export const metadata: Metadata = { title: 'Computi Metrici Clienti' }
 
 type Computometrico = {
   id: number
@@ -92,18 +92,18 @@ export default async function Page() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
         <div>
-          <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Computometri Clienti</h2>
-          <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0' }}>Tutti i computometrici emessi.</p>
+          <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Computi Metrici Clienti</h2>
+          <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0' }}>Tutti i computi metrici emessi.</p>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
           <a href="/area-clienti/carrello-computometrico" className="btn-green" style={{ padding: '0 24px' }}>
-            + Nuovo computometrico
+            + Nuovo computo metrico
           </a>
         </div>
       </div>
 
       {items.length === 0 ? (
-        <p style={{ color: '#aaa', fontSize: 14 }}>Nessun computometrico trovato.</p>
+        <p style={{ color: '#aaa', fontSize: 14 }}>Nessun computo metrico trovato.</p>
       ) : (
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff', border: '1px solid #e8e8e8', borderRadius: 8 }}>

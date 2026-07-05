@@ -501,7 +501,7 @@ export default function CarrelloComputometricoClient({
               <button type="button" onClick={handleSalva} disabled={isPending}
                 className={isPending ? 'btn-gray' : 'btn-green'}
                 style={{ flex: 1, minWidth: 200, padding: '0 8px', fontSize: 14, fontFamily: 'inherit' }}>
-                {isPending ? 'Salvataggio…' : 'Salva computometrico →'}
+                {isPending ? 'Salvataggio…' : 'Salva computo metrico →'}
               </button>
             ) : (
               <a href={`/login?redirect_to=/area-clienti/carrello-computometrico`} className="btn-green"

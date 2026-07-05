@@ -63,7 +63,7 @@ export default async function Page() {
           </Link>
           <Link href={ctaComputometrico} className="cta-home-btn">
             <div className="cta-row">
-              <div><Image src="/images/cta/computometrico-online.png" alt="Computometrico" width={130} height={130} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} /></div>
+              <div><Image src="/images/cta/computometrico-online.png" alt="Computo Metrico" width={130} height={130} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} /></div>
               <span className="testo-cta"><span className="animato">Computo Metrico<br />Online &amp; Gratis</span></span>
             </div>
             <span className="cta-sub">Edilizia &amp; Strutture &amp; Scale &amp; Recinzioni</span>

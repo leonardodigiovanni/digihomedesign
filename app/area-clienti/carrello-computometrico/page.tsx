@@ -9,7 +9,7 @@ import type { ArticoloComputabile } from './carrello-client'
 import type { RigaCarrello } from './actions'
 
 export const dynamic = 'force-dynamic'
-export const metadata: Metadata = { title: 'Carrello Computometrico' }
+export const metadata: Metadata = { title: 'Carrello Computo Metrico' }
 
 async function getArticoli(): Promise<ArticoloComputabile[]> {
   const db = await getConnection()

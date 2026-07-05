@@ -184,7 +184,7 @@ export const areaClientiPages: NavPage[] = [
   { id: 50, label: 'Ordini',     href: '/area-clienti/ordini'     },
   { id: 51, label: 'Cantieri',   href: '/area-clienti/cantieri'   },
   { id: 52, label: 'Preventivi',    href: '/area-clienti/preventivi'    },
-  { id: 54, label: 'Computometri', href: '/area-clienti/computometrici' },
+  { id: 54, label: 'Computi Metrici', href: '/area-clienti/computometrici' },
   { id: 53, label: 'Documenti',    href: '/area-clienti/documenti'      },
   { id: 55, label: 'Avvisi',     href: '/area-clienti/avvisi'     },
 ]
@@ -220,7 +220,7 @@ export const clientiDipendentiPages: NavPage[] = [
   { id: 35, label: 'Ordini Ricevuti',    href: '/area-lavoro/ordini-ricevuti'      },
   { id: 28, label: 'Cantieri',           href: '/area-lavoro/cantieri'             },
   { id: 60, label: 'Preventivi',         href: '/clienti/preventivi'               },
-  { id: 57, label: 'Computometri',       href: '/clienti/computometrici'           },
+  { id: 57, label: 'Computi Metrici',    href: '/clienti/computometrici'           },
   { id: 61, label: 'Documenti',          href: '/clienti/documenti'                },
   { id: 56, label: 'Avvisi',             href: '/area-clienti/avvisi'              },
 ]

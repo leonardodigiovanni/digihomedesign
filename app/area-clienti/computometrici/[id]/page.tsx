@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import type { Metadata } from 'next'
 
-export const metadata: Metadata = { title: 'Computometrico' }
+export const metadata: Metadata = { title: 'Computo Metrico' }
 
 type Testata = {
   id: number
@@ -136,7 +136,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
           <div>
             <h2 className="effetto-3d" style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>
-              Computometrico {testata.numero || `#${testata.id}`}
+              Computo Metrico {testata.numero || `#${testata.id}`}
             </h2>
             <p style={{ color: '#555', fontSize: 14, margin: '4px 0 0' }}>{testata.descrizione}</p>
           </div>
@@ -176,7 +176,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
         {/* Tabella righe */}
         {righe.length === 0 ? (
-          <p style={{ color: '#aaa', fontSize: 14 }}>Nessun articolo in questo computometrico.</p>
+          <p style={{ color: '#aaa', fontSize: 14 }}>Nessun articolo in questo computo metrico.</p>
         ) : (
           <div style={{
             overflowX: 'auto', borderRadius: '8px 8px 0 0',
