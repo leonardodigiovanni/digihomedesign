@@ -517,7 +517,7 @@ body {
 .home-hero-cta .cta-home-btn {
   flex: 1 0 220px;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   height: auto;
   min-height: 100px;
   padding: 0;
@@ -526,8 +526,9 @@ body {
 .home-hero-cta .cta-row {
   display: flex;
   flex-direction: row;
+  align-items: center;
   width: 100%;
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   min-height: 80px;
 }
 .home-hero-cta .cta-row > div {
@@ -553,7 +554,7 @@ body {
   padding: 5px 8px;
   line-height: 1.35;
   text-align: center;
-  font-size: 11px;
+  font-size: 13px;
   letter-spacing: 1px;
   color: #c8960c;
   background: rgba(0,0,0,0.55);
