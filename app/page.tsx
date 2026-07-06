@@ -244,7 +244,7 @@ export default async function Page() {
         )}
         {ok('/serramenti/vetrate') && (
         <Link href="/serramenti/vetrate" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/vetrate/vetrata.jpg" alt="Vetrate" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/vetrate/vetrata.png" alt="Vetrate" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Vetrate</span></div>
         </Link>
         )}
@@ -256,7 +256,7 @@ export default async function Page() {
         )}
         {ok('/serramenti/box-doccia') && (
         <Link href="/serramenti/box-doccia" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/box-doccia/box-doccia.png" alt="Box Doccia" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/box-doccia/box-doccia-rettangolare.png" alt="Box Doccia" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Box Doccia</span></div>
         </Link>
         )}
