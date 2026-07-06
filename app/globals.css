@@ -338,7 +338,27 @@ body {
   flex: none !important;
 }
 .page-card > div:last-child {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
   text-align: center;
+}
+.page-card .testo-articoli {
+  display: inline-block;
+  position: relative;
+  top: 2px;
+  font-weight: 700 !important;
+  font-style: italic !important;
+  font-size: 15px !important;
+  padding: 6px 16px;
+  border-radius: 10px;
+  background:
+    repeating-linear-gradient(-60deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 1px, transparent 1px, transparent 6px),
+    linear-gradient(-60deg, #111 0%, #222 20%, #383838 45%, #222 80%, #111 100%) !important;
+  -webkit-background-clip: initial !important;
+  background-clip: initial !important;
+  -webkit-text-fill-color: #fff !important;
+  color: #fff !important;
 }
 /* ── Vetrina foto row: center se ci sta, scroll orizzontale se no ── */
 .vetrina-foto-row {

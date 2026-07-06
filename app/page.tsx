@@ -47,7 +47,7 @@ export default async function Page() {
   return (
     <>
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 16, marginBottom: 16 }}>
-      <p style={{ textAlign: 'center', margin: 0, padding: 0, lineHeight: 1 }}>
+      <p style={{ textAlign: 'center', margin: 0, padding: 0, lineHeight: 1.5 }}>
       <span className="testo-titoli" style={{ display: 'block' }}>Infissi &middot; Verande</span>
       <span className="testo-titoli" style={{ display: 'block' }}>Persiane &middot; Porte</span>
       <span className="testo-titoli" style={{ display: 'block' }}>Ristrutturazioni</span>
