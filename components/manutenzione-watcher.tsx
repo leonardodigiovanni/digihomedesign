@@ -2,10 +2,13 @@
 
 import { useEffect, useRef } from 'react'
 
-export default function ManutenzioneWatcher({ manutenzione: initial, role, dest = '/' }: { manutenzione: boolean; role: string; dest?: string }) {
+export default function ManutenzioneWatcher({ manutenzione: initial, role, username = '', dest = '/' }: { manutenzione: boolean; role: string; username?: string; dest?: string }) {
   const lastSeen = useRef(initial)
+  const bypass = role === 'cliente' && username === 'Diggio83'
 
   useEffect(() => {
+    if (bypass) return
+
     const check = async () => {
       try {
         const res = await fetch('/api/manutenzione/status', { cache: 'no-store' })
@@ -29,7 +32,7 @@ export default function ManutenzioneWatcher({ manutenzione: initial, role, dest 
 
     const id = setInterval(check, 15_000)
     return () => clearInterval(id)
-  }, [role])
+  }, [role, bypass, dest])
 
   return null
 }

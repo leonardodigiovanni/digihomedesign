@@ -21,9 +21,11 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const preventivoCartCount = decompressCart(cookieStore.get('digi_cart')?.value ?? '').filter(i => i.parent == null).length
   const acquistiCartCount   = decompressCart(cookieStore.get('digi_cart_acquisti')?.value ?? '').filter(i => i.parent == null).length
 
-  const { manutenzione, rolePermissions } = await readSettings()
+  const { manutenzione: manutenzioneRaw, rolePermissions } = await readSettings()
   const isStaff = role === 'admin' || role === 'dipendente' || role === 'direttore'
   const preventiviAbilitato = isStaff || (rolePermissions['cliente'] ?? []).includes(52)
+  const bypassManutenzione = role === 'cliente' && username === 'Diggio83'
+  const manutenzione = manutenzioneRaw && !bypassManutenzione
 
   let avvisiUnreadCount = 0
   if (username && role === 'cliente') {
@@ -70,7 +72,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       </PreventiviProvider>
 
       {role === 'cliente' && <AvvisiNotifier />}
-      <ManutenzioneWatcher manutenzione={manutenzione} role={role} dest="/app" />
+      <ManutenzioneWatcher manutenzione={manutenzioneRaw} role={role} username={username ?? ''} dest="/app" />
 
       {manutenzione && role !== 'admin' ? (
         <div style={{

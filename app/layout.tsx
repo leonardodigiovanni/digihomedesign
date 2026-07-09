@@ -230,7 +230,8 @@ export default async function RootLayout({
     ? { background: pageBgFn(pageBgMode), boxShadow: rgbBoxShadow(pageBg.r, pageBg.g, pageBg.b) }
     : {}
 
-  const inManutenzione = settings.manutenzione && role !== 'admin'
+  const bypassManutenzione = role === 'cliente' && username === 'Diggio83'
+  const inManutenzione = settings.manutenzione && role !== 'admin' && !bypassManutenzione
   const isStaffLayout  = role === 'admin' || role === 'dipendente' || role === 'direttore'
   const preventiviAbilitato = isStaffLayout || (rolePermissions['cliente'] ?? []).includes(52)
 
@@ -318,7 +319,7 @@ export default async function RootLayout({
         <Footer footerBg={settings.footerBg} footerBgMode={settings.footerBgMode} />
 
         <CookieBanner />
-        <ManutenzioneWatcher manutenzione={settings.manutenzione} role={role ?? ''} />
+        <ManutenzioneWatcher manutenzione={settings.manutenzione} role={role ?? ''} username={username ?? ''} />
         <EmergencyLogin inManutenzione={inManutenzione} />
         <PwaRegister />
 
