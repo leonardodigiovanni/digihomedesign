@@ -205,6 +205,7 @@ export const adminPages: NavPage[] = [
   { id: 64, label: 'Database',            href: '/amministrazione/database',        roles: ['admin'] },
   { id: 65, label: 'Area di Test',        href: '/amministrazione/area-di-test',    roles: ['admin'] },
   { id: 66, label: 'B2B',                 href: '/amministrazione/b2b',             roles: ['admin'] },
+  { id: 67, label: 'B2C',                 href: '/amministrazione/b2c',             roles: ['admin'] },
 ]
 
 // Pagine Fornitori: visibili solo a dipendenti e admin
