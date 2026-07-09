@@ -804,14 +804,78 @@ export default async function Page() {
       {/* Vendiamo Marchi di valore */}
       <div className="page-section-wrapper" style={{ margin: 0 }}>
         <div style={{ borderRadius: 20, padding: '28px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, background: '#fff' }}>
-          <h2 className="testo-articoli" style={{ textAlign: 'center', margin: 0 }}>
-            Vendiamo Marchi di valore
+          <h2 className="testo-articoli" style={{ textAlign: 'center', margin: 0, display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <span>Vendiamo le migliori Marche</span>
+            <span>Selezioniamo Fornitori Qualificati e Affidabili</span>
+            <span>Utilizziamo Attrezzature e Prodotti di Qualità</span>
           </h2>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, justifyContent: 'center', alignItems: 'center' }}>
             {[
-              { src: '/images/brand/partners/alsistem.png',  alt: 'Alsistem',  href: 'https://www.alsistem.it/' },
-              { src: '/images/brand/partners/alphacan.png',  alt: 'Alphacan',  href: '#' },
-              { src: '/images/brand/partners/moskout.png',   alt: 'Moskout',   href: '#' },
+              { src: '/images/brand/partners/3M.png',                alt: '3M',                  href: '#' },
+              { src: '/images/brand/partners/alphacan.png',          alt: 'Alphacan',            href: '#' },
+              { src: '/images/brand/partners/alsistem.png',          alt: 'Alsistem',            href: '#' },
+              { src: '/images/brand/partners/ALU-ITALIA.png',        alt: 'Alu Italia',          href: '#' },
+              { src: '/images/brand/partners/AMAZON.png',            alt: 'Amazon',              href: '#' },
+              { src: '/images/brand/partners/ARGO.png',              alt: 'Argo',                href: '#' },
+              { src: '/images/brand/partners/ARISTON.png',           alt: 'Ariston',             href: '#' },
+              { src: '/images/brand/partners/BEGHELLI.png',          alt: 'Beghelli',            href: '#' },
+              { src: '/images/brand/partners/BETA.png',              alt: 'Beta',                href: '#' },
+              { src: '/images/brand/partners/BLACK-DECKER.png',      alt: 'Black & Decker',      href: '#' },
+              { src: '/images/brand/partners/BOSH.png',              alt: 'Bosch',               href: '#' },
+              { src: '/images/brand/partners/BOSTIK.png',            alt: 'Bostik',              href: '#' },
+              { src: '/images/brand/partners/BRICO-CENTER.png',      alt: 'Brico Center',        href: '#' },
+              { src: '/images/brand/partners/CANDY.png',             alt: 'Candy',               href: '#' },
+              { src: '/images/brand/partners/CANON.png',             alt: 'Canon',               href: '#' },
+              { src: '/images/brand/partners/CISA.png',              alt: 'CISA',                href: '#' },
+              { src: '/images/brand/partners/DAIKIN.png',            alt: 'Daikin',              href: '#' },
+              { src: '/images/brand/partners/DEGHI.png',             alt: 'Deghi',               href: '#' },
+              { src: '/images/brand/partners/DELONGHI.png',          alt: 'DeLonghi',            href: '#' },
+              { src: '/images/brand/partners/DEWALT.png',            alt: 'DeWalt',              href: '#' },
+              { src: '/images/brand/partners/edilsider.png',         alt: 'Edilsider',           href: '#' },
+              { src: '/images/brand/partners/ELECTROLUX.png',        alt: 'Electrolux',          href: '#' },
+              { src: '/images/brand/partners/FAAC.png',              alt: 'FAAC',                href: '#' },
+              { src: '/images/brand/partners/FAI.png',               alt: 'FAI',                 href: '#' },
+              { src: '/images/brand/partners/FINSTRAL.png',          alt: 'Finstral',            href: '#' },
+              { src: '/images/brand/partners/FISCHER.png',           alt: 'Fischer',             href: '#' },
+              { src: '/images/brand/partners/GDM.png',               alt: 'GDM',                 href: '#' },
+              { src: '/images/brand/partners/GTHERMIC.png',          alt: 'Gthermic',            href: '#' },
+              { src: '/images/brand/partners/HAIER.png',             alt: 'Haier',               href: '#' },
+              { src: '/images/brand/partners/HISENSE.png',           alt: 'Hisense',             href: '#' },
+              { src: '/images/brand/partners/IMPERIAL.png',          alt: 'Imperial',            href: '#' },
+              { src: '/images/brand/partners/INDINVEST.png',         alt: 'Indinvest',           href: '#' },
+              { src: '/images/brand/partners/LEROY-MERLIN.png',      alt: 'Leroy Merlin',        href: '#' },
+              { src: '/images/brand/partners/LEVANTE.png',           alt: 'Levante',             href: '#' },
+              { src: '/images/brand/partners/LG.png',                alt: 'LG',                  href: '#' },
+              { src: '/images/brand/partners/LOCTITE.png',           alt: 'Loctite',             href: '#' },
+              { src: '/images/brand/partners/MAPEI.png',             alt: 'Mapei',               href: '#' },
+              { src: '/images/brand/partners/MAX-MEYER.png',         alt: 'Max Meyer',           href: '#' },
+              { src: '/images/brand/partners/METRA.png',             alt: 'Metra',               href: '#' },
+              { src: '/images/brand/partners/MITSUBISHI.png',        alt: 'Mitsubishi',          href: '#' },
+              { src: '/images/brand/partners/MONDO-CONVENIENZA.png', alt: 'Mondo Convenienza',   href: '#' },
+              { src: '/images/brand/partners/moskout.png',           alt: 'Moskout',             href: '#' },
+              { src: '/images/brand/partners/MOTTURA.png',           alt: 'Mottura',             href: '#' },
+              { src: '/images/brand/partners/MOULINEX.png',          alt: 'Moulinex',            href: '#' },
+              { src: '/images/brand/partners/PALAZZOLO.png',         alt: 'Palazzolo',           href: '#' },
+              { src: '/images/brand/partners/PANASONIC.png',         alt: 'Panasonic',           href: '#' },
+              { src: '/images/brand/partners/PATTEX.png',            alt: 'Pattex',              href: '#' },
+              { src: '/images/brand/partners/PROFIL-PLASTIC.png',    alt: 'Profil Plastic',      href: '#' },
+              { src: '/images/brand/partners/REHAU.png',             alt: 'Rehau',               href: '#' },
+              { src: '/images/brand/partners/ROLLTEK.png',           alt: 'Rolltek',             href: '#' },
+              { src: '/images/brand/partners/SALAMANDER.png',        alt: 'Salamander',          href: '#' },
+              { src: '/images/brand/partners/SAMSUNG.png',           alt: 'Samsung',             href: '#' },
+              { src: '/images/brand/partners/SARATOGA.png',          alt: 'Saratoga',            href: '#' },
+              { src: '/images/brand/partners/SCHUCO.png',            alt: 'Schüco',              href: '#' },
+              { src: '/images/brand/partners/SCOTCH.png',            alt: 'Scotch',              href: '#' },
+              { src: '/images/brand/partners/SCRIGNO.png',           alt: 'Scrigno',             href: '#' },
+              { src: '/images/brand/partners/SHARKNET.png',          alt: 'Sharknet',            href: '#' },
+              { src: '/images/brand/partners/SIEMENS.png',           alt: 'Siemens',             href: '#' },
+              { src: '/images/brand/partners/TOSHIBA.png',           alt: 'Toshiba',             href: '#' },
+              { src: '/images/brand/partners/TWIN-SYSTEMS.png',      alt: 'Twin Systems',        href: '#' },
+              { src: '/images/brand/partners/TYTAN.png',             alt: 'Tytan',               href: '#' },
+              { src: '/images/brand/partners/VIMAR.png',             alt: 'Vimar',               href: '#' },
+              { src: '/images/brand/partners/VORTICE.png',           alt: 'Vortice',             href: '#' },
+              { src: '/images/brand/partners/WHIRLPOOL.png',         alt: 'Whirlpool',           href: '#' },
+              { src: '/images/brand/partners/WURTH.png',             alt: 'Würth',               href: '#' },
             ].map(m => (
               <a key={m.alt} href={m.href} target={m.href !== '#' ? '_blank' : undefined} rel="noopener noreferrer"
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 8px', height: 52, border: '2px solid #c8960c', borderRadius: 6, background: '#fff', flexShrink: 0 }}
