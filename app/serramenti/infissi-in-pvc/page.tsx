@@ -13,13 +13,13 @@ import AggiungiArticoloAcquistoForm from '@/components/aggiungi-articolo-acquist
 import type { ArticoloListinoAcquisto } from '@/components/aggiungi-articolo-acquisto-form'
 
 export const metadata: Metadata = {
-  title: 'Infissi in PVC a Palermo â€” Multicamera Alta Efficienza',
-  description: 'Infissi in PVC a Palermo: finestre e porte-finestre multicamera con trasmittanza fino a 0,8 W/mÂ²K. Isolamento termico e acustico superiore. Preventivo gratuito.',
+  title: 'Infissi in PVC a Palermo — Multicamera Alta Efficienza',
+  description: 'Infissi in PVC a Palermo: finestre e porte-finestre multicamera con trasmittanza fino a 0,8 W/m²K. Isolamento termico e acustico superiore. Preventivo gratuito.',
   alternates: { canonical: 'https://www.digi-home-design.com/serramenti/infissi-in-pvc' },
   robots: { index: true, follow: true },
   openGraph: {
-    title: 'Infissi in PVC a Palermo â€” Multicamera Alta Efficienza',
-    description: 'Infissi in PVC a Palermo: finestre e porte-finestre multicamera con trasmittanza fino a 0,8 W/mÂ²K. Isolamento termico e acustico superiore. Preventivo gratuito.',
+    title: 'Infissi in PVC a Palermo — Multicamera Alta Efficienza',
+    description: 'Infissi in PVC a Palermo: finestre e porte-finestre multicamera con trasmittanza fino a 0,8 W/m²K. Isolamento termico e acustico superiore. Preventivo gratuito.',
     url: 'https://www.digi-home-design.com/serramenti/infissi-in-pvc',
     type: 'website',
   },
@@ -122,7 +122,7 @@ export default async function Page() {
         const parts = [p.numero || `#${p.id}`]
         if (p.cliente_nome) parts.push(p.cliente_nome)
         if (p.descrizione) parts.push(p.descrizione)
-        return { id: p.id, label: parts.join(' â€” ') }
+        return { id: p.id, label: parts.join(' — ') }
       })
     } catch {}
     finally { await db2.end() }
@@ -157,13 +157,13 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Gli <strong>infissi in PVC a Palermo</strong> offrono il miglior rapporto qualitÃ -prezzo per l&apos;isolamento termoacustico: i profili multicamera a 5, 6 o 7 camere raggiungono valori di trasmittanza termica Uf fino a 0,95 W/mÂ²K, tra i piÃ¹ bassi sul mercato. Il PVC Ã¨ un materiale intrinsecamente isolante, non necessita di taglio termico aggiuntivo e garantisce lunga durata senza manutenzione.
+              Gli infissi in PVC a Palermo offrono il miglior rapporto qualità-prezzo per l&apos;isolamento termoacustico: i profili multicamera a 5, 6 o 7 camere raggiungono valori di trasmittanza termica Uf fino a 0,95 W/m²K, tra i più bassi sul mercato. Il PVC è un materiale intrinsecamente isolante, non necessita di taglio termico aggiuntivo e garantisce lunga durata senza manutenzione.
             </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Installiamo sistemi dei principali brand europei â€” VEKA, Rehau, KBE, Aluplast â€” in versione bianca, foliata in varie essenze di legno e in colorazione integrale. Le ante sono disponibili nelle tipologie a battente, a vasistas, scorrevole parallela e alzante-scorrevole, abbinate a vetrocamera con gas argon e Low-E per la massima efficienza.
+              Installiamo sistemi dei principali brand europei — VEKA, Rehau, KBE, Aluplast — in versione bianca, foliata in varie essenze di legno e in colorazione integrale. Le ante sono disponibili nelle tipologie a battente, a vasistas, scorrevole parallela e alzante-scorrevole, abbinate a vetrocamera con gas argon e Low-E per la massima efficienza.
             </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Il servizio Ã¨ chiavi in mano: sopralluogo, rilievo, fornitura, posa e smaltimento dei vecchi infissi. Contattaci per un preventivo gratuito a Palermo e provincia.
+              Il servizio è chiavi in mano: sopralluogo, rilievo, fornitura, posa e smaltimento dei vecchi infissi. Contattaci per un preventivo gratuito a Palermo e provincia.
             </p>
           </div>
         </div>
@@ -204,4 +204,3 @@ export default async function Page() {
     </div>
   )
 }
-

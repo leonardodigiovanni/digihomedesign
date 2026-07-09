@@ -878,9 +878,10 @@ export default async function Page() {
               { src: '/images/brand/partners/WURTH.png',             alt: 'Würth',               href: '#' },
             ].map(m => (
               <a key={m.alt} href={m.href} target={m.href !== '#' ? '_blank' : undefined} rel="noopener noreferrer"
+                className="partner-logo-box"
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 8px', height: 52, border: '2px solid #c8960c', borderRadius: 6, background: '#fff', flexShrink: 0 }}
               >
-                <Image src={m.src} alt={m.alt} width={130} height={40} style={{ objectFit: 'contain' }} />
+                <Image src={m.src} alt={m.alt} width={130} height={40} className="partner-logo-img" style={{ objectFit: 'contain' }} />
               </a>
             ))}
           </div>

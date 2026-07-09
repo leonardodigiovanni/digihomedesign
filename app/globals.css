@@ -89,6 +89,20 @@ a:active, a:active img, a:focus img {
   .page-content-wrapper { max-width: 100% !important; margin-left: 0 !important; margin-right: 0 !important; padding-left: 0 !important; padding-right: 0 !important; }
 }
 
+/* ── Loghi marchi partner: 2 per riga anche su cellulare ── */
+@media (max-width: 480px) {
+  .partner-logo-box {
+    width: calc(50% - 8px) !important;
+    padding: 0 4px !important;
+    height: 44px !important;
+    box-sizing: border-box;
+  }
+  .partner-logo-img {
+    width: 100px !important;
+    height: 32px !important;
+  }
+}
+
 /* ── Grid bottoni responsive ── */
 .btn-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
 @media (max-width: 640px) {
