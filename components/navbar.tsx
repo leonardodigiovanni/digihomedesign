@@ -117,19 +117,14 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
     scrollPos.current = 0
     if (innerRef.current) innerRef.current.style.marginLeft = '0'
     updateArrows()
+    // In questo layout è "body" (non la finestra) l'elemento che scrolla
+    // davvero (per via di html{overflow-y:scroll} + body{height:100%}).
+    // "body" non viene mai smontato tra una navigazione e l'altra, quindi
+    // il suo scrollTop resta quello della pagina precedente se non lo
+    // resettiamo esplicitamente qui.
+    document.body.scrollTop = 0
+    document.documentElement.scrollTop = 0
     window.scrollTo(0, 0)
-    // Il contenuto in cima alla nuova pagina (sotto l'header sticky) a volte
-    // resta con un "paint" non aggiornato dopo una navigazione SPA (il DOM è
-    // corretto, ma il browser non ridisegna quella zona finché non avviene
-    // un vero scroll/reflow). Forziamo reflow + un vero delta di scroll dopo
-    // il primo paint della nuova pagina per far ridisegnare tutto.
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        void document.body.offsetHeight
-        window.scrollTo(0, 1)
-        window.scrollTo(0, 0)
-      })
-    })
   }, [pathname])
 
   // Chiudi menu mobile se il browser diventa largo; aggiorna frecce al resize

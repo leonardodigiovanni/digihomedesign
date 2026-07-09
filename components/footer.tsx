@@ -158,6 +158,7 @@ const infoRows = [
   { label: 'P.IVA',        value: '07407080824' },
   { label: 'Email',        value: 'info@digi-home-design.com' },
   { label: 'PEC',          value: 'digi_home_design_srl@namirialpec.it' },
+  { label: 'Codice Univoco', value: 'KRRH6B' },
   { label: 'Telefono',     value: '+39 3518716731' },
 ]
 
