@@ -41,6 +41,8 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
     return () => window.removeEventListener('avvisi-count-changed', handle)
   }, [])
   const [sectionOpen, setSectionOpen] = useState(false)
+  const [mobileOpenSection, setMobileOpenSection] = useState<string | null>(null)
+  const toggleMobileSection = (key: string) => setMobileOpenSection(prev => prev === key ? null : key)
   const [canLeft,  setCanLeft]  = useState(false)
   const [canRight, setCanRight] = useState(false)
   const router              = useRouter()
@@ -110,10 +112,24 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
   // Chiudi tutto al cambio pagina e resetta scroll
   useEffect(() => {
     setMenuOpen(false)
+    setMobileOpenSection(null)
     if (skipSectionClose.current) { skipSectionClose.current = false } else { setSectionOpen(false) }
     scrollPos.current = 0
     if (innerRef.current) innerRef.current.style.marginLeft = '0'
     updateArrows()
+    window.scrollTo(0, 0)
+    // Il contenuto in cima alla nuova pagina (sotto l'header sticky) a volte
+    // resta con un "paint" non aggiornato dopo una navigazione SPA (il DOM è
+    // corretto, ma il browser non ridisegna quella zona finché non avviene
+    // un vero scroll/reflow). Forziamo reflow + un vero delta di scroll dopo
+    // il primo paint della nuova pagina per far ridisegnare tutto.
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        void document.body.offsetHeight
+        window.scrollTo(0, 1)
+        window.scrollTo(0, 0)
+      })
+    })
   }, [pathname])
 
   // Chiudi menu mobile se il browser diventa largo; aggiorna frecce al resize
@@ -181,7 +197,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
     })
 
   return (
-    <nav className="class_gold_D_safe" style={{ borderBottom: '1px solid #c8960c', flexShrink: 0 }}>
+    <nav className="class_gold_D_safe" style={{ borderBottom: '1px solid #c8960c', flexShrink: 0, position: 'relative' }}>
 
       {/* ── Desktop ── */}
       <div className="nav-bar">
@@ -362,7 +378,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
         <button
           type="button"
           className="nav-hamburger testo-nav-bar"
-          onClick={() => setMenuOpen(o => !o)}
+          onClick={() => { setMenuOpen(o => !o); setMobileOpenSection(null) }}
           aria-expanded={menuOpen}
           aria-label={menuOpen ? 'Chiudi menu' : 'Apri menu'}
           style={{ position: 'relative' }}
@@ -442,6 +458,11 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
       {menuOpen && (
       <div
         style={{
+          position: 'absolute',
+          top: '100%',
+          left: 0,
+          right: 0,
+          zIndex: 300,
           background: '#fdfcf8',
           borderTop: '1px solid #c8960c',
           padding: '6px 0 16px',
@@ -450,27 +471,32 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
           boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
         }}
       >
-          <MobileLink href="/" label="Home" active={isActive('/')} indent />
+          <Link
+            href="/"
+            className="nav-mobile-section"
+            style={{ textDecoration: 'none', color: isActive('/') ? '#111' : undefined }}
+          >
+            <span style={{ textDecoration: isActive('/') ? 'underline' : 'none', textDecorationThickness: isActive('/') ? '3px' : undefined, textUnderlineOffset: isActive('/') ? '4px' : undefined }}>Home</span>
+          </Link>
 
           {visibleClientPages.length > 0 && (
-            <>
-              <div className="nav-mobile-section">Brand</div>
+            <MobileSection sectionKey="brand" label="Brand" open={mobileOpenSection === 'brand'} onToggle={toggleMobileSection}>
               {visibleClientPages.map(p => (
                 <MobileLink key={p.id} href={p.href} label={p.label} active={isActive(p.href)} indent />
               ))}
-            </>
+            </MobileSection>
           )}
 
           {categoryGroups.map(g => {
             const visiblePages = g.pages.filter(p => !disabledPages.includes(p.id))
             if (visiblePages.length === 0) return null
+            const key = `cat-${g.id}`
             return (
-              <React.Fragment key={g.id}>
-                <div className="nav-mobile-section">{g.label}</div>
+              <MobileSection key={g.id} sectionKey={key} label={g.label} open={mobileOpenSection === key} onToggle={toggleMobileSection}>
                 {visiblePages.map(p => (
                   <MobileLink key={p.href} href={p.href} label={p.label} active={isActive(p.href)} indent />
                 ))}
-              </React.Fragment>
+              </MobileSection>
             )
           })}
 
@@ -482,60 +508,54 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             )
             const items = clienteAbilitato ? allItems : allItems.filter(p => p.id === 52 || p.id === 54)
             return items.length > 0 ? (
-              <>
-                <div className="nav-mobile-section">Area Personale</div>
+              <MobileSection sectionKey="area-personale" label="Area Personale" open={mobileOpenSection === 'area-personale'} onToggle={toggleMobileSection} badge={liveAvvisiCount}>
                 {items.map(p => (
                   <MobileLink key={p.id} href={p.href} label={p.label} active={isActive(p.href)} indent
                     badge={p.href === '/area-clienti/avvisi' ? liveAvvisiCount : 0} />
                 ))}
-              </>
+              </MobileSection>
             ) : null
           })()}
 
           {aiutoPages.filter(p => !disabledPages.includes(p.id)).length > 0 && (
-            <>
-              <div className="nav-mobile-section">Aiuto</div>
+            <MobileSection sectionKey="aiuto" label="Aiuto" open={mobileOpenSection === 'aiuto'} onToggle={toggleMobileSection}>
               {aiutoPages.filter(p => !disabledPages.includes(p.id)).map(p => (
                 <MobileLink key={p.id} href={p.href} label={p.label} active={isActive(p.href)} indent />
               ))}
-            </>
+            </MobileSection>
           )}
 
           {fornitoriItems.length > 0 && (
-            <>
-              <div className="nav-mobile-section">Area Fornitori</div>
+            <MobileSection sectionKey="area-fornitori" label="Area Fornitori" open={mobileOpenSection === 'area-fornitori'} onToggle={toggleMobileSection}>
               {fornitoriItems.map(p => (
                 <MobileLink key={p.id} href={p.href} label={p.label} active={isActive(p.href)} indent />
               ))}
-            </>
+            </MobileSection>
           )}
 
           {clientiItems.length > 0 && (
-            <>
-              <div className="nav-mobile-section">Area Clienti</div>
+            <MobileSection sectionKey="area-clienti" label="Area Clienti" open={mobileOpenSection === 'area-clienti'} onToggle={toggleMobileSection}>
               {clientiItems.map(p => (
                 <MobileLink key={p.id} href={p.href} label={p.label} active={isActive(p.href)} indent />
               ))}
-            </>
+            </MobileSection>
           )}
 
           {internalItems.length > 0 && (
-            <>
-              <div className="nav-mobile-section">Area Lavoro</div>
+            <MobileSection sectionKey="area-lavoro" label="Area Lavoro" open={mobileOpenSection === 'area-lavoro'} onToggle={toggleMobileSection} badge={unreadEmailCount}>
               {internalItems.map(p => (
                 <MobileLink key={p.id} href={p.href} label={p.label} active={isActive(p.href)} indent
                   badge={p.href === '/area-lavoro/email' ? unreadEmailCount : 0} />
               ))}
-            </>
+            </MobileSection>
           )}
 
           {adminItems.length > 0 && (
-            <>
-              <div className="nav-mobile-section">Amministrazione</div>
+            <MobileSection sectionKey="amministrazione" label="Amministrazione" open={mobileOpenSection === 'amministrazione'} onToggle={toggleMobileSection}>
               {adminItems.map(p => (
                 <MobileLink key={p.id} href={p.href} label={p.label} active={isActive(p.href)} indent />
               ))}
-            </>
+            </MobileSection>
           )}
       </div>
       )}
@@ -1091,6 +1111,43 @@ function AreaClientiDropdown({
         </div>
       )}
     </div>
+  )
+}
+
+function MobileSection({
+  sectionKey,
+  label,
+  open,
+  onToggle,
+  badge = 0,
+  children,
+}: {
+  sectionKey: string
+  label: string
+  open: boolean
+  onToggle: (key: string) => void
+  badge?: number
+  children: React.ReactNode
+}) {
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => onToggle(sectionKey)}
+        aria-expanded={open}
+        className="nav-mobile-section"
+        style={{ width: '100%', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit' }}
+      >
+        <span>{label}</span>
+        {!open && badge > 0 && (
+          <span style={{ background: '#e53e3e', color: '#fff', borderRadius: '50%', minWidth: 18, height: 18, fontSize: 11, fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px', flexShrink: 0 }}>
+            {badge > 99 ? '99+' : badge}
+          </span>
+        )}
+        <span className="fs-11" style={{ flexShrink: 0 }}>{open ? '▴' : '▾'}</span>
+      </button>
+      {open && children}
+    </>
   )
 }
 
