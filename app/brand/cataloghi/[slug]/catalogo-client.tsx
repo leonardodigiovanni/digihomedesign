@@ -38,6 +38,31 @@ function PdfViewer({ voce, onClose, isApp }: { voce: Voce; onClose: () => void; 
   const touchStart = useRef<{ x: number; y: number } | null>(null)
   const panStart = useRef<{ x: number; scrollLeft: number; overscroll: number } | null>(null)
   const pinchStart = useRef<{ dist: number; scale: number; contentX: number; contentY: number; viewX: number; viewY: number } | null>(null)
+  const mouseStart = useRef<{ x: number; y: number; scrollLeft: number; scrollTop: number } | null>(null)
+
+  function onMouseDown(e: React.MouseEvent) {
+    if (e.button !== 0 || !containerRef.current) return
+    mouseStart.current = { x: e.clientX, y: e.clientY, scrollLeft: containerRef.current.scrollLeft, scrollTop: containerRef.current.scrollTop }
+    containerRef.current.style.cursor = 'grabbing'
+    e.preventDefault()
+  }
+
+  useEffect(() => {
+    function onMove(e: MouseEvent) {
+      const start = mouseStart.current
+      const container = containerRef.current
+      if (!start || !container) return
+      container.scrollLeft = start.scrollLeft - (e.clientX - start.x)
+      container.scrollTop = start.scrollTop - (e.clientY - start.y)
+    }
+    function onUp() {
+      mouseStart.current = null
+      if (containerRef.current) containerRef.current.style.cursor = 'grab'
+    }
+    window.addEventListener('mousemove', onMove)
+    window.addEventListener('mouseup', onUp)
+    return () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp) }
+  }, [])
 
   function pinchDist(e: React.TouchEvent) {
     const [a, b] = [e.touches[0], e.touches[1]]
@@ -230,7 +255,7 @@ function PdfViewer({ voce, onClose, isApp }: { voce: Voce; onClose: () => void; 
         </div>
       </div>
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-      <div ref={containerRef} onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd} style={{ overflow: 'auto', background: '#666', padding: '16px 0', flex: 1, touchAction: 'pan-y' }}>
+      <div ref={containerRef} onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd} onMouseDown={onMouseDown} style={{ overflow: 'auto', background: '#666', padding: '16px 0', flex: 1, touchAction: 'pan-y', cursor: 'grab' }}>
         <div style={{ display: 'flex', justifyContent: 'center', minWidth: 'max-content', padding: '0 6px' }}>
           <Document
             file={pdfSrc(voce.pdf_filename)}
