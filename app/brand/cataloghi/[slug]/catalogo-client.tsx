@@ -138,9 +138,9 @@ function PdfViewer({ voce, onClose, isApp }: { voce: Voce; onClose: () => void; 
         borderLeft: '1px solid #444',
       }}>
         <span style={{ fontSize: 9, color: '#fff', lineHeight: 1 }}>{Math.round(scale * 100)}%</span>
-        <input type="range" min={50} max={300} step={25} value={Math.round(scale * 100)}
+        <input type="range" min={50} max={300} step={1} value={Math.round(scale * 100)}
           onChange={e => setScale(Number(e.target.value) / 100)}
-          style={{ writingMode: 'vertical-lr', direction: 'rtl', WebkitAppearance: 'slider-vertical', width: 16, height: 100, cursor: 'pointer', accentColor: '#c8960c' } as React.CSSProperties}
+          style={{ writingMode: 'vertical-lr', direction: 'rtl', WebkitAppearance: 'slider-vertical', width: 16, height: 260, cursor: 'pointer', accentColor: '#c8960c' } as React.CSSProperties}
         />
       </div>
       </div>
