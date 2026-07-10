@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useLayoutEffect } from 'react'
 import Link from 'next/link'
 import { Document, Page, pdfjs } from 'react-pdf'
 import { b } from '@/lib/btn'
@@ -21,28 +21,87 @@ function toSlug(nome: string): string {
     .replace(/^-|-$/g, '')
 }
 
+const RENDER_HEADROOM = 3 // il PDF si disegna una sola volta a questo multiplo del 100%; lo zoom sopra/sotto e' solo CSS transform, niente re-render
+
 function PdfViewer({ voce, onClose, isApp }: { voce: Voce; onClose: () => void; isApp?: boolean }) {
   const [numPages, setNumPages] = useState(0)
   const [page, setPage] = useState(1)
   const [scale, setScale] = useState(1)
-  const [containerWidth, setContainerWidth] = useState(800)
+  const [baseWidth, setBaseWidth] = useState(700)
+  const [pageAspect, setPageAspect] = useState<number | null>(null)
   const [cardHeight, setCardHeight] = useState('80vh')
   const containerRef = useRef<HTMLDivElement>(null)
   const cardRef = useRef<HTMLDivElement>(null)
   const hasFit = useRef(false)
-  const pdfPageSize = useRef<{ w: number; h: number } | null>(null)
+  const titleWrapRef = useRef<HTMLDivElement>(null)
+  const titleSpanRef = useRef<HTMLSpanElement>(null)
   const touchStart = useRef<{ x: number; y: number } | null>(null)
+  const panStart = useRef<{ x: number; scrollLeft: number; overscroll: number } | null>(null)
+  const pinchStart = useRef<{ dist: number; scale: number; contentX: number; contentY: number; viewX: number; viewY: number } | null>(null)
+
+  function pinchDist(e: React.TouchEvent) {
+    const [a, b] = [e.touches[0], e.touches[1]]
+    return Math.hypot(b.clientX - a.clientX, b.clientY - a.clientY)
+  }
 
   function onTouchStart(e: React.TouchEvent) {
+    if (e.touches.length === 2) {
+      touchStart.current = null
+      panStart.current = null
+      const container = containerRef.current
+      if (!container) return
+      const [t0, t1] = [e.touches[0], e.touches[1]]
+      const midX = (t0.clientX + t1.clientX) / 2
+      const midY = (t0.clientY + t1.clientY) / 2
+      const cRect = container.getBoundingClientRect()
+      const viewX = midX - cRect.left
+      const viewY = midY - cRect.top
+      pinchStart.current = {
+        dist: pinchDist(e), scale,
+        contentX: container.scrollLeft + viewX, contentY: container.scrollTop + viewY,
+        viewX, viewY,
+      }
+      return
+    }
+    pinchStart.current = null
     const container = containerRef.current
-    if (e.touches.length !== 1 || !container || container.scrollWidth > container.clientWidth + 2) {
+    if (e.touches.length !== 1 || !container) { touchStart.current = null; return }
+    if (container.scrollWidth > container.clientWidth + 2) {
+      panStart.current = { x: e.touches[0].clientX, scrollLeft: container.scrollLeft, overscroll: 0 }
       touchStart.current = null
       return
     }
+    panStart.current = null
     touchStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
   }
 
+  function onTouchMove(e: React.TouchEvent) {
+    if (e.touches.length === 2 && pinchStart.current) {
+      const ratio = pinchDist(e) / pinchStart.current.dist
+      setScale(Math.min(Math.max(pinchStart.current.scale * ratio, 0.5), 3))
+      return
+    }
+    if (e.touches.length === 1 && panStart.current && containerRef.current) {
+      const container = containerRef.current
+      const dx = e.touches[0].clientX - panStart.current.x
+      const rawTarget = panStart.current.scrollLeft - dx
+      const maxScroll = container.scrollWidth - container.clientWidth
+      panStart.current.overscroll = rawTarget < 0 ? rawTarget : rawTarget > maxScroll ? rawTarget - maxScroll : 0
+      container.scrollLeft = rawTarget
+    }
+  }
+
   function onTouchEnd(e: React.TouchEvent) {
+    if (e.touches.length < 2) pinchStart.current = null
+    if (panStart.current) {
+      if (e.touches.length === 0) {
+        const over = panStart.current.overscroll
+        panStart.current = null
+        if (over < -50) setPage(p => Math.max(1, p - 1))
+        else if (over > 50) setPage(p => Math.min(numPages, p + 1))
+      }
+      return
+    }
     const start = touchStart.current
     touchStart.current = null
     if (!start) return
@@ -54,22 +113,40 @@ function PdfViewer({ voce, onClose, isApp }: { voce: Voce; onClose: () => void; 
     else setPage(p => Math.max(1, p - 1))
   }
 
+  // durante/dopo un pinch, ancora lo scroll al punto sotto le dita mentre lo zoom (CSS) cambia
+  useLayoutEffect(() => {
+    const anchor = pinchStart.current
+    const container = containerRef.current
+    if (!anchor || !container) return
+    const ratio = scale / anchor.scale
+    container.scrollLeft = anchor.contentX * ratio - anchor.viewX
+    container.scrollTop = anchor.contentY * ratio - anchor.viewY
+  }, [scale])
+
   function fitScale() {
     if (hasFit.current) return
-    const dims = pdfPageSize.current
     const container = containerRef.current
-    if (!dims || !container) return
+    if (!container) return
     const availW = container.clientWidth - 12
     if (availW <= 0) return
-    setScale(Math.min(Math.max(availW / dims.w, 0.5), 3))
+    setBaseWidth(availW)
+    setScale(1)
     hasFit.current = true
   }
 
   useEffect(() => {
-    const el = containerRef.current
-    if (!el) return
-    const obs = new ResizeObserver(entries => { setContainerWidth(entries[0].contentRect.width) })
-    obs.observe(el)
+    const wrap = titleWrapRef.current
+    const span = titleSpanRef.current
+    if (!wrap || !span) return
+    const measure = () => {
+      span.style.fontSize = '14px'
+      const natural = span.scrollWidth
+      const ratio = (wrap.clientWidth * 0.94) / natural
+      span.style.fontSize = `${Math.min(Math.max(14 * ratio, 9), 18)}px`
+    }
+    measure()
+    const obs = new ResizeObserver(measure)
+    obs.observe(wrap)
     return () => obs.disconnect()
   }, [])
 
@@ -91,22 +168,29 @@ function PdfViewer({ voce, onClose, isApp }: { voce: Voce; onClose: () => void; 
 
   useEffect(() => { fitScale() }, [cardHeight])
 
-  useEffect(() => { if (containerRef.current) containerRef.current.scrollTop = 0 }, [page])
+  useEffect(() => {
+    if (!containerRef.current) return
+    containerRef.current.scrollTop = 0
+    containerRef.current.scrollLeft = 0
+  }, [page])
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async function handleDocLoad(pdf: any) {
     setNumPages(pdf.numPages)
     setPage(1)
-    if (hasFit.current) return
     try {
       const p = await pdf.getPage(1)
       const vp = p.getViewport({ scale: 1 })
       if (vp.height > 0 && vp.width > 0) {
-        pdfPageSize.current = { w: vp.width, h: vp.height }
+        setPageAspect(vp.height / vp.width)
         fitScale()
       }
     } catch {}
   }
+
+  const nativeWidth = baseWidth * RENDER_HEADROOM
+  const nativeHeight = nativeWidth * (pageAspect ?? 1.414)
+  const displayScale = scale / RENDER_HEADROOM
 
   const arrowBtn = (disabled: boolean): React.CSSProperties => ({
     width: 42, height: 42, borderRadius: 21, fontWeight: 700,
@@ -122,19 +206,21 @@ function PdfViewer({ voce, onClose, isApp }: { voce: Voce; onClose: () => void; 
       position: 'relative', display: 'flex', flexDirection: 'column', height: cardHeight,
     }}>
       <div style={{ borderBottom: '1px solid #e0e0e0', background: '#fafafa', flexShrink: 0 }}>
-        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', padding: '4px 12px', minHeight: 50 }}>
-          <span className="fs-14" style={{ fontWeight: 700, color: '#1a1a1a', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {voce.pdf_label || voce.nome}
-          </span>
-          <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', padding: '4px 0', minHeight: 50, gap: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
             <button style={arrowBtn(page <= 1)} disabled={page <= 1} onClick={() => setPage(p => p - 1)}>‹</button>
             <span className="fs-13" style={{ color: '#555', whiteSpace: 'nowrap', minWidth: 36, textAlign: 'center' }}>{page} / {numPages || '…'}</span>
             <button style={arrowBtn(page >= numPages)} disabled={page >= numPages} onClick={() => setPage(p => p + 1)}>›</button>
           </div>
+          <div ref={titleWrapRef} style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
+            <span ref={titleSpanRef} className="fs-14" style={{ fontWeight: 700, color: '#1a1a1a', whiteSpace: 'nowrap', display: 'inline-block' }}>
+              {voce.pdf_label || voce.nome}
+            </span>
+          </div>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexShrink: 0 }}>
-            <a href={pdfSrc(voce.pdf_filename)} download className={`${b('btn-black', isApp)} fs-13`}
-              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', height: 34, padding: '0 16px', borderRadius: 17, textDecoration: 'none', whiteSpace: 'nowrap' }}>
-              Scarica
+            <a href={pdfSrc(voce.pdf_filename)} download title="Scarica" className={`${b('btn-black btn-icon', isApp)} fs-13`}
+              style={{ flexShrink: 0, textDecoration: 'none' }}>
+              ↓
             </a>
             <button onClick={onClose} title="Chiudi" className={`${b('btn-red btn-icon', isApp)} fs-13`}
               style={{ flexShrink: 0 }}>
@@ -144,7 +230,7 @@ function PdfViewer({ voce, onClose, isApp }: { voce: Voce; onClose: () => void; 
         </div>
       </div>
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-      <div ref={containerRef} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} style={{ overflow: 'auto', background: '#666', padding: '16px 0', flex: 1 }}>
+      <div ref={containerRef} onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd} style={{ overflow: 'auto', background: '#666', padding: '16px 0', flex: 1, touchAction: 'pan-y' }}>
         <div style={{ display: 'flex', justifyContent: 'center', minWidth: 'max-content', padding: '0 6px' }}>
           <Document
             file={pdfSrc(voce.pdf_filename)}
@@ -152,7 +238,16 @@ function PdfViewer({ voce, onClose, isApp }: { voce: Voce; onClose: () => void; 
             loading={<div className="fs-14" style={{ color: '#fff', padding: '40px 20px' }}>Caricamento PDF…</div>}
             error={<div className="fs-14" style={{ color: '#fcc', padding: '40px 20px' }}>Impossibile caricare il PDF.{' '}<a href={pdfSrc(voce.pdf_filename)} style={{ color: '#fdd', textDecoration: 'underline' }}>Apri direttamente</a></div>}
           >
-            <Page pageNumber={page} width={Math.max(300, containerWidth - 12) * scale} renderTextLayer={false} renderAnnotationLayer={false} />
+            <div style={{ width: nativeWidth * displayScale, height: nativeHeight * displayScale, overflow: 'hidden', position: 'relative' }}>
+              {[page - 1, page, page + 1].filter(p => p >= 1 && p <= numPages).map(p => (
+                <div key={p} style={{ position: 'absolute', inset: 0, visibility: p === page ? 'visible' : 'hidden' }}>
+                  <div style={{ width: nativeWidth, transform: `scale(${displayScale})`, transformOrigin: 'top left' }}>
+                    <Page pageNumber={p} width={nativeWidth} renderTextLayer={false} renderAnnotationLayer={false}
+                      loading={<div style={{ width: nativeWidth, height: nativeHeight, background: '#fff' }} />} />
+                  </div>
+                </div>
+              ))}
+            </div>
           </Document>
         </div>
       </div>
