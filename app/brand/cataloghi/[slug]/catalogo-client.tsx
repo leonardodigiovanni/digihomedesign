@@ -31,6 +31,28 @@ function PdfViewer({ voce, onClose, isApp }: { voce: Voce; onClose: () => void; 
   const cardRef = useRef<HTMLDivElement>(null)
   const hasFit = useRef(false)
   const pdfPageSize = useRef<{ w: number; h: number } | null>(null)
+  const touchStart = useRef<{ x: number; y: number } | null>(null)
+
+  function onTouchStart(e: React.TouchEvent) {
+    const container = containerRef.current
+    if (e.touches.length !== 1 || !container || container.scrollWidth > container.clientWidth + 2) {
+      touchStart.current = null
+      return
+    }
+    touchStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+  }
+
+  function onTouchEnd(e: React.TouchEvent) {
+    const start = touchStart.current
+    touchStart.current = null
+    if (!start) return
+    const t = e.changedTouches[0]
+    const dx = t.clientX - start.x
+    const dy = t.clientY - start.y
+    if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5) return
+    if (dx < 0) setPage(p => Math.min(numPages, p + 1))
+    else setPage(p => Math.max(1, p - 1))
+  }
 
   function fitScale() {
     if (hasFit.current) return
@@ -68,6 +90,8 @@ function PdfViewer({ voce, onClose, isApp }: { voce: Voce; onClose: () => void; 
   }, [])
 
   useEffect(() => { fitScale() }, [cardHeight])
+
+  useEffect(() => { if (containerRef.current) containerRef.current.scrollTop = 0 }, [page])
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async function handleDocLoad(pdf: any) {
@@ -120,7 +144,7 @@ function PdfViewer({ voce, onClose, isApp }: { voce: Voce; onClose: () => void; 
         </div>
       </div>
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-      <div ref={containerRef} style={{ overflow: 'auto', background: '#666', padding: '16px 0', flex: 1 }}>
+      <div ref={containerRef} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} style={{ overflow: 'auto', background: '#666', padding: '16px 0', flex: 1 }}>
         <div style={{ display: 'flex', justifyContent: 'center', minWidth: 'max-content', padding: '0 6px' }}>
           <Document
             file={pdfSrc(voce.pdf_filename)}
