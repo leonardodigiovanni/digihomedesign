@@ -30,6 +30,18 @@ function PdfViewer({ voce, onClose, isApp }: { voce: Voce; onClose: () => void; 
   const containerRef = useRef<HTMLDivElement>(null)
   const cardRef = useRef<HTMLDivElement>(null)
   const hasFit = useRef(false)
+  const pdfPageSize = useRef<{ w: number; h: number } | null>(null)
+
+  function fitScale() {
+    if (hasFit.current) return
+    const dims = pdfPageSize.current
+    const container = containerRef.current
+    if (!dims || !container) return
+    const availW = container.clientWidth - 12
+    if (availW <= 0) return
+    setScale(Math.min(Math.max(availW / dims.w, 0.5), 3))
+    hasFit.current = true
+  }
 
   useEffect(() => {
     const el = containerRef.current
@@ -42,16 +54,20 @@ function PdfViewer({ voce, onClose, isApp }: { voce: Voce; onClose: () => void; 
   useEffect(() => {
     const el = cardRef.current
     if (!el) return
+    const header = document.getElementById('site-sticky-header')
+    el.style.scrollMarginTop = `${(header?.offsetHeight ?? 0) + 8}px`
     el.scrollIntoView({ behavior: 'smooth', block: 'start' })
     const measure = () => {
       const top = el.getBoundingClientRect().top
       setCardHeight(`${Math.floor(window.innerHeight - top)}px`)
     }
-    const timer = setTimeout(measure, 450)
+    const timer = setTimeout(() => { measure(); fitScale() }, 450)
     const onResize = () => measure()
     window.addEventListener('resize', onResize)
     return () => { clearTimeout(timer); window.removeEventListener('resize', onResize) }
   }, [])
+
+  useEffect(() => { fitScale() }, [cardHeight])
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async function handleDocLoad(pdf: any) {
@@ -62,12 +78,8 @@ function PdfViewer({ voce, onClose, isApp }: { voce: Voce; onClose: () => void; 
       const p = await pdf.getPage(1)
       const vp = p.getViewport({ scale: 1 })
       if (vp.height > 0 && vp.width > 0) {
-        const availH = window.innerHeight - 160
-        const availW = (containerRef.current?.clientWidth ?? window.innerWidth) - 32
-        const scaleH = availH / vp.height
-        const scaleW = availW / vp.width
-        setScale(Math.min(Math.max(Math.min(scaleH, scaleW), 0.5), 3))
-        hasFit.current = true
+        pdfPageSize.current = { w: vp.width, h: vp.height }
+        fitScale()
       }
     } catch {}
   }
@@ -107,10 +119,23 @@ function PdfViewer({ voce, onClose, isApp }: { voce: Voce; onClose: () => void; 
           </div>
         </div>
       </div>
+      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+      <div ref={containerRef} style={{ overflow: 'auto', background: '#666', padding: '16px 0', flex: 1 }}>
+        <div style={{ display: 'flex', justifyContent: 'center', minWidth: 'max-content', padding: '0 6px' }}>
+          <Document
+            file={pdfSrc(voce.pdf_filename)}
+            onLoadSuccess={handleDocLoad}
+            loading={<div className="fs-14" style={{ color: '#fff', padding: '40px 20px' }}>Caricamento PDF…</div>}
+            error={<div className="fs-14" style={{ color: '#fcc', padding: '40px 20px' }}>Impossibile caricare il PDF.{' '}<a href={pdfSrc(voce.pdf_filename)} style={{ color: '#fdd', textDecoration: 'underline' }}>Apri direttamente</a></div>}
+          >
+            <Page pageNumber={page} width={Math.max(300, containerWidth - 12) * scale} renderTextLayer={false} renderAnnotationLayer={false} />
+          </Document>
+        </div>
+      </div>
       <div style={{
-        position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
-        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
-        background: 'rgba(0,0,0,0.5)', borderRadius: 20, padding: '8px 5px', zIndex: 10,
+        width: 40, flexShrink: 0, background: '#555',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4,
+        borderLeft: '1px solid #444',
       }}>
         <span style={{ fontSize: 9, color: '#fff', lineHeight: 1 }}>{Math.round(scale * 100)}%</span>
         <input type="range" min={50} max={300} step={25} value={Math.round(scale * 100)}
@@ -118,17 +143,6 @@ function PdfViewer({ voce, onClose, isApp }: { voce: Voce; onClose: () => void; 
           style={{ writingMode: 'vertical-lr', direction: 'rtl', WebkitAppearance: 'slider-vertical', width: 16, height: 100, cursor: 'pointer', accentColor: '#c8960c' } as React.CSSProperties}
         />
       </div>
-      <div ref={containerRef} style={{ overflow: 'auto', background: '#666', padding: '16px 0', flex: 1 }}>
-        <div style={{ display: 'flex', justifyContent: 'center', minWidth: 'max-content', padding: '0 16px' }}>
-          <Document
-            file={pdfSrc(voce.pdf_filename)}
-            onLoadSuccess={handleDocLoad}
-            loading={<div className="fs-14" style={{ color: '#fff', padding: '40px 20px' }}>Caricamento PDF…</div>}
-            error={<div className="fs-14" style={{ color: '#fcc', padding: '40px 20px' }}>Impossibile caricare il PDF.{' '}<a href={pdfSrc(voce.pdf_filename)} style={{ color: '#fdd', textDecoration: 'underline' }}>Apri direttamente</a></div>}
-          >
-            <Page pageNumber={page} width={Math.max(300, containerWidth - 32) * scale} renderTextLayer={false} renderAnnotationLayer={false} />
-          </Document>
-        </div>
       </div>
     </div>
   )
