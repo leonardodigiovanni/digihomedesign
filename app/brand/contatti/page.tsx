@@ -52,7 +52,7 @@ export default async function Page() {
           <p className="testo-articoli" style={{ margin: 0, textAlign: 'justify' }}>Siamo a disposizione per sopralluoghi gratuiti, preventivi e informazioni su tutti i nostri servizi. Contattaci telefonicamente, via email o compila il modulo — ti risponderemo entro 24 ore.</p>
         </div>
         <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '24px 24px' }}>
-          <p className="testo-articoli" style={{ margin: 0, textAlign: 'justify' }}>Operiamo direttamente a Palermo e in tutta la Provincia e nel resto della Sicilia. Potremmo affidarci alla nostra rete di selezionati e fidati collaboratori per gestire distanze maggiori.</p>
+          <p className="testo-articoli" style={{ margin: 0, textAlign: 'justify' }}>Operiamo direttamente a Palermo e Provincia. Potremmo affidarci alla nostra rete di selezionati e fidati collaboratori per gestire distanze maggiori.</p>
         </div>
       </div>
 
