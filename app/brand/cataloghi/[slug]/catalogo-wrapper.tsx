@@ -185,6 +185,9 @@ export default function CatalogoWrapper({
 
   // Linguette PDF disponibili = solo quelle per cui almeno un PDF ha il flag
   const linguettePdfDisponibili = PDF_FILTRI.filter(f => voci.some(v => (v[f.key] as number ?? 0) === 1))
+  // Tra queste: quali hanno l'etichetta che combacia con un produttore (→ zona "filtri per marca")
+  const cMarche = linguettePdfDisponibili.filter(f => artModello.some(a => a.produttore?.toLowerCase() === catalogoLabel(f.n).toLowerCase()))
+  const cClassiche = linguettePdfDisponibili.filter(f => !cMarche.includes(f))
 
   const showFiltriBar =
     linguettePdfDisponibili.length > 0 ||
@@ -230,48 +233,84 @@ export default function CatalogoWrapper({
   return (
     <>
       {showFiltriBar && (
-        <div style={{ display: 'flex', flexWrap: 'nowrap', gap: 6, alignItems: 'center', background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '8px 16px', marginBottom: 8, overflowX: 'auto', WebkitOverflowScrolling: 'touch' as const }}>
-          <button onClick={resetFiltri} disabled={!hasFilters || !!selectedVoce} className={hasFilters && !selectedVoce ? 'btn-red' : 'btn-gray'} style={{ fontSize: 11, padding: '2px 8px', height: 26 }}>✕</button>
-          {faseOpt.length > 0 && (
-            <select value={faseSel} disabled={!!selectedVoce} onChange={e => { setFaseSel(e.target.value); setMaterialeSel(''); setTipologiaSel(''); setAmbienteSel(''); setFasciaSel('') }} style={selStyle}>
-              <option value="">Fase</option>
-              {faseOpt.map(o => <option key={o} value={o}>{o}</option>)}
-            </select>
+        <div style={{ display: 'flex', flexWrap: 'nowrap', gap: 0, alignItems: 'stretch', background: '#fff', border: '1px solid #c8960c', borderRadius: 10, marginBottom: 8, overflowX: 'auto', WebkitOverflowScrolling: 'touch' as const }}>
+          <button onClick={resetFiltri} disabled={!hasFilters || !!selectedVoce} className={hasFilters && !selectedVoce ? 'btn-red' : 'btn-gray'} style={{ fontSize: 11, padding: '2px 8px', height: 26, alignSelf: 'flex-end', flexShrink: 0, marginLeft: 12, marginBottom: 6 }}>✕</button>
+
+          {/* Zona 1: filtri con corrispondenza obbligatoria (select classificazione + F) */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 3, justifyContent: 'center', background: '#fff', padding: '6px 12px', flexShrink: 0 }}>
+            <span style={{ fontSize: 11, color: '#888', whiteSpace: 'nowrap' }}>filtri con corrispondenze obbligatorie</span>
+            <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+              {faseOpt.length > 0 && (
+                <select value={faseSel} disabled={!!selectedVoce} onChange={e => { setFaseSel(e.target.value); setMaterialeSel(''); setTipologiaSel(''); setAmbienteSel(''); setFasciaSel('') }} style={selStyle}>
+                  <option value="">Fase</option>
+                  {faseOpt.map(o => <option key={o} value={o}>{o}</option>)}
+                </select>
+              )}
+              {materialeOpt.length > 0 && (
+                <select value={materialeSel} disabled={!!selectedVoce} onChange={e => { setMaterialeSel(e.target.value); setTipologiaSel(''); setAmbienteSel(''); setFasciaSel('') }} style={selStyle}>
+                  <option value="">Materiale</option>
+                  {materialeOpt.map(o => <option key={o} value={o}>{o}</option>)}
+                </select>
+              )}
+              {tipologiaOpt.length > 0 && (
+                <select value={tipologiaSel} disabled={!!selectedVoce} onChange={e => { setTipologiaSel(e.target.value); setAmbienteSel(''); setFasciaSel('') }} style={selStyle}>
+                  <option value="">Tipologia</option>
+                  {tipologiaOpt.map(o => <option key={o} value={o}>{o}</option>)}
+                </select>
+              )}
+              {ambienteOpt.length > 0 && (
+                <select value={ambienteSel} disabled={!!selectedVoce} onChange={e => { setAmbienteSel(e.target.value); setFasciaSel('') }} style={selStyle}>
+                  <option value="">Ambiente</option>
+                  {ambienteOpt.map(o => <option key={o} value={o}>{o}</option>)}
+                </select>
+              )}
+              {fasciaOpt.length > 0 && (
+                <select value={fasciaSel} disabled={!!selectedVoce} onChange={e => setFasciaSel(e.target.value)} style={selStyle}>
+                  <option value="">Fascia</option>
+                  {fasciaOpt.map(o => <option key={o} value={o}>{o}</option>)}
+                </select>
+              )}
+              {modelloDisponibili.map(n => (
+                <Linguetta key={n} label={modelloLabel(n)} attiva={filtriModello.has(n)} disabled={!!selectedVoce}
+                  onToggle={() => setFiltriModello(prev => { const s = new Set(prev); s.has(n) ? s.delete(n) : s.add(n); return s })}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Zona 2: filtri catalogo classici (una corrispondenza esatta basta, solo PDF) */}
+          {cClassiche.length > 0 && (
+            <>
+              <div style={{ width: 1, background: '#e0d5b8', flexShrink: 0 }} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 3, justifyContent: 'center', background: '#fff9d6', padding: '6px 12px', flexShrink: 0 }}>
+                <span style={{ fontSize: 11, color: '#8a7a2a', whiteSpace: 'nowrap' }}>filtri che basta una corrispondenza esatta</span>
+                <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                  {cClassiche.map(f => (
+                    <Linguetta key={f.n} label={catalogoLabel(f.n)} attiva={filtriPdf.has(f.n)}
+                      onToggle={() => setFiltriPdf(prev => { const s = new Set(prev); s.has(f.n) ? s.delete(f.n) : s.add(f.n); return s })}
+                    />
+                  ))}
+                </div>
+              </div>
+            </>
           )}
-          {materialeOpt.length > 0 && (
-            <select value={materialeSel} disabled={!!selectedVoce} onChange={e => { setMaterialeSel(e.target.value); setTipologiaSel(''); setAmbienteSel(''); setFasciaSel('') }} style={selStyle}>
-              <option value="">Materiale</option>
-              {materialeOpt.map(o => <option key={o} value={o}>{o}</option>)}
-            </select>
+
+          {/* Zona 3: filtri catalogo che combaciano con un produttore (filtrano anche gli articoli) */}
+          {cMarche.length > 0 && (
+            <>
+              <div style={{ width: 1, background: '#e0d5b8', flexShrink: 0 }} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 3, justifyContent: 'center', background: '#e8f7e8', padding: '6px 12px', flexShrink: 0 }}>
+                <span style={{ fontSize: 11, color: '#4a8a4a', whiteSpace: 'nowrap' }}>filtri che la marca deve essere tra quelle selezionate</span>
+                <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                  {cMarche.map(f => (
+                    <Linguetta key={f.n} label={catalogoLabel(f.n)} attiva={filtriPdf.has(f.n)}
+                      onToggle={() => setFiltriPdf(prev => { const s = new Set(prev); s.has(f.n) ? s.delete(f.n) : s.add(f.n); return s })}
+                    />
+                  ))}
+                </div>
+              </div>
+            </>
           )}
-          {tipologiaOpt.length > 0 && (
-            <select value={tipologiaSel} disabled={!!selectedVoce} onChange={e => { setTipologiaSel(e.target.value); setAmbienteSel(''); setFasciaSel('') }} style={selStyle}>
-              <option value="">Tipologia</option>
-              {tipologiaOpt.map(o => <option key={o} value={o}>{o}</option>)}
-            </select>
-          )}
-          {ambienteOpt.length > 0 && (
-            <select value={ambienteSel} disabled={!!selectedVoce} onChange={e => { setAmbienteSel(e.target.value); setFasciaSel('') }} style={selStyle}>
-              <option value="">Ambiente</option>
-              {ambienteOpt.map(o => <option key={o} value={o}>{o}</option>)}
-            </select>
-          )}
-          {fasciaOpt.length > 0 && (
-            <select value={fasciaSel} disabled={!!selectedVoce} onChange={e => setFasciaSel(e.target.value)} style={selStyle}>
-              <option value="">Fascia</option>
-              {fasciaOpt.map(o => <option key={o} value={o}>{o}</option>)}
-            </select>
-          )}
-          {modelloDisponibili.map(n => (
-            <Linguetta key={n} label={modelloLabel(n)} attiva={filtriModello.has(n)} disabled={!!selectedVoce}
-              onToggle={() => setFiltriModello(prev => { const s = new Set(prev); s.has(n) ? s.delete(n) : s.add(n); return s })}
-            />
-          ))}
-          {linguettePdfDisponibili.map(f => (
-            <Linguetta key={f.n} label={catalogoLabel(f.n)} attiva={filtriPdf.has(f.n)}
-              onToggle={() => setFiltriPdf(prev => { const s = new Set(prev); s.has(f.n) ? s.delete(f.n) : s.add(f.n); return s })}
-            />
-          ))}
         </div>
       )}
 
