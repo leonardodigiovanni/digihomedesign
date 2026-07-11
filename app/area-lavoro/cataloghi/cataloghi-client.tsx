@@ -396,7 +396,7 @@ function VoceRow({ voce, isStaff, percorsi, filtriLabels, filtriCatalogoLabels }
         <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexShrink: 0 }}>
           <a href={pdfSrc(voce.pdf_filename)} target="_blank" rel="noreferrer"
             className="btn-black" style={{ fontSize: 11 }}>PDF</a>
-          {hasDetail && (
+          {(hasDetail || isStaff) && (
             <button onClick={() => { setOpen(o => !o); if (editing) setEditing(false) }}
               className="btn-gray" style={{ fontSize: 11, padding: '3px 8px', minWidth: 28 }}>
               {open ? '▲' : '▼'}
