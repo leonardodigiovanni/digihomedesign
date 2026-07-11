@@ -238,7 +238,7 @@ export default function CatalogoWrapper({
 
           {/* Zona 1: filtri con corrispondenza obbligatoria (select classificazione + F) */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 3, justifyContent: 'center', background: '#fff', padding: '6px 12px', flexShrink: 0 }}>
-            <span style={{ fontSize: 11, color: '#888', whiteSpace: 'nowrap' }}>filtri con corrispondenze obbligatorie</span>
+            <span style={{ fontSize: 11, color: '#888', whiteSpace: 'nowrap' }}>Tutte corrispondenze esatte (catalogo+articolo)</span>
             <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
               {faseOpt.length > 0 && (
                 <select value={faseSel} disabled={!!selectedVoce} onChange={e => { setFaseSel(e.target.value); setMaterialeSel(''); setTipologiaSel(''); setAmbienteSel(''); setFasciaSel('') }} style={selStyle}>
@@ -283,7 +283,7 @@ export default function CatalogoWrapper({
             <>
               <div style={{ width: 1, background: '#e0d5b8', flexShrink: 0 }} />
               <div style={{ display: 'flex', flexDirection: 'column', gap: 3, justifyContent: 'center', background: '#fff9d6', padding: '6px 12px', flexShrink: 0 }}>
-                <span style={{ fontSize: 11, color: '#8a7a2a', whiteSpace: 'nowrap' }}>filtri che basta una corrispondenza esatta</span>
+                <span style={{ fontSize: 11, color: '#8a7a2a', whiteSpace: 'nowrap' }}>Almeno una corrispondenza (catalogo)</span>
                 <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
                   {cClassiche.map(f => (
                     <Linguetta key={f.n} label={catalogoLabel(f.n)} attiva={filtriPdf.has(f.n)}
@@ -300,7 +300,7 @@ export default function CatalogoWrapper({
             <>
               <div style={{ width: 1, background: '#e0d5b8', flexShrink: 0 }} />
               <div style={{ display: 'flex', flexDirection: 'column', gap: 3, justifyContent: 'center', background: '#e8f7e8', padding: '6px 12px', flexShrink: 0 }}>
-                <span style={{ fontSize: 11, color: '#4a8a4a', whiteSpace: 'nowrap' }}>filtri che la marca deve essere tra quelle selezionate</span>
+                <span style={{ fontSize: 11, color: '#4a8a4a', whiteSpace: 'nowrap' }}>Marche prestabilite (catalogo+articolo)</span>
                 <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
                   {cMarche.map(f => (
                     <Linguetta key={f.n} label={catalogoLabel(f.n)} attiva={filtriPdf.has(f.n)}
