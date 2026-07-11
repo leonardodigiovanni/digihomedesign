@@ -10,6 +10,7 @@ import CatalogoWrapper from '@/app/brand/cataloghi/[slug]/catalogo-wrapper'
 import { type ArticoloListino } from '@/app/brand/cataloghi/[slug]/aggiungi-articolo'
 import { LISTINO_COLS } from '@/lib/catalogo-matching'
 import { getFiltriModelloLabels } from '@/lib/filtri-modello-labels'
+import { getFiltriCatalogoLabels } from '@/lib/filtri-catalogo-labels'
 import type { PreventivoDestOption } from '@/app/brand/cataloghi/actions'
 import AggiungiArticoloAcquistoForm from '@/components/aggiungi-articolo-acquisto-form'
 import type { ArticoloListinoAcquisto } from '@/components/aggiungi-articolo-acquisto-form'
@@ -95,7 +96,8 @@ async function getCatalogoData(nomeCategoria: string, sottocatSlug: string) {
         ...r, max_acquistabile: r.max_acquistabile != null ? Number(r.max_acquistabile) : null,
       }))
       const filtriLabels = await getFiltriModelloLabels(db)
-      return { categoria: { nome: nomeCategoria }, voci: voceList, articoliPerListino, articoliAcquisto, filtriLabels }
+      const filtriCatalogoLabels = await getFiltriCatalogoLabels(db)
+      return { categoria: { nome: nomeCategoria }, voci: voceList, articoliPerListino, articoliAcquisto, filtriLabels, filtriCatalogoLabels }
     } finally {
       await db.end()
     }
@@ -204,6 +206,7 @@ export default async function Page() {
             fixedCat="serramenti"
             fixedSottocat="infissi-in-alluminio"
             filtriLabels={catalogo.filtriLabels}
+            filtriCatalogoLabels={catalogo.filtriCatalogoLabels}
           />
         )}
 

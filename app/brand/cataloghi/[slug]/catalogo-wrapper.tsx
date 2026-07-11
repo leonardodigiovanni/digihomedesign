@@ -37,17 +37,18 @@ type Props = {
   fixedCat?: string
   fixedSottocat?: string
   filtriLabels?: Record<number, string>
+  filtriCatalogoLabels?: Record<number, string>
 }
 
-// ─── Linguette PDF ─────────────────────────────────────────────────────────────
+// ─── Linguette PDF (C1..C6, etichette condivise dal pannello Cataloghi) ───────
 
-const PDF_FILTRI: { label: string; key: keyof Voce }[] = [
-  { label: 'Battente',    key: 'filtro_battente' },
-  { label: 'Scorrevole',  key: 'filtro_scorrevole' },
-  { label: 'T. Termico',  key: 'filtro_taglio_termico' },
-  { label: 'T. Freddo',   key: 'filtro_taglio_freddo' },
-  { label: 'Economico',   key: 'filtro_economico' },
-  { label: 'Fascia Alta', key: 'filtro_fascia_alta' },
+const PDF_FILTRI: { n: number; key: keyof Voce }[] = [
+  { n: 1, key: 'filtro_battente' },
+  { n: 2, key: 'filtro_scorrevole' },
+  { n: 3, key: 'filtro_taglio_termico' },
+  { n: 4, key: 'filtro_taglio_freddo' },
+  { n: 5, key: 'filtro_economico' },
+  { n: 6, key: 'filtro_fascia_alta' },
 ]
 
 // ─── Filtri modello (F1..F10, etichette condivise dal pannello Cataloghi) ─────
@@ -90,9 +91,10 @@ const selStyle = { fontSize: 11, padding: '3px 6px', border: '1px solid #ccc', b
 export default function CatalogoWrapper({
   voci, articoliPerListino, isStaff, isLoggedIn, preventiviBozza, cartNonVuoto,
   parentPendente, categorySlug, basePath, carrelloHref, preventivoClienteBaseHref,
-  submitLabel, isApp, fixedCat, fixedSottocat, filtriLabels,
+  submitLabel, isApp, fixedCat, fixedSottocat, filtriLabels, filtriCatalogoLabels,
 }: Props) {
   const modelloLabel = (n: number) => filtriLabels?.[n] ?? `F${n}`
+  const catalogoLabel = (n: number) => filtriCatalogoLabels?.[n] ?? `C${n}`
   const [selectedVoce, setSelectedVoce] = useState<Voce | null>(null)
 
   const [formSottocat, setFormSottocat] = useState('')
@@ -101,7 +103,7 @@ export default function CatalogoWrapper({
   const [tipologiaSel, setTipologiaSel] = useState('')
   const [ambienteSel, setAmbienteSel] = useState('')
   const [fasciaSel, setFasciaSel] = useState('')
-  const [filtriPdf, setFiltriPdf] = useState<Set<string>>(new Set())
+  const [filtriPdf, setFiltriPdf] = useState<Set<number>>(new Set())
   const [filtriModello, setFiltriModello] = useState<Set<number>>(new Set())
   const [savedFilters, setSavedFilters] = useState<{
     formSottocat: string; faseSel: string; materialeSel: string; tipologiaSel: string
@@ -162,8 +164,8 @@ export default function CatalogoWrapper({
   // Linguette PDF (filtri catalogo): filtrano SOLO l'elenco dei PDF mostrati, mai gli articoli
   // (non esiste un campo corrispondente sugli articoli — vedi decisione nel doc di progetto).
   const vociFiltrate = filtriPdf.size === 0 ? postModello : postModello.filter(v =>
-    [...filtriPdf].some(lbl => {
-      const f = PDF_FILTRI.find(f => f.label === lbl)
+    [...filtriPdf].some(n => {
+      const f = PDF_FILTRI.find(f => f.n === n)
       return f && (v[f.key] as number ?? 0) === 1
     })
   )
@@ -257,8 +259,8 @@ export default function CatalogoWrapper({
             />
           ))}
           {linguettePdfDisponibili.map(f => (
-            <Linguetta key={f.label} label={f.label} attiva={filtriPdf.has(f.label)}
-              onToggle={() => setFiltriPdf(prev => { const s = new Set(prev); s.has(f.label) ? s.delete(f.label) : s.add(f.label); return s })}
+            <Linguetta key={f.n} label={catalogoLabel(f.n)} attiva={filtriPdf.has(f.n)}
+              onToggle={() => setFiltriPdf(prev => { const s = new Set(prev); s.has(f.n) ? s.delete(f.n) : s.add(f.n); return s })}
             />
           ))}
         </div>
