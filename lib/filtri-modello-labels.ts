@@ -21,7 +21,8 @@ export async function getFiltriModelloLabels(db: any): Promise<Record<number, st
     await ensureFiltriModelloLabelsTable(db)
     const [rows] = await db.query(`SELECT n, label FROM filtri_modello_labels`)
     for (const r of rows as { n: number; label: string }[]) {
-      if (r.label) labels[r.n] = r.label
+      // riga presente = valore esplicitamente salvato (anche stringa vuota va rispettata)
+      labels[r.n] = r.label
     }
   } catch {}
   return labels

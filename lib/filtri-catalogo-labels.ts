@@ -29,7 +29,8 @@ export async function getFiltriCatalogoLabels(db: any): Promise<Record<number, s
     await ensureFiltriCatalogoLabelsTable(db)
     const [rows] = await db.query(`SELECT n, label FROM filtri_catalogo_labels`)
     for (const r of rows as { n: number; label: string }[]) {
-      if (r.label) labels[r.n] = r.label
+      // riga presente = valore esplicitamente salvato (anche stringa vuota va rispettata)
+      labels[r.n] = r.label
     }
   } catch {}
   return labels
