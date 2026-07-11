@@ -48,11 +48,12 @@ export async function matchArticoliPerVoce(voceList: VoceForMatching[], db: any,
     // Filtri aggiuntivi (fase, materiale, ecc.) rimangono come WHERE su listini
     const extraConds: string[] = []
     const extraParams: (string | number)[] = []
-    if (voce.fase)      { extraConds.push('fase = ?');      extraParams.push(voce.fase) }
-    if (voce.materiale) { extraConds.push('materiale = ?'); extraParams.push(voce.materiale) }
-    if (voce.tipologia) { extraConds.push('tipologia = ?'); extraParams.push(voce.tipologia) }
-    if (voce.ambiente)  { extraConds.push('ambiente = ?');  extraParams.push(voce.ambiente) }
-    if (voce.fascia)    { extraConds.push('fascia = ?');    extraParams.push(voce.fascia) }
+    // campo vuoto sull'articolo = "va bene con qualunque valore", quindi match tollerante
+    if (voce.fase)      { extraConds.push("(fase = ? OR fase IS NULL OR fase = '')");           extraParams.push(voce.fase) }
+    if (voce.materiale) { extraConds.push("(materiale = ? OR materiale IS NULL OR materiale = '')"); extraParams.push(voce.materiale) }
+    if (voce.tipologia) { extraConds.push("(tipologia = ? OR tipologia IS NULL OR tipologia = '')"); extraParams.push(voce.tipologia) }
+    if (voce.ambiente)  { extraConds.push("(ambiente = ? OR ambiente IS NULL OR ambiente = '')"); extraParams.push(voce.ambiente) }
+    if (voce.fascia)    { extraConds.push("(fascia = ? OR fascia IS NULL OR fascia = '')");     extraParams.push(voce.fascia) }
     if (voce.filtro_1 === 1) extraConds.push('Filtro_1 = 1')
     if (voce.filtro_2 === 1) extraConds.push('Filtro_2 = 1')
     if (voce.filtro_3 === 1) extraConds.push('Filtro_3 = 1')

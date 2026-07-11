@@ -55,6 +55,8 @@ async function getCatalogoData(nomeCategoria: string, sottocatSlug: string) {
       await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_2      TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
       await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_3      TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
       await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_4      TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+      // Base fissa per la pagina: articoli il cui percorso è esattamente serramenti/infissi-in-alluminio.
+      // I filtri (manuali o ereditati da un PDF aperto) narrowano questa stessa base lato client.
       const [artRows] = await db.query(
         `SELECT ${LISTINO_COLS} FROM listini
          WHERE disponibile = 1 AND preventivabile = 1 AND principale = 1

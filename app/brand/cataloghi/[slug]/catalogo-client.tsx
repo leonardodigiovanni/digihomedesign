@@ -337,8 +337,11 @@ export default function CatalogoClient({ voci, onSelect, isApp }: {
     return <p className="fs-14" style={{ color: '#aaa' }}>Nessun catalogo disponibile per questa categoria.</p>
   }
 
-  const isFirst = currentIdx === 0
-  const isLast = currentIdx === voci.length - 1
+  // voci può restringersi (filtri) mentre currentIdx resta quello vecchio: evita accessi fuori range
+  const safeIdx = Math.min(currentIdx, voci.length - 1)
+
+  const isFirst = safeIdx === 0
+  const isLast = safeIdx === voci.length - 1
 
   const arrowBtn = (disabled: boolean): React.CSSProperties => ({
     width: 42, height: 42, borderRadius: 21,
@@ -358,14 +361,14 @@ export default function CatalogoClient({ voci, onSelect, isApp }: {
     width: '100%',
   }
 
-  const v = voci[currentIdx]
+  const v = voci[safeIdx]
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       {voci.length > 1 && (
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <button onClick={() => setCurrentIdx(i => Math.max(0, i - 1))} style={arrowBtn(isFirst)} disabled={isFirst} aria-label="Precedente">‹</button>
-          <span className="fs-13" style={{ color: '#888' }}>{currentIdx + 1} / {voci.length}</span>
+          <span className="fs-13" style={{ color: '#888' }}>{safeIdx + 1} / {voci.length}</span>
           <button onClick={() => setCurrentIdx(i => Math.min(voci.length - 1, i + 1))} style={arrowBtn(isLast)} disabled={isLast} aria-label="Successivo">›</button>
         </div>
       )}
