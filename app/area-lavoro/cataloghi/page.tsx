@@ -6,12 +6,14 @@ import { getConnection } from '@/lib/db'
 import CataloghiClient, { type Voce } from './cataloghi-client'
 import type { Metadata } from 'next'
 import { ensurePercorsiTables, type Percorso } from '@/lib/percorsi'
+import { getFiltriModelloLabels } from '@/lib/filtri-modello-labels'
+import { getFiltriCatalogoLabels } from '@/lib/filtri-catalogo-labels'
 
 export const metadata: Metadata = { title: 'Cataloghi' }
 
 const STAFF_ROLES = ['admin', 'dipendente', 'direttore']
 
-async function getData(): Promise<{ voci: Voce[]; percorsiPerVoce: Record<number, Percorso[]> }> {
+async function getData(): Promise<{ voci: Voce[]; percorsiPerVoce: Record<number, Percorso[]>; filtriLabels: Record<number, string>; filtriCatalogoLabels: Record<number, string> }> {
   const db = await getConnection()
   try {
     await ensurePercorsiTables(db)
@@ -42,6 +44,12 @@ async function getData(): Promise<{ voci: Voce[]; percorsiPerVoce: Record<number
     await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_2 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_3 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_4 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_5 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_6 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_7 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_8 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_9 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_10 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN schema_url VARCHAR(500) NULL`).catch(() => {})
 
     const [vociRows] = await db.query(`
@@ -49,7 +57,8 @@ async function getData(): Promise<{ voci: Voce[]; percorsiPerVoce: Record<number
              filtro_battente, filtro_scorrevole, filtro_taglio_termico, filtro_taglio_freddo,
              filtro_economico, filtro_fascia_alta,
              fase, materiale, tipologia, ambiente, fascia,
-             filtro_1, filtro_2, filtro_3, filtro_4, schema_url
+             filtro_1, filtro_2, filtro_3, filtro_4, filtro_5, filtro_6, filtro_7, filtro_8, filtro_9, filtro_10,
+             schema_url
       FROM catalogo_voci ORDER BY nome ASC
     `)
 
@@ -84,10 +93,19 @@ async function getData(): Promise<{ voci: Voce[]; percorsiPerVoce: Record<number
       filtro_2:  Number(r.filtro_2 ?? 0),
       filtro_3:  Number(r.filtro_3 ?? 0),
       filtro_4:  Number(r.filtro_4 ?? 0),
+      filtro_5:  Number(r.filtro_5 ?? 0),
+      filtro_6:  Number(r.filtro_6 ?? 0),
+      filtro_7:  Number(r.filtro_7 ?? 0),
+      filtro_8:  Number(r.filtro_8 ?? 0),
+      filtro_9:  Number(r.filtro_9 ?? 0),
+      filtro_10: Number(r.filtro_10 ?? 0),
       schema_url: r.schema_url ? String(r.schema_url) : null,
     })) as Voce[]
 
-    return { voci, percorsiPerVoce }
+    const filtriLabels = await getFiltriModelloLabels(db)
+    const filtriCatalogoLabels = await getFiltriCatalogoLabels(db)
+
+    return { voci, percorsiPerVoce, filtriLabels, filtriCatalogoLabels }
   } finally {
     await db.end()
   }
@@ -100,7 +118,7 @@ export default async function Page() {
   const settings = await readSettings()
   if (!hasPageAccess(role, 23, settings)) redirect('/')
 
-  const { voci, percorsiPerVoce } = await getData()
+  const { voci, percorsiPerVoce, filtriLabels, filtriCatalogoLabels } = await getData()
   const isStaff = STAFF_ROLES.includes(role)
 
   return (
@@ -109,7 +127,7 @@ export default async function Page() {
       <p style={{ color: '#000', fontSize: 13, marginBottom: 16 }}>
         Depliant e cataloghi prodotti. Ogni voce ha un PDF e N coppie categoria / sottocategoria.
       </p>
-      <CataloghiClient voci={voci} isStaff={isStaff} percorsiPerVoce={percorsiPerVoce} />
+      <CataloghiClient voci={voci} isStaff={isStaff} percorsiPerVoce={percorsiPerVoce} filtriLabels={filtriLabels} filtriCatalogoLabels={filtriCatalogoLabels} />
     </div>
   )
 }

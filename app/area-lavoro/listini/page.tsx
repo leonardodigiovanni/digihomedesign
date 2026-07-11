@@ -6,12 +6,13 @@ import { getConnection } from '@/lib/db'
 import ListiniClient, { type Articolo, type Fornitore } from './listini-client'
 import type { Metadata } from 'next'
 import { ensurePercorsiTables, type Percorso } from '@/lib/percorsi'
+import { getFiltriModelloLabels } from '@/lib/filtri-modello-labels'
 
 export const metadata: Metadata = {
   title: 'Listini',
 }
 
-async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[]; percorsiPerListino: Record<number, Percorso[]> }> {
+async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[]; percorsiPerListino: Record<number, Percorso[]>; filtriLabels: Record<number, string> }> {
   const db = await getConnection()
   try {
     await db.execute(`
@@ -160,7 +161,9 @@ async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[]
       percorsiPerListino[r.listino_id].push({ id: r.id, categoria: r.categoria, sottocategoria: r.sottocategoria })
     }
 
-    return { articoli, fornitori, percorsiPerListino }
+    const filtriLabels = await getFiltriModelloLabels(db)
+
+    return { articoli, fornitori, percorsiPerListino, filtriLabels }
   } finally {
     await db.end()
   }
@@ -174,7 +177,7 @@ export default async function Page() {
   const settings = await readSettings()
   if (!hasPageAccess(role, 25, settings)) redirect('/')
 
-  const { articoli, fornitori, percorsiPerListino } = await getData()
+  const { articoli, fornitori, percorsiPerListino, filtriLabels } = await getData()
 
   return (
     <div>
@@ -182,7 +185,7 @@ export default async function Page() {
       <p style={{ color: '#000', fontSize: 13, marginBottom: 24 }}>
         Prezzi di acquisto e vendita per articoli e lavorazioni. Doppio click su una riga per modificarla.
       </p>
-      <ListiniClient articoli={articoli} fornitori={fornitori} percorsiPerListino={percorsiPerListino} />
+      <ListiniClient articoli={articoli} fornitori={fornitori} percorsiPerListino={percorsiPerListino} filtriLabels={filtriLabels} />
     </div>
   )
 }

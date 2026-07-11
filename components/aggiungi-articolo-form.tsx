@@ -31,6 +31,12 @@ export type ArticoloListino = {
   filtro_2?: number
   filtro_3?: number
   filtro_4?: number
+  filtro_5?: number
+  filtro_6?: number
+  filtro_7?: number
+  filtro_8?: number
+  filtro_9?: number
+  filtro_10?: number
   sottocategoria?: string | null
   fase?: string | null
   materiale?: string | null

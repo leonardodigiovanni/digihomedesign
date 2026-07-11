@@ -108,17 +108,18 @@ function useVis() {
 
 const UNITA_PREDEFINITE = ['m²', 'ml', 'kg', 't', 'pz', 'h', 'corpo']
 
+// Etichette (label/title) vengono dal set globale filtriLabels — modificabile solo dal pannello Cataloghi
 const FILTRI_FIELDS = [
-  { n: 1,  col: 'Filtro_1',  label: '1A',  title: '1 Anta' },
-  { n: 2,  col: 'Filtro_2',  label: '2A',  title: '2 Ante' },
-  { n: 3,  col: 'Filtro_3',  label: '3+',  title: '3+ Ante' },
-  { n: 4,  col: 'Filtro_4',  label: 'S',   title: 'Sopraluce' },
-  { n: 5,  col: 'Filtro_5',  label: 'F5',  title: 'F5' },
-  { n: 6,  col: 'Filtro_6',  label: 'F6',  title: 'F6' },
-  { n: 7,  col: 'Filtro_7',  label: 'F7',  title: 'F7' },
-  { n: 8,  col: 'Filtro_8',  label: 'F8',  title: 'F8' },
-  { n: 9,  col: 'Filtro_9',  label: 'F9',  title: 'F9' },
-  { n: 10, col: 'Filtro_10', label: 'F10', title: 'F10' },
+  { n: 1,  col: 'Filtro_1' },
+  { n: 2,  col: 'Filtro_2' },
+  { n: 3,  col: 'Filtro_3' },
+  { n: 4,  col: 'Filtro_4' },
+  { n: 5,  col: 'Filtro_5' },
+  { n: 6,  col: 'Filtro_6' },
+  { n: 7,  col: 'Filtro_7' },
+  { n: 8,  col: 'Filtro_8' },
+  { n: 9,  col: 'Filtro_9' },
+  { n: 10, col: 'Filtro_10' },
 ]
 
 function getFiltro(art: Articolo, n: number): number {
@@ -938,7 +939,7 @@ function PercorsiPanel({ percorsi, listinoId }: { percorsi: Percorso[]; listinoI
 
 // ─── Riga normale ─────────────────────────────────────────────────────────────
 
-function RigaNormale({ art, percorsi, onEdit, onScheda, onDelete, onAction, pending }: {
+function RigaNormale({ art, percorsi, onEdit, onScheda, onDelete, onAction, pending, filtriLabels }: {
   art: Articolo
   percorsi: Percorso[]
   onEdit: () => void
@@ -946,6 +947,7 @@ function RigaNormale({ art, percorsi, onEdit, onScheda, onDelete, onAction, pend
   onDelete: () => void
   onAction: () => void
   pending: boolean
+  filtriLabels: Record<number, string>
 }) {
   const vis = useVis()
   const m = margine(art.prezzo_acquisto, art.prezzo_vendita)
@@ -1026,9 +1028,9 @@ function RigaNormale({ art, percorsi, onEdit, onScheda, onDelete, onAction, pend
       <td style={{ ...td, padding: 4, verticalAlign: 'middle', ...vis('filtri') }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 6px', width: 126 }}>
           {FILTRI_FIELDS.map(f => (
-            <div key={f.col} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }} title={f.title}>
+            <div key={f.col} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }} title={filtriLabels[f.n] ?? `F${f.n}`}>
               <ToggleCheckbox id={art.id} colonna={f.col} valore={getFiltro(art, f.n)} />
-              <span style={{ fontSize: 8, color: '#888', lineHeight: 1 }}>{f.label}</span>
+              <span style={{ fontSize: 8, color: '#888', lineHeight: 1 }}>{filtriLabels[f.n] ?? `F${f.n}`}</span>
             </div>
           ))}
         </div>
@@ -1161,7 +1163,7 @@ function RigaEdit({ art, categorie, produttori, fornitori, onDone, onSaved }: {
 
 // ─── Componente principale ────────────────────────────────────────────────────
 
-export default function ListiniClient({ articoli, fornitori, percorsiPerListino }: { articoli: Articolo[]; fornitori: Fornitore[]; percorsiPerListino: Record<number, Percorso[]> }) {
+export default function ListiniClient({ articoli, fornitori, percorsiPerListino, filtriLabels }: { articoli: Articolo[]; fornitori: Fornitore[]; percorsiPerListino: Record<number, Percorso[]>; filtriLabels: Record<number, string> }) {
   const [filtroTesto, setFiltroTesto]               = useState('')
   const [filtroCategoria, setFiltroCategoria]       = useState('')
   const [filtroSottocategoria, setFiltroSottocategoria] = useState('')
@@ -1407,7 +1409,8 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino 
                         onScheda={() => setSchedaId(art.id)}
                         onDelete={() => handleDelete(art.id)}
                         onAction={() => setLastId(art.id)}
-                        pending={deletingId === art.id} />
+                        pending={deletingId === art.id}
+                        filtriLabels={filtriLabels} />
                 ))}
               </tbody>
             </table>

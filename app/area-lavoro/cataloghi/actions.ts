@@ -7,6 +7,8 @@ import { revalidatePath } from 'next/cache'
 import { readSettings } from '@/lib/settings'
 import { hasPageAccess } from '@/lib/permissions'
 import { ensurePercorsiTables } from '@/lib/percorsi'
+import { ensureFiltriModelloLabelsTable } from '@/lib/filtri-modello-labels'
+import { ensureFiltriCatalogoLabelsTable } from '@/lib/filtri-catalogo-labels'
 
 
 const STAFF_ROLES = ['admin', 'dipendente', 'direttore']
@@ -46,6 +48,12 @@ async function ensureVociTable(db: Awaited<ReturnType<typeof getConnection>>) {
   await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_2 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
   await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_3 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
   await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_4 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_5 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_6 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_7 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_8 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_9 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_10 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
   await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN schema_url VARCHAR(500) NULL`).catch(() => {})
 }
 
@@ -109,6 +117,12 @@ export async function updateVoce(_: MutResult | null, fd: FormData): Promise<Mut
   const filtro_2       = fd.get('filtro_2')        === 'on' ? 1 : 0
   const filtro_3       = fd.get('filtro_3')        === 'on' ? 1 : 0
   const filtro_4       = fd.get('filtro_4')        === 'on' ? 1 : 0
+  const filtro_5       = fd.get('filtro_5')        === 'on' ? 1 : 0
+  const filtro_6       = fd.get('filtro_6')        === 'on' ? 1 : 0
+  const filtro_7       = fd.get('filtro_7')        === 'on' ? 1 : 0
+  const filtro_8       = fd.get('filtro_8')        === 'on' ? 1 : 0
+  const filtro_9       = fd.get('filtro_9')        === 'on' ? 1 : 0
+  const filtro_10      = fd.get('filtro_10')       === 'on' ? 1 : 0
   const schema_url     = (fd.get('schema_url')     as string)?.trim() || null
 
   if (isNaN(id) || !nome) return { ok: false, error: 'Dati incompleti.' }
@@ -116,8 +130,8 @@ export async function updateVoce(_: MutResult | null, fd: FormData): Promise<Mut
   const db = await getConnection()
   try {
     await ensureVociTable(db)
-    const extraCols = ', filtro_battente=?, filtro_scorrevole=?, filtro_taglio_termico=?, filtro_taglio_freddo=?, filtro_economico=?, filtro_fascia_alta=?, fase=?, materiale=?, tipologia=?, ambiente=?, fascia=?, filtro_1=?, filtro_2=?, filtro_3=?, filtro_4=?, schema_url=?'
-    const extraVals = [filtro_battente, filtro_scorrevole, filtro_taglio_termico, filtro_taglio_freddo, filtro_economico, filtro_fascia_alta, fase, materiale, tipologia, ambiente, fascia, filtro_1, filtro_2, filtro_3, filtro_4, schema_url]
+    const extraCols = ', filtro_battente=?, filtro_scorrevole=?, filtro_taglio_termico=?, filtro_taglio_freddo=?, filtro_economico=?, filtro_fascia_alta=?, fase=?, materiale=?, tipologia=?, ambiente=?, fascia=?, filtro_1=?, filtro_2=?, filtro_3=?, filtro_4=?, filtro_5=?, filtro_6=?, filtro_7=?, filtro_8=?, filtro_9=?, filtro_10=?, schema_url=?'
+    const extraVals = [filtro_battente, filtro_scorrevole, filtro_taglio_termico, filtro_taglio_freddo, filtro_economico, filtro_fascia_alta, fase, materiale, tipologia, ambiente, fascia, filtro_1, filtro_2, filtro_3, filtro_4, filtro_5, filtro_6, filtro_7, filtro_8, filtro_9, filtro_10, schema_url]
     if (new_pdf_filename) {
       await db.execute(
         `UPDATE catalogo_voci SET nome=?, serie=?, pdf_label=?, descrizione=?, pdf_filename=?${extraCols} WHERE id=?`,
@@ -129,6 +143,27 @@ export async function updateVoce(_: MutResult | null, fd: FormData): Promise<Mut
         [nome, serie, pdf_label, descrizione, ...extraVals, id]
       )
     }
+
+    // Etichette globali F1..F10: condivise da cataloghi, listini e chip pubblici sul sito
+    await ensureFiltriModelloLabelsTable(db)
+    for (let n = 1; n <= 10; n++) {
+      const label = (fd.get(`label_${n}`) as string)?.trim() ?? ''
+      await db.execute(
+        `INSERT INTO filtri_modello_labels (n, label) VALUES (?, ?) ON DUPLICATE KEY UPDATE label = VALUES(label)`,
+        [n, label]
+      )
+    }
+
+    // Etichette globali C1..C6 (filtri catalogo, solo lista PDF)
+    await ensureFiltriCatalogoLabelsTable(db)
+    for (let n = 1; n <= 6; n++) {
+      const label = (fd.get(`labelc_${n}`) as string)?.trim() ?? ''
+      await db.execute(
+        `INSERT INTO filtri_catalogo_labels (n, label) VALUES (?, ?) ON DUPLICATE KEY UPDATE label = VALUES(label)`,
+        [n, label]
+      )
+    }
+
     revalidatePath('/cataloghi')
     return { ok: true }
   } finally { await db.end() }

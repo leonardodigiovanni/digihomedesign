@@ -15,6 +15,8 @@ type Voce = {
   sottocategoria?: string | null; fase?: string | null; materiale?: string | null
   tipologia?: string | null; ambiente?: string | null; fascia?: string | null
   filtro_1?: number; filtro_2?: number; filtro_3?: number; filtro_4?: number
+  filtro_5?: number; filtro_6?: number; filtro_7?: number; filtro_8?: number
+  filtro_9?: number; filtro_10?: number
 }
 
 type Props = {
@@ -34,6 +36,7 @@ type Props = {
   mostraFiltri?: boolean
   fixedCat?: string
   fixedSottocat?: string
+  filtriLabels?: Record<number, string>
 }
 
 // ─── Linguette PDF ─────────────────────────────────────────────────────────────
@@ -47,20 +50,13 @@ const PDF_FILTRI: { label: string; key: keyof Voce }[] = [
   { label: 'Fascia Alta', key: 'filtro_fascia_alta' },
 ]
 
-// ─── Filtri modello (1 anta/2 ante/3+ ante/sopraluce) ─────────────────────────
+// ─── Filtri modello (F1..F10, etichette condivise dal pannello Cataloghi) ─────
 
-const MODELLO_FILTRI = [
-  { n: 1, label: '1 Anta' },
-  { n: 2, label: '2 Ante' },
-  { n: 3, label: '3+ Ante' },
-  { n: 4, label: 'Sopraluce' },
-] as const
+const MODELLO_N = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const
 
-function flagModello(obj: { filtro_1?: number; filtro_2?: number; filtro_3?: number; filtro_4?: number }, n: number): number {
-  if (n === 1) return obj.filtro_1 ?? 0
-  if (n === 2) return obj.filtro_2 ?? 0
-  if (n === 3) return obj.filtro_3 ?? 0
-  return obj.filtro_4 ?? 0
+function flagModello(obj: { filtro_1?: number; filtro_2?: number; filtro_3?: number; filtro_4?: number; filtro_5?: number; filtro_6?: number; filtro_7?: number; filtro_8?: number; filtro_9?: number; filtro_10?: number }, n: number): number {
+  const key = `filtro_${n}` as keyof typeof obj
+  return obj[key] ?? 0
 }
 
 const H = 28, THUMB = 22
@@ -94,8 +90,9 @@ const selStyle = { fontSize: 11, padding: '3px 6px', border: '1px solid #ccc', b
 export default function CatalogoWrapper({
   voci, articoliPerListino, isStaff, isLoggedIn, preventiviBozza, cartNonVuoto,
   parentPendente, categorySlug, basePath, carrelloHref, preventivoClienteBaseHref,
-  submitLabel, isApp, fixedCat, fixedSottocat,
+  submitLabel, isApp, fixedCat, fixedSottocat, filtriLabels,
 }: Props) {
+  const modelloLabel = (n: number) => filtriLabels?.[n] ?? `F${n}`
   const [selectedVoce, setSelectedVoce] = useState<Voce | null>(null)
 
   const [formSottocat, setFormSottocat] = useState('')
@@ -150,7 +147,7 @@ export default function CatalogoWrapper({
 
   // Filtri modello (1 anta/2 ante/3+ ante/sopraluce): flag booleano, match sempre rigoroso.
   // Selezione manuale (nessun PDF aperto) = OR tra i chip attivi. PDF aperto = AND (eredita tutti i suoi flag insieme).
-  const modelloDisponibili = MODELLO_FILTRI.filter(f => voci.some(v => flagModello(v, f.n) === 1))
+  const modelloDisponibili = MODELLO_N.filter(n => voci.some(v => flagModello(v, n) === 1))
   const postModello = filtriModello.size === 0 ? post6 : post6.filter(v =>
     selectedVoce
       ? [...filtriModello].every(n => flagModello(v, n) === 1)
@@ -204,7 +201,7 @@ export default function CatalogoWrapper({
       setAmbienteSel(voce.ambiente ?? '')
       setFasciaSel(voce.fascia ?? '')
       const m = new Set<number>()
-      for (const f of MODELLO_FILTRI) { if (flagModello(voce, f.n) === 1) m.add(f.n) }
+      for (const n of MODELLO_N) { if (flagModello(voce, n) === 1) m.add(n) }
       setFiltriModello(m)
     } else if (savedFilters) {
       setFormSottocat(savedFilters.formSottocat)
@@ -254,9 +251,9 @@ export default function CatalogoWrapper({
               {fasciaOpt.map(o => <option key={o} value={o}>{o}</option>)}
             </select>
           )}
-          {modelloDisponibili.map(f => (
-            <Linguetta key={f.label} label={f.label} attiva={filtriModello.has(f.n)} disabled={!!selectedVoce}
-              onToggle={() => setFiltriModello(prev => { const s = new Set(prev); s.has(f.n) ? s.delete(f.n) : s.add(f.n); return s })}
+          {modelloDisponibili.map(n => (
+            <Linguetta key={n} label={modelloLabel(n)} attiva={filtriModello.has(n)} disabled={!!selectedVoce}
+              onToggle={() => setFiltriModello(prev => { const s = new Set(prev); s.has(n) ? s.delete(n) : s.add(n); return s })}
             />
           ))}
           {linguettePdfDisponibili.map(f => (

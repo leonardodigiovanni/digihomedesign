@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { addVoce, updateVoce, deleteVoce } from './actions'
 import { addPercorsoVoce, removePercorsoVoce, type Percorso } from '@/lib/percorsi'
 import GestioneBlob from '@/components/gestione-blob'
+import { FILTRI_CATALOGO_COLS } from '@/lib/filtri-catalogo-labels'
 
 function pdfSrc(filename: string): string {
   return filename.startsWith('https://') ? filename : `/uploads/cataloghi/${filename}`
@@ -40,6 +41,12 @@ export type Voce = {
   filtro_2: number
   filtro_3: number
   filtro_4: number
+  filtro_5: number
+  filtro_6: number
+  filtro_7: number
+  filtro_8: number
+  filtro_9: number
+  filtro_10: number
   schema_url: string | null
 }
 
@@ -112,7 +119,7 @@ function NuovaVoceForm({ onDone }: { onDone: () => void }) {
 
 // ─── Form modifica voce ───────────────────────────────────────────────────────
 
-function VoceEditForm({ voce, onDone }: { voce: Voce; onDone: () => void }) {
+function VoceEditForm({ voce, onDone, filtriLabels, filtriCatalogoLabels }: { voce: Voce; onDone: () => void; filtriLabels: Record<number, string>; filtriCatalogoLabels: Record<number, string> }) {
   const [pdfFile, setPdfFile] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
   const [errore, setErrore] = useState('')
@@ -190,39 +197,37 @@ function VoceEditForm({ voce, onDone }: { voce: Voce; onDone: () => void }) {
           </div>
         </div>
         <div style={{ gridColumn: '1 / -1' }}>
-          <label style={{ ...lbl, marginBottom: 6 }}>Filtri catalogo</label>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6 }}>
-            {([
-              ['filtro_battente',       'A battente'],
-              ['filtro_scorrevole',     'Scorrevole'],
-              ['filtro_taglio_termico', 'Taglio termico'],
-              ['filtro_taglio_freddo',  'Taglio freddo'],
-              ['filtro_economico',      'Economico'],
-              ['filtro_fascia_alta',    'Fascia alta'],
-            ] as [keyof Voce, string][]).map(([k, label]) => (
-              <label key={k} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, cursor: 'pointer' }}>
-                <input type="checkbox" name={k as string} defaultChecked={(voce[k] as number) === 1}
-                  style={{ width: 15, height: 15, accentColor: '#c8960c' }} />
-                {label}
-              </label>
-            ))}
+          <label style={{ ...lbl, marginBottom: 6 }}>Filtri catalogo (non filtra articoli) — spunta + nome del flag (vale ovunque nel sito)</label>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+            {FILTRI_CATALOGO_COLS.map((k, i) => {
+              const n = i + 1
+              return (
+                <div key={k} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ fontSize: 11, color: '#888', width: 22, flexShrink: 0 }}>C{n}</span>
+                  <input type="checkbox" name={k} defaultChecked={(voce[k as keyof Voce] as number) === 1}
+                    style={{ width: 15, height: 15, accentColor: '#c8960c', flexShrink: 0 }} />
+                  <input name={`labelc_${n}`} defaultValue={filtriCatalogoLabels[n] ?? `C${n}`}
+                    placeholder={`C${n}`} style={{ ...inp, fontSize: 12, padding: '3px 6px' }} />
+                </div>
+              )
+            })}
           </div>
         </div>
         <div style={{ gridColumn: '1 / -1' }}>
-          <label style={{ ...lbl, marginBottom: 6 }}>Filtri modello (ante)</label>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 6 }}>
-            {([
-              ['filtro_1', '1 anta'],
-              ['filtro_2', '2 ante'],
-              ['filtro_3', '3+ ante'],
-              ['filtro_4', 'Sopraluce'],
-            ] as [keyof Voce, string][]).map(([k, label]) => (
-              <label key={k} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, cursor: 'pointer' }}>
-                <input type="checkbox" name={k as string} defaultChecked={(voce[k] as number) === 1}
-                  style={{ width: 15, height: 15, accentColor: '#1e5c1e' }} />
-                {label}
-              </label>
-            ))}
+          <label style={{ ...lbl, marginBottom: 6 }}>Filtri catalogo e Articoli — spunta + nome del flag (vale ovunque nel sito)</label>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => {
+              const k = `filtro_${n}` as keyof Voce
+              return (
+                <div key={n} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ fontSize: 11, color: '#888', width: 22, flexShrink: 0 }}>F{n}</span>
+                  <input type="checkbox" name={k as string} defaultChecked={(voce[k] as number) === 1}
+                    style={{ width: 15, height: 15, accentColor: '#1e5c1e', flexShrink: 0 }} />
+                  <input name={`label_${n}`} defaultValue={filtriLabels[n] ?? `F${n}`}
+                    placeholder={`F${n}`} style={{ ...inp, fontSize: 12, padding: '3px 6px' }} />
+                </div>
+              )
+            })}
           </div>
         </div>
         <div style={{ gridColumn: '1 / -1' }}>
@@ -350,29 +355,19 @@ function PercorsiInline({ percorsi, voceId }: { percorsi: Percorso[]; voceId: nu
 
 // ─── Riga voce ────────────────────────────────────────────────────────────────
 
-const FLAG_CATALOGO: [keyof Voce, string][] = [
-  ['filtro_battente',       'Battente'],
-  ['filtro_scorrevole',     'Scorrevole'],
-  ['filtro_taglio_termico', 'T.Termico'],
-  ['filtro_taglio_freddo',  'T.Freddo'],
-  ['filtro_economico',      'Economico'],
-  ['filtro_fascia_alta',    'F.Alta'],
-]
-const FLAG_MODELLO: [keyof Voce, string][] = [
-  ['filtro_1', '1 anta'],
-  ['filtro_2', '2 ante'],
-  ['filtro_3', '3+ ante'],
-  ['filtro_4', 'Sopraluce'],
-]
-
-function VoceRow({ voce, isStaff, percorsi }: { voce: Voce; isStaff: boolean; percorsi: Percorso[] }) {
+function VoceRow({ voce, isStaff, percorsi, filtriLabels, filtriCatalogoLabels }: { voce: Voce; isStaff: boolean; percorsi: Percorso[]; filtriLabels: Record<number, string>; filtriCatalogoLabels: Record<number, string> }) {
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState(false)
   const [pending, startT] = useTransition()
   const router = useRouter()
 
-  const classAtivi = FLAG_CATALOGO.filter(([k]) => (voce[k] as number) === 1).map(([, l]) => l)
-  const modAtivi   = FLAG_MODELLO.filter(([k]) => (voce[k] as number) === 1).map(([, l]) => l)
+  const classAtivi = FILTRI_CATALOGO_COLS
+    .map((k, i) => ({ k, n: i + 1 }))
+    .filter(({ k }) => (voce[k as keyof Voce] as number) === 1)
+    .map(({ n }) => filtriCatalogoLabels[n] ?? `C${n}`)
+  const modAtivi   = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    .filter(n => (voce[`filtro_${n}` as keyof Voce] as number) === 1)
+    .map(n => filtriLabels[n] ?? `F${n}`)
   const hasDetail  = !!(voce.fase || voce.materiale || voce.tipologia || voce.ambiente || voce.fascia ||
                         voce.descrizione || classAtivi.length || modAtivi.length)
 
@@ -466,7 +461,7 @@ function VoceRow({ voce, isStaff, percorsi }: { voce: Voce; isStaff: boolean; pe
       {/* Form modifica */}
       {open && editing && isStaff && (
         <div style={{ borderTop: '1px solid #eee', padding: '0 14px 14px' }}>
-          <VoceEditForm voce={voce} onDone={() => { setEditing(false) }} />
+          <VoceEditForm voce={voce} onDone={() => { setEditing(false) }} filtriLabels={filtriLabels} filtriCatalogoLabels={filtriCatalogoLabels} />
         </div>
       )}
     </div>
@@ -476,11 +471,13 @@ function VoceRow({ voce, isStaff, percorsi }: { voce: Voce; isStaff: boolean; pe
 // ─── Componente principale ────────────────────────────────────────────────────
 
 export default function CataloghiClient({
-  voci, isStaff, percorsiPerVoce,
+  voci, isStaff, percorsiPerVoce, filtriLabels, filtriCatalogoLabels,
 }: {
   voci: Voce[]
   isStaff: boolean
   percorsiPerVoce: Record<number, Percorso[]>
+  filtriLabels: Record<number, string>
+  filtriCatalogoLabels: Record<number, string>
 }) {
   const [addOpen, setAddOpen] = useState(false)
 
@@ -502,7 +499,7 @@ export default function CataloghiClient({
         </p>
       ) : (
         voci.map(v => (
-          <VoceRow key={v.id} voce={v} isStaff={isStaff} percorsi={percorsiPerVoce[v.id] ?? []} />
+          <VoceRow key={v.id} voce={v} isStaff={isStaff} percorsi={percorsiPerVoce[v.id] ?? []} filtriLabels={filtriLabels} filtriCatalogoLabels={filtriCatalogoLabels} />
         ))
       )}
 

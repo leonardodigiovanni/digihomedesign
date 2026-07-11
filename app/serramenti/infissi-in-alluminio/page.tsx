@@ -9,6 +9,7 @@ import CtaCantiere from '@/components/cta-cantiere'
 import CatalogoWrapper from '@/app/brand/cataloghi/[slug]/catalogo-wrapper'
 import { type ArticoloListino } from '@/app/brand/cataloghi/[slug]/aggiungi-articolo'
 import { LISTINO_COLS } from '@/lib/catalogo-matching'
+import { getFiltriModelloLabels } from '@/lib/filtri-modello-labels'
 import type { PreventivoDestOption } from '@/app/brand/cataloghi/actions'
 import AggiungiArticoloAcquistoForm from '@/components/aggiungi-articolo-acquisto-form'
 import type { ArticoloListinoAcquisto } from '@/components/aggiungi-articolo-acquisto-form'
@@ -34,14 +35,21 @@ async function getCatalogoData(nomeCategoria: string, sottocatSlug: string) {
   try {
     const db = await getConnection()
     try {
-      type VoceRow = { id: number; nome: string; serie: string; pdf_filename: string; pdf_label: string; descrizione: string | null; filtro_battente: number; filtro_scorrevole: number; filtro_taglio_termico: number; filtro_taglio_freddo: number; filtro_economico: number; filtro_fascia_alta: number; sottocategoria?: string | null; fase?: string | null; materiale?: string | null; tipologia?: string | null; ambiente?: string | null; fascia?: string | null; filtro_1?: number; filtro_2?: number; filtro_3?: number; filtro_4?: number }
+      type VoceRow = { id: number; nome: string; serie: string; pdf_filename: string; pdf_label: string; descrizione: string | null; filtro_battente: number; filtro_scorrevole: number; filtro_taglio_termico: number; filtro_taglio_freddo: number; filtro_economico: number; filtro_fascia_alta: number; sottocategoria?: string | null; fase?: string | null; materiale?: string | null; tipologia?: string | null; ambiente?: string | null; fascia?: string | null; filtro_1?: number; filtro_2?: number; filtro_3?: number; filtro_4?: number; filtro_5?: number; filtro_6?: number; filtro_7?: number; filtro_8?: number; filtro_9?: number; filtro_10?: number }
+      await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_5 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+      await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_6 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+      await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_7 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+      await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_8 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+      await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_9 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+      await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_10 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
       const [voci] = await db.query(
         `SELECT cv.id, cv.nome, cv.serie, cv.pdf_filename, cv.pdf_label, cv.descrizione,
                 cv.filtro_battente, cv.filtro_scorrevole, cv.filtro_taglio_termico,
                 cv.filtro_taglio_freddo, cv.filtro_economico, cv.filtro_fascia_alta,
                 (SELECT vp2.sottocategoria FROM catalogo_voci_percorsi vp2 WHERE vp2.voce_id = cv.id AND LOWER(REPLACE(TRIM(vp2.categoria), '-', ' ')) = ? AND (LOWER(REPLACE(TRIM(vp2.sottocategoria), '-', ' ')) = ? OR TRIM(vp2.sottocategoria) = '') LIMIT 1) AS sottocategoria,
                 cv.fase, cv.materiale, cv.tipologia, cv.ambiente, cv.fascia,
-                cv.filtro_1, cv.filtro_2, cv.filtro_3, cv.filtro_4
+                cv.filtro_1, cv.filtro_2, cv.filtro_3, cv.filtro_4,
+                cv.filtro_5, cv.filtro_6, cv.filtro_7, cv.filtro_8, cv.filtro_9, cv.filtro_10
          FROM catalogo_voci cv
          WHERE cv.id IN (SELECT vp.voce_id FROM catalogo_voci_percorsi vp WHERE LOWER(REPLACE(TRIM(vp.categoria), '-', ' ')) = ? AND (LOWER(REPLACE(TRIM(vp.sottocategoria), '-', ' ')) = ? OR TRIM(vp.sottocategoria) = ''))
          ORDER BY cv.nome ASC`,
@@ -55,6 +63,12 @@ async function getCatalogoData(nomeCategoria: string, sottocatSlug: string) {
       await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_2      TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
       await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_3      TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
       await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_4      TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+      await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_5      TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+      await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_6      TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+      await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_7      TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+      await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_8      TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+      await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_9      TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+      await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_10     TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
       // Base fissa per la pagina: articoli il cui percorso è esattamente serramenti/infissi-in-alluminio.
       // I filtri (manuali o ereditati da un PDF aperto) narrowano questa stessa base lato client.
       const [artRows] = await db.query(
@@ -80,7 +94,8 @@ async function getCatalogoData(nomeCategoria: string, sottocatSlug: string) {
       const articoliAcquisto = (rowsAcq as (ArticoloListinoAcquisto & { max_acquistabile: number | null })[]).map(r => ({
         ...r, max_acquistabile: r.max_acquistabile != null ? Number(r.max_acquistabile) : null,
       }))
-      return { categoria: { nome: nomeCategoria }, voci: voceList, articoliPerListino, articoliAcquisto }
+      const filtriLabels = await getFiltriModelloLabels(db)
+      return { categoria: { nome: nomeCategoria }, voci: voceList, articoliPerListino, articoliAcquisto, filtriLabels }
     } finally {
       await db.end()
     }
@@ -188,6 +203,7 @@ export default async function Page() {
             mostraFiltri
             fixedCat="serramenti"
             fixedSottocat="infissi-in-alluminio"
+            filtriLabels={catalogo.filtriLabels}
           />
         )}
 
