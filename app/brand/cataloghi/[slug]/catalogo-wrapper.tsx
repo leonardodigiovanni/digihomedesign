@@ -290,6 +290,8 @@ export default function CatalogoWrapper({
             preventivoClienteBaseHref={preventivoClienteBaseHref}
             submitLabel={submitLabel}
             isApp={isApp}
+            filtriLabels={filtriLabels}
+            lockedFiltriModello={selectedVoce ? filtriModello : undefined}
           />
         </div>
       )}

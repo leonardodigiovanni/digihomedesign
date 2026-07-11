@@ -58,12 +58,12 @@ export type ConfirmData = {
   note?: string
 }
 
-const FILTRI_MODELLO: { label: string; key: 'filtro_1' | 'filtro_2' | 'filtro_3' | 'filtro_4' }[] = [
-  { label: '1 Anta',    key: 'filtro_1' },
-  { label: '2 Ante',   key: 'filtro_2' },
-  { label: '3+ Ante',  key: 'filtro_3' },
-  { label: 'Sopraluce', key: 'filtro_4' },
-]
+const FILTRI_MODELLO_N = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const
+
+function flagN(a: ArticoloListino, n: number): number {
+  const key = `filtro_${n}` as keyof ArticoloListino
+  return (a[key] as number | undefined) ?? 0
+}
 
 export default function AggiungiArticoloForm({
   articoli,
@@ -82,6 +82,8 @@ export default function AggiungiArticoloForm({
   onSottocatChange,
   onConfirm,
   onClose,
+  filtriLabels,
+  lockedFiltriModello,
 }: {
   articoli: ArticoloListino[]
   isStaff?: boolean
@@ -99,6 +101,8 @@ export default function AggiungiArticoloForm({
   onSottocatChange?: (val: string) => void
   onConfirm?: (data: ConfirmData) => Promise<CartResult>
   onClose?: () => void
+  filtriLabels?: Record<number, string>
+  lockedFiltriModello?: Set<number>
 }) {
   const preventiviAbilitato = usePreventiviAbilitato()
   const router = useRouter()
@@ -112,7 +116,7 @@ export default function AggiungiArticoloForm({
   const [produttoreFiltro, setProduttoreFiltro] = useState('')
   const [serieFiltro, setSerieFiltro] = useState('')
   const [catFiltro, setCatFiltro] = useState('')
-  const [filtriModelloAttivi, setFiltriModelloAttivi] = useState<Set<string>>(new Set())
+  const [filtriModelloAttivi, setFiltriModelloAttivi] = useState<Set<number>>(new Set(lockedFiltriModello ?? []))
   const [schemaFiltro, setSchemaFiltro] = useState<string | null>(null)
   const [selectedId, setSelectedId] = useState<number>(articoli[0]?.id ?? 0)
   const [result, setResult] = useState<CartResult | null>(null)
@@ -210,17 +214,14 @@ export default function AggiungiArticoloForm({
   }, [postClassifica, produttoreFiltro, serieFiltro])
 
   const haFiltriModello = useMemo(
-    () => FILTRI_MODELLO.some(f => artBase.some(a => (a[f.key] ?? 0) === 1)),
+    () => FILTRI_MODELLO_N.some(n => artBase.some(a => flagN(a, n) === 1)),
     [artBase]
   )
 
   const artFiltrati = useMemo(() => {
     let lista = artBase
     if (filtriModelloAttivi.size > 0) {
-      lista = lista.filter(a => [...filtriModelloAttivi].every(lbl => {
-        const f = FILTRI_MODELLO.find(f => f.label === lbl)
-        return f && (a[f.key] ?? 0) === 1
-      }))
+      lista = lista.filter(a => [...filtriModelloAttivi].every(n => flagN(a, n) === 1))
     }
     if (schemaFiltro) lista = lista.filter(a => a.schema_url === schemaFiltro)
     const seen = new Set<string>()
@@ -235,10 +236,7 @@ export default function AggiungiArticoloForm({
   const thumbnailsData = useMemo(() => {
     let base = artBase
     if (filtriModelloAttivi.size > 0) {
-      base = base.filter(a => [...filtriModelloAttivi].every(lbl => {
-        const f = FILTRI_MODELLO.find(f => f.label === lbl)
-        return f && (a[f.key] ?? 0) === 1
-      }))
+      base = base.filter(a => [...filtriModelloAttivi].every(n => flagN(a, n) === 1))
     }
     const map = new Map<string, number>()
     for (const a of base) {
@@ -252,14 +250,19 @@ export default function AggiungiArticoloForm({
 
   useEffect(() => {
     setSchemaFiltro(null)
-    setFiltriModelloAttivi(new Set())
+    setFiltriModelloAttivi(new Set(lockedFiltriModello ?? []))
   }, [sottocatFiltro, faseFiltro, materialeFiltro, tipologiaFiltro, ambienteFiltro, fasciaFiltro, produttoreFiltro, serieFiltro])
 
   useEffect(() => {
     setSottocatFiltro(''); setFaseFiltro(''); setMaterialeFiltro(''); setTipologiaFiltro('')
     setAmbienteFiltro(''); setFasciaFiltro(''); setProduttoreFiltro(''); setSerieFiltro('')
-    setSchemaFiltro(null); setFiltriModelloAttivi(new Set())
+    setSchemaFiltro(null); setFiltriModelloAttivi(new Set(lockedFiltriModello ?? []))
   }, [catFiltro])
+
+  // Se cambia il PDF aperto (nuovo set di flag ereditati), riallinea i chip
+  useEffect(() => {
+    setFiltriModelloAttivi(new Set(lockedFiltriModello ?? []))
+  }, [lockedFiltriModello])
 
   useEffect(() => {
     setSelectedId(artFiltrati[0]?.id ?? 0)
@@ -422,30 +425,37 @@ export default function AggiungiArticoloForm({
           {/* Linguette filtro modello */}
           {haFiltriModello && (() => {
             const H = 28, THUMB = 22
-            const chipsDisponibili = FILTRI_MODELLO.filter(f => artBase.some(a => (a[f.key] ?? 0) === 1))
+            const chipsDisponibili = FILTRI_MODELLO_N.filter(n => artBase.some(a => flagN(a, n) === 1))
+            const soloLocked = filtriModelloAttivi.size > 0 &&
+              [...filtriModelloAttivi].every(n => lockedFiltriModello?.has(n))
             return (
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#fff', border: '1px solid #d0d0d0', borderRadius: 10, padding: '6px 12px', overflow: 'hidden' }}>
-                <button type="button" disabled={filtriModelloAttivi.size === 0 && !schemaFiltro}
-                  className={`${filtriModelloAttivi.size > 0 || schemaFiltro ? 'btn-red' : 'btn-gray'} btn-icon fs-11`}
+                <button type="button" disabled={(filtriModelloAttivi.size === 0 || soloLocked) && !schemaFiltro}
+                  className={`${(filtriModelloAttivi.size > 0 && !soloLocked) || schemaFiltro ? 'btn-red' : 'btn-gray'} btn-icon fs-11`}
                   style={{ flexShrink: 0 }}
-                  onClick={() => { setFiltriModelloAttivi(new Set()); setSchemaFiltro(null) }}
+                  onClick={() => { setFiltriModelloAttivi(new Set(lockedFiltriModello ?? [])); setSchemaFiltro(null) }}
                 >✕</button>
                 <div style={{ width: 1, height: 20, background: '#ddd', flexShrink: 0, margin: '0 10px' }} />
                 <div style={{ display: 'flex', gap: 6, overflowX: 'auto', WebkitOverflowScrolling: 'touch' as const, paddingBottom: 2 }}>
-                  {chipsDisponibili.map(f => {
-                    const attiva = filtriModelloAttivi.has(f.label)
-                    const W = Math.max(THUMB + 8 + f.label.length * 7, 90)
+                  {chipsDisponibili.map(n => {
+                    const attiva = filtriModelloAttivi.has(n)
+                    const locked = lockedFiltriModello?.has(n) ?? false
+                    const label = filtriLabels?.[n] ?? `F${n}`
+                    const W = Math.max(THUMB + 8 + label.length * 7, 90)
+                    const toggle = () => {
+                      if (locked) return
+                      setFiltriModelloAttivi(prev => { const s = new Set(prev); s.has(n) ? s.delete(n) : s.add(n); return s })
+                      setSchemaFiltro(null)
+                    }
                     return (
-                      <div key={f.label} role="button" tabIndex={0}
-                        onClick={() => {
-                          setFiltriModelloAttivi(prev => { const n = new Set(prev); n.has(f.label) ? n.delete(f.label) : n.add(f.label); return n })
-                          setSchemaFiltro(null)
-                        }}
-                        onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setFiltriModelloAttivi(prev => { const n = new Set(prev); n.has(f.label) ? n.delete(f.label) : n.add(f.label); return n }); setSchemaFiltro(null) } }}
-                        style={{ position: 'relative', width: W, height: H, borderRadius: H / 2, flexShrink: 0, background: attiva ? '#1e5c1e' : '#3a3a3a', transition: 'background 0.2s', cursor: 'pointer', userSelect: 'none' }}
+                      <div key={n} role="button" tabIndex={locked ? -1 : 0}
+                        onClick={toggle}
+                        onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') toggle() }}
+                        title={locked ? 'Ereditato dal PDF aperto' : undefined}
+                        style={{ position: 'relative', width: W, height: H, borderRadius: H / 2, flexShrink: 0, background: attiva ? '#1e5c1e' : '#3a3a3a', transition: 'background 0.2s', cursor: locked ? 'default' : 'pointer', userSelect: 'none', opacity: locked ? 0.7 : 1 }}
                       >
-                        <span style={{ position: 'absolute', left: 8, top: 0, bottom: 0, display: 'flex', alignItems: 'center', fontSize: 10, fontFamily: 'inherit', fontWeight: 700, color: attiva ? '#7dda7d' : 'transparent', transition: 'color 0.2s', whiteSpace: 'nowrap', pointerEvents: 'none' }}>{f.label}</span>
-                        <span style={{ position: 'absolute', right: 8, top: 0, bottom: 0, display: 'flex', alignItems: 'center', fontSize: 10, fontFamily: 'inherit', fontWeight: 400, color: attiva ? 'transparent' : '#aaaaaa', transition: 'color 0.2s', whiteSpace: 'nowrap', pointerEvents: 'none' }}>{f.label}</span>
+                        <span style={{ position: 'absolute', left: 8, top: 0, bottom: 0, display: 'flex', alignItems: 'center', fontSize: 10, fontFamily: 'inherit', fontWeight: 700, color: attiva ? '#7dda7d' : 'transparent', transition: 'color 0.2s', whiteSpace: 'nowrap', pointerEvents: 'none' }}>{label}</span>
+                        <span style={{ position: 'absolute', right: 8, top: 0, bottom: 0, display: 'flex', alignItems: 'center', fontSize: 10, fontFamily: 'inherit', fontWeight: 400, color: attiva ? 'transparent' : '#aaaaaa', transition: 'color 0.2s', whiteSpace: 'nowrap', pointerEvents: 'none' }}>{label}</span>
                         <div style={{ position: 'absolute', width: THUMB, height: THUMB, borderRadius: '50%', background: '#fff', top: (H - THUMB) / 2, left: attiva ? W - THUMB - 3 : 3, transition: 'left 0.2s', boxShadow: '0 1px 4px rgba(0,0,0,0.5)' }} />
                       </div>
                     )
