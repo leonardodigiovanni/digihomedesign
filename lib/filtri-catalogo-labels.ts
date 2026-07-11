@@ -4,8 +4,6 @@ export const FILTRI_CATALOGO_COLS = [
   'filtro_taglio_freddo', 'filtro_economico', 'filtro_fascia_alta',
 ] as const
 
-const DEFAULT_LABELS = ['Battente', 'Scorrevole', 'T.Termico', 'T.Freddo', 'Economico', 'Fascia Alta']
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function ensureFiltriCatalogoLabelsTable(db: any) {
   await db.execute(`
@@ -18,7 +16,7 @@ export async function ensureFiltriCatalogoLabelsTable(db: any) {
 
 function defaults(): Record<number, string> {
   const d: Record<number, string> = {}
-  for (let n = 1; n <= 6; n++) d[n] = DEFAULT_LABELS[n - 1]
+  for (let n = 1; n <= 6; n++) d[n] = `C${n}`
   return d
 }
 
