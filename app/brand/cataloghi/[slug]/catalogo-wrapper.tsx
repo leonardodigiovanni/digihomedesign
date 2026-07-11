@@ -170,7 +170,16 @@ export default function CatalogoWrapper({
     })
   )
 
-  const artFiltrati = artModello
+  // Eccezione: se l'etichetta di un C acceso combacia (case-insensitive) con il produttore
+  // di almeno un articolo tra quelli candidati, quel C funge anche da filtro produttore
+  // per gli articoli — OR tra i C accesi che fanno match. I C senza match restano solo-PDF.
+  const marcheCAttive = [...filtriPdf]
+    .map(n => catalogoLabel(n))
+    .filter(label => artModello.some(a => a.produttore?.toLowerCase() === label.toLowerCase()))
+
+  const artFiltrati = marcheCAttive.length === 0
+    ? artModello
+    : artModello.filter(a => marcheCAttive.some(m => a.produttore?.toLowerCase() === m.toLowerCase()))
 
   const hasFilters = !!(faseSel || materialeSel || tipologiaSel || ambienteSel || fasciaSel || filtriPdf.size || filtriModello.size)
 
