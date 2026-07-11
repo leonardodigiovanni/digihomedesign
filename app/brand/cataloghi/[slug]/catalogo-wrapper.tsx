@@ -291,7 +291,7 @@ export default function CatalogoWrapper({
             submitLabel={submitLabel}
             isApp={isApp}
             filtriLabels={filtriLabels}
-            lockedFiltriModello={selectedVoce ? filtriModello : undefined}
+            lockedFiltriModello={filtriModello}
           />
         </div>
       )}
