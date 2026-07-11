@@ -31,6 +31,9 @@ async function ensureVociTable(db: Awaited<ReturnType<typeof getConnection>>) {
       created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
   `)
+  // categoria_id è un residuo del vecchio sistema (pre-percorsi): la rendiamo opzionale
+  // così l'INSERT non fallisce più senza doverla valorizzare.
+  await db.execute(`ALTER TABLE catalogo_voci MODIFY COLUMN categoria_id INT NULL DEFAULT NULL`).catch(() => {})
   await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN serie VARCHAR(200) NOT NULL DEFAULT ''`).catch(() => {})
   await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN descrizione TEXT NULL`).catch(() => {})
   await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_battente TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
