@@ -75,6 +75,8 @@ function NuovaVoceForm({ onDone }: { onDone: () => void }) {
       const result = await addVoce(null, fd)
       if (result.ok) { router.refresh(); onDone() }
       else setErrore(result.error)
+    } catch (e) {
+      setErrore(e instanceof Error ? e.message : 'Errore imprevisto durante il salvataggio.')
     } finally {
       setUploading(false)
     }
@@ -159,6 +161,8 @@ function VoceEditForm({ voce, onDone, filtriLabels, filtriCatalogoLabels }: { vo
       const result = await updateVoce(null, fd)
       if (result.ok) { router.refresh(); onDone() }
       else setErrore(result.error)
+    } catch (e) {
+      setErrore(e instanceof Error ? e.message : 'Errore imprevisto durante il salvataggio.')
     } finally { setUploading(false) }
   }
 
