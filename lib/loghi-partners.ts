@@ -19,6 +19,7 @@ export const LOGHI_PARTNERS: string[] = [
   "/images/brand/partners/CANDY.png",
   "/images/brand/partners/CANON.png",
   "/images/brand/partners/CISA.png",
+  "/images/brand/partners/COMAS.png",
   "/images/brand/partners/DAIKIN.png",
   "/images/brand/partners/DEGHI.png",
   "/images/brand/partners/DELONGHI.png",
