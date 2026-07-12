@@ -47,7 +47,6 @@ export type Voce = {
   filtro_8: number
   filtro_9: number
   filtro_10: number
-  schema_url: string | null
 }
 
 // ─── Form nuova voce ──────────────────────────────────────────────────────────
@@ -233,10 +232,6 @@ function VoceEditForm({ voce, onDone, filtriLabels, filtriCatalogoLabels }: { vo
               )
             })}
           </div>
-        </div>
-        <div style={{ gridColumn: '1 / -1' }}>
-          <label style={lbl}>Schema (URL immagine)</label>
-          <input name="schema_url" defaultValue={voce.schema_url ?? ''} style={inp} placeholder="/listini/schema.png" />
         </div>
         <div style={{ gridColumn: '1 / -1' }}>
           <label style={lbl}>PDF attuale</label>

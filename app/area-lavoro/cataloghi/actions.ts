@@ -66,7 +66,6 @@ async function ensureVociTable(db: Awaited<ReturnType<typeof getConnection>>) {
   await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_8 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
   await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_9 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
   await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_10 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
-  await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN schema_url VARCHAR(500) NULL`).catch(() => {})
 }
 
 export type MutResult = { ok: true } | { ok: false; error: string }
@@ -135,15 +134,14 @@ export async function updateVoce(_: MutResult | null, fd: FormData): Promise<Mut
   const filtro_8       = fd.get('filtro_8')        === 'on' ? 1 : 0
   const filtro_9       = fd.get('filtro_9')        === 'on' ? 1 : 0
   const filtro_10      = fd.get('filtro_10')       === 'on' ? 1 : 0
-  const schema_url     = (fd.get('schema_url')     as string)?.trim() || null
 
   if (isNaN(id) || !nome) return { ok: false, error: 'Dati incompleti.' }
 
   const db = await getConnection()
   try {
     await ensureVociTable(db)
-    const extraCols = ', filtro_c1=?, filtro_c2=?, filtro_c3=?, filtro_c4=?, filtro_c5=?, filtro_c6=?, fase=?, materiale=?, tipologia=?, ambiente=?, fascia=?, filtro_1=?, filtro_2=?, filtro_3=?, filtro_4=?, filtro_5=?, filtro_6=?, filtro_7=?, filtro_8=?, filtro_9=?, filtro_10=?, schema_url=?'
-    const extraVals = [filtro_c1, filtro_c2, filtro_c3, filtro_c4, filtro_c5, filtro_c6, fase, materiale, tipologia, ambiente, fascia, filtro_1, filtro_2, filtro_3, filtro_4, filtro_5, filtro_6, filtro_7, filtro_8, filtro_9, filtro_10, schema_url]
+    const extraCols = ', filtro_c1=?, filtro_c2=?, filtro_c3=?, filtro_c4=?, filtro_c5=?, filtro_c6=?, fase=?, materiale=?, tipologia=?, ambiente=?, fascia=?, filtro_1=?, filtro_2=?, filtro_3=?, filtro_4=?, filtro_5=?, filtro_6=?, filtro_7=?, filtro_8=?, filtro_9=?, filtro_10=?'
+    const extraVals = [filtro_c1, filtro_c2, filtro_c3, filtro_c4, filtro_c5, filtro_c6, fase, materiale, tipologia, ambiente, fascia, filtro_1, filtro_2, filtro_3, filtro_4, filtro_5, filtro_6, filtro_7, filtro_8, filtro_9, filtro_10]
     if (new_pdf_filename) {
       await db.execute(
         `UPDATE catalogo_voci SET nome=?, serie=?, pdf_label=?, descrizione=?, pdf_filename=?${extraCols} WHERE id=?`,

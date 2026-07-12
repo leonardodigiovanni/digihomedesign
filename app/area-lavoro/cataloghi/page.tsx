@@ -58,15 +58,13 @@ async function getData(): Promise<{ voci: Voce[]; percorsiPerVoce: Record<number
     await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_8 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_9 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_10 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
-    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN schema_url VARCHAR(500) NULL`).catch(() => {})
 
     const [vociRows] = await db.query(`
       SELECT id, nome, pdf_filename, pdf_label, serie, descrizione,
              filtro_c1, filtro_c2, filtro_c3, filtro_c4,
              filtro_c5, filtro_c6,
              fase, materiale, tipologia, ambiente, fascia,
-             filtro_1, filtro_2, filtro_3, filtro_4, filtro_5, filtro_6, filtro_7, filtro_8, filtro_9, filtro_10,
-             schema_url
+             filtro_1, filtro_2, filtro_3, filtro_4, filtro_5, filtro_6, filtro_7, filtro_8, filtro_9, filtro_10
       FROM catalogo_voci ORDER BY nome ASC
     `)
 
@@ -107,7 +105,6 @@ async function getData(): Promise<{ voci: Voce[]; percorsiPerVoce: Record<number
       filtro_8:  Number(r.filtro_8 ?? 0),
       filtro_9:  Number(r.filtro_9 ?? 0),
       filtro_10: Number(r.filtro_10 ?? 0),
-      schema_url: r.schema_url ? String(r.schema_url) : null,
     })) as Voce[]
 
     const filtriLabels = await getFiltriModelloLabels(db)
