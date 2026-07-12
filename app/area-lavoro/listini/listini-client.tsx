@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useActionState, useTransition, useRef, useEffect, useContext, createContext } from 'react'
 import SelectLookup from '@/components/select-lookup'
 import { useRouter } from 'next/navigation'
-import { addArticolo, updateArticolo, deleteArticolo, cloneArticolo, toggleDisponibile, togglePreventivabile, toggleAcquistabile, toggleComputabile, togglePrincipale, toggleCaratteristica, toggleEscluso, toggleColonnaBooleana, updateSchedaTecnica, clearImmagine, type MutResult, type AddResult } from './actions'
+import { addArticolo, updateArticolo, deleteArticolo, cloneArticolo, toggleDisponibile, togglePreventivabile, toggleAcquistabile, toggleComputabile, togglePrincipale, toggleCaratteristica, toggleEscluso, toggleColonnaBooleana, updateSchedaTecnica, clearImmagine, updateMassivo, type MutResult, type AddResult } from './actions'
 import { addPercorsoListino, removePercorsoListino, type Percorso } from '@/lib/percorsi'
 
 // ─── Tipi ─────────────────────────────────────────────────────────────────────
@@ -127,6 +127,23 @@ function getFiltro(art: Articolo, n: number): number {
   return (art as unknown as Record<string, number>)[`filtro_${n}`] ?? 0
 }
 
+const RICHIEDE_FIELDS = [
+  { key: 'richiede_larghezza',        label: 'larghezza' },
+  { key: 'richiede_altezza',          label: 'altezza' },
+  { key: 'richiede_quantita',         label: 'quantita' },
+  { key: 'richiede_piano',            label: 'piano' },
+  { key: 'richiede_km',               label: 'km' },
+  { key: 'richiede_peso',             label: 'peso' },
+  { key: 'richiede_tipo_colore',      label: 'tipo_colore' },
+  { key: 'richiede_tipo_colore_acc',  label: 'tipo_colore_acc' },
+  { key: 'richiede_tipo_vetro',       label: 'tipo_vetro' },
+  { key: 'richiede_tipo_montaggio',   label: 'tipo_montaggio' },
+] as const
+
+function nomeFile(url: string): string {
+  return url.split('/').pop() || url
+}
+
 function fmt(n: number) {
   return n.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
@@ -136,6 +153,72 @@ function margine(acq: number, vnd: number): { pct: string; color: string } | nul
   const pct = ((vnd - acq) / vnd) * 100
   const color = pct >= 20 ? '#2e7d32' : pct >= 10 ? '#e65100' : '#c62828'
   return { pct: pct.toFixed(1) + '%', color }
+}
+
+// ─── Filtro per colonna (riga sopra le intestazioni) ──────────────────────────
+
+function ColFilter({ value, onChange, options, width }: {
+  value: string; onChange: (v: string) => void; options: { value: string; label: string }[]; width?: number
+}) {
+  return (
+    <select
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      style={{
+        width: width ?? '100%', maxWidth: width ?? 160, fontSize: 10, padding: '2px 3px',
+        border: '1px solid #4a4a5e', borderRadius: 3, background: value ? '#3a3a20' : '#1a1a28',
+        color: value ? '#e8d38a' : '#999', fontFamily: 'inherit', boxSizing: 'border-box',
+      }}
+    >
+      <option value="">tutti</option>
+      {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+    </select>
+  )
+}
+
+const thF: React.CSSProperties = {
+  padding: '4px 6px', borderBottom: '1px solid #444', borderRight: '1px solid #444',
+  background: '#20202f', verticalAlign: 'middle',
+}
+
+// ─── Riga valori per aggiornamento massivo ────────────────────────────────────
+
+function ValField({ value, onChange, width, placeholder }: { value: string; onChange: (v: string) => void; width?: number; placeholder?: string }) {
+  return (
+    <input
+      value={value}
+      placeholder={placeholder}
+      onChange={e => onChange(e.target.value)}
+      style={{
+        width: width ?? '100%', maxWidth: width ?? 160, fontSize: 10, padding: '2px 3px',
+        border: '1px solid #c8960c', borderRadius: 3, background: value ? '#fff3cd' : '#fff',
+        color: '#222', fontFamily: 'inherit', boxSizing: 'border-box',
+      }}
+    />
+  )
+}
+
+function ValBoolField({ value, onChange, width }: { value: string; onChange: (v: string) => void; width?: number }) {
+  return (
+    <select
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      style={{
+        width: width ?? '100%', maxWidth: width ?? 160, fontSize: 10, padding: '2px 3px',
+        border: '1px solid #c8960c', borderRadius: 3, background: value ? '#fff3cd' : '#fff',
+        color: '#222', fontFamily: 'inherit', boxSizing: 'border-box',
+      }}
+    >
+      <option value="">–</option>
+      <option value="1">1</option>
+      <option value="0">0</option>
+    </select>
+  )
+}
+
+const thV: React.CSSProperties = {
+  padding: '4px 6px', borderBottom: '1px solid #444', borderRight: '1px solid #444',
+  background: '#2e2a10', verticalAlign: 'middle',
 }
 
 // ─── Stili comuni ─────────────────────────────────────────────────────────────
@@ -1223,6 +1306,13 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
   const [lastId, setLastId]                 = useState<number | null>(null)
   const [isCloning, setIsCloning]           = useState(false)
   const [colVis, setColVis]                 = useState<Record<ColKey, boolean>>(COL_DEFAULT)
+  const [cf, setCf] = useState<Record<string, string>>({})
+  const setCfV = (k: string, v: string) => setCf(prev => ({ ...prev, [k]: v }))
+  const [valoriOpen, setValoriOpen] = useState(false)
+  const [valori, setValori] = useState<Record<string, string>>({})
+  const setValoreV = (k: string, v: string) => setValori(prev => ({ ...prev, [k]: v }))
+  const hasValori = Object.values(valori).some(v => v !== '')
+  const [submittingValori, setSubmittingValori] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -1256,6 +1346,41 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
   const ambienti    = useMemo(() => [...new Set(articoli.map(a => a.ambiente).filter(Boolean) as string[])].sort(), [articoli])
   const fasce       = useMemo(() => [...new Set(articoli.map(a => a.fascia).filter(Boolean) as string[])].sort(), [articoli])
 
+  // ─── Valori distinti per la riga di filtri per-colonna ───────────────────────
+  const percorsiCoppie = useMemo(() => {
+    const map = new Map<string, { categoria: string; sottocategoria: string }>()
+    allPercorsi.forEach(p => {
+      if (!p.sottocategoria) return
+      const k = `${p.categoria}|||${p.sottocategoria}`
+      if (!map.has(k)) map.set(k, { categoria: p.categoria, sottocategoria: p.sottocategoria })
+    })
+    return [...map.entries()].sort((a, b) => a[0].localeCompare(b[0]))
+  }, [allPercorsi])
+  const categorieArt = useMemo(() => [...new Set(articoli.map(a => a.categoria).filter(Boolean))].sort(), [articoli])
+  const descrizioni   = useMemo(() => [...new Set(articoli.map(a => a.descrizione).filter(Boolean))].sort(), [articoli])
+  const loghiPresenti = useMemo(() => {
+    const set = new Set<string>()
+    articoli.forEach(a => { if (a.logo_url) set.add(nomeFile(a.logo_url)) })
+    return [...set].sort()
+  }, [articoli])
+  const fornitoriPresenti = useMemo(() => {
+    const ids = new Set(articoli.map(a => a.fornitore_id).filter((v): v is number => v != null))
+    return fornitori.filter(f => ids.has(f.id)).sort((a, b) => a.ragione_sociale.localeCompare(b.ragione_sociale))
+  }, [articoli, fornitori])
+  const unitaPresenti = useMemo(() => [...new Set(articoli.map(a => a.unita).filter(Boolean))].sort(), [articoli])
+  const minimoPresenti = useMemo(() => [...new Set(articoli.map(a => a.minimo).filter((v): v is number => v != null))].sort((a, b) => a - b), [articoli])
+  const pAcqPresenti = useMemo(() => [...new Set(articoli.map(a => a.prezzo_acquisto))].sort((a, b) => a - b), [articoli])
+  const pVndPresenti = useMemo(() => [...new Set(articoli.map(a => a.prezzo_vendita))].sort((a, b) => a - b), [articoli])
+  const costantePresenti = useMemo(() => [...new Set(articoli.map(a => a.costante).filter(v => v !== 0))].sort((a, b) => a - b), [articoli])
+  const abbrPresenti = useMemo(() => [...new Set(articoli.map(a => a.abbr).filter(Boolean))].sort(), [articoli])
+  const scontoPresenti = useMemo(() => [...new Set(articoli.map(a => a.sconto_articolo).filter(v => v !== 0))].sort((a, b) => a - b), [articoli])
+  const marginePresenti = useMemo(() => {
+    const set = new Set<string>()
+    articoli.forEach(a => { const m = margine(a.prezzo_acquisto, a.prezzo_vendita); if (m) set.add(m.pct) })
+    return [...set].sort()
+  }, [articoli])
+  const notePresenti = useMemo(() => [...new Set(articoli.map(a => a.note).filter(Boolean) as string[])].sort(), [articoli])
+
   const filtrati = useMemo(() => articoli.filter(a => {
     const percorsi = percorsiPerListino[a.id] ?? []
     if (filtroCategoria) {
@@ -1278,12 +1403,51 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
     if (filtroTipologia && a.tipologia !== filtroTipologia) return false
     if (filtroAmbiente  && a.ambiente  !== filtroAmbiente)  return false
     if (filtroFascia    && a.fascia    !== filtroFascia)    return false
+
+    // ─── filtri per-colonna (riga sopra le intestazioni) ───
+    if (cf.percorso) {
+      const [pc, ps] = cf.percorso.split('|||')
+      if (!percorsi.some(p => p.categoria === pc && p.sottocategoria === ps)) return false
+    }
+    if (cf.categoria    && a.categoria    !== cf.categoria)    return false
+    if (cf.fase         && a.fase         !== cf.fase)         return false
+    if (cf.materiale    && a.materiale    !== cf.materiale)    return false
+    if (cf.tipologia    && a.tipologia    !== cf.tipologia)    return false
+    if (cf.ambiente     && a.ambiente     !== cf.ambiente)     return false
+    if (cf.descrizione  && a.descrizione  !== cf.descrizione)  return false
+    if (cf.fascia       && a.fascia       !== cf.fascia)       return false
+    if (cf.produttore   && a.produttore   !== cf.produttore)   return false
+    if (cf.logo         && (a.logo_url ? nomeFile(a.logo_url) : '') !== cf.logo) return false
+    if (cf.serie        && a.serie        !== cf.serie)        return false
+    if (cf.fornitore    && String(a.fornitore_id ?? '') !== cf.fornitore) return false
+    if (cf.escluso      && String(a.escluso) !== cf.escluso)   return false
+    if (cf.unita        && a.unita        !== cf.unita)        return false
+    if (cf.minimo       && String(a.minimo ?? '') !== cf.minimo) return false
+    if (cf.p_acq        && String(a.prezzo_acquisto) !== cf.p_acq) return false
+    if (cf.p_vnd        && String(a.prezzo_vendita)  !== cf.p_vnd) return false
+    if (cf.costante     && String(a.costante) !== cf.costante) return false
+    if (cf.abbr         && a.abbr         !== cf.abbr)         return false
+    if (cf.sconto       && String(a.sconto_articolo) !== cf.sconto) return false
+    if (cf.margine) {
+      const m = margine(a.prezzo_acquisto, a.prezzo_vendita)
+      if (!m || m.pct !== cf.margine) return false
+    }
+    if (cf.note && (a.note ?? '') !== cf.note) return false
+    for (const rc of RICHIEDE_FIELDS) {
+      const v = cf[rc.key]
+      if (v && String((a as unknown as Record<string, number>)[rc.key]) !== v) return false
+    }
+    for (let n = 1; n <= 10; n++) {
+      const v = cf[`filtro_${n}`]
+      if (v && String(getFiltro(a, n)) !== v) return false
+    }
+
     if (filtroTesto) {
       const t = filtroTesto.toLowerCase()
       return a.descrizione.toLowerCase().includes(t) || a.produttore.toLowerCase().includes(t) || a.fornitore_nome.toLowerCase().includes(t) || (a.note ?? '').toLowerCase().includes(t)
     }
     return true
-  }), [articoli, percorsiPerListino, filtroCategoria, filtroSottocategoria, filtroProduttore, filtroSerie, filtroFornitore, filtroTesto, filtroDisp, filtroFase, filtroMateriale, filtroTipologia, filtroAmbiente, filtroFascia])
+  }), [articoli, percorsiPerListino, filtroCategoria, filtroSottocategoria, filtroProduttore, filtroSerie, filtroFornitore, filtroTesto, filtroDisp, filtroFase, filtroMateriale, filtroTipologia, filtroAmbiente, filtroFascia, cf])
 
   const schedaArt = schedaId !== null ? (articoli.find(a => a.id === schedaId) ?? null) : null
 
@@ -1308,6 +1472,21 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
     await deleteArticolo(null, fd)
     router.refresh()
     setDeletingId(null)
+  }
+
+  async function handleSubmitValori() {
+    if (!hasValori || submittingValori) return
+    const ids = filtrati.map(a => a.id)
+    setSubmittingValori(true)
+    const res = await updateMassivo(ids, valori)
+    setSubmittingValori(false)
+    if (res.ok) {
+      setValori({})
+      setValoriOpen(false)
+      router.refresh()
+    } else {
+      alert(res.error)
+    }
   }
 
   // helper locale per th
@@ -1393,14 +1572,253 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
             onDone={(newId) => { if (newId) setLastId(newId); setNuovoOpen(false) }} />
         )}
 
-        {filtrati.length === 0 ? (
-          <p style={{ color: '#aaa', fontSize: 13 }}>
-            {articoli.length === 0 ? 'Nessun articolo. Aggiungine uno con "+ Nuovo articolo".' : 'Nessun risultato.'}
-          </p>
-        ) : (
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
+                {valoriOpen && (
+                  <tr>
+                    <th style={{ ...thV, ...thVis('percorsi') }}>
+                      <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+                        {hasValori && (
+                          <button
+                            type="button"
+                            onClick={handleSubmitValori}
+                            disabled={submittingValori}
+                            title="Applica valori agli articoli filtrati"
+                            style={{
+                              width: 18, height: 18, minWidth: 18, borderRadius: '50%', border: '1px solid #2e7d32',
+                              background: '#2e7d32', color: '#fff', fontSize: 10, lineHeight: 1,
+                              cursor: submittingValori ? 'wait' : 'pointer', opacity: submittingValori ? 0.5 : 1,
+                              display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, flexShrink: 0,
+                            }}
+                          >✓</button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => setValori({})}
+                          title="Annulla i valori inseriti"
+                          style={{
+                            width: 18, height: 18, minWidth: 18, borderRadius: '50%', border: '1px solid #666',
+                            background: '#3a3a3a', color: '#ddd', fontSize: 10, lineHeight: 1, cursor: 'pointer',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, flexShrink: 0,
+                          }}
+                        >✕</button>
+                        <ValField value={valori.percorso_categoria ?? ''} onChange={v => setValoreV('percorso_categoria', v)} placeholder="categoria" width={90} />
+                        <ValField value={valori.percorso_sottocategoria ?? ''} onChange={v => setValoreV('percorso_sottocategoria', v)} placeholder="sottocat." width={90} />
+                      </div>
+                    </th>
+                    <th style={{ ...thV, ...thVis('cat') }}>
+                      <ValField value={valori.categoria ?? ''} onChange={v => setValoreV('categoria', v)} />
+                    </th>
+                    <th style={{ ...thV, ...thVis('fase') }}>
+                      <ValField value={valori.fase ?? ''} onChange={v => setValoreV('fase', v)} />
+                    </th>
+                    <th style={{ ...thV, ...thVis('mat') }}>
+                      <ValField value={valori.materiale ?? ''} onChange={v => setValoreV('materiale', v)} />
+                    </th>
+                    <th style={{ ...thV, ...thVis('tipo') }}>
+                      <ValField value={valori.tipologia ?? ''} onChange={v => setValoreV('tipologia', v)} />
+                    </th>
+                    <th style={{ ...thV, ...thVis('amb') }}>
+                      <ValField value={valori.ambiente ?? ''} onChange={v => setValoreV('ambiente', v)} />
+                    </th>
+                    <th style={{ ...thV, ...thVis('descr') }}>
+                      <ValField value={valori.descrizione ?? ''} onChange={v => setValoreV('descrizione', v)} width={160} />
+                    </th>
+                    <th style={{ ...thV, ...thVis('fascia') }}>
+                      <ValField value={valori.fascia ?? ''} onChange={v => setValoreV('fascia', v)} />
+                    </th>
+                    <th style={{ ...thV, ...thVis('prod') }}>
+                      <ValField value={valori.produttore ?? ''} onChange={v => setValoreV('produttore', v)} />
+                    </th>
+                    <th style={{ ...thV, width: 70, ...thVis('logo') }}>
+                      <ValField value={valori.logo ?? ''} onChange={v => setValoreV('logo', v)} width={70} />
+                    </th>
+                    <th style={{ ...thV, ...thVis('serie') }}>
+                      <ValField value={valori.serie ?? ''} onChange={v => setValoreV('serie', v)} />
+                    </th>
+                    <th style={{ ...thV, ...thVis('forn') }}>
+                      <ValField value={valori.fornitore ?? ''} onChange={v => setValoreV('fornitore', v)} />
+                    </th>
+                    <th style={{ ...thV, width: 140, ...thVis('schema') }} />
+                    <th style={{ ...thV, width: 140, ...thVis('foto') }} />
+                    <th style={{ ...thV, textAlign: 'center', ...thVis('escluso') }}>
+                      <ValBoolField value={valori.escluso ?? ''} onChange={v => setValoreV('escluso', v)} width={46} />
+                    </th>
+                    <th style={{ ...thV, textAlign: 'center', ...thVis('unita') }}>
+                      <ValField value={valori.unita ?? ''} onChange={v => setValoreV('unita', v)} width={60} />
+                    </th>
+                    <th style={{ ...thV, textAlign: 'center', ...thVis('minimo') }}>
+                      <ValField value={valori.minimo ?? ''} onChange={v => setValoreV('minimo', v)} width={60} />
+                    </th>
+                    <th style={{ ...thV, textAlign: 'right', ...thVis('p_acq') }}>
+                      <ValField value={valori.p_acq ?? ''} onChange={v => setValoreV('p_acq', v)} width={70} />
+                    </th>
+                    <th style={{ ...thV, textAlign: 'right', ...thVis('p_vnd') }}>
+                      <ValField value={valori.p_vnd ?? ''} onChange={v => setValoreV('p_vnd', v)} width={70} />
+                    </th>
+                    <th style={{ ...thV, textAlign: 'right', ...thVis('costante') }}>
+                      <ValField value={valori.costante ?? ''} onChange={v => setValoreV('costante', v)} width={60} />
+                    </th>
+                    <th style={{ ...thV, ...thVis('abbr') }}>
+                      <ValField value={valori.abbr ?? ''} onChange={v => setValoreV('abbr', v)} width={60} />
+                    </th>
+                    <th style={{ ...thV, textAlign: 'center', ...thVis('sconto') }}>
+                      <ValField value={valori.sconto ?? ''} onChange={v => setValoreV('sconto', v)} width={60} />
+                    </th>
+                    <th style={{ ...thV, textAlign: 'center', ...thVis('margine') }} />
+                    <th style={{ ...thV, ...thVis('note') }}>
+                      <ValField value={valori.note ?? ''} onChange={v => setValoreV('note', v)} width={140} />
+                    </th>
+                    {RICHIEDE_FIELDS.map(rc => (
+                      <th key={rc.key} style={{ ...thV, textAlign: 'center', ...thVis('richiede') }}>
+                        <ValBoolField value={valori[rc.key] ?? ''} onChange={v => setValoreV(rc.key, v)} width={44} />
+                      </th>
+                    ))}
+                    <th style={{ ...thV, ...thVis('filtri') }}>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2px 4px', width: 126 }}>
+                        {FILTRI_FIELDS.map(f => (
+                          <div key={f.col} title={filtriLabels[f.n] ?? `F${f.n}`}>
+                            <ValBoolField value={valori[`filtro_${f.n}`] ?? ''} onChange={v => setValoreV(`filtro_${f.n}`, v)} width={26} />
+                          </div>
+                        ))}
+                      </div>
+                    </th>
+                    <th style={{ ...thV, ...(colVis['azioni'] || editId !== null ? {} : { display: 'none' }) }} />
+                  </tr>
+                )}
+                <tr>
+                  <th style={{ ...thF, ...thVis('percorsi') }}>
+                    <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+                      <button
+                        type="button"
+                        onClick={() => setValoriOpen(o => !o)}
+                        title={valoriOpen ? 'Chiudi riga valori' : 'Aggiornamento massivo: apri riga valori'}
+                        style={{
+                          width: 18, height: 18, minWidth: 18, borderRadius: '50%', border: '1px solid #c8960c',
+                          background: valoriOpen ? '#c8960c' : '#3a3a3a', color: valoriOpen ? '#1a1a1a' : '#c8960c',
+                          fontSize: 10, lineHeight: 1, cursor: 'pointer',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, flexShrink: 0,
+                        }}
+                      >{valoriOpen ? '−' : '+'}</button>
+                      <button
+                        type="button"
+                        onClick={() => setCf({})}
+                        title="Rimuovi tutti i filtri"
+                        style={{
+                          width: 18, height: 18, minWidth: 18, borderRadius: '50%', border: '1px solid #666',
+                          background: '#3a3a3a', color: '#ddd', fontSize: 10, lineHeight: 1, cursor: 'pointer',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0, flexShrink: 0,
+                        }}
+                      >✕</button>
+                      <ColFilter value={cf.percorso ?? ''} onChange={v => setCfV('percorso', v)}
+                        options={percorsiCoppie.map(([k, p]) => ({ value: k, label: `${p.categoria} / ${p.sottocategoria}` }))} />
+                    </div>
+                  </th>
+                  <th style={{ ...thF, ...thVis('cat') }}>
+                    <ColFilter value={cf.categoria ?? ''} onChange={v => setCfV('categoria', v)}
+                      options={categorieArt.map(v => ({ value: v, label: v }))} />
+                  </th>
+                  <th style={{ ...thF, ...thVis('fase') }}>
+                    <ColFilter value={cf.fase ?? ''} onChange={v => setCfV('fase', v)}
+                      options={fasi.map(v => ({ value: v, label: v }))} />
+                  </th>
+                  <th style={{ ...thF, ...thVis('mat') }}>
+                    <ColFilter value={cf.materiale ?? ''} onChange={v => setCfV('materiale', v)}
+                      options={materiali.map(v => ({ value: v, label: v }))} />
+                  </th>
+                  <th style={{ ...thF, ...thVis('tipo') }}>
+                    <ColFilter value={cf.tipologia ?? ''} onChange={v => setCfV('tipologia', v)}
+                      options={tipologie.map(v => ({ value: v, label: v }))} />
+                  </th>
+                  <th style={{ ...thF, ...thVis('amb') }}>
+                    <ColFilter value={cf.ambiente ?? ''} onChange={v => setCfV('ambiente', v)}
+                      options={ambienti.map(v => ({ value: v, label: v }))} />
+                  </th>
+                  <th style={{ ...thF, ...thVis('descr') }}>
+                    <ColFilter value={cf.descrizione ?? ''} onChange={v => setCfV('descrizione', v)}
+                      options={descrizioni.map(v => ({ value: v, label: v }))} width={160} />
+                  </th>
+                  <th style={{ ...thF, ...thVis('fascia') }}>
+                    <ColFilter value={cf.fascia ?? ''} onChange={v => setCfV('fascia', v)}
+                      options={fasce.map(v => ({ value: v, label: v }))} />
+                  </th>
+                  <th style={{ ...thF, ...thVis('prod') }}>
+                    <ColFilter value={cf.produttore ?? ''} onChange={v => setCfV('produttore', v)}
+                      options={produttori.map(v => ({ value: v, label: v }))} />
+                  </th>
+                  <th style={{ ...thF, width: 70, ...thVis('logo') }}>
+                    <ColFilter value={cf.logo ?? ''} onChange={v => setCfV('logo', v)}
+                      options={loghiPresenti.map(v => ({ value: v, label: v }))} width={70} />
+                  </th>
+                  <th style={{ ...thF, ...thVis('serie') }}>
+                    <ColFilter value={cf.serie ?? ''} onChange={v => setCfV('serie', v)}
+                      options={serie.map(v => ({ value: v, label: v }))} />
+                  </th>
+                  <th style={{ ...thF, ...thVis('forn') }}>
+                    <ColFilter value={cf.fornitore ?? ''} onChange={v => setCfV('fornitore', v)}
+                      options={fornitoriPresenti.map(f => ({ value: String(f.id), label: f.ragione_sociale }))} />
+                  </th>
+                  <th style={{ ...thF, width: 140, ...thVis('schema') }} />
+                  <th style={{ ...thF, width: 140, ...thVis('foto') }} />
+                  <th style={{ ...thF, textAlign: 'center', ...thVis('escluso') }}>
+                    <ColFilter value={cf.escluso ?? ''} onChange={v => setCfV('escluso', v)}
+                      options={[{ value: '1', label: '1' }, { value: '0', label: '0' }]} width={46} />
+                  </th>
+                  <th style={{ ...thF, textAlign: 'center', ...thVis('unita') }}>
+                    <ColFilter value={cf.unita ?? ''} onChange={v => setCfV('unita', v)}
+                      options={unitaPresenti.map(v => ({ value: v, label: v }))} width={60} />
+                  </th>
+                  <th style={{ ...thF, textAlign: 'center', ...thVis('minimo') }}>
+                    <ColFilter value={cf.minimo ?? ''} onChange={v => setCfV('minimo', v)}
+                      options={minimoPresenti.map(v => ({ value: String(v), label: String(v) }))} width={60} />
+                  </th>
+                  <th style={{ ...thF, textAlign: 'right', ...thVis('p_acq') }}>
+                    <ColFilter value={cf.p_acq ?? ''} onChange={v => setCfV('p_acq', v)}
+                      options={pAcqPresenti.map(v => ({ value: String(v), label: fmt(v) }))} width={70} />
+                  </th>
+                  <th style={{ ...thF, textAlign: 'right', ...thVis('p_vnd') }}>
+                    <ColFilter value={cf.p_vnd ?? ''} onChange={v => setCfV('p_vnd', v)}
+                      options={pVndPresenti.map(v => ({ value: String(v), label: fmt(v) }))} width={70} />
+                  </th>
+                  <th style={{ ...thF, textAlign: 'right', ...thVis('costante') }}>
+                    <ColFilter value={cf.costante ?? ''} onChange={v => setCfV('costante', v)}
+                      options={costantePresenti.map(v => ({ value: String(v), label: String(v) }))} width={60} />
+                  </th>
+                  <th style={{ ...thF, ...thVis('abbr') }}>
+                    <ColFilter value={cf.abbr ?? ''} onChange={v => setCfV('abbr', v)}
+                      options={abbrPresenti.map(v => ({ value: v, label: v }))} width={60} />
+                  </th>
+                  <th style={{ ...thF, textAlign: 'center', ...thVis('sconto') }}>
+                    <ColFilter value={cf.sconto ?? ''} onChange={v => setCfV('sconto', v)}
+                      options={scontoPresenti.map(v => ({ value: String(v), label: `${v}%` }))} width={60} />
+                  </th>
+                  <th style={{ ...thF, textAlign: 'center', ...thVis('margine') }}>
+                    <ColFilter value={cf.margine ?? ''} onChange={v => setCfV('margine', v)}
+                      options={marginePresenti.map(v => ({ value: v, label: v }))} width={70} />
+                  </th>
+                  <th style={{ ...thF, ...thVis('note') }}>
+                    <ColFilter value={cf.note ?? ''} onChange={v => setCfV('note', v)}
+                      options={notePresenti.map(v => ({ value: v, label: v }))} width={140} />
+                  </th>
+                  {RICHIEDE_FIELDS.map(rc => (
+                    <th key={rc.key} style={{ ...thF, textAlign: 'center', ...thVis('richiede') }}>
+                      <ColFilter value={cf[rc.key] ?? ''} onChange={v => setCfV(rc.key, v)}
+                        options={[{ value: '1', label: '1' }, { value: '0', label: '0' }]} width={44} />
+                    </th>
+                  ))}
+                  <th style={{ ...thF, ...thVis('filtri') }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2px 4px', width: 126 }}>
+                      {FILTRI_FIELDS.map(f => (
+                        <div key={f.col} title={filtriLabels[f.n] ?? `F${f.n}`}>
+                          <ColFilter value={cf[`filtro_${f.n}`] ?? ''} onChange={v => setCfV(`filtro_${f.n}`, v)}
+                            options={[{ value: '1', label: '1' }, { value: '0', label: '0' }]} width={26} />
+                        </div>
+                      ))}
+                    </div>
+                  </th>
+                  <th style={{ ...thF, ...(colVis['azioni'] || editId !== null ? {} : { display: 'none' }) }} />
+                </tr>
                 <tr>
                   <th style={{ ...thS, ...thVis('percorsi') }}>Percorsi</th>
                   <th style={{ ...thS, ...thVis('cat') }}>Categoria</th>
@@ -1441,7 +1859,13 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
                 </tr>
               </thead>
               <tbody>
-                {filtrati.map(art => (
+                {filtrati.length === 0 ? (
+                  <tr>
+                    <td colSpan={100} style={{ padding: '16px 10px', color: '#aaa', fontSize: 13 }}>
+                      {articoli.length === 0 ? 'Nessun articolo. Aggiungine uno con "+ Nuovo articolo".' : 'Nessun risultato con i filtri selezionati.'}
+                    </td>
+                  </tr>
+                ) : filtrati.map(art => (
                   editId === art.id
                     ? <RigaEdit key={art.id} art={art} categorie={categorie} produttori={produttori} fornitori={fornitori} onDone={() => setEditId(null)} onSaved={(id) => setLastId(id)} />
                     : <RigaNormale key={art.id} art={art}
@@ -1456,7 +1880,6 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
               </tbody>
             </table>
           </div>
-        )}
 
         {schedaArt && <SchedaTecnicaModal art={schedaArt} onClose={() => setSchedaId(null)} loghiDisponibili={loghiDisponibili} />}
       </div>

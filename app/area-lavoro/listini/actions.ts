@@ -351,6 +351,114 @@ export async function clearImmagine(_: MutResult | null, fd: FormData): Promise<
   } finally { await db.end() }
 }
 
+// ─── Aggiornamento massivo (riga valori) ──────────────────────────────────────
+
+const CAMPI_TESTO: Record<string, string> = {
+  categoria: 'categoria', fase: 'fase', materiale: 'materiale', tipologia: 'tipologia',
+  ambiente: 'ambiente', descrizione: 'descrizione', fascia: 'fascia', produttore: 'produttore',
+  logo: 'logo_url', serie: 'serie', unita: 'unita', abbr: 'abbr', note: 'note',
+}
+const CAMPI_NUMERICI: Record<string, string> = {
+  minimo: 'minimo', p_acq: 'prezzo_acquisto', p_vnd: 'prezzo_vendita', costante: 'costante', sconto: 'sconto_articolo',
+}
+const CAMPI_BOOL: Record<string, string> = {
+  escluso: 'escluso',
+  richiede_larghezza: 'richiede_larghezza', richiede_altezza: 'richiede_altezza', richiede_quantita: 'richiede_quantita',
+  richiede_piano: 'richiede_piano', richiede_km: 'richiede_km', richiede_peso: 'richiede_peso',
+  richiede_tipo_colore: 'richiede_tipo_colore', richiede_tipo_colore_acc: 'richiede_tipo_colore_acc',
+  richiede_tipo_vetro: 'richiede_tipo_vetro', richiede_tipo_montaggio: 'richiede_tipo_montaggio',
+  filtro_1: 'Filtro_1', filtro_2: 'Filtro_2', filtro_3: 'Filtro_3', filtro_4: 'Filtro_4', filtro_5: 'Filtro_5',
+  filtro_6: 'Filtro_6', filtro_7: 'Filtro_7', filtro_8: 'Filtro_8', filtro_9: 'Filtro_9', filtro_10: 'Filtro_10',
+}
+
+// Colonne che accettano NULL in DB: la convenzione "NULL" (case-insensitive) scritta in un campo
+// azzera la colonna. Le colonne testuali/numeriche NOT NULL vengono azzerate a '' / 0 invece.
+const TESTO_NULLABLE = new Set(['fase', 'materiale', 'tipologia', 'ambiente', 'fascia', 'logo', 'note'])
+const NUMERICI_NULLABLE = new Set(['minimo'])
+
+function isNullToken(v: string): boolean {
+  return v.trim().toLowerCase() === 'null'
+}
+
+export type BulkResult =
+  | { ok: true; aggiornati: number; percorsiInseriti: number }
+  | { ok: false; error: string }
+
+export async function updateMassivo(ids: number[], valori: Record<string, string>): Promise<BulkResult> {
+  await checkAccess()
+  if (!ids.length) return { ok: false, error: 'Nessun articolo nella lista filtrata.' }
+
+  await ensureTable()
+  const db = await getConnection()
+  try {
+    const sets: string[] = []
+    const params: (string | number | null)[] = []
+
+    for (const [k, col] of Object.entries(CAMPI_TESTO)) {
+      const v = valori[k]
+      if (v === undefined || v === '') continue
+      if (isNullToken(v)) { sets.push(`${col} = ?`); params.push(TESTO_NULLABLE.has(k) ? null : '') }
+      else { sets.push(`${col} = ?`); params.push(v) }
+    }
+    for (const [k, col] of Object.entries(CAMPI_NUMERICI)) {
+      const v = valori[k]
+      if (v === undefined || v === '') continue
+      if (isNullToken(v)) { sets.push(`${col} = ?`); params.push(NUMERICI_NULLABLE.has(k) ? null : 0) }
+      else {
+        const n = parseFloat(v)
+        if (!isNaN(n)) { sets.push(`${col} = ?`); params.push(n) }
+      }
+    }
+    for (const [k, col] of Object.entries(CAMPI_BOOL)) {
+      const v = valori[k]
+      if (v === '0' || v === '1') { sets.push(`${col} = ?`); params.push(parseInt(v)) }
+    }
+    if (valori.fornitore) {
+      const raw = valori.fornitore.trim()
+      if (isNullToken(raw)) {
+        sets.push('fornitore_id = ?'); params.push(null)
+      } else {
+        let fornitoreId: number | null = null
+        if (/^\d+$/.test(raw)) {
+          fornitoreId = parseInt(raw)
+        } else {
+          const [rows] = await db.query('SELECT id FROM fornitori WHERE ragione_sociale = ? LIMIT 1', [raw])
+          const r = (rows as { id: number }[])[0]
+          if (r) fornitoreId = r.id
+        }
+        if (fornitoreId != null) { sets.push('fornitore_id = ?'); params.push(fornitoreId) }
+      }
+    }
+
+    let aggiornati = 0
+    if (sets.length > 0) {
+      const placeholders = ids.map(() => '?').join(',')
+      const [res] = await db.query(
+        `UPDATE listini SET ${sets.join(', ')} WHERE id IN (${placeholders})`,
+        [...params, ...ids]
+      ) as [{ affectedRows: number }, unknown]
+      aggiornati = res.affectedRows
+    }
+
+    let percorsiInseriti = 0
+    const pc = (valori.percorso_categoria ?? '').trim()
+    const ps = (valori.percorso_sottocategoria ?? '').trim()
+    if (pc) {
+      await ensurePercorsiTables(db)
+      for (const id of ids) {
+        const [r] = await db.execute(
+          `INSERT IGNORE INTO listini_percorsi (listino_id, categoria, sottocategoria) VALUES (?, ?, ?)`,
+          [id, pc, ps]
+        ) as [{ affectedRows: number }, unknown]
+        if (r.affectedRows > 0) percorsiInseriti++
+      }
+    }
+
+    revalidatePath('/area-lavoro/listini')
+    return { ok: true, aggiornati, percorsiInseriti }
+  } finally { await db.end() }
+}
+
 export async function updateSchedaTecnica(_: MutResult | null, fd: FormData): Promise<MutResult> {
   await checkAccess()
 
