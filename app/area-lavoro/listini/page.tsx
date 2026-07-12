@@ -7,20 +7,7 @@ import ListiniClient, { type Articolo, type Fornitore } from './listini-client'
 import type { Metadata } from 'next'
 import { ensurePercorsiTables, type Percorso } from '@/lib/percorsi'
 import { getFiltriModelloLabels } from '@/lib/filtri-modello-labels'
-import fs from 'fs'
-import path from 'path'
-
-function getLoghiDisponibili(): string[] {
-  try {
-    const dir = path.join(process.cwd(), 'public', 'images', 'brand', 'partners')
-    return fs.readdirSync(dir)
-      .filter(f => /\.(png|jpe?g|webp|svg)$/i.test(f))
-      .sort((a, b) => a.localeCompare(b))
-      .map(f => `/images/brand/partners/${f}`)
-  } catch {
-    return []
-  }
-}
+import { LOGHI_PARTNERS } from '@/lib/loghi-partners'
 
 export const metadata: Metadata = {
   title: 'Listini',
@@ -178,7 +165,7 @@ async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[]
     }
 
     const filtriLabels = await getFiltriModelloLabels(db)
-    const loghiDisponibili = getLoghiDisponibili()
+    const loghiDisponibili = LOGHI_PARTNERS
 
     return { articoli, fornitori, percorsiPerListino, filtriLabels, loghiDisponibili }
   } finally {

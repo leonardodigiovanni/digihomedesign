@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "node scripts/generate-loghi-partners.mjs",
     "dev": "cross-env NODE_OPTIONS=--max-old-space-size=6144 next dev --experimental-https --hostname 0.0.0.0 --webpack --disable-source-maps",
+    "prebuild": "node scripts/generate-loghi-partners.mjs",
     "build": "cross-env NODE_OPTIONS=--max-old-space-size=6144 next build",
     "start": "next start --hostname 0.0.0.0",
     "lint": "eslint"
