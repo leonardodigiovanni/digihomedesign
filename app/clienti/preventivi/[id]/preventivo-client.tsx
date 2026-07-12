@@ -539,6 +539,7 @@ function ArticoloForm({
 
   const [filtriModelloAttivi, setFiltriModelloAttivi] = useState<Set<number>>(new Set())
   const [schemaFiltro, setSchemaFiltro] = useState<string | null>(null)
+  const [marcheAttive, setMarcheAttive] = useState<Set<string>>(new Set())
 
   const marche = useMemo(() => {
     let base = postClassifica
@@ -576,9 +577,10 @@ function ArticoloForm({
       base = base.filter(m => [...filtriModelloAttivi].every(n => flagN(m, n) === 1))
     }
     if (marca) base = base.filter(m => m.produttore === marca)
+    if (marcheAttive.size > 0) base = base.filter(m => marcheAttive.has(m.produttore))
     if (serieFiltro) base = base.filter(m => m.serie === serieFiltro)
     return base
-  }, [modelli, filtriModelloAttivi, marca, serieFiltro, isCaratteristicaMode])
+  }, [modelli, filtriModelloAttivi, marca, marcheAttive, serieFiltro, isCaratteristicaMode])
 
   const thumbnailsData = useMemo(() => {
     let base = postClassifica.filter(l => l.principale === 1)
@@ -586,6 +588,7 @@ function ArticoloForm({
       base = base.filter(m => [...filtriModelloAttivi].every(n => flagN(m, n) === 1))
     }
     if (marca) base = base.filter(l => l.produttore === marca)
+    if (marcheAttive.size > 0) base = base.filter(l => marcheAttive.has(l.produttore))
     const map = new Map<string, number[]>()
     for (const m of base) {
       if (!m.schema_url) continue
@@ -596,7 +599,7 @@ function ArticoloForm({
     return [...map.entries()]
       .map(([url, ids]) => ({ url, count: ids.length, singleId: ids.length === 1 ? ids[0] : null }))
       .sort((a, b) => b.count - a.count)
-  }, [postClassifica, filtriModelloAttivi, marca])
+  }, [postClassifica, filtriModelloAttivi, marca, marcheAttive])
 
   const modelliConSchema = useMemo(() => {
     if (!schemaFiltro) return modelliFiltrati
@@ -613,7 +616,7 @@ function ArticoloForm({
     setTipo(t)
     setSottocatFiltro(''); setFaseFiltro(''); setMaterialeFiltro('')
     setTipologiaFiltro(''); setAmbienteFiltro(''); setFasciaFiltro('')
-    setMarca(''); setSerieFiltro(''); setListinoId(''); setFiltriModelloAttivi(new Set()); setSchemaFiltro(null)
+    setMarca(''); setSerieFiltro(''); setListinoId(''); setFiltriModelloAttivi(new Set()); setSchemaFiltro(null); setMarcheAttive(new Set())
   }
 
   function handleChangeMarca(m: string) {
@@ -819,6 +822,50 @@ function ArticoloForm({
                     style={inp}
                   />
                 </div>
+
+                {/* Linguette marche (selezione multipla in OR, indipendente dalla lookup sopra) */}
+                {/* Visibile se c'è scelta reale, o se resta 1 sola marca ma con una selezione attiva (per far vedere cosa è sopravvissuto agli altri filtri) */}
+                {(marche.length > 1 || (marche.length > 0 && marcheAttive.size > 0)) && (() => {
+                  const H = 28, THUMB = 22
+                  return (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                      <span style={{ fontSize: 11, color: '#4a8a4a', whiteSpace: 'nowrap' }}>Marche</span>
+                      <div style={{
+                        display: 'flex', alignItems: 'center', gap: 0,
+                        background: '#e8f7e8', border: '1px solid #b8ddb8', borderRadius: 10,
+                        padding: '6px 12px', overflow: 'hidden',
+                      }}>
+                      <button type="button" disabled={marcheAttive.size === 0}
+                        className={`${marcheAttive.size > 0 ? 'btn-red' : 'btn-gray'} btn-icon fs-11`}
+                        style={{ flexShrink: 0 }}
+                        onClick={() => { setMarcheAttive(new Set()); setSchemaFiltro(null); setListinoId('') }}
+                      >✕</button>
+                      <div style={{ width: 1, height: 20, background: '#c8e8c8', flexShrink: 0, margin: '0 10px' }} />
+                      <div style={{ display: 'flex', gap: 6, overflowX: 'auto', WebkitOverflowScrolling: 'touch' as const, paddingBottom: 2 }}>
+                        {marche.map(p => {
+                          const attiva = marcheAttive.has(p)
+                          const W = Math.max(THUMB + 8 + p.length * 7, 90)
+                          const toggle = () => {
+                            setMarcheAttive(prev => { const s = new Set(prev); s.has(p) ? s.delete(p) : s.add(p); return s })
+                            setSchemaFiltro(null); setListinoId('')
+                          }
+                          return (
+                            <div key={p} role="button" tabIndex={0}
+                              onClick={toggle}
+                              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') toggle() }}
+                              style={{ position: 'relative', width: W, height: H, borderRadius: H / 2, flexShrink: 0, background: attiva ? '#1e5c1e' : '#3a3a3a', transition: 'background 0.2s', cursor: 'pointer', userSelect: 'none' }}
+                            >
+                              <span style={{ position: 'absolute', left: 8, top: 0, bottom: 0, display: 'flex', alignItems: 'center', fontSize: 10, fontFamily: 'inherit', fontWeight: 700, color: attiva ? '#7dda7d' : 'transparent', transition: 'color 0.2s', whiteSpace: 'nowrap', pointerEvents: 'none' }}>{p}</span>
+                              <span style={{ position: 'absolute', right: 8, top: 0, bottom: 0, display: 'flex', alignItems: 'center', fontSize: 10, fontFamily: 'inherit', fontWeight: 400, color: attiva ? 'transparent' : '#aaaaaa', transition: 'color 0.2s', whiteSpace: 'nowrap', pointerEvents: 'none' }}>{p}</span>
+                              <div style={{ position: 'absolute', width: THUMB, height: THUMB, borderRadius: '50%', background: '#fff', top: (H - THUMB) / 2, left: attiva ? W - THUMB - 3 : 3, transition: 'left 0.2s', boxShadow: '0 1px 4px rgba(0,0,0,0.5)' }} />
+                            </div>
+                          )
+                        })}
+                      </div>
+                      </div>
+                    </div>
+                  )
+                })()}
 
                 {/* Serie */}
                 <div>

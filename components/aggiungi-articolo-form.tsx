@@ -118,6 +118,7 @@ export default function AggiungiArticoloForm({
   const [catFiltro, setCatFiltro] = useState('')
   const [filtriModelloAttivi, setFiltriModelloAttivi] = useState<Set<number>>(new Set(lockedFiltriModello ?? []))
   const [schemaFiltro, setSchemaFiltro] = useState<string | null>(null)
+  const [marcheAttive, setMarcheAttive] = useState<Set<string>>(new Set())
   const [selectedId, setSelectedId] = useState<number>(articoli[0]?.id ?? 0)
   const [result, setResult] = useState<CartResult | null>(null)
   const [isPending, startTransition] = useTransition()
@@ -209,9 +210,10 @@ export default function AggiungiArticoloForm({
   const artBase = useMemo(() => {
     let lista = postClassifica
     if (produttoreFiltro) lista = lista.filter(a => a.produttore === produttoreFiltro)
+    if (marcheAttive.size > 0) lista = lista.filter(a => marcheAttive.has(a.produttore))
     if (serieFiltro) lista = lista.filter(a => a.serie === serieFiltro)
     return lista
-  }, [postClassifica, produttoreFiltro, serieFiltro])
+  }, [postClassifica, produttoreFiltro, marcheAttive, serieFiltro])
 
   const haFiltriModello = useMemo(
     () => FILTRI_MODELLO_N.some(n => artBase.some(a => flagN(a, n) === 1)),
@@ -251,12 +253,12 @@ export default function AggiungiArticoloForm({
   useEffect(() => {
     setSchemaFiltro(null)
     setFiltriModelloAttivi(new Set(lockedFiltriModello ?? []))
-  }, [sottocatFiltro, faseFiltro, materialeFiltro, tipologiaFiltro, ambienteFiltro, fasciaFiltro, produttoreFiltro, serieFiltro])
+  }, [sottocatFiltro, faseFiltro, materialeFiltro, tipologiaFiltro, ambienteFiltro, fasciaFiltro, produttoreFiltro, marcheAttive, serieFiltro])
 
   useEffect(() => {
     setSottocatFiltro(''); setFaseFiltro(''); setMaterialeFiltro(''); setTipologiaFiltro('')
     setAmbienteFiltro(''); setFasciaFiltro(''); setProduttoreFiltro(''); setSerieFiltro('')
-    setSchemaFiltro(null); setFiltriModelloAttivi(new Set(lockedFiltriModello ?? []))
+    setSchemaFiltro(null); setFiltriModelloAttivi(new Set(lockedFiltriModello ?? [])); setMarcheAttive(new Set())
   }, [catFiltro])
 
   // Se cambia il PDF aperto (nuovo set di flag ereditati), riallinea i chip
@@ -422,6 +424,42 @@ export default function AggiungiArticoloForm({
               <SelectLookup value={serieFiltro} onChange={setSerieFiltro} options={[{ value: '', label: '— Tutte —' }, ...serie.map(s => ({ value: s, label: s }))]} style={inpStyle} />
             </div>
           </div>
+          {/* Linguette marche (selezione multipla in OR, indipendente dalla lookup Marca sopra) */}
+          {/* Visibile se c'è scelta reale, o se resta 1 sola marca ma con una selezione attiva (per far vedere cosa è sopravvissuto agli altri filtri) */}
+          {(produttori.length > 1 || (produttori.length > 0 && marcheAttive.size > 0)) && (() => {
+            const H = 28, THUMB = 22
+            return (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                <span style={{ fontSize: 11, color: '#4a8a4a', whiteSpace: 'nowrap' }}>Marche</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 0, background: '#e8f7e8', border: '1px solid #b8ddb8', borderRadius: 10, padding: '6px 12px', overflow: 'hidden' }}>
+                  <button type="button" disabled={marcheAttive.size === 0}
+                    className={`${marcheAttive.size > 0 ? 'btn-red' : 'btn-gray'} btn-icon fs-11`}
+                    style={{ flexShrink: 0 }}
+                    onClick={() => setMarcheAttive(new Set())}
+                  >✕</button>
+                  <div style={{ width: 1, height: 20, background: '#c8e8c8', flexShrink: 0, margin: '0 10px' }} />
+                  <div style={{ display: 'flex', gap: 6, overflowX: 'auto', WebkitOverflowScrolling: 'touch' as const, paddingBottom: 2 }}>
+                    {produttori.map(p => {
+                      const attiva = marcheAttive.has(p)
+                      const W = Math.max(THUMB + 8 + p.length * 7, 90)
+                      const toggle = () => setMarcheAttive(prev => { const s = new Set(prev); s.has(p) ? s.delete(p) : s.add(p); return s })
+                      return (
+                        <div key={p} role="button" tabIndex={0}
+                          onClick={toggle}
+                          onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') toggle() }}
+                          style={{ position: 'relative', width: W, height: H, borderRadius: H / 2, flexShrink: 0, background: attiva ? '#1e5c1e' : '#3a3a3a', transition: 'background 0.2s', cursor: 'pointer', userSelect: 'none' }}
+                        >
+                          <span style={{ position: 'absolute', left: 8, top: 0, bottom: 0, display: 'flex', alignItems: 'center', fontSize: 10, fontFamily: 'inherit', fontWeight: 700, color: attiva ? '#7dda7d' : 'transparent', transition: 'color 0.2s', whiteSpace: 'nowrap', pointerEvents: 'none' }}>{p}</span>
+                          <span style={{ position: 'absolute', right: 8, top: 0, bottom: 0, display: 'flex', alignItems: 'center', fontSize: 10, fontFamily: 'inherit', fontWeight: 400, color: attiva ? 'transparent' : '#aaaaaa', transition: 'color 0.2s', whiteSpace: 'nowrap', pointerEvents: 'none' }}>{p}</span>
+                          <div style={{ position: 'absolute', width: THUMB, height: THUMB, borderRadius: '50%', background: '#fff', top: (H - THUMB) / 2, left: attiva ? W - THUMB - 3 : 3, transition: 'left 0.2s', boxShadow: '0 1px 4px rgba(0,0,0,0.5)' }} />
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
+            )
+          })()}
           {/* Linguette filtro modello */}
           {haFiltriModello && (() => {
             const H = 28, THUMB = 22
