@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import { ensurePercorsiTables } from '@/lib/percorsi'
 import { readSettings } from '@/lib/settings'
+import { getFiltriModelloLabels } from '@/lib/filtri-modello-labels'
 import type { Metadata } from 'next'
 import CarrelloComputometricoClient from './carrello-client'
 import type { ArticoloComputabile } from './carrello-client'
@@ -21,10 +22,16 @@ async function getArticoli(): Promise<ArticoloComputabile[]> {
     await db.execute(`ALTER TABLE listini ADD COLUMN tipologia     VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
     await db.execute(`ALTER TABLE listini ADD COLUMN ambiente      VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
     await db.execute(`ALTER TABLE listini ADD COLUMN fascia        VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
-    await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_1 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
-    await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_2 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
-    await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_3 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
-    await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_4 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_1  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_2  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_3  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_4  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_5  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_6  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_7  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_8  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_9  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_10 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
 
     await ensurePercorsiTables(db)
 
@@ -40,6 +47,8 @@ async function getArticoli(): Promise<ArticoloComputabile[]> {
              l.richiede_tipo_colore, l.richiede_tipo_colore_acc, l.richiede_tipo_vetro, l.richiede_tipo_montaggio,
              l.minimo,
              l.Filtro_1 AS filtro_1, l.Filtro_2 AS filtro_2, l.Filtro_3 AS filtro_3, l.Filtro_4 AS filtro_4,
+             l.Filtro_5 AS filtro_5, l.Filtro_6 AS filtro_6, l.Filtro_7 AS filtro_7, l.Filtro_8 AS filtro_8,
+             l.Filtro_9 AS filtro_9, l.Filtro_10 AS filtro_10,
              l.schema_url
       FROM listini l
       LEFT JOIN listini_percorsi lp ON lp.listino_id = l.id
@@ -77,6 +86,12 @@ async function getArticoli(): Promise<ArticoloComputabile[]> {
         filtro_2: Number(r.filtro_2 ?? 0),
         filtro_3: Number(r.filtro_3 ?? 0),
         filtro_4: Number(r.filtro_4 ?? 0),
+        filtro_5: Number(r.filtro_5 ?? 0),
+        filtro_6: Number(r.filtro_6 ?? 0),
+        filtro_7: Number(r.filtro_7 ?? 0),
+        filtro_8: Number(r.filtro_8 ?? 0),
+        filtro_9: Number(r.filtro_9 ?? 0),
+        filtro_10: Number(r.filtro_10 ?? 0),
         schema_url: r.schema_url != null ? String(r.schema_url) : null,
       }))
   } catch { return [] }
@@ -148,14 +163,18 @@ export default async function Page() {
     if (!(rolePermissions['cliente'] ?? []).includes(54)) redirect('/aiuto/guida-computometrico')
   }
 
-  const [articoli, initialRighe] = await Promise.all([
+  const [articoli, initialRighe, filtriLabels] = await Promise.all([
     getArticoli(),
     username ? getCarrelloRighe(username) : Promise.resolve([]),
+    (async () => {
+      const db = await getConnection()
+      try { return await getFiltriModelloLabels(db) } catch { return {} } finally { await db.end() }
+    })(),
   ])
 
   return (
     <div className="page-content-wrapper" style={{ margin: '8px 0', padding: '0 0 8px' }}>
-      <CarrelloComputometricoClient articoli={articoli} isLoggedIn={!!username} initialRighe={initialRighe} />
+      <CarrelloComputometricoClient articoli={articoli} isLoggedIn={!!username} initialRighe={initialRighe} filtriLabels={filtriLabels} />
     </div>
   )
 }

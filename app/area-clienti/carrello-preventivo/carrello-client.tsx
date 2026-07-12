@@ -36,6 +36,12 @@ export type ListinoItem = {
   filtro_2?: number
   filtro_3?: number
   filtro_4?: number
+  filtro_5?: number
+  filtro_6?: number
+  filtro_7?: number
+  filtro_8?: number
+  filtro_9?: number
+  filtro_10?: number
   schema_url?: string | null
   sottocategoria?: string | null
   fase?: string | null
@@ -189,6 +195,7 @@ export default function CarrelloClient({
   stampaHref = '/area-clienti/carrello-preventivo/stampa',
   postSaveHref,
   isApp,
+  filtriLabels,
 }: {
   articoli: ArticoloCarrello[]
   isLoggedIn: boolean
@@ -200,6 +207,7 @@ export default function CarrelloClient({
   stampaHref?: string
   postSaveHref?: string
   isApp?: boolean
+  filtriLabels?: Record<number, string>
 }) {
   const router = useRouter()
   const [delPending,    startDel]    = useTransition()
@@ -672,6 +680,7 @@ export default function CarrelloClient({
               }}
               onClose={onClose}
               isApp={isApp}
+              filtriLabels={filtriLabels}
             />
           </div>
         </div>

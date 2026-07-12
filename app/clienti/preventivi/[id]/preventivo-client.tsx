@@ -31,6 +31,12 @@ export type ListinoItem = {
   filtro_2?: number
   filtro_3?: number
   filtro_4?: number
+  filtro_5?: number
+  filtro_6?: number
+  filtro_7?: number
+  filtro_8?: number
+  filtro_9?: number
+  filtro_10?: number
   schema_url?: string | null
   sottocategoria?: string | null
   fase?: string | null
@@ -388,18 +394,20 @@ function ClienteSelector({ preventivo_id, cliente_id, clienti: clientiInit, isAp
 }
 
 // ─── Filtri modello (linguette) ───────────────────────────────────────────────
+// Le linguette rispecchiano i 10 flag Filtro_1..Filtro_10 usati anche nei cataloghi:
+// stessa numerazione, stesse label (tabella filtri_modello_labels), nessun significato hardcoded qui.
 
-const FILTRI_MODELLO: { label: string; key: 'filtro_1' | 'filtro_2' | 'filtro_3' | 'filtro_4' }[] = [
-  { label: '1 Anta',    key: 'filtro_1' },
-  { label: '2 Ante',   key: 'filtro_2' },
-  { label: '3+ Ante',  key: 'filtro_3' },
-  { label: 'Sopraluce', key: 'filtro_4' },
-]
+const FILTRI_MODELLO_N = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const
+
+function flagN(l: ListinoItem, n: number): number {
+  const key = `filtro_${n}` as keyof ListinoItem
+  return (l[key] as number | undefined) ?? 0
+}
 
 // ─── Form aggiunta articolo ───────────────────────────────────────────────────
 
 function ArticoloForm({
-  preventivo_id, listini, prefill, parentId = null, parentArt = null, existingChildTypes = [], gapTypeFilter = null, altriParentIds = [], onClose, isStaff = true, isApp, percorsiPerListino = {},
+  preventivo_id, listini, prefill, parentId = null, parentArt = null, existingChildTypes = [], gapTypeFilter = null, altriParentIds = [], onClose, isStaff = true, isApp, percorsiPerListino = {}, filtriLabels,
 }: {
   preventivo_id: number
   listini: ListinoItem[]
@@ -413,6 +421,7 @@ function ArticoloForm({
   isStaff?: boolean
   isApp?: boolean
   percorsiPerListino?: Record<number, PercorsoEntry[]>
+  filtriLabels?: Record<number, string>
 }) {
   const router = useRouter()
   const [pending, startT] = useTransition()
@@ -528,16 +537,13 @@ function ArticoloForm({
   }, [postClassifica, marca])
   // ────────────────────────────────────────────────────────────────────────────
 
-  const [filtriModelloAttivi, setFiltriModelloAttivi] = useState<Set<string>>(new Set())
+  const [filtriModelloAttivi, setFiltriModelloAttivi] = useState<Set<number>>(new Set())
   const [schemaFiltro, setSchemaFiltro] = useState<string | null>(null)
 
   const marche = useMemo(() => {
     let base = postClassifica
     if (filtriModelloAttivi.size > 0) {
-      base = base.filter(l => [...filtriModelloAttivi].every(lbl => {
-        const f = FILTRI_MODELLO.find(f => f.label === lbl)
-        return f && (l[f.key] ?? 0) === 1
-      }))
+      base = base.filter(l => [...filtriModelloAttivi].every(n => flagN(l, n) === 1))
     }
     if (schemaFiltro) base = base.filter(l => l.schema_url === schemaFiltro)
     return [...new Set(base.map(l => l.produttore))].filter(Boolean).sort()
@@ -554,8 +560,8 @@ function ArticoloForm({
   const haVetro = TIPI_CON_VETRO.has(tipo.toLowerCase())
 
   const haFiltriModello = useMemo(
-    () => !isCaratteristicaMode && FILTRI_MODELLO.some(f =>
-      postClassifica.some(m => (m[f.key] ?? 0) === 1)
+    () => !isCaratteristicaMode && FILTRI_MODELLO_N.some(n =>
+      postClassifica.some(m => flagN(m, n) === 1)
     ),
     [postClassifica, isCaratteristicaMode]
   )
@@ -563,17 +569,11 @@ function ArticoloForm({
   const modelliFiltrati = useMemo(() => {
     if (isCaratteristicaMode) {
       if (filtriModelloAttivi.size === 0) return modelli
-      return modelli.filter(m => [...filtriModelloAttivi].every(lbl => {
-        const f = FILTRI_MODELLO.find(f => f.label === lbl)
-        return f && (m[f.key] ?? 0) === 1
-      }))
+      return modelli.filter(m => [...filtriModelloAttivi].every(n => flagN(m, n) === 1))
     }
     let base = modelli
     if (filtriModelloAttivi.size > 0) {
-      base = base.filter(m => [...filtriModelloAttivi].every(lbl => {
-        const f = FILTRI_MODELLO.find(f => f.label === lbl)
-        return f && (m[f.key] ?? 0) === 1
-      }))
+      base = base.filter(m => [...filtriModelloAttivi].every(n => flagN(m, n) === 1))
     }
     if (marca) base = base.filter(m => m.produttore === marca)
     if (serieFiltro) base = base.filter(m => m.serie === serieFiltro)
@@ -583,10 +583,7 @@ function ArticoloForm({
   const thumbnailsData = useMemo(() => {
     let base = postClassifica.filter(l => l.principale === 1)
     if (filtriModelloAttivi.size > 0) {
-      base = base.filter(m => [...filtriModelloAttivi].every(lbl => {
-        const f = FILTRI_MODELLO.find(f => f.label === lbl)
-        return f && (m[f.key] ?? 0) === 1
-      }))
+      base = base.filter(m => [...filtriModelloAttivi].every(n => flagN(m, n) === 1))
     }
     if (marca) base = base.filter(l => l.produttore === marca)
     const map = new Map<string, number[]>()
@@ -837,8 +834,8 @@ function ArticoloForm({
                 {/* Linguette filtro */}
                 {haFiltriModello && (() => {
                   const H = 28, THUMB = 22
-                  const chipsDisponibili = FILTRI_MODELLO.filter(f =>
-                    postClassifica.some(m => (m[f.key] ?? 0) === 1)
+                  const chipsDisponibili = FILTRI_MODELLO_N.filter(n =>
+                    postClassifica.some(m => flagN(m, n) === 1)
                   )
                   return (
                     <div style={{
@@ -853,20 +850,22 @@ function ArticoloForm({
                       >✕</button>
                       <div style={{ width: 1, height: 20, background: '#ddd', flexShrink: 0, margin: '0 10px' }} />
                       <div style={{ display: 'flex', gap: 6, overflowX: 'auto', WebkitOverflowScrolling: 'touch' as const, paddingBottom: 2 }}>
-                        {chipsDisponibili.map(f => {
-                          const attiva = filtriModelloAttivi.has(f.label)
-                          const W = Math.max(THUMB + 8 + f.label.length * 7, 90)
+                        {chipsDisponibili.map(n => {
+                          const attiva = filtriModelloAttivi.has(n)
+                          const chipLabel = filtriLabels?.[n] ?? `F${n}`
+                          const W = Math.max(THUMB + 8 + chipLabel.length * 7, 90)
+                          const toggle = () => {
+                            setFiltriModelloAttivi(prev => { const s = new Set(prev); s.has(n) ? s.delete(n) : s.add(n); return s })
+                            setSchemaFiltro(null); setMarca(''); setListinoId('')
+                          }
                           return (
-                            <div key={f.label} role="button" tabIndex={0}
-                              onClick={() => {
-                                setFiltriModelloAttivi(prev => { const n = new Set(prev); n.has(f.label) ? n.delete(f.label) : n.add(f.label); return n })
-                                setSchemaFiltro(null); setMarca(''); setListinoId('')
-                              }}
-                              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { setFiltriModelloAttivi(prev => { const n = new Set(prev); n.has(f.label) ? n.delete(f.label) : n.add(f.label); return n }); setSchemaFiltro(null); setMarca(''); setListinoId('') } }}
+                            <div key={n} role="button" tabIndex={0}
+                              onClick={toggle}
+                              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') toggle() }}
                               style={{ position: 'relative', width: W, height: H, borderRadius: H / 2, flexShrink: 0, background: attiva ? '#1e5c1e' : '#3a3a3a', transition: 'background 0.2s', cursor: 'pointer', userSelect: 'none' }}
                             >
-                              <span style={{ position: 'absolute', left: 8, top: 0, bottom: 0, display: 'flex', alignItems: 'center', fontSize: 10, fontFamily: 'inherit', fontWeight: 700, color: attiva ? '#7dda7d' : 'transparent', transition: 'color 0.2s', whiteSpace: 'nowrap', pointerEvents: 'none' }}>{f.label}</span>
-                              <span style={{ position: 'absolute', right: 8, top: 0, bottom: 0, display: 'flex', alignItems: 'center', fontSize: 10, fontFamily: 'inherit', fontWeight: 400, color: attiva ? 'transparent' : '#aaaaaa', transition: 'color 0.2s', whiteSpace: 'nowrap', pointerEvents: 'none' }}>{f.label}</span>
+                              <span style={{ position: 'absolute', left: 8, top: 0, bottom: 0, display: 'flex', alignItems: 'center', fontSize: 10, fontFamily: 'inherit', fontWeight: 700, color: attiva ? '#7dda7d' : 'transparent', transition: 'color 0.2s', whiteSpace: 'nowrap', pointerEvents: 'none' }}>{chipLabel}</span>
+                              <span style={{ position: 'absolute', right: 8, top: 0, bottom: 0, display: 'flex', alignItems: 'center', fontSize: 10, fontFamily: 'inherit', fontWeight: 400, color: attiva ? 'transparent' : '#aaaaaa', transition: 'color 0.2s', whiteSpace: 'nowrap', pointerEvents: 'none' }}>{chipLabel}</span>
                               <div style={{ position: 'absolute', width: THUMB, height: THUMB, borderRadius: '50%', background: '#fff', top: (H - THUMB) / 2, left: attiva ? W - THUMB - 3 : 3, transition: 'left 0.2s', boxShadow: '0 1px 4px rgba(0,0,0,0.5)' }} />
                             </div>
                           )
@@ -1541,7 +1540,7 @@ function matchesPercorsi(
 export default function PreventivoClient({
   preventivo, articoli, listini, clienti, isStaff = true,
   clienteEmail = '', clienteCellulare = '', backHref, stampaHref, isApp,
-  percorsiPerListino = {},
+  percorsiPerListino = {}, filtriLabels,
 }: {
   preventivo: Preventivo
   articoli: Articolo[]
@@ -1554,6 +1553,7 @@ export default function PreventivoClient({
   stampaHref?: string
   isApp?: boolean
   percorsiPerListino?: Record<number, PercorsoEntry[]>
+  filtriLabels?: Record<number, string>
 }) {
   const router = useRouter()
   const [showForm, setShowForm]         = useState(false)
@@ -2346,6 +2346,7 @@ export default function PreventivoClient({
           isStaff={isStaff}
           isApp={isApp}
           percorsiPerListino={percorsiPerListino}
+          filtriLabels={filtriLabels}
         />
       )}
 

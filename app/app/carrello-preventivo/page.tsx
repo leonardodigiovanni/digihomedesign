@@ -9,6 +9,7 @@ import { extractAvgColor, colorFromDesc } from '@/lib/extract-color'
 import { ensurePercorsiTables } from '@/lib/percorsi'
 import { readSettings } from '@/lib/settings'
 import SetActionBar from '@/app/app/set-action-bar'
+import { getFiltriModelloLabels } from '@/lib/filtri-modello-labels'
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = { title: 'Carrello Preventivo' }
@@ -172,6 +173,8 @@ export default async function Page() {
                richiede_tipo_colore, richiede_tipo_colore_acc, richiede_tipo_vetro, richiede_tipo_montaggio,
                minimo,
                Filtro_1 AS filtro_1, Filtro_2 AS filtro_2, Filtro_3 AS filtro_3, Filtro_4 AS filtro_4,
+               Filtro_5 AS filtro_5, Filtro_6 AS filtro_6, Filtro_7 AS filtro_7, Filtro_8 AS filtro_8,
+               Filtro_9 AS filtro_9, Filtro_10 AS filtro_10,
                schema_url
         FROM listini
         WHERE disponibile = 1 AND preventivabile = 1 AND principale = 1
@@ -205,9 +208,21 @@ export default async function Page() {
         filtro_2: Number(l.filtro_2 ?? 0),
         filtro_3: Number(l.filtro_3 ?? 0),
         filtro_4: Number(l.filtro_4 ?? 0),
+        filtro_5: Number(l.filtro_5 ?? 0),
+        filtro_6: Number(l.filtro_6 ?? 0),
+        filtro_7: Number(l.filtro_7 ?? 0),
+        filtro_8: Number(l.filtro_8 ?? 0),
+        filtro_9: Number(l.filtro_9 ?? 0),
+        filtro_10: Number(l.filtro_10 ?? 0),
         schema_url: l.schema_url != null ? String(l.schema_url) : null,
       }))
     } finally { await dbL.end() }
+  } catch {}
+
+  let filtriLabels: Record<number, string> = {}
+  try {
+    const dbF = await getConnection()
+    try { filtriLabels = await getFiltriModelloLabels(dbF) } finally { await dbF.end() }
   } catch {}
 
   let scontoClientePct = 0
@@ -262,6 +277,7 @@ export default async function Page() {
         postSaveHref="/app/carrello-preventivo"
         isApp={true}
         percorsiPerListino={percorsiPerListino}
+        filtriLabels={filtriLabels}
       />
       <SetActionBar>
         <Link href="/app/cataloghi" className="btn-black-app fs-12" style={{ flex: 1 }}>

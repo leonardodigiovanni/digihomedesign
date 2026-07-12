@@ -13,6 +13,12 @@ export type VoceForMatching = {
   filtro_2?: number
   filtro_3?: number
   filtro_4?: number
+  filtro_5?: number
+  filtro_6?: number
+  filtro_7?: number
+  filtro_8?: number
+  filtro_9?: number
+  filtro_10?: number
 }
 
 export type MatchOpts = {
@@ -29,10 +35,16 @@ export async function matchArticoliPerVoce(voceList: VoceForMatching[], db: any,
 
   await db.execute(`ALTER TABLE listini ADD COLUMN principale TINYINT(1) NOT NULL DEFAULT 1`).catch(() => {})
   await db.execute(`ALTER TABLE listini ADD COLUMN caratteristica TINYINT(1) NOT NULL DEFAULT 1`).catch(() => {})
-  await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_1 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
-  await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_2 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
-  await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_3 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
-  await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_4 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_1  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_2  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_3  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_4  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_5  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_6  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_7  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_8  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_9  TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN Filtro_10 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
   await db.execute(`ALTER TABLE listini ADD COLUMN sottocategoria VARCHAR(100) NULL`).catch(() => {})
   await db.execute(`ALTER TABLE listini ADD COLUMN fase VARCHAR(100) NULL`).catch(() => {})
   await db.execute(`ALTER TABLE listini ADD COLUMN materiale VARCHAR(100) NULL`).catch(() => {})
@@ -54,10 +66,16 @@ export async function matchArticoliPerVoce(voceList: VoceForMatching[], db: any,
     if (voce.tipologia) { extraConds.push("(tipologia = ? OR tipologia IS NULL OR tipologia = '')"); extraParams.push(voce.tipologia) }
     if (voce.ambiente)  { extraConds.push("(ambiente = ? OR ambiente IS NULL OR ambiente = '')"); extraParams.push(voce.ambiente) }
     if (voce.fascia)    { extraConds.push("(fascia = ? OR fascia IS NULL OR fascia = '')");     extraParams.push(voce.fascia) }
-    if (voce.filtro_1 === 1) extraConds.push('Filtro_1 = 1')
-    if (voce.filtro_2 === 1) extraConds.push('Filtro_2 = 1')
-    if (voce.filtro_3 === 1) extraConds.push('Filtro_3 = 1')
-    if (voce.filtro_4 === 1) extraConds.push('Filtro_4 = 1')
+    if (voce.filtro_1  === 1) extraConds.push('Filtro_1 = 1')
+    if (voce.filtro_2  === 1) extraConds.push('Filtro_2 = 1')
+    if (voce.filtro_3  === 1) extraConds.push('Filtro_3 = 1')
+    if (voce.filtro_4  === 1) extraConds.push('Filtro_4 = 1')
+    if (voce.filtro_5  === 1) extraConds.push('Filtro_5 = 1')
+    if (voce.filtro_6  === 1) extraConds.push('Filtro_6 = 1')
+    if (voce.filtro_7  === 1) extraConds.push('Filtro_7 = 1')
+    if (voce.filtro_8  === 1) extraConds.push('Filtro_8 = 1')
+    if (voce.filtro_9  === 1) extraConds.push('Filtro_9 = 1')
+    if (voce.filtro_10 === 1) extraConds.push('Filtro_10 = 1')
     const extraWhere = extraConds.length > 0 ? ' AND ' + extraConds.join(' AND ') : ''
 
     try {

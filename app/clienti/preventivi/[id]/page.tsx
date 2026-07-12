@@ -5,6 +5,7 @@ import type { Metadata } from 'next'
 import PreventivoClient, { type Articolo, type ListinoItem, type Preventivo, type ClienteOption } from './preventivo-client'
 import { extractAvgColor } from '@/lib/extract-color'
 import { ensurePercorsiTables } from '@/lib/percorsi'
+import { getFiltriModelloLabels } from '@/lib/filtri-modello-labels'
 
 export const metadata: Metadata = { title: 'Dettaglio Preventivo' }
 
@@ -130,6 +131,8 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
              l.richiede_tipo_colore, l.richiede_tipo_colore_acc, l.richiede_tipo_vetro, l.richiede_tipo_montaggio,
              l.minimo,
              l.Filtro_1 AS filtro_1, l.Filtro_2 AS filtro_2, l.Filtro_3 AS filtro_3, l.Filtro_4 AS filtro_4,
+             l.Filtro_5 AS filtro_5, l.Filtro_6 AS filtro_6, l.Filtro_7 AS filtro_7, l.Filtro_8 AS filtro_8,
+             l.Filtro_9 AS filtro_9, l.Filtro_10 AS filtro_10,
              l.schema_url,
              COALESCE(f.ragione_sociale, '') AS fornitore_nome
       FROM listini l
@@ -170,6 +173,12 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       filtro_2: Number(l.filtro_2 ?? 0),
       filtro_3: Number(l.filtro_3 ?? 0),
       filtro_4: Number(l.filtro_4 ?? 0),
+      filtro_5: Number(l.filtro_5 ?? 0),
+      filtro_6: Number(l.filtro_6 ?? 0),
+      filtro_7: Number(l.filtro_7 ?? 0),
+      filtro_8: Number(l.filtro_8 ?? 0),
+      filtro_9: Number(l.filtro_9 ?? 0),
+      filtro_10: Number(l.filtro_10 ?? 0),
       schema_url: l.schema_url != null ? String(l.schema_url) : null,
     }))
     const _seenListiniIds = new Set<number>()
@@ -217,7 +226,9 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       clienteCellulare  = cInfo[0]?.telefono ?? ''
     }
 
-    return <PreventivoClient preventivo={preventivo} articoli={articoli} listini={listini} clienti={clienti} isStaff={true} clienteEmail={clienteEmail} clienteCellulare={clienteCellulare} percorsiPerListino={percorsiPerListino} />
+    const filtriLabels = await getFiltriModelloLabels(db)
+
+    return <PreventivoClient preventivo={preventivo} articoli={articoli} listini={listini} clienti={clienti} isStaff={true} clienteEmail={clienteEmail} clienteCellulare={clienteCellulare} percorsiPerListino={percorsiPerListino} filtriLabels={filtriLabels} />
   } catch {
     redirect('/clienti/preventivi')
   } finally {

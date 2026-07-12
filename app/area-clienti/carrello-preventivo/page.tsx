@@ -8,6 +8,7 @@ import { decompressCart } from '@/lib/cart-cookie'
 import { extractAvgColor, colorFromDesc } from '@/lib/extract-color'
 import { ensurePercorsiTables } from '@/lib/percorsi'
 import { readSettings } from '@/lib/settings'
+import { getFiltriModelloLabels } from '@/lib/filtri-modello-labels'
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = { title: 'Carrello Preventivo' }
@@ -344,6 +345,8 @@ export default async function Page() {
                l.richiede_tipo_colore, l.richiede_tipo_colore_acc, l.richiede_tipo_vetro, l.richiede_tipo_montaggio,
                l.minimo,
                l.Filtro_1 AS filtro_1, l.Filtro_2 AS filtro_2, l.Filtro_3 AS filtro_3, l.Filtro_4 AS filtro_4,
+               l.Filtro_5 AS filtro_5, l.Filtro_6 AS filtro_6, l.Filtro_7 AS filtro_7, l.Filtro_8 AS filtro_8,
+               l.Filtro_9 AS filtro_9, l.Filtro_10 AS filtro_10,
                l.schema_url
         FROM listini l
         LEFT JOIN listini_percorsi lp ON lp.listino_id = l.id
@@ -378,9 +381,21 @@ export default async function Page() {
         filtro_2: Number(l.filtro_2 ?? 0),
         filtro_3: Number(l.filtro_3 ?? 0),
         filtro_4: Number(l.filtro_4 ?? 0),
+        filtro_5: Number(l.filtro_5 ?? 0),
+        filtro_6: Number(l.filtro_6 ?? 0),
+        filtro_7: Number(l.filtro_7 ?? 0),
+        filtro_8: Number(l.filtro_8 ?? 0),
+        filtro_9: Number(l.filtro_9 ?? 0),
+        filtro_10: Number(l.filtro_10 ?? 0),
         schema_url: l.schema_url != null ? String(l.schema_url) : null,
       }))
     } finally { await dbL.end() }
+  } catch {}
+
+  let filtriLabels: Record<number, string> = {}
+  try {
+    const dbF = await getConnection()
+    try { filtriLabels = await getFiltriModelloLabels(dbF) } finally { await dbF.end() }
   } catch {}
 
   // Leggi sconto cliente se loggato
@@ -401,7 +416,7 @@ export default async function Page() {
   return (
     <div className="page-content-wrapper" style={{ margin: '8px 0', padding: '0 0 8px', color: '#444', fontSize: 15, lineHeight: 1.8 }}>
 
-<CarrelloClient articoli={articoli} isLoggedIn={isLoggedIn} scontoClientePct={scontoClientePct} caratteristiche={caratteristiche} listini={listini} percorsiPerListino={percorsiPerListino} />
+<CarrelloClient articoli={articoli} isLoggedIn={isLoggedIn} scontoClientePct={scontoClientePct} caratteristiche={caratteristiche} listini={listini} percorsiPerListino={percorsiPerListino} filtriLabels={filtriLabels} />
 
       {isStaff && (
         <div style={{ marginTop: 56, borderTop: '2px solid #e8e8e8', paddingTop: 40 }}>

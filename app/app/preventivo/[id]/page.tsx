@@ -5,6 +5,7 @@ import PreventivoClient, { type Articolo, type ListinoItem, type Preventivo } fr
 import PreventivoActionsBar from './actions-bar'
 import { extractAvgColor } from '@/lib/extract-color'
 import { ensurePercorsiTables } from '@/lib/percorsi'
+import { getFiltriModelloLabels } from '@/lib/filtri-modello-labels'
 
 function dateToLocal(d: unknown): string {
   if (!(d instanceof Date)) return String(d ?? '')
@@ -137,6 +138,8 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
              l.richiede_tipo_colore, l.richiede_tipo_colore_acc, l.richiede_tipo_vetro, l.richiede_tipo_montaggio,
              l.minimo,
              l.Filtro_1 AS filtro_1, l.Filtro_2 AS filtro_2, l.Filtro_3 AS filtro_3, l.Filtro_4 AS filtro_4,
+             l.Filtro_5 AS filtro_5, l.Filtro_6 AS filtro_6, l.Filtro_7 AS filtro_7, l.Filtro_8 AS filtro_8,
+             l.Filtro_9 AS filtro_9, l.Filtro_10 AS filtro_10,
              l.schema_url,
              COALESCE(f.ragione_sociale, '') AS fornitore_nome
       FROM listini l
@@ -158,6 +161,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       richiede_tipo_colore: number; richiede_tipo_colore_acc: number; richiede_tipo_vetro: number; richiede_tipo_montaggio: number
       minimo: number | null
       filtro_1: number; filtro_2: number; filtro_3: number; filtro_4: number
+      filtro_5: number; filtro_6: number; filtro_7: number; filtro_8: number; filtro_9: number; filtro_10: number
       schema_url: string | null
     }
     const allListini: RawListino[] = (listiniRows as Record<string, unknown>[]).map(l => ({
@@ -188,6 +192,12 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       filtro_2: Number(l.filtro_2 ?? 0),
       filtro_3: Number(l.filtro_3 ?? 0),
       filtro_4: Number(l.filtro_4 ?? 0),
+      filtro_5: Number(l.filtro_5 ?? 0),
+      filtro_6: Number(l.filtro_6 ?? 0),
+      filtro_7: Number(l.filtro_7 ?? 0),
+      filtro_8: Number(l.filtro_8 ?? 0),
+      filtro_9: Number(l.filtro_9 ?? 0),
+      filtro_10: Number(l.filtro_10 ?? 0),
       schema_url: l.schema_url != null ? String(l.schema_url) : null,
     }))
 
@@ -237,9 +247,12 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         richiede_tipo_vetro: l.richiede_tipo_vetro, richiede_tipo_montaggio: l.richiede_tipo_montaggio,
         minimo: l.minimo,
         filtro_1: l.filtro_1, filtro_2: l.filtro_2, filtro_3: l.filtro_3, filtro_4: l.filtro_4,
+        filtro_5: l.filtro_5, filtro_6: l.filtro_6, filtro_7: l.filtro_7, filtro_8: l.filtro_8, filtro_9: l.filtro_9, filtro_10: l.filtro_10,
         schema_url: l.schema_url,
       }))
     }
+
+    const filtriLabels = await getFiltriModelloLabels(db)
 
     let clienteEmail = '', clienteCellulare = ''
     {
@@ -276,6 +289,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
           stampaHref={`/app/preventivo/${prevId}/stampa`}
           backHref="/app/preventivo"
           percorsiPerListino={percorsiPerListino}
+          filtriLabels={filtriLabels}
         />
       </div>
     )

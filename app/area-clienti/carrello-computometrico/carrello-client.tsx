@@ -36,6 +36,12 @@ export type ArticoloComputabile = {
   filtro_2: number
   filtro_3: number
   filtro_4: number
+  filtro_5: number
+  filtro_6: number
+  filtro_7: number
+  filtro_8: number
+  filtro_9: number
+  filtro_10: number
   schema_url: string | null
   principale: number
   caratteristica: number
@@ -79,10 +85,12 @@ export default function CarrelloComputometricoClient({
   articoli,
   isLoggedIn,
   initialRighe,
+  filtriLabels,
 }: {
   articoli: ArticoloComputabile[]
   isLoggedIn: boolean
   initialRighe: RigaCarrello[]
+  filtriLabels?: Record<number, string>
 }) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
@@ -261,6 +269,7 @@ export default function CarrelloComputometricoClient({
               onConfirm={handleConfirm}
               onClose={onClose}
               submitLabel="Aggiungi al computo"
+              filtriLabels={filtriLabels}
             />
           </div>
         </div>
