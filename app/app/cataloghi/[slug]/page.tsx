@@ -34,8 +34,8 @@ async function getData(slug: string) {
 
     const [vociRows] = await db.query(`
       SELECT cv.id, cv.nome, cv.pdf_filename, cv.pdf_label, cv.descrizione,
-             cv.filtro_battente, cv.filtro_scorrevole, cv.filtro_taglio_termico,
-             cv.filtro_taglio_freddo, cv.filtro_economico, cv.filtro_fascia_alta,
+             cv.filtro_c1, cv.filtro_c2, cv.filtro_c3,
+             cv.filtro_c4, cv.filtro_c5, cv.filtro_c6,
              (SELECT vp2.sottocategoria FROM catalogo_voci_percorsi vp2 WHERE vp2.voce_id = cv.id AND vp2.categoria = ? LIMIT 1) AS sottocategoria,
              cv.fase, cv.materiale, cv.tipologia, cv.ambiente, cv.fascia,
              cv.filtro_1, cv.filtro_2, cv.filtro_3, cv.filtro_4
@@ -57,7 +57,7 @@ async function getData(slug: string) {
 
     return {
       categoria: { nome: catNome },
-      voci: vociRows as { id: number; nome: string; pdf_filename: string; pdf_label: string; descrizione: string | null; filtro_battente: number; filtro_scorrevole: number; filtro_taglio_termico: number; filtro_taglio_freddo: number; filtro_economico: number; filtro_fascia_alta: number; sottocategoria?: string | null; fase?: string | null; materiale?: string | null; tipologia?: string | null; ambiente?: string | null; fascia?: string | null; filtro_1?: number; filtro_2?: number; filtro_3?: number; filtro_4?: number }[],
+      voci: vociRows as { id: number; nome: string; pdf_filename: string; pdf_label: string; descrizione: string | null; filtro_c1: number; filtro_c2: number; filtro_c3: number; filtro_c4: number; filtro_c5: number; filtro_c6: number; sottocategoria?: string | null; fase?: string | null; materiale?: string | null; tipologia?: string | null; ambiente?: string | null; fascia?: string | null; filtro_1?: number; filtro_2?: number; filtro_3?: number; filtro_4?: number }[],
       articoliAcquisto,
     }
   } finally {

@@ -34,14 +34,23 @@ async function ensureVociTable(db: Awaited<ReturnType<typeof getConnection>>) {
   // categoria_id è un residuo del vecchio sistema (pre-percorsi): la rendiamo opzionale
   // così l'INSERT non fallisce più senza doverla valorizzare.
   await db.execute(`ALTER TABLE catalogo_voci MODIFY COLUMN categoria_id INT NULL DEFAULT NULL`).catch(() => {})
+  // Rinomina (con conservazione dati) le 6 colonne "filtri catalogo" ai nomi generici C1..C6,
+  // ora che le etichette sono editabili e slegate dal nome originale. Se la vecchia colonna non
+  // esiste più (rinomina già avvenuta), questa CHANGE fallisce silenziosamente: idempotente.
+  await db.execute(`ALTER TABLE catalogo_voci CHANGE COLUMN filtro_battente       filtro_c1 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE catalogo_voci CHANGE COLUMN filtro_scorrevole     filtro_c2 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE catalogo_voci CHANGE COLUMN filtro_taglio_termico filtro_c3 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE catalogo_voci CHANGE COLUMN filtro_taglio_freddo  filtro_c4 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE catalogo_voci CHANGE COLUMN filtro_economico      filtro_c5 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE catalogo_voci CHANGE COLUMN filtro_fascia_alta    filtro_c6 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
   await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN serie VARCHAR(200) NOT NULL DEFAULT ''`).catch(() => {})
   await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN descrizione TEXT NULL`).catch(() => {})
-  await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_battente TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
-  await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_scorrevole TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
-  await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_taglio_termico TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
-  await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_taglio_freddo TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
-  await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_economico TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
-  await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_fascia_alta TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_c1 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_c2 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_c3 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_c4 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_c5 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_c6 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
   await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN fase VARCHAR(100) NULL`).catch(() => {})
   await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN materiale VARCHAR(100) NULL`).catch(() => {})
   await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN tipologia VARCHAR(100) NULL`).catch(() => {})
@@ -105,12 +114,12 @@ export async function updateVoce(_: MutResult | null, fd: FormData): Promise<Mut
   const pdf_label        = (fd.get('pdf_label')        as string)?.trim() ?? ''
   const descrizione      = (fd.get('descrizione')      as string)?.trim() ?? ''
   const new_pdf_filename = (fd.get('new_pdf_filename') as string)?.trim() || null
-  const filtro_battente       = fd.get('filtro_battente')       === 'on' ? 1 : 0
-  const filtro_scorrevole     = fd.get('filtro_scorrevole')     === 'on' ? 1 : 0
-  const filtro_taglio_termico = fd.get('filtro_taglio_termico') === 'on' ? 1 : 0
-  const filtro_taglio_freddo  = fd.get('filtro_taglio_freddo')  === 'on' ? 1 : 0
-  const filtro_economico      = fd.get('filtro_economico')      === 'on' ? 1 : 0
-  const filtro_fascia_alta    = fd.get('filtro_fascia_alta')    === 'on' ? 1 : 0
+  const filtro_c1       = fd.get('filtro_c1')       === 'on' ? 1 : 0
+  const filtro_c2     = fd.get('filtro_c2')     === 'on' ? 1 : 0
+  const filtro_c3 = fd.get('filtro_c3') === 'on' ? 1 : 0
+  const filtro_c4  = fd.get('filtro_c4')  === 'on' ? 1 : 0
+  const filtro_c5      = fd.get('filtro_c5')      === 'on' ? 1 : 0
+  const filtro_c6    = fd.get('filtro_c6')    === 'on' ? 1 : 0
   const fase           = (fd.get('fase')           as string)?.trim() || null
   const materiale      = (fd.get('materiale')      as string)?.trim() || null
   const tipologia      = (fd.get('tipologia')      as string)?.trim() || null
@@ -133,8 +142,8 @@ export async function updateVoce(_: MutResult | null, fd: FormData): Promise<Mut
   const db = await getConnection()
   try {
     await ensureVociTable(db)
-    const extraCols = ', filtro_battente=?, filtro_scorrevole=?, filtro_taglio_termico=?, filtro_taglio_freddo=?, filtro_economico=?, filtro_fascia_alta=?, fase=?, materiale=?, tipologia=?, ambiente=?, fascia=?, filtro_1=?, filtro_2=?, filtro_3=?, filtro_4=?, filtro_5=?, filtro_6=?, filtro_7=?, filtro_8=?, filtro_9=?, filtro_10=?, schema_url=?'
-    const extraVals = [filtro_battente, filtro_scorrevole, filtro_taglio_termico, filtro_taglio_freddo, filtro_economico, filtro_fascia_alta, fase, materiale, tipologia, ambiente, fascia, filtro_1, filtro_2, filtro_3, filtro_4, filtro_5, filtro_6, filtro_7, filtro_8, filtro_9, filtro_10, schema_url]
+    const extraCols = ', filtro_c1=?, filtro_c2=?, filtro_c3=?, filtro_c4=?, filtro_c5=?, filtro_c6=?, fase=?, materiale=?, tipologia=?, ambiente=?, fascia=?, filtro_1=?, filtro_2=?, filtro_3=?, filtro_4=?, filtro_5=?, filtro_6=?, filtro_7=?, filtro_8=?, filtro_9=?, filtro_10=?, schema_url=?'
+    const extraVals = [filtro_c1, filtro_c2, filtro_c3, filtro_c4, filtro_c5, filtro_c6, fase, materiale, tipologia, ambiente, fascia, filtro_1, filtro_2, filtro_3, filtro_4, filtro_5, filtro_6, filtro_7, filtro_8, filtro_9, filtro_10, schema_url]
     if (new_pdf_filename) {
       await db.execute(
         `UPDATE catalogo_voci SET nome=?, serie=?, pdf_label=?, descrizione=?, pdf_filename=?${extraCols} WHERE id=?`,

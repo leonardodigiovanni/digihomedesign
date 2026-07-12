@@ -1,7 +1,7 @@
 // Le 6 colonne booleane esistenti su catalogo_voci, in ordine C1..C6 — filtrano solo i PDF, mai gli articoli
 export const FILTRI_CATALOGO_COLS = [
-  'filtro_battente', 'filtro_scorrevole', 'filtro_taglio_termico',
-  'filtro_taglio_freddo', 'filtro_economico', 'filtro_fascia_alta',
+  'filtro_c1', 'filtro_c2', 'filtro_c3',
+  'filtro_c4', 'filtro_c5', 'filtro_c6',
 ] as const
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

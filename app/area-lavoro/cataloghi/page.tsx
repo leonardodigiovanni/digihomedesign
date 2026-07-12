@@ -27,14 +27,22 @@ async function getData(): Promise<{ voci: Voce[]; percorsiPerVoce: Record<number
         created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `)
+    // Rinomina (con conservazione dati) le 6 colonne "filtri catalogo" ai nomi generici C1..C6.
+    // Idempotente: se la vecchia colonna non esiste più, fallisce silenziosamente.
+    await db.execute(`ALTER TABLE catalogo_voci CHANGE COLUMN filtro_battente       filtro_c1 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci CHANGE COLUMN filtro_scorrevole     filtro_c2 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci CHANGE COLUMN filtro_taglio_termico filtro_c3 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci CHANGE COLUMN filtro_taglio_freddo  filtro_c4 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci CHANGE COLUMN filtro_economico      filtro_c5 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci CHANGE COLUMN filtro_fascia_alta    filtro_c6 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN serie VARCHAR(200) NOT NULL DEFAULT ''`).catch(() => {})
     await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN descrizione TEXT NULL`).catch(() => {})
-    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_battente TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
-    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_scorrevole TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
-    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_taglio_termico TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
-    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_taglio_freddo TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
-    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_economico TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
-    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_fascia_alta TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_c1 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_c2 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_c3 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_c4 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_c5 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN filtro_c6 TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN fase VARCHAR(100) NULL`).catch(() => {})
     await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN materiale VARCHAR(100) NULL`).catch(() => {})
     await db.execute(`ALTER TABLE catalogo_voci ADD COLUMN tipologia VARCHAR(100) NULL`).catch(() => {})
@@ -54,8 +62,8 @@ async function getData(): Promise<{ voci: Voce[]; percorsiPerVoce: Record<number
 
     const [vociRows] = await db.query(`
       SELECT id, nome, pdf_filename, pdf_label, serie, descrizione,
-             filtro_battente, filtro_scorrevole, filtro_taglio_termico, filtro_taglio_freddo,
-             filtro_economico, filtro_fascia_alta,
+             filtro_c1, filtro_c2, filtro_c3, filtro_c4,
+             filtro_c5, filtro_c6,
              fase, materiale, tipologia, ambiente, fascia,
              filtro_1, filtro_2, filtro_3, filtro_4, filtro_5, filtro_6, filtro_7, filtro_8, filtro_9, filtro_10,
              schema_url
@@ -78,12 +86,12 @@ async function getData(): Promise<{ voci: Voce[]; percorsiPerVoce: Record<number
       pdf_filename:          String(r.pdf_filename ?? ''),
       pdf_label:             String(r.pdf_label ?? ''),
       descrizione:           String(r.descrizione ?? ''),
-      filtro_battente:       Number(r.filtro_battente       ?? 0),
-      filtro_scorrevole:     Number(r.filtro_scorrevole     ?? 0),
-      filtro_taglio_termico: Number(r.filtro_taglio_termico ?? 0),
-      filtro_taglio_freddo:  Number(r.filtro_taglio_freddo  ?? 0),
-      filtro_economico:      Number(r.filtro_economico      ?? 0),
-      filtro_fascia_alta:    Number(r.filtro_fascia_alta    ?? 0),
+      filtro_c1:       Number(r.filtro_c1       ?? 0),
+      filtro_c2:     Number(r.filtro_c2     ?? 0),
+      filtro_c3: Number(r.filtro_c3 ?? 0),
+      filtro_c4:  Number(r.filtro_c4  ?? 0),
+      filtro_c5:      Number(r.filtro_c5      ?? 0),
+      filtro_c6:    Number(r.filtro_c6    ?? 0),
       fase:      r.fase      ? String(r.fase)      : null,
       materiale: r.materiale ? String(r.materiale) : null,
       tipologia: r.tipologia ? String(r.tipologia) : null,

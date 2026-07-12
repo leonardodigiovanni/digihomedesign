@@ -10,8 +10,8 @@ import type { PreventivoDestOption } from '@/app/brand/cataloghi/actions'
 type Voce = {
   id: number; nome: string; serie?: string; pdf_filename: string; pdf_label: string
   descrizione?: string | null
-  filtro_battente?: number; filtro_scorrevole?: number; filtro_taglio_termico?: number
-  filtro_taglio_freddo?: number; filtro_economico?: number; filtro_fascia_alta?: number
+  filtro_c1?: number; filtro_c2?: number; filtro_c3?: number
+  filtro_c4?: number; filtro_c5?: number; filtro_c6?: number
   sottocategoria?: string | null; fase?: string | null; materiale?: string | null
   tipologia?: string | null; ambiente?: string | null; fascia?: string | null
   filtro_1?: number; filtro_2?: number; filtro_3?: number; filtro_4?: number
@@ -43,12 +43,12 @@ type Props = {
 // ─── Linguette PDF (C1..C6, etichette condivise dal pannello Cataloghi) ───────
 
 const PDF_FILTRI: { n: number; key: keyof Voce }[] = [
-  { n: 1, key: 'filtro_battente' },
-  { n: 2, key: 'filtro_scorrevole' },
-  { n: 3, key: 'filtro_taglio_termico' },
-  { n: 4, key: 'filtro_taglio_freddo' },
-  { n: 5, key: 'filtro_economico' },
-  { n: 6, key: 'filtro_fascia_alta' },
+  { n: 1, key: 'filtro_c1' },
+  { n: 2, key: 'filtro_c2' },
+  { n: 3, key: 'filtro_c3' },
+  { n: 4, key: 'filtro_c4' },
+  { n: 5, key: 'filtro_c5' },
+  { n: 6, key: 'filtro_c6' },
 ]
 
 // ─── Filtri modello (F1..F10, etichette condivise dal pannello Cataloghi) ─────

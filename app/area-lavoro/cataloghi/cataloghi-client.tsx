@@ -26,12 +26,12 @@ export type Voce = {
   pdf_filename: string
   pdf_label: string
   descrizione: string
-  filtro_battente: number
-  filtro_scorrevole: number
-  filtro_taglio_termico: number
-  filtro_taglio_freddo: number
-  filtro_economico: number
-  filtro_fascia_alta: number
+  filtro_c1: number
+  filtro_c2: number
+  filtro_c3: number
+  filtro_c4: number
+  filtro_c5: number
+  filtro_c6: number
   fase: string | null
   materiale: string | null
   tipologia: string | null

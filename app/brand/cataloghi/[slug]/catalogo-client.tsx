@@ -7,7 +7,7 @@ import { b } from '@/lib/btn'
 
 pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`
 
-type Voce = { id: number; nome: string; serie?: string; pdf_filename: string; pdf_label: string; descrizione?: string | null; filtro_battente?: number; filtro_scorrevole?: number; filtro_taglio_termico?: number; filtro_taglio_freddo?: number; filtro_economico?: number; filtro_fascia_alta?: number }
+type Voce = { id: number; nome: string; serie?: string; pdf_filename: string; pdf_label: string; descrizione?: string | null; filtro_c1?: number; filtro_c2?: number; filtro_c3?: number; filtro_c4?: number; filtro_c5?: number; filtro_c6?: number }
 
 function pdfSrc(filename: string): string {
   return filename.startsWith('https://') ? filename : `/uploads/cataloghi/${filename}`
