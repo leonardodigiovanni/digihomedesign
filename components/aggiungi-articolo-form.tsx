@@ -6,6 +6,7 @@ import { usePreventiviAbilitato } from '@/lib/preventivi-flag-context'
 import SelectLookup from '@/components/select-lookup'
 import { useRouter } from 'next/navigation'
 import { aggiungiAlCarrello, aggiungiAlPreventivoDaCatalogo, annullaParentPendente, type CartResult, type PreventivoDestOption } from '@/app/brand/cataloghi/actions'
+import { hasPercorso, valoriPercorso, type PercorsoEntry } from '@/lib/percorsi-match'
 
 export type ArticoloListino = {
   id: number
@@ -85,6 +86,7 @@ export default function AggiungiArticoloForm({
   onClose,
   filtriLabels,
   lockedFiltriModello,
+  percorsiPerListino = {},
 }: {
   articoli: ArticoloListino[]
   isStaff?: boolean
@@ -104,6 +106,7 @@ export default function AggiungiArticoloForm({
   onClose?: () => void
   filtriLabels?: Record<number, string>
   lockedFiltriModello?: Set<number>
+  percorsiPerListino?: Record<number, PercorsoEntry[]>
 }) {
   const preventiviAbilitato = usePreventiviAbilitato()
   const router = useRouter()
@@ -161,10 +164,23 @@ export default function AggiungiArticoloForm({
   }, [mostraDestinazione, preventiviBozza, destId])
 
   // cascata classificazione
-  const catOpt       = useMemo(() => [...new Set(articoli.map(a => a.categoria).filter(Boolean))].sort() as string[], [articoli])
-  const postCat      = useMemo(() => catFiltro ? articoli.filter(a => a.categoria === catFiltro) : articoli, [articoli, catFiltro])
-  const sottocatOpt  = useMemo(() => [...new Set(postCat.map(a => a.sottocategoria).filter(Boolean))].sort() as string[], [postCat])
-  const postSottocat = useMemo(() => sottocatFiltro ? postCat.filter(a => a.sottocategoria === sottocatFiltro) : postCat, [postCat, sottocatFiltro])
+  const catOpt = useMemo(() => [...new Set(
+    articoli.flatMap(a => valoriPercorso(a.id, {}, 'categoria', { categoria: a.categoria ?? '', sottocategoria: a.sottocategoria ?? '' }, percorsiPerListino))
+  )].filter(Boolean).sort() as string[], [articoli, percorsiPerListino])
+
+  const postCat = useMemo(() => catFiltro
+    ? articoli.filter(a => hasPercorso(a.id, { categoria: catFiltro }, { categoria: a.categoria ?? '', sottocategoria: a.sottocategoria ?? '' }, percorsiPerListino))
+    : articoli,
+  [articoli, catFiltro, percorsiPerListino])
+
+  const sottocatOpt = useMemo(() => [...new Set(
+    postCat.flatMap(a => valoriPercorso(a.id, { categoria: catFiltro }, 'sottocategoria', { categoria: a.categoria ?? '', sottocategoria: a.sottocategoria ?? '' }, percorsiPerListino))
+  )].filter(Boolean).sort() as string[], [postCat, catFiltro, percorsiPerListino])
+
+  const postSottocat = useMemo(() => sottocatFiltro
+    ? postCat.filter(a => hasPercorso(a.id, { categoria: catFiltro, sottocategoria: sottocatFiltro }, { categoria: a.categoria ?? '', sottocategoria: a.sottocategoria ?? '' }, percorsiPerListino))
+    : postCat,
+  [postCat, sottocatFiltro, catFiltro, percorsiPerListino])
   const faseOpt      = useMemo(() => [...new Set(postSottocat.map(a => a.fase).filter(Boolean))].sort() as string[], [postSottocat])
   const postFase     = useMemo(() => faseFiltro ? postSottocat.filter(a => a.fase === faseFiltro) : postSottocat, [postSottocat, faseFiltro])
   const matOpt       = useMemo(() => [...new Set(postFase.map(a => a.materiale).filter(Boolean))].sort() as string[], [postFase])

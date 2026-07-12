@@ -6,6 +6,7 @@ import { aggiungiArticolo, rimuoviArticolo, associaCliente, aggiornaDatiPreventi
 import PreviewInfisso from '@/components/preview-infisso'
 import { b } from '@/lib/btn'
 import SelectLookup from '@/components/select-lookup'
+import { hasPercorso, valoriPercorso } from '@/lib/percorsi-match'
 
 // ─── Tipi ─────────────────────────────────────────────────────────────────────
 
@@ -476,20 +477,30 @@ function ArticoloForm({
     return listini.filter(l => l.principale === 1)
   }, [listini, parentId, parentArt, gapTypeFilter])
 
-  const tipi   = useMemo(() => [...new Set(listiniFiltrati.map(l => l.categoria))].sort(), [listiniFiltrati])
+  const tipi = useMemo(() => [...new Set(
+    listiniFiltrati.flatMap(l => valoriPercorso(l.id, {}, 'categoria', { categoria: l.categoria ?? '', sottocategoria: l.sottocategoria ?? '' }, percorsiPerListino))
+  )].filter(Boolean).sort(), [listiniFiltrati, percorsiPerListino])
 
   // ─── Cascata classificazione ────────────────────────────────────────────────
   const listiniPerTipo = useMemo(
-    () => isCaratteristicaMode ? listiniFiltrati : (tipo ? listiniFiltrati.filter(l => l.categoria === tipo) : listiniFiltrati),
-    [listiniFiltrati, tipo, isCaratteristicaMode]
+    () => isCaratteristicaMode
+      ? listiniFiltrati
+      : (tipo
+          ? listiniFiltrati.filter(l => hasPercorso(l.id, { categoria: tipo }, { categoria: l.categoria ?? '', sottocategoria: l.sottocategoria ?? '' }, percorsiPerListino))
+          : listiniFiltrati),
+    [listiniFiltrati, tipo, isCaratteristicaMode, percorsiPerListino]
   )
   const sottocatOptions = useMemo(
-    () => [...new Set(listiniPerTipo.map(l => l.sottocategoria).filter(Boolean))].sort() as string[],
-    [listiniPerTipo]
+    () => [...new Set(
+      listiniPerTipo.flatMap(l => valoriPercorso(l.id, { categoria: tipo }, 'sottocategoria', { categoria: l.categoria ?? '', sottocategoria: l.sottocategoria ?? '' }, percorsiPerListino))
+    )].filter(Boolean).sort() as string[],
+    [listiniPerTipo, tipo, percorsiPerListino]
   )
   const postSottocat = useMemo(
-    () => sottocatFiltro ? listiniPerTipo.filter(l => l.sottocategoria === sottocatFiltro) : listiniPerTipo,
-    [listiniPerTipo, sottocatFiltro]
+    () => sottocatFiltro
+      ? listiniPerTipo.filter(l => hasPercorso(l.id, { categoria: tipo, sottocategoria: sottocatFiltro }, { categoria: l.categoria ?? '', sottocategoria: l.sottocategoria ?? '' }, percorsiPerListino))
+      : listiniPerTipo,
+    [listiniPerTipo, sottocatFiltro, tipo, percorsiPerListino]
   )
   const faseOptions = useMemo(
     () => [...new Set(postSottocat.map(l => l.fase).filter(Boolean))].sort() as string[],

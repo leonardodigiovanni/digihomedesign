@@ -2,6 +2,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import { ensurePercorsiTables } from '@/lib/percorsi'
+import type { PercorsoEntry } from '@/lib/percorsi-match'
 import { readSettings } from '@/lib/settings'
 import { getFiltriModelloLabels } from '@/lib/filtri-modello-labels'
 import type { Metadata } from 'next'
@@ -12,7 +13,7 @@ import type { RigaCarrello } from './actions'
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = { title: 'Carrello Computo Metrico' }
 
-async function getArticoli(): Promise<ArticoloComputabile[]> {
+async function getArticoli(): Promise<{ articoli: ArticoloComputabile[]; percorsiPerListino: Record<number, PercorsoEntry[]> }> {
   const db = await getConnection()
   try {
     await db.execute(`ALTER TABLE listini ADD COLUMN computabile TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
@@ -56,7 +57,7 @@ async function getArticoli(): Promise<ArticoloComputabile[]> {
       ORDER BY COALESCE(lp.categoria, l.categoria), l.produttore, l.serie, l.descrizione
     `) as [Record<string, unknown>[], unknown]
 
-    return (rows as Record<string, unknown>[])
+    const all: ArticoloComputabile[] = (rows as Record<string, unknown>[])
       .map(r => ({
         id:            Number(r.id),
         categoria:     String(r.categoria ?? ''),
@@ -95,7 +96,34 @@ async function getArticoli(): Promise<ArticoloComputabile[]> {
         schema_url: r.schema_url != null ? String(r.schema_url) : null,
         logo_url: r.logo_url != null ? String(r.logo_url) : null,
       }))
-  } catch { return [] }
+
+    // Un listino puo' comparire su piu' righe (un percorso per categoria/sottocategoria
+    // condivisa): teniamo una riga canonica per id, i percorsi completi vivono a parte
+    // in percorsiPerListino cosi' il filtro categoria/sottocategoria della modale puo'
+    // ancora vederli tutti (vedi lib/percorsi-match.ts).
+    const seenIds = new Set<number>()
+    const articoli = all.filter(a => {
+      if (seenIds.has(a.id)) return false
+      seenIds.add(a.id)
+      return true
+    })
+
+    const percorsiPerListino: Record<number, PercorsoEntry[]> = {}
+    if (articoli.length > 0) {
+      const ph = articoli.map(() => '?').join(',')
+      const [pRows] = await db.query(
+        `SELECT listino_id, categoria, sottocategoria FROM listini_percorsi WHERE listino_id IN (${ph})`,
+        articoli.map(a => a.id)
+      ) as [Record<string, unknown>[], unknown]
+      for (const row of pRows as Record<string, unknown>[]) {
+        const id = Number(row.listino_id)
+        if (!percorsiPerListino[id]) percorsiPerListino[id] = []
+        percorsiPerListino[id].push({ categoria: String(row.categoria), sottocategoria: String(row.sottocategoria) })
+      }
+    }
+
+    return { articoli, percorsiPerListino }
+  } catch { return { articoli: [], percorsiPerListino: {} } }
   finally { await db.end() }
 }
 
@@ -164,7 +192,7 @@ export default async function Page() {
     if (!(rolePermissions['cliente'] ?? []).includes(54)) redirect('/aiuto/guida-computometrico')
   }
 
-  const [articoli, initialRighe, filtriLabels] = await Promise.all([
+  const [{ articoli, percorsiPerListino }, initialRighe, filtriLabels] = await Promise.all([
     getArticoli(),
     username ? getCarrelloRighe(username) : Promise.resolve([]),
     (async () => {
@@ -175,7 +203,7 @@ export default async function Page() {
 
   return (
     <div className="page-content-wrapper" style={{ margin: '8px 0', padding: '0 0 8px' }}>
-      <CarrelloComputometricoClient articoli={articoli} isLoggedIn={!!username} initialRighe={initialRighe} filtriLabels={filtriLabels} />
+      <CarrelloComputometricoClient articoli={articoli} isLoggedIn={!!username} initialRighe={initialRighe} filtriLabels={filtriLabels} percorsiPerListino={percorsiPerListino} />
     </div>
   )
 }

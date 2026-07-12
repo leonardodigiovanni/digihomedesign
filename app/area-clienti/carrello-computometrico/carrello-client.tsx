@@ -3,6 +3,7 @@
 import React, { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import AggiungiArticoloForm, { type ArticoloListino, type ConfirmData } from '@/components/aggiungi-articolo-form'
+import type { PercorsoEntry } from '@/lib/percorsi-match'
 import {
   salvaComputometrico, type RigaComputometrico,
   addRigaCarrello, removeRigaCarrello, updateNoteCarrello, clearCarrelloComputometrico,
@@ -87,11 +88,13 @@ export default function CarrelloComputometricoClient({
   isLoggedIn,
   initialRighe,
   filtriLabels,
+  percorsiPerListino = {},
 }: {
   articoli: ArticoloComputabile[]
   isLoggedIn: boolean
   initialRighe: RigaCarrello[]
   filtriLabels?: Record<number, string>
+  percorsiPerListino?: Record<number, PercorsoEntry[]>
 }) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
@@ -271,6 +274,7 @@ export default function CarrelloComputometricoClient({
               onClose={onClose}
               submitLabel="Aggiungi al computo"
               filtriLabels={filtriLabels}
+              percorsiPerListino={percorsiPerListino}
             />
           </div>
         </div>

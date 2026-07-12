@@ -682,6 +682,7 @@ export default function CarrelloClient({
               onClose={onClose}
               isApp={isApp}
               filtriLabels={filtriLabels}
+              percorsiPerListino={percorsiPerListino}
             />
           </div>
         </div>
