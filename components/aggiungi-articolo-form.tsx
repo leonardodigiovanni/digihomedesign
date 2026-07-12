@@ -26,6 +26,7 @@ export type ArticoloListino = {
   richiede_tipo_vetro?: number
   richiede_tipo_montaggio?: number
   schema_url?: string | null
+  logo_url?: string | null
   max_acquistabile?: number | null
   filtro_1?: number
   filtro_2?: number
@@ -240,13 +241,20 @@ export default function AggiungiArticoloForm({
     if (filtriModelloAttivi.size > 0) {
       base = base.filter(a => [...filtriModelloAttivi].every(n => flagN(a, n) === 1))
     }
-    const map = new Map<string, number>()
+    const map = new Map<string, ArticoloListino[]>()
     for (const a of base) {
       if (!a.schema_url) continue
-      map.set(a.schema_url, (map.get(a.schema_url) ?? 0) + 1)
+      const items = map.get(a.schema_url) ?? []
+      items.push(a)
+      map.set(a.schema_url, items)
     }
     return [...map.entries()]
-      .map(([url, count]) => ({ url, count }))
+      .map(([url, items]) => {
+        // Badge logo solo se il gruppo è di una marca sola (schema condiviso da marche diverse resta ambiguo)
+        const marcheGruppo = new Set(items.map(i => i.produttore))
+        const badgeLogo = marcheGruppo.size === 1 ? (items.find(i => i.logo_url)?.logo_url ?? null) : null
+        return { url, count: items.length, badgeLogo }
+      })
       .sort((a, b) => b.count - a.count)
   }, [artBase, filtriModelloAttivi])
 
@@ -505,7 +513,7 @@ export default function AggiungiArticoloForm({
           {/* Griglia schema */}
           {thumbnailsData.length > 0 && (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: 8 }}>
-              {thumbnailsData.map(({ url, count }) => {
+              {thumbnailsData.map(({ url, count, badgeLogo }) => {
                 const isSelected = schemaFiltro === url
                 return (
                   <button
@@ -514,13 +522,18 @@ export default function AggiungiArticoloForm({
                     onClick={() => setSchemaFiltro(isSelected ? null : url)}
                     title={count > 1 ? `${count} articoli` : undefined}
                     style={{
-                      padding: 0, background: '#fff', cursor: 'pointer',
+                      display: 'flex', flexDirection: 'column', padding: 0, background: '#fff', cursor: 'pointer',
                       border: isSelected ? '2px solid #c8960c' : '1px solid #ddd',
                       borderRadius: 6, overflow: 'hidden',
                       boxShadow: isSelected ? '0 0 0 2px rgba(200,150,12,0.25)' : 'none',
                     }}
                   >
-                    <img src={url} alt="" style={{ display: 'block', width: '100%', height: 70, objectFit: 'contain', background: '#f9f9f9' }} />
+                    <img src={url} alt="" style={{ display: 'block', width: '100%', height: 70, objectFit: 'contain', background: '#fff' }} />
+                    {badgeLogo && (
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 24, background: '#fff', flexShrink: 0 }}>
+                        <img src={badgeLogo} alt="" style={{ maxWidth: '80%', maxHeight: 18, objectFit: 'contain' }} />
+                      </div>
+                    )}
                   </button>
                 )
               })}

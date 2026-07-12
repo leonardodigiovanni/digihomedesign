@@ -43,6 +43,7 @@ export type ListinoItem = {
   filtro_9?: number
   filtro_10?: number
   schema_url?: string | null
+  logo_url?: string | null
   sottocategoria?: string | null
   fase?: string | null
   materiale?: string | null

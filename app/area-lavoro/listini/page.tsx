@@ -7,12 +7,26 @@ import ListiniClient, { type Articolo, type Fornitore } from './listini-client'
 import type { Metadata } from 'next'
 import { ensurePercorsiTables, type Percorso } from '@/lib/percorsi'
 import { getFiltriModelloLabels } from '@/lib/filtri-modello-labels'
+import fs from 'fs'
+import path from 'path'
+
+function getLoghiDisponibili(): string[] {
+  try {
+    const dir = path.join(process.cwd(), 'public', 'images', 'brand', 'partners')
+    return fs.readdirSync(dir)
+      .filter(f => /\.(png|jpe?g|webp|svg)$/i.test(f))
+      .sort((a, b) => a.localeCompare(b))
+      .map(f => `/images/brand/partners/${f}`)
+  } catch {
+    return []
+  }
+}
 
 export const metadata: Metadata = {
   title: 'Listini',
 }
 
-async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[]; percorsiPerListino: Record<number, Percorso[]>; filtriLabels: Record<number, string> }> {
+async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[]; percorsiPerListino: Record<number, Percorso[]>; filtriLabels: Record<number, string>; loghiDisponibili: string[] }> {
   const db = await getConnection()
   try {
     await db.execute(`
@@ -43,6 +57,7 @@ async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[]
     await db.execute(`ALTER TABLE listini ADD COLUMN max_acquistabile INT NULL DEFAULT NULL`).catch(() => {})
     await db.execute(`ALTER TABLE listini ADD COLUMN sconto_articolo DECIMAL(5,2) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE listini ADD COLUMN schema_url VARCHAR(500) NULL`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN logo_url VARCHAR(500) NULL`).catch(() => {})
     await db.execute(`ALTER TABLE listini ADD COLUMN serie VARCHAR(200) NOT NULL DEFAULT ''`).catch(() => {})
     await db.execute(`ALTER TABLE listini ADD COLUMN principale TINYINT(1) NOT NULL DEFAULT 1`).catch(() => {})
     await db.execute(`ALTER TABLE listini ADD COLUMN caratteristica TINYINT(1) NOT NULL DEFAULT 1`).catch(() => {})
@@ -86,7 +101,7 @@ async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[]
              l.richiede_km, l.richiede_peso, l.richiede_tipo_colore, l.richiede_tipo_colore_acc, l.richiede_tipo_vetro, l.richiede_tipo_montaggio, l.costante, l.abbr, l.minimo,
              l.Filtro_1, l.Filtro_2, l.Filtro_3, l.Filtro_4, l.Filtro_5,
              l.Filtro_6, l.Filtro_7, l.Filtro_8, l.Filtro_9, l.Filtro_10,
-             l.updated_at, l.foto_url, l.schema_url, l.profilo_frontale_mm, l.profilo_profondita_mm,
+             l.updated_at, l.foto_url, l.schema_url, l.logo_url, l.profilo_frontale_mm, l.profilo_profondita_mm,
              l.trasmittanza_uw, l.fornitore_id, l.escluso, l.computabile,
              COALESCE(f.ragione_sociale, '') AS fornitore_nome
       FROM listini l
@@ -134,6 +149,7 @@ async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[]
       updated_at:            r.updated_at instanceof Date ? r.updated_at.toISOString() : String(r.updated_at ?? ''),
       foto_url:              r.foto_url   ? String(r.foto_url)   : null,
       schema_url:            r.schema_url ? String(r.schema_url) : null,
+      logo_url:              r.logo_url   ? String(r.logo_url)   : null,
       profilo_frontale_mm:   r.profilo_frontale_mm  != null ? parseFloat(String(r.profilo_frontale_mm))  : null,
       profilo_profondita_mm: r.profilo_profondita_mm != null ? parseFloat(String(r.profilo_profondita_mm)) : null,
       trasmittanza_uw:       r.trasmittanza_uw != null ? parseFloat(String(r.trasmittanza_uw)) : null,
@@ -162,8 +178,9 @@ async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[]
     }
 
     const filtriLabels = await getFiltriModelloLabels(db)
+    const loghiDisponibili = getLoghiDisponibili()
 
-    return { articoli, fornitori, percorsiPerListino, filtriLabels }
+    return { articoli, fornitori, percorsiPerListino, filtriLabels, loghiDisponibili }
   } finally {
     await db.end()
   }
@@ -177,7 +194,7 @@ export default async function Page() {
   const settings = await readSettings()
   if (!hasPageAccess(role, 25, settings)) redirect('/')
 
-  const { articoli, fornitori, percorsiPerListino, filtriLabels } = await getData()
+  const { articoli, fornitori, percorsiPerListino, filtriLabels, loghiDisponibili } = await getData()
 
   return (
     <div>
@@ -185,7 +202,7 @@ export default async function Page() {
       <p style={{ color: '#000', fontSize: 13, marginBottom: 24 }}>
         Prezzi di acquisto e vendita per articoli e lavorazioni. Doppio click su una riga per modificarla.
       </p>
-      <ListiniClient articoli={articoli} fornitori={fornitori} percorsiPerListino={percorsiPerListino} filtriLabels={filtriLabels} />
+      <ListiniClient articoli={articoli} fornitori={fornitori} percorsiPerListino={percorsiPerListino} filtriLabels={filtriLabels} loghiDisponibili={loghiDisponibili} />
     </div>
   )
 }

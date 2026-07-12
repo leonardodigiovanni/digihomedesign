@@ -45,6 +45,7 @@ async function ensureTable() {
   await db.execute(`ALTER TABLE listini ADD COLUMN max_acquistabile INT NULL DEFAULT NULL`).catch(() => {})
   await db.execute(`ALTER TABLE listini ADD COLUMN sconto_articolo DECIMAL(5,2) NOT NULL DEFAULT 0`).catch(() => {})
   await db.execute(`ALTER TABLE listini ADD COLUMN schema_url VARCHAR(500) NULL`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN logo_url VARCHAR(500) NULL`).catch(() => {})
   await db.execute(`ALTER TABLE listini ADD COLUMN serie VARCHAR(200) NOT NULL DEFAULT ''`).catch(() => {})
   await db.execute(`ALTER TABLE listini ADD COLUMN principale TINYINT(1) NOT NULL DEFAULT 1`).catch(() => {})
   await db.execute(`ALTER TABLE listini ADD COLUMN caratteristica TINYINT(1) NOT NULL DEFAULT 1`).catch(() => {})
@@ -340,7 +341,7 @@ export async function clearImmagine(_: MutResult | null, fd: FormData): Promise<
   const id   = parseInt(fd.get('id') as string)
   const tipo = fd.get('tipo') as string
   if (isNaN(id)) return { ok: false, error: 'ID non valido.' }
-  const col = tipo === 'schema' ? 'schema_url' : tipo === 'foto' ? 'foto_url' : null
+  const col = tipo === 'schema' ? 'schema_url' : tipo === 'foto' ? 'foto_url' : tipo === 'logo' ? 'logo_url' : null
   if (!col) return { ok: false, error: 'Tipo non valido.' }
   const db = await getConnection()
   try {
@@ -359,16 +360,18 @@ export async function updateSchedaTecnica(_: MutResult | null, fd: FormData): Pr
   const frontale   = (fd.get('profilo_frontale_mm')   as string)?.trim()
   const profondita = (fd.get('profilo_profondita_mm') as string)?.trim()
   const trasmitt   = (fd.get('trasmittanza_uw')       as string)?.trim()
+  const logoUrl    = (fd.get('logo_url')              as string)?.trim()
 
   await ensureTable()
   const db = await getConnection()
   try {
     await db.execute(
-      'UPDATE listini SET profilo_frontale_mm=?, profilo_profondita_mm=?, trasmittanza_uw=? WHERE id=?',
+      'UPDATE listini SET profilo_frontale_mm=?, profilo_profondita_mm=?, trasmittanza_uw=?, logo_url=? WHERE id=?',
       [
         frontale   ? parseFloat(frontale)   : null,
         profondita ? parseFloat(profondita) : null,
         trasmitt   ? parseFloat(trasmitt)   : null,
+        logoUrl    ? logoUrl                : null,
         id,
       ]
     )

@@ -27,7 +27,7 @@ export type MatchOpts = {
   categoriaListino?: string | null
 }
 
-export const LISTINO_COLS = 'id, descrizione, produttore, serie, unita, prezzo_acquisto, prezzo_vendita, sconto_articolo, richiede_larghezza, richiede_altezza, richiede_quantita, richiede_piano, richiede_km, richiede_peso, richiede_tipo_colore, richiede_tipo_vetro, richiede_tipo_montaggio, schema_url, max_acquistabile, Filtro_1 AS filtro_1, Filtro_2 AS filtro_2, Filtro_3 AS filtro_3, Filtro_4 AS filtro_4, Filtro_5 AS filtro_5, Filtro_6 AS filtro_6, Filtro_7 AS filtro_7, Filtro_8 AS filtro_8, Filtro_9 AS filtro_9, Filtro_10 AS filtro_10, sottocategoria, fase, materiale, tipologia, ambiente, fascia'
+export const LISTINO_COLS = 'id, descrizione, produttore, serie, unita, prezzo_acquisto, prezzo_vendita, sconto_articolo, richiede_larghezza, richiede_altezza, richiede_quantita, richiede_piano, richiede_km, richiede_peso, richiede_tipo_colore, richiede_tipo_vetro, richiede_tipo_montaggio, schema_url, logo_url, max_acquistabile, Filtro_1 AS filtro_1, Filtro_2 AS filtro_2, Filtro_3 AS filtro_3, Filtro_4 AS filtro_4, Filtro_5 AS filtro_5, Filtro_6 AS filtro_6, Filtro_7 AS filtro_7, Filtro_8 AS filtro_8, Filtro_9 AS filtro_9, Filtro_10 AS filtro_10, sottocategoria, fase, materiale, tipologia, ambiente, fascia'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function matchArticoliPerVoce(voceList: VoceForMatching[], db: any, opts?: MatchOpts): Promise<Record<string, ArticoloListino[]>> {

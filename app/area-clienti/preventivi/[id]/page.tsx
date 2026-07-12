@@ -138,7 +138,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
              l.Filtro_1 AS filtro_1, l.Filtro_2 AS filtro_2, l.Filtro_3 AS filtro_3, l.Filtro_4 AS filtro_4,
              l.Filtro_5 AS filtro_5, l.Filtro_6 AS filtro_6, l.Filtro_7 AS filtro_7, l.Filtro_8 AS filtro_8,
              l.Filtro_9 AS filtro_9, l.Filtro_10 AS filtro_10,
-             l.schema_url,
+             l.schema_url, l.logo_url,
              COALESCE(f.ragione_sociale, '') AS fornitore_nome
       FROM listini l
       LEFT JOIN fornitori f ON f.id = l.fornitore_id
@@ -146,7 +146,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       ORDER BY l.categoria, l.produttore, l.serie, l.descrizione
     `) as [Record<string, unknown>[], unknown]
 
-    type RawListino = { id: number; categoria: string; produttore: string; serie: string; descrizione: string; unita: string; prezzo_vendita: number; prezzo_acquisto: number; sconto_articolo: number; fornitore_nome: string; principale: number; caratteristica: number; richiede_tipo_colore: number; richiede_tipo_colore_acc: number; richiede_tipo_vetro: number; richiede_tipo_montaggio: number; minimo: number | null; filtro_1: number; filtro_2: number; filtro_3: number; filtro_4: number; filtro_5: number; filtro_6: number; filtro_7: number; filtro_8: number; filtro_9: number; filtro_10: number; schema_url: string | null }
+    type RawListino = { id: number; categoria: string; produttore: string; serie: string; descrizione: string; unita: string; prezzo_vendita: number; prezzo_acquisto: number; sconto_articolo: number; fornitore_nome: string; principale: number; caratteristica: number; richiede_tipo_colore: number; richiede_tipo_colore_acc: number; richiede_tipo_vetro: number; richiede_tipo_montaggio: number; minimo: number | null; filtro_1: number; filtro_2: number; filtro_3: number; filtro_4: number; filtro_5: number; filtro_6: number; filtro_7: number; filtro_8: number; filtro_9: number; filtro_10: number; schema_url: string | null; logo_url: string | null }
     const allListini: RawListino[] = (listiniRows as Record<string, unknown>[]).map(l => ({
       id: Number(l.id),
       categoria: String(l.categoria ?? ''),
@@ -176,6 +176,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       filtro_9: Number(l.filtro_9 ?? 0),
       filtro_10: Number(l.filtro_10 ?? 0),
       schema_url: l.schema_url != null ? String(l.schema_url) : null,
+      logo_url: l.logo_url != null ? String(l.logo_url) : null,
     }))
 
     let listini: ListinoItem[]
@@ -191,7 +192,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
           best.set(key, l)
         }
       }
-      listini = [...best.values()].map(l => ({ id: l.id, categoria: l.categoria, produttore: l.produttore, serie: l.serie, descrizione: l.descrizione, unita: l.unita, prezzo_vendita: l.prezzo_vendita, sconto_articolo: l.sconto_articolo, fornitore_nome: l.fornitore_nome, principale: l.principale, caratteristica: l.caratteristica, richiede_tipo_colore: l.richiede_tipo_colore, richiede_tipo_colore_acc: l.richiede_tipo_colore_acc, richiede_tipo_vetro: l.richiede_tipo_vetro, richiede_tipo_montaggio: l.richiede_tipo_montaggio, minimo: l.minimo, filtro_1: l.filtro_1, filtro_2: l.filtro_2, filtro_3: l.filtro_3, filtro_4: l.filtro_4, filtro_5: l.filtro_5, filtro_6: l.filtro_6, filtro_7: l.filtro_7, filtro_8: l.filtro_8, filtro_9: l.filtro_9, filtro_10: l.filtro_10, schema_url: l.schema_url }))
+      listini = [...best.values()].map(l => ({ id: l.id, categoria: l.categoria, produttore: l.produttore, serie: l.serie, descrizione: l.descrizione, unita: l.unita, prezzo_vendita: l.prezzo_vendita, sconto_articolo: l.sconto_articolo, fornitore_nome: l.fornitore_nome, principale: l.principale, caratteristica: l.caratteristica, richiede_tipo_colore: l.richiede_tipo_colore, richiede_tipo_colore_acc: l.richiede_tipo_colore_acc, richiede_tipo_vetro: l.richiede_tipo_vetro, richiede_tipo_montaggio: l.richiede_tipo_montaggio, minimo: l.minimo, filtro_1: l.filtro_1, filtro_2: l.filtro_2, filtro_3: l.filtro_3, filtro_4: l.filtro_4, filtro_5: l.filtro_5, filtro_6: l.filtro_6, filtro_7: l.filtro_7, filtro_8: l.filtro_8, filtro_9: l.filtro_9, filtro_10: l.filtro_10, schema_url: l.schema_url, logo_url: l.logo_url }))
     }
 
     const filtriLabels = await getFiltriModelloLabels(db)

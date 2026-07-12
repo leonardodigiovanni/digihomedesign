@@ -133,7 +133,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
              l.Filtro_1 AS filtro_1, l.Filtro_2 AS filtro_2, l.Filtro_3 AS filtro_3, l.Filtro_4 AS filtro_4,
              l.Filtro_5 AS filtro_5, l.Filtro_6 AS filtro_6, l.Filtro_7 AS filtro_7, l.Filtro_8 AS filtro_8,
              l.Filtro_9 AS filtro_9, l.Filtro_10 AS filtro_10,
-             l.schema_url,
+             l.schema_url, l.logo_url,
              COALESCE(f.ragione_sociale, '') AS fornitore_nome
       FROM listini l
       LEFT JOIN listini_percorsi lp ON lp.listino_id = l.id
@@ -180,6 +180,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       filtro_9: Number(l.filtro_9 ?? 0),
       filtro_10: Number(l.filtro_10 ?? 0),
       schema_url: l.schema_url != null ? String(l.schema_url) : null,
+      logo_url: l.logo_url != null ? String(l.logo_url) : null,
     }))
     const _seenListiniIds = new Set<number>()
     const listini: ListinoItem[] = _listiniAll.filter(l => {

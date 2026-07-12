@@ -38,6 +38,7 @@ export type ListinoItem = {
   filtro_9?: number
   filtro_10?: number
   schema_url?: string | null
+  logo_url?: string | null
   sottocategoria?: string | null
   fase?: string | null
   materiale?: string | null
@@ -589,15 +590,20 @@ function ArticoloForm({
     }
     if (marca) base = base.filter(l => l.produttore === marca)
     if (marcheAttive.size > 0) base = base.filter(l => marcheAttive.has(l.produttore))
-    const map = new Map<string, number[]>()
+    const map = new Map<string, ListinoItem[]>()
     for (const m of base) {
       if (!m.schema_url) continue
-      const ids = map.get(m.schema_url) ?? []
-      ids.push(m.id)
-      map.set(m.schema_url, ids)
+      const items = map.get(m.schema_url) ?? []
+      items.push(m)
+      map.set(m.schema_url, items)
     }
     return [...map.entries()]
-      .map(([url, ids]) => ({ url, count: ids.length, singleId: ids.length === 1 ? ids[0] : null }))
+      .map(([url, items]) => {
+        // Badge logo solo se il gruppo è di una marca sola (schema condiviso da marche diverse resta ambiguo)
+        const marcheGruppo = new Set(items.map(i => i.produttore))
+        const badgeLogo = marcheGruppo.size === 1 ? (items.find(i => i.logo_url)?.logo_url ?? null) : null
+        return { url, count: items.length, singleId: items.length === 1 ? items[0].id : null, badgeLogo }
+      })
       .sort((a, b) => b.count - a.count)
   }, [postClassifica, filtriModelloAttivi, marca, marcheAttive])
 
@@ -925,7 +931,7 @@ function ArticoloForm({
                 {/* Disegno — in fondo, dopo tutti i filtri */}
                 {thumbnailsData.length > 0 && (
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: 8 }}>
-                    {thumbnailsData.map(({ url, count, singleId }) => {
+                    {thumbnailsData.map(({ url, count, singleId, badgeLogo }) => {
                       const isSelected = schemaFiltro === url || (singleId !== null && listinoId === String(singleId))
                       return (
                         <button
@@ -946,14 +952,20 @@ function ArticoloForm({
                           }}
                           title={count > 1 ? `${count} modelli` : undefined}
                           style={{
-                            padding: 0, background: '#fff', cursor: 'pointer',
+                            display: 'flex', flexDirection: 'column', padding: 0, background: '#fff', cursor: 'pointer',
                             border: isSelected ? '2px solid #c8960c' : '1px solid #ddd',
                             borderRadius: 6, overflow: 'hidden',
                             boxShadow: isSelected ? '0 0 0 2px rgba(200,150,12,0.25)' : 'none',
                           }}
                         >
                           {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={url} alt="" style={{ display: 'block', width: '100%', height: 70, objectFit: 'contain', background: '#f9f9f9' }} />
+                          <img src={url} alt="" style={{ display: 'block', width: '100%', height: 70, objectFit: 'contain', background: '#fff' }} />
+                          {badgeLogo && (
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 24, background: '#fff', flexShrink: 0 }}>
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img src={badgeLogo} alt="" style={{ maxWidth: '80%', maxHeight: 18, objectFit: 'contain' }} />
+                            </div>
+                          )}
                         </button>
                       )
                     })}

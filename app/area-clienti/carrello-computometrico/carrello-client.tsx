@@ -43,6 +43,7 @@ export type ArticoloComputabile = {
   filtro_9: number
   filtro_10: number
   schema_url: string | null
+  logo_url: string | null
   principale: number
   caratteristica: number
 }

@@ -37,6 +37,7 @@ export type Articolo = {
   updated_at: string
   foto_url: string | null
   schema_url: string | null
+  logo_url: string | null
   profilo_frontale_mm: number | null
   profilo_profondita_mm: number | null
   trasmittanza_uw: number | null
@@ -73,13 +74,13 @@ export type Articolo = {
 
 // ─── Visibilità colonne ────────────────────────────────────────────────────────
 
-const COL_KEYS = ['percorsi','cat','fase','mat','tipo','amb','descr','fascia','prod','serie','forn','schema','foto','escluso','unita','minimo','p_acq','p_vnd','costante','abbr','sconto','margine','note','richiede','filtri','azioni'] as const
+const COL_KEYS = ['percorsi','cat','fase','mat','tipo','amb','descr','fascia','prod','logo','serie','forn','schema','foto','escluso','unita','minimo','p_acq','p_vnd','costante','abbr','sconto','margine','note','richiede','filtri','azioni'] as const
 type ColKey = typeof COL_KEYS[number]
 
 const COL_LABELS: Record<ColKey, string> = {
   percorsi: 'Percorsi', cat: 'Categoria',
   fase: 'Fase', mat: 'Materiale', tipo: 'Tipologia', amb: 'Ambiente',
-  descr: 'Descriz.', fascia: 'Fascia', prod: 'Marca', serie: 'Serie', forn: 'Fornitore',
+  descr: 'Descriz.', fascia: 'Fascia', prod: 'Marca', logo: 'Logo', serie: 'Serie', forn: 'Fornitore',
   schema: 'Schema', foto: 'Foto', escluso: 'Escluso', unita: 'Unità',
   minimo: 'Minimo', p_acq: 'P.Acq', p_vnd: 'P.Vnd', costante: 'Cost.',
   abbr: 'Abbr', sconto: 'Sconto', margine: 'Margine', note: 'Note',
@@ -89,7 +90,7 @@ const COL_LABELS: Record<ColKey, string> = {
 const COL_DEFAULT: Record<ColKey, boolean> = {
   percorsi: true, cat: true,
   fase: true, mat: true, tipo: true, amb: true,
-  descr: true, fascia: true, prod: true, serie: true, forn: true,
+  descr: true, fascia: true, prod: true, logo: true, serie: true, forn: true,
   schema: true, foto: true, escluso: true, unita: true,
   minimo: false, p_acq: true, p_vnd: true, costante: false,
   abbr: false, sconto: true, margine: true, note: true,
@@ -474,11 +475,12 @@ function ImgUploadRow({ preview, isTarget, pasteFlash, uploading, fileRef, onAct
 
 // ─── Scheda tecnica ───────────────────────────────────────────────────────────
 
-function SchedaTecnicaModal({ art, onClose }: { art: Articolo; onClose: () => void }) {
+function SchedaTecnicaModal({ art, onClose, loghiDisponibili }: { art: Articolo; onClose: () => void; loghiDisponibili: string[] }) {
   const router = useRouter()
   const [result, formAction, pending] = useActionState<MutResult | null, FormData>(updateSchedaTecnica, null)
   const [preview,       setPreview]       = useState<string | null>(art.foto_url   ?? null)
   const [previewSchema, setPreviewSchema] = useState<string | null>(art.schema_url ?? null)
+  const [logoUrl, setLogoUrl] = useState<string | null>(art.logo_url ?? null)
   const [uploading,  setUploading]  = useState(false)
   const [uploadErr,  setUploadErr]  = useState<string | null>(null)
   const [pasteFlash,       setPasteFlash]       = useState(false)
@@ -595,6 +597,40 @@ function SchedaTecnicaModal({ art, onClose }: { art: Articolo; onClose: () => vo
               onActivate={() => setPasteTarget('schema')}
               onFileChange={e => handleFile(e, 'schema')}
             />
+          </div>
+
+          <div style={{ marginBottom: 18 }}>
+            <span style={lbl}>Logo marca (badge sullo schema nelle modali Aggiungi articolo)</span>
+            <input type="hidden" name="logo_url" value={logoUrl ?? ''} />
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, maxHeight: 160, overflowY: 'auto', border: '1px solid #e0e0e0', borderRadius: 6, padding: 8 }}>
+              <button
+                type="button"
+                onClick={() => setLogoUrl(null)}
+                title="Nessun logo"
+                style={{
+                  width: 44, height: 44, borderRadius: 4, cursor: 'pointer',
+                  border: logoUrl === null ? '2px solid #1a4a8a' : '1px solid #ddd',
+                  background: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 16, color: '#999', flexShrink: 0,
+                }}
+              >✕</button>
+              {loghiDisponibili.map(url => (
+                <button
+                  key={url}
+                  type="button"
+                  onClick={() => setLogoUrl(url)}
+                  title={url.split('/').pop()}
+                  style={{
+                    width: 44, height: 44, borderRadius: 4, cursor: 'pointer', padding: 3,
+                    border: logoUrl === url ? '2px solid #1a4a8a' : '1px solid #ddd',
+                    background: '#fff', flexShrink: 0,
+                  }}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                </button>
+              ))}
+            </div>
           </div>
 
           {uploadErr && <p style={{ color: '#c00', fontSize: 11, margin: '-10px 0 14px', background: '#fff5f5', padding: '6px 10px', borderRadius: 4 }}>{uploadErr}</p>}
@@ -813,14 +849,14 @@ function ToggleEsclusoBtn({ art }: { art: Articolo }) {
   )
 }
 
-function ImgCell({ artId, url, tipo, alt, escluso }: { artId: number; url: string | null; tipo: 'schema' | 'foto'; alt: string; escluso?: boolean }) {
+function ImgCell({ artId, url, tipo, alt, escluso, height = 90 }: { artId: number; url: string | null; tipo: 'schema' | 'foto' | 'logo'; alt: string; escluso?: boolean; height?: number }) {
   const [, startT] = React.useTransition()
   const router = useRouter()
   return (
-    <div style={{ position: 'relative', width: '100%', height: 90 }}>
+    <div style={{ position: 'relative', width: '100%', height }}>
       {url
-        ? <img src={url} alt={alt} style={{ display: 'block', width: '100%', height: 90, objectFit: 'contain', background: '#f5f5f5', borderRadius: 3, opacity: escluso ? 0.4 : 1 }} />
-        : <div style={{ width: '100%', height: 90, background: '#f5f5f5', borderRadius: 3 }} />
+        ? <img src={url} alt={alt} style={{ display: 'block', width: '100%', height, objectFit: 'contain', background: '#f5f5f5', borderRadius: 3, opacity: escluso ? 0.4 : 1 }} />
+        : <div style={{ width: '100%', height, background: '#f5f5f5', borderRadius: 3 }} />
       }
       {url && escluso && (
         <img src="/images/app/escluso.png" alt="ESCLUSO" style={{ position: 'absolute', top: '-20%', left: '-20%', width: '140%', height: '140%', objectFit: 'contain', pointerEvents: 'none' }} />
@@ -975,6 +1011,9 @@ function RigaNormale({ art, percorsi, onEdit, onScheda, onDelete, onAction, pend
       </td>
       <td style={{ ...td, ...vis('fascia') }}>{art.fascia ? <span style={{ background: '#f8e8ee', borderRadius: 3, padding: '2px 7px', fontSize: 11, fontWeight: 600 }}>{art.fascia}</span> : null}</td>
       <td style={{ ...td, color: '#555', ...vis('prod') }}>{art.produttore}</td>
+      <td style={{ ...td, padding: 4, width: 70, minWidth: 60, ...vis('logo') }}>
+        <ImgCell artId={art.id} url={art.logo_url} tipo="logo" alt="logo" height={36} />
+      </td>
       <td style={{ ...td, color: '#555', ...vis('serie') }}>{art.serie}</td>
       <td style={{ ...td, color: '#555', ...vis('forn') }}>{art.fornitore_nome}</td>
       <td style={{ ...td, padding: 4, width: 140, minWidth: 120, ...vis('schema') }}>
@@ -1110,6 +1149,7 @@ function RigaEdit({ art, categorie, produttori, fornitori, onDone, onSaved }: {
         <input name="produttore" defaultValue={art.produttore} style={inp} list="prod-list-edit" />
         <datalist id="prod-list-edit">{produttori.map(p => <option key={p} value={p} />)}</datalist>
       </td>
+      <td style={{ ...tde, ...vis('logo') }} />
       <td style={{ ...tde, ...vis('serie') }}>
         <input name="serie" defaultValue={art.serie} style={inp} placeholder="Es. AWS 75" />
       </td>
@@ -1163,7 +1203,7 @@ function RigaEdit({ art, categorie, produttori, fornitori, onDone, onSaved }: {
 
 // ─── Componente principale ────────────────────────────────────────────────────
 
-export default function ListiniClient({ articoli, fornitori, percorsiPerListino, filtriLabels }: { articoli: Articolo[]; fornitori: Fornitore[]; percorsiPerListino: Record<number, Percorso[]>; filtriLabels: Record<number, string> }) {
+export default function ListiniClient({ articoli, fornitori, percorsiPerListino, filtriLabels, loghiDisponibili }: { articoli: Articolo[]; fornitori: Fornitore[]; percorsiPerListino: Record<number, Percorso[]>; filtriLabels: Record<number, string>; loghiDisponibili: string[] }) {
   const [filtroTesto, setFiltroTesto]               = useState('')
   const [filtroCategoria, setFiltroCategoria]       = useState('')
   const [filtroSottocategoria, setFiltroSottocategoria] = useState('')
@@ -1371,6 +1411,7 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
                   <th style={{ ...thS, ...thVis('descr') }}>Descrizione</th>
                   <th style={{ ...thS, ...thVis('fascia') }}>Fascia</th>
                   <th style={{ ...thS, ...thVis('prod') }}>Marca</th>
+                  <th style={{ ...thS, width: 70, ...thVis('logo') }}>Logo</th>
                   <th style={{ ...thS, ...thVis('serie') }}>Serie</th>
                   <th style={{ ...thS, ...thVis('forn') }}>Fornitore</th>
                   <th style={{ ...thS, width: 140, ...thVis('schema') }}>Schema</th>
@@ -1417,7 +1458,7 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
           </div>
         )}
 
-        {schedaArt && <SchedaTecnicaModal art={schedaArt} onClose={() => setSchedaId(null)} />}
+        {schedaArt && <SchedaTecnicaModal art={schedaArt} onClose={() => setSchedaId(null)} loghiDisponibili={loghiDisponibili} />}
       </div>
     </ColVisCtx.Provider>
   )
