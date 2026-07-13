@@ -47,7 +47,7 @@ function CarrelloIcon({ count }: { count: number }) {
   return (
     <div style={{ position: 'relative', width: 44, height: 44 }}>
       <div style={{ ...GOLD, overflow: 'hidden' }}>
-        <img src="/images/carrello/carrello-acquisti.png" alt="Carrello acquisti" style={{ width: 36, height: 36, objectFit: 'contain', display: 'block' }} />
+        <img src="/images/carrello/acquisti.png" alt="Carrello acquisti" style={{ width: 36, height: 36, objectFit: 'contain', display: 'block' }} />
       </div>
       <span style={{
         position: 'absolute', top: 2, right: 0,

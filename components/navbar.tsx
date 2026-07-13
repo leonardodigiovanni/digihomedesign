@@ -352,7 +352,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             className="cart-btn"
             style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 41, height: 41, marginTop: 1, textDecoration: 'none' }}
           >
-            <img src="/images/carrello/carrello-acquisti.png" alt="Carrello acquisti" style={{ height: 46, width: 46, display: 'block', objectFit: 'contain' }} />
+            <img src="/images/carrello/acquisti.png" alt="Carrello acquisti" style={{ height: 41, width: 41, display: 'block', objectFit: 'contain' }} />
             <span className="fs-9" style={{
               position: 'absolute', top: 4, right: 1,
               background: '#e65100', color: '#fff', borderRadius: '50%',
@@ -376,7 +376,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
           onClick={() => { setMenuOpen(o => !o); setMobileOpenSection(null) }}
           aria-expanded={menuOpen}
           aria-label={menuOpen ? 'Chiudi menu' : 'Apri menu'}
-          style={{ position: 'relative' }}
+          style={{ position: 'relative', fontWeight: 500 }}
         >
           <span className="fs-18" style={{ width: 20, display: 'inline-block', textAlign: 'center' }}>{menuOpen ? '✕' : '☰'}</span>
           Menu
@@ -434,7 +434,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             className="cart-btn"
             style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 41, height: 41, marginTop: 1, textDecoration: 'none' }}
           >
-            <img src="/images/carrello/carrello-acquisti.png" alt="Carrello acquisti" style={{ height: 46, width: 46, display: 'block', objectFit: 'contain' }} />
+            <img src="/images/carrello/acquisti.png" alt="Carrello acquisti" style={{ height: 41, width: 41, display: 'block', objectFit: 'contain' }} />
             <span style={{
               position: 'absolute', top: 4, right: 0,
               background: '#e65100', color: '#fff', borderRadius: '50%',
