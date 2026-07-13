@@ -14,7 +14,7 @@ html, body {
   padding: 0;
 }
 html {
-  overflow-y: scroll;
+  overflow-y: hidden;
 }
 * {
   -webkit-tap-highlight-color: transparent;
