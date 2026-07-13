@@ -127,6 +127,30 @@ function getFiltro(art: Articolo, n: number): number {
   return (art as unknown as Record<string, number>)[`filtro_${n}`] ?? 0
 }
 
+// Disposizione fissa a 3 righe (3+4+3) condivisa da riga valori, riga filtri e riga dati,
+// così ogni controllo resta esattamente allineato sopra il flag F che filtra.
+const FILTRI_ROWS = [[1, 2, 3], [4, 5, 6, 7], [8, 9, 10]]
+const FILTRI_ITEM_W = 26
+const FILTRI_GAP = 4
+const FILTRI_GRID_W = 4 * FILTRI_ITEM_W + 3 * FILTRI_GAP
+
+function FiltriGrid({ renderItem, titleFor }: { renderItem: (n: number) => React.ReactNode; titleFor?: (n: number) => string }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 2, width: FILTRI_GRID_W }}>
+      {FILTRI_ROWS.map((row, i) => (
+        <div key={i} style={{ display: 'flex', gap: FILTRI_GAP, justifyContent: 'center' }}>
+          {row.map(n => (
+            <div key={n} style={{ width: FILTRI_ITEM_W, display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+              title={titleFor?.(n)}>
+              {renderItem(n)}
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  )
+}
+
 const RICHIEDE_FIELDS = [
   { key: 'richiede_larghezza',        label: 'larghezza' },
   { key: 'richiede_altezza',          label: 'altezza' },
@@ -140,13 +164,15 @@ const RICHIEDE_FIELDS = [
   { key: 'richiede_tipo_montaggio',   label: 'tipo_montaggio' },
 ] as const
 
+// width = minWidth del bottone corrispondente (ToggleDisponibileBtn ecc.), così il filtro
+// nella riga sopra resta centrato esattamente sopra il flag che filtra.
 const AZIONI_FLAGS = [
-  { key: 'disponibile',     label: 'disp' },
-  { key: 'preventivabile',  label: 'prev' },
-  { key: 'acquistabile',    label: 'acq' },
-  { key: 'computabile',     label: 'comp' },
-  { key: 'principale',      label: 'princ' },
-  { key: 'caratteristica',  label: 'carat' },
+  { key: 'disponibile',     label: 'disp',  width: 76 },
+  { key: 'preventivabile',  label: 'prev',  width: 64 },
+  { key: 'acquistabile',    label: 'acq',   width: 58 },
+  { key: 'computabile',     label: 'comp',  width: 64 },
+  { key: 'principale',      label: 'princ', width: 62 },
+  { key: 'caratteristica',  label: 'carat', width: 62 },
 ] as const
 
 function nomeFile(url: string): string {
@@ -242,6 +268,7 @@ const thS: React.CSSProperties = {
   textAlign: 'left', whiteSpace: 'nowrap', borderBottom: '2px solid #444',
   borderRight: '1px solid #444',
   background: '#2a2a3e', userSelect: 'none',
+  position: 'sticky', top: 0, zIndex: 10,
 }
 
 // ─── Form nuovo articolo ──────────────────────────────────────────────────────
@@ -1157,14 +1184,14 @@ function RigaNormale({ art, percorsi, onEdit, onScheda, onDelete, onAction, pend
       <td style={{ ...td, textAlign: 'center', ...vis('richiede') }}><ToggleCheckbox id={art.id} colonna="richiede_tipo_vetro"      valore={art.richiede_tipo_vetro} /></td>
       <td style={{ ...td, textAlign: 'center', ...vis('richiede') }}><ToggleCheckbox id={art.id} colonna="richiede_tipo_montaggio" valore={art.richiede_tipo_montaggio} /></td>
       <td style={{ ...td, padding: 4, verticalAlign: 'middle', ...vis('filtri') }}>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 6px', width: 126 }}>
-          {FILTRI_FIELDS.map(f => (
-            <div key={f.col} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }} title={filtriLabels[f.n] ?? `F${f.n}`}>
-              <ToggleCheckbox id={art.id} colonna={f.col} valore={getFiltro(art, f.n)} />
-              <span style={{ fontSize: 8, color: '#888', lineHeight: 1 }}>{filtriLabels[f.n] ?? `F${f.n}`}</span>
-            </div>
-          ))}
-        </div>
+        <FiltriGrid
+          titleFor={n => filtriLabels[n] ?? `F${n}`}
+          renderItem={n => (
+            <>
+              <ToggleCheckbox id={art.id} colonna={FILTRI_FIELDS[n - 1].col} valore={getFiltro(art, n)} />
+              <span style={{ fontSize: 8, color: '#888', lineHeight: 1 }}>{filtriLabels[n] ?? `F${n}`}</span>
+            </>
+          )} />
       </td>
       <td style={{ ...td, opacity: 1, whiteSpace: 'nowrap', ...vis('azioni') }}>
         <div style={{ display: 'flex', gap: 4 }}>
@@ -1330,6 +1357,75 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
       if (saved) setColVis(prev => ({ ...prev, ...JSON.parse(saved) }))
     } catch {}
   }, [])
+
+  // ─── Auto-scroll orizzontale al bordo della griglia ────────────────────────
+  // Quando il mouse è vicino (o fuori) dal bordo sx/dx della griglia, scrolla
+  // in automatico finché non rientra verso il centro.
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const scrollDirRef = useRef<0 | 1 | -1>(0)
+  const scrollFrameRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    const EDGE_ZONE = 50
+    const SCROLL_SPEED_PX_SEC = 300
+    let lastTs: number | null = null
+
+    function tick(ts: number) {
+      const el = scrollRef.current
+      if (scrollDirRef.current !== 0 && el) {
+        const elapsedSec = lastTs != null ? (ts - lastTs) / 1000 : 0
+        lastTs = ts
+        el.scrollLeft += scrollDirRef.current * SCROLL_SPEED_PX_SEC * elapsedSec
+        scrollFrameRef.current = requestAnimationFrame(tick)
+      } else {
+        lastTs = null
+        scrollFrameRef.current = null
+      }
+    }
+
+    function ensureLoop() {
+      if (scrollFrameRef.current == null) scrollFrameRef.current = requestAnimationFrame(tick)
+    }
+
+    function onMouseMove(e: MouseEvent) {
+      const el = scrollRef.current
+      if (!el) { scrollDirRef.current = 0; return }
+      const rect = el.getBoundingClientRect()
+      if (e.clientY < rect.top || e.clientY > rect.bottom) {
+        scrollDirRef.current = 0
+        return
+      }
+      if (e.clientX < rect.left + EDGE_ZONE) { scrollDirRef.current = -1; ensureLoop() }
+      else if (e.clientX > rect.right - EDGE_ZONE) { scrollDirRef.current = 1; ensureLoop() }
+      else scrollDirRef.current = 0
+    }
+
+    function stop() { scrollDirRef.current = 0 }
+
+    window.addEventListener('mousemove', onMouseMove)
+    document.addEventListener('mouseleave', stop)
+    return () => {
+      window.removeEventListener('mousemove', onMouseMove)
+      document.removeEventListener('mouseleave', stop)
+      if (scrollFrameRef.current != null) cancelAnimationFrame(scrollFrameRef.current)
+    }
+  }, [])
+
+  // ─── Altezza griglia = spazio visibile residuo ─────────────────────────────
+  // Così la griglia scrolla al suo interno e l'header (sticky) resta sempre visibile.
+  const [gridMaxHeight, setGridMaxHeight] = useState('70vh')
+
+  useEffect(() => {
+    const update = () => {
+      const el = scrollRef.current
+      if (!el) return
+      const top = el.getBoundingClientRect().top
+      setGridMaxHeight(`${Math.floor(window.innerHeight - top)}px`)
+    }
+    update()
+    window.addEventListener('resize', update)
+    return () => window.removeEventListener('resize', update)
+  }, [nuovoOpen, valoriOpen])
 
   function toggleCol(key: ColKey) {
     setColVis(prev => {
@@ -1585,7 +1681,7 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
             onDone={(newId) => { if (newId) setLastId(newId); setNuovoOpen(false) }} />
         )}
 
-          <div style={{ overflowX: 'auto' }}>
+          <div ref={scrollRef} style={{ overflowX: 'auto', overflowY: 'auto', maxHeight: gridMaxHeight }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
                 {valoriOpen && (
@@ -1689,18 +1785,16 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
                       </th>
                     ))}
                     <th style={{ ...thV, ...thVis('filtri') }}>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2px 4px', width: 126 }}>
-                        {FILTRI_FIELDS.map(f => (
-                          <div key={f.col} title={filtriLabels[f.n] ?? `F${f.n}`}>
-                            <ValBoolField value={valori[`filtro_${f.n}`] ?? ''} onChange={v => setValoreV(`filtro_${f.n}`, v)} width={26} />
-                          </div>
-                        ))}
-                      </div>
+                      <FiltriGrid
+                        titleFor={n => filtriLabels[n] ?? `F${n}`}
+                        renderItem={n => (
+                          <ValBoolField value={valori[`filtro_${n}`] ?? ''} onChange={v => setValoreV(`filtro_${n}`, v)} width={26} />
+                        )} />
                     </th>
                     <th style={{ ...thV, ...(colVis['azioni'] || editId !== null ? {} : { display: 'none' }) }}>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2px 4px', width: 90 }}>
+                      <div style={{ display: 'flex', gap: 4 }}>
                         {AZIONI_FLAGS.map(f => (
-                          <div key={f.key} title={f.label}>
+                          <div key={f.key} style={{ width: f.width, display: 'flex', justifyContent: 'center' }} title={f.label}>
                             <ValBoolField value={valori[f.key] ?? ''} onChange={v => setValoreV(f.key, v)} width={26} />
                           </div>
                         ))}
@@ -1829,19 +1923,17 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
                     </th>
                   ))}
                   <th style={{ ...thF, ...thVis('filtri') }}>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2px 4px', width: 126 }}>
-                      {FILTRI_FIELDS.map(f => (
-                        <div key={f.col} title={filtriLabels[f.n] ?? `F${f.n}`}>
-                          <ColFilter value={cf[`filtro_${f.n}`] ?? ''} onChange={v => setCfV(`filtro_${f.n}`, v)}
-                            options={[{ value: '1', label: '1' }, { value: '0', label: '0' }]} width={26} />
-                        </div>
-                      ))}
-                    </div>
+                    <FiltriGrid
+                      titleFor={n => filtriLabels[n] ?? `F${n}`}
+                      renderItem={n => (
+                        <ColFilter value={cf[`filtro_${n}`] ?? ''} onChange={v => setCfV(`filtro_${n}`, v)}
+                          options={[{ value: '1', label: '1' }, { value: '0', label: '0' }]} width={26} />
+                      )} />
                   </th>
                   <th style={{ ...thF, ...(colVis['azioni'] || editId !== null ? {} : { display: 'none' }) }}>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2px 4px', width: 90 }}>
+                    <div style={{ display: 'flex', gap: 4 }}>
                       {AZIONI_FLAGS.map(f => (
-                        <div key={f.key} title={f.label}>
+                        <div key={f.key} style={{ width: f.width, display: 'flex', justifyContent: 'center' }} title={f.label}>
                           <ColFilter value={cf[f.key] ?? ''} onChange={v => setCfV(f.key, v)}
                             options={[{ value: '1', label: '1' }, { value: '0', label: '0' }]} width={26} />
                         </div>
