@@ -284,15 +284,13 @@ export default function CarrelloAcquistiClient({
 
   const thS: React.CSSProperties = {
     padding: '8px 8px', fontSize: 12, fontWeight: 700, color: '#1a1a1a',
-    textAlign: 'left', borderBottom: '1px solid #222',
-    whiteSpace: 'nowrap', }
+    textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.06em',
+    borderBottom: '1px solid #222', whiteSpace: 'nowrap', }
   const tdS: React.CSSProperties = {
     padding: '2px 8px', fontSize: 12, color: '#1a1a1a',
     borderBottom: '1px solid #222', verticalAlign: 'middle',
     overflow: 'hidden', wordBreak: 'break-word',
     }
-  const VERDE = 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)'
-  const ROSA  = 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)'
   const inpS: React.CSSProperties = {
     width: '100%', padding: '7px 10px', border: '1px solid #ddd', borderRadius: 6,
     fontSize: 14, fontFamily: 'inherit', boxSizing: 'border-box',
@@ -517,7 +515,7 @@ export default function CarrelloAcquistiClient({
   let globalIdx = 0
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       {renderModal()}
 
       {/* Preview fullscreen */}
@@ -555,35 +553,30 @@ export default function CarrelloAcquistiClient({
       )}
 
       {/* Bottoni aggiunta articoli */}
-      <div style={{ background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.06) 0px,rgba(255,255,255,0.06) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e8e8e8 0%,#d0d0d0 30%,#c4c4c4 50%,#d8d8d8 70%,#e4e4e4 100%)', border: '1px solid #222', borderRadius: 10, padding: 12 }}>
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-          <a href={cataloghiHref} className={b('btn-green', isApp)} style={{
-            flex: 1, minWidth: 140, padding: '0 8px', fontSize: 14,
-          }}>
-            + Aggiungi articolo
-          </a>
-          {lastTopLevel && (
-            <button type="button" onClick={openDuplica} disabled={actPending}
-              className={actPending ? b('btn-gray', isApp) : b('btn-green', isApp)}
-              style={{
-                flex: 1, minWidth: 140, padding: '0 8px', fontSize: 14,
-              }}>
-              + Ripeti articolo
-            </button>
-          )}
-        </div>
+      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
+        <a href={cataloghiHref} className={b('btn-green', isApp)} style={{
+          minWidth: 200, padding: '0 8px', fontSize: 14,
+        }}>
+          + Aggiungi articolo
+        </a>
+        {lastTopLevel && (
+          <button type="button" onClick={openDuplica} disabled={actPending}
+            className={actPending ? b('btn-gray', isApp) : b('btn-green', isApp)}
+            style={{ minWidth: 200, padding: '0 8px', fontSize: 14 }}>
+            + Ripeti articolo
+          </button>
+        )}
       </div>
 
       {/* Tabella */}
       <div className="carrello-overflow" style={{ overflowX: 'auto' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, width: '100%' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: '100%' }}>
           {catGroups.map(cg => {
             const groupComplete = cg.groups.every(grp => getLacuneAperte(grp[0]).length === 0)
-            const groupBg = groupComplete ? VERDE : ROSA
             return (
-            <div key={cg.key} style={{ background: groupBg, border: '1px solid #222', borderRadius: 8, overflow: 'hidden', width: '100%', boxSizing: 'border-box' }}>
+            <div key={cg.key} className={groupComplete ? undefined : 'sfondo-orange-app'} style={{ background: groupComplete ? '#fff' : undefined, border: '1px solid #222', borderRadius: 8, overflow: 'hidden', width: '100%', boxSizing: 'border-box' }}>
               {/* Label gruppo */}
-              <div style={{ padding: '6px 14px', background: VERDE, borderBottom: '1px solid #222', fontSize: 12, fontWeight: 700, color: '#1a1a1a' }}>
+              <div style={{ padding: '6px 14px', background: '#fff', borderBottom: '1px solid #222', fontSize: 12, fontWeight: 700, color: '#1a1a1a' }}>
                 {cg.label}
               </div>
               <table className="carrello-table" style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
@@ -594,7 +587,7 @@ export default function CarrelloAcquistiClient({
                   <col style={{ width: 70 }} />
                 </colgroup>
                 <thead>
-                  <tr style={{ background: VERDE }}>
+                  <tr style={{ background: '#fff' }}>
                     <th style={{ ...thS, textAlign: 'center', width: 70 }}>
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -634,7 +627,7 @@ export default function CarrelloAcquistiClient({
                   return (
                     <React.Fragment key={root.index}>
                       {/* Riga articolo principale */}
-                      <tr style={{ background: hasLacune ? ROSA : VERDE, borderTop: groupIdx > 0 ? '1px solid #333' : undefined }}>
+                      <tr className={hasLacune ? 'sfondo-orange-app' : undefined} style={{ background: hasLacune ? undefined : '#fff', borderTop: groupIdx > 0 ? '1px solid #333' : undefined }}>
                         <td style={{ ...tdS, textAlign: 'center', padding: '4px 0' }}>
                           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
                             {(root.abbr || root.foto_url) && (
@@ -787,7 +780,7 @@ export default function CarrelloAcquistiClient({
           )})}
 
           {/* Totale */}
-          <div style={{ background: VERDE, border: '1px solid #222', borderRadius: 8, padding: '12px 20px', display: 'flex', flexDirection: 'column', gap: 4, color: '#1a1a1a' }}>
+          <div style={{ background: '#fff', border: '1px solid #222', borderRadius: 8, padding: '12px 20px', display: 'flex', flexDirection: 'column', gap: 4, color: '#1a1a1a' }}>
             {(() => {
               const hasScontiPromo = isLoggedIn && scontiPromo >= 0.01
               const hasScontoCliente = isLoggedIn && scontoCliAmt >= 0.01
