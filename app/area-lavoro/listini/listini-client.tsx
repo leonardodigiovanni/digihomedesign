@@ -140,6 +140,15 @@ const RICHIEDE_FIELDS = [
   { key: 'richiede_tipo_montaggio',   label: 'tipo_montaggio' },
 ] as const
 
+const AZIONI_FLAGS = [
+  { key: 'disponibile',     label: 'disp' },
+  { key: 'preventivabile',  label: 'prev' },
+  { key: 'acquistabile',    label: 'acq' },
+  { key: 'computabile',     label: 'comp' },
+  { key: 'principale',      label: 'princ' },
+  { key: 'caratteristica',  label: 'carat' },
+] as const
+
 function nomeFile(url: string): string {
   return url.split('/').pop() || url
 }
@@ -1437,6 +1446,10 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
       const v = cf[rc.key]
       if (v && String((a as unknown as Record<string, number>)[rc.key]) !== v) return false
     }
+    for (const af of AZIONI_FLAGS) {
+      const v = cf[af.key]
+      if (v && String((a as unknown as Record<string, number>)[af.key]) !== v) return false
+    }
     for (let n = 1; n <= 10; n++) {
       const v = cf[`filtro_${n}`]
       if (v && String(getFiltro(a, n)) !== v) return false
@@ -1684,7 +1697,15 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
                         ))}
                       </div>
                     </th>
-                    <th style={{ ...thV, ...(colVis['azioni'] || editId !== null ? {} : { display: 'none' }) }} />
+                    <th style={{ ...thV, ...(colVis['azioni'] || editId !== null ? {} : { display: 'none' }) }}>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2px 4px', width: 90 }}>
+                        {AZIONI_FLAGS.map(f => (
+                          <div key={f.key} title={f.label}>
+                            <ValBoolField value={valori[f.key] ?? ''} onChange={v => setValoreV(f.key, v)} width={26} />
+                          </div>
+                        ))}
+                      </div>
+                    </th>
                   </tr>
                 )}
                 <tr>
@@ -1817,7 +1838,16 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
                       ))}
                     </div>
                   </th>
-                  <th style={{ ...thF, ...(colVis['azioni'] || editId !== null ? {} : { display: 'none' }) }} />
+                  <th style={{ ...thF, ...(colVis['azioni'] || editId !== null ? {} : { display: 'none' }) }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2px 4px', width: 90 }}>
+                      {AZIONI_FLAGS.map(f => (
+                        <div key={f.key} title={f.label}>
+                          <ColFilter value={cf[f.key] ?? ''} onChange={v => setCfV(f.key, v)}
+                            options={[{ value: '1', label: '1' }, { value: '0', label: '0' }]} width={26} />
+                        </div>
+                      ))}
+                    </div>
+                  </th>
                 </tr>
                 <tr>
                   <th style={{ ...thS, ...thVis('percorsi') }}>Percorsi</th>

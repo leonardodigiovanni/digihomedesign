@@ -363,6 +363,8 @@ const CAMPI_NUMERICI: Record<string, string> = {
 }
 const CAMPI_BOOL: Record<string, string> = {
   escluso: 'escluso',
+  disponibile: 'disponibile', preventivabile: 'preventivabile', acquistabile: 'acquistabile',
+  computabile: 'computabile', principale: 'principale', caratteristica: 'caratteristica',
   richiede_larghezza: 'richiede_larghezza', richiede_altezza: 'richiede_altezza', richiede_quantita: 'richiede_quantita',
   richiede_piano: 'richiede_piano', richiede_km: 'richiede_km', richiede_peso: 'richiede_peso',
   richiede_tipo_colore: 'richiede_tipo_colore', richiede_tipo_colore_acc: 'richiede_tipo_colore_acc',
