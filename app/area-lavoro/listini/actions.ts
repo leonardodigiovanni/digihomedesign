@@ -307,6 +307,12 @@ export async function cloneArticolo(_: AddResult | null, fd: FormData): Promise<
   await ensureTable()
   const db = await getConnection()
   try {
+    const [descRows] = await db.query('SELECT descrizione FROM listini WHERE id=?', [sourceId])
+    const src = (descRows as { descrizione: string }[])[0]
+    if (!src) return { ok: false, error: 'Articolo non trovato.' }
+    const m = src.descrizione.match(/^(\d+)\s+(.*)$/)
+    const nuovaDescrizione = m ? `${parseInt(m[1], 10) + 1} ${m[2]}` : `0 ${src.descrizione}`
+
     const [ins] = await db.execute(
       `INSERT INTO listini
         (categoria, produttore, serie, descrizione, unita, prezzo_acquisto, prezzo_vendita,
@@ -316,14 +322,14 @@ export async function cloneArticolo(_: AddResult | null, fd: FormData): Promise<
          richiede_km, richiede_peso, richiede_tipo_colore, richiede_tipo_colore_acc,
          richiede_tipo_vetro, richiede_tipo_montaggio, foto_url)
        SELECT
-        categoria, produttore, serie, descrizione, unita, prezzo_acquisto, prezzo_vendita,
+        categoria, produttore, serie, ?, unita, prezzo_acquisto, prezzo_vendita,
         note, fornitore_id, max_acquistabile, sconto_articolo, costante, abbr, minimo,
         disponibile, preventivabile, acquistabile, principale, caratteristica,
         richiede_larghezza, richiede_altezza, richiede_quantita, richiede_piano,
         richiede_km, richiede_peso, richiede_tipo_colore, richiede_tipo_colore_acc,
         richiede_tipo_vetro, richiede_tipo_montaggio, foto_url
        FROM listini WHERE id=?`,
-      [sourceId]
+      [nuovaDescrizione, sourceId]
     ) as [{ insertId: number }, unknown]
     await ensurePercorsiTables(db).catch(() => {})
     await db.execute(
