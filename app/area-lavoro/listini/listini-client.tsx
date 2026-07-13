@@ -1419,12 +1419,26 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
     const update = () => {
       const el = scrollRef.current
       if (!el) return
-      const top = el.getBoundingClientRect().top
-      setGridMaxHeight(`${Math.floor(window.innerHeight - top)}px`)
+      // Clamp a 0: se il div è già scrollato sopra al viewport (top negativo),
+      // l'altezza disponibile non deve superare l'intera finestra.
+      const top = Math.max(0, el.getBoundingClientRect().top)
+      const h = Math.floor(window.innerHeight - top)
+      setGridMaxHeight(h > 0 ? `${h}px` : '70vh')
     }
     update()
     window.addEventListener('resize', update)
-    return () => window.removeEventListener('resize', update)
+    // È il body (non window) l'elemento che scrolla in questo layout: al mount,
+    // a scroll 0, tutto ciò che sta sopra la griglia (header+navbar+filtri) può
+    // già superare l'altezza della finestra, dando un top errato. Serve
+    // ricalcolare mentre si scrolla, quando header/filtri escono dalla vista.
+    document.body.addEventListener('scroll', update, { passive: true })
+    const ro = new ResizeObserver(update)
+    ro.observe(document.body)
+    return () => {
+      window.removeEventListener('resize', update)
+      document.body.removeEventListener('scroll', update)
+      ro.disconnect()
+    }
   }, [nuovoOpen, valoriOpen])
 
   function toggleCol(key: ColKey) {
