@@ -832,6 +832,7 @@ export default async function Page() {
               { src: '/images/brand/partners/DEGHI.png',             alt: 'Deghi',               href: '#' },
               { src: '/images/brand/partners/DELONGHI.png',          alt: 'DeLonghi',            href: '#' },
               { src: '/images/brand/partners/DEWALT.png',            alt: 'DeWalt',              href: '#' },
+              { src: '/images/brand/partners/DIGAL.png',             alt: 'Digal',               href: '#' },
               { src: '/images/brand/partners/edilsider.png',         alt: 'Edilsider',           href: '#' },
               { src: '/images/brand/partners/ELECTROLUX.png',        alt: 'Electrolux',          href: '#' },
               { src: '/images/brand/partners/FAAC.png',              alt: 'FAAC',                href: '#' },
