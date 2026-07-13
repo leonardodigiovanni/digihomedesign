@@ -3,7 +3,7 @@ import { usePathname } from 'next/navigation'
 
 const STAFF_PREFIXES = ['/area-lavoro', '/clienti', '/amministrazione', '/disegno']
 const STAFF_ROLES = ['admin', 'dipendente', 'venditore', 'magazzino', 'ragioniere', 'commercialista', 'direttore', 'marketing', 'email', 'operaio']
-const CLIENT_WIDTH_PATHS = ['/clienti/preventivi/', '/area-clienti/carrello-preventivo']
+const CLIENT_WIDTH_PATHS = ['/clienti/preventivi/', '/area-clienti/carrello-preventivo', '/area-clienti/carrello-acquisti']
 
 export default function MainWrapper({ children, role }: { children: React.ReactNode; role: string }) {
   const pathname = usePathname()
