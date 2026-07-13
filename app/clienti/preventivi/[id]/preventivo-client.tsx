@@ -953,7 +953,7 @@ function ArticoloForm({
                               if (isSelected) { setListinoId(''); setSchemaFiltro(null) }
                               else {
                                 const item = listiniFiltrati.find(l => l.id === singleId)
-                                if (item) setMarca(item.produttore)
+                                if (item) { setMarca(item.produttore); setTipo(item.categoria) }
                                 setListinoId(String(singleId)); setSchemaFiltro(url)
                               }
                             } else {
@@ -995,7 +995,7 @@ function ArticoloForm({
                       if (!v) { setSchemaFiltro(null) }
                       if (v) {
                         const item = listiniFiltrati.find(l => l.id === parseInt(v))
-                        if (item) setMarca(item.produttore)
+                        if (item) { setMarca(item.produttore); setTipo(item.categoria) }
                       }
                     }}
                     options={[{ value: '', label: '— Seleziona —' }, ...modelliConSchema.map(m => {
