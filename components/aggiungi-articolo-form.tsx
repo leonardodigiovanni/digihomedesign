@@ -87,6 +87,9 @@ export default function AggiungiArticoloForm({
   filtriLabels,
   lockedFiltriModello,
   percorsiPerListino = {},
+  hideColore = false,
+  showNote = !!onConfirm,
+  forceQuantita = false,
 }: {
   articoli: ArticoloListino[]
   isStaff?: boolean
@@ -107,6 +110,9 @@ export default function AggiungiArticoloForm({
   filtriLabels?: Record<number, string>
   lockedFiltriModello?: Set<number>
   percorsiPerListino?: Record<number, PercorsoEntry[]>
+  hideColore?: boolean
+  showNote?: boolean
+  forceQuantita?: boolean
 }) {
   const preventiviAbilitato = usePreventiviAbilitato()
   const router = useRouter()
@@ -361,7 +367,7 @@ export default function AggiungiArticoloForm({
     }}>
       {onClose && (
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 4 }}>
-          <button type="button" onClick={onClose} className={b('btn-red', isApp)} style={{ width: 32, height: 32, fontSize: 16, padding: 0, borderRadius: '50%', lineHeight: 1 }}>✕</button>
+          <button type="button" onClick={onClose} className={`${b('btn-red', isApp)} btn-icon`} style={{ fontSize: 16, lineHeight: 1 }}>✕</button>
         </div>
       )}
       {parentPendente && (
@@ -615,7 +621,7 @@ export default function AggiungiArticoloForm({
                 <input name="altezza" type="number" min={0} step="0.1" required style={inpStyle} />
               </label>
             )}
-            {selected.richiede_quantita === 1 && (
+            {(selected.richiede_quantita === 1 || forceQuantita) && (
               <label className="testo-articoli" style={lbl}>
                 Quantità *
                 <input name="quantita" type="number" min={1} defaultValue={1} required style={inpStyle} />
@@ -641,13 +647,13 @@ export default function AggiungiArticoloForm({
             )}
           </div>
 
-          {selected.richiede_tipo_colore === 1 && (
+          {selected.richiede_tipo_colore === 1 && !hideColore && (
             <label className="testo-articoli" style={lbl}>
               Colore
               <input name="colore" type="text" placeholder="es. Bianco RAL 9010" style={inpStyle} />
             </label>
           )}
-          {onConfirm && (
+          {showNote && (
             <label className="testo-articoli" style={lbl}>
               Note
               <textarea name="note" rows={2} style={{ ...inpStyle, resize: 'vertical' as const }} />

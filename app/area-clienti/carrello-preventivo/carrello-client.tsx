@@ -683,6 +683,9 @@ export default function CarrelloClient({
               isApp={isApp}
               filtriLabels={filtriLabels}
               percorsiPerListino={percorsiPerListino}
+              hideColore
+              showNote={false}
+              forceQuantita
             />
           </div>
         </div>
