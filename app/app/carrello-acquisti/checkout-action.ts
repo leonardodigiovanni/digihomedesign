@@ -111,6 +111,10 @@ export async function creaCheckoutSessionApp(): Promise<void> {
 
     const totale = articoli.reduce((s, a) => s + a.subtotale, 0)
 
+    // Stripe rifiuta pagamenti sotto 0,50€: meglio bloccarlo qui con un messaggio
+    // chiaro che mandare l'utente su Stripe e farlo tornare con un errore grezzo.
+    if (totale < 0.5) redirect('/app/carrello-acquisti?errore=importo_minimo')
+
     const [res] = await db.execute(
       'INSERT INTO ordini_acquisti (username, cliente_id, status, totale, articoli_json) VALUES (?,?,?,?,?)',
       [username, clienteId, 'pending', totale, JSON.stringify(articoli)]

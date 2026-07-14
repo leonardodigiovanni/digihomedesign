@@ -1,7 +1,7 @@
 ﻿'use client'
 
 import React, { useState, useTransition, useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { b } from '@/lib/btn'
 import {
   rimuoviDaCarrelloAcquisti,
@@ -90,6 +90,8 @@ export default function CarrelloAcquistiClient({
   isApp?: boolean
 }) {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const erroreImportoMinimo = searchParams.get('errore') === 'importo_minimo'
   const [delPending,   startDel]   = useTransition()
   const [clearPending, startClear] = useTransition()
   const [actPending,   startAct]   = useTransition()
@@ -517,6 +519,12 @@ export default function CarrelloAcquistiClient({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       {renderModal()}
+
+      {erroreImportoMinimo && (
+        <div style={{ background: '#fff5f5', color: '#c00', border: '1px solid #fed7d7', borderRadius: 6, padding: '10px 16px', fontSize: 14 }}>
+          L&apos;importo minimo per il pagamento con carta è di 0,50€. Aggiungi altri articoli al carrello prima di procedere.
+        </div>
+      )}
 
       {/* Preview fullscreen */}
       {previewItem && (
