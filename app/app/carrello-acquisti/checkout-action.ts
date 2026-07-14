@@ -143,7 +143,6 @@ export async function creaCheckoutSessionApp(): Promise<void> {
     })
 
     const session = await getStripe().checkout.sessions.create({
-      payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
       success_url: `${baseUrl}/app/ordini/successo?session_id={CHECKOUT_SESSION_ID}`,
