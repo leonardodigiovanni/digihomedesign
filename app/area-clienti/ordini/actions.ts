@@ -147,6 +147,7 @@ export async function clonaPreventivoComeOrdine(preventivoId: number) {
 
 export async function clonaAcquistoComeOrdine(ordineAcquistoId: number) {
   const db = await getConnection()
+  db.on('error', err => console.error('[clonaAcquistoComeOrdine] errore connessione MySQL:', err))
   try {
     await ensureTables(db)
 
@@ -178,8 +179,8 @@ export async function clonaAcquistoComeOrdine(ordineAcquistoId: number) {
         `INSERT INTO ordini_clienti_articoli
          (ordine_id, tipo_riga, categoria, produttore, serie, descrizione,
           unita, quantita, larghezza_cm, altezza_cm, colore,
-          prezzo_unit, sconto_art_pct, sconto_cli_pct, totale)
-         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+          prezzo_unit, prezzo_lordo, sconto_art_pct, sconto_cli_pct, totale)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
         [
           ordineId, 'articolo',
           art.categoria ?? '', art.produttore ?? '', '',
@@ -189,6 +190,7 @@ export async function clonaAcquistoComeOrdine(ordineAcquistoId: number) {
           Number(art.larghezza_cm ?? 0), Number(art.altezza_cm ?? 0),
           art.colore ?? '',
           Number(art.prezzo_vendita ?? 0),
+          Number(art.prezzo_pre_sconto ?? 0),
           Number(art.sconto_articolo ?? 0),
           Number(art.sconto_cliente_pct ?? 0),
           Number(art.subtotale ?? 0),

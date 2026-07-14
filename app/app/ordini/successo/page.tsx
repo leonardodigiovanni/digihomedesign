@@ -1,10 +1,11 @@
-import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import { getStripe } from '@/lib/stripe'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import type { ArticoloSnapshot } from '@/app/area-clienti/carrello-acquisti/checkout-action'
+import { clonaAcquistoComeOrdine } from '@/app/area-clienti/ordini/actions'
+import ClearCart from './clear-cart'
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = { title: 'Ordine confermato' }
@@ -15,21 +16,22 @@ export default async function Page({ searchParams }: Props) {
   const { session_id } = await searchParams
   if (!session_id) redirect('/app/carrello-acquisti')
 
-  const cookieStore = await cookies()
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let session: any = null
   try {
     session = await getStripe().checkout.sessions.retrieve(session_id)
-  } catch {
+  } catch (err) {
+    console.error('[app/ordini/successo] retrieve sessione Stripe fallito:', err)
     redirect('/app/carrello-acquisti')
   }
 
   if (!session || session.payment_status !== 'paid') {
+    console.error('[app/ordini/successo] sessione non pagata o assente:', session?.payment_status)
     redirect('/app/carrello-acquisti')
   }
 
   const db = await getConnection()
+  db.on('error', err => console.error('[app/ordini/successo] errore connessione MySQL:', err))
   let articoli: ArticoloSnapshot[] = []
   let ordineId: number | null = null
   let totale = 0
@@ -43,21 +45,26 @@ export default async function Page({ searchParams }: Props) {
     if (rows[0]) {
       ordineId = rows[0].id
       totale   = Number(rows[0].totale)
-      try { articoli = JSON.parse(rows[0].articoli_json) } catch {}
+      try { articoli = JSON.parse(rows[0].articoli_json) } catch (err) {
+        console.error('[app/ordini/successo] parse articoli_json fallito:', err)
+      }
       await db.execute(
         'UPDATE ordini_acquisti SET status=? WHERE stripe_session_id=? AND status != ?',
         ['paid', session_id, 'paid']
       )
       if (ordineId) {
-        const { clonaAcquistoComeOrdine } = await import('@/app/area-clienti/ordini/actions')
-        await clonaAcquistoComeOrdine(ordineId).catch(() => {})
+        await clonaAcquistoComeOrdine(ordineId).catch(err => {
+          console.error('[app/ordini/successo] clonaAcquistoComeOrdine fallita per ordine', ordineId, ':', err)
+        })
       }
+    } else {
+      console.error('[app/ordini/successo] nessuna riga ordini_acquisti per session_id:', session_id)
     }
+  } catch (err) {
+    console.error('[app/ordini/successo] errore query/update ordini_acquisti:', err)
   } finally {
     await db.end()
   }
-
-  cookieStore.delete('digi_cart_acquisti')
 
   const tdS: React.CSSProperties = {
     padding: '10px 14px', fontSize: 13, color: '#333',
@@ -71,6 +78,7 @@ export default async function Page({ searchParams }: Props) {
 
   return (
     <div style={{ maxWidth: 720, margin: '48px auto', padding: '0 20px 64px', color: '#444', fontSize: 15, lineHeight: 1.8 }}>
+      <ClearCart />
 
       <div style={{
         background: 'linear-gradient(135deg,#1b4d1b,#2e7d32)',
@@ -93,14 +101,17 @@ export default async function Page({ searchParams }: Props) {
         Il tuo ordine è stato ricevuto e verrà elaborato al più presto.
       </p>
 
-      {articoli.length > 0 && (
+      {articoli.length > 0 && (() => {
+        const lordo = articoli.reduce((s, a) => s + a.prezzo_pre_sconto, 0)
+        const sconto = Math.round((lordo - totale) * 100) / 100
+        return (
         <div style={{ background: '#fff', border: '2px solid #c8960c', borderRadius: 10, overflow: 'hidden', marginBottom: 28 }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr>
                 <th style={thS}>Articolo</th>
                 <th style={{ ...thS, textAlign: 'center' }}>Qtà</th>
-                <th style={{ ...thS, textAlign: 'right' }}>Subtotale</th>
+                <th style={{ ...thS, textAlign: 'right' }}>Prezzo pieno</th>
               </tr>
             </thead>
             <tbody>
@@ -117,12 +128,22 @@ export default async function Page({ searchParams }: Props) {
                       {dims.length > 0 && <div style={{ fontSize: 11, color: '#aaa' }}>{dims.join(' · ')}</div>}
                     </td>
                     <td style={{ ...tdS, textAlign: 'center' }}>{a.quantita} {a.unita}</td>
-                    <td style={{ ...tdS, textAlign: 'right', fontWeight: 600 }}>€ {a.subtotale.toFixed(2)}</td>
+                    <td style={{ ...tdS, textAlign: 'right', fontWeight: 600 }}>€ {a.prezzo_pre_sconto.toFixed(2)}</td>
                   </tr>
                 )
               })}
             </tbody>
             <tfoot>
+              <tr style={{ background: '#fafafa', borderTop: '2px solid #e8e8e8' }}>
+                <td colSpan={2} style={{ padding: '10px 14px', fontSize: 13, fontWeight: 700, textAlign: 'right' }}>Totale lordo</td>
+                <td style={{ padding: '10px 14px', fontSize: 13, fontWeight: 700, textAlign: 'right' }}>€ {lordo.toFixed(2)}</td>
+              </tr>
+              {sconto > 0.004 && (
+                <tr style={{ background: '#fafafa' }}>
+                  <td colSpan={2} style={{ padding: '10px 14px', fontSize: 13, fontWeight: 700, textAlign: 'right', color: '#e65100' }}>Sconto</td>
+                  <td style={{ padding: '10px 14px', fontSize: 13, fontWeight: 700, textAlign: 'right', color: '#e65100' }}>− € {sconto.toFixed(2)}</td>
+                </tr>
+              )}
               <tr style={{ background: '#fafafa', borderTop: '2px solid #e8e8e8' }}>
                 <td colSpan={2} style={{ padding: '10px 14px', fontSize: 13, fontWeight: 700, textAlign: 'right' }}>Totale pagato</td>
                 <td style={{ padding: '10px 14px', fontSize: 15, fontWeight: 700, textAlign: 'right', color: '#2e7d32' }}>€ {totale.toFixed(2)}</td>
@@ -130,7 +151,8 @@ export default async function Page({ searchParams }: Props) {
             </tfoot>
           </table>
         </div>
-      )}
+        )
+      })()}
 
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
         <Link href="/app" style={{

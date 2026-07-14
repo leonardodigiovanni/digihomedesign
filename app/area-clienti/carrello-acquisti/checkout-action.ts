@@ -6,6 +6,11 @@ import { getConnection } from '@/lib/db'
 import { getStripe } from '@/lib/stripe'
 import { decompressCart } from '@/lib/cart-cookie'
 
+export async function svuotaCarrelloAcquisti(): Promise<void> {
+  const cookieStore = await cookies()
+  cookieStore.delete('digi_cart_acquisti')
+}
+
 type CartItem = { id: number; q: number; l?: number; h?: number; ante?: number; colore?: string; note?: string }
 
 export type ArticoloSnapshot = {
@@ -36,7 +41,7 @@ async function ensureTable(db: Awaited<ReturnType<typeof getConnection>>) {
   await db.execute(`
     CREATE TABLE IF NOT EXISTS ordini_acquisti (
       id                INT AUTO_INCREMENT PRIMARY KEY,
-      stripe_session_id VARCHAR(200) NOT NULL DEFAULT '',
+      stripe_session_id VARCHAR(200) NULL DEFAULT NULL,
       username          VARCHAR(100) NOT NULL,
       cliente_id        INT NULL,
       status            ENUM('pending','paid','cancelled','expired') NOT NULL DEFAULT 'pending',
@@ -47,7 +52,10 @@ async function ensureTable(db: Awaited<ReturnType<typeof getConnection>>) {
       UNIQUE KEY uq_session (stripe_session_id)
     )
   `)
-  await db.execute(`ALTER TABLE ordini_acquisti ADD COLUMN IF NOT EXISTS stripe_session_id VARCHAR(200) NOT NULL DEFAULT ''`).catch(() => {})
+  await db.execute(`ALTER TABLE ordini_acquisti ADD COLUMN IF NOT EXISTS stripe_session_id VARCHAR(200) NULL DEFAULT NULL`).catch(() => {})
+  // Migrazione da schema precedente (NOT NULL DEFAULT ''): righe pending con stripe_session_id=''
+  // violavano il vincolo UNIQUE ad ogni nuovo checkout. NULL non collide mai con NULL.
+  await db.execute(`ALTER TABLE ordini_acquisti MODIFY COLUMN stripe_session_id VARCHAR(200) NULL DEFAULT NULL`).catch(() => {})
 }
 
 export async function creaCheckoutSession(): Promise<void> {
@@ -63,6 +71,7 @@ export async function creaCheckoutSession(): Promise<void> {
   if (cart.length === 0) redirect('/area-clienti/carrello-acquisti')
 
   const db = await getConnection()
+  db.on('error', err => console.error('[creaCheckoutSession] errore connessione MySQL:', err))
   let articoli: ArticoloSnapshot[] = []
   let clienteId: number | null = null
 
@@ -166,6 +175,12 @@ export async function creaCheckoutSession(): Promise<void> {
     await db.execute('UPDATE ordini_acquisti SET stripe_session_id=? WHERE id=?', [session.id, ordineId])
 
     redirect(session.url!)
+  } catch (err) {
+    const isRedirect = typeof err === 'object' && err !== null && 'digest' in err
+      && typeof (err as { digest?: unknown }).digest === 'string'
+      && (err as { digest: string }).digest.startsWith('NEXT_REDIRECT')
+    if (!isRedirect) console.error('[creaCheckoutSession] errore:', err)
+    throw err
   } finally {
     await db.end()
   }

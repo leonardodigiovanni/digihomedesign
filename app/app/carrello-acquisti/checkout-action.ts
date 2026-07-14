@@ -7,6 +7,11 @@ import { getStripe } from '@/lib/stripe'
 import { decompressCart } from '@/lib/cart-cookie'
 import type { ArticoloSnapshot } from '@/app/area-clienti/carrello-acquisti/checkout-action'
 
+export async function svuotaCarrelloAcquisti(): Promise<void> {
+  const cookieStore = await cookies()
+  cookieStore.delete('digi_cart_acquisti')
+}
+
 type CartItem = { id: number; q: number; l?: number; h?: number; ante?: number; colore?: string; note?: string }
 
 function calcolaSubtotale(prezzo: number, unita: string, h: number, l: number, q: number): number {
@@ -19,7 +24,7 @@ async function ensureTable(db: Awaited<ReturnType<typeof getConnection>>) {
   await db.execute(`
     CREATE TABLE IF NOT EXISTS ordini_acquisti (
       id                INT AUTO_INCREMENT PRIMARY KEY,
-      stripe_session_id VARCHAR(200) NOT NULL DEFAULT '',
+      stripe_session_id VARCHAR(200) NULL DEFAULT NULL,
       username          VARCHAR(100) NOT NULL,
       cliente_id        INT NULL,
       status            ENUM('pending','paid','cancelled','expired') NOT NULL DEFAULT 'pending',
@@ -30,7 +35,10 @@ async function ensureTable(db: Awaited<ReturnType<typeof getConnection>>) {
       UNIQUE KEY uq_session (stripe_session_id)
     )
   `)
-  await db.execute(`ALTER TABLE ordini_acquisti ADD COLUMN IF NOT EXISTS stripe_session_id VARCHAR(200) NOT NULL DEFAULT ''`).catch(() => {})
+  await db.execute(`ALTER TABLE ordini_acquisti ADD COLUMN IF NOT EXISTS stripe_session_id VARCHAR(200) NULL DEFAULT NULL`).catch(() => {})
+  // Migrazione da schema precedente (NOT NULL DEFAULT ''): righe pending con stripe_session_id=''
+  // violavano il vincolo UNIQUE ad ogni nuovo checkout. NULL non collide mai con NULL.
+  await db.execute(`ALTER TABLE ordini_acquisti MODIFY COLUMN stripe_session_id VARCHAR(200) NULL DEFAULT NULL`).catch(() => {})
 }
 
 export async function creaCheckoutSessionApp(): Promise<void> {
