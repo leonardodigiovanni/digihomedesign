@@ -2,6 +2,8 @@ import { cookies } from 'next/headers'
 import Link from 'next/link'
 import Image from 'next/image'
 import HeroCarousel from '@/components/hero-carousel'
+import HeroCardsScroll from '@/components/hero-cards-scroll'
+import HeroCtaScroll from '@/components/hero-cta-scroll'
 import PulsaSync from '@/components/pulsa-sync'
 import PartnerForm from '@/components/partner-form'
 import PartnersBlock from '@/components/partners-block'
@@ -53,7 +55,7 @@ export default async function Page() {
       <span className="testo-titoli" style={{ display: 'block' }}>Ristrutturazioni</span>
       </p>
       <div className="home-hero">
-        <div className="home-hero-cta">
+        <HeroCtaScroll>
           <Link href={ctaPreventivi} className="cta-home-btn">
             <div className="cta-row">
               <div><Image src="/images/cta/preventivo-online.png" alt="Preventivo" width={130} height={130} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} /></div>
@@ -82,7 +84,7 @@ export default async function Page() {
             </div>
             <span className="cta-sub">Download DIGIApp</span>
           </Link>
-        </div>
+        </HeroCtaScroll>
         <div className="home-hero-text" style={{ borderRadius: 20, background: '#fff' }}>
           <div style={{ padding: '28px 28px 24px' }}>
           <p className="testo-articoli">
@@ -100,7 +102,7 @@ export default async function Page() {
           </p>
           </div>
         </div>
-      <div className="home-hero-cards" style={{ display: 'flex', gap: 16, overflowX: 'auto', padding: '8px 4px', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
+      <HeroCardsScroll>
 
         {/* ── Brand ── */}
 
@@ -798,7 +800,7 @@ export default async function Page() {
         )}
         */}
 
-      </div>
+      </HeroCardsScroll>
       </div>
 
       {/* Vendiamo Marchi di valore */}

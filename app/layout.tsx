@@ -15,6 +15,7 @@ import Image from 'next/image'
 import EmergencyLogin from '@/components/emergency-login'
 import PwaRegister from '@/components/pwa-register'
 import CookieBanner from '@/components/cookie-banner'
+import VetrinaAutoScroll from '@/components/vetrina-auto-scroll'
 import ManutenzioneWatcher from '@/components/manutenzione-watcher'
 import MainWrapper from '@/components/main-wrapper'
 import { PreventiviProvider } from '@/lib/preventivi-flag-context'
@@ -320,6 +321,7 @@ export default async function RootLayout({
         <Footer footerBg={settings.footerBg} footerBgMode={settings.footerBgMode} />
 
         <CookieBanner />
+        <VetrinaAutoScroll />
         <ManutenzioneWatcher manutenzione={settings.manutenzione} role={role ?? ''} username={username ?? ''} />
         <EmergencyLogin inManutenzione={inManutenzione} />
         <PwaRegister />
