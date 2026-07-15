@@ -123,18 +123,18 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/metallurgia/porte-corazzate/caveau.jpg" alt="Porta corazzata per caveau" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Fotografia da scegliere</span>
+                <span className="testo-articoli">Porta corazzata per caveau</span>
               </div>
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/metallurgia/porte-corazzate/panic-room.jpg" alt="Porta corazzata per panic room" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Fotografia da scegliere</span>
+                <span className="testo-articoli">Porta corazzata per panic room</span>
               </div>
             </div>
           </div>
