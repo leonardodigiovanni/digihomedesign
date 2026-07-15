@@ -90,7 +90,7 @@ function transform(content) {
               <div style={{ position: 'relative', width: 220, height: 240 }}>
                 <Image src="${card1.src}" alt="${card1.alt}" fill sizes="220px" style={{ objectFit: 'cover' }} />
               </div>
-              <div style={{ padding: '10px 12px 14px' }}>
+              <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">${card1.label}</span>
               </div>
             </div>
@@ -98,7 +98,7 @@ function transform(content) {
               <div style={{ position: 'relative', width: 220, height: 240 }}>
                 <Image src="${card2.src}" alt="${card2.alt}" fill sizes="220px" style={{ objectFit: 'cover' }} />
               </div>
-              <div style={{ padding: '10px 12px 14px' }}>
+              <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">${card2.label}</span>
               </div>
             </div>
