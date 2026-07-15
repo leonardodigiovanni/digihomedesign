@@ -275,9 +275,19 @@ export default function AggiungiArticoloForm({
         // Badge logo solo se il gruppo è di una marca sola (schema condiviso da marche diverse resta ambiguo)
         const marcheGruppo = new Set(items.map(i => i.produttore))
         const badgeLogo = marcheGruppo.size === 1 ? (items.find(i => i.logo_url)?.logo_url ?? null) : null
-        return { url, count: items.length, badgeLogo }
+        const rif = items[0]
+        return {
+          url, count: items.length, badgeLogo,
+          materiale: rif.materiale ?? '', tipologia: rif.tipologia ?? '',
+          produttore: rif.produttore ?? '', serie: rif.serie ?? '',
+        }
       })
-      .sort((a, b) => b.count - a.count)
+      .sort((a, b) =>
+        a.materiale.localeCompare(b.materiale, 'it')
+        || a.tipologia.localeCompare(b.tipologia, 'it')
+        || a.produttore.localeCompare(b.produttore, 'it')
+        || a.serie.localeCompare(b.serie, 'it')
+      )
   }, [artBase, filtriModelloAttivi])
 
   useEffect(() => {
@@ -390,8 +400,8 @@ export default function AggiungiArticoloForm({
         </div>
       )}
       <div style={{ marginBottom: 8 }}>
-        <h2 className="testo-articoli" style={{ margin: 0 }}>
-          {parentPendente ? 'Scegli la caratteristica da aggiungere' : 'Aggiungi articolo al preventivo da elenco'}
+        <h2 className="testo-articoli" style={{ margin: 0, textAlign: 'center', fontSize: 24 }}>
+          {parentPendente ? 'Scegli la caratteristica da aggiungere' : 'Aggiungi un articolo al preventivo'}
         </h2>
       </div>
 
