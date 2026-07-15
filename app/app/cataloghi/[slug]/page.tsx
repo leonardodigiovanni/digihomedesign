@@ -10,6 +10,8 @@ import { type ArticoloListino } from '@/app/brand/cataloghi/[slug]/aggiungi-arti
 import type { PreventivoDestOption } from '@/app/brand/cataloghi/actions'
 import { LISTINO_COLS } from '@/lib/catalogo-matching'
 import { ensurePercorsiTables } from '@/lib/percorsi'
+import { getFiltriModelloLabels } from '@/lib/filtri-modello-labels'
+import { getFiltriCatalogoLabels } from '@/lib/filtri-catalogo-labels'
 
 type Props = { params: Promise<{ slug: string }> }
 
@@ -71,10 +73,15 @@ async function getData(slug: string) {
       ...r, max_acquistabile: r.max_acquistabile != null ? Number(r.max_acquistabile) : null,
     }))
 
+    const filtriLabels = await getFiltriModelloLabels(db)
+    const filtriCatalogoLabels = await getFiltriCatalogoLabels(db)
+
     return {
       categoria: { nome: catNome },
       voci: vociRows as { id: number; nome: string; pdf_filename: string; pdf_label: string; descrizione: string | null; filtro_c1: number; filtro_c2: number; filtro_c3: number; filtro_c4: number; filtro_c5: number; filtro_c6: number; sottocategoria?: string | null; fase?: string | null; materiale?: string | null; tipologia?: string | null; ambiente?: string | null; fascia?: string | null; filtro_1?: number; filtro_2?: number; filtro_3?: number; filtro_4?: number }[],
       articoliAcquisto,
+      filtriLabels,
+      filtriCatalogoLabels,
     }
   } finally {
     await db.end()
@@ -139,7 +146,7 @@ export default async function Page({ params }: Props) {
     } catch {}
   }
 
-  const { categoria, voci, articoliAcquisto } = data
+  const { categoria, voci, articoliAcquisto, filtriLabels, filtriCatalogoLabels } = data
 
   const dbL = await getConnection()
   let articoliPerListino: Record<string, ArticoloListino[]> = {}
@@ -203,6 +210,8 @@ export default async function Page({ params }: Props) {
         preventivoClienteBaseHref="/app/preventivo"
         submitLabel="Conferma"
         isApp={true}
+        filtriLabels={filtriLabels}
+        filtriCatalogoLabels={filtriCatalogoLabels}
       />
 
       {articoliAcquisto.length > 0 && (
