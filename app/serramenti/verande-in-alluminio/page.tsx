@@ -157,17 +157,17 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/verande-in-alluminio/20251108_120024.jpg" alt="Veranda in alluminio installata" fill sizes="240px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/verande-in-alluminio/20251108_120024.jpg" alt="Veranda in alluminio installata" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
-              <div style={{ padding: '8px 12px 10px' }}>
+              <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Veranda in alluminio installata</span>
               </div>
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/verande-in-alluminio/photo_2026-04-15_23-21-54.jpg" alt="Veranda in alluminio su misura" fill sizes="240px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/verande-in-alluminio/photo_2026-04-15_23-21-54.jpg" alt="Veranda in alluminio su misura" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
-              <div style={{ padding: '8px 12px 10px' }}>
+              <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Veranda in alluminio su misura</span>
               </div>
             </div>

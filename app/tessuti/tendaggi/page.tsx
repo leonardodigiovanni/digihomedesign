@@ -125,7 +125,7 @@ export default async function Page() {
               <div style={{ position: 'relative', width: '100%', aspectRatio: '1/1' }}>
                 <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="(max-width: 480px) 100vw, 480px" style={{ objectFit: 'cover' }} />
               </div>
-              <div style={{ padding: '8px 12px 10px' }}>
+              <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Fotografia da scegliere</span>
               </div>
             </div>
@@ -133,7 +133,7 @@ export default async function Page() {
               <div style={{ position: 'relative', width: '100%', aspectRatio: '1/1' }}>
                 <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="(max-width: 480px) 100vw, 480px" style={{ objectFit: 'cover' }} />
               </div>
-              <div style={{ padding: '8px 12px 10px' }}>
+              <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Fotografia da scegliere</span>
               </div>
             </div>

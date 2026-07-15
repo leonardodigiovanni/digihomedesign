@@ -24,7 +24,7 @@ export default function Page() {
           <div style={{ width: '100%' }}>
             <Image src="/images/storia/francesco.png" alt="Francesco" width={240} height={148} style={{ width: '100%', height: 'auto', display: 'block' }} />
           </div>
-          <div style={{ padding: '10px 12px 14px' }}>
+          <div style={{ padding: '14px 16px' }}>
             <span className="testo-articoli">Francesco</span>
           </div>
         </div>
@@ -57,7 +57,7 @@ export default function Page() {
           <div style={{ width: '100%' }}>
             <Image src="/images/storia/pupi-carretto-siciliano.png" alt="Pupi e carretto siciliano" width={240} height={148} style={{ width: '100%', height: 'auto', display: 'block' }} />
           </div>
-          <div style={{ padding: '10px 12px 14px' }}>
+          <div style={{ padding: '14px 16px' }}>
             <span className="testo-articoli">I pupi stampati</span>
           </div>
         </div>

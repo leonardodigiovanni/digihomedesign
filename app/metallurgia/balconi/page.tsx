@@ -123,17 +123,17 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/metallurgia/balconi/photo_2026-04-15_23-18-29.jpg" alt="Balcone in ferro realizzato" fill sizes="240px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/metallurgia/balconi/photo_2026-04-15_23-18-29.jpg" alt="Balcone in ferro realizzato" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
-              <div style={{ padding: '8px 12px 10px' }}>
+              <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Balcone in ferro realizzato</span>
               </div>
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="240px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
-              <div style={{ padding: '8px 12px 10px' }}>
+              <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Fotografia da scegliere</span>
               </div>
             </div>

@@ -157,17 +157,17 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/imbotti-in-alluminio/20240802_183635.jpg" alt="Imbotti in alluminio installati" fill sizes="240px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/imbotti-in-alluminio/20240802_183635.jpg" alt="Imbotti in alluminio installati" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
-              <div style={{ padding: '8px 12px 10px' }}>
+              <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Imbotti in alluminio installati</span>
               </div>
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/imbotti-in-alluminio/cassonetto_mediterraneo-800x533.jpg" alt="Cassonetto mediterraneo in alluminio" fill sizes="240px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/imbotti-in-alluminio/cassonetto_mediterraneo-800x533.jpg" alt="Cassonetto mediterraneo in alluminio" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
-              <div style={{ padding: '8px 12px 10px' }}>
+              <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Cassonetto mediterraneo in alluminio</span>
               </div>
             </div>

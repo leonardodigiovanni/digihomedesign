@@ -157,17 +157,17 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/zanzariere/zanzariera.jpg" alt="Zanzariera su misura" fill sizes="240px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/zanzariere/zanzariera.jpg" alt="Zanzariera su misura" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
-              <div style={{ padding: '8px 12px 10px' }}>
+              <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Zanzariera su misura</span>
               </div>
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/zanzariere/zanzariere.jpg" alt="Zanzariere installate" fill sizes="240px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/zanzariere/zanzariere.jpg" alt="Zanzariere installate" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
-              <div style={{ padding: '8px 12px 10px' }}>
+              <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Zanzariere installate</span>
               </div>
             </div>

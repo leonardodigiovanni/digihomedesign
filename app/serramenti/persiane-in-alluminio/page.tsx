@@ -157,17 +157,17 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/persiane-in-alluminio/photo_2026-04-15_23-25-26.jpg" alt="Persiane in alluminio installate" fill sizes="240px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/persiane-in-alluminio/photo_2026-04-15_23-25-26.jpg" alt="Persiane in alluminio installate" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
-              <div style={{ padding: '8px 12px 10px' }}>
+              <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Persiane in alluminio installate</span>
               </div>
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/persiane-in-alluminio/planet45-persiana2.jpg" alt="Persiana in alluminio Planet 45" fill sizes="240px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/persiane-in-alluminio/planet45-persiana2.jpg" alt="Persiana in alluminio Planet 45" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
-              <div style={{ padding: '8px 12px 10px' }}>
+              <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Persiana in alluminio Planet 45</span>
               </div>
             </div>
