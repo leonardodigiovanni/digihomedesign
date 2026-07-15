@@ -62,8 +62,8 @@ export default function AggiungiArticoloAcquistoForm({ articoli, isApp }: { arti
       background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 10,
       padding: isApp ? '20px 4px 0' : '20px 4px',
     }}>
-      <p className="testo-articoli" style={{ margin: '0 0 8px' }}>
-        Acquista articoli
+      <p className="testo-articoli" style={{ margin: '0 0 8px', textAlign: 'center', fontSize: 24 }}>
+        Aggiungi un articolo al carrello acquisti
       </p>
 
       {step === 'select' && (
