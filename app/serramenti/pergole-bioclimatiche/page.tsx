@@ -157,18 +157,18 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/pergole-bioclimatiche/orientabili.jpg" alt="Pergola bioclimatica con lamelle orientabili su terrazza" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Fotografia da scegliere</span>
+                <span className="testo-articoli">Pergola con lamelle orientabili</span>
               </div>
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/pergole-bioclimatiche/pergole.jpg" alt="Pergole bioclimatiche su balconi in alluminio bianco" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Fotografia da scegliere</span>
+                <span className="testo-articoli">Pergole bioclimatiche in alluminio</span>
               </div>
             </div>
           </div>

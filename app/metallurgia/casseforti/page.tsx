@@ -123,18 +123,18 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/metallurgia/casseforti/cassaforte.jpg" alt="Casseforti a mobile e a pavimento con serratura a chiave" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Fotografia da scegliere</span>
+                <span className="testo-articoli">Casseforti a mobile e a pavimento</span>
               </div>
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/metallurgia/casseforti/cassasicura.jpg" alt="Cassaforte da incasso a muro" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Fotografia da scegliere</span>
+                <span className="testo-articoli">Casseforti da incasso a muro</span>
               </div>
             </div>
           </div>

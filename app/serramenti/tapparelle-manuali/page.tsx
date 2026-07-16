@@ -157,15 +157,15 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/tapparelle-manuali/20240802_170856.jpg" alt="Tapparelle manuali installate" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/tapparelle-manuali/legno.png" alt="Tapparella manuale effetto legno" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Tapparelle manuali installate</span>
+                <span className="testo-articoli">Tapparella manuale effetto legno</span>
               </div>
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/tapparelle-manuali/photo_2026-04-15_23-14-37.jpg" alt="Tapparelle manuali su misura" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/tapparelle-manuali/tapparelle.jpg" alt="Tapparella manuale su misura" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Tapparelle manuali su misura</span>

@@ -123,18 +123,18 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/metallurgia/grondaie/Gronde-Testa-di-Moro.jpg" alt="Grondaie in alluminio color testa di moro" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Fotografia da scegliere</span>
+                <span className="testo-articoli">Grondaie in alluminio testa di moro</span>
               </div>
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/metallurgia/grondaie/rame.jpg" alt="Grondaie in rame su tetto in coppi" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Fotografia da scegliere</span>
+                <span className="testo-articoli">Grondaie in rame</span>
               </div>
             </div>
           </div>

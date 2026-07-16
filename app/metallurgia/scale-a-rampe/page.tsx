@@ -123,7 +123,7 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/metallurgia/scale-a-rampa/photo_2026-04-15_23-24-17.jpg" alt="Scala a rampe in ferro" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/metallurgia/scale-a-rampa/scala-laser-nera.webp" alt="Scala a rampe in ferro" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Scala a rampe in ferro</span>
