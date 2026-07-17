@@ -5,14 +5,14 @@ import CtaPreventivo from '@/components/cta-preventivo'
 import CtaCantiere from '@/components/cta-cantiere'
 
 export const metadata: Metadata = {
-  title: 'Porte Corazzate a Palermo — Sicurezza e Blindature',
-  description: 'Porte corazzate a Palermo: blindature antintrusione, porte blindate e sistemi di sicurezza per abitazioni e uffici. Installazione professionale e preventivo gratuito.',
-  alternates: { canonical: 'https://www.digi-home-design.com/porte-corazzate' },
+  title: 'Porte Blindate a Palermo — Sicurezza e Blindature',
+  description: 'Porte blindate a Palermo: blindature antintrusione, porte corazzate e sistemi di sicurezza per abitazioni e uffici. Installazione professionale e preventivo gratuito.',
+  alternates: { canonical: 'https://www.digi-home-design.com/porte-blindate' },
   robots: { index: true, follow: true },
   openGraph: {
-    title: 'Porte Corazzate a Palermo — Sicurezza e Blindature',
-    description: 'Porte corazzate a Palermo: blindature antintrusione, porte blindate e sistemi di sicurezza per abitazioni e uffici. Installazione professionale e preventivo gratuito.',
-    url: 'https://www.digi-home-design.com/porte-corazzate',
+    title: 'Porte Blindate a Palermo — Sicurezza e Blindature',
+    description: 'Porte blindate a Palermo: blindature antintrusione, porte corazzate e sistemi di sicurezza per abitazioni e uffici. Installazione professionale e preventivo gratuito.',
+    url: 'https://www.digi-home-design.com/porte-blindate',
     type: 'website',
   },
 }
@@ -21,9 +21,9 @@ export default function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/" style={{ color: '#888', textDecoration: 'underline' }}>Home</Link> / Porte Corazzate
+        <Link href="/" style={{ color: '#888', textDecoration: 'underline' }}>Home</Link> / Porte Blindate
       </p>
-      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Porte Corazzate a Palermo</h1>
+      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Porte Blindate a Palermo</h1>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '16px' }}>
@@ -47,7 +47,7 @@ export default function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Installiamo <strong>porte corazzate a Palermo</strong> per abitazioni, uffici e locali commerciali: porte blindate di classe 3, 4 e 5, con serrature multiblindo, cerniere antisvillo e pannelli in acciaio ad alta resistenza. La sicurezza della tua famiglia e dei tuoi beni è la nostra priorità.
+              Installiamo <strong>porte blindate a Palermo</strong> per abitazioni, uffici e locali commerciali: porte corazzate di classe 3, 4 e 5, con serrature multiblindo, cerniere antisvillo e pannelli in acciaio ad alta resistenza. La sicurezza della tua famiglia e dei tuoi beni è la nostra priorità.
             </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
               Collaboriamo con i principali produttori italiani di porte blindate e offriamo un&apos;ampia gamma di finiture, colori e rivestimenti interni per integrare la porta di sicurezza nell&apos;arredo della tua casa senza rinunciare all&apos;estetica.

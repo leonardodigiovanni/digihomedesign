@@ -3,7 +3,7 @@
 import { useActionState, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { saveSettings, saveHeaderBg, saveFooterBg, savePageBg, saveDisabledPages, saveAccessControls, saveRolePermissions, type SaveResult, type SaveBgResult, type SaveAccessResult } from './actions'
-import { clientPages, internalPages, categoryGroups, areaClientiPages, aiutoPages, clientiDipendentiPages, fornitoriDipendentiPages } from '@/lib/nav-config'
+import { clientPages, internalPages, categoryGroups, areaClientiPages, aiutoPages, prodottiPages, clientiDipendentiPages, fornitoriDipendentiPages } from '@/lib/nav-config'
 import FlashSuccess from '@/components/flash-success'
 import type { Rgba, BgMode } from '@/lib/settings'
 import { rgbGradient, rgbGradientInv, rgbBrushedBackground, rgbBrushedBackgroundInv, rgbLuminance } from '@/lib/bg-utils'
@@ -442,6 +442,7 @@ function CheckRow({ label, checked, onChange, name }: { label: string; checked: 
 // Tutti i gruppi di pagine pubbliche con i loro ID
 const PAGE_GROUPS: { label: string; pages: { id: number; label: string }[] }[] = [
   { label: 'Brand',        pages: clientPages },
+  { label: 'Prodotti',     pages: prodottiPages },
   ...categoryGroups.map(g => ({ label: g.label, pages: g.pages })),
   { label: 'Area Personale', pages: areaClientiPages },
   { label: 'Aiuto',        pages: aiutoPages },

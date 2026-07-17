@@ -17,6 +17,11 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 31536000,
   },
   allowedDevOrigins: ['192.168.1.38'],
+  async redirects() {
+    return [
+      { source: '/porte-corazzate', destination: '/porte-blindate', permanent: true },
+    ]
+  },
   webpack: (config) => {
     config.resolve.alias.canvas = false
     return config

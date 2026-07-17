@@ -4,7 +4,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { writeSettings, readSettings, type Rgba, type BgMode } from '@/lib/settings'
 import { ALL_ROLES } from '@/lib/permissions'
-import { internalPages, clientPages, categoryGroups, areaClientiPages, aiutoPages, clientiDipendentiPages, fornitoriDipendentiPages } from '@/lib/nav-config'
+import { internalPages, clientPages, categoryGroups, areaClientiPages, aiutoPages, prodottiPages, clientiDipendentiPages, fornitoriDipendentiPages } from '@/lib/nav-config'
 
 export type SaveResult =
   | { ok: true; inactivityMinutes: number; countdownSeconds: number }
@@ -97,6 +97,7 @@ export async function saveDisabledPages(
 
   const allIds = [
     ...clientPages.map(p => p.id),
+    ...prodottiPages.map(p => p.id),
     ...categoryGroups.flatMap(g => g.pages.map(p => p.id)),
     ...areaClientiPages.map(p => p.id),
     ...aiutoPages.map(p => p.id),

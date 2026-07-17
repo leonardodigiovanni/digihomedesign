@@ -171,6 +171,16 @@ export const clientPages: NavPage[] = [
   { id: 40, label: 'Documenti Legali',      href: '/brand/templates-documenti'   },
 ]
 
+// Pagine Prodotti: pagine vetrina top-level, sempre pubbliche
+export const prodottiPages: NavPage[] = [
+  { id: 280, label: 'Infissi',                        href: '/infissi'                        },
+  { id: 281, label: 'Verande',                        href: '/verande'                        },
+  { id: 282, label: 'Persiane',                       href: '/persiane'                        },
+  { id: 283, label: 'Porte Blindate',                 href: '/porte-blindate'                  },
+  { id: 284, label: 'Strutture Metalliche',           href: '/strutture-metalliche'            },
+  { id: 285, label: 'Ristrutturazioni Chiavi in Mano', href: '/ristrutturazioni-chiavi-in-mano' },
+]
+
 // Colori placeholder per i riquadri della home (sostituire con immagini reali)
 export const cardColors = [
   '#4f7cac','#6b8f71','#c47c5a','#7b6fa0',

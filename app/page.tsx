@@ -960,7 +960,7 @@ export default async function Page() {
           </div>
           <p className="testo-articoli">
             Siamo specialisti in <Link href="/infissi" aria-label="infissi-a-palermo" style={{ color: '#1a1a1a', fontWeight: 700 }}>infissi</Link> e <Link href="/serramenti" aria-label="serramenti-a-palermo" style={{ color: '#1a1a1a', fontWeight: 700 }}>serramenti</Link>: finestre, porte-finestre e scorrevoli su misura, installati e garantiti.
-            Realizziamo <Link href="/verande" aria-label="verande-a-palermo" style={{ color: '#1a1a1a', fontWeight: 700 }}>verande</Link> per vivere gli spazi esterni tutto l&apos;anno, e montiamo <Link href="/porte-corazzate" aria-label="porte-corazzate-a-palermo" style={{ color: '#1a1a1a', fontWeight: 700 }}>porte corazzate</Link> e blindature antintrusione per la massima sicurezza.
+            Realizziamo <Link href="/verande" aria-label="verande-a-palermo" style={{ color: '#1a1a1a', fontWeight: 700 }}>verande</Link> per vivere gli spazi esterni tutto l&apos;anno, e montiamo <Link href="/porte-blindate" aria-label="porte-blindate-a-palermo" style={{ color: '#1a1a1a', fontWeight: 700 }}>porte blindate</Link> e blindature antintrusione per la massima sicurezza.
             Le nostre <Link href="/persiane" aria-label="persiane-a-palermo" style={{ color: '#1a1a1a', fontWeight: 700 }}>persiane in alluminio</Link> coniugano estetica e durata nel tempo.
           </p>
           <p className="testo-articoli" style={{ marginTop: 12 }}>

@@ -4,7 +4,7 @@ import React, { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { clientPages, visibleAdminPages, visibleInternalPages, visibleFornitoriPages, visibleClientiPages, aiutoPages, categoryGroups, areaClientiPages, type NavPage, type CategoryGroup } from '@/lib/nav-config'
+import { clientPages, visibleAdminPages, visibleInternalPages, visibleFornitoriPages, visibleClientiPages, aiutoPages, categoryGroups, areaClientiPages, prodottiPages, type NavPage, type CategoryGroup } from '@/lib/nav-config'
 import HeaderAuth from '@/components/header-auth'
 
 interface NavbarProps {
@@ -162,6 +162,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
   const adminItems         = visibleAdminPages(role)
   const internalItems      = visibleInternalPages(role, rolePermissions).filter(p => !disabledPages.includes(p.id))
   const visibleClientPages = clientPages.filter(p => !disabledPages.includes(p.id))
+  const prodottiItems      = prodottiPages.filter(p => !disabledPages.includes(p.id))
   const fornitoriItems     = visibleFornitoriPages(role, rolePermissions, disabledPages)
   const clientiItems       = visibleClientiPages(role, rolePermissions, disabledPages)
 
@@ -252,6 +253,10 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
               )}
             </div>
             </>
+          )}
+
+          {prodottiItems.length > 0 && (
+            <><NavSep /><ProdottiDropdown items={prodottiItems} isActive={isActive} linkStyle={linkStyle} /></>
           )}
 
           {categoryGroups.map(g => {
@@ -482,6 +487,14 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             </MobileSection>
           )}
 
+          {prodottiItems.length > 0 && (
+            <MobileSection sectionKey="prodotti" label="Prodotti" open={mobileOpenSection === 'prodotti'} onToggle={toggleMobileSection}>
+              {prodottiItems.map(p => (
+                <MobileLink key={p.id} href={p.href} label={p.label} active={isActive(p.href)} indent />
+              ))}
+            </MobileSection>
+          )}
+
           {categoryGroups.map(g => {
             const visiblePages = g.pages.filter(p => !disabledPages.includes(p.id))
             if (visiblePages.length === 0) return null
@@ -685,6 +698,59 @@ function InternalDropdown({
                   {unread > 99 ? '99+' : unread}
                 </span>
               )}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function ProdottiDropdown({
+  items,
+  isActive,
+  linkStyle,
+}: {
+  items: NavPage[]
+  isActive: (href: string) => boolean
+  linkStyle: (href: string) => React.CSSProperties
+}) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  const alignRef = useDropdownAlign(open)
+
+  useEffect(() => {
+    function handle(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handle)
+    return () => document.removeEventListener('mousedown', handle)
+  }, [])
+
+  const anyActive = items.some(p => isActive(p.href))
+
+  return (
+    <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+      <button onClick={() => setOpen(o => !o)} className="nav-link testo-nav-bar" style={{ ...linkStyle('/prodotti'), gap: 4, textDecoration: anyActive ? 'underline' : 'none', textDecorationThickness: anyActive ? '3px' : undefined, textUnderlineOffset: anyActive ? '4px' : undefined }}>
+        Prodotti {open ? '▴' : '▾'}
+      </button>
+      {open && (
+        <div ref={alignRef} style={{
+          position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
+          background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
+          boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 12,
+          display: 'grid', gridTemplateRows: 'repeat(6, auto)', gridAutoFlow: 'column', gridAutoColumns: 'max-content', gap: 2,
+          zIndex: 200, width: 'max-content', minWidth: 220,
+        }}>
+          {items.map(p => (
+            <Link
+              key={p.id}
+              href={p.href}
+              onClick={() => setOpen(false)}
+              className={isActive(p.href) ? 'nav-dropdown-link nav-dropdown-link-active' : 'nav-dropdown-link'}
+              style={{ padding: '7px 10px' }}
+            >
+              <span>{p.label}</span>
             </Link>
           ))}
         </div>

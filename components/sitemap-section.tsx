@@ -1,14 +1,5 @@
 import Link from 'next/link'
-import { categoryGroups, clientPages } from '@/lib/nav-config'
-
-const topPages = [
-  { label: 'Infissi',                        href: '/infissi'                        },
-  { label: 'Verande',                         href: '/verande'                        },
-  { label: 'Persiane',                         href: '/persiane'                       },
-  { label: 'Porte Corazzate',                 href: '/porte-corazzate'                },
-  { label: 'Strutture Metalliche',            href: '/strutture-metalliche'           },
-  { label: 'Ristrutturazioni Chiavi in Mano', href: '/ristrutturazioni-chiavi-in-mano'},
-]
+import { categoryGroups, clientPages, prodottiPages } from '@/lib/nav-config'
 
 const brandPages = clientPages.map(p => ({ label: p.label, href: p.href }))
 
@@ -56,6 +47,10 @@ function renderColumns(heading: string, pages: SimpleLink[]) {
 }
 
 export default function SitemapSection({ disabledPages }: { disabledPages: number[] }) {
+  const visibleProdotti = prodottiPages
+    .filter(p => !disabledPages.includes(p.id))
+    .map(p => ({ label: p.label, href: p.href }))
+
   const visibleBrand = brandPages.filter(p => {
     const navPage = clientPages.find(c => c.href === p.href)
     return !navPage || !disabledPages.includes(navPage.id)
@@ -86,14 +81,14 @@ export default function SitemapSection({ disabledPages }: { disabledPages: numbe
             gap: '0 16px',
           }}>
 
-            {/* Prodotti principali */}
-            {renderColumns('Prodotti', topPages)}
-
             {/* Brand — filtrato */}
-            {visibleBrand.length > 0 && (
+            {visibleBrand.length > 0 && renderColumns('Brand', visibleBrand)}
+
+            {/* Prodotti principali — filtrato */}
+            {visibleProdotti.length > 0 && (
               <>
                 <div style={{ width: 1, background: 'rgba(255,255,255,0.18)', alignSelf: 'stretch', flexShrink: 0 }} />
-                {renderColumns('Brand', visibleBrand)}
+                {renderColumns('Prodotti', visibleProdotti)}
               </>
             )}
 
