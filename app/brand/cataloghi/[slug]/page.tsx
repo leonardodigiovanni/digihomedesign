@@ -272,7 +272,7 @@ export default async function Page({ params }: Props) {
           </Link>
           {cartNonVuoto && (
             <Link href="/area-clienti/carrello-preventivo" className="btn-black fs-12">
-              Vai alla simulazione
+              Vai alla simulazione →
             </Link>
           )}
         </StickyBottomBarContent>

@@ -149,7 +149,7 @@ export default async function AppDownloadPage() {
 
       <StickyBottomBarContent>
         <a href="/" className="btn-black fs-12" style={{ padding: '0 28px' }}>
-          Vai al sito
+          Vai al sito →
         </a>
       </StickyBottomBarContent>
 

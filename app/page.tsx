@@ -16,9 +16,6 @@ import type { Metadata } from 'next'
 const VIDEO_ID = 'WrMGGouem3c'
 const VIDEO_URL = `https://www.youtube.com/watch?v=${VIDEO_ID}&list=RDWrMGGouem3c&start_radio=1`
 
-const VIDEO2_ID = 'U0Elm96fbsk'
-const VIDEO2_URL = `https://www.youtube.com/watch?v=${VIDEO2_ID}&list=PLeBliHWVE78rxU7Y5LDD8ZKYsTzVrqw1L&index=4`
-
 async function getVideoTitle(url: string): Promise<string> {
   try {
     const res = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`)
@@ -80,10 +77,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  const [videoTitle, video2Title] = await Promise.all([
-    getVideoTitle(VIDEO_URL),
-    getVideoTitle(VIDEO2_URL),
-  ])
+  const videoTitle = await getVideoTitle(VIDEO_URL)
   const cookieStore = await cookies()
   const username = cookieStore.get('session_user')?.value
   const role = cookieStore.get('session_role')?.value ?? ''
@@ -105,8 +99,7 @@ export default async function Page() {
   return (
     <>
     <HomeShortcutsContent role={role || null} rolePermissions={rolePermissions} disabledPages={disabledPages}>
-      <VideoButton url={VIDEO_URL} videoId={VIDEO_ID} label="Infisso in PVC" hint={videoTitle} />
-      <VideoButton url={VIDEO2_URL} videoId={VIDEO2_ID} label="Porta blindata ctg 6" hint={video2Title} />
+      <VideoButton url={VIDEO_URL} videoId={VIDEO_ID} label="Video youtube 1" hint={videoTitle} />
     </HomeShortcutsContent>
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 16, marginBottom: 16 }}>
       <p style={{ textAlign: 'center', margin: 0, padding: 0, lineHeight: 1.5 }}>
