@@ -10,6 +10,7 @@ import { StickyBottomBarProvider } from '@/lib/sticky-bottom-bar-context'
 import { HomeShortcutsProvider } from '@/lib/home-shortcuts-context'
 import { PageTitleOverrideProvider } from '@/lib/page-title-override-context'
 import InactivityGuard from '@/components/inactivity-guard'
+import PageVisitTracker from '@/components/page-visit-tracker'
 import AvvisiNotifier from '@/components/avvisi-notifier'
 import { readSettings, type BgMode } from '@/lib/settings'
 import { rgbGradient, rgbGradientInv, rgbBrushedBackground, rgbBrushedBackgroundInv, rgbBrushedBackgroundDark, rgbBrushedBackgroundDarkInv, rgbBoxShadow } from '@/lib/bg-utils'
@@ -338,6 +339,7 @@ export default async function RootLayout({
         <ManutenzioneWatcher manutenzione={settings.manutenzione} role={role ?? ''} username={username ?? ''} />
         <EmergencyLogin inManutenzione={inManutenzione} />
         <PwaRegister />
+        <PageVisitTracker />
 
         {role === 'cliente' && !inManutenzione && <AvvisiNotifier />}
 

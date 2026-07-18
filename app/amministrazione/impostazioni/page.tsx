@@ -2,6 +2,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { readSettings } from '@/lib/settings'
+import { getVisitStats, getShortcutStats } from '@/lib/page-visits-db'
 import SettingsForm from './settings-form'
 import ManutenzioneToggle from './manutenzione-toggle'
 import BannerPanel from './banner-panel'
@@ -24,6 +25,7 @@ export default async function Page() {
   if (cookieStore.get('session_role')?.value !== 'admin') redirect('/')
 
   const settings = await readSettings()
+  const [visitStats, shortcutStats] = await Promise.all([getVisitStats(), getShortcutStats()])
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
@@ -67,6 +69,8 @@ export default async function Page() {
         pageBg={settings.pageBg}
         pageBgMode={settings.pageBgMode}
         disabledPages={settings.disabledPages}
+        visitStats={visitStats}
+        shortcutStats={shortcutStats}
         rolePermissions={settings.rolePermissions}
         registrazioniDisabilitate={settings.registrazioniDisabilitate}
         loginClientiDisabilitato={settings.loginClientiDisabilitato}

@@ -31,6 +31,8 @@ interface Props {
   pageBg: Rgba
   pageBgMode: BgMode
   disabledPages: number[]
+  visitStats: Record<string, { sloggato: number; cliente: number; minuti: number }>
+  shortcutStats: Record<string, { attive: number; cancellate: number }>
   registrazioniDisabilitate: boolean
   loginClientiDisabilitato: boolean
   loginDipendentiDisabilitato: boolean
@@ -278,7 +280,7 @@ function BgColorPanel({
   )
 }
 
-export default function SettingsForm({ inactivityMinutes, countdownSeconds, headerBg, headerBgMode, footerBg, footerBgMode, pageBg, pageBgMode, disabledPages, registrazioniDisabilitate, loginClientiDisabilitato, loginDipendentiDisabilitato, rolePermissions }: Props) {
+export default function SettingsForm({ inactivityMinutes, countdownSeconds, headerBg, headerBgMode, footerBg, footerBgMode, pageBg, pageBgMode, disabledPages, visitStats, shortcutStats, registrazioniDisabilitate, loginClientiDisabilitato, loginDipendentiDisabilitato, rolePermissions }: Props) {
   const [savedMinutes, setSavedMinutes] = useState(inactivityMinutes)
   const [savedSeconds, setSavedSeconds] = useState(countdownSeconds)
   const [minutes, setMinutes] = useState(inactivityMinutes)
@@ -402,7 +404,7 @@ export default function SettingsForm({ inactivityMinutes, countdownSeconds, head
       </div>
 
       {/* Pagine visibili — riga a tutta larghezza */}
-      <PagesPanel disabledPages={disabledPages} />
+      <PagesPanel disabledPages={disabledPages} visitStats={visitStats} shortcutStats={shortcutStats} />
 
       {/* Matrice permessi — riga a tutta larghezza */}
       <RolePermissionsPanel rolePermissions={rolePermissions} />
@@ -423,7 +425,7 @@ const panelStyle: React.CSSProperties = {
   boxSizing: 'border-box',
 }
 
-function CheckRow({ label, checked, onChange, name }: { label: string; checked: boolean; onChange: (v: boolean) => void; name: string }) {
+function CheckRow({ label, checked, onChange, name, stats }: { label: string; checked: boolean; onChange: (v: boolean) => void; name: string; stats?: string }) {
   return (
     <label style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 14, cursor: 'pointer', userSelect: 'none' }}>
       <input
@@ -434,16 +436,30 @@ function CheckRow({ label, checked, onChange, name }: { label: string; checked: 
         onChange={e => onChange(e.target.checked)}
         style={{ width: 16, height: 16, cursor: 'pointer', accentColor: '#1a1a1a' }}
       />
-      {label}
+      <span>
+        {label}
+        {stats && <span style={{ display: 'block', fontSize: 11, color: '#999' }}>{stats}</span>}
+      </span>
     </label>
   )
 }
 
+// sloggati/clienti · scorciatoie attive/cancellate · minuti totali di lettura attiva
+function formatPageStats(
+  href: string,
+  visitStats: Record<string, { sloggato: number; cliente: number; minuti: number }>,
+  shortcutStats: Record<string, { attive: number; cancellate: number }>
+): string {
+  const v = visitStats[href] ?? { sloggato: 0, cliente: 0, minuti: 0 }
+  const s = shortcutStats[href] ?? { attive: 0, cancellate: 0 }
+  return `${v.sloggato}/${v.cliente} · ${s.attive}/${s.cancellate} · ${Math.round(v.minuti)}min`
+}
+
 // Tutti i gruppi di pagine pubbliche con i loro ID
-const PAGE_GROUPS: { label: string; pages: { id: number; label: string }[] }[] = [
+const PAGE_GROUPS: { label: string; hubHref?: string; pages: { id: number; label: string; href: string }[] }[] = [
   { label: 'Brand',        pages: clientPages },
   { label: 'Prodotti',     pages: prodottiPages },
-  ...categoryGroups.map(g => ({ label: g.label, pages: g.pages })),
+  ...categoryGroups.map(g => ({ label: g.label, hubHref: g.href, pages: g.pages })),
   { label: 'Area Personale', pages: areaClientiPages },
   { label: 'Aiuto',        pages: aiutoPages },
 ]
@@ -459,7 +475,11 @@ function allPageIds(): number[] {
   return PAGE_GROUPS.flatMap(g => g.pages.map(p => p.id))
 }
 
-function PagesPanel({ disabledPages }: { disabledPages: number[] }) {
+function PagesPanel({ disabledPages, visitStats, shortcutStats }: {
+  disabledPages: number[]
+  visitStats: Record<string, { sloggato: number; cliente: number; minuti: number }>
+  shortcutStats: Record<string, { attive: number; cancellate: number }>
+}) {
   const router = useRouter()
   const [saved, setSaved] = useState(() => initPages(disabledPages))
   const [pages, setPages] = useState(() => initPages(disabledPages))
@@ -489,7 +509,14 @@ function PagesPanel({ disabledPages }: { disabledPages: number[] }) {
             const twoCol = g.pages.length > 7
             return (
               <div key={g.label} style={{ flexShrink: 0 }}>
-                <div style={groupHeaderStyle}>{g.label}</div>
+                <div style={groupHeaderStyle}>
+                  {g.label}
+                  {g.hubHref && (
+                    <span style={{ display: 'block', fontWeight: 400, textTransform: 'none', letterSpacing: 'normal', fontSize: 11, color: '#999' }}>
+                      {formatPageStats(g.hubHref, visitStats, shortcutStats)}
+                    </span>
+                  )}
+                </div>
                 <div style={{
                   display: 'grid',
                   gridTemplateColumns: twoCol ? 'repeat(2, auto)' : '1fr',
@@ -499,6 +526,7 @@ function PagesPanel({ disabledPages }: { disabledPages: number[] }) {
                     <CheckRow
                       key={p.id}
                       label={p.label}
+                      stats={formatPageStats(p.href, visitStats, shortcutStats)}
                       checked={pages[p.id] ?? true}
                       onChange={v => setPages(prev => ({ ...prev, [p.id]: v }))}
                       name={`page_${p.id}`}

@@ -278,7 +278,7 @@ const PUBLIC_PAGES_WITH_ID = [
 // o la stessa pagina con una query string (/pageHref?param=x) — le pagine di
 // dettaglio dinamiche (per path o per query, es. i cantieri) condividono gli
 // stessi permessi della voce di menu statica a cui appartengono.
-function matchesPage(href: string, pageHref: string): boolean {
+export function matchesPage(href: string, pageHref: string): boolean {
   return href === pageHref || href.startsWith(pageHref + '/') || href.startsWith(pageHref + '?')
 }
 
