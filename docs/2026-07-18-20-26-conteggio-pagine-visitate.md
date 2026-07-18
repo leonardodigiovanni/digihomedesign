@@ -299,6 +299,21 @@ Il dato SEO vero riguarda solo le pagine vetrina pubbliche (categorie, hub,
 Brand, Prodotti, Aiuto). Nessuna modifica di scope richiesta per ora — il
 pannello continua a mostrare tutte le pagine indistintamente.
 
+## Correzione post-rilascio #3 — hub Brand mancante
+
+Segnalato dall'utente dopo il deploy: `/brand` non aveva la riga di
+statistiche, a differenza degli hub categoria (Serramenti, Metallurgia,
+ecc.). Motivo: in `PAGE_GROUPS` solo `categoryGroups` riceveva `hubHref: g.href`
+— il gruppo "Brand" no, perché inizialmente trattato come semplice etichetta
+di raggruppamento come "Prodotti"/"Area Personale"/"Aiuto". Ma a differenza
+di quei tre, **`/brand` è una vera pagina** (`app/brand/page.tsx`, hub con
+link a Storia/Galleria/Contatti/ecc.), verificato che `/prodotti`,
+`/aiuto`, `/area-clienti` invece non hanno un proprio `page.tsx` — restano
+correttamente senza riga hub.
+
+**Fix**: aggiunto `hubHref: '/brand'` alla voce Brand di `PAGE_GROUPS` in
+`settings-form.tsx`. Verificato che la riga statistiche ora compare.
+
 ## Non tocco
 
 - Nessuna modifica a `home_shortcuts` (solo lettura via nuova query di

@@ -457,7 +457,7 @@ function formatPageStats(
 
 // Tutti i gruppi di pagine pubbliche con i loro ID
 const PAGE_GROUPS: { label: string; hubHref?: string; pages: { id: number; label: string; href: string }[] }[] = [
-  { label: 'Brand',        pages: clientPages },
+  { label: 'Brand',        hubHref: '/brand', pages: clientPages },
   { label: 'Prodotti',     pages: prodottiPages },
   ...categoryGroups.map(g => ({ label: g.label, hubHref: g.href, pages: g.pages })),
   { label: 'Area Personale', pages: areaClientiPages },
