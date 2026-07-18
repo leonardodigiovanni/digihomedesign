@@ -21,10 +21,7 @@ const GOLD: React.CSSProperties = {
 
 const HomeSvg = () => (
   <div style={GOLD}>
-    <svg width="34" height="30" viewBox="-1 -1 26 23" fill="none" stroke="#000" strokeWidth="2" strokeLinecap="square" strokeLinejoin="miter" style={{ marginTop: -6 }}>
-      <path d="M1 10.5 L12 2 L17 5.8 L17 3 L19.5 3 L19.5 7.6 L23 10.5 V20.5 M1 20.5 V10.5"/>
-      <text x="12" y="20" textAnchor="middle" fontSize="13" fontWeight="600" fill="#000" stroke="none" fontFamily="system-ui,sans-serif">DG</text>
-    </svg>
+    <img src="/images/header/home.png" alt="Home" style={{ width: 41, height: 41, objectFit: 'contain', display: 'block', marginTop: -7 }} />
   </div>
 )
 

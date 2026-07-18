@@ -5,12 +5,64 @@ import HeroCarousel from '@/components/hero-carousel'
 import HeroCardsScroll from '@/components/hero-cards-scroll'
 import HeroCtaScroll from '@/components/hero-cta-scroll'
 import PulsaSync from '@/components/pulsa-sync'
+import HomeShortcutsContent from '@/components/home-shortcuts-content'
 import PartnerForm from '@/components/partner-form'
 import PartnersBlock from '@/components/partners-block'
 import FornitoreForm from '@/components/fornitore-form'
 import { readSettings } from '@/lib/settings'
 import { categoryGroups } from '@/lib/nav-config'
 import type { Metadata } from 'next'
+
+const VIDEO_ID = 'WrMGGouem3c'
+const VIDEO_URL = `https://www.youtube.com/watch?v=${VIDEO_ID}&list=RDWrMGGouem3c&start_radio=1`
+
+const VIDEO2_ID = 'U0Elm96fbsk'
+const VIDEO2_URL = `https://www.youtube.com/watch?v=${VIDEO2_ID}&list=PLeBliHWVE78rxU7Y5LDD8ZKYsTzVrqw1L&index=4`
+
+async function getVideoTitle(url: string): Promise<string> {
+  try {
+    const res = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`)
+    if (!res.ok) return 'Guarda il video'
+    const data = await res.json() as { title?: string }
+    return data.title ?? 'Guarda il video'
+  } catch {
+    return 'Guarda il video'
+  }
+}
+
+function VideoButton({ url, videoId, label, hint }: { url: string; videoId: string; label: string; hint: string }) {
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      title={hint}
+      className="btn-black fs-12"
+      style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', height: 32, gap: 8, padding: '0 12px 0 8px' }}
+    >
+      <div style={{ position: 'relative', width: 42, height: 24, flexShrink: 0 }}>
+        <img
+          src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
+          alt="Anteprima video"
+          style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 3, display: 'block' }}
+        />
+        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{
+            width: 0, height: 0,
+            borderTop: '4px solid transparent',
+            borderBottom: '4px solid transparent',
+            borderLeft: '7px solid #fff',
+            marginLeft: 1,
+            filter: 'drop-shadow(0 0 1px rgba(0,0,0,0.7))',
+          }} />
+        </div>
+      </div>
+      <span style={{ textAlign: 'left', whiteSpace: 'nowrap' }}>
+        {label}
+      </span>
+    </a>
+  )
+}
 
 export const metadata: Metadata = {
   title: 'Infissi, Verande, Ristrutturazioni e Sicurezza a Palermo',
@@ -28,6 +80,10 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
+  const [videoTitle, video2Title] = await Promise.all([
+    getVideoTitle(VIDEO_URL),
+    getVideoTitle(VIDEO2_URL),
+  ])
   const cookieStore = await cookies()
   const username = cookieStore.get('session_user')?.value
   const role = cookieStore.get('session_role')?.value ?? ''
@@ -48,6 +104,10 @@ export default async function Page() {
 
   return (
     <>
+    <HomeShortcutsContent role={role || null} rolePermissions={rolePermissions} disabledPages={disabledPages}>
+      <VideoButton url={VIDEO_URL} videoId={VIDEO_ID} label="Infisso in PVC" hint={videoTitle} />
+      <VideoButton url={VIDEO2_URL} videoId={VIDEO2_ID} label="Porta blindata ctg 6" hint={video2Title} />
+    </HomeShortcutsContent>
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 16, marginBottom: 16 }}>
       <p style={{ textAlign: 'center', margin: 0, padding: 0, lineHeight: 1.5 }}>
       <span className="testo-titoli" style={{ display: 'block' }}>Infissi &middot; Verande</span>
@@ -85,7 +145,7 @@ export default async function Page() {
             <span className="cta-sub">Download DIGIApp</span>
           </Link>
         </HeroCtaScroll>
-        <div className="home-hero-text" style={{ borderRadius: 20, background: '#fff' }}>
+        <div className="home-hero-text" style={{ borderRadius: 20, background: '#fff', border: '1px solid #c8960c' }}>
           <div style={{ padding: '28px 28px 24px' }}>
           <p className="testo-articoli">
             DIGI Home Design nasce da oltre 60 anni di esperienza nel settore della lavorazione del ferro e dei serramenti. Da realtà artigiana a conduzione familiare, stimata nella città di Palermo, l&apos;azienda si è evoluta nel tempo fino a diventare una realtà moderna e innovativa, capace di integrare competenze nell&apos;edilizia, nelle ristrutturazioni e nella riqualificazione energetica.<br /><br />
@@ -805,7 +865,7 @@ export default async function Page() {
 
       {/* Vendiamo Marchi di valore */}
       <div className="page-section-wrapper" style={{ margin: 0 }}>
-        <div style={{ borderRadius: 20, padding: '28px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, background: '#fff' }}>
+        <div style={{ borderRadius: 20, padding: '28px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, background: '#fff', border: '1px solid #c8960c' }}>
           <h2 className="testo-articoli" style={{ textAlign: 'center', margin: 0, display: 'flex', flexDirection: 'column', gap: 6 }}>
             <span>Vendiamo le migliori Marche</span>
             <span>Selezioniamo Fornitori Qualificati e Affidabili</span>
@@ -902,7 +962,7 @@ export default async function Page() {
 
       {/* Blocco SEO keyword cluster */}
       <div className="page-section-wrapper" style={{ margin: 0 }}>
-        <div style={{ borderRadius: 20, padding: '28px 24px', color: '#444', fontSize: 15, lineHeight: 1.8, background: '#fff' }}>
+        <div style={{ borderRadius: 20, padding: '28px 24px', color: '#444', fontSize: 15, lineHeight: 1.8, background: '#fff', border: '1px solid #c8960c' }}>
           <div className="seo-block-flex">
             <div>
               <h2 className="testo-articoli" style={{ marginBottom: 6, marginTop: 0 }}>

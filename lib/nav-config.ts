@@ -204,6 +204,7 @@ export const aiutoPages: NavPage[] = [
   { id: 101, label: 'Guida PreventivoOnLine', href: '/aiuto/guida-preventivo' },
   { id: 102, label: 'Guida CantiereOnLine',   href: '/aiuto/guida-cantiere'   },
   { id: 103, label: 'Guida DigiApp',           href: '/aiuto/app'              },
+  { id: 104, label: 'Guida alla Navigazione', href: '/aiuto/guida-navigazione' },
 ]
 
 // Pagine amministrazione: area amministrativa fissa
@@ -251,6 +252,58 @@ export const internalPages: NavPage[] = [
   { id: 33, label: 'Archivio',             href: '/area-lavoro/archivio'             },
   { id: 34, label: 'Facsimili',            href: '/area-lavoro/facsimili'            },
 ]
+
+// Prefissi che richiedono login (stessa lista di app/actions.ts PROTECTED_PREFIXES)
+const PROTECTED_PREFIXES = ['/area-clienti', '/area-lavoro', '/amministrazione', '/clienti', '/disegno']
+
+// Tutte le pagine vetrina pubbliche con un id nel pannello "Pagine visibili"
+const PUBLIC_PAGES_WITH_ID = [
+  ...categoryGroups.flatMap(g => g.pages),
+  ...clientPages,
+  ...prodottiPages,
+  ...aiutoPages,
+]
+
+/**
+ * Per le scorciatoie home: una pagina va nascosta se il profilo corrente
+ * (anche se loggato) non potrebbe comunque accedervi — replica la stessa
+ * logica di visibleInternalPages/visibleFornitoriPages/visibleClientiPages —
+ * oppure se l'admin l'ha disattivata dal pannello "Pagine visibili"
+ * (indipendentemente dal motivo: ruolo o scelta admin, non ha senso
+ * proporla come preferita se è stata disabilitata).
+ */
+export function isHrefAccessible(
+  href: string,
+  role: string | null,
+  rolePermissions: Record<string, number[]>,
+  disabledPages: number[]
+): boolean {
+  const publicMatch = PUBLIC_PAGES_WITH_ID.find(p => p.href === href)
+  if (publicMatch && disabledPages.includes(publicMatch.id)) return false
+
+  const isProtected = PROTECTED_PREFIXES.some(p => href === p || href.startsWith(p + '/'))
+  if (!isProtected) return true
+  if (!role) return false
+  if (role === 'admin') return true
+
+  if (areaClientiPages.some(p => p.href === href)) return true
+  if (adminPages.some(p => p.href === href)) return false
+
+  const allowed = rolePermissions[role] ?? []
+  const internal = internalPages.find(p => p.href === href)
+  if (internal) return allowed.includes(internal.id)
+
+  if (role === 'cliente') return false
+
+  const fornitori = fornitoriDipendentiPages.find(p => p.href === href)
+  if (fornitori) return allowed.includes(fornitori.id) && !disabledPages.includes(fornitori.id)
+
+  const clienti = clientiDipendentiPages.find(p => p.href === href)
+  if (clienti) return allowed.includes(clienti.id) && !disabledPages.includes(clienti.id)
+
+  // Pagina protetta ma non riconosciuta in nessuna matrice: nascondi per sicurezza
+  return false
+}
 
 export function visibleAdminPages(role: string | null): NavPage[] {
   if (!role) return []

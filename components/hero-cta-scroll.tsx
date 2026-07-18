@@ -1,11 +1,14 @@
 'use client'
 
 import { useEdgeAutoScroll } from '@/lib/use-edge-auto-scroll'
+import { useScrollEdgeMask } from '@/lib/use-scroll-edge-mask'
+import { mergeRefs } from '@/lib/merge-refs'
 
 export default function HeroCtaScroll({ children }: { children: React.ReactNode }) {
-  const ref = useEdgeAutoScroll<HTMLDivElement>({ axis: 'x' })
+  const autoScrollRef = useEdgeAutoScroll<HTMLDivElement>({ axis: 'x' })
+  const maskRef = useScrollEdgeMask<HTMLDivElement>(40)
   return (
-    <div ref={ref} className="home-hero-cta">
+    <div ref={mergeRefs(autoScrollRef, maskRef)} className="home-hero-cta">
       {children}
     </div>
   )

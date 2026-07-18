@@ -16,11 +16,11 @@ const linkStyle: React.CSSProperties = {
   alignItems: 'center',
   gap: 4,
   textDecoration: 'none',
-  minHeight: 44,
+  minHeight: 20,
   whiteSpace: 'nowrap',
 }
 
-const MAX_PER_COL = 5
+const MAX_PER_COL = 8
 
 function chunk<T>(arr: T[], size: number): T[][] {
   const out: T[][] = []
@@ -65,7 +65,7 @@ export default function SitemapSection({ disabledPages }: { disabledPages: numbe
 
   return (
     <section style={{
-      padding: '8px 24px 28px',
+      padding: '8px 24px 14px',
       background: '#1c1c1c',
     }}>
       <div style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.7)' }}>

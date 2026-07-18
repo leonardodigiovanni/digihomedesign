@@ -182,15 +182,7 @@ a:active, a:active img, a:focus img {
   font-size: 20px;
   font-weight: 700;
   font-family: inherit;
-  background:
-    repeating-linear-gradient(
-      135deg,
-      rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px,
-      transparent 1px, transparent 6px
-    ),
-    linear-gradient(135deg,
-      #b89030 0%, #c8960c 18%, #f5d060 38%, #f0c840 50%, #f5d060 62%, #c8960c 82%, #b89030 100%
-    );
+  background: #c8960c;
   transition: filter 0.15s;
 }
 .nav-arrow-btn:hover {
@@ -201,15 +193,7 @@ a:active, a:active img, a:focus img {
 .cart-btn {
   border: none;
   cursor: pointer;
-  background:
-    repeating-linear-gradient(
-      135deg,
-      rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px,
-      transparent 1px, transparent 6px
-    ),
-    linear-gradient(135deg,
-      #b89030 0%, #c8960c 18%, #f5d060 38%, #f0c840 50%, #f5d060 62%, #c8960c 82%, #b89030 100%
-    );
+  background: #c8960c;
   transition: filter 0.15s;
 }
 .cart-btn:hover { filter: brightness(1.12); }
@@ -227,15 +211,7 @@ a:active, a:active img, a:focus img {
   height: 34px;
   border-radius: 6px;
   border: 1px solid #a07808;
-  background:
-    repeating-linear-gradient(
-      135deg,
-      rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px,
-      transparent 1px, transparent 6px
-    ),
-    linear-gradient(135deg,
-      #b89030 0%, #c8960c 18%, #f5d060 38%, #f0c840 50%, #f5d060 62%, #c8960c 82%, #b89030 100%
-    );
+  background: #c8960c;
   z-index: -1;
   pointer-events: none;
   opacity: 0;
@@ -287,7 +263,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #000 !important;
+  background: #000;
   min-width: 320px;
   overflow-x: hidden;
 }
@@ -335,9 +311,7 @@ body {
   overflow: hidden;
   text-decoration: none;
   border: 2px solid transparent;
-  background:
-    repeating-linear-gradient(-60deg, rgba(0,0,0,0.06) 0px, rgba(0,0,0,0.06) 1px, transparent 1px, transparent 6px) padding-box,
-    linear-gradient(#dba820, #dba820) border-box;
+  background: #dba820;
   box-shadow: 0 2px 8px rgba(200,150,12,0.35);
   transition: transform 0.15s, box-shadow 0.15s;
 }
@@ -367,9 +341,7 @@ body {
   line-height: 19px !important;
   padding: 0px 16px;
   border-radius: 10px;
-  background:
-    repeating-linear-gradient(-60deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 1px, transparent 1px, transparent 6px),
-    linear-gradient(-60deg, #111 0%, #222 20%, #383838 45%, #222 80%, #111 100%) !important;
+  background: #222 !important;
   -webkit-background-clip: initial !important;
   background-clip: initial !important;
   -webkit-text-fill-color: #fff !important;
@@ -395,7 +367,6 @@ body {
   width: 100% !important;
 }
 .page-card:hover {
-  transform: translateY(-3px);
   box-shadow: 0 8px 24px rgba(0,0,0,0.1);
 }
 .testo-card {
@@ -425,16 +396,8 @@ body {
   border-radius: 16px;
   overflow: hidden;
   position: relative;
-  background:
-    repeating-linear-gradient(
-      135deg,
-      rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 1px,
-      transparent 1px, transparent 6px
-    ),
-    linear-gradient(135deg,
-      #111 0%, #222 20%, #383838 45%, #222 80%, #111 100%
-    );
-  box-shadow: 0 2px 8px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+  background: #222;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
   opacity: 0.9;
   transition: opacity 0.15s, transform 0.15s, filter 0.15s;
 }
@@ -463,22 +426,13 @@ body {
   line-height: 1.3;
   padding: 16px;
   box-sizing: border-box;
-  background:
-    repeating-linear-gradient(
-      135deg,
-      rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 1px,
-      transparent 1px, transparent 6px
-    ),
-    linear-gradient(135deg,
-      #111 0%, #222 20%, #383838 45%, #222 80%, #111 100%
-    );
+  background: #222;
   box-shadow: none;
   opacity: 0.92;
   transition: opacity 0.15s, transform 0.15s, filter 0.15s;
 }
 .cta-home-btn:hover {
   opacity: 1;
-  transform: scale(1.04);
   filter: brightness(1.15);
 }
 
@@ -489,16 +443,8 @@ body {
   border-radius: 6px;
   font-weight: 600;
   text-decoration: none;
-  background:
-    repeating-linear-gradient(
-      135deg,
-      rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 1px,
-      transparent 1px, transparent 6px
-    ),
-    linear-gradient(135deg,
-      #111 0%, #222 20%, #383838 45%, #222 80%, #111 100%
-    );
-  box-shadow: 0 2px 8px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08);
+  background: #222;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.45);
   transition: filter 0.15s, transform 0.15s;
 }
 .cta-btn-metal:hover {
@@ -519,6 +465,8 @@ body {
   margin: 0;
 }
 .home-hero-text  { order: 3; }
+/* Fade ai bordi: gestito dinamicamente da useScrollEdgeMask (lib/use-scroll-edge-mask.ts),
+   che accende/spegne il fade lato per lato in base a cosa c'è ancora da scrollare */
 .home-hero-cards { order: 2; }
 .home-hero-cta {
   display: flex;
@@ -669,622 +617,46 @@ body {
 .sitemap-scroll                           { scrollbar-color: #555 #2a2a2a; scrollbar-width: thin; }
 
 /* ─────────────────────────────────────────
-   EFFETTI ORO
-   Velocità shimmer: cambia --gold-shimmer-speed
-   Più alto = più lento (es. 6s lento, 2s veloce)
+   EFFETTI ORO / ARGENTO — tinta piatta, senza spazzolatura né chiaroscuro
+   (dal 2026-07-17: rimossi gradiente multi-stop, texture spazzolata,
+   riflesso radiale e shimmer animato su richiesta esplicita)
    ───────────────────────────────────────── */
 :root {
-  --gold-shimmer-speed: 5s;
   --orange-app: #f29878;
 }
 
-@keyframes gold-shimmer {
-  0%   { transform: skewX(-45deg) translateX(-10800%); }
-  8%   { transform: skewX(-45deg) translateX(24000%); }
-  100% { transform: skewX(-45deg) translateX(24000%); }
-}
-
-/* A — Gradiente statico */
-.class_gold_A {
-  background: linear-gradient(
-    135deg,
-    #b89030 0%,
-    #c8960c 18%,
-    #f5d060 38%,
-    #f0c840 50%,
-    #f5d060 62%,
-    #c8960c 82%,
-    #b89030 100%
-  );
-  box-shadow: 0 4px 24px rgba(200,150,12,0.35), inset 0 1px 0 rgba(255,250,200,0.6);
-}
-
-/* B — Gradiente + shimmer animato */
-.class_gold_B {
-  background: linear-gradient(
-    135deg,
-    #b89030 0%,
-    #c8960c 20%,
-    #f5d060 45%,
-    #c8960c 80%,
-    #b89030 100%
-  );
-  box-shadow: 0 4px 24px rgba(200,150,12,0.35), inset 0 1px 0 rgba(255,250,200,0.6);
-  position: relative;
-  overflow: hidden;
-}
-.class_gold_B::after {
-  content: '';
-  position: absolute;
-  top: -20%;
-  left: 0;
-  width: 1%;
-  height: 140%;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,220,80,0.25) 50%, transparent 100%);
-  animation: gold-shimmer var(--gold-shimmer-speed) linear infinite;
-}
-
-/* Variante per elementi strutturali (footer, header) dove overflow:hidden
-   non va applicato al contenitore principale. Lo shimmer va nel div .gold-shimmer-wrap */
-.class_gold_B_safe {
-  background: linear-gradient(
-    135deg,
-    #b89030 0%,
-    #c8960c 20%,
-    #f5d060 45%,
-    #c8960c 80%,
-    #b89030 100%
-  );
-  box-shadow: 0 4px 24px rgba(200,150,12,0.35), inset 0 1px 0 rgba(255,250,200,0.6);
-  position: relative;
-}
-.gold-shimmer-wrap {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-  z-index: 0;
-}
-.gold-shimmer-wrap::after {
-  content: '';
-  position: absolute;
-  top: -20%;
-  left: 0;
-  width: 1%;
-  height: 140%;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,220,80,0.25) 50%, transparent 100%);
-  animation: gold-shimmer var(--gold-shimmer-speed) linear infinite;
-}
-
-/* C — Oro spazzolato + riflesso radiale + shimmer */
-.class_gold_C {
-  background:
-    repeating-linear-gradient(
-      60deg,
-      rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px,
-      transparent 1px, transparent 6px
-    ),
-    linear-gradient(
-      135deg,
-      #b89030 0%,
-      #c8960c 18%,
-      #f5d060 38%,
-      #f0c840 50%,
-      #f5d060 62%,
-      #c8960c 82%,
-      #b89030 100%
-    );
-  box-shadow: 0 4px 32px rgba(200,150,12,0.45), inset 0 1px 0 rgba(255,250,200,0.7);
-  position: relative;
-  overflow: hidden;
-}
-.class_gold_C::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,210,50,0.15) 0%, transparent 70%);
-  pointer-events: none;
-}
-.class_gold_C::after {
-  content: '';
-  position: absolute;
-  top: -20%;
-  left: 0;
-  width: 1%;
-  height: 140%;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,220,80,0.28) 50%, transparent 100%);
-  animation: gold-shimmer var(--gold-shimmer-speed) linear infinite;
-  animation-delay: calc(var(--gold-shimmer-speed) / -2);
-}
-
-/* Varianti safe per C (header/footer/page) — overflow gestito da child div */
-.class_gold_C_safe {
-  background:
-    repeating-linear-gradient(
-      60deg,
-      rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px,
-      transparent 1px, transparent 6px
-    ),
-    linear-gradient(
-      135deg,
-      #b89030 0%, #c8960c 18%, #f5d060 38%, #f0c840 50%,
-      #f5d060 62%, #c8960c 82%, #b89030 100%
-    );
-  box-shadow: 0 4px 32px rgba(200,150,12,0.45), inset 0 1px 0 rgba(255,250,200,0.7);
+.class_gold_A,
+.class_gold_B, .class_gold_B_safe,
+.class_gold_C, .class_gold_C_safe,
+.class_gold_D, .class_gold_D_safe,
+.class_gold_A_inv,
+.class_gold_B_inv, .class_gold_B_inv_safe,
+.class_gold_C_inv, .class_gold_C_inv_safe,
+.class_gold_D_inv, .class_gold_D_inv_safe {
+  background: #dba820;
   position: relative;
 }
 
-.class_silver_C_safe {
-  background:
-    repeating-linear-gradient(
-      60deg,
-      rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px,
-      transparent 1px, transparent 6px
-    ),
-    linear-gradient(
-      135deg,
-      #787878 0%, #8a8a8a 18%, #cccccc 38%, #c8c8c8 50%,
-      #cccccc 62%, #8a8a8a 82%, #787878 100%
-    );
-  box-shadow: 0 4px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.8);
+.class_silver_A,
+.class_silver_B, .class_silver_B_safe,
+.class_silver_C, .class_silver_C_safe,
+.class_silver_D, .class_silver_D_safe,
+.class_silver_A_inv,
+.class_silver_B_inv, .class_silver_B_inv_safe,
+.class_silver_C_inv, .class_silver_C_inv_safe,
+.class_silver_D_inv, .class_silver_D_inv_safe {
+  background: #e2e2e2;
   position: relative;
+}
+
+/* Wrapper ex-shimmer: restano come no-op per compatibilità con l'markup esistente
+   (header/footer possono ancora renderizzare il div, ma non produce più alcun effetto) */
+.gold-shimmer-wrap, .silver-shimmer-wrap {
+  display: none;
 }
 
 /* ─────────────────────────────────────────
-   EFFETTI ARGENTO
-   Velocità shimmer: cambia --silver-shimmer-speed
-   Più alto = più lento (es. 6s lento, 2s veloce)
-   ───────────────────────────────────────── */
-:root {
-  --silver-shimmer-speed: 5s;
-}
-
-@keyframes silver-shimmer {
-  0%   { transform: skewX(-45deg) translateX(-10800%); }
-  8%   { transform: skewX(-45deg) translateX(24000%); }
-  100% { transform: skewX(-45deg) translateX(24000%); }
-}
-
-/* A — Gradiente argento statico */
-.class_silver_A {
-  background: linear-gradient(
-    135deg,
-    #787878 0%,
-    #8a8a8a 18%,
-    #cccccc 38%,
-    #c8c8c8 50%,
-    #cccccc 62%,
-    #8a8a8a 82%,
-    #787878 100%
-  );
-  box-shadow: 0 4px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.7);
-}
-
-/* B — Gradiente argento + shimmer animato */
-.class_silver_B {
-  background: linear-gradient(
-    135deg,
-    #787878 0%,
-    #8a8a8a 20%,
-    #d0d0d0 45%,
-    #8a8a8a 80%,
-    #787878 100%
-  );
-  box-shadow: 0 4px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.7);
-  position: relative;
-  overflow: hidden;
-}
-.class_silver_B::after {
-  content: '';
-  position: absolute;
-  top: -20%;
-  left: 0;
-  width: 1%;
-  height: 140%;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.28) 50%, transparent 100%);
-  animation: silver-shimmer var(--silver-shimmer-speed) linear infinite;
-}
-
-/* Variante safe per elementi strutturali */
-.class_silver_B_safe {
-  background: linear-gradient(
-    135deg,
-    #787878 0%,
-    #8a8a8a 20%,
-    #d0d0d0 45%,
-    #8a8a8a 80%,
-    #787878 100%
-  );
-  box-shadow: 0 4px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.7);
-  position: relative;
-}
-.silver-shimmer-wrap {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-  z-index: 0;
-}
-.silver-shimmer-wrap::after {
-  content: '';
-  position: absolute;
-  top: -20%;
-  left: 0;
-  width: 1%;
-  height: 140%;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.28) 50%, transparent 100%);
-  animation: silver-shimmer var(--silver-shimmer-speed) linear infinite;
-}
-
-/* C — Argento spazzolato + riflesso radiale + shimmer */
-.class_silver_C {
-  background:
-    repeating-linear-gradient(
-      60deg,
-      rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px,
-      transparent 1px, transparent 6px
-    ),
-    linear-gradient(
-      135deg,
-      #787878 0%,
-      #8a8a8a 18%,
-      #cccccc 38%,
-      #c8c8c8 50%,
-      #cccccc 62%,
-      #8a8a8a 82%,
-      #787878 100%
-    );
-  box-shadow: 0 4px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.8);
-  position: relative;
-  overflow: hidden;
-}
-.class_silver_C::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 60% 70% at 50% 50%, rgba(210,210,210,0.15) 0%, transparent 70%);
-  pointer-events: none;
-}
-.class_silver_C::after {
-  content: '';
-  position: absolute;
-  top: -20%;
-  left: 0;
-  width: 1%;
-  height: 140%;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
-  animation: silver-shimmer var(--silver-shimmer-speed) linear infinite;
-  animation-delay: calc(var(--silver-shimmer-speed) / -2);
-}
-
-/* ─────────────────────────────────────────
-   VARIANTI INVERTITE (chiaro→scuro→chiaro)
-   ───────────────────────────────────────── */
-
-/* ORO INVERTITO */
-
-/* A inv — Gradiente statico */
-.class_gold_A_inv {
-  background: linear-gradient(
-    135deg,
-    #f0c840 0%,
-    #f5d060 18%,
-    #c8960c 38%,
-    #b89030 50%,
-    #c8960c 62%,
-    #f5d060 82%,
-    #f0c840 100%
-  );
-  box-shadow: 0 4px 24px rgba(200,150,12,0.35), inset 0 1px 0 rgba(255,250,200,0.6);
-}
-
-/* B inv — Gradiente + shimmer */
-.class_gold_B_inv {
-  background: linear-gradient(
-    135deg,
-    #f5d060 0%,
-    #c8960c 20%,
-    #b89030 45%,
-    #c8960c 80%,
-    #f5d060 100%
-  );
-  box-shadow: 0 4px 24px rgba(200,150,12,0.35), inset 0 1px 0 rgba(255,250,200,0.6);
-  position: relative;
-  overflow: hidden;
-}
-.class_gold_B_inv::after {
-  content: '';
-  position: absolute;
-  top: -20%;
-  left: 0;
-  width: 1%;
-  height: 140%;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,220,80,0.25) 50%, transparent 100%);
-  animation: gold-shimmer var(--gold-shimmer-speed) linear infinite;
-}
-
-.class_gold_B_inv_safe {
-  background: linear-gradient(
-    135deg,
-    #f5d060 0%,
-    #c8960c 20%,
-    #b89030 45%,
-    #c8960c 80%,
-    #f5d060 100%
-  );
-  box-shadow: 0 4px 24px rgba(200,150,12,0.35), inset 0 1px 0 rgba(255,250,200,0.6);
-  position: relative;
-}
-
-/* C inv — Oro spazzolato + riflesso radiale + shimmer */
-.class_gold_C_inv {
-  background:
-    repeating-linear-gradient(
-      60deg,
-      rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px,
-      transparent 1px, transparent 6px
-    ),
-    linear-gradient(
-      135deg,
-      #f0c840 0%,
-      #f5d060 18%,
-      #c8960c 38%,
-      #b89030 50%,
-      #c8960c 62%,
-      #f5d060 82%,
-      #f0c840 100%
-    );
-  box-shadow: 0 4px 32px rgba(200,150,12,0.45), inset 0 1px 0 rgba(255,250,200,0.7);
-  position: relative;
-  overflow: hidden;
-}
-.class_gold_C_inv::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,210,50,0.15) 0%, transparent 70%);
-  pointer-events: none;
-}
-.class_gold_C_inv::after {
-  content: '';
-  position: absolute;
-  top: -20%;
-  left: 0;
-  width: 1%;
-  height: 140%;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,220,80,0.28) 50%, transparent 100%);
-  animation: gold-shimmer var(--gold-shimmer-speed) linear infinite;
-  animation-delay: calc(var(--gold-shimmer-speed) / -2);
-}
-
-.class_gold_C_inv_safe {
-  background:
-    repeating-linear-gradient(
-      60deg,
-      rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px,
-      transparent 1px, transparent 6px
-    ),
-    linear-gradient(
-      135deg,
-      #f0c840 0%, #f5d060 18%, #c8960c 38%, #b89030 50%,
-      #c8960c 62%, #f5d060 82%, #f0c840 100%
-    );
-  box-shadow: 0 4px 32px rgba(200,150,12,0.45), inset 0 1px 0 rgba(255,250,200,0.7);
-  position: relative;
-}
-
-/* ARGENTO INVERTITO */
-
-/* A inv — Gradiente statico */
-.class_silver_A_inv {
-  background: linear-gradient(
-    135deg,
-    #c8c8c8 0%,
-    #cccccc 18%,
-    #8a8a8a 38%,
-    #787878 50%,
-    #8a8a8a 62%,
-    #cccccc 82%,
-    #c8c8c8 100%
-  );
-  box-shadow: 0 4px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.7);
-}
-
-/* B inv — Gradiente + shimmer */
-.class_silver_B_inv {
-  background: linear-gradient(
-    135deg,
-    #d0d0d0 0%,
-    #8a8a8a 20%,
-    #787878 45%,
-    #8a8a8a 80%,
-    #d0d0d0 100%
-  );
-  box-shadow: 0 4px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.7);
-  position: relative;
-  overflow: hidden;
-}
-.class_silver_B_inv::after {
-  content: '';
-  position: absolute;
-  top: -20%;
-  left: 0;
-  width: 1%;
-  height: 140%;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.28) 50%, transparent 100%);
-  animation: silver-shimmer var(--silver-shimmer-speed) linear infinite;
-}
-
-.class_silver_B_inv_safe {
-  background: linear-gradient(
-    135deg,
-    #d0d0d0 0%,
-    #8a8a8a 20%,
-    #787878 45%,
-    #8a8a8a 80%,
-    #d0d0d0 100%
-  );
-  box-shadow: 0 4px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.7);
-  position: relative;
-}
-
-/* C inv — Argento spazzolato + riflesso radiale + shimmer */
-.class_silver_C_inv {
-  background:
-    repeating-linear-gradient(
-      60deg,
-      rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px,
-      transparent 1px, transparent 6px
-    ),
-    linear-gradient(
-      135deg,
-      #c8c8c8 0%,
-      #cccccc 18%,
-      #8a8a8a 38%,
-      #787878 50%,
-      #8a8a8a 62%,
-      #cccccc 82%,
-      #c8c8c8 100%
-    );
-  box-shadow: 0 4px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.8);
-  position: relative;
-  overflow: hidden;
-}
-.class_silver_C_inv::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 60% 70% at 50% 50%, rgba(210,210,210,0.15) 0%, transparent 70%);
-  pointer-events: none;
-}
-.class_silver_C_inv::after {
-  content: '';
-  position: absolute;
-  top: -20%;
-  left: 0;
-  width: 1%;
-  height: 140%;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
-  animation: silver-shimmer var(--silver-shimmer-speed) linear infinite;
-  animation-delay: calc(var(--silver-shimmer-speed) / -2);
-}
-
-.class_silver_C_inv_safe {
-  background:
-    repeating-linear-gradient(
-      60deg,
-      rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px,
-      transparent 1px, transparent 6px
-    ),
-    linear-gradient(
-      135deg,
-      #c8c8c8 0%, #cccccc 18%, #8a8a8a 38%, #787878 50%,
-      #8a8a8a 62%, #cccccc 82%, #c8c8c8 100%
-    );
-  box-shadow: 0 4px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.8);
-  position: relative;
-}
-
-/* ─────────────────────────────────────────
-   TIPO D — Spazzolato + riflesso radiale, SENZA shimmer animato
-   ───────────────────────────────────────── */
-
-/* ORO D */
-.class_gold_D {
-  background:
-    repeating-linear-gradient(60deg, rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px, transparent 1px, transparent 6px),
-    linear-gradient(135deg, #b89030 0%, #c8960c 18%, #f5d060 38%, #f0c840 50%, #f5d060 62%, #c8960c 82%, #b89030 100%);
-  box-shadow: 0 4px 32px rgba(200,150,12,0.45), inset 0 1px 0 rgba(255,250,200,0.7);
-  position: relative;
-  overflow: hidden;
-}
-.class_gold_D::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,210,50,0.15) 0%, transparent 70%);
-  pointer-events: none;
-}
-.class_gold_D_safe {
-  background:
-    repeating-linear-gradient(-60deg, rgba(0,0,0,0.06) 0px, rgba(0,0,0,0.06) 1px, transparent 1px, transparent 6px),
-    #dba820;
-  position: relative;
-}
-
-/* ORO D inv */
-.class_gold_D_inv {
-  background:
-    repeating-linear-gradient(60deg, rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px, transparent 1px, transparent 6px),
-    linear-gradient(135deg, #f0c840 0%, #f5d060 18%, #c8960c 38%, #b89030 50%, #c8960c 62%, #f5d060 82%, #f0c840 100%);
-  box-shadow: 0 4px 32px rgba(200,150,12,0.45), inset 0 1px 0 rgba(255,250,200,0.7);
-  position: relative;
-  overflow: hidden;
-}
-.class_gold_D_inv::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 60% 70% at 50% 50%, rgba(255,210,50,0.15) 0%, transparent 70%);
-  pointer-events: none;
-}
-.class_gold_D_inv_safe {
-  background:
-    repeating-linear-gradient(60deg, rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px, transparent 1px, transparent 6px),
-    linear-gradient(135deg, #f0c840 0%, #f5d060 18%, #c8960c 38%, #b89030 50%, #c8960c 62%, #f5d060 82%, #f0c840 100%);
-  box-shadow: 0 4px 32px rgba(200,150,12,0.45), inset 0 1px 0 rgba(255,250,200,0.7);
-  position: relative;
-}
-
-/* ARGENTO D */
-.class_silver_D {
-  background:
-    repeating-linear-gradient(60deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 1px, transparent 6px),
-    linear-gradient(135deg, #787878 0%, #8a8a8a 18%, #cccccc 38%, #c8c8c8 50%, #cccccc 62%, #8a8a8a 82%, #787878 100%);
-  box-shadow: 0 4px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.8);
-  position: relative;
-  overflow: hidden;
-}
-.class_silver_D::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 60% 70% at 50% 50%, rgba(210,210,210,0.15) 0%, transparent 70%);
-  pointer-events: none;
-}
-.class_silver_D_safe {
-  background:
-    repeating-linear-gradient(-60deg, rgba(0,0,0,0.06) 0px, rgba(0,0,0,0.06) 1px, transparent 1px, transparent 6px),
-    #e2e2e2;
-  position: relative;
-}
-
-/* ARGENTO D inv */
-.class_silver_D_inv {
-  background:
-    repeating-linear-gradient(60deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 1px, transparent 6px),
-    linear-gradient(135deg, #c8c8c8 0%, #cccccc 18%, #8a8a8a 38%, #787878 50%, #8a8a8a 62%, #cccccc 82%, #c8c8c8 100%);
-  box-shadow: 0 4px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.8);
-  position: relative;
-  overflow: hidden;
-}
-.class_silver_D_inv::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 60% 70% at 50% 50%, rgba(210,210,210,0.15) 0%, transparent 70%);
-  pointer-events: none;
-}
-.class_silver_D_inv_safe {
-  background:
-    repeating-linear-gradient(60deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 1px, transparent 6px),
-    linear-gradient(135deg, #c8c8c8 0%, #cccccc 18%, #8a8a8a 38%, #787878 50%, #8a8a8a 62%, #cccccc 82%, #c8c8c8 100%);
-  box-shadow: 0 4px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.8);
-  position: relative;
-}
-
-/* ─────────────────────────────────────────
-   BOTTONI AZIONE — metallo spazzolato + shimmer
+   BOTTONI AZIONE — colore piatto monocromatico, senza spazzolatura né effetto lucido
    .btn-green  → conferma / salva / login
    .btn-red    → annulla / logout / elimina
    .btn-gray   → stato disabilitato
@@ -1325,144 +697,80 @@ body {
 }
 /* Verde — conferma / salva / login */
 .btn-green {
-  background:
-    repeating-linear-gradient(
-      135deg,
-      rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px,
-      transparent 1px, transparent 6px
-    ),
-    linear-gradient(135deg,
-      #1b4d1b 0%, #266626 20%, #3a8f3a 45%, #266626 80%, #1b4d1b 100%
-    ) !important;
+  background: #266626 !important;
   color: #d4f5d4 !important;
   border: none !important;
-  box-shadow: 0 2px 8px rgba(20,80,20,0.45), inset 0 1px 0 rgba(160,255,160,0.2);
+  box-shadow: 0 2px 8px rgba(20,80,20,0.45);
 }
 .btn-green:hover:not(:disabled) {
   filter: brightness(1.14);
 }
 /* Rosso — annulla / logout / elimina */
 .btn-red {
-  background:
-    repeating-linear-gradient(
-      135deg,
-      rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 1px,
-      transparent 1px, transparent 6px
-    ),
-    linear-gradient(135deg,
-      #2a0202 0%, #510505 18%, #8c0808 35%, #951c1c 45%, #9c2b2b 50%, #951c1c 55%, #8c0808 65%, #510505 82%, #2a0202 100%
-    ) !important;
+  background: #8c0808 !important;
   color: #ffd8d8 !important;
   border: none !important;
-  box-shadow: 0 2px 8px rgba(140,8,8,0.45), inset 0 1px 0 rgba(200,100,100,0.2);
+  box-shadow: 0 2px 8px rgba(140,8,8,0.45);
 }
 .btn-red:hover:not(:disabled) {
   filter: brightness(1.14);
 }
 /* Arancione — sollecito / avviso */
 .btn-orange {
-  background:
-    repeating-linear-gradient(
-      135deg,
-      rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px,
-      transparent 1px, transparent 6px
-    ),
-    linear-gradient(135deg,
-      #7a2810 0%, #bf5020 20%, #d97030 45%, #bf5020 80%, #7a2810 100%
-    ) !important;
+  background: #bf5020 !important;
   color: #ffe8cc !important;
   border: none !important;
-  box-shadow: 0 2px 8px rgba(120,40,16,0.5), inset 0 1px 0 rgba(255,185,120,0.22);
+  box-shadow: 0 2px 8px rgba(120,40,16,0.5);
 }
 .btn-orange:hover:not(:disabled) {
   filter: brightness(1.14);
 }
 /* RGB-C rame */
 .btn-rgb-c {
-  background:
-    repeating-linear-gradient(
-      135deg,
-      rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px,
-      transparent 1px, transparent 6px
-    ),
-    linear-gradient(135deg,
-      #3a2222 0%, #623a3a 20%, #915555 45%, #623a3a 80%, #3a2222 100%
-    ) !important;
+  background: #623a3a !important;
   color: #ffd8d8 !important;
   border: none !important;
-  box-shadow: 0 2px 8px rgba(145,85,85,0.45), inset 0 1px 0 rgba(200,160,160,0.2);
+  box-shadow: 0 2px 8px rgba(145,85,85,0.45);
 }
 .btn-rgb-c:hover:not(:disabled) {
   filter: brightness(1.14);
 }
-/* Blu lucido spazzolato */
+/* Blu */
 .btn-blue {
-  background:
-    repeating-linear-gradient(
-      135deg,
-      rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px,
-      transparent 1px, transparent 6px
-    ),
-    linear-gradient(135deg,
-      #0a1f4a 0%, #1a3a8a 20%, #2558c8 45%, #1a3a8a 80%, #0a1f4a 100%
-    ) !important;
+  background: #1a3a8a !important;
   color: #d0e4ff !important;
   border: none !important;
-  box-shadow: 0 2px 8px rgba(20,60,180,0.45), inset 0 1px 0 rgba(160,200,255,0.2);
+  box-shadow: 0 2px 8px rgba(20,60,180,0.45);
 }
 .btn-blue:hover:not(:disabled) {
   filter: brightness(1.18);
 }
-/* Nero lucido spazzolato */
+/* Nero */
 .btn-black {
-  background:
-    repeating-linear-gradient(
-      135deg,
-      rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px,
-      transparent 1px, transparent 6px
-    ),
-    linear-gradient(135deg,
-      #000 0%, #1a1a1a 20%, #333 45%, #1a1a1a 80%, #000 100%
-    ) !important;
+  background: #1a1a1a !important;
   color: #e0e0e0 !important;
   border: none !important;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.12);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.6);
 }
 .btn-black:hover:not(:disabled) {
   filter: brightness(1.18);
 }
-/* Oro spazzolato */
+/* Oro */
 .btn-gold {
-  background:
-    repeating-linear-gradient(
-      135deg,
-      rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px,
-      transparent 1px, transparent 6px
-    ),
-    linear-gradient(135deg,
-      #7a5c00 0%, #c8960c 20%, #e8b94a 45%, #c8960c 80%, #7a5c00 100%
-    );
+  background: #c8960c;
   color: #1a1a1a !important;
   border: none !important;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.25);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.35);
 }
 .btn-gold:hover:not(:disabled) {
   filter: brightness(1.1);
 }
 /* Grigio — disabilitato */
 .btn-gray {
-  background:
-    repeating-linear-gradient(
-      135deg,
-      rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px,
-      transparent 1px, transparent 6px
-    ),
-    linear-gradient(135deg,
-      #787878 0%, #8a8a8a 18%, #cccccc 38%, #c8c8c8 50%, #cccccc 62%, #8a8a8a 82%, #787878 100%
-    ) !important;
+  background: #8a8a8a !important;
   color: #333 !important;
   border: none !important;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.7);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.18);
 }
 .btn-gray:disabled {
   cursor: default !important;
@@ -1494,77 +802,59 @@ body {
   transition: filter 0.15s;
 }
 .btn-green-app {
-  background:
-    repeating-linear-gradient(135deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 6px),
-    #2a7a2a !important;
+  background: #2a7a2a !important;
   color: #d4f5d4 !important;
   border: none !important;
   box-shadow: 0 2px 8px rgba(20,80,20,0.45);
 }
 .btn-green-app:hover:not(:disabled) { filter: brightness(1.14); }
 .btn-red-app {
-  background:
-    repeating-linear-gradient(135deg, rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 1px, transparent 1px, transparent 6px),
-    #8c0808 !important;
+  background: #8c0808 !important;
   color: #ffd8d8 !important;
   border: none !important;
   box-shadow: 0 2px 8px rgba(140,8,8,0.45);
 }
 .btn-red-app:hover:not(:disabled) { filter: brightness(1.14); }
 .btn-orange-app {
-  background:
-    repeating-linear-gradient(135deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 6px),
-    var(--orange-app) !important;
+  background: var(--orange-app) !important;
   color: #000 !important;
   border: none !important;
-  box-shadow: 0 2px 8px rgba(200,100,60,0.3), inset 0 1px 0 rgba(255,220,200,0.4);
+  box-shadow: 0 2px 8px rgba(200,100,60,0.3);
 }
 .btn-orange-app:hover:not(:disabled) { filter: brightness(1.08); }
 .sfondo-orange-app {
-  background:
-    repeating-linear-gradient(135deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 6px),
-    var(--orange-app);
+  background: var(--orange-app);
 }
 .btn-rgb-c-app {
-  background:
-    repeating-linear-gradient(135deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 6px),
-    #7a4444 !important;
+  background: #7a4444 !important;
   color: #ffd8d8 !important;
   border: none !important;
   box-shadow: 0 2px 8px rgba(145,85,85,0.45);
 }
 .btn-rgb-c-app:hover:not(:disabled) { filter: brightness(1.14); }
 .btn-blue-app {
-  background:
-    repeating-linear-gradient(135deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 6px),
-    #1e44a8 !important;
+  background: #1e44a8 !important;
   color: #d0e4ff !important;
   border: none !important;
   box-shadow: 0 2px 8px rgba(20,60,180,0.45);
 }
 .btn-blue-app:hover:not(:disabled) { filter: brightness(1.18); }
 .btn-black-app {
-  background:
-    repeating-linear-gradient(135deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 6px),
-    #1a1a1a !important;
+  background: #1a1a1a !important;
   color: #e0e0e0 !important;
   border: none !important;
   box-shadow: 0 2px 8px rgba(0,0,0,0.6);
 }
 .btn-black-app:hover:not(:disabled) { filter: brightness(1.18); }
 .btn-gold-app {
-  background:
-    repeating-linear-gradient(135deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 1px, transparent 6px),
-    #d4a010;
+  background: #d4a010;
   color: #1a1a1a !important;
   border: none !important;
   box-shadow: 0 2px 8px rgba(0,0,0,0.35);
 }
 .btn-gold-app:hover:not(:disabled) { filter: brightness(1.1); }
 .btn-gray-app {
-  background:
-    repeating-linear-gradient(135deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 1px, transparent 6px),
-    #999999 !important;
+  background: #999999 !important;
   color: #333 !important;
   border: none !important;
   box-shadow: 0 2px 6px rgba(0,0,0,0.18);
@@ -1574,12 +864,10 @@ body {
   opacity: 0.6;
 }
 .btn-pink {
-  background:
-    repeating-linear-gradient(135deg, rgba(255,255,255,0.12) 0px, rgba(255,255,255,0.12) 1px, transparent 1px, transparent 6px),
-    linear-gradient(135deg, #e0916a 0%, #ffbfa0 30%, #ffd4be 50%, #ffbfa0 70%, #e0916a 100%);
+  background: #ffbfa0;
   color: #000 !important;
   border: 1px solid #c07050 !important;
-  box-shadow: 0 2px 8px rgba(200,100,60,0.3), inset 0 1px 0 rgba(255,220,200,0.4);
+  box-shadow: 0 2px 8px rgba(200,100,60,0.3);
 }
 .btn-pink:hover:not(:disabled) { filter: brightness(1.08); }
 .btn-pink.btn-icon { border: none !important; }
@@ -1587,12 +875,10 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background:
-    repeating-linear-gradient(135deg, rgba(255,255,255,0.12) 0px, rgba(255,255,255,0.12) 1px, transparent 1px, transparent 6px),
-    linear-gradient(135deg, #e0916a 0%, #ffbfa0 30%, #ffd4be 50%, #ffbfa0 70%, #e0916a 100%);
+  background: #ffbfa0;
   color: #000 !important;
   border: none !important;
-  box-shadow: 0 2px 8px rgba(200,100,60,0.3), inset 0 1px 0 rgba(255,220,200,0.4);
+  box-shadow: 0 2px 8px rgba(200,100,60,0.3);
   font-family: inherit;
   cursor: pointer;
   transition: filter 0.15s;
@@ -1663,9 +949,7 @@ body {
   position: absolute;
   inset: 0;
   border-radius: 4px;
-  background:
-    repeating-linear-gradient(135deg, rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px, transparent 1px, transparent 6px),
-    linear-gradient(135deg, #b89030 0%, #c8960c 18%, #f5d060 38%, #f0c840 50%, #f5d060 62%, #c8960c 82%, #b89030 100%);
+  background: #c8960c;
   opacity: 0;
   transition: opacity 0.12s;
   z-index: 0;
@@ -1710,9 +994,7 @@ body {
   content: '';
   position: absolute;
   inset: 0;
-  background:
-    repeating-linear-gradient(135deg, rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px, transparent 1px, transparent 6px),
-    linear-gradient(135deg, #b89030 0%, #c8960c 18%, #f5d060 38%, #f0c840 50%, #f5d060 62%, #c8960c 82%, #b89030 100%);
+  background: #c8960c;
   opacity: 0;
   transition: opacity 0.12s;
   z-index: 0;
@@ -1840,37 +1122,22 @@ body {
 
 /* Sfondo grigio — zona link/redirect fissa sopra il footer */
 .sfondo-redirect-app {
-  background:
-    repeating-linear-gradient(135deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 1px, transparent 6px),
-    #e0e0e0;
+  background: #e0e0e0;
 }
 
-/* Sfondo spazzolato grigio — usato su riquadri, righe tabella, card interne */
+/* Sfondo grigio — usato su riquadri, righe tabella, card interne */
 .sfondo-riquadri-app {
-  background: repeating-linear-gradient(
-    135deg,
-    rgba(255,255,255,0.06) 0px,
-    rgba(255,255,255,0.06) 1px,
-    transparent 1px,
-    transparent 6px
-  ), #d8d8d8;
+  background: #d8d8d8;
 }
 
 /* Card generica */
 .app-card {
-  background: repeating-linear-gradient(
-    135deg,
-    rgba(255,255,255,0.06) 0px,
-    rgba(255,255,255,0.06) 1px,
-    transparent 1px,
-    transparent 6px
-  ),
-  #ebebeb;
+  background: #ebebeb;
   border-radius: 12px;
   border: 1px solid #222;
   padding: 12px;
   margin: 0 0 12px 3px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.5);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
 }
 
 .app-card-title {
@@ -2035,4 +1302,15 @@ body {
 .app-nav-icon {
   font-size: 26px;
   line-height: 1;
+}
+
+/* Sticky bottom bar: colore indipendente da .page-card/nav (stessa RGB oggi,
+   #dba820, ma classe propria così può cambiare da sola in futuro).
+   Scroll orizzontale con fade già gestisce lo spazio, quindi i contenuti
+   non devono rimpicciolirsi/andare a capo per adattarsi */
+.sticky-bottom-bar-row {
+  background: #dba820;
+}
+.sticky-bottom-bar-row > * {
+  flex-shrink: 0;
 }

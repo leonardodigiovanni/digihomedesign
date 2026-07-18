@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import type { Metadata } from 'next'
+import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 
 export const metadata: Metadata = {
   title: 'La Nostra Storia — Digi Home Design Palermo',
@@ -64,7 +65,9 @@ export default function Page() {
 
       </div>
 
-      <Link href="/brand" className="btn-black fs-12" style={{ marginTop: 40 }}>← Torna a Brand</Link>
+      <StickyBottomBarContent>
+        <Link href="/brand" className="btn-black fs-12">← Torna a Brand</Link>
+      </StickyBottomBarContent>
 
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>pagina revisionata</p>
     </div>

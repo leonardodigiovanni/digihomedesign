@@ -16,7 +16,7 @@ export default function MainWrapper({ children, role }: { children: React.ReactN
     )
   return (
     <main
-      className="main-layout class_silver_D_safe"
+      className="main-layout"
       style={{ flex: 1, padding: '8px 8px', ...(!isFullWidth && { maxWidth: 720, margin: '0 auto', width: '100%' }) }}
     >
       {children}

@@ -182,7 +182,7 @@ export default function Footer({
         ...dynamicStyle,
         ...(isFixedEffect || isRgbEffect ? {} : { background: `rgba(${footerBg.r},${footerBg.g},${footerBg.b},${footerBg.a / 100})` }),
         borderTop: `1px solid ${borderColor}`,
-        padding: '28px 24px 16px',
+        padding: '14px 24px 16px',
         position: 'relative',
       }}
     >
@@ -193,10 +193,10 @@ export default function Footer({
 
       <div style={{ position: 'relative', zIndex: 1 }}>
         {/* Dati aziendali */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 16 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           {infoRows.map(({ label, value }) => (
-            <div key={label} className="testo-articoli" style={{ lineHeight: 1.5, fontSize: 11 }}>
-              <span>{label}:</span> {value}
+            <div key={label} style={{ lineHeight: 1.5, fontSize: 11, fontFamily: 'var(--font-sans), sans-serif', fontWeight: 300, letterSpacing: 1 }}>
+              <span style={{ color: tc.label }}>{label}:</span> <span style={{ color: tc.value }}>{value}</span>
             </div>
           ))}
         </div>
@@ -204,18 +204,18 @@ export default function Footer({
       </div>
     </footer>
 
-    {/* Social icons — tra footer e subfooter */}
+    {/* Social icons — tra footer e subfooter, stesso sfondo del footer */}
     <div
+      className={isFixedEffect ? EFFECT_CLASS[footerBgMode] : ''}
       style={{
-        background:
-          'repeating-linear-gradient(135deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 6px),' +
-          'linear-gradient(180deg, #1a1a1a 0%, #080808 40%, #111 60%, #080808 80%, #1a1a1a 100%)',
+        ...dynamicStyle,
+        ...(isFixedEffect || isRgbEffect ? {} : { background: `rgba(${footerBg.r},${footerBg.g},${footerBg.b},${footerBg.a / 100})` }),
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         gap: 28,
         flexWrap: 'wrap',
-        padding: '14px 24px',
+        padding: '0 24px 14px',
       }}
     >
       {socials.map(({ label, href, icon }) => (
@@ -226,7 +226,7 @@ export default function Footer({
     </div>
 
     {/* Ultima riga nera */}
-    <div className="subfooter-bar" style={{ background: '#000', padding: '10px 24px' }}>
+    <div className="subfooter-bar" style={{ background: '#000', borderTop: '1px solid #222', padding: '10px 24px' }}>
       <p className="testo-indice" style={{ textAlign: 'center', margin: 0, fontSize: 10 }}>
         © 2026  -  DIGI Home Design S.R.L.
       </p>

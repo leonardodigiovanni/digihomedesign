@@ -70,6 +70,19 @@ export default function DatabaseClient() {
         </div>
       )}
 
+      {result && !result.error && result.columns.length === 0 && result.rowsAffected === undefined && result.rows.length === 0 && (
+        <div style={{
+          background: '#001a00',
+          border: '1px solid #080',
+          borderRadius: 6,
+          padding: '10px 14px',
+          color: '#5f5',
+          fontSize: 14,
+        }}>
+          Nessun record trovato.
+        </div>
+      )}
+
       {result?.error && (
         <div style={{
           background: '#1a0000',

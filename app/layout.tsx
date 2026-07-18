@@ -5,6 +5,9 @@ import Header from '@/components/header'
 import Navbar from '@/components/navbar'
 import Footer from '@/components/footer'
 import SitemapSection from '@/components/sitemap-section'
+import StickyBottomBar from '@/components/sticky-bottom-bar'
+import { StickyBottomBarProvider } from '@/lib/sticky-bottom-bar-context'
+import { HomeShortcutsProvider } from '@/lib/home-shortcuts-context'
 import InactivityGuard from '@/components/inactivity-guard'
 import AvvisiNotifier from '@/components/avvisi-notifier'
 import { readSettings, type BgMode } from '@/lib/settings'
@@ -16,6 +19,8 @@ import EmergencyLogin from '@/components/emergency-login'
 import PwaRegister from '@/components/pwa-register'
 import CookieBanner from '@/components/cookie-banner'
 import VetrinaAutoScroll from '@/components/vetrina-auto-scroll'
+import RightClickShortcutHint from '@/components/right-click-shortcut-hint'
+import ShortcutHintPopup from '@/components/shortcut-hint-popup'
 import ManutenzioneWatcher from '@/components/manutenzione-watcher'
 import MainWrapper from '@/components/main-wrapper'
 import { PreventiviProvider } from '@/lib/preventivi-flag-context'
@@ -248,6 +253,7 @@ export default async function RootLayout({
   return (
     <html lang="it" className={inter.variable}>
       <body style={isPageEffect ? {} : { background: `rgba(${pageBg.r}, ${pageBg.g}, ${pageBg.b}, ${pageBg.a / 100})` }}>
+        <HomeShortcutsProvider key={username ?? 'anon'} loggedIn={!!username} role={role} rolePermissions={rolePermissions} disabledPages={settings.disabledPages}>
 
         {/* Sfondo pagina con effetto (fixed, sotto tutto) */}
         {isPageEffect && (
@@ -303,25 +309,30 @@ export default async function RootLayout({
           {!inManutenzione && <Navbar role={role} disabledPages={settings.disabledPages} rolePermissions={rolePermissions} username={username} registrazioniDisabilitate={settings.registrazioniDisabilitate} bannerAbilitato={settings.bannerAbilitato} cartCount={cartCount} cartAcquistiCount={cartAcquistiCount} unreadEmailCount={unreadEmailCount} unreadAvvisiCount={unreadAvvisiCount} clienteAbilitato={clienteAbilitato} />}
         </div>
 
-        <MainWrapper role={role ?? ''}>
-          <PreventiviProvider abilitato={preventiviAbilitato}>
-            {inManutenzione ? (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '50vh', gap: 20, textAlign: 'center' }}>
-                <Image src="/images/manutenzione/sito_manutenzione.png" alt="Manutenzione" width={108} height={108} priority style={{ objectFit: 'contain' }} />
-                <p className="fs-28" style={{ fontWeight: 600, color: '#444', maxWidth: 600, lineHeight: 1.6, margin: 0, textAlign: 'center' }}>
-                  Stiamo lavorando per migliorare il sito.<br />
-                  Torneremo online al più presto. Ci scusiamo per il disagio.
-                </p>
-              </div>
-            ) : children}
-          </PreventiviProvider>
-        </MainWrapper>
+        <StickyBottomBarProvider>
+          <MainWrapper role={role ?? ''}>
+            <PreventiviProvider abilitato={preventiviAbilitato}>
+              {inManutenzione ? (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '50vh', gap: 20, textAlign: 'center' }}>
+                  <Image src="/images/manutenzione/sito_manutenzione.png" alt="Manutenzione" width={108} height={108} priority style={{ objectFit: 'contain' }} />
+                  <p className="fs-28" style={{ fontWeight: 600, color: '#444', maxWidth: 600, lineHeight: 1.6, margin: 0, textAlign: 'center' }}>
+                    Stiamo lavorando per migliorare il sito.<br />
+                    Torneremo online al più presto. Ci scusiamo per il disagio.
+                  </p>
+                </div>
+              ) : children}
+            </PreventiviProvider>
+          </MainWrapper>
 
-        {!inManutenzione && <SitemapSection disabledPages={settings.disabledPages} />}
-        <Footer footerBg={settings.footerBg} footerBgMode={settings.footerBgMode} />
+          {!inManutenzione && <SitemapSection disabledPages={settings.disabledPages} />}
+          <Footer footerBg={settings.footerBg} footerBgMode={settings.footerBgMode} />
+          {!inManutenzione && <StickyBottomBar />}
+        </StickyBottomBarProvider>
 
         <CookieBanner />
         <VetrinaAutoScroll />
+        <RightClickShortcutHint />
+        <ShortcutHintPopup loggedIn={!!username} />
         <ManutenzioneWatcher manutenzione={settings.manutenzione} role={role ?? ''} username={username ?? ''} />
         <EmergencyLogin inManutenzione={inManutenzione} />
         <PwaRegister />
@@ -335,6 +346,7 @@ export default async function RootLayout({
           />
         )}
 
+        </HomeShortcutsProvider>
       </body>
     </html>
   )

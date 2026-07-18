@@ -8,85 +8,54 @@ function darken(r: number, g: number, b: number, f: number): string {
   return `#${hex2(r * f)}${hex2(g * f)}${hex2(b * f)}`
 }
 
-function lighten(r: number, g: number, b: number, t: number): string {
-  return `#${hex2(r + (255 - r) * t)}${hex2(g + (255 - g) * t)}${hex2(b + (255 - b) * t)}`
+/** Tinta piatta a partire da r,g,b (nessun gradiente, nessuna spazzolatura) */
+function flat(r: number, g: number, b: number): string {
+  return `#${hex2(r)}${hex2(g)}${hex2(b)}`
 }
 
-/** Gradiente metallico a partire da r,g,b */
+/** @deprecated tinta piatta, mantenuta per compatibilità firma */
 export function rgbGradient(r: number, g: number, b: number): string {
-  const dark   = darken(r, g, b, 0.40)
-  const mid    = darken(r, g, b, 0.68)
-  const base   = `#${hex2(r)}${hex2(g)}${hex2(b)}`
-  const light  = lighten(r, g, b, 0.45)
-  const vLight = lighten(r, g, b, 0.62)
-  return `linear-gradient(135deg, ${dark} 0%, ${mid} 18%, ${base} 35%, ${light} 45%, ${vLight} 50%, ${light} 55%, ${base} 65%, ${mid} 82%, ${dark} 100%)`
+  return flat(r, g, b)
 }
 
-/** Gradiente metallico invertito (chiaro→scuro→chiaro) */
+/** @deprecated tinta piatta, mantenuta per compatibilità firma */
 export function rgbGradientInv(r: number, g: number, b: number): string {
-  const dark   = darken(r, g, b, 0.40)
-  const mid    = darken(r, g, b, 0.68)
-  const base   = `#${hex2(r)}${hex2(g)}${hex2(b)}`
-  const light  = lighten(r, g, b, 0.45)
-  const vLight = lighten(r, g, b, 0.62)
-  return `linear-gradient(135deg, ${vLight} 0%, ${light} 18%, ${base} 35%, ${mid} 45%, ${dark} 50%, ${mid} 55%, ${base} 65%, ${light} 82%, ${vLight} 100%)`
+  return flat(r, g, b)
 }
 
-/** Gradiente con texture spazzolata (per effetto C) */
+/** @deprecated tinta piatta, mantenuta per compatibilità firma */
 export function rgbBrushedBackground(r: number, g: number, b: number): string {
-  return [
-    'repeating-linear-gradient(60deg, rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px, transparent 1px, transparent 6px)',
-    rgbGradient(r, g, b),
-  ].join(', ')
+  return flat(r, g, b)
 }
 
-/** Gradiente spazzolato invertito (per effetto C inv) */
+/** @deprecated tinta piatta, mantenuta per compatibilità firma */
 export function rgbBrushedBackgroundInv(r: number, g: number, b: number): string {
-  return [
-    'repeating-linear-gradient(60deg, rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px, transparent 1px, transparent 6px)',
-    rgbGradientInv(r, g, b),
-  ].join(', ')
+  return flat(r, g, b)
 }
 
-/** Gradiente metallico scuro: variazione tonale visibile ma rimane sempre buio (per effetto D) */
+/** @deprecated tinta piatta, mantenuta per compatibilità firma */
 export function rgbGradientDark(r: number, g: number, b: number): string {
-  const dark  = darken(r, g, b, 0.30)
-  const mid   = darken(r, g, b, 0.58)
-  const base  = `#${hex2(r)}${hex2(g)}${hex2(b)}`
-  const soft  = lighten(r, g, b, 0.08)
-  const peak  = lighten(r, g, b, 0.14)
-  return `linear-gradient(135deg, ${dark} 0%, ${mid} 18%, ${base} 35%, ${soft} 45%, ${peak} 50%, ${soft} 55%, ${base} 65%, ${mid} 82%, ${dark} 100%)`
+  return flat(r, g, b)
 }
 
-/** Gradiente scuro invertito (per effetto D inv) */
+/** @deprecated tinta piatta, mantenuta per compatibilità firma */
 export function rgbGradientDarkInv(r: number, g: number, b: number): string {
-  const dark  = darken(r, g, b, 0.30)
-  const mid   = darken(r, g, b, 0.58)
-  const base  = `#${hex2(r)}${hex2(g)}${hex2(b)}`
-  const soft  = lighten(r, g, b, 0.08)
-  const peak  = lighten(r, g, b, 0.14)
-  return `linear-gradient(135deg, ${peak} 0%, ${soft} 18%, ${base} 35%, ${mid} 45%, ${dark} 50%, ${mid} 55%, ${base} 65%, ${soft} 82%, ${peak} 100%)`
+  return flat(r, g, b)
 }
 
-/** Gradiente spazzolato scuro (per effetto D) */
+/** @deprecated tinta piatta, mantenuta per compatibilità firma */
 export function rgbBrushedBackgroundDark(r: number, g: number, b: number): string {
-  return [
-    'repeating-linear-gradient(60deg, rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 1px, transparent 1px, transparent 6px)',
-    rgbGradientDark(r, g, b),
-  ].join(', ')
+  return flat(r, g, b)
 }
 
-/** Gradiente spazzolato scuro invertito (per effetto D inv) */
+/** @deprecated tinta piatta, mantenuta per compatibilità firma */
 export function rgbBrushedBackgroundDarkInv(r: number, g: number, b: number): string {
-  return [
-    'repeating-linear-gradient(60deg, rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 1px, transparent 1px, transparent 6px)',
-    rgbGradientDarkInv(r, g, b),
-  ].join(', ')
+  return flat(r, g, b)
 }
 
-/** Box-shadow per effetti RGB */
+/** Box-shadow per effetti RGB — solo ombra esterna, nessun lucido inset */
 export function rgbBoxShadow(r: number, g: number, b: number): string {
-  return `0 4px 24px rgba(${r},${g},${b},0.4), inset 0 1px 0 rgba(255,255,255,0.5)`
+  return `0 4px 24px rgba(${r},${g},${b},0.4)`
 }
 
 /** Border color (versione scura del colore base) */

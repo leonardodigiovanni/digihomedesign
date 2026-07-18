@@ -233,7 +233,8 @@ export default function CatalogoWrapper({
   return (
     <>
       {showFiltriBar && (
-        <div style={{ display: 'flex', flexWrap: 'nowrap', gap: 0, alignItems: 'stretch', background: '#fff', border: '1px solid #c8960c', borderRadius: 10, marginBottom: 8, overflowX: 'auto', WebkitOverflowScrolling: 'touch' as const }}>
+        <div style={{ border: '1px solid #c8960c', borderRadius: 10, marginBottom: 8, overflow: 'hidden' }}>
+        <div className="filtri-scroll-row" style={{ display: 'flex', flexWrap: 'nowrap', gap: 0, alignItems: 'stretch', background: '#fff', overflowX: 'auto', WebkitOverflowScrolling: 'touch' as const }}>
           <button onClick={resetFiltri} disabled={!hasFilters || !!selectedVoce} className={hasFilters && !selectedVoce ? 'btn-red' : 'btn-gray'} style={{ fontSize: 11, padding: '2px 8px', height: 26, alignSelf: 'flex-end', flexShrink: 0, marginLeft: 12, marginBottom: 6 }}>✕</button>
 
           {/* Zona 1: filtri con corrispondenza obbligatoria (select classificazione + F) */}
@@ -311,6 +312,7 @@ export default function CatalogoWrapper({
               </div>
             </>
           )}
+        </div>
         </div>
       )}
 

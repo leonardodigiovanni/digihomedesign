@@ -61,39 +61,24 @@
   padding: 20px 0 24px;
 }
 
-/* Sfondo oro spazzolato — zona link/redirect fissa sopra il footer */
+/* Sfondo oro — zona link/redirect fissa sopra il footer */
 .sfondo-redirect-app {
-  background:
-    repeating-linear-gradient(135deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 1px, transparent 6px),
-    #e0e0e0;
+  background: #e0e0e0;
 }
 
-/* Sfondo spazzolato grigio — usato su riquadri, righe tabella, card interne */
+/* Sfondo grigio — usato su riquadri, righe tabella, card interne */
 .sfondo-riquadri-app {
-  background: repeating-linear-gradient(
-    135deg,
-    rgba(255,255,255,0.06) 0px,
-    rgba(255,255,255,0.06) 1px,
-    transparent 1px,
-    transparent 6px
-  ), #d8d8d8;
+  background: #d8d8d8;
 }
 
 /* Card generica */
 .app-card {
-  background: repeating-linear-gradient(
-    135deg,
-    rgba(255,255,255,0.06) 0px,
-    rgba(255,255,255,0.06) 1px,
-    transparent 1px,
-    transparent 6px
-  ),
-  #ebebeb;
+  background: #ebebeb;
   border-radius: 12px;
   border: 1px solid gold;
   padding: 18px 16px;
   margin-bottom: 14px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.5);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
 }
 
 .app-card-title {
