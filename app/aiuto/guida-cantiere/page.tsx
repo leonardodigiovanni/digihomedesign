@@ -3,6 +3,8 @@ import Image from 'next/image'
 import type { Metadata } from 'next'
 import { readSettings } from '@/lib/settings'
 import AccediDropdown from '@/components/accedi-dropdown'
+import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
+import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = {
   title: 'Guida Cantiere Online',
@@ -15,7 +17,7 @@ export default async function GuidaCantiere() {
   return (
     <div style={{ padding: '0 0 64px' }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/" style={{ color: '#888', textDecoration: 'underline' }}>Home</Link> / Aiuto / Guida Cantiere
+        <Link href="/" style={{ color: '#888', textDecoration: 'underline' }}>Home</Link> / Aiuto / Guida Cantiere<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Segui il tuo cantiere in tempo reale</h1>
       <p className="sottotitolo-3d fs-14" style={{ marginBottom: 8 }}>
@@ -90,10 +92,10 @@ export default async function GuidaCantiere() {
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <Link href="/" className="btn-black fs-12" style={{ flex: 1 }}>← Home</Link>
-          <Link href="/area-clienti/cantieri" className="btn-black fs-12" style={{ flex: 1 }}>I miei cantieri →</Link>
-        </div>
+        <StickyBottomBarContent>
+          <Link href="/" className="btn-black fs-12">← Home</Link>
+          <Link href="/area-clienti/cantieri" className="btn-black fs-12">I miei cantieri →</Link>
+        </StickyBottomBarContent>
 
       </div>
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>tipo aiuto</p>

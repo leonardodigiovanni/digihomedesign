@@ -4,6 +4,7 @@ import { readSettings } from '@/lib/settings'
 import { hasPageAccess } from '@/lib/permissions'
 import { getConnection } from '@/lib/db'
 import AnagraficaClientiClient, { type Cliente } from './client'
+import ShortcutStar from '@/components/shortcut-star'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -59,7 +60,7 @@ export default async function Page() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <div>
-        <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Anagrafica Clienti</h2>
+        <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Anagrafica Clienti<ShortcutStar href="/area-lavoro/anagrafica-clienti" small /></h2>
         <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0' }}>Elenco clienti — persone fisiche e giuridiche</p>
       </div>
       <AnagraficaClientiClient clienti={clienti} role={role} />

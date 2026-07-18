@@ -5,6 +5,7 @@ import { readSettings } from '@/lib/settings'
 import SettingsForm from './settings-form'
 import ManutenzioneToggle from './manutenzione-toggle'
 import BannerPanel from './banner-panel'
+import ShortcutStar from '@/components/shortcut-star'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -26,7 +27,7 @@ export default async function Page() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
-      <h2 style={{ fontSize: 24, fontWeight: 600, margin: 0 }}>Impostazioni</h2>
+      <h2 style={{ fontSize: 24, fontWeight: 600, margin: 0 }}>Impostazioni<ShortcutStar href="/amministrazione/impostazioni" small /></h2>
 
       <div style={{ display: 'flex', gap: 32, alignItems: 'flex-start', flexWrap: 'wrap' }}>
         <div style={{ flex: '0 0 auto' }}>

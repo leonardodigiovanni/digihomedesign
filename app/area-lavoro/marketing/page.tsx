@@ -4,6 +4,7 @@ import { readSettings } from '@/lib/settings'
 import { hasPageAccess } from '@/lib/permissions'
 import { getConnection } from '@/lib/db'
 import MarketingClient, { type Record_ } from './marketing-client'
+import ShortcutStar from '@/components/shortcut-star'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -49,7 +50,7 @@ export default async function Page() {
 
   return (
     <div>
-      <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 6 }}>Marketing</h2>
+      <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 6 }}>Marketing<ShortcutStar href="/area-lavoro/marketing" small /></h2>
       <p style={{ color: '#000', fontSize: 13, marginBottom: 24 }}>
         Registro delle campagne e azioni di marketing.
       </p>

@@ -8,6 +8,7 @@ import type { Metadata } from 'next'
 import { ensurePercorsiTables, type Percorso } from '@/lib/percorsi'
 import { getFiltriModelloLabels } from '@/lib/filtri-modello-labels'
 import { LOGHI_PARTNERS } from '@/lib/loghi-partners'
+import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = {
   title: 'Listini',
@@ -185,7 +186,7 @@ export default async function Page() {
 
   return (
     <div>
-      <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 6 }}>Listini</h2>
+      <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 6 }}>Listini<ShortcutStar href="/area-lavoro/listini" small /></h2>
       <p style={{ color: '#000', fontSize: 13, marginBottom: 24 }}>
         Prezzi di acquisto e vendita per articoli e lavorazioni. Doppio click su una riga per modificarla.
       </p>

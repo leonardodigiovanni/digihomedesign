@@ -4,6 +4,9 @@ import { useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { useHomeShortcuts } from '@/lib/home-shortcuts-context'
 import { nameFromPathname } from '@/lib/page-label'
+import { isExcludedFromShortcuts } from '@/lib/shortcut-exclusions'
+import { useCurrentUrl } from '@/lib/use-current-url'
+import { usePageTitleOverrideValue } from '@/lib/page-title-override-context'
 
 const COUNTDOWN_S = 5
 
@@ -29,13 +32,14 @@ function isOnInteractiveElement(target: EventTarget | null): boolean {
  */
 export default function RightClickShortcutHint() {
   const pathname = usePathname()
+  const currentUrl = useCurrentUrl()
   const { isShortcut, add, remove } = useHomeShortcuts()
   const [pos, setPos] = useState<{ x: number; y: number } | null>(null)
   const [secondsLeft, setSecondsLeft] = useState(COUNTDOWN_S)
   const btnRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
-    if (pathname === '/') return
+    if (pathname === '/' || isExcludedFromShortcuts(pathname)) return
 
     let interval: ReturnType<typeof setInterval> | null = null
 
@@ -79,22 +83,24 @@ export default function RightClickShortcutHint() {
     }
   }, [pathname])
 
-  // Nasconde al cambio pagina
-  useEffect(() => { setPos(null) }, [pathname])
+  // Nasconde al cambio pagina (anche solo cambio query string, es. altro cantiere)
+  useEffect(() => { setPos(null) }, [currentUrl])
+
+  const titleOverride = usePageTitleOverrideValue(currentUrl)
 
   if (!pos || pathname === '/') return null
 
-  const name = nameFromPathname(pathname)
+  const name = titleOverride ?? nameFromPathname(currentUrl)
   const label = `Vai a ${name}`
-  const alreadyAdded = isShortcut(pathname)
+  const alreadyAdded = isShortcut(currentUrl)
 
   return (
     <button
       ref={btnRef}
       type="button"
       onClick={() => {
-        if (alreadyAdded) remove(pathname)
-        else add(pathname, label)
+        if (alreadyAdded) remove(currentUrl)
+        else add(currentUrl, label)
         setPos(null)
       }}
       title={alreadyAdded ? `Elimina scorciatoia a "${label}" dalla Homepage` : `Aggiungi scorciatoia a "${label}" nella Homepage`}

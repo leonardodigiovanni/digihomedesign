@@ -6,6 +6,7 @@ import Link from 'next/link'
 import OrdiniRicevutiClient, { type OrdineRicevuto, type Nota, type Cliente } from '@/app/area-lavoro/ordini-ricevuti/client'
 import ApriOrdineBtn from './apri-btn'
 import type { Metadata } from 'next'
+import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = { title: 'Ordini' }
 
@@ -92,7 +93,7 @@ export default async function Page() {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
         <div>
-          <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Ordini</h2>
+          <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Ordini<ShortcutStar href="/area-clienti/ordini" small /></h2>
           <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0' }}>Tutti gli ordini ricevuti dai clienti</p>
         </div>
         <OrdiniRicevutiClient ordini={ordini} clienti={clienti} role={role} />
@@ -117,7 +118,7 @@ export default async function Page() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <div>
-        <h2 className="effetto-3d" style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>I miei ordini</h2>
+        <h2 className="effetto-3d" style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>I miei ordini<ShortcutStar href="/area-clienti/ordini" small /></h2>
         <p style={{ color: '#555', fontSize: 14, margin: '4px 0 0' }}>
           Preventivi accettati e acquisti completati.
         </p>

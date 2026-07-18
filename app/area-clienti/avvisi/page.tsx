@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import type { Metadata } from 'next'
 import { NuovoAvvisoForm, AvvisiStaff, AvvisiCliente, type Avviso } from './avvisi-client'
+import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = { title: 'Avvisi' }
 
@@ -65,7 +66,7 @@ export default async function Page() {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
         <div>
-          <h2 className="effetto-3d" style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Avvisi</h2>
+          <h2 className="effetto-3d" style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Avvisi<ShortcutStar href="/area-clienti/avvisi" small /></h2>
           {isStaff && (
             <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0' }}>Tutti gli avvisi inviati ai clienti.</p>
           )}

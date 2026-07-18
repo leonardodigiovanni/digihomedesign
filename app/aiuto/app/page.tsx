@@ -2,6 +2,8 @@
 import Image from 'next/image'
 import type { Metadata } from 'next'
 import QRCode from 'qrcode'
+import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
+import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = {
   title: 'Scarica la nostra App',
@@ -18,7 +20,7 @@ export default async function AppPage() {
   return (
     <div style={{ padding: '0 0 64px' }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/" style={{ color: '#888', textDecoration: 'underline' }}>Home</Link> / Aiuto / App
+        <Link href="/" style={{ color: '#888', textDecoration: 'underline' }}>Home</Link> / Aiuto / App<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Scarica la nostra App</h1>
       <p className="sottotitolo-3d fs-14" style={{ marginBottom: 8 }}>
@@ -97,10 +99,10 @@ export default async function AppPage() {
           </a>
         </div>
 
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <Link href="/" className="btn-black fs-12" style={{ flex: 1 }}>← Home</Link>
-          <Link href="/app-download" className="btn-black fs-12" style={{ flex: 1 }}>Scarica l&apos;app →</Link>
-        </div>
+        <StickyBottomBarContent>
+          <Link href="/" className="btn-black fs-12">← Home</Link>
+          <Link href="/app-download" className="btn-black fs-12">Scarica l&apos;app →</Link>
+        </StickyBottomBarContent>
 
       </div>
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>tipo aiuto</p>

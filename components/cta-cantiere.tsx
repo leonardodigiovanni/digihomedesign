@@ -6,7 +6,7 @@ export default async function CtaCantiere() {
   const user = cookieStore.get('session_user')?.value ?? null
   const href = user ? '/area-clienti/cantieri' : '/aiuto/guida-cantiere'
   return (
-    <Link href={href} className="btn-black fs-12" style={{ flex: 1 }}>
+    <Link href={href} className="btn-black fs-12">
       Segui cantiere
     </Link>
   )

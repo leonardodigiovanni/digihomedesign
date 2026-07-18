@@ -4,6 +4,7 @@ import { readSettings } from '@/lib/settings'
 import { hasPageAccess } from '@/lib/permissions'
 import { getConnection } from '@/lib/db'
 import ArchivioClient, { type Documento } from './archivio-client'
+import ShortcutStar from '@/components/shortcut-star'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -47,7 +48,7 @@ export default async function Page() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <div>
-        <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Archivio</h2>
+        <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Archivio<ShortcutStar href="/area-lavoro/archivio" small /></h2>
         <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0' }}>Conservazione documenti aziendali</p>
       </div>
       <ArchivioClient documenti={documenti} role={role} />

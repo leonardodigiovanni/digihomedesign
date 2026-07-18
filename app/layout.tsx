@@ -8,6 +8,7 @@ import SitemapSection from '@/components/sitemap-section'
 import StickyBottomBar from '@/components/sticky-bottom-bar'
 import { StickyBottomBarProvider } from '@/lib/sticky-bottom-bar-context'
 import { HomeShortcutsProvider } from '@/lib/home-shortcuts-context'
+import { PageTitleOverrideProvider } from '@/lib/page-title-override-context'
 import InactivityGuard from '@/components/inactivity-guard'
 import AvvisiNotifier from '@/components/avvisi-notifier'
 import { readSettings, type BgMode } from '@/lib/settings'
@@ -254,6 +255,7 @@ export default async function RootLayout({
     <html lang="it" className={inter.variable}>
       <body style={isPageEffect ? {} : { background: `rgba(${pageBg.r}, ${pageBg.g}, ${pageBg.b}, ${pageBg.a / 100})` }}>
         <HomeShortcutsProvider key={username ?? 'anon'} loggedIn={!!username} role={role} rolePermissions={rolePermissions} disabledPages={settings.disabledPages}>
+        <PageTitleOverrideProvider>
 
         {/* Sfondo pagina con effetto (fixed, sotto tutto) */}
         {isPageEffect && (
@@ -346,6 +348,7 @@ export default async function RootLayout({
           />
         )}
 
+        </PageTitleOverrideProvider>
         </HomeShortcutsProvider>
       </body>
     </html>

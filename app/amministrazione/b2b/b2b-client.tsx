@@ -7,6 +7,7 @@ import {
   salvaBrandB2B, eliminaBrandB2B, inviaEmailB2B,
   type InviaResult,
 } from './actions'
+import ShortcutStar from '@/components/shortcut-star'
 
 export type TemplateB2B = {
   id: number
@@ -208,7 +209,7 @@ export default function B2BClient({ templates, brands }: { templates: TemplateB2
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
         Amministrazione / B2B
       </p>
-      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 16 }}>B2B — Template ed email a marchi/fornitori</h1>
+      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 16 }}>B2B — Template ed email a marchi/fornitori<ShortcutStar href="/amministrazione/b2b" small /></h1>
 
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'flex-start' }}>
 

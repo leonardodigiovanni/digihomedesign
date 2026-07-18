@@ -8,6 +8,8 @@ import ApriCantiereBtn from './apri-btn'
 import ApriTaskBtn from './apri-task-btn'
 import { b } from '@/lib/btn'
 import { addMedia, addTask, addCantiere } from '@/app/area-lavoro/cantieri/actions'
+import ShortcutStar from '@/components/shortcut-star'
+import { usePageTitleOverride } from '@/lib/page-title-override-context'
 import SetActionBar from '@/app/app/set-action-bar'
 import InfoCard from '@/app/app/info-card'
 
@@ -302,6 +304,8 @@ function TaskGrid({
 }) {
   const [aperto, setAperto] = useState(false)
 
+  usePageTitleOverride(`/area-clienti/cantieri?cantiere=${cantiere.id}`, `Cantiere ${cantiere.titolo}`)
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginLeft: 3, marginRight: 3 }}>
       <div className="sfondo-riquadri-app" style={{ border: '1px solid #222', borderRadius: 12, padding: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.18),inset 0 1px 0 rgba(255,255,255,0.5)' }}>
@@ -310,7 +314,7 @@ function TaskGrid({
           style={{ display: 'flex', alignItems: 'center', gap: 6, width: '100%', background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left' }}
         >
           <span style={{ fontSize: 14, fontWeight: 700, color: '#1a1a1a', flex: 1, display: 'flex', alignItems: 'center', gap: 6 }}>
-            <PuntinaSvg /> Lavori del cantiere {cantiere.titolo}
+            <PuntinaSvg /> Lavori del cantiere {cantiere.titolo}<ShortcutStar small />
           </span>
           <span style={{ fontSize: 16, color: '#888', transition: 'transform 0.2s', transform: aperto ? 'rotate(180deg)' : 'rotate(0deg)', display: 'inline-block' }}>▾</span>
         </button>

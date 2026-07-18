@@ -2,6 +2,8 @@
 import type { Metadata } from 'next'
 import CtaPreventivo from '@/components/cta-preventivo'
 import CtaCantiere from '@/components/cta-cantiere'
+import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
+import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = {
   title: 'Termodinamica a Palermo — Climatizzazione, Caldaie e Impianti',
@@ -31,7 +33,7 @@ export default function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 4px 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/" style={{ color: '#888', textDecoration: 'underline' }}>Home</Link> / Termodinamica
+        <Link href="/" style={{ color: '#888', textDecoration: 'underline' }}>Home</Link> / Termodinamica<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 12 }}>
         Termodinamica a Palermo
@@ -47,12 +49,12 @@ export default function Page() {
           </Link>
         ))}
       </div>
-      <div style={{ display: 'flex', gap: 8 }}>
-        <Link href="/" className="btn-black fs-12" style={{ flex: 1 }}>← Home</Link>
+      <StickyBottomBarContent>
+        <Link href="/" className="btn-black fs-12">← Home</Link>
         <CtaPreventivo />
         <CtaCantiere />
-        <Link href="/brand/contatti" className="btn-black fs-12" style={{ flex: 1 }}>Chiedi info</Link>
-      </div>
+        <Link href="/brand/contatti" className="btn-black fs-12">Chiedi info</Link>
+      </StickyBottomBarContent>
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>tipo indice di categoria</p>
     </div>
   )

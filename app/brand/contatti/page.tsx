@@ -2,6 +2,8 @@
 import Link from 'next/link'
 import ContattoForm from './contatto-form'
 import type { Metadata } from 'next'
+import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
+import ShortcutStar from '@/components/shortcut-star'
 
 function IconPhone() {
   return (
@@ -44,7 +46,7 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/brand" style={{ color: '#888', textDecoration: 'underline' }}>Brand</Link> / Contatti
+        <Link href="/brand" style={{ color: '#888', textDecoration: 'underline' }}>Brand</Link> / Contatti<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 16 }}>Contatti</h1>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 0 }}>
@@ -94,7 +96,9 @@ export default async function Page() {
 
       <ContattoForm username={username} role={role} />
 
-      <Link href="/brand" className="btn-black fs-12" style={{ marginTop: 32 }}>← Torna a Brand</Link>
+      <StickyBottomBarContent>
+        <Link href="/brand" className="btn-black fs-12">← Torna a Brand</Link>
+      </StickyBottomBarContent>
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>pagina revisionata</p>
     </div>
   )

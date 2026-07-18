@@ -3,6 +3,7 @@
 import React, { useState, useTransition, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { salvaTemplate, salvaDisegnoTemplate, toggleAttivoTemplate, eliminaTemplate, type MutResult } from './actions'
+import ShortcutStar from '@/components/shortcut-star'
 
 export type Template = {
   id: number
@@ -339,7 +340,7 @@ export default function TemplatesClient({ templates, disegnoTemplates, provvisor
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
         <div>
-          <h2 style={{ fontSize: 20, fontWeight: 700, margin: 0 }}>Template Preventivo</h2>
+          <h2 style={{ fontSize: 20, fontWeight: 700, margin: 0 }}>Template Preventivo<ShortcutStar href="/amministrazione/templates" small /></h2>
         </div>
       </div>
 

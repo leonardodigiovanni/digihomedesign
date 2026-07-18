@@ -4,6 +4,7 @@ import { readSettings } from '@/lib/settings'
 import { hasPageAccess } from '@/lib/permissions'
 import { getConnection } from '@/lib/db'
 import WorklistClient, { type Compito, type Utente } from './worklist-client'
+import ShortcutStar from '@/components/shortcut-star'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -101,7 +102,7 @@ export default async function Page() {
 
   return (
     <div>
-      <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 6 }}>Worklist</h2>
+      <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 6 }}>Worklist<ShortcutStar href="/area-lavoro/worklist" small /></h2>
       <p style={{ color: '#000', fontSize: 13, marginBottom: 24 }}>
         {isGestore
           ? 'Tutti i compiti — crea, assegna, monitora.'

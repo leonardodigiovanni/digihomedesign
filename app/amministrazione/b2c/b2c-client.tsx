@@ -7,6 +7,7 @@ import {
   salvaClienteB2C, eliminaClienteB2C, inviaEmailB2C,
   type InviaResult,
 } from './actions'
+import ShortcutStar from '@/components/shortcut-star'
 
 export type TemplateB2C = {
   id: number
@@ -208,7 +209,7 @@ export default function B2CClient({ templates, clienti }: { templates: TemplateB
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
         Amministrazione / B2C
       </p>
-      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 16 }}>B2C — Template ed email ai clienti</h1>
+      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 16 }}>B2C — Template ed email ai clienti<ShortcutStar href="/amministrazione/b2c" small /></h1>
 
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'flex-start' }}>
 

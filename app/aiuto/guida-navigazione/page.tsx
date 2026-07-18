@@ -1,5 +1,7 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
+import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = {
   title: 'Guida alla Navigazione',
@@ -11,7 +13,7 @@ export default function GuidaNavigazione() {
   return (
     <div style={{ padding: '0 0 64px' }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/" style={{ color: '#888', textDecoration: 'underline' }}>Home</Link> / Aiuto / Guida alla Navigazione
+        <Link href="/" style={{ color: '#888', textDecoration: 'underline' }}>Home</Link> / Aiuto / Guida alla Navigazione<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Scorciatoie nella Homepage</h1>
       <p className="sottotitolo-3d fs-14" style={{ marginBottom: 8 }}>
@@ -68,9 +70,9 @@ export default function GuidaNavigazione() {
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <Link href="/" className="btn-black fs-12" style={{ flex: 1 }}>← Home</Link>
-        </div>
+        <StickyBottomBarContent>
+          <Link href="/" className="btn-black fs-12">← Home</Link>
+        </StickyBottomBarContent>
 
       </div>
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>tipo aiuto</p>

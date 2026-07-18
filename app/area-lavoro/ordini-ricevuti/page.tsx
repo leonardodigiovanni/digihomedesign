@@ -4,6 +4,7 @@ import { hasPageAccess } from '@/lib/permissions'
 import { readSettings } from '@/lib/settings'
 import { getConnection } from '@/lib/db'
 import OrdiniStaffClient from './ordini-staff-client'
+import ShortcutStar from '@/components/shortcut-star'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Ordini' }
@@ -66,7 +67,7 @@ export default async function Page() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <div>
-        <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Ordini</h2>
+        <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Ordini<ShortcutStar href="/area-lavoro/ordini-ricevuti" small /></h2>
         <p style={{ color: '#555', fontSize: 14, margin: '4px 0 0' }}>
           Gestione ordini clienti — preventivi accettati e acquisti completati.
         </p>

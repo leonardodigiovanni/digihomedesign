@@ -1,3 +1,5 @@
+import { isExcludedFromShortcuts } from '@/lib/shortcut-exclusions'
+
 export type NavPage = {
   id: number
   label: string
@@ -272,12 +274,22 @@ const PUBLIC_PAGES_WITH_ID = [
  * (indipendentemente dal motivo: ruolo o scelta admin, non ha senso
  * proporla come preferita se è stata disabilitata).
  */
+// Vero se href è esattamente pageHref, o un suo sotto-percorso (/pageHref/dettaglio)
+// o la stessa pagina con una query string (/pageHref?param=x) — le pagine di
+// dettaglio dinamiche (per path o per query, es. i cantieri) condividono gli
+// stessi permessi della voce di menu statica a cui appartengono.
+function matchesPage(href: string, pageHref: string): boolean {
+  return href === pageHref || href.startsWith(pageHref + '/') || href.startsWith(pageHref + '?')
+}
+
 export function isHrefAccessible(
   href: string,
   role: string | null,
   rolePermissions: Record<string, number[]>,
   disabledPages: number[]
 ): boolean {
+  if (isExcludedFromShortcuts(href)) return false
+
   const publicMatch = PUBLIC_PAGES_WITH_ID.find(p => p.href === href)
   if (publicMatch && disabledPages.includes(publicMatch.id)) return false
 
@@ -286,19 +298,19 @@ export function isHrefAccessible(
   if (!role) return false
   if (role === 'admin') return true
 
-  if (areaClientiPages.some(p => p.href === href)) return true
+  if (areaClientiPages.some(p => matchesPage(href, p.href))) return true
   if (adminPages.some(p => p.href === href)) return false
 
   const allowed = rolePermissions[role] ?? []
-  const internal = internalPages.find(p => p.href === href)
+  const internal = internalPages.find(p => matchesPage(href, p.href))
   if (internal) return allowed.includes(internal.id)
 
   if (role === 'cliente') return false
 
-  const fornitori = fornitoriDipendentiPages.find(p => p.href === href)
+  const fornitori = fornitoriDipendentiPages.find(p => matchesPage(href, p.href))
   if (fornitori) return allowed.includes(fornitori.id) && !disabledPages.includes(fornitori.id)
 
-  const clienti = clientiDipendentiPages.find(p => p.href === href)
+  const clienti = clientiDipendentiPages.find(p => matchesPage(href, p.href))
   if (clienti) return allowed.includes(clienti.id) && !disabledPages.includes(clienti.id)
 
   // Pagina protetta ma non riconosciuta in nessuna matrice: nascondi per sicurezza

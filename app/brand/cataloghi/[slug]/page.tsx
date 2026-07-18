@@ -10,6 +10,8 @@ import { getFiltriModelloLabels } from '@/lib/filtri-modello-labels'
 import { getFiltriCatalogoLabels } from '@/lib/filtri-catalogo-labels'
 import AggiungiArticoloAcquisto from '@/components/aggiungi-articolo-acquisto-form'
 import type { ArticoloListinoAcquisto } from '@/components/aggiungi-articolo-acquisto-form'
+import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
+import ShortcutStar from '@/components/shortcut-star'
 import CatalogoWrapper from './catalogo-wrapper'
 import type { PreventivoDestOption } from '@/app/brand/cataloghi/actions'
 
@@ -220,7 +222,7 @@ export default async function Page({ params }: Props) {
         <Link href="/brand" style={{ color: '#888', textDecoration: 'underline' }}>Brand</Link>
         {' / '}
         <Link href="/brand/cataloghi" style={{ color: '#888', textDecoration: 'underline' }}>Cataloghi</Link>
-        {' / '}{categoria.nome}
+        {' / '}{categoria.nome}<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>
         {categoria.nome}
@@ -264,16 +266,16 @@ export default async function Page({ params }: Props) {
           {`cat=${categoria.nome} | voci=${voci.length} | artPool=${Object.entries(articoliPerListino).map(([k,v]) => `${k}:${v.length}`).join(' ')}`}
         </p>
 
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-          <Link href="/brand/cataloghi" className="btn-black fs-12" style={{ flex: 1 }}>
+        <StickyBottomBarContent>
+          <Link href="/brand/cataloghi" className="btn-black fs-12">
             ← Torna ai Cataloghi
           </Link>
           {cartNonVuoto && (
-            <Link href="/area-clienti/carrello-preventivo" className="btn-black fs-12" style={{ flex: 1 }}>
+            <Link href="/area-clienti/carrello-preventivo" className="btn-black fs-12">
               Vai alla simulazione
             </Link>
           )}
-        </div>
+        </StickyBottomBarContent>
 
       </div>
     </div>

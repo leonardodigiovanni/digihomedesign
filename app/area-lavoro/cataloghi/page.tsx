@@ -8,6 +8,7 @@ import type { Metadata } from 'next'
 import { ensurePercorsiTables, type Percorso } from '@/lib/percorsi'
 import { getFiltriModelloLabels } from '@/lib/filtri-modello-labels'
 import { getFiltriCatalogoLabels } from '@/lib/filtri-catalogo-labels'
+import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = { title: 'Cataloghi' }
 
@@ -128,7 +129,7 @@ export default async function Page() {
 
   return (
     <div>
-      <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 6 }}>Cataloghi</h2>
+      <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 6 }}>Cataloghi<ShortcutStar href="/area-lavoro/cataloghi" small /></h2>
       <p style={{ color: '#000', fontSize: 13, marginBottom: 16 }}>
         Depliant e cataloghi prodotti. Ogni voce ha un PDF e N coppie categoria / sottocategoria.
       </p>

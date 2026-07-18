@@ -2,6 +2,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import type { Metadata } from 'next'
+import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = { title: 'Computi Metrici' }
 
@@ -109,7 +110,7 @@ export default async function Page() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
         <div>
-          <h2 className="effetto-3d" style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Computi Metrici</h2>
+          <h2 className="effetto-3d" style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Computi Metrici<ShortcutStar href="/area-clienti/computometrici" small /></h2>
           <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0' }}>
             {isStaff ? 'Tutti i computi metrici emessi.' : 'Le stime dei computi metrici associate al tuo account.'}
           </p>

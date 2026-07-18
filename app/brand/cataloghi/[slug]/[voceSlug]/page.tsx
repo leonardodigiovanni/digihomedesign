@@ -8,6 +8,8 @@ import VoceViewer from './voce-viewer'
 import type { PreventivoDestOption } from '@/app/brand/cataloghi/actions'
 import { LISTINO_COLS } from '@/lib/catalogo-matching'
 import { ensurePercorsiTables } from '@/lib/percorsi'
+import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
+import ShortcutStar from '@/components/shortcut-star'
 
 type Props = { params: Promise<{ slug: string; voceSlug: string }> }
 
@@ -168,7 +170,7 @@ export default async function Page({ params }: Props) {
         <Link href="/brand/cataloghi" style={{ color: '#888', textDecoration: 'underline' }}>Cataloghi</Link>
         {' / '}
         <Link href={`/brand/cataloghi/${slug}`} style={{ color: '#888', textDecoration: 'underline' }}>{categoria.nome}</Link>
-        {' / '}{voce.pdf_label || voce.nome}
+        {' / '}{voce.pdf_label || voce.nome}<ShortcutStar />
       </p>
       <VoceViewer voce={voce} backHref={`/brand/cataloghi/${slug}`} />
 
@@ -186,16 +188,16 @@ export default async function Page({ params }: Props) {
         </>
       )}
 
-      <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-        <Link href={`/brand/cataloghi/${slug}`} className="btn-black fs-12" style={{ flex: 1 }}>
+      <StickyBottomBarContent>
+        <Link href={`/brand/cataloghi/${slug}`} className="btn-black fs-12">
           ← Torna a cataloghi
         </Link>
         {cartNonVuoto && (
-          <Link href="/area-clienti/carrello-preventivo" className="btn-black fs-12" style={{ flex: 1 }}>
+          <Link href="/area-clienti/carrello-preventivo" className="btn-black fs-12">
             Vai alla simulazione
           </Link>
         )}
-      </div>
+      </StickyBottomBarContent>
     </div>
   )
 }

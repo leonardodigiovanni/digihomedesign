@@ -4,6 +4,7 @@ import { getConnection } from '@/lib/db'
 import CantieriClienteClient from './cantieri-cliente-client'
 import type { Cantiere, Task, Media } from '@/app/area-lavoro/cantieri/cantieri-client'
 import type { Metadata } from 'next'
+import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = { title: 'I Miei Cantieri' }
 
@@ -116,6 +117,7 @@ export default async function Page() {
 
   return (
     <div>
+      <ShortcutStar href="/area-clienti/cantieri" />
       <CantieriClienteClient cantieri={cantieri} tasks={tasks} media={media} />
       <div className="IsDebug fs-11" style={{ marginTop: 8 }}>pagina revisionata</div>
     </div>

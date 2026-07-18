@@ -1,6 +1,7 @@
 'use client'
 import { useState, useRef } from 'react'
 import SelectLookup from '@/components/select-lookup'
+import ShortcutStar from '@/components/shortcut-star'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -1467,7 +1468,7 @@ export default function DisegnoClient() {
 
   return (
     <div style={{ padding: '24px 32px', fontFamily: 'Arial,sans-serif', minHeight: '100vh', background: '#f4f4f6' }}>
-      <h2 style={{ fontSize: '18px', color: '#1a3a5c', marginBottom: '20px' }}>Editor Disegno</h2>
+      <h2 style={{ fontSize: '18px', color: '#1a3a5c', marginBottom: '20px' }}>Editor Disegno<ShortcutStar href="/disegno" small /></h2>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
 

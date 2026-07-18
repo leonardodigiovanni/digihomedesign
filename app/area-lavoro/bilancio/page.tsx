@@ -4,6 +4,7 @@ import { readSettings } from '@/lib/settings'
 import { hasPageAccess } from '@/lib/permissions'
 import { getConnection } from '@/lib/db'
 import BilancioClient, { type Movimento } from './bilancio-client'
+import ShortcutStar from '@/components/shortcut-star'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -82,7 +83,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ a
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <div>
-        <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Bilancio</h2>
+        <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Bilancio<ShortcutStar href="/area-lavoro/bilancio" small /></h2>
         <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0' }}>Conto economico e stato patrimoniale</p>
       </div>
       <BilancioClient movimenti={movimenti} anno={anno} anni={anni} role={role} />

@@ -10,6 +10,8 @@ import { type ArticoloListino } from '@/app/brand/cataloghi/[slug]/aggiungi-arti
 import type { PreventivoDestOption } from '@/app/brand/cataloghi/actions'
 import AggiungiArticoloAcquistoForm from '@/components/aggiungi-articolo-acquisto-form'
 import type { ArticoloListinoAcquisto } from '@/components/aggiungi-articolo-acquisto-form'
+import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
+import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = {
   title: 'Strutture Metalliche a Palermo — Tettoie, Pensiline e Soppalchi',
@@ -114,7 +116,7 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/metallurgia" style={{ color: '#888', textDecoration: 'underline' }}>Metallurgia</Link> / Strutture
+        <Link href="/metallurgia" style={{ color: '#888', textDecoration: 'underline' }}>Metallurgia</Link> / Strutture<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Strutture Metalliche a Palermo</h1>
 
@@ -166,11 +168,11 @@ export default async function Page() {
           <AggiungiArticoloAcquistoForm articoli={catalogo.articoliAcquisto} />
         )}
 
-        <div style={{ display: 'flex', gap: 8 }}>
-          <Link href="/metallurgia" className="btn-black fs-12" style={{ flex: 1 }}>← Torna a Metallurgia</Link>
+        <StickyBottomBarContent>
+          <Link href="/metallurgia" className="btn-black fs-12">← Torna a Metallurgia</Link>
           <CtaPreventivo />
           <CtaCantiere />
-        </div>
+        </StickyBottomBarContent>
       </div>
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>{(() => {
         const cerca = catalogo

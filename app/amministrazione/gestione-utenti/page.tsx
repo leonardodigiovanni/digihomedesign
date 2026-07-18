@@ -2,6 +2,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import GestioneUtentiClient from './gestione-utenti-client'
+import ShortcutStar from '@/components/shortcut-star'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -31,7 +32,7 @@ export default async function Page() {
 
   return (
     <div>
-      <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 24 }}>Gestione Utenti</h2>
+      <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 24 }}>Gestione Utenti<ShortcutStar href="/amministrazione/gestione-utenti" small /></h2>
       <GestioneUtentiClient users={users} currentUser={currentUser} />
     </div>
   )

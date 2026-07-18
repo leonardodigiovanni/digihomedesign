@@ -9,6 +9,7 @@ import type { Metadata } from 'next'
 import CarrelloComputometricoClient from './carrello-client'
 import type { ArticoloComputabile } from './carrello-client'
 import type { RigaCarrello } from './actions'
+import ShortcutStar from '@/components/shortcut-star'
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = { title: 'Carrello Computo Metrico' }
@@ -203,6 +204,7 @@ export default async function Page() {
 
   return (
     <div className="page-content-wrapper" style={{ margin: '8px 0', padding: '0 0 8px' }}>
+      <ShortcutStar href="/area-clienti/carrello-computometrico" />
       <CarrelloComputometricoClient articoli={articoli} isLoggedIn={!!username} initialRighe={initialRighe} filtriLabels={filtriLabels} percorsiPerListino={percorsiPerListino} />
     </div>
   )

@@ -6,6 +6,8 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { clientPages, visibleAdminPages, visibleInternalPages, visibleFornitoriPages, visibleClientiPages, aiutoPages, categoryGroups, areaClientiPages, prodottiPages, type NavPage, type CategoryGroup } from '@/lib/nav-config'
 import HeaderAuth from '@/components/header-auth'
+import ShortcutStar from '@/components/shortcut-star'
+import { useHomeShortcuts } from '@/lib/home-shortcuts-context'
 
 interface NavbarProps {
   role: string | null
@@ -22,6 +24,7 @@ interface NavbarProps {
 }
 
 export default function Navbar({ role, disabledPages = [], rolePermissions = {}, username, registrazioniDisabilitate, bannerAbilitato = false, cartCount = 0, cartAcquistiCount = 0, unreadEmailCount = 0, unreadAvvisiCount = 0, clienteAbilitato = true }: NavbarProps) {
+  const { shortcuts } = useHomeShortcuts()
   const [menuOpen, setMenuOpen]       = useState(false)
   const [liveAvvisiCount, setLiveAvvisiCount] = useState(unreadAvvisiCount)
   const [computoCount, setComputoCount] = useState(0)
@@ -216,9 +219,11 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
               <button
                 onClick={() => { if (!sectionOpen) { skipSectionClose.current = true; router.push('/brand') } setSectionOpen(o => !o) }}
                 className="nav-link testo-nav-bar"
-                style={{ ...linkStyle('/brand'), gap: 4 }}
+                style={{ ...linkStyle('/brand'), gap: 4, textDecoration: 'none' }}
               >
-                Brand {sectionOpen ? '▴' : '▾'}
+                <span style={isActive('/brand') ? { borderBottom: '3px solid currentColor', paddingBottom: 3 } : undefined}>
+                  Brand<ShortcutStar href="/brand" small outline /> {sectionOpen ? '▴' : '▾'}
+                </span>
               </button>
 
               {sectionOpen && (
@@ -246,7 +251,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
                       className={isActive(p.href) ? 'nav-dropdown-link nav-dropdown-link-active' : 'nav-dropdown-link'}
                       style={{ padding: '7px 10px' }}
                     >
-                      <span>{p.label}</span>
+                      <span>{p.label}<ShortcutStar href={p.href} small /></span>
                     </Link>
                   ))}
                 </div>
@@ -282,6 +287,10 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
 
           {aiutoPages.filter(p => !disabledPages.includes(p.id)).length > 0 && (
             <><NavSep /><AiutoDropdown items={aiutoPages.filter(p => !disabledPages.includes(p.id))} isActive={isActive} linkStyle={linkStyle} /></>
+          )}
+
+          {!!username && shortcuts.length > 0 && (
+            <><NavSep /><PreferitiDropdown items={shortcuts} isActive={isActive} linkStyle={linkStyle} /></>
           )}
 
           {fornitoriItems.length > 0 && (
@@ -533,6 +542,14 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             </MobileSection>
           )}
 
+          {!!username && shortcuts.length > 0 && (
+            <MobileSection sectionKey="preferiti" label="Preferiti" open={mobileOpenSection === 'preferiti'} onToggle={toggleMobileSection}>
+              {shortcuts.map(s => (
+                <MobileLink key={s.href} href={s.href} label={s.label.replace(/^Vai a /, '')} active={isActive(s.href)} indent />
+              ))}
+            </MobileSection>
+          )}
+
           {fornitoriItems.length > 0 && (
             <MobileSection sectionKey="area-fornitori" label="Area Fornitori" open={mobileOpenSection === 'area-fornitori'} onToggle={toggleMobileSection}>
               {fornitoriItems.map(p => (
@@ -692,7 +709,7 @@ function InternalDropdown({
               className={isActive(p.href) ? 'nav-dropdown-link nav-dropdown-link-active' : 'nav-dropdown-link'}
               style={{ padding: '7px 10px', display: 'flex', alignItems: 'center', gap: 6 }}
             >
-              <span>{p.label}</span>
+              <span>{p.label}<ShortcutStar href={p.href} small /></span>
               {p.href === '/area-lavoro/email' && unread > 0 && (
                 <span style={{ background: '#e53e3e', color: '#fff', borderRadius: '50%', minWidth: 18, height: 18, fontSize: 11, fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px', textDecoration: 'none', flexShrink: 0 }}>
                   {unread > 99 ? '99+' : unread}
@@ -750,7 +767,7 @@ function ProdottiDropdown({
               className={isActive(p.href) ? 'nav-dropdown-link nav-dropdown-link-active' : 'nav-dropdown-link'}
               style={{ padding: '7px 10px' }}
             >
-              <span>{p.label}</span>
+              <span>{p.label}<ShortcutStar href={p.href} small /></span>
             </Link>
           ))}
         </div>
@@ -803,7 +820,60 @@ function AiutoDropdown({
               className={isActive(p.href) ? 'nav-dropdown-link nav-dropdown-link-active' : 'nav-dropdown-link'}
               style={{ padding: '7px 10px' }}
             >
-              <span>{p.label}</span>
+              <span>{p.label}<ShortcutStar href={p.href} small /></span>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function PreferitiDropdown({
+  items,
+  isActive,
+  linkStyle,
+}: {
+  items: { href: string; label: string }[]
+  isActive: (href: string) => boolean
+  linkStyle: (href: string) => React.CSSProperties
+}) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  const alignRef = useDropdownAlign(open)
+
+  useEffect(() => {
+    function handle(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handle)
+    return () => document.removeEventListener('mousedown', handle)
+  }, [])
+
+  const anyActive = items.some(p => isActive(p.href))
+
+  return (
+    <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+      <button onClick={() => setOpen(o => !o)} className="nav-link testo-nav-bar" style={{ ...linkStyle('/preferiti'), gap: 4, textDecoration: anyActive ? 'underline' : 'none', textDecorationThickness: anyActive ? '3px' : undefined, textUnderlineOffset: anyActive ? '4px' : undefined }}>
+        Preferiti {open ? '▴' : '▾'}
+      </button>
+      {open && (
+        <div ref={alignRef} style={{
+          position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
+          background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
+          boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 12,
+          display: 'grid', gridTemplateRows: 'repeat(6, auto)', gridAutoFlow: 'column', gridAutoColumns: 'max-content', gap: 2,
+          zIndex: 200, width: 'max-content', minWidth: 220,
+        }}>
+          {items.map(p => (
+            <Link
+              key={p.href}
+              href={p.href}
+              onClick={() => setOpen(false)}
+              className={isActive(p.href) ? 'nav-dropdown-link nav-dropdown-link-active' : 'nav-dropdown-link'}
+              style={{ padding: '7px 10px' }}
+            >
+              <span>{p.label.replace(/^Vai a /, '')}<ShortcutStar href={p.href} small /></span>
             </Link>
           ))}
         </div>
@@ -856,7 +926,7 @@ function AdminDropdown({
               className={isActive(p.href) ? 'nav-dropdown-link nav-dropdown-link-active' : 'nav-dropdown-link'}
               style={{ padding: '7px 10px' }}
             >
-              <span>{p.label}</span>
+              <span>{p.label}<ShortcutStar href={p.href} small /></span>
             </Link>
           ))}
         </div>
@@ -919,15 +989,11 @@ function CategoryDropdown({
       <button
         onClick={() => { if (!open) router.push(group.href); setOpen(o => !o) }}
         className="nav-link testo-nav-bar"
-        style={{
-          ...linkStyle(group.href),
-          gap: 4,
-          textDecoration: anyActive ? 'underline' : 'none',
-          textDecorationThickness: anyActive ? '3px' : undefined,
-          textUnderlineOffset: anyActive ? '4px' : undefined,
-        }}
+        style={{ ...linkStyle(group.href), gap: 4, textDecoration: 'none' }}
       >
-        {group.label} {open ? '▴' : '▾'}
+        <span style={anyActive ? { borderBottom: '3px solid currentColor', paddingBottom: 3 } : undefined}>
+          {group.label}<ShortcutStar href={group.href} small outline /> {open ? '▴' : '▾'}
+        </span>
       </button>
       {isMounted && open && createPortal(
         <div
@@ -964,7 +1030,7 @@ function CategoryDropdown({
                 className={isActive(p.href) ? 'nav-dropdown-link nav-dropdown-link-active' : 'nav-dropdown-link'}
                 style={{ padding: '7px 10px' }}
               >
-                <span>{p.label}</span>
+                <span>{p.label}<ShortcutStar href={p.href} small /></span>
               </Link>
             ))}
           </div>
@@ -1019,7 +1085,7 @@ function FornitoriDropdown({
               className={isActive(p.href) ? 'nav-dropdown-link nav-dropdown-link-active' : 'nav-dropdown-link'}
               style={{ padding: '7px 10px' }}
             >
-              <span>{p.label}</span>
+              <span>{p.label}<ShortcutStar href={p.href} small /></span>
             </Link>
           ))}
         </div>
@@ -1072,7 +1138,7 @@ function ClientiDropdown({
               className={isActive(p.href) ? 'nav-dropdown-link nav-dropdown-link-active' : 'nav-dropdown-link'}
               style={{ padding: '7px 10px' }}
             >
-              <span>{p.label}</span>
+              <span>{p.label}<ShortcutStar href={p.href} small /></span>
             </Link>
           ))}
         </div>
@@ -1161,7 +1227,7 @@ function AreaClientiDropdown({
               className={isActive(p.href) ? 'nav-dropdown-link nav-dropdown-link-active' : 'nav-dropdown-link'}
               style={{ padding: '7px 10px', display: 'flex', alignItems: 'center', gap: 6 }}
             >
-              <span>{p.label}</span>
+              <span>{p.label}<ShortcutStar href={p.href} small /></span>
               {p.href === '/area-clienti/avvisi' && open && unread > 0 && (
                 <span style={{ background: '#e53e3e', color: '#fff', borderRadius: '50%', minWidth: 18, height: 18, fontSize: 11, fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px', textDecoration: 'none', flexShrink: 0 }}>
                   {unread > 99 ? '99+' : unread}
@@ -1219,7 +1285,7 @@ function MobileLink({ href, label, active, indent, badge = 0 }: { href: string; 
       className={active ? 'nav-mobile-link nav-mobile-link-active' : 'nav-mobile-link'}
       style={{ padding: `10px ${indent ? 28 : 16}px`, display: 'flex', alignItems: 'center', gap: 6 }}
     >
-      <span>{label}</span>
+      <span>{label}<ShortcutStar href={href} small /></span>
       {badge > 0 && (
         <span style={{ background: '#e53e3e', color: '#fff', borderRadius: '50%', minWidth: 18, height: 18, fontSize: 11, fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px', textDecoration: 'none', flexShrink: 0 }}>
           {badge > 99 ? '99+' : badge}

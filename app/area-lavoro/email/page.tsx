@@ -2,6 +2,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import EmailClient from './email-client'
+import ShortcutStar from '@/components/shortcut-star'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -62,7 +63,7 @@ export default async function Page() {
 
   return (
     <div>
-      <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 24 }}>Email</h2>
+      <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 24 }}>Email<ShortcutStar href="/area-lavoro/email" small /></h2>
       <EmailClient messaggi={messaggi} isAdmin={role === 'admin'} />
     </div>
   )

@@ -1,5 +1,7 @@
 ﻿import Link from 'next/link'
 import type { Metadata } from 'next'
+import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
+import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = {
   title: 'Condizioni di Vendita — Digi Home Design Palermo',
@@ -11,7 +13,7 @@ export default function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/brand" style={{ color: '#888', textDecoration: 'underline' }}>Brand</Link> / Condizioni di Vendita
+        <Link href="/brand" style={{ color: '#888', textDecoration: 'underline' }}>Brand</Link> / Condizioni di Vendita<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 16 }}>Condizioni di Vendita</h1>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 8 }}>
@@ -47,7 +49,9 @@ export default function Page() {
         ))}
       </div>
 
-      <Link href="/brand" className="btn-black fs-12" style={{ marginTop: 32 }}>← Torna a Brand</Link>
+      <StickyBottomBarContent>
+        <Link href="/brand" className="btn-black fs-12">← Torna a Brand</Link>
+      </StickyBottomBarContent>
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>pagina revisionata</p>
     </div>
   )

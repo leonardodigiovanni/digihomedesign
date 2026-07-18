@@ -9,6 +9,7 @@ import { extractAvgColor, colorFromDesc } from '@/lib/extract-color'
 import { ensurePercorsiTables } from '@/lib/percorsi'
 import { readSettings } from '@/lib/settings'
 import { getFiltriModelloLabels } from '@/lib/filtri-modello-labels'
+import ShortcutStar from '@/components/shortcut-star'
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = { title: 'Carrello Preventivo' }
@@ -417,6 +418,7 @@ export default async function Page() {
   return (
     <div className="page-content-wrapper" style={{ margin: '8px 0', padding: '0 0 8px', color: '#444', fontSize: 15, lineHeight: 1.8 }}>
 
+<ShortcutStar href="/area-clienti/carrello-preventivo" />
 <CarrelloClient articoli={articoli} isLoggedIn={isLoggedIn} scontoClientePct={scontoClientePct} caratteristiche={caratteristiche} listini={listini} percorsiPerListino={percorsiPerListino} filtriLabels={filtriLabels} />
 
       {isStaff && (

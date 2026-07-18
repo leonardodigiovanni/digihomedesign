@@ -6,6 +6,8 @@ import type { Metadata } from 'next'
 import type { ArticoloSnapshot } from '@/app/area-clienti/carrello-acquisti/checkout-action'
 import { clonaAcquistoComeOrdine } from '@/app/area-clienti/ordini/actions'
 import ClearCart from './clear-cart'
+import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
+import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = { title: 'Ordine confermato' }
 
@@ -81,6 +83,8 @@ export default async function Page({ searchParams }: Props) {
   return (
     <div style={{ maxWidth: 720, margin: '48px auto', padding: '0 20px 64px', color: '#444', fontSize: 15, lineHeight: 1.8 }}>
       <ClearCart />
+
+      <ShortcutStar />
 
       {/* Intestazione conferma */}
       <div style={{
@@ -158,20 +162,10 @@ export default async function Page({ searchParams }: Props) {
         )
       })()}
 
-      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-        <Link href="/area-clienti/ordini" style={{
-          padding: '10px 22px', fontSize: 13, fontWeight: 600, borderRadius: 6,
-          background: '#1a4a8a', color: '#fff', textDecoration: 'none',
-        }}>
-          I miei ordini →
-        </Link>
-        <Link href="/brand/cataloghi" style={{
-          padding: '10px 22px', fontSize: 13, fontWeight: 600, borderRadius: 6,
-          background: '#f0f0f0', color: '#444', textDecoration: 'none',
-        }}>
-          Continua a sfogliare
-        </Link>
-      </div>
+      <StickyBottomBarContent>
+        <Link href="/area-clienti/ordini" className="btn-black fs-12">I miei ordini →</Link>
+        <Link href="/brand/cataloghi" className="btn-black fs-12">Continua a sfogliare</Link>
+      </StickyBottomBarContent>
     </div>
   )
 }

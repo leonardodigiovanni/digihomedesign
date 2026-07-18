@@ -155,18 +155,8 @@ export default async function Page({ searchParams }: Props) {
       })()}
 
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-        <Link href="/app" style={{
-          padding: '10px 22px', fontSize: 13, fontWeight: 600, borderRadius: 6,
-          background: '#1a4a8a', color: '#fff', textDecoration: 'none',
-        }}>
-          Torna alla home →
-        </Link>
-        <Link href="/app/cataloghi" style={{
-          padding: '10px 22px', fontSize: 13, fontWeight: 600, borderRadius: 6,
-          background: '#f0f0f0', color: '#444', textDecoration: 'none',
-        }}>
-          Continua a sfogliare
-        </Link>
+        <Link href="/app" className="btn-black-app fs-12">Torna alla home →</Link>
+        <Link href="/app/cataloghi" className="btn-black-app fs-12">Continua a sfogliare</Link>
       </div>
     </div>
   )

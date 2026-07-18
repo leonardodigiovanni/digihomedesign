@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import QRCode from 'qrcode'
 import Image from 'next/image'
+import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
+import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = {
   title: 'Installa l\'App',
@@ -71,6 +73,8 @@ export default async function AppDownloadPage() {
 
   return (
     <div style={{ padding: '0 0 64px' }}>
+
+      <ShortcutStar />
 
       {/* Header */}
       <div style={{ textAlign: 'center', marginBottom: 36 }}>
@@ -143,12 +147,11 @@ export default async function AppDownloadPage() {
 
       </div>
 
-      {/* CTA apri app */}
-      <div style={{ textAlign: 'center' }}>
+      <StickyBottomBarContent>
         <a href="/" className="btn-black fs-12" style={{ padding: '0 28px' }}>
           Vai al sito
         </a>
-      </div>
+      </StickyBottomBarContent>
 
     </div>
   )

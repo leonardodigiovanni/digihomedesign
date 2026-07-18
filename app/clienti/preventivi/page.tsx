@@ -7,6 +7,7 @@ import EliminaBtn from './elimina-btn'
 import VisibilitaBtn from './visibilita-btn'
 import ApriBtnPreventivo from '../../area-clienti/preventivi/apri-btn'
 import { decompressCart } from '@/lib/cart-cookie'
+import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = { title: 'Preventivi Clienti' }
 
@@ -100,7 +101,7 @@ export default async function Page() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
         <div>
-          <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Preventivi Clienti</h2>
+          <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Preventivi Clienti<ShortcutStar href="/clienti/preventivi" small /></h2>
           <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0' }}>Tutti i preventivi emessi.</p>
         </div>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>

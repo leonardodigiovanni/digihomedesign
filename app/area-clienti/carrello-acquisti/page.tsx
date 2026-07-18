@@ -5,6 +5,7 @@ import CarrelloAcquistiClient from './carrello-acquisti-client'
 import { decompressCart, type CartItem } from '@/lib/cart-cookie'
 import { readSettings } from '@/lib/settings'
 import { extractAvgColor, colorFromDesc } from '@/lib/extract-color'
+import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = { title: 'Carrello Acquisti' }
 
@@ -170,6 +171,7 @@ export default async function Page() {
 
   return (
     <div className="page-content-wrapper" style={{ margin: '8px 0', padding: '0 0 8px', color: '#444', fontSize: 15, lineHeight: 1.8 }}>
+      <ShortcutStar href="/area-clienti/carrello-acquisti" />
       <CarrelloAcquistiClient articoli={articoli} isLoggedIn={isLoggedIn} caratteristiche={caratteristiche} registrazioniDisabilitate={registrazioniDisabilitate} scontoClientePct={scontoClientePct} />
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>pagina revisionata</p>
     </div>

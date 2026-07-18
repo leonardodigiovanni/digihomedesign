@@ -11,6 +11,8 @@ import { LISTINO_COLS } from '@/lib/catalogo-matching'
 import type { PreventivoDestOption } from '@/app/brand/cataloghi/actions'
 import AggiungiArticoloAcquistoForm from '@/components/aggiungi-articolo-acquisto-form'
 import type { ArticoloListinoAcquisto } from '@/components/aggiungi-articolo-acquisto-form'
+import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
+import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = {
   title: 'Pergole Bioclimatiche a Palermo — Lamelle Orientabili su Misura',
@@ -148,7 +150,7 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Pergole Bioclimatiche
+        <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Pergole Bioclimatiche<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Pergole Bioclimatiche a Palermo</h1>
 
@@ -203,11 +205,11 @@ export default async function Page() {
           <AggiungiArticoloAcquistoForm articoli={catalogo.articoliAcquisto} />
         )}
 
-        <div style={{ display: 'flex', gap: 8 }}>
-          <Link href="/serramenti" className="btn-black fs-12" style={{ flex: 1 }}>← Torna a Serramenti</Link>
+        <StickyBottomBarContent>
+          <Link href="/serramenti" className="btn-black fs-12">← Torna a Serramenti</Link>
           <CtaPreventivo />
           <CtaCantiere />
-        </div>
+        </StickyBottomBarContent>
       </div>
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>{(() => {
         const cerca = catalogo

@@ -4,6 +4,8 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import PreviewInfisso from '@/components/preview-infisso'
 import type { OrdineInfo, OrdineArticolo } from './page'
+import ShortcutStar from '@/components/shortcut-star'
+import { usePageTitleOverride } from '@/lib/page-title-override-context'
 
 // Centesimi → evita accumuli floating point
 function c(n: number | string | null | undefined): number { return Math.round(Number(n ?? 0) * 100) }
@@ -29,6 +31,8 @@ function renderPrezzo(cents: number, opts?: { strike?: number; pct?: number }) {
 export default function OrdineClient({ ordine, articoli }: { ordine: OrdineInfo; articoli: OrdineArticolo[] }) {
   const [expandedIds, setExpandedIds] = useState<Set<number>>(() => new Set())
   const [previewArt, setPreviewArt]   = useState<OrdineArticolo | null>(null)
+
+  usePageTitleOverride(`/area-clienti/ordini/${ordine.id}`, ordine.numero ? `Ordine ${ordine.numero}` : null)
 
   function toggleExpand(id: number) {
     setExpandedIds(prev => {
@@ -77,7 +81,7 @@ export default function OrdineClient({ ordine, articoli }: { ordine: OrdineInfo;
       {/* Header */}
       <div>
         <h2 className="effetto-3d" style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>
-          Ordine {ordine.numero || `#${ordine.id}`}
+          Ordine {ordine.numero || `#${ordine.id}`}<ShortcutStar href={`/area-clienti/ordini/${ordine.id}`} small />
         </h2>
         <div style={{ display: 'flex', gap: 14, alignItems: 'center', marginTop: 8, flexWrap: 'wrap', fontSize: 13, color: '#555' }}>
           <span style={{

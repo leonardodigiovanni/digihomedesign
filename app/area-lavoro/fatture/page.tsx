@@ -4,6 +4,7 @@ import { readSettings } from '@/lib/settings'
 import { hasPageAccess } from '@/lib/permissions'
 import { getConnection } from '@/lib/db'
 import FattureClient, { type Fattura, type Pagamento } from './fatture-client'
+import ShortcutStar from '@/components/shortcut-star'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -84,7 +85,7 @@ export default async function Page() {
 
   return (
     <div>
-      <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 24 }}>Fatture</h2>
+      <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 24 }}>Fatture<ShortcutStar href="/area-lavoro/fatture" small /></h2>
       <FattureClient fatture={fatture} pagamenti={pagamenti} />
     </div>
   )

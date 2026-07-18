@@ -4,6 +4,7 @@ import { getConnection } from '@/lib/db'
 import type { Metadata } from 'next'
 import { UploadDocumentoForm } from './upload-form'
 import { DocumentiFiltri } from './filtri'
+import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = { title: 'Documenti Clienti' }
 
@@ -69,7 +70,7 @@ export default async function Page() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       <div>
-        <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Documenti Clienti</h2>
+        <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Documenti Clienti<ShortcutStar href="/clienti/documenti" small /></h2>
         <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0' }}>Tutti i documenti caricati.</p>
       </div>
 

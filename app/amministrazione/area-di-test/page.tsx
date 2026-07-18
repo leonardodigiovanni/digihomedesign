@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import type { Metadata } from 'next'
 import AreaTestClient, { type FlatRow, type Pv2Row } from './area-test-client'
+import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = { title: 'Area di Test' }
 
@@ -99,7 +100,7 @@ export default async function Page() {
 
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-        <h2 style={{ fontSize: 24, fontWeight: 600, margin: 0 }}>Area di Test</h2>
+        <h2 style={{ fontSize: 24, fontWeight: 600, margin: 0 }}>Area di Test<ShortcutStar href="/amministrazione/area-di-test" small /></h2>
         <AreaTestClient flatRows={flatRows} pv2={pv2} />
       </div>
     )

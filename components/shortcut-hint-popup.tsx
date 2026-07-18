@@ -3,7 +3,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { useHomeShortcuts } from '@/lib/home-shortcuts-context'
-import { nameFromPathname, labelFromPathname } from '@/lib/page-label'
+import { nameFromPathname } from '@/lib/page-label'
+import { isExcludedFromShortcuts } from '@/lib/shortcut-exclusions'
+import { useCurrentUrl } from '@/lib/use-current-url'
+import { usePageTitleOverrideValue } from '@/lib/page-title-override-context'
 
 const DWELL_MS = 2 * 60 * 1000
 const COUNTDOWN_S = 15
@@ -20,6 +23,7 @@ const FOREVER_KEY = 'shortcut_hint_dismissed_forever'
  */
 export default function ShortcutHintPopup({ loggedIn }: { loggedIn: boolean }) {
   const pathname = usePathname()
+  const currentUrl = useCurrentUrl()
   const { isShortcut, add } = useHomeShortcuts()
   const [visible, setVisible] = useState(false)
   const [secondsLeft, setSecondsLeft] = useState(COUNTDOWN_S)
@@ -27,7 +31,7 @@ export default function ShortcutHintPopup({ loggedIn }: { loggedIn: boolean }) {
 
   useEffect(() => {
     setVisible(false)
-    if (!loggedIn || pathname === '/' || isShortcut(pathname)) return
+    if (!loggedIn || pathname === '/' || isShortcut(currentUrl) || isExcludedFromShortcuts(pathname)) return
     if (sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(FOREVER_KEY)) return
 
     const timeout = setTimeout(() => {
@@ -51,7 +55,9 @@ export default function ShortcutHintPopup({ loggedIn }: { loggedIn: boolean }) {
       if (intervalRef.current) clearInterval(intervalRef.current)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname, loggedIn])
+  }, [currentUrl, loggedIn])
+
+  const titleOverride = usePageTitleOverrideValue(currentUrl)
 
   if (!visible) return null
 
@@ -60,7 +66,7 @@ export default function ShortcutHintPopup({ loggedIn }: { loggedIn: boolean }) {
     setVisible(false)
   }
 
-  const name = nameFromPathname(pathname)
+  const name = titleOverride ?? nameFromPathname(currentUrl)
 
   return (
     <div
@@ -88,7 +94,7 @@ export default function ShortcutHintPopup({ loggedIn }: { loggedIn: boolean }) {
 
         <button
           type="button"
-          onClick={() => { add(pathname, labelFromPathname(pathname)); close() }}
+          onClick={() => { add(currentUrl, `Vai a ${name}`); close() }}
           className="btn-green fs-12"
           style={{ height: 42, borderRadius: 21, padding: '0 20px' }}
         >

@@ -159,9 +159,7 @@ export default function Page() {
       </p>
 
       <div style={{ marginTop: 32, paddingTop: 16, borderTop: '1px solid #eee' }}>
-        <Link href="/app" style={{ fontSize: 12, color: '#888', textDecoration: 'underline' }}>
-          ← Torna alla home
-        </Link>
+        <Link href="/app" className="btn-black-app fs-12">← Torna alla home</Link>
       </div>
 
     </div>

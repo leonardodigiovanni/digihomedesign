@@ -5,6 +5,7 @@ import type { Metadata } from 'next'
 import { DeleteDocumentoButton } from './delete-button'
 import { documentoSrc } from '@/lib/media-src'
 import { UploadDocumentoForm } from './upload-form'
+import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = { title: 'Documenti' }
 
@@ -110,7 +111,7 @@ export default async function Page() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       <div>
-        <h2 className="effetto-3d" style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Documenti</h2>
+        <h2 className="effetto-3d" style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>Documenti<ShortcutStar href="/area-clienti/documenti" small /></h2>
         <p style={{ color: '#000', fontSize: 14, margin: '4px 0 0' }}>
           {isStaff ? 'Tutti i documenti caricati.' : 'I documenti condivisi con te.'}
         </p>

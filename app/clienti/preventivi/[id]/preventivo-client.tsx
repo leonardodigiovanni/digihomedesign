@@ -7,6 +7,9 @@ import PreviewInfisso from '@/components/preview-infisso'
 import { b } from '@/lib/btn'
 import SelectLookup from '@/components/select-lookup'
 import { hasPercorso, valoriPercorso } from '@/lib/percorsi-match'
+import ShortcutStar from '@/components/shortcut-star'
+import { usePageTitleOverride } from '@/lib/page-title-override-context'
+import { useCurrentUrl } from '@/lib/use-current-url'
 
 // ─── Tipi ─────────────────────────────────────────────────────────────────────
 
@@ -1626,6 +1629,8 @@ export default function PreventivoClient({
   filtriLabels?: Record<number, string>
 }) {
   const router = useRouter()
+  const currentUrl = useCurrentUrl()
+  usePageTitleOverride(currentUrl, preventivo.numero ? `Preventivo ${preventivo.numero}` : null)
   const [showForm, setShowForm]         = useState(false)
   const [showInoltra, setShowInoltra]   = useState(false)
   const [editArticolo, setEditArticolo] = useState<Articolo | null>(null)
@@ -1817,7 +1822,7 @@ export default function PreventivoClient({
       <div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
           <h2 className="effetto-3d" style={{ margin: 0, fontSize: 22, fontWeight: 700 }}>
-            Preventivo {preventivo.numero || `#${preventivo.id}`}
+            Preventivo {preventivo.numero || `#${preventivo.id}`}<ShortcutStar small />
           </h2>
           <span style={{
             fontSize: 12, fontWeight: 700, color: STATO_COLORS[statoLocale] ?? '#888',

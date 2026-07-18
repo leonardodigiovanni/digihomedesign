@@ -1,5 +1,7 @@
 ﻿import Link from 'next/link'
 import type { Metadata } from 'next'
+import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
+import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = {
   title: 'Galleria Lavori — Digi Home Design Palermo',
@@ -11,7 +13,7 @@ export default function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/brand" style={{ color: '#888', textDecoration: 'underline' }}>Brand</Link> / Galleria
+        <Link href="/brand" style={{ color: '#888', textDecoration: 'underline' }}>Brand</Link> / Galleria<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 16 }}>Galleria Lavori</h1>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -22,7 +24,9 @@ export default function Page() {
           <p className="testo-articoli" style={{ margin: 0 }}>Ogni progetto racconta una storia diversa — materiali scelti insieme al cliente, soluzioni su misura per ogni spazio, risultati che durano nel tempo.</p>
         </div>
       </div>
-      <Link href="/brand" className="btn-black" style={{ marginTop: 32, fontSize: 14 }}>← Torna a Brand</Link>
+      <StickyBottomBarContent>
+        <Link href="/brand" className="btn-black fs-12">← Torna a Brand</Link>
+      </StickyBottomBarContent>
     </div>
   )
 }

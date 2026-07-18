@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
+import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = { title: 'Privacy Policy & Cookie Policy — DIGI Home Design' }
 
@@ -27,6 +29,7 @@ export default function Page() {
   return (
     <div style={{ padding: '0 0 80px' }}>
 
+      <ShortcutStar />
       <h1 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>
         Privacy Policy &amp; Cookie Policy
       </h1>
@@ -202,11 +205,9 @@ export default function Page() {
         comunicate agli utenti registrati via email. La versione aggiornata è sempre disponibile a questa pagina.
       </p>
 
-      <div style={{ marginTop: 40, paddingTop: 20, borderTop: '1px solid #eee' }}>
-        <Link href="/" style={{ fontSize: 12, color: '#888', textDecoration: 'underline' }}>
-          ← Torna alla home
-        </Link>
-      </div>
+      <StickyBottomBarContent>
+        <Link href="/" className="btn-black fs-12">← Torna alla home</Link>
+      </StickyBottomBarContent>
 
     </div>
   )

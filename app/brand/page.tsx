@@ -2,6 +2,8 @@
 import type { Metadata } from 'next'
 import { readSettings } from '@/lib/settings'
 import { clientPages } from '@/lib/nav-config'
+import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
+import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = {
   title: 'Brand — Digi Home Design Palermo',
@@ -36,7 +38,7 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/" style={{ color: '#888', textDecoration: 'underline' }}>Home</Link> / Brand
+        <Link href="/" style={{ color: '#888', textDecoration: 'underline' }}>Home</Link> / Brand<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 12 }}>
         Brand
@@ -64,9 +66,9 @@ export default async function Page() {
           </Link>
         ))}
       </div>
-      <Link href="/" className="fs-12" style={{ display: 'inline-block', marginTop: 40, color: '#1a1a1a', fontWeight: 600, textDecoration: 'underline' }}>
-        ← Torna alla home
-      </Link>
+      <StickyBottomBarContent>
+        <Link href="/" className="btn-black fs-12">← Torna alla home</Link>
+      </StickyBottomBarContent>
     </div>
   )
 }
