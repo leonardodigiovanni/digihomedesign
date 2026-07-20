@@ -314,7 +314,7 @@ function TaskGrid({
           style={{ display: 'flex', alignItems: 'center', gap: 6, width: '100%', background: 'none', border: 'none', padding: 0, cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left' }}
         >
           <span style={{ fontSize: 14, fontWeight: 700, color: '#1a1a1a', flex: 1, display: 'flex', alignItems: 'center', gap: 6 }}>
-            <PuntinaSvg /> Lavori del cantiere {cantiere.titolo}<ShortcutStar small />
+            <PuntinaSvg /> Lavori del cantiere {cantiere.titolo}{!isApp && <ShortcutStar small />}
           </span>
           <span style={{ fontSize: 16, color: '#888', transition: 'transform 0.2s', transform: aperto ? 'rotate(180deg)' : 'rotate(0deg)', display: 'inline-block' }}>▾</span>
         </button>

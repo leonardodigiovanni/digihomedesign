@@ -10,7 +10,7 @@ export default function ApriTaskBtn({ task, isApp }: { task: Task; isApp?: boole
   return (
     <button
       type="button"
-      onClick={() => router.push(`/area-clienti/cantieri/task/${task.id}`)}
+      onClick={() => router.push(isApp ? `/app/cantiere/task/${task.id}` : `/area-clienti/cantieri/task/${task.id}`)}
       className={b('btn-gold', isApp)}
       style={{ padding: '0 24px', width: '100%' }}
     >
