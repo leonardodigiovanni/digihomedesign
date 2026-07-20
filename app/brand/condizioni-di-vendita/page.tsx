@@ -6,14 +6,14 @@ import ShortcutStar from '@/components/shortcut-star'
 export const metadata: Metadata = {
   title: 'Condizioni di Vendita — Digi Home Design Palermo',
   description: 'Condizioni generali di vendita e fornitura di Digi Home Design: modalità di pagamento, garanzie, tempi di consegna e politica di reso.',
-  alternates: { canonical: 'https://www.digi-home-design.com/brand/condizioni-di-vendita' },
+  alternates: { canonical: 'https://www.digi-home-design.com/chi-siamo/condizioni-di-vendita' },
 }
 
 export default function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/brand" style={{ color: '#888', textDecoration: 'underline' }}>Brand</Link> / Condizioni di Vendita<ShortcutStar />
+        <Link href="/chi-siamo" style={{ color: '#888', textDecoration: 'underline' }}>Chi Siamo</Link> / Condizioni di Vendita<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 16 }}>Condizioni di Vendita</h1>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 8 }}>
@@ -50,7 +50,7 @@ export default function Page() {
       </div>
 
       <StickyBottomBarContent>
-        <Link href="/brand" className="btn-black fs-12">← Torna a Brand</Link>
+        <Link href="/chi-siamo" className="btn-black fs-12">← Torna a Chi Siamo</Link>
       </StickyBottomBarContent>
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>pagina revisionata</p>
     </div>

@@ -53,7 +53,7 @@ export default function Page() {
         <Link href="/" className="btn-black fs-12">← Home</Link>
         <CtaPreventivo />
         <CtaCantiere />
-        <Link href="/brand/contatti" className="btn-black fs-12">Chiedi info</Link>
+        <Link href="/chi-siamo/contatti" className="btn-black fs-12">Chiedi info</Link>
       </StickyBottomBarContent>
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>tipo indice di categoria</p>
     </div>

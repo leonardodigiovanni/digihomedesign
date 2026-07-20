@@ -6,14 +6,14 @@ import ShortcutStar from '@/components/shortcut-star'
 export const metadata: Metadata = {
   title: 'Galleria Lavori — Digi Home Design Palermo',
   description: 'Galleria fotografica dei lavori realizzati da Digi Home Design a Palermo: ristrutturazioni, serramenti, arredi, impianti e molto altro.',
-  alternates: { canonical: 'https://www.digi-home-design.com/brand/galleria' },
+  alternates: { canonical: 'https://www.digi-home-design.com/chi-siamo/galleria' },
 }
 
 export default function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/brand" style={{ color: '#888', textDecoration: 'underline' }}>Brand</Link> / Galleria<ShortcutStar />
+        <Link href="/chi-siamo" style={{ color: '#888', textDecoration: 'underline' }}>Chi Siamo</Link> / Galleria<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 16 }}>Galleria Lavori</h1>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -25,7 +25,7 @@ export default function Page() {
         </div>
       </div>
       <StickyBottomBarContent>
-        <Link href="/brand" className="btn-black fs-12">← Torna a Brand</Link>
+        <Link href="/chi-siamo" className="btn-black fs-12">← Torna a Chi Siamo</Link>
       </StickyBottomBarContent>
     </div>
   )

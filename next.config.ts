@@ -22,6 +22,15 @@ const nextConfig: NextConfig = {
       { source: '/porte-corazzate', destination: '/porte-blindate', permanent: true },
     ]
   },
+  // "brand" resta il nome della cartella sotto app/ (nessuna modifica ai file/import
+  // interni, zero rischio per i ~130 file che dipendono da app/brand/cataloghi), ma
+  // in giro per il sito le pagine vanno raggiunte con l'URL pubblico /chi-siamo.
+  async rewrites() {
+    return [
+      { source: '/chi-siamo', destination: '/brand' },
+      { source: '/chi-siamo/:path*', destination: '/brand/:path*' },
+    ]
+  },
   webpack: (config) => {
     config.resolve.alias.canvas = false
     return config

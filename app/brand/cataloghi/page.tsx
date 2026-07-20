@@ -10,7 +10,7 @@ import ShortcutStar from '@/components/shortcut-star'
 export const metadata: Metadata = {
   title: 'Cataloghi — Digi Home Design Palermo',
   description: 'Scarica i cataloghi prodotti di Digi Home Design: infissi, verande, persiane, imbotti, zanzariere e molto altro.',
-  alternates: { canonical: 'https://www.digi-home-design.com/brand/cataloghi' },
+  alternates: { canonical: 'https://www.digi-home-design.com/chi-siamo/cataloghi' },
 }
 
 function toSlug(nome: string): string {
@@ -53,7 +53,7 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/brand" style={{ color: '#888', textDecoration: 'underline' }}>Brand</Link> / Cataloghi<ShortcutStar />
+        <Link href="/chi-siamo" style={{ color: '#888', textDecoration: 'underline' }}>Chi Siamo</Link> / Cataloghi<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Cataloghi</h1>
       <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '24px 28px', marginBottom: 8 }}>
@@ -67,8 +67,8 @@ export default async function Page() {
       )}
 
       <StickyBottomBarContent>
-        <Link href="/brand" className="btn-black fs-12">
-        ← Torna a Brand
+        <Link href="/chi-siamo" className="btn-black fs-12">
+        ← Torna a Chi Siamo
         </Link>
         {!loggedIn && (
         <Link href="/aiuto/guida-preventivo" className="btn-black fs-12">

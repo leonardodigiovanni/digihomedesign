@@ -162,15 +162,22 @@ export const categoryGroups: CategoryGroup[] = [
   },
 ]
 
-// Pagine Brand: area pubblica sito vetrina
+// Pagine Chi Siamo (ex "Brand"): area pubblica sito vetrina.
+// Le pagine vivono ancora sotto app/brand/* (nessuna modifica ai file), ma sono
+// raggiunte con l'URL pubblico /chi-siamo/* grazie al rewrite in next.config.ts.
 export const clientPages: NavPage[] = [
-  { id: 36, label: 'Storia',                href: '/brand/storia'                },
-  { id: 6,  label: 'Galleria',              href: '/brand/galleria'              },
-  { id: 15, label: 'Contatti',              href: '/brand/contatti'              },
-  { id: 37, label: 'Partners',              href: '/brand/partners'              },
-  { id: 38, label: 'Cataloghi',             href: '/brand/cataloghi'             },
-  { id: 39, label: 'Condizioni di Vendita', href: '/brand/condizioni-di-vendita' },
-  { id: 40, label: 'Documenti Legali',      href: '/brand/templates-documenti'   },
+  { id: 36, label: 'Storia',                href: '/chi-siamo/storia'                },
+  { id: 6,  label: 'Galleria',              href: '/chi-siamo/galleria'              },
+  { id: 15, label: 'Contatti',              href: '/chi-siamo/contatti'              },
+  { id: 37, label: 'Partners',              href: '/chi-siamo/partners'              },
+  { id: 39, label: 'Condizioni di Vendita', href: '/chi-siamo/condizioni-di-vendita' },
+  { id: 40, label: 'Documenti Legali',      href: '/chi-siamo/templates-documenti'   },
+]
+
+// Voci singole in barra (non dentro un dropdown): Shop prima di Cataloghi
+export const standalonePages: NavPage[] = [
+  { id: 41, label: 'Shop',      href: '/shop'               },
+  { id: 38, label: 'Cataloghi', href: '/chi-siamo/cataloghi' },
 ]
 
 // Pagine Prodotti: pagine vetrina top-level, sempre pubbliche
@@ -262,6 +269,7 @@ const PROTECTED_PREFIXES = ['/area-clienti', '/area-lavoro', '/amministrazione',
 const PUBLIC_PAGES_WITH_ID = [
   ...categoryGroups.flatMap(g => g.pages),
   ...clientPages,
+  ...standalonePages,
   ...prodottiPages,
   ...aiutoPages,
 ]

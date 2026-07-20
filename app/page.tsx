@@ -87,7 +87,7 @@ export default async function Page() {
   const isStaff             = role === 'admin' || role === 'dipendente' || role === 'direttore'
   const preventiviFlag      = isStaff || (rolePermissions['cliente'] ?? []).includes(52)
   const computometricoFlag  = isStaff || (rolePermissions['cliente'] ?? []).includes(54)
-  const ctaPreventivi       = preventiviFlag     ? (role ? '/area-clienti/preventivi' : '/brand/cataloghi')                         : '/aiuto/guida-preventivo'
+  const ctaPreventivi       = preventiviFlag     ? (role ? '/area-clienti/preventivi' : '/chi-siamo/cataloghi')                      : '/aiuto/guida-preventivo'
   const ctaComputometrico   = computometricoFlag ? (role ? '/area-clienti/computometrici' : '/area-clienti/carrello-computometrico') : '/aiuto/guida-computometrico'
   const disabledHrefs = new Set(
     categoryGroups.flatMap(g => g.pages)
@@ -160,8 +160,8 @@ export default async function Page() {
         {/* ── Brand ── */}
 
         {/*
-        {ok('/brand/storia') && (
-        <Link href="/brand/storia" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+        {ok('/chi-siamo/storia') && (
+        <Link href="/chi-siamo/storia" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
           <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/casa-ristrutturata-1.jpg" alt="Storia" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Storia</span></div>
         </Link>
@@ -169,8 +169,8 @@ export default async function Page() {
         */}
 
         {/*
-        {ok('/brand/galleria') && (
-        <Link href="/brand/galleria" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+        {ok('/chi-siamo/galleria') && (
+        <Link href="/chi-siamo/galleria" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
           <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/casa-ristrutturata-2.jpg" alt="Galleria" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Galleria</span></div>
         </Link>
@@ -178,8 +178,8 @@ export default async function Page() {
         */}
 
         {/*
-        {ok('/brand/contatti') && (
-        <Link href="/brand/contatti" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+        {ok('/chi-siamo/contatti') && (
+        <Link href="/chi-siamo/contatti" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
           <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/casa-ristrutturata-3.jpg" alt="Contatti" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Contatti</span></div>
         </Link>
@@ -187,8 +187,8 @@ export default async function Page() {
         */}
 
         {/*
-        {ok('/brand/partners') && (
-        <Link href="/brand/partners" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+        {ok('/chi-siamo/partners') && (
+        <Link href="/chi-siamo/partners" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
           <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/casa-ristrutturata-4.jpg" alt="Partners" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Partners</span></div>
         </Link>
@@ -196,8 +196,8 @@ export default async function Page() {
         */}
 
         {/*
-        {ok('/brand/cataloghi') && (
-        <Link href="/brand/cataloghi" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+        {ok('/chi-siamo/cataloghi') && (
+        <Link href="/chi-siamo/cataloghi" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
           <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/casa-ristrutturata-5.jpg" alt="Cataloghi" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Cataloghi</span></div>
         </Link>
@@ -205,8 +205,8 @@ export default async function Page() {
         */}
 
         {/*
-        {ok('/brand/condizioni-di-vendita') && (
-        <Link href="/brand/condizioni-di-vendita" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+        {ok('/chi-siamo/condizioni-di-vendita') && (
+        <Link href="/chi-siamo/condizioni-di-vendita" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
           <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/casa-ristrutturata-6.jpg" alt="Condizioni di Vendita" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Condizioni di Vendita</span></div>
         </Link>
@@ -214,8 +214,8 @@ export default async function Page() {
         */}
 
         {/*
-        {ok('/brand/templates-documenti') && (
-        <Link href="/brand/templates-documenti" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+        {ok('/chi-siamo/templates-documenti') && (
+        <Link href="/chi-siamo/templates-documenti" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
           <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/casa-ristrutturata-7.jpg" alt="Documenti Legali" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Documenti Legali</span></div>
         </Link>

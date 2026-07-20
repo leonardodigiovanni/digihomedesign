@@ -7,14 +7,14 @@ import ShortcutStar from '@/components/shortcut-star'
 export const metadata: Metadata = {
   title: 'Partners — Digi Home Design Palermo',
   description: 'I partner e fornitori selezionati di Digi Home Design: marchi di qualità con cui collaboriamo per garantire materiali e prodotti al top del mercato.',
-  alternates: { canonical: 'https://www.digi-home-design.com/brand/partners' },
+  alternates: { canonical: 'https://www.digi-home-design.com/chi-siamo/partners' },
 }
 
 export default function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/brand" style={{ color: '#888', textDecoration: 'underline' }}>Brand</Link> / Partners<ShortcutStar />
+        <Link href="/chi-siamo" style={{ color: '#888', textDecoration: 'underline' }}>Chi Siamo</Link> / Partners<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 16 }}>Partners</h1>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -29,7 +29,7 @@ export default function Page() {
         <PartnersBlock />
       </div>
       <StickyBottomBarContent>
-        <Link href="/brand" className="btn-black fs-12">← Torna a Brand</Link>
+        <Link href="/chi-siamo" className="btn-black fs-12">← Torna a Chi Siamo</Link>
       </StickyBottomBarContent>
     </div>
   )

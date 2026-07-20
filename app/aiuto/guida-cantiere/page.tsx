@@ -86,7 +86,7 @@ export default async function GuidaCantiere() {
           </p>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             <AccediDropdown />
-            <Link href={registrazioniDisabilitate ? '/brand/contatti' : '/registrazione'} className="btn-black fs-12">
+            <Link href={registrazioniDisabilitate ? '/chi-siamo/contatti' : '/registrazione'} className="btn-black fs-12">
               {registrazioniDisabilitate ? 'Richiedi registrazione' : 'Registrati'}
             </Link>
           </div>

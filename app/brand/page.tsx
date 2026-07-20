@@ -6,26 +6,26 @@ import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = {
-  title: 'Brand — Digi Home Design Palermo',
+  title: 'Chi Siamo — Digi Home Design Palermo',
   description: 'Scopri Digi Home Design: la nostra storia, galleria lavori, contatti, partners, cataloghi, condizioni di vendita e template documenti.',
-  alternates: { canonical: 'https://www.digi-home-design.com/brand' },
+  alternates: { canonical: 'https://www.digi-home-design.com/chi-siamo' },
   robots: { index: true, follow: true },
   openGraph: {
-    title: 'Brand — Digi Home Design Palermo',
+    title: 'Chi Siamo — Digi Home Design Palermo',
     description: 'Scopri Digi Home Design: la nostra storia, galleria lavori, contatti, partners, cataloghi, condizioni di vendita e template documenti.',
-    url: 'https://www.digi-home-design.com/brand',
+    url: 'https://www.digi-home-design.com/chi-siamo',
     type: 'website',
   },
 }
 
 const pages = [
-  { label: 'Storia',                href: '/brand/storia',                desc: 'Le radici artigianali della nostra azienda, nata da poco ma con un grande bagaglio di conoscenza, a partire dal 1960.' },
-  { label: 'Galleria',              href: '/brand/galleria',              desc: 'Foto e video dei nostri lavori completati: ristrutturazioni, serramenti e molto altro.' },
-  { label: 'Contatti',              href: '/brand/contatti',              desc: 'Dove siamo, come raggiungerci e tutti i recapiti per richiedere un preventivo.' },
-  { label: 'Partners',              href: '/brand/partners',              desc: 'I brand e i fornitori con cui collaboriamo per garantire qualità e affidabilità.' },
-  { label: 'Cataloghi',             href: '/brand/cataloghi',             desc: 'Sfoglia i cataloghi dei prodotti disponibili: serramenti, porte, arredi e altro e componi il tuo preventivo senza registrazione.' },
-  { label: 'Condizioni di Vendita', href: '/brand/condizioni-di-vendita', desc: 'Termini e condizioni che regolano i nostri contratti di fornitura e posa.' },
-  { label: 'Documenti Legali',      href: '/brand/templates-documenti',   desc: 'Documenti legali ufficiali: Privacy Policy & Cookie Policy e Consenso Marketing, Newsletter e SMS, scaricabili in PDF.' },
+  { label: 'Storia',                href: '/chi-siamo/storia',                desc: 'Le radici artigianali della nostra azienda, nata da poco ma con un grande bagaglio di conoscenza, a partire dal 1960.' },
+  { label: 'Galleria',              href: '/chi-siamo/galleria',              desc: 'Foto e video dei nostri lavori completati: ristrutturazioni, serramenti e molto altro.' },
+  { label: 'Contatti',              href: '/chi-siamo/contatti',              desc: 'Dove siamo, come raggiungerci e tutti i recapiti per richiedere un preventivo.' },
+  { label: 'Partners',              href: '/chi-siamo/partners',              desc: 'I brand e i fornitori con cui collaboriamo per garantire qualità e affidabilità.' },
+  { label: 'Cataloghi',             href: '/chi-siamo/cataloghi',             desc: 'Sfoglia i cataloghi dei prodotti disponibili: serramenti, porte, arredi e altro e componi il tuo preventivo senza registrazione.' },
+  { label: 'Condizioni di Vendita', href: '/chi-siamo/condizioni-di-vendita', desc: 'Termini e condizioni che regolano i nostri contratti di fornitura e posa.' },
+  { label: 'Documenti Legali',      href: '/chi-siamo/templates-documenti',   desc: 'Documenti legali ufficiali: Privacy Policy & Cookie Policy e Consenso Marketing, Newsletter e SMS, scaricabili in PDF.' },
 ]
 
 export default async function Page() {
@@ -38,10 +38,10 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/" style={{ color: '#888', textDecoration: 'underline' }}>Home</Link> / Brand<ShortcutStar />
+        <Link href="/" style={{ color: '#888', textDecoration: 'underline' }}>Home</Link> / Chi Siamo<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 12 }}>
-        Brand
+        Chi Siamo
       </h1>
       <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '24px 24px', marginBottom: 36 }}>
         <p className="testo-articoli" style={{ margin: 0 }}>Tutto quello che riguarda Digi Home Design: la nostra storia, i lavori realizzati, come contattarci, i partner con cui lavoriamo e la documentazione ufficiale.</p>

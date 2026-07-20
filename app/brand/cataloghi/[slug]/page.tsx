@@ -219,9 +219,9 @@ export default async function Page({ params }: Props) {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/brand" style={{ color: '#888', textDecoration: 'underline' }}>Brand</Link>
+        <Link href="/chi-siamo" style={{ color: '#888', textDecoration: 'underline' }}>Chi Siamo</Link>
         {' / '}
-        <Link href="/brand/cataloghi" style={{ color: '#888', textDecoration: 'underline' }}>Cataloghi</Link>
+        <Link href="/chi-siamo/cataloghi" style={{ color: '#888', textDecoration: 'underline' }}>Cataloghi</Link>
         {' / '}{categoria.nome}<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>
@@ -267,7 +267,7 @@ export default async function Page({ params }: Props) {
         </p>
 
         <StickyBottomBarContent>
-          <Link href="/brand/cataloghi" className="btn-black fs-12">
+          <Link href="/chi-siamo/cataloghi" className="btn-black fs-12">
             ← Torna ai Cataloghi
           </Link>
           {cartNonVuoto && (

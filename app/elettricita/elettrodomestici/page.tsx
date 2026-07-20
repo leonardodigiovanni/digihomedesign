@@ -64,7 +64,7 @@ export default function Page() {
           <Link href="/elettricita" className="btn-black fs-12">← Torna a Elettricità</Link>
           <CtaPreventivo />
           <CtaCantiere />
-          <Link href="/brand/contatti" className="btn-black fs-12">Chiedi info</Link>
+          <Link href="/chi-siamo/contatti" className="btn-black fs-12">Chiedi info</Link>
         </StickyBottomBarContent>
       </div>
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>tipo pagina fototesto contatti</p>

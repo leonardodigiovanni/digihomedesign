@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { CategoriaCard } from './page'
 import { b } from '@/lib/btn'
 
-export function CatalogoGrid({ categorie, basePath = '/brand/cataloghi', isApp }: { categorie: CategoriaCard[]; basePath?: string; isApp?: boolean }) {
+export function CatalogoGrid({ categorie, basePath = '/chi-siamo/cataloghi', isApp }: { categorie: CategoriaCard[]; basePath?: string; isApp?: boolean }) {
   const ref = useRef<HTMLDivElement>(null)
   const [cols, setCols] = useState(2)
 

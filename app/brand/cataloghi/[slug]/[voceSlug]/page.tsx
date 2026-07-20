@@ -165,14 +165,14 @@ export default async function Page({ params }: Props) {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/brand" style={{ color: '#888', textDecoration: 'underline' }}>Brand</Link>
+        <Link href="/chi-siamo" style={{ color: '#888', textDecoration: 'underline' }}>Chi Siamo</Link>
         {' / '}
-        <Link href="/brand/cataloghi" style={{ color: '#888', textDecoration: 'underline' }}>Cataloghi</Link>
+        <Link href="/chi-siamo/cataloghi" style={{ color: '#888', textDecoration: 'underline' }}>Cataloghi</Link>
         {' / '}
-        <Link href={`/brand/cataloghi/${slug}`} style={{ color: '#888', textDecoration: 'underline' }}>{categoria.nome}</Link>
+        <Link href={`/chi-siamo/cataloghi/${slug}`} style={{ color: '#888', textDecoration: 'underline' }}>{categoria.nome}</Link>
         {' / '}{voce.pdf_label || voce.nome}<ShortcutStar />
       </p>
-      <VoceViewer voce={voce} backHref={`/brand/cataloghi/${slug}`} />
+      <VoceViewer voce={voce} backHref={`/chi-siamo/cataloghi/${slug}`} />
 
       {articoliPreventivo.length > 0 && (
         <>
@@ -189,7 +189,7 @@ export default async function Page({ params }: Props) {
       )}
 
       <StickyBottomBarContent>
-        <Link href={`/brand/cataloghi/${slug}`} className="btn-black fs-12">
+        <Link href={`/chi-siamo/cataloghi/${slug}`} className="btn-black fs-12">
           ← Torna a cataloghi
         </Link>
         {cartNonVuoto && (

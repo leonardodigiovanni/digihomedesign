@@ -5,9 +5,9 @@ const BASE = 'https://www.digi-home-design.com'
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes: string[] = [
     '/',
-    '/brand/storia',
-    '/brand/contatti',
-    '/brand/condizioni-di-vendita',
+    '/chi-siamo/storia',
+    '/chi-siamo/contatti',
+    '/chi-siamo/condizioni-di-vendita',
 
     '/arredi',
     '/arredi/lampadari',

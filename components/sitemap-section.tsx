@@ -81,8 +81,8 @@ export default function SitemapSection({ disabledPages }: { disabledPages: numbe
             gap: '0 16px',
           }}>
 
-            {/* Brand — filtrato */}
-            {visibleBrand.length > 0 && renderColumns('Brand', visibleBrand)}
+            {/* Chi Siamo — filtrato */}
+            {visibleBrand.length > 0 && renderColumns('Chi Siamo', visibleBrand)}
 
             {/* Prodotti principali — filtrato */}
             {visibleProdotti.length > 0 && (

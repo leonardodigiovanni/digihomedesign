@@ -3,7 +3,7 @@
 import { useActionState, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { saveSettings, saveHeaderBg, saveFooterBg, savePageBg, saveDisabledPages, saveAccessControls, saveRolePermissions, type SaveResult, type SaveBgResult, type SaveAccessResult } from './actions'
-import { clientPages, internalPages, categoryGroups, areaClientiPages, aiutoPages, prodottiPages, clientiDipendentiPages, fornitoriDipendentiPages } from '@/lib/nav-config'
+import { clientPages, standalonePages, internalPages, categoryGroups, areaClientiPages, aiutoPages, prodottiPages, clientiDipendentiPages, fornitoriDipendentiPages } from '@/lib/nav-config'
 import FlashSuccess from '@/components/flash-success'
 import type { Rgba, BgMode } from '@/lib/settings'
 import { rgbGradient, rgbGradientInv, rgbBrushedBackground, rgbBrushedBackgroundInv, rgbLuminance } from '@/lib/bg-utils'
@@ -457,7 +457,8 @@ function formatPageStats(
 
 // Tutti i gruppi di pagine pubbliche con i loro ID
 const PAGE_GROUPS: { label: string; hubHref?: string; pages: { id: number; label: string; href: string }[] }[] = [
-  { label: 'Brand',        hubHref: '/brand', pages: clientPages },
+  { label: 'Chi Siamo',    hubHref: '/chi-siamo', pages: clientPages },
+  { label: 'Voci singole', pages: standalonePages },
   { label: 'Prodotti',     pages: prodottiPages },
   ...categoryGroups.map(g => ({ label: g.label, hubHref: g.href, pages: g.pages })),
   { label: 'Area Personale', pages: areaClientiPages },

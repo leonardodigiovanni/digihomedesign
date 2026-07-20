@@ -94,7 +94,7 @@ export default async function GuidaPreventivo() {
             </p>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               <AccediDropdown />
-              <Link href={registrazioniDisabilitate ? '/brand/contatti' : '/registrazione'} className="btn-black fs-12">
+              <Link href={registrazioniDisabilitate ? '/chi-siamo/contatti' : '/registrazione'} className="btn-black fs-12">
                 {registrazioniDisabilitate ? 'Richiedi registrazione' : 'Registrati'}
               </Link>
             </div>
@@ -106,7 +106,7 @@ export default async function GuidaPreventivo() {
 
         <StickyBottomBarContent>
           <Link href="/" className="btn-black fs-12">← Home</Link>
-          <Link href="/brand/cataloghi" className="btn-black fs-12">Cataloghi →</Link>
+          <Link href="/chi-siamo/cataloghi" className="btn-black fs-12">Cataloghi →</Link>
           {cartNonVuoto && (
           <Link href="/area-clienti/carrello-preventivo" className="btn-black fs-12">Carrello preventivi →</Link>
           )}

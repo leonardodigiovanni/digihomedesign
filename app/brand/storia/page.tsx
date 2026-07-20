@@ -7,14 +7,14 @@ import ShortcutStar from '@/components/shortcut-star'
 export const metadata: Metadata = {
   title: 'La Nostra Storia — Digi Home Design Palermo',
   description: 'La storia di Digi Home Design: chi siamo, la nostra missione e i valori che guidano il nostro lavoro a Palermo dal primo giorno.',
-  alternates: { canonical: 'https://www.digi-home-design.com/brand/storia' },
+  alternates: { canonical: 'https://www.digi-home-design.com/chi-siamo/storia' },
 }
 
 export default function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/brand" style={{ color: '#888', textDecoration: 'underline' }}>Brand</Link> / Storia<ShortcutStar />
+        <Link href="/chi-siamo" style={{ color: '#888', textDecoration: 'underline' }}>Chi Siamo</Link> / Storia<ShortcutStar />
       </p>
 
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 24, marginTop: 0 }}>La Nostra Storia</h1>
@@ -67,7 +67,7 @@ export default function Page() {
       </div>
 
       <StickyBottomBarContent>
-        <Link href="/brand" className="btn-black fs-12">← Torna a Brand</Link>
+        <Link href="/chi-siamo" className="btn-black fs-12">← Torna a Chi Siamo</Link>
       </StickyBottomBarContent>
 
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>pagina revisionata</p>

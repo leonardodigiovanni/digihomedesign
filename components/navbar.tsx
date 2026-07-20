@@ -4,7 +4,7 @@ import React, { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { clientPages, visibleAdminPages, visibleInternalPages, visibleFornitoriPages, visibleClientiPages, aiutoPages, categoryGroups, areaClientiPages, prodottiPages, type NavPage, type CategoryGroup } from '@/lib/nav-config'
+import { clientPages, standalonePages, visibleAdminPages, visibleInternalPages, visibleFornitoriPages, visibleClientiPages, aiutoPages, categoryGroups, areaClientiPages, prodottiPages, type NavPage, type CategoryGroup } from '@/lib/nav-config'
 import HeaderAuth from '@/components/header-auth'
 import ShortcutStar from '@/components/shortcut-star'
 import { useHomeShortcuts } from '@/lib/home-shortcuts-context'
@@ -165,6 +165,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
   const adminItems         = visibleAdminPages(role)
   const internalItems      = visibleInternalPages(role, rolePermissions).filter(p => !disabledPages.includes(p.id))
   const visibleClientPages = clientPages.filter(p => !disabledPages.includes(p.id))
+  const standaloneItems    = standalonePages.filter(p => !disabledPages.includes(p.id))
   const prodottiItems      = prodottiPages.filter(p => !disabledPages.includes(p.id))
   const fornitoriItems     = visibleFornitoriPages(role, rolePermissions, disabledPages)
   const clientiItems       = visibleClientiPages(role, rolePermissions, disabledPages)
@@ -213,17 +214,57 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             <span style={{ position: 'absolute', bottom: 10, left: '50%', transform: 'translateX(-50%)', display: 'block', width: 30, height: 3, background: isActive('/') ? '#111' : 'transparent' }} />
           </Link>
 
+          {standaloneItems.map(p => (
+            <React.Fragment key={p.id}>
+              <NavSep />
+              <Link href={p.href} className="nav-link testo-nav-bar" style={linkStyle(p.href)}>
+                {p.label}<ShortcutStar href={p.href} small outline />
+              </Link>
+            </React.Fragment>
+          ))}
+
+          {prodottiItems.length > 0 && (
+            <><NavSep /><ProdottiDropdown items={prodottiItems} isActive={isActive} linkStyle={linkStyle} /></>
+          )}
+
+          {categoryGroups.map(g => {
+            const visiblePages = g.pages.filter(p => !disabledPages.includes(p.id))
+            if (visiblePages.length === 0) return null
+            return (
+              <React.Fragment key={g.id}>
+                <NavSep />
+                <CategoryDropdown group={{ ...g, pages: visiblePages }} isActive={isActive} linkStyle={linkStyle} />
+              </React.Fragment>
+            )
+          })}
+
+          {role === 'cliente' && (() => {
+            const allowed = rolePermissions['cliente']
+            const allItems = areaClientiPages.filter(p =>
+              !disabledPages.includes(p.id) &&
+              (allowed === undefined || allowed.includes(p.id))
+            )
+            const items = clienteAbilitato ? allItems : allItems.filter(p => p.id === 52 || p.id === 54)
+            return items.length > 0 ? <><NavSep /><AreaClientiDropdown items={items} isActive={isActive} linkStyle={linkStyle} unreadAvvisiCount={liveAvvisiCount} /></> : null
+          })()}
+
+          {aiutoPages.filter(p => !disabledPages.includes(p.id)).length > 0 && (
+            <><NavSep /><AiutoDropdown items={aiutoPages.filter(p => !disabledPages.includes(p.id))} isActive={isActive} linkStyle={linkStyle} /></>
+          )}
+
+          {!!username && shortcuts.length > 0 && (
+            <><NavSep /><PreferitiDropdown items={shortcuts} isActive={isActive} linkStyle={linkStyle} /></>
+          )}
+
           {visibleClientPages.length > 0 && (
             <><NavSep />
             <div ref={dropRef} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
               <button
-                onClick={() => { if (!sectionOpen) { skipSectionClose.current = true; router.push('/brand') } setSectionOpen(o => !o) }}
+                onClick={() => { if (!sectionOpen) { skipSectionClose.current = true; router.push('/chi-siamo') } setSectionOpen(o => !o) }}
                 className="nav-link testo-nav-bar"
-                style={{ ...linkStyle('/brand'), gap: 4, textDecoration: 'none' }}
+                style={{ ...linkStyle('/chi-siamo'), gap: 4 }}
               >
-                <span style={isActive('/brand') ? { borderBottom: '3px solid currentColor', paddingBottom: 3 } : undefined}>
-                  Brand<ShortcutStar href="/brand" small outline /> {sectionOpen ? '▴' : '▾'}
-                </span>
+                Chi Siamo<ShortcutStar href="/chi-siamo" small outline /> {sectionOpen ? '▴' : '▾'}
               </button>
 
               {sectionOpen && (
@@ -258,39 +299,6 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
               )}
             </div>
             </>
-          )}
-
-          {prodottiItems.length > 0 && (
-            <><NavSep /><ProdottiDropdown items={prodottiItems} isActive={isActive} linkStyle={linkStyle} /></>
-          )}
-
-          {categoryGroups.map(g => {
-            const visiblePages = g.pages.filter(p => !disabledPages.includes(p.id))
-            if (visiblePages.length === 0) return null
-            return (
-              <React.Fragment key={g.id}>
-                <NavSep />
-                <CategoryDropdown group={{ ...g, pages: visiblePages }} isActive={isActive} linkStyle={linkStyle} />
-              </React.Fragment>
-            )
-          })}
-
-          {role === 'cliente' && (() => {
-            const allowed = rolePermissions['cliente']
-            const allItems = areaClientiPages.filter(p =>
-              !disabledPages.includes(p.id) &&
-              (allowed === undefined || allowed.includes(p.id))
-            )
-            const items = clienteAbilitato ? allItems : allItems.filter(p => p.id === 52 || p.id === 54)
-            return items.length > 0 ? <><NavSep /><AreaClientiDropdown items={items} isActive={isActive} linkStyle={linkStyle} unreadAvvisiCount={liveAvvisiCount} /></> : null
-          })()}
-
-          {aiutoPages.filter(p => !disabledPages.includes(p.id)).length > 0 && (
-            <><NavSep /><AiutoDropdown items={aiutoPages.filter(p => !disabledPages.includes(p.id))} isActive={isActive} linkStyle={linkStyle} /></>
-          )}
-
-          {!!username && shortcuts.length > 0 && (
-            <><NavSep /><PreferitiDropdown items={shortcuts} isActive={isActive} linkStyle={linkStyle} /></>
           )}
 
           {fornitoriItems.length > 0 && (
@@ -488,13 +496,16 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             <span style={{ textDecoration: isActive('/') ? 'underline' : 'none', textDecorationThickness: isActive('/') ? '3px' : undefined, textUnderlineOffset: isActive('/') ? '4px' : undefined }}>Home</span>
           </Link>
 
-          {visibleClientPages.length > 0 && (
-            <MobileSection sectionKey="brand" label="Brand" open={mobileOpenSection === 'brand'} onToggle={toggleMobileSection}>
-              {visibleClientPages.map(p => (
-                <MobileLink key={p.id} href={p.href} label={p.label} active={isActive(p.href)} indent />
-              ))}
-            </MobileSection>
-          )}
+          {standaloneItems.map(p => (
+            <Link
+              key={p.id}
+              href={p.href}
+              className="nav-mobile-section"
+              style={{ textDecoration: 'none', color: isActive(p.href) ? '#111' : undefined }}
+            >
+              <span style={{ textDecoration: isActive(p.href) ? 'underline' : 'none', textDecorationThickness: isActive(p.href) ? '3px' : undefined, textUnderlineOffset: isActive(p.href) ? '4px' : undefined }}>{p.label}</span>
+            </Link>
+          ))}
 
           {prodottiItems.length > 0 && (
             <MobileSection sectionKey="prodotti" label="Prodotti" open={mobileOpenSection === 'prodotti'} onToggle={toggleMobileSection}>
@@ -546,6 +557,14 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             <MobileSection sectionKey="preferiti" label="Preferiti" open={mobileOpenSection === 'preferiti'} onToggle={toggleMobileSection}>
               {shortcuts.map(s => (
                 <MobileLink key={s.href} href={s.href} label={s.label.replace(/^Vai a /, '')} active={isActive(s.href)} indent />
+              ))}
+            </MobileSection>
+          )}
+
+          {visibleClientPages.length > 0 && (
+            <MobileSection sectionKey="brand" label="Chi Siamo" open={mobileOpenSection === 'brand'} onToggle={toggleMobileSection}>
+              {visibleClientPages.map(p => (
+                <MobileLink key={p.id} href={p.href} label={p.label} active={isActive(p.href)} indent />
               ))}
             </MobileSection>
           )}
@@ -850,11 +869,9 @@ function PreferitiDropdown({
     return () => document.removeEventListener('mousedown', handle)
   }, [])
 
-  const anyActive = items.some(p => isActive(p.href))
-
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className="nav-link testo-nav-bar" style={{ ...linkStyle('/preferiti'), gap: 4, textDecoration: anyActive ? 'underline' : 'none', textDecorationThickness: anyActive ? '3px' : undefined, textUnderlineOffset: anyActive ? '4px' : undefined }}>
+      <button onClick={() => setOpen(o => !o)} className="nav-link testo-nav-bar" style={{ ...linkStyle('/preferiti'), gap: 4, textDecoration: 'none' }}>
         Preferiti {open ? '▴' : '▾'}
       </button>
       {open && (
@@ -982,18 +999,14 @@ function CategoryDropdown({
     return () => document.removeEventListener('mousedown', handle)
   }, [open])
 
-  const anyActive = isActive(group.href)
-
   return (
     <div ref={triggerRef} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
       <button
         onClick={() => { if (!open) router.push(group.href); setOpen(o => !o) }}
         className="nav-link testo-nav-bar"
-        style={{ ...linkStyle(group.href), gap: 4, textDecoration: 'none' }}
+        style={{ ...linkStyle(group.href), gap: 4 }}
       >
-        <span style={anyActive ? { borderBottom: '3px solid currentColor', paddingBottom: 3 } : undefined}>
-          {group.label}<ShortcutStar href={group.href} small outline /> {open ? '▴' : '▾'}
-        </span>
+        {group.label}<ShortcutStar href={group.href} small outline /> {open ? '▴' : '▾'}
       </button>
       {isMounted && open && createPortal(
         <div

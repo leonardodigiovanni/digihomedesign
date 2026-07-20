@@ -1314,3 +1314,52 @@ body {
 .sticky-bottom-bar-row > * {
   flex-shrink: 0;
 }
+
+/* Slider prezzo a doppia maniglia (e-commerce): due input[type=range] nativi
+   sovrapposti sulla stessa traccia — mai un div custom con setPointerCapture,
+   rompe il drag touch (vedi memoria feedback_slider_touch). Track/thumb nativi,
+   la barra colorata visibile è un div separato disegnato sotto. */
+.ecommerce-range-track input[type="range"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  margin: 0;
+  height: 20px;
+  background: transparent;
+  pointer-events: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.ecommerce-range-track input[type="range"]::-webkit-slider-runnable-track {
+  -webkit-appearance: none;
+  height: 4px;
+  background: transparent;
+}
+.ecommerce-range-track input[type="range"]::-moz-range-track {
+  height: 4px;
+  background: transparent;
+  border: none;
+}
+.ecommerce-range-track input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  pointer-events: auto;
+  width: 18px;
+  height: 18px;
+  margin-top: -7px;
+  border-radius: 50%;
+  background: #c8960c;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  cursor: pointer;
+}
+.ecommerce-range-track input[type="range"]::-moz-range-thumb {
+  pointer-events: auto;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #c8960c;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  cursor: pointer;
+}
