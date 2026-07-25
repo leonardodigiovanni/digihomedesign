@@ -1,4 +1,4 @@
-﻿import Link from 'next/link'
+import Link from 'next/link'
 import Image from 'next/image'
 import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
@@ -14,14 +14,14 @@ import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = {
-  title: 'Pannelli Bugnato Alluminio a Palermo — Facciate e Rivestimenti',
-  description: 'Pannelli in alluminio bugnato a Palermo per facciate, cancelli e recinzioni. Leggeri, resistenti alla corrosione e disponibili in ogni colore RAL.',
-  alternates: { canonical: 'https://www.digi-home-design.com/metallurgia/pannelli-bugnato-alluminio' },
+  title: 'Porte Blindate Rivestimento Legno a Palermo — Classe 3, 4, 5 e 6',
+  description: 'Porte blindate a Palermo con rivestimento esterno in legno: fornitura e installazione classe 3-6 con serrature di sicurezza multipunto. Misure standard e su misura.',
+  alternates: { canonical: 'https://www.digi-home-design.com/metallurgia/porte-blindate-legno' },
   robots: { index: true, follow: true },
   openGraph: {
-    title: 'Pannelli Bugnato Alluminio a Palermo — Facciate e Rivestimenti',
-    description: 'Pannelli in alluminio bugnato a Palermo per facciate, cancelli e recinzioni. Leggeri, resistenti alla corrosione e disponibili in ogni colore RAL.',
-    url: 'https://www.digi-home-design.com/metallurgia/pannelli-bugnato-alluminio',
+    title: 'Porte Blindate Rivestimento Legno a Palermo — Classe 3, 4, 5 e 6',
+    description: 'Porte blindate a Palermo con rivestimento esterno in legno: fornitura e installazione classe 3-6 con serrature di sicurezza multipunto. Misure standard e su misura.',
+    url: 'https://www.digi-home-design.com/metallurgia/porte-blindate-legno',
     type: 'website',
   },
 }
@@ -71,7 +71,7 @@ async function getCatalogoData(nomeCategoria: string) {
 }
 
 export default async function Page() {
-  const CERCA = 'Pannelli Bugnato Alluminio'
+  const CERCA = 'Porte Blindate Legno'
   const catalogo = await getCatalogoData(CERCA)
   const cookieStore = await cookies()
   const role = cookieStore.get('session_role')?.value ?? ''
@@ -116,39 +116,39 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/metallurgia" style={{ color: '#888', textDecoration: 'underline' }}>Metallurgia</Link> / Pannelli Bugnato Alluminio<ShortcutStar />
+        <Link href="/metallurgia" style={{ color: '#888', textDecoration: 'underline' }}>Metallurgia</Link> / Porte Blindate Riv. Legno<ShortcutStar />
       </p>
-      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Pannelli Bugnato Alluminio a Palermo</h1>
+      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Porte Blindate Rivestimento Legno a Palermo</h1>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '16px' }}>
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/metallurgia/pannelli-bugnato-alluminio/photo_2026-04-15_23-13-47.jpg" alt="Pannelli bugnato in alluminio" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/metallurgia/porte-blindate/porta-laccata.jpg" alt="Porta blindata con rivestimento in legno" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Pannelli bugnato in alluminio</span>
+                <span className="testo-articoli">Porta blindata rivestita in legno</span>
               </div>
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/metallurgia/porte-blindate/serratura.jpg" alt="Serratura di sicurezza multipunto" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Fotografia da scegliere</span>
+                <span className="testo-articoli">Serratura di sicurezza multipunto</span>
               </div>
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              I <strong>pannelli in alluminio bugnato</strong> sono elementi decorativi e funzionali ampiamente utilizzati per rivestimenti di facciate, tamponamenti di cancelli e recinzioni, pannellature per saracinesche e portoni industriali. La lavorazione bugnata conferisce rigidità strutturale al pannello pur mantenendo il peso ridotto tipico dell&apos;alluminio.
+              Forniamo e installiamo <strong>porte blindate con rivestimento in legno a Palermo</strong> certificate dalla classe 3 alla classe 6 secondo la norma UNI EN 1627: la scelta della classe dipende dal livello di rischio e dal contesto abitativo o commerciale. Ogni porta è dotata di serratura multipunto con chiusura perimetrale, cerniere anti-scasso e pannello esterno in acciaio da almeno 1,5 mm.
             </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Lavoriamo con lamiere in alluminio da 1 a 3 mm in vari pattern di bugne — quadra, tonda, elongata — con finitura grezza, anodizzata o verniciata a polvere in qualsiasi colore RAL. I pannelli vengono tagliati su misura e forati per il fissaggio a telai in ferro o alluminio estruso.
+              Le ante sono rivestite esternamente in legno impiallacciato, disponibile in diverse essenze e finiture, per integrarsi con l&apos;estetica classica o moderna dell&apos;ambiente. Installiamo modelli con apertura a destra, sinistra, doppia anta e scorrevole. La posa include la rimozione della vecchia porta, la posa del controtelaio in acciaio e il sigillamento perimetrale.
             </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Ideali per ambienti costieri grazie alla totale resistenza alla ruggine. Contattaci per un preventivo gratuito con campionatura delle finiture disponibili.
+              Collaboriamo con i principali marchi italiani — Dierre, Alias, Oikos, Bertolotto Blindate. Contattaci per un sopralluogo e un preventivo gratuito.
             </p>
           </div>
         </div>

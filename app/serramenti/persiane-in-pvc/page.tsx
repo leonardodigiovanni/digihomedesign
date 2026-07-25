@@ -15,14 +15,14 @@ import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = {
-  title: 'Tapparelle Manuali a Palermo â€” PVC, Alluminio e Acciaio su Misura',
-  description: 'Tapparelle manuali a Palermo su misura: cinghia, manovella o moschettone in PVC coibentato, alluminio estruso e acciaio. Fornitura e posa con garanzia.',
-  alternates: { canonical: 'https://www.digi-home-design.com/serramenti/tapparelle-manuali' },
+  title: 'Persiane in PVC a Palermo — Su Misura',
+  description: 'Persiane in PVC a Palermo: leggere, resistenti alla salsedine e a zero manutenzione. Schermano l’irraggiamento solare estivo su misura per ogni apertura.',
+  alternates: { canonical: 'https://www.digi-home-design.com/serramenti/persiane-in-pvc' },
   robots: { index: true, follow: true },
   openGraph: {
-    title: 'Tapparelle Manuali a Palermo â€” PVC, Alluminio e Acciaio su Misura',
-    description: 'Tapparelle manuali a Palermo su misura: cinghia, manovella o moschettone in PVC coibentato, alluminio estruso e acciaio. Fornitura e posa con garanzia.',
-    url: 'https://www.digi-home-design.com/serramenti/tapparelle-manuali',
+    title: 'Persiane in PVC a Palermo — Su Misura',
+    description: 'Persiane in PVC a Palermo: leggere, resistenti alla salsedine e a zero manutenzione. Schermano l’irraggiamento solare estivo su misura per ogni apertura.',
+    url: 'https://www.digi-home-design.com/serramenti/persiane-in-pvc',
     type: 'website',
   },
 }
@@ -106,7 +106,7 @@ async function getCatalogoData(nomeCategoria: string, sottocatSlug: string) {
 }
 
 export default async function Page() {
-  const catalogo = await getCatalogoData('serramenti', 'tapparelle-manuali')
+  const catalogo = await getCatalogoData('serramenti', 'persiane-in-pvc')
   const cookieStore = await cookies()
   const role = cookieStore.get('session_role')?.value ?? ''
   const isStaff = role === 'admin' || role === 'dipendente'
@@ -141,7 +141,7 @@ export default async function Page() {
         const parts = [p.numero || `#${p.id}`]
         if (p.cliente_nome) parts.push(p.cliente_nome)
         if (p.descrizione) parts.push(p.descrizione)
-        return { id: p.id, label: parts.join(' â€” ') }
+        return { id: p.id, label: parts.join(' — ') }
       })
     } catch {}
     finally { await db2.end() }
@@ -150,39 +150,39 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Tapparelle Manuali<ShortcutStar />
+        <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Persiane in PVC<ShortcutStar />
       </p>
-      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Tapparelle Manuali a Palermo</h1>
+      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Persiane in PVC a Palermo</h1>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
         <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '16px' }}>
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/tapparelle-manuali/legno.png" alt="Tapparella manuale effetto legno" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/persiane-in-alluminio/persiana.JPG" alt="Persiana in PVC" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Tapparella manuale effetto legno</span>
+                <span className="testo-articoli">Persiana in PVC</span>
               </div>
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/tapparelle-manuali/tapparelle.jpg" alt="Tapparella manuale su misura" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/persiane-in-alluminio/bianca.png" alt="Persiana bianca in PVC" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Tapparelle manuali su misura</span>
+                <span className="testo-articoli">Persiana bianca in PVC</span>
               </div>
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Forniamo e installiamo <strong>tapparelle manuali su misura a Palermo</strong> in PVC coibentato, alluminio estruso e acciaio zincato: a cinghia, a manovella laterale o a moschettone, con avvolgitore a cassonetto incassato o a vista. Le tapparelle manuali sono la soluzione piÃ¹ semplice e affidabile per oscuramento, isolamento termoacustico e sicurezza delle aperture.
+              Forniamo e installiamo <strong>persiane in PVC su misura a Palermo</strong>: una soluzione leggera ed economica che schermano l&apos;irraggiamento solare diretto e riducono il surriscaldamento estivo degli ambienti, senza il peso e i costi di manutenzione di altri materiali.
             </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Le doghe in PVC coibentato garantiscono ottimo isolamento termico e acustico, riducendo i ponti freddi e il rumore esterno. Le doghe in alluminio estruso sono piÃ¹ leggere e resistenti alla corrosione, ideali per ambienti marini o ad alta umiditÃ . Disponibili in tutti i colori RAL e con finiture effetto legno.
+              Il PVC non richiede verniciature periodiche e resiste all&apos;esposizione prolungata a sole e salsedine tipica del clima costiero palermitano, mantenendo colore e funzionalità delle cerniere nel tempo. Disponibili a stecche fisse o orientabili, in diverse colorazioni. Se cerchi invece maggiore robustezza strutturale, valuta la versione <Link href="/serramenti/persiane-in-alluminio" style={{ color: '#8a6800', textDecoration: 'underline' }}>in alluminio</Link>.
             </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Ogni tapparella viene misurata sul posto e realizzata su misura. Contattaci per un preventivo gratuito a Palermo e provincia.
+              Ogni persiana viene misurata sul posto e realizzata su misura con accessori di chiusura inclusi. Contattaci per un preventivo gratuito.
             </p>
           </div>
         </div>
@@ -197,7 +197,7 @@ export default async function Page() {
             cartNonVuoto={cartNonVuoto}
             submitLabel="Conferma"
             fixedCat="serramenti"
-            fixedSottocat="tapparelle-manuali"
+            fixedSottocat="persiane-in-pvc"
           />
         )}
 
@@ -214,7 +214,7 @@ export default async function Page() {
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>{(() => {
         const cerca = catalogo
           ? `${catalogo.categoria.nome}`
-          : 'serramenti/tapparelle-manuali/non trovata'
+          : 'serramenti/persiane-in-pvc/non trovata'
         const trova = catalogo && catalogo.voci.length > 0
           ? catalogo.voci.map(v => `(${v.nome}:${v.serie}:${v.pdf_label})/${v.sottocategoria ?? 'nessuno'}`).join('+')
           : 'nessuno'
@@ -223,4 +223,3 @@ export default async function Page() {
     </div>
   )
 }
-

@@ -223,10 +223,10 @@ export default async function Page() {
         */}
 
         {/* ── Serramenti ── */}
-        {ok('/serramenti/infissi-in-alluminio') && (
-        <Link href="/serramenti/infissi-in-alluminio" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/infissi-in-alluminio/porta-finestra-2-ante.jpg" alt="Infissi in Alluminio" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
-          <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Infissi in Alluminio</span></div>
+        {ok('/serramenti/infissi-in-alluminio-taglio-termico') && (
+        <Link href="/serramenti/infissi-in-alluminio-taglio-termico" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/infissi-in-alluminio/porta-finestra-2-ante.jpg" alt="Infissi in Alluminio a Taglio Termico" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Infissi in Alluminio a Taglio Termico</span></div>
         </Link>
         )}
         {ok('/serramenti/infissi-in-pvc') && (
@@ -257,21 +257,21 @@ export default async function Page() {
         )}
         {ok('/serramenti/imbotti') && (
         <Link href="/serramenti/imbotti" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/imbotti-in-alluminio/imbotto.png" alt="Imbotti & Cassonetti" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
-          <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Imbotti & Cassonetti</span></div>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/imbotti-in-alluminio/imbotto.png" alt="Imbotti" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Imbotti</span></div>
         </Link>
         )}
-        {ok('/serramenti/tapparelle-manuali') && (
-        <Link href="/serramenti/tapparelle-manuali" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/tapparelle-manuali/tapparelle.jpg" alt="Tapparelle Manuali" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
-          <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Tapparelle Manuali</span></div>
+        {ok('/serramenti/tapparelle-in-alluminio') && (
+        <Link href="/serramenti/tapparelle-in-alluminio" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/tapparelle-manuali/tapparelle.jpg" alt="Tapparelle in Alluminio" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Tapparelle in Alluminio</span></div>
         </Link>
         )}
         {/*
-        {ok('/serramenti/tapparelle-motorizzate') && (
-        <Link href="/serramenti/tapparelle-motorizzate" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/casa-ristrutturata-8.jpg" alt="Tapparelle Motorizzate" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
-          <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Tapparelle Motorizzate</span></div>
+        {ok('/serramenti/tapparelle-motorizzazione') && (
+        <Link href="/serramenti/tapparelle-motorizzazione" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/casa-ristrutturata-8.jpg" alt="Tapparelle Motorizzazione" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Tapparelle Motorizzazione</span></div>
         </Link>
         )}
         */}
@@ -297,10 +297,10 @@ export default async function Page() {
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Zanzariere</span></div>
         </Link>
         )}
-        {ok('/serramenti/vetrate') && (
-        <Link href="/serramenti/vetrate" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/vetrate/vetrata.png" alt="Vetrate" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
-          <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Vetrate</span></div>
+        {ok('/serramenti/vetrine') && (
+        <Link href="/serramenti/vetrine" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/vetrate/vetrata.png" alt="Vetrine" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Vetrine</span></div>
         </Link>
         )}
         {ok('/serramenti/pergole-bioclimatiche') && (

@@ -84,11 +84,11 @@ export default function SitemapSection({ disabledPages }: { disabledPages: numbe
             {/* Chi Siamo — filtrato */}
             {visibleBrand.length > 0 && renderColumns('Chi Siamo', visibleBrand)}
 
-            {/* Prodotti principali — filtrato */}
+            {/* Riqualificazione Energetica — filtrato */}
             {visibleProdotti.length > 0 && (
               <>
                 <div style={{ width: 1, background: 'rgba(255,255,255,0.18)', alignSelf: 'stretch', flexShrink: 0 }} />
-                {renderColumns('Prodotti', visibleProdotti)}
+                {renderColumns('Riqualificazione Energetica', visibleProdotti)}
               </>
             )}
 

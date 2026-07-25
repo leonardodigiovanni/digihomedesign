@@ -4,10 +4,20 @@ import React, { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { clientPages, standalonePages, visibleAdminPages, visibleInternalPages, visibleFornitoriPages, visibleClientiPages, aiutoPages, categoryGroups, areaClientiPages, prodottiPages, type NavPage, type CategoryGroup } from '@/lib/nav-config'
+import { clientPages, standalonePages, visibleAdminPages, visibleInternalPages, visibleFornitoriPages, visibleClientiPages, aiutoPages, categoryGroups, areaClientiPages, prodottiPages, prodottiSubgroups, comfortSpaziEsterniPages, antintrusioneSicurezzaPages, carpenteriaArredoPages, ristrutturazioniChiaviInManoPages, type NavPage, type CategoryGroup } from '@/lib/nav-config'
 import HeaderAuth from '@/components/header-auth'
 import ShortcutStar from '@/components/shortcut-star'
 import { useHomeShortcuts } from '@/lib/home-shortcuts-context'
+
+// Pagine spostate dal dropdown di categoria a un menu "flat" dedicato (es. Comfort
+// e Spazi Esterni): restano nell'array categoryGroups (serve al pannello admin
+// "Pagine visibili" per il toggle), ma non vengono più duplicate nel dropdown
+// della categoria di origine — l'URL sotto /serramenti/* non cambia.
+const HIDDEN_FROM_CATEGORY: Record<string, number[]> = {
+  serramenti: [2082, 2081, 203, 2031, 210, 202, 204, 205],
+  metallurgia: [2124, 2125, 2126, 215, 214, 2201, 2202, 216, 217],
+  legno: [249],
+}
 
 interface NavbarProps {
   role: string | null
@@ -61,6 +71,12 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
     const inner     = innerRef.current
     if (!container || !inner) return
     const maxScroll = inner.offsetWidth - container.offsetWidth
+    // Se il contenuto ora entra tutto (es. dopo un resize), annulla uno scroll residuo:
+    // altrimenti marginLeft resterebbe negativo con canRight già false e canLeft bloccato.
+    if (maxScroll <= 0 && scrollPos.current !== 0) {
+      scrollPos.current = 0
+      inner.style.marginLeft = '0'
+    }
     setCanLeft(scrollPos.current > 0)
     setCanRight(maxScroll > 0 && scrollPos.current < maxScroll - 1)
   }
@@ -74,7 +90,15 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
     const AW = 42 // freccia quadrata: larghezza = altezza navbar
     const items = Array.from(inner.children) as HTMLElement[]
     const maxScroll = inner.offsetWidth - W
-    if (maxScroll <= 0) return
+    if (maxScroll <= 0) {
+      // Nessun overflow: assicurati che uno scroll residuo non lasci la nav bloccata
+      if (scrollPos.current !== 0) {
+        scrollPos.current = 0
+        inner.style.marginLeft = '0'
+        updateArrows()
+      }
+      return
+    }
 
     // Posizione iniziale basata sulla direzione
     let initial: number
@@ -167,12 +191,38 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
   const visibleClientPages = clientPages.filter(p => !disabledPages.includes(p.id))
   const standaloneItems    = standalonePages.filter(p => !disabledPages.includes(p.id))
   const prodottiItems      = prodottiPages.filter(p => !disabledPages.includes(p.id))
+  const comfortItems       = comfortSpaziEsterniPages.filter(p => !disabledPages.includes(p.id))
+  const antintrusioneItems = antintrusioneSicurezzaPages.filter(p => !disabledPages.includes(p.id))
+  const carpenteriaItems   = carpenteriaArredoPages.filter(p => !disabledPages.includes(p.id))
+  const ristrutturazioniItems = ristrutturazioniChiaviInManoPages.filter(p => !disabledPages.includes(p.id))
   const fornitoriItems     = visibleFornitoriPages(role, rolePermissions, disabledPages)
   const clientiItems       = visibleClientiPages(role, rolePermissions, disabledPages)
+
+  const areaPersonaleItems = (() => {
+    if (role !== 'cliente') return []
+    const allowed = rolePermissions['cliente']
+    const allItems = areaClientiPages.filter(p =>
+      !disabledPages.includes(p.id) &&
+      (allowed === undefined || allowed.includes(p.id))
+    )
+    return clienteAbilitato ? allItems : allItems.filter(p => p.id === 52 || p.id === 54)
+  })()
+  const preferitiVisibili  = !!username && shortcuts.length > 0
+  // Ordine del segmento "silver" (pagine per loggati): serve per sapere quale
+  // sia il primo item visibile, il cui separatore di apertura resta fuori dal
+  // wrapper — così lo sfondo silver parte esattamente dal separatore, non prima.
+  const primoGruppoSilver = areaPersonaleItems.length > 0 ? 'personale'
+    : fornitoriItems.length > 0 ? 'fornitori'
+    : clientiItems.length > 0 ? 'clienti'
+    : internalItems.length > 0 ? 'lavoro'
+    : adminItems.length > 0 ? 'admin'
+    : preferitiVisibili ? 'preferiti'
+    : null
 
   const isStaff = role === 'admin' || role === 'dipendente' || role === 'direttore'
   const preventiviAbilitato     = isStaff || (rolePermissions['cliente'] ?? []).includes(52)
   const computometricoAbilitato = !!username && (isStaff || (rolePermissions['cliente'] ?? []).includes(54))
+  const computometricoHref = computometricoAbilitato ? (role ? '/area-clienti/computometrici' : '/area-clienti/carrello-computometrico') : '/aiuto/guida-computometrico'
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/'
@@ -180,14 +230,11 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
   }
 
   const linkStyle = (href: string): React.CSSProperties => ({
-    padding: '0 12px',
+    padding: '0 5px',
     height: 46,
     display: 'flex',
     alignItems: 'center',
     fontWeight: 500,
-    textDecoration: isActive(href) ? 'underline' : 'none',
-    textDecorationThickness: isActive(href) ? '3px' : undefined,
-    textUnderlineOffset: isActive(href) ? '4px' : undefined,
     whiteSpace: 'nowrap',
     transition: 'color 0.15s',
     lineHeight: 1,
@@ -195,6 +242,9 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
     border: 'none',
     cursor: 'pointer',
     })
+
+  // Item selezionato: sfondo gold persistente (vedi .nav-link-active in globals.css) al posto della sottolineatura
+  const linkClass = (active: boolean) => `nav-link testo-nav-bar${active ? ' nav-link-active' : ''}`
 
   return (
     <nav className="class_gold_D_safe" style={{ borderBottom: '1px solid #c8960c', flexShrink: 0, position: 'relative' }}>
@@ -209,51 +259,53 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
           </button>
         )}
         <div className="nav-scroll-inner" ref={innerRef}>
-          <Link href="/" className="nav-link testo-nav-bar" style={{ ...linkStyle('/'), display: 'inline-flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', gap: 2, marginLeft: 8, position: 'relative' }} aria-label="Home">
-            <img src="/images/header/home.png" alt="Home" style={{ height: 30, width: 30, display: 'block', objectFit: 'contain', marginTop: -12 }} />
-            <span style={{ position: 'absolute', bottom: 10, left: '50%', transform: 'translateX(-50%)', display: 'block', width: 30, height: 3, background: isActive('/') ? '#111' : 'transparent' }} />
+          <Link href="/" className={linkClass(isActive('/'))} style={{ ...linkStyle('/'), display: 'inline-flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', gap: 2, marginLeft: 8, position: 'relative' }} aria-label="Home">
+            <img src="/images/header/home.png" alt="Home" style={{ height: 30, width: 30, display: 'block', objectFit: 'contain', marginTop: -3 }} />
           </Link>
+
+          {prodottiItems.length > 0 && (
+            <><NavSep /><ProdottiDropdown items={prodottiItems} isActive={isActive} linkStyle={linkStyle} linkClass={linkClass} /></>
+          )}
+
+          {comfortItems.length > 0 && (
+            <><NavSep /><ComfortDropdown items={comfortItems} isActive={isActive} linkStyle={linkStyle} linkClass={linkClass} /></>
+          )}
+
+          {antintrusioneItems.length > 0 && (
+            <><NavSep /><AntintrusioneDropdown items={antintrusioneItems} isActive={isActive} linkStyle={linkStyle} linkClass={linkClass} /></>
+          )}
+
+          {carpenteriaItems.length > 0 && (
+            <><NavSep /><CarpenteriaDropdown items={carpenteriaItems} isActive={isActive} linkStyle={linkStyle} linkClass={linkClass} /></>
+          )}
+
+          {ristrutturazioniItems.length > 0 && (
+            <><NavSep /><RistrutturazioniDropdown items={ristrutturazioniItems} isActive={isActive} linkStyle={linkStyle} linkClass={linkClass} computometricoHref={computometricoHref} /></>
+          )}
 
           {standaloneItems.map(p => (
             <React.Fragment key={p.id}>
               <NavSep />
-              <Link href={p.href} className="nav-link testo-nav-bar" style={linkStyle(p.href)}>
+              <Link href={p.href} className={linkClass(isActive(p.href))} style={linkStyle(p.href)}>
                 {p.label}<ShortcutStar href={p.href} small outline />
               </Link>
             </React.Fragment>
           ))}
 
-          {prodottiItems.length > 0 && (
-            <><NavSep /><ProdottiDropdown items={prodottiItems} isActive={isActive} linkStyle={linkStyle} /></>
-          )}
-
           {categoryGroups.map(g => {
-            const visiblePages = g.pages.filter(p => !disabledPages.includes(p.id))
+            const hidden = HIDDEN_FROM_CATEGORY[g.id] ?? []
+            const visiblePages = g.pages.filter(p => !disabledPages.includes(p.id) && !hidden.includes(p.id))
             if (visiblePages.length === 0) return null
             return (
               <React.Fragment key={g.id}>
                 <NavSep />
-                <CategoryDropdown group={{ ...g, pages: visiblePages }} isActive={isActive} linkStyle={linkStyle} />
+                <CategoryDropdown group={{ ...g, pages: visiblePages }} isActive={isActive} linkStyle={linkStyle} linkClass={linkClass} />
               </React.Fragment>
             )
           })}
 
-          {role === 'cliente' && (() => {
-            const allowed = rolePermissions['cliente']
-            const allItems = areaClientiPages.filter(p =>
-              !disabledPages.includes(p.id) &&
-              (allowed === undefined || allowed.includes(p.id))
-            )
-            const items = clienteAbilitato ? allItems : allItems.filter(p => p.id === 52 || p.id === 54)
-            return items.length > 0 ? <><NavSep /><AreaClientiDropdown items={items} isActive={isActive} linkStyle={linkStyle} unreadAvvisiCount={liveAvvisiCount} /></> : null
-          })()}
-
           {aiutoPages.filter(p => !disabledPages.includes(p.id)).length > 0 && (
-            <><NavSep /><AiutoDropdown items={aiutoPages.filter(p => !disabledPages.includes(p.id))} isActive={isActive} linkStyle={linkStyle} /></>
-          )}
-
-          {!!username && shortcuts.length > 0 && (
-            <><NavSep /><PreferitiDropdown items={shortcuts} isActive={isActive} linkStyle={linkStyle} /></>
+            <><NavSep /><AiutoDropdown items={aiutoPages.filter(p => !disabledPages.includes(p.id))} isActive={isActive} linkStyle={linkStyle} linkClass={linkClass} /></>
           )}
 
           {visibleClientPages.length > 0 && (
@@ -261,10 +313,11 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             <div ref={dropRef} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
               <button
                 onClick={() => { if (!sectionOpen) { skipSectionClose.current = true; router.push('/chi-siamo') } setSectionOpen(o => !o) }}
-                className="nav-link testo-nav-bar"
-                style={{ ...linkStyle('/chi-siamo'), gap: 4 }}
+                className={linkClass(isActive('/chi-siamo'))}
+                style={{ ...linkStyle('/chi-siamo'), height: 'auto', flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4 }}
               >
-                Chi Siamo<ShortcutStar href="/chi-siamo" small outline /> {sectionOpen ? '▴' : '▾'}
+                <span>Chi Siamo<ShortcutStar href="/chi-siamo" small outline /></span>
+                <span>{sectionOpen ? '▴' : '▾'}</span>
               </button>
 
               {sectionOpen && (
@@ -301,33 +354,60 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             </>
           )}
 
-          {fornitoriItems.length > 0 && (
-            <><NavSep /><FornitoriDropdown items={fornitoriItems} isActive={isActive} linkStyle={linkStyle} /></>
-          )}
+          {/* ── Da qui in poi: pagine per utenti loggati (non sito vetrina) — tema "silver" di prova, facile da rimuovere togliendo "nav-theme-silver".
+               Il separatore di confine (NavSepBoundary, senza margine) è l'esatto limite gold/silver.
+               Il wrapper cresce (flex-grow) per riempire di silver tutto lo spazio residuo fino al bordo destro. ── */}
+          {primoGruppoSilver && (
+          <>
+          <NavSepBoundary />
+          <div className="nav-theme-silver" style={{ display: 'flex', alignItems: 'center', height: '100%', flex: '1 0 auto', paddingLeft: 3 }}>
+            {areaPersonaleItems.length > 0 && (
+              <>{primoGruppoSilver !== 'personale' && <NavSep />}<AreaClientiDropdown items={areaPersonaleItems} isActive={isActive} linkStyle={linkStyle} linkClass={linkClass} unreadAvvisiCount={liveAvvisiCount} /></>
+            )}
 
-          {clientiItems.length > 0 && (
-            <><NavSep /><ClientiDropdown items={clientiItems} isActive={isActive} linkStyle={linkStyle} /></>
-          )}
+            {fornitoriItems.length > 0 && (
+              <>{primoGruppoSilver !== 'fornitori' && <NavSep />}<FornitoriDropdown items={fornitoriItems} isActive={isActive} linkStyle={linkStyle} linkClass={linkClass} /></>
+            )}
 
-          {internalItems.length > 0 && (
-            <><NavSep /><InternalDropdown items={internalItems} isActive={isActive} linkStyle={linkStyle} unreadEmailCount={unreadEmailCount} /></>
-          )}
+            {clientiItems.length > 0 && (
+              <>{primoGruppoSilver !== 'clienti' && <NavSep />}<ClientiDropdown items={clientiItems} isActive={isActive} linkStyle={linkStyle} linkClass={linkClass} /></>
+            )}
 
-          {adminItems.length > 0 && (
-            <><NavSep /><AdminDropdown items={adminItems} isActive={isActive} linkStyle={linkStyle} /></>
+            {internalItems.length > 0 && (
+              <>{primoGruppoSilver !== 'lavoro' && <NavSep />}<InternalDropdown items={internalItems} isActive={isActive} linkStyle={linkStyle} linkClass={linkClass} unreadEmailCount={unreadEmailCount} /></>
+            )}
+
+            {adminItems.length > 0 && (
+              <>{primoGruppoSilver !== 'admin' && <NavSep />}<AdminDropdown items={adminItems} isActive={isActive} linkStyle={linkStyle} linkClass={linkClass} /></>
+            )}
+
+            {preferitiVisibili && (
+              <>{primoGruppoSilver !== 'preferiti' && <NavSep />}<PreferitiDropdown items={shortcuts} isActive={isActive} linkStyle={linkStyle} /></>
+            )}
+          </div>
+          </>
           )}
         </div>{/* fine nav-scroll-inner */}
         {canRight && (
-          <button className="nav-arrow-btn nav-arrow-btn-right" onClick={() => scrollNav('right')} aria-label="Scorri destra">
+          <button className={`nav-arrow-btn nav-arrow-btn-right${primoGruppoSilver ? ' nav-arrow-btn-silver' : ''}`} onClick={() => scrollNav('right')} aria-label="Scorri destra">
             <svg viewBox="0 0 14 12" width="14" height="12" fill="currentColor"><path d="M0 0 L6 6 L0 12 Z M8 0 L14 6 L8 12 Z"/></svg>
           </button>
         )}
         </div>{/* fine nav-scroll */}
 
-        {/* Icone carrello — sempre visibili, non scorrono */}
-        {(cartCount > 0 || cartAcquistiCount > 0 || computoCount > 0 || !!username) && (
-        <div style={{ flexShrink: 0, paddingRight: 4, paddingLeft: 8, borderLeft: '1px solid #e8d89a', display: 'flex', alignItems: 'center', gap: 8 }}>
-          {computoCount > 0 && computometricoAbilitato && (
+        {/* Icone carrello — sempre visibili, non scorrono. Visibile solo se c'è
+            almeno un'icona reale da mostrare (altrimenti resterebbe un riquadro
+            vuoto, solo padding+bordo). Sfondo verde fisso, coerente con lo
+            sfondo dei bottoni (.cart-btn), indipendente dal segmento gold/silver
+            della nav retrostante. */}
+        {(() => {
+          const showComputo    = computoCount > 0 && computometricoAbilitato
+          const showPreventivo = cartCount > 0 && preventiviAbilitato
+          const showAcquisti   = cartAcquistiCount > 0
+          if (!showComputo && !showPreventivo && !showAcquisti) return null
+          return (
+        <div style={{ flexShrink: 0, paddingRight: 4, borderLeft: '1px solid #d98aa8', background: '#f7b2c3', display: 'flex', alignItems: 'center', gap: 0 }}>
+          {showComputo && (
           <Link
             href="/area-clienti/carrello-computometrico"
             title="Computo metrico"
@@ -348,14 +428,16 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             )}
           </Link>
           )}
-          {cartCount > 0 && preventiviAbilitato && (
+          {showPreventivo && (
+          <>
+          {showComputo && <NavSep />}
           <Link
             href="/area-clienti/carrello-preventivo"
             title="Carrello preventivo"
             className="cart-btn"
             style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 41, height: 41, marginTop: 1, textDecoration: 'none' }}
           >
-            <img src="/images/carrello/carrello-preventivo-t.png" alt="Carrello preventivo" style={{ height: 36, width: 36, display: 'block', objectFit: 'contain' }} />
+            <img src="/images/carrello/carrello-preventivo-t.png" alt="Carrello preventivo" style={{ height: 38, width: 38, display: 'block', objectFit: 'contain', transform: 'translateY(-1px)' }} />
             <span style={{
               position: 'absolute', top: 4, right: 1,
               background: '#2b8fcf', color: '#fff', borderRadius: '50%',
@@ -366,8 +448,11 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
               {cartCount > 99 ? '99+' : cartCount}
             </span>
           </Link>
+          </>
           )}
-          {cartAcquistiCount > 0 && (
+          {showAcquisti && (
+          <>
+          {(showComputo || showPreventivo) && <NavSep />}
           <Link
             href="/area-clienti/carrello-acquisti"
             title="Carrello acquisti"
@@ -385,9 +470,11 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
               {cartAcquistiCount > 99 ? '99+' : cartAcquistiCount}
             </span>
           </Link>
+          </>
           )}
         </div>
-        )}
+          )
+        })()}
       </div>
 
       {/* ── Mobile bar: hamburger + auth ── */}
@@ -408,8 +495,14 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             </span>
           )}
         </button>
-        <div style={{ marginLeft: 'auto', paddingRight: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
-          {computoCount > 0 && computometricoAbilitato && (
+        <div style={{ marginLeft: 'auto', paddingRight: 12, background: '#f7b2c3', display: 'flex', alignItems: 'center', height: '100%', gap: 0 }}>
+          {(() => {
+            const showComputo    = computoCount > 0 && computometricoAbilitato
+            const showPreventivo = cartCount > 0 && preventiviAbilitato
+            const showAcquisti   = cartAcquistiCount > 0
+            return (
+            <>
+          {showComputo && (
           <Link
             href="/area-clienti/carrello-computometrico"
             title="Computo metrico"
@@ -430,14 +523,16 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             )}
           </Link>
           )}
-          {cartCount > 0 && preventiviAbilitato && (
+          {showPreventivo && (
+          <>
+          {showComputo && <NavSep />}
           <Link
             href="/area-clienti/carrello-preventivo"
             title="Carrello preventivo"
             className="cart-btn"
             style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 41, height: 41, marginTop: 1, textDecoration: 'none' }}
           >
-            <img src="/images/carrello/carrello-preventivo-t.png" alt="Carrello preventivo" style={{ height: 36, width: 36, display: 'block', objectFit: 'contain' }} />
+            <img src="/images/carrello/carrello-preventivo-t.png" alt="Carrello preventivo" style={{ height: 38, width: 38, display: 'block', objectFit: 'contain', transform: 'translateY(-1px)' }} />
             <span style={{
               position: 'absolute', top: 4, right: 0,
               background: '#2b8fcf', color: '#fff', borderRadius: '50%',
@@ -448,8 +543,11 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
               {cartCount > 99 ? '99+' : cartCount}
             </span>
           </Link>
+          </>
           )}
-          {cartAcquistiCount > 0 && (
+          {showAcquisti && (
+          <>
+          {(showComputo || showPreventivo) && <NavSep />}
           <Link
             href="/area-clienti/carrello-acquisti"
             title="Carrello acquisti"
@@ -467,7 +565,11 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
               {cartAcquistiCount > 99 ? '99+' : cartAcquistiCount}
             </span>
           </Link>
+          </>
           )}
+            </>
+            )
+          })()}
         </div>
       </div>
 
@@ -490,33 +592,83 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
       >
           <Link
             href="/"
-            className="nav-mobile-section"
+            className={`nav-mobile-section${isActive('/') ? ' nav-mobile-section-active' : ''}`}
             style={{ textDecoration: 'none', color: isActive('/') ? '#111' : undefined }}
           >
-            <span style={{ textDecoration: isActive('/') ? 'underline' : 'none', textDecorationThickness: isActive('/') ? '3px' : undefined, textUnderlineOffset: isActive('/') ? '4px' : undefined }}>Home</span>
+            <span>Home</span>
           </Link>
 
-          {standaloneItems.map(p => (
-            <Link
-              key={p.id}
-              href={p.href}
-              className="nav-mobile-section"
-              style={{ textDecoration: 'none', color: isActive(p.href) ? '#111' : undefined }}
-            >
-              <span style={{ textDecoration: isActive(p.href) ? 'underline' : 'none', textDecorationThickness: isActive(p.href) ? '3px' : undefined, textUnderlineOffset: isActive(p.href) ? '4px' : undefined }}>{p.label}</span>
-            </Link>
-          ))}
-
           {prodottiItems.length > 0 && (
-            <MobileSection sectionKey="prodotti" label="Prodotti" open={mobileOpenSection === 'prodotti'} onToggle={toggleMobileSection}>
-              {prodottiItems.map(p => (
+            <MobileSection sectionKey="prodotti" label="Riqualificazione Energetica" open={mobileOpenSection === 'prodotti'} onToggle={toggleMobileSection}>
+              {prodottiSubgroups.map(sg => {
+                const groupItems = prodottiItems.filter(p => sg.pageIds.includes(p.id))
+                if (groupItems.length === 0) return null
+                return (
+                  <React.Fragment key={sg.label}>
+                    <p className="fs-11" style={{ margin: 0, padding: '8px 16px 2px 28px', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#8a6800' }}>
+                      {sg.label}
+                    </p>
+                    {groupItems.map(p => (
+                      <MobileLink key={p.id} href={p.href} label={p.label} active={isActive(p.href)} indent />
+                    ))}
+                  </React.Fragment>
+                )
+              })}
+              <Link href="/bonuss-riqualificazione" onClick={() => setMenuOpen(false)} className="nav-banner-bonus" style={{ margin: '8px 16px 4px' }}>
+                Scopri Bonus e Detrazioni Fiscali
+              </Link>
+            </MobileSection>
+          )}
+
+          {comfortItems.length > 0 && (
+            <MobileSection sectionKey="comfort" label="Comfort e Spazi Esterni" open={mobileOpenSection === 'comfort'} onToggle={toggleMobileSection}>
+              {comfortItems.map(p => (
                 <MobileLink key={p.id} href={p.href} label={p.label} active={isActive(p.href)} indent />
               ))}
             </MobileSection>
           )}
 
+          {antintrusioneItems.length > 0 && (
+            <MobileSection sectionKey="antintrusione" label="Antintrusione e Sicurezza" open={mobileOpenSection === 'antintrusione'} onToggle={toggleMobileSection}>
+              {antintrusioneItems.map(p => (
+                <MobileLink key={p.id} href={p.href} label={p.label} active={isActive(p.href)} indent />
+              ))}
+            </MobileSection>
+          )}
+
+          {carpenteriaItems.length > 0 && (
+            <MobileSection sectionKey="carpenteria" label="Carpenteria d'Arredo" open={mobileOpenSection === 'carpenteria'} onToggle={toggleMobileSection}>
+              {carpenteriaItems.map(p => (
+                <MobileLink key={p.id} href={p.href} label={p.label} active={isActive(p.href)} indent />
+              ))}
+            </MobileSection>
+          )}
+
+          {ristrutturazioniItems.length > 0 && (
+            <MobileSection sectionKey="ristrutturazioni" label="Ristrutturazioni Chiavi in Mano" open={mobileOpenSection === 'ristrutturazioni'} onToggle={toggleMobileSection}>
+              {ristrutturazioniItems.map(p => (
+                <MobileLink key={p.id} href={p.href} label={p.label} active={isActive(p.href)} indent />
+              ))}
+              <Link href={computometricoHref} onClick={() => setMenuOpen(false)} className="nav-banner-bonus" style={{ margin: '8px 16px 4px' }}>
+                Calcola il Computo Metrico Online
+              </Link>
+            </MobileSection>
+          )}
+
+          {standaloneItems.map(p => (
+            <Link
+              key={p.id}
+              href={p.href}
+              className={`nav-mobile-section${isActive(p.href) ? ' nav-mobile-section-active' : ''}`}
+              style={{ textDecoration: 'none', color: isActive(p.href) ? '#111' : undefined }}
+            >
+              <span>{p.label}</span>
+            </Link>
+          ))}
+
           {categoryGroups.map(g => {
-            const visiblePages = g.pages.filter(p => !disabledPages.includes(p.id))
+            const hidden = HIDDEN_FROM_CATEGORY[g.id] ?? []
+            const visiblePages = g.pages.filter(p => !disabledPages.includes(p.id) && !hidden.includes(p.id))
             if (visiblePages.length === 0) return null
             const key = `cat-${g.id}`
             return (
@@ -644,18 +796,26 @@ function useDropdownAlign(open: boolean): React.RefObject<HTMLDivElement> {
 }
 
 function NavSep() {
-  return <div style={{ width: 1, height: 18, background: 'rgba(0,0,0,0.22)', flexShrink: 0, alignSelf: 'center', margin: '0 2px' }} />
+  return <div style={{ width: 1, alignSelf: 'stretch', background: 'rgba(0,0,0,0.18)', flexShrink: 0, margin: '4px 2px' }} />
+}
+
+// Separatore di confine gold/silver: senza margine orizzontale, così la linea
+// è esattamente il limite di colore (nessun px di gold o silver "in più" ai suoi lati).
+function NavSepBoundary() {
+  return <div style={{ width: 1, alignSelf: 'stretch', background: 'rgba(0,0,0,0.18)', flexShrink: 0, margin: '4px 0 4px 2px' }} />
 }
 
 function InternalDropdown({
   items,
   isActive,
   linkStyle,
+  linkClass,
   unreadEmailCount = 0,
 }: {
   items: NavPage[]
   isActive: (href: string) => boolean
   linkStyle: (href: string) => React.CSSProperties
+  linkClass: (active: boolean) => string
   unreadEmailCount?: number
 }) {
   const [open, setOpen] = useState(false)
@@ -704,8 +864,9 @@ function InternalDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className="nav-link testo-nav-bar" style={{ ...linkStyle('/area-lavoro'), gap: 4, textDecoration: 'none' }}>
-        <span className={anyActive ? 'nav-trigger-underline' : undefined}>Area Lavoro</span> {open ? '▴' : '▾'}
+      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/area-lavoro'), height: 'auto', flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4 }}>
+        <span>Area Lavoro</span>
+        <span>{open ? '▴' : '▾'}</span>
         {!open && unread > 0 && (
           <span style={{ position: 'absolute', top: 6, right: 6, background: '#e53e3e', color: '#fff', borderRadius: '50%', minWidth: 18, height: 18, fontSize: 11, fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>
             {unread > 99 ? '99+' : unread}
@@ -715,7 +876,7 @@ function InternalDropdown({
       {open && (
         <div ref={alignRef} style={{
           position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
-          background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
+          background: '#fdfcf8', border: '1px solid var(--nav-accent-border)', borderRadius: 6,
           boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 12,
           display: 'grid', gridTemplateRows: 'repeat(6, auto)', gridAutoFlow: 'column', gridAutoColumns: 'max-content', gap: 2,
           zIndex: 200, width: 'max-content', minWidth: 320,
@@ -746,10 +907,12 @@ function ProdottiDropdown({
   items,
   isActive,
   linkStyle,
+  linkClass,
 }: {
   items: NavPage[]
   isActive: (href: string) => boolean
   linkStyle: (href: string) => React.CSSProperties
+  linkClass: (active: boolean) => string
 }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -767,8 +930,87 @@ function ProdottiDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className="nav-link testo-nav-bar" style={{ ...linkStyle('/prodotti'), gap: 4, textDecoration: anyActive ? 'underline' : 'none', textDecorationThickness: anyActive ? '3px' : undefined, textUnderlineOffset: anyActive ? '4px' : undefined }}>
-        Prodotti {open ? '▴' : '▾'}
+      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/prodotti'), height: 'auto', flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4, padding: '0 6px' }}>
+        <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+          <span>Riqualificazione</span>
+          <span>Energetica</span>
+        </span>
+        <span>{open ? '▴' : '▾'}</span>
+      </button>
+      {open && (
+        <div ref={alignRef} style={{
+          position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
+          background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
+          boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 12,
+          display: 'flex', flexDirection: 'column', gap: 8,
+          zIndex: 200, width: 'max-content',
+        }}>
+          <div style={{ display: 'flex', gap: 20 }}>
+            {prodottiSubgroups.map(sg => {
+              const groupItems = items.filter(p => sg.pageIds.includes(p.id))
+              if (groupItems.length === 0) return null
+              return (
+                <div key={sg.label} style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 190 }}>
+                  <p className="fs-11" style={{ margin: '0 0 4px', padding: '0 10px', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#8a6800' }}>
+                    {sg.label}
+                  </p>
+                  {groupItems.map(p => (
+                    <Link
+                      key={p.id}
+                      href={p.href}
+                      onClick={() => setOpen(false)}
+                      className={isActive(p.href) ? 'nav-dropdown-link nav-dropdown-link-active' : 'nav-dropdown-link'}
+                      style={{ padding: '7px 10px' }}
+                    >
+                      <span>{p.label}<ShortcutStar href={p.href} small /></span>
+                    </Link>
+                  ))}
+                </div>
+              )
+            })}
+          </div>
+          <Link href="/bonuss-riqualificazione" onClick={() => setOpen(false)} className="nav-banner-bonus">
+            Scopri Bonus e Detrazioni Fiscali
+          </Link>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function ComfortDropdown({
+  items,
+  isActive,
+  linkStyle,
+  linkClass,
+}: {
+  items: NavPage[]
+  isActive: (href: string) => boolean
+  linkStyle: (href: string) => React.CSSProperties
+  linkClass: (active: boolean) => string
+}) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  const alignRef = useDropdownAlign(open)
+
+  useEffect(() => {
+    function handle(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handle)
+    return () => document.removeEventListener('mousedown', handle)
+  }, [])
+
+  const anyActive = items.some(p => isActive(p.href))
+
+  return (
+    <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/comfort-e-spazi-esterni'), height: 'auto', flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4, padding: '0 6px' }}>
+        <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+          <span>Spazi Esterni</span>
+          <span>e Comfort</span>
+        </span>
+        <span>{open ? '▴' : '▾'}</span>
       </button>
       {open && (
         <div ref={alignRef} style={{
@@ -795,14 +1037,16 @@ function ProdottiDropdown({
   )
 }
 
-function AiutoDropdown({
+function AntintrusioneDropdown({
   items,
   isActive,
   linkStyle,
+  linkClass,
 }: {
   items: NavPage[]
   isActive: (href: string) => boolean
   linkStyle: (href: string) => React.CSSProperties
+  linkClass: (active: boolean) => string
 }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -820,8 +1064,196 @@ function AiutoDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className="nav-link testo-nav-bar" style={{ ...linkStyle('/aiuto'), gap: 4, textDecoration: anyActive ? 'underline' : 'none', textDecorationThickness: anyActive ? '3px' : undefined, textUnderlineOffset: anyActive ? '4px' : undefined }}>
-        Aiuto {open ? '▴' : '▾'}
+      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/antintrusione-e-sicurezza'), height: 'auto', flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4, padding: '0 6px' }}>
+        <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+          <span>Antintrusione</span>
+          <span>e Sicurezza</span>
+        </span>
+        <span>{open ? '▴' : '▾'}</span>
+      </button>
+      {open && (
+        <div ref={alignRef} style={{
+          position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
+          background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
+          boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 12,
+          display: 'grid', gridTemplateRows: 'repeat(6, auto)', gridAutoFlow: 'column', gridAutoColumns: 'max-content', gap: 2,
+          zIndex: 200, width: 'max-content', minWidth: 220,
+        }}>
+          {items.map(p => (
+            <Link
+              key={p.id}
+              href={p.href}
+              onClick={() => setOpen(false)}
+              className={isActive(p.href) ? 'nav-dropdown-link nav-dropdown-link-active' : 'nav-dropdown-link'}
+              style={{ padding: '7px 10px' }}
+            >
+              <span>{p.label}<ShortcutStar href={p.href} small /></span>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function CarpenteriaDropdown({
+  items,
+  isActive,
+  linkStyle,
+  linkClass,
+}: {
+  items: NavPage[]
+  isActive: (href: string) => boolean
+  linkStyle: (href: string) => React.CSSProperties
+  linkClass: (active: boolean) => string
+}) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  const alignRef = useDropdownAlign(open)
+
+  useEffect(() => {
+    function handle(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handle)
+    return () => document.removeEventListener('mousedown', handle)
+  }, [])
+
+  const anyActive = items.some(p => isActive(p.href))
+
+  return (
+    <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle("/carpenteria-d-arredo"), height: 'auto', flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4, padding: '0 6px' }}>
+        <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+          <span>Carpenteria</span>
+          <span>d&apos;Arredo</span>
+        </span>
+        <span>{open ? '▴' : '▾'}</span>
+      </button>
+      {open && (
+        <div ref={alignRef} style={{
+          position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
+          background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
+          boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 12,
+          display: 'grid', gridTemplateRows: 'repeat(6, auto)', gridAutoFlow: 'column', gridAutoColumns: 'max-content', gap: 2,
+          zIndex: 200, width: 'max-content', minWidth: 220,
+        }}>
+          {items.map(p => (
+            <Link
+              key={p.id}
+              href={p.href}
+              onClick={() => setOpen(false)}
+              className={isActive(p.href) ? 'nav-dropdown-link nav-dropdown-link-active' : 'nav-dropdown-link'}
+              style={{ padding: '7px 10px' }}
+            >
+              <span>{p.label}<ShortcutStar href={p.href} small /></span>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function RistrutturazioniDropdown({
+  items,
+  isActive,
+  linkStyle,
+  linkClass,
+  computometricoHref,
+}: {
+  items: NavPage[]
+  isActive: (href: string) => boolean
+  linkStyle: (href: string) => React.CSSProperties
+  linkClass: (active: boolean) => string
+  computometricoHref: string
+}) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  const alignRef = useDropdownAlign(open)
+
+  useEffect(() => {
+    function handle(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handle)
+    return () => document.removeEventListener('mousedown', handle)
+  }, [])
+
+  const anyActive = items.some(p => isActive(p.href))
+
+  return (
+    <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/ristrutturazioni-chiavi-in-mano'), height: 'auto', flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4, padding: '0 6px' }}>
+        <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+          <span>Ristrutturazioni</span>
+          <span>Chiavi in Mano</span>
+        </span>
+        <span>{open ? '▴' : '▾'}</span>
+      </button>
+      {open && (
+        <div ref={alignRef} style={{
+          position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
+          background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
+          boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 12,
+          display: 'flex', flexDirection: 'column', gap: 8,
+          zIndex: 200, width: 'max-content',
+        }}>
+          <div style={{
+            display: 'grid', gridTemplateRows: 'repeat(6, auto)', gridAutoFlow: 'column', gridAutoColumns: 'max-content', gap: 2,
+            minWidth: 220,
+          }}>
+            {items.map(p => (
+              <Link
+                key={p.id}
+                href={p.href}
+                onClick={() => setOpen(false)}
+                className={isActive(p.href) ? 'nav-dropdown-link nav-dropdown-link-active' : 'nav-dropdown-link'}
+                style={{ padding: '7px 10px' }}
+              >
+                <span>{p.label}<ShortcutStar href={p.href} small /></span>
+              </Link>
+            ))}
+          </div>
+          <Link href={computometricoHref} onClick={() => setOpen(false)} className="nav-banner-bonus">
+            Calcola il Computo Metrico Online
+          </Link>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function AiutoDropdown({
+  items,
+  isActive,
+  linkStyle,
+  linkClass,
+}: {
+  items: NavPage[]
+  isActive: (href: string) => boolean
+  linkStyle: (href: string) => React.CSSProperties
+  linkClass: (active: boolean) => string
+}) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  const alignRef = useDropdownAlign(open)
+
+  useEffect(() => {
+    function handle(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handle)
+    return () => document.removeEventListener('mousedown', handle)
+  }, [])
+
+  const anyActive = items.some(p => isActive(p.href))
+
+  return (
+    <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/aiuto'), height: 'auto', flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4 }}>
+        <span>Aiuto</span>
+        <span>{open ? '▴' : '▾'}</span>
       </button>
       {open && (
         <div ref={alignRef} style={{
@@ -871,8 +1303,9 @@ function PreferitiDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className="nav-link testo-nav-bar" style={{ ...linkStyle('/preferiti'), gap: 4, textDecoration: 'none' }}>
-        Preferiti {open ? '▴' : '▾'}
+      <button onClick={() => setOpen(o => !o)} className="nav-link testo-nav-bar" style={{ ...linkStyle('/preferiti'), height: 'auto', flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4, textDecoration: 'none' }}>
+        <span>Preferiti</span>
+        <span>{open ? '▴' : '▾'}</span>
       </button>
       {open && (
         <div ref={alignRef} style={{
@@ -903,10 +1336,12 @@ function AdminDropdown({
   items,
   isActive,
   linkStyle,
+  linkClass,
 }: {
   items: NavPage[]
   isActive: (href: string) => boolean
   linkStyle: (href: string) => React.CSSProperties
+  linkClass: (active: boolean) => string
 }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -924,13 +1359,14 @@ function AdminDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className="nav-link testo-nav-bar" style={{ ...linkStyle('/amministrazione'), gap: 4, textDecoration: 'none' }}>
-        <span className={anyActive ? 'nav-trigger-underline' : undefined}>Amministrazione</span> {open ? '▴' : '▾'}
+      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/amministrazione'), height: 'auto', flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4 }}>
+        <span>Amministrazione</span>
+        <span>{open ? '▴' : '▾'}</span>
       </button>
       {open && (
         <div ref={alignRef} style={{
           position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
-          background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
+          background: '#fdfcf8', border: '1px solid var(--nav-accent-border)', borderRadius: 6,
           boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 12,
           display: 'grid', gridTemplateRows: 'repeat(6, auto)', gridAutoFlow: 'column', gridAutoColumns: 'max-content', gap: 2,
           zIndex: 200, width: 'max-content', minWidth: 200,
@@ -956,10 +1392,12 @@ function CategoryDropdown({
   group,
   isActive,
   linkStyle,
+  linkClass,
 }: {
   group: CategoryGroup
   isActive: (href: string) => boolean
   linkStyle: (href: string) => React.CSSProperties
+  linkClass: (active: boolean) => string
 }) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
@@ -1003,10 +1441,18 @@ function CategoryDropdown({
     <div ref={triggerRef} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
       <button
         onClick={() => { if (!open) router.push(group.href); setOpen(o => !o) }}
-        className="nav-link testo-nav-bar"
-        style={{ ...linkStyle(group.href), gap: 4 }}
+        className={linkClass(isActive(group.href))}
+        style={{ ...linkStyle(group.href), height: 'auto', flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4 }}
       >
-        {group.label}<ShortcutStar href={group.href} small outline /> {open ? '▴' : '▾'}
+        {group.id === 'metallurgia' ? (
+          <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+            <span>Ferro e</span>
+            <span>Acciaio<ShortcutStar href={group.href} small outline /></span>
+          </span>
+        ) : (
+          <span>{group.label}<ShortcutStar href={group.href} small outline /></span>
+        )}
+        <span>{open ? '▴' : '▾'}</span>
       </button>
       {isMounted && open && createPortal(
         <div
@@ -1058,10 +1504,12 @@ function FornitoriDropdown({
   items,
   isActive,
   linkStyle,
+  linkClass,
 }: {
   items: NavPage[]
   isActive: (href: string) => boolean
   linkStyle: (href: string) => React.CSSProperties
+  linkClass: (active: boolean) => string
 }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -1079,13 +1527,14 @@ function FornitoriDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className="nav-link testo-nav-bar" style={{ ...linkStyle('/area-fornitori'), gap: 4, textDecoration: anyActive ? 'underline' : 'none', textDecorationThickness: anyActive ? '3px' : undefined, textUnderlineOffset: anyActive ? '4px' : undefined }}>
-        Area Fornitori {open ? '▴' : '▾'}
+      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/area-fornitori'), height: 'auto', flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4 }}>
+        <span>Area Fornitori</span>
+        <span>{open ? '▴' : '▾'}</span>
       </button>
       {open && (
         <div ref={alignRef} style={{
           position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
-          background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
+          background: '#fdfcf8', border: '1px solid var(--nav-accent-border)', borderRadius: 6,
           boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 4,
           display: 'grid', gridTemplateRows: 'repeat(6, auto)', gridAutoFlow: 'column', gridAutoColumns: 'max-content', gap: 0,
           zIndex: 200, width: 'max-content', minWidth: 200,
@@ -1111,10 +1560,12 @@ function ClientiDropdown({
   items,
   isActive,
   linkStyle,
+  linkClass,
 }: {
   items: NavPage[]
   isActive: (href: string) => boolean
   linkStyle: (href: string) => React.CSSProperties
+  linkClass: (active: boolean) => string
 }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -1132,13 +1583,14 @@ function ClientiDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className="nav-link testo-nav-bar" style={{ ...linkStyle('/clienti'), gap: 4, textDecoration: anyActive ? 'underline' : 'none', textDecorationThickness: anyActive ? '3px' : undefined, textUnderlineOffset: anyActive ? '4px' : undefined }}>
-        Area Clienti {open ? '▴' : '▾'}
+      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/clienti'), height: 'auto', flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4 }}>
+        <span>Area Clienti</span>
+        <span>{open ? '▴' : '▾'}</span>
       </button>
       {open && (
         <div ref={alignRef} style={{
           position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
-          background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
+          background: '#fdfcf8', border: '1px solid var(--nav-accent-border)', borderRadius: 6,
           boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 4,
           display: 'grid', gridTemplateRows: 'repeat(6, auto)', gridAutoFlow: 'column', gridAutoColumns: 'max-content', gap: 0,
           zIndex: 200, width: 'max-content', minWidth: 180,
@@ -1164,11 +1616,13 @@ function AreaClientiDropdown({
   items,
   isActive,
   linkStyle,
+  linkClass,
   unreadAvvisiCount = 0,
 }: {
   items: NavPage[]
   isActive: (href: string) => boolean
   linkStyle: (href: string) => React.CSSProperties
+  linkClass: (active: boolean) => string
   unreadAvvisiCount?: number
 }) {
   const [open, setOpen]       = useState(false)
@@ -1214,12 +1668,11 @@ function AreaClientiDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className="nav-link testo-nav-bar" style={{ ...linkStyle('/area-clienti'), gap: 4, color: '#000', textDecoration: 'none' }}>
-        <span style={{ textDecoration: anyActive ? 'underline' : 'none', textDecorationThickness: anyActive ? '3px' : undefined, textUnderlineOffset: anyActive ? '4px' : undefined }}>
-          Area Personale {open ? '▴' : '▾'}
-        </span>
+      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/area-clienti'), height: 'auto', flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4 }}>
+        <span>Area Personale</span>
+        <span>{open ? '▴' : '▾'}</span>
         {!open && unread > 0 && (
-          <span style={{ background: '#e53e3e', color: '#fff', borderRadius: '50%', minWidth: 18, height: 18, fontSize: 11, fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px', flexShrink: 0 }}>
+          <span style={{ position: 'absolute', top: 6, right: 6, background: '#e53e3e', color: '#fff', borderRadius: '50%', minWidth: 18, height: 18, fontSize: 11, fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>
             {unread > 99 ? '99+' : unread}
           </span>
         )}
@@ -1227,7 +1680,7 @@ function AreaClientiDropdown({
       {open && (
         <div ref={alignRef} style={{
           position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
-          background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
+          background: '#fdfcf8', border: '1px solid var(--nav-accent-border)', borderRadius: 6,
           boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 4,
           display: 'grid', gridTemplateRows: 'repeat(6, auto)', gridAutoFlow: 'column', gridAutoColumns: 'max-content', gap: 0,
           zIndex: 200, width: 'max-content', minWidth: 180,

@@ -14,13 +14,13 @@ import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = {
-  title: 'Porte Scrigno a Palermo — Porte a Scomparsa su Misura',
-  description: 'Porte scrigno a Palermo: porte a scomparsa nel muro per ambienti moderni e funzionali. Installazione su muratura esistente o in fase di costruzione.',
+  title: 'Porte a Scomparsa a Palermo — Porte Scrigno su Misura',
+  description: 'Porte a scomparsa a Palermo: porte scrigno nel muro per ambienti moderni e funzionali. Installazione su muratura esistente o in fase di costruzione.',
   alternates: { canonical: 'https://www.digi-home-design.com/legno/porte-scrigno' },
   robots: { index: true, follow: true },
   openGraph: {
-    title: 'Porte Scrigno a Palermo — Porte a Scomparsa su Misura',
-    description: 'Porte scrigno a Palermo: porte a scomparsa nel muro per ambienti moderni e funzionali. Installazione su muratura esistente o in fase di costruzione.',
+    title: 'Porte a Scomparsa a Palermo — Porte Scrigno su Misura',
+    description: 'Porte a scomparsa a Palermo: porte scrigno nel muro per ambienti moderni e funzionali. Installazione su muratura esistente o in fase di costruzione.',
     url: 'https://www.digi-home-design.com/legno/porte-scrigno',
     type: 'website',
   },
@@ -116,9 +116,9 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/legno" style={{ color: '#888', textDecoration: 'underline' }}>Legno</Link> / Porte Scrigno<ShortcutStar />
+        <Link href="/legno" style={{ color: '#888', textDecoration: 'underline' }}>Legno</Link> / Porte a Scomparsa<ShortcutStar />
       </p>
-      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Porte Scrigno a Palermo</h1>
+      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Porte a Scomparsa a Palermo</h1>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '16px' }}>

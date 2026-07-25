@@ -20,9 +20,10 @@ export const metadata: Metadata = {
 
 const subcategories = [
   { href: '/metallurgia/porte-corazzate',            label: 'Porte Corazzate',            desc: 'Porte corazzate su misura in acciaio per abitazioni, uffici e locali commerciali.' },
-  { href: '/metallurgia/porte-blindate',             label: 'Porte Blindate',             desc: 'Porte blindate di sicurezza classe 3-6 per abitazioni e uffici.' },
+  { href: '/metallurgia/porte-blindate-legno',       label: 'Porte Blindate Riv. Legno',      desc: 'Porte blindate di sicurezza classe 3-6 con rivestimento esterno in legno.' },
+  { href: '/metallurgia/porte-blindate-alluminio',   label: 'Porte Blindate Riv. Alluminio',  desc: 'Porte blindate di sicurezza classe 3-6 con rivestimento esterno in alluminio.' },
+  { href: '/metallurgia/porte-blindate-pvc',         label: 'Porte Blindate Riv. PVC',        desc: 'Porte blindate di sicurezza classe 3-6 con rivestimento esterno in PVC.' },
   { href: '/metallurgia/porte-antincendio',          label: 'Porte Antincendio',          desc: 'Porte REI certificate per compartimentazione antincendio in acciaio.' },
-  { href: '/metallurgia/pannelli-bugnato-alluminio', label: 'Pannelli Bugnato Alluminio', desc: 'Pannelli decorativi in alluminio bugnato per facciate e rivestimenti.' },
   { href: '/metallurgia/cancelli',                   label: 'Cancelli',                   desc: 'Cancelli carrabili e pedonali in ferro battuto e acciaio, manuali o motorizzati.' },
   { href: '/metallurgia/grate',                      label: 'Grate',                      desc: 'Grate di sicurezza per finestre e vani in ferro e acciaio inox.' },
   { href: '/metallurgia/ringhiere',                  label: 'Ringhiere',                  desc: 'Ringhiere per scale e balconi in ferro, acciaio inox e alluminio su misura.' },

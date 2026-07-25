@@ -20,6 +20,10 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: '/porte-corazzate', destination: '/porte-blindate', permanent: true },
+      { source: '/metallurgia/porte-blindate', destination: '/metallurgia/porte-blindate-legno', permanent: true },
+      { source: '/serramenti/infissi-in-alluminio', destination: '/serramenti/infissi-in-alluminio-taglio-termico', permanent: true },
+      { source: '/serramenti/tapparelle-manuali', destination: '/serramenti/tapparelle-in-alluminio', permanent: true },
+      { source: '/serramenti/tapparelle-motorizzate', destination: '/serramenti/tapparelle-motorizzazione', permanent: true },
     ]
   },
   // "brand" resta il nome della cartella sotto app/ (nessuna modifica ai file/import

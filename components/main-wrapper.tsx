@@ -11,6 +11,7 @@ export default function MainWrapper({ children, role }: { children: React.ReactN
   const forceClientWidth = CLIENT_WIDTH_PATHS.some(p => pathname.startsWith(p))
   const isFullWidth =
     !forceClientWidth && (
+      pathname === '/' ||
       STAFF_PREFIXES.some(p => pathname.startsWith(p)) ||
       (pathname.startsWith('/area-clienti/') && isStaffRole)
     )

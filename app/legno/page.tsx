@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 
 const subcategories = [
   { href: '/legno/porte-interne',           label: 'Porte Interne',           desc: 'Porte interne in legno su misura, battenti e scorrevoli per ogni stile.' },
-  { href: '/legno/porte-scrigno',           label: 'Porte Scrigno',           desc: 'Porte a scomparsa nel muro per spazi moderni e privi di ingombri.' },
+  { href: '/legno/porte-scrigno',           label: 'Porte a Scomparsa',       desc: 'Porte a scomparsa nel muro per spazi moderni e privi di ingombri.' },
   { href: '/legno/cucine',                  label: 'Cucine',                  desc: 'Cucine in legno su misura: componibili e in muratura, dal classico al moderno.' },
   { href: '/legno/mobili-in-massello',      label: 'Mobili in Massello',      desc: 'Mobili artigianali in legno massello, solidi e duraturi nel tempo.' },
   { href: '/legno/mobili-tamburati',        label: 'Mobili Tamburati',        desc: 'Mobili in legno tamburato: leggerezza e design a prezzi accessibili.' },

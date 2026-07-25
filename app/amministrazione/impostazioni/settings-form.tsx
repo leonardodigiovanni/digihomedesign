@@ -459,7 +459,7 @@ function formatPageStats(
 const PAGE_GROUPS: { label: string; hubHref?: string; pages: { id: number; label: string; href: string }[] }[] = [
   { label: 'Chi Siamo',    hubHref: '/chi-siamo', pages: clientPages },
   { label: 'Voci singole', pages: standalonePages },
-  { label: 'Prodotti',     pages: prodottiPages },
+  { label: 'Riqualificazione Energetica', pages: prodottiPages },
   ...categoryGroups.map(g => ({ label: g.label, hubHref: g.href, pages: g.pages })),
   { label: 'Area Personale', pages: areaClientiPages },
   { label: 'Aiuto',        pages: aiutoPages },

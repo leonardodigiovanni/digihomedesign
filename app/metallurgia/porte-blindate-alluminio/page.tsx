@@ -1,4 +1,4 @@
-﻿import Link from 'next/link'
+import Link from 'next/link'
 import Image from 'next/image'
 import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
@@ -14,14 +14,14 @@ import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = {
-  title: 'Grate di Sicurezza a Palermo — Finestre e Vani in Ferro',
-  description: 'Grate di sicurezza a Palermo per finestre, vani e aperture: in ferro quadro, tondo e acciaio inox. Fisse, apribili a cardine e scorrevoli. Su misura.',
-  alternates: { canonical: 'https://www.digi-home-design.com/metallurgia/grate' },
+  title: 'Porte Blindate Rivestimento Alluminio a Palermo — Classe 3, 4, 5 e 6',
+  description: 'Porte blindate a Palermo con rivestimento esterno in alluminio: fornitura e installazione classe 3-6 con serrature di sicurezza multipunto. Misure standard e su misura.',
+  alternates: { canonical: 'https://www.digi-home-design.com/metallurgia/porte-blindate-alluminio' },
   robots: { index: true, follow: true },
   openGraph: {
-    title: 'Grate di Sicurezza a Palermo — Finestre e Vani in Ferro',
-    description: 'Grate di sicurezza a Palermo per finestre, vani e aperture: in ferro quadro, tondo e acciaio inox. Fisse, apribili a cardine e scorrevoli. Su misura.',
-    url: 'https://www.digi-home-design.com/metallurgia/grate',
+    title: 'Porte Blindate Rivestimento Alluminio a Palermo — Classe 3, 4, 5 e 6',
+    description: 'Porte blindate a Palermo con rivestimento esterno in alluminio: fornitura e installazione classe 3-6 con serrature di sicurezza multipunto. Misure standard e su misura.',
+    url: 'https://www.digi-home-design.com/metallurgia/porte-blindate-alluminio',
     type: 'website',
   },
 }
@@ -71,7 +71,7 @@ async function getCatalogoData(nomeCategoria: string) {
 }
 
 export default async function Page() {
-  const CERCA = 'Grate'
+  const CERCA = 'Porte Blindate Alluminio'
   const catalogo = await getCatalogoData(CERCA)
   const cookieStore = await cookies()
   const role = cookieStore.get('session_role')?.value ?? ''
@@ -116,39 +116,39 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/metallurgia" style={{ color: '#888', textDecoration: 'underline' }}>Metallurgia</Link> / Grate<ShortcutStar />
+        <Link href="/metallurgia" style={{ color: '#888', textDecoration: 'underline' }}>Metallurgia</Link> / Porte Blindate Riv. Alluminio<ShortcutStar />
       </p>
-      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Grate di Sicurezza a Palermo</h1>
+      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Porte Blindate Rivestimento Alluminio a Palermo</h1>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '16px' }}>
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/metallurgia/grate/grata-fissa.png" alt="Grata fissa" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/metallurgia/porte-blindate/porta-laccata.jpg" alt="Porta blindata con rivestimento in alluminio" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Grata fissa</span>
+                <span className="testo-articoli">Porta blindata rivestita in alluminio</span>
               </div>
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/metallurgia/grate/grata1s.png" alt="Grata a rombi" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/metallurgia/porte-blindate/serratura.jpg" alt="Serratura di sicurezza multipunto" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Grata a rombi</span>
+                <span className="testo-articoli">Serratura di sicurezza multipunto</span>
               </div>
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Realizziamo e installiamo <strong>grate di sicurezza a Palermo</strong> per la protezione di finestre, vani cantina, bocche di lupo e aperture di qualsiasi dimensione. Lavoriamo con ferro quadro, piatto e tondo, acciaio inox AISI 304 e alluminio, con saldature a piena penetrazione e verniciatura a polvere epossidica.
+              Forniamo e installiamo <strong>porte blindate con rivestimento in alluminio a Palermo</strong> certificate dalla classe 3 alla classe 6 secondo la norma UNI EN 1627: la scelta della classe dipende dal livello di rischio e dal contesto abitativo o commerciale. Ogni porta è dotata di serratura multipunto con chiusura perimetrale, cerniere anti-scasso e pannello esterno in acciaio da almeno 1,5 mm.
             </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Le grate sono disponibili in versione fissa a muro, apribile a cardine con serratura di sicurezza (obbligatoria come via di fuga secondo il D.M. 9/04/1994), o scorrevole su binario. I pattern decorativi spaziano dal classico a lancia al moderno geometrico, con possibilità di inserire motivi personalizzati in ferro battuto.
+              Le ante sono rivestite esternamente in alluminio anodizzato o verniciato a polvere, resistente agli agenti atmosferici e adatto anche a porte esposte all&apos;esterno. Installiamo modelli con apertura a destra, sinistra, doppia anta e scorrevole. La posa include la rimozione della vecchia porta, la posa del controtelaio in acciaio e il sigillamento perimetrale.
             </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Ogni grata viene misurata sul posto e realizzata su misura. Contattaci per un sopralluogo gratuito e un preventivo a Palermo e provincia.
+              Collaboriamo con i principali marchi italiani — Dierre, Alias, Oikos, Bertolotto Blindate. Contattaci per un sopralluogo e un preventivo gratuito.
             </p>
           </div>
         </div>

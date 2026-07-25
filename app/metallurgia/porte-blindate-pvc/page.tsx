@@ -1,4 +1,4 @@
-﻿import Link from 'next/link'
+import Link from 'next/link'
 import Image from 'next/image'
 import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
@@ -14,14 +14,14 @@ import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = {
-  title: 'Porte Blindate a Palermo — Classe 3, 4, 5 e 6',
-  description: 'Porte blindate a Palermo: fornitura e installazione di porte blindate classe 3-6 con serrature di sicurezza multipunto. Misure standard e su misura.',
-  alternates: { canonical: 'https://www.digi-home-design.com/metallurgia/porte-blindate' },
+  title: 'Porte Blindate Rivestimento PVC a Palermo — Classe 3, 4, 5 e 6',
+  description: 'Porte blindate a Palermo con rivestimento esterno in PVC: fornitura e installazione classe 3-6 con serrature di sicurezza multipunto. Misure standard e su misura.',
+  alternates: { canonical: 'https://www.digi-home-design.com/metallurgia/porte-blindate-pvc' },
   robots: { index: true, follow: true },
   openGraph: {
-    title: 'Porte Blindate a Palermo — Classe 3, 4, 5 e 6',
-    description: 'Porte blindate a Palermo: fornitura e installazione di porte blindate classe 3-6 con serrature di sicurezza multipunto. Misure standard e su misura.',
-    url: 'https://www.digi-home-design.com/metallurgia/porte-blindate',
+    title: 'Porte Blindate Rivestimento PVC a Palermo — Classe 3, 4, 5 e 6',
+    description: 'Porte blindate a Palermo con rivestimento esterno in PVC: fornitura e installazione classe 3-6 con serrature di sicurezza multipunto. Misure standard e su misura.',
+    url: 'https://www.digi-home-design.com/metallurgia/porte-blindate-pvc',
     type: 'website',
   },
 }
@@ -71,7 +71,7 @@ async function getCatalogoData(nomeCategoria: string) {
 }
 
 export default async function Page() {
-  const CERCA = 'Porte Blindate'
+  const CERCA = 'Porte Blindate PVC'
   const catalogo = await getCatalogoData(CERCA)
   const cookieStore = await cookies()
   const role = cookieStore.get('session_role')?.value ?? ''
@@ -116,19 +116,19 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/metallurgia" style={{ color: '#888', textDecoration: 'underline' }}>Metallurgia</Link> / Porte Blindate<ShortcutStar />
+        <Link href="/metallurgia" style={{ color: '#888', textDecoration: 'underline' }}>Metallurgia</Link> / Porte Blindate Riv. PVC<ShortcutStar />
       </p>
-      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Porte Blindate a Palermo</h1>
+      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Porte Blindate Rivestimento PVC a Palermo</h1>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '16px' }}>
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/metallurgia/porte-blindate/porta-laccata.jpg" alt="Porta blindata laccata" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/metallurgia/porte-blindate/porta-laccata.jpg" alt="Porta blindata con rivestimento in PVC" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Porta blindata laccata</span>
+                <span className="testo-articoli">Porta blindata rivestita in PVC</span>
               </div>
             </div>
             <div className="page-card">
@@ -142,10 +142,10 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Forniamo e installiamo <strong>porte blindate a Palermo</strong> certificate dalla classe 3 alla classe 6 secondo la norma UNI EN 1627: la scelta della classe dipende dal livello di rischio e dal contesto abitativo o commerciale. Ogni porta è dotata di serratura multipunto con chiusura perimetrale, cerniere anti-scasso e pannello esterno in acciaio da almeno 1,5 mm.
+              Forniamo e installiamo <strong>porte blindate con rivestimento in PVC a Palermo</strong> certificate dalla classe 3 alla classe 6 secondo la norma UNI EN 1627: la scelta della classe dipende dal livello di rischio e dal contesto abitativo o commerciale. Ogni porta è dotata di serratura multipunto con chiusura perimetrale, cerniere anti-scasso e pannello esterno in acciaio da almeno 1,5 mm.
             </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Le ante sono disponibili con rivestimento esterno in acciaio inox satinato, laminato laccato o legno impiallacciato per integrarsi con l&apos;estetica dell&apos;ambiente. Installiamo modelli con apertura a destra, sinistra, doppia anta e scorrevole. La posa include la rimozione della vecchia porta, la posa del controtelaio in acciaio e il sigillamento perimetrale.
+              Le ante sono rivestite esternamente in PVC, una soluzione economica, leggera e resistente all&apos;umidità, disponibile in diverse finiture colore. Installiamo modelli con apertura a destra, sinistra, doppia anta e scorrevole. La posa include la rimozione della vecchia porta, la posa del controtelaio in acciaio e il sigillamento perimetrale.
             </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
               Collaboriamo con i principali marchi italiani — Dierre, Alias, Oikos, Bertolotto Blindate. Contattaci per un sopralluogo e un preventivo gratuito.

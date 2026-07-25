@@ -20,16 +20,16 @@ export const categoryGroups: CategoryGroup[] = [
     label: 'Serramenti',
     href: '/serramenti',
     pages: [
-      { id: 201, label: 'Infissi in Alluminio',    href: '/serramenti/infissi-in-alluminio'    },
+      { id: 201, label: 'Infissi in Alluminio a Freddo', href: '/serramenti/infissi-in-alluminio-freddo' },
       { id: 202, label: 'Infissi in PVC',          href: '/serramenti/infissi-in-pvc'          },
       { id: 203,  label: 'Verande in Alluminio',    href: '/serramenti/verande-in-alluminio'    },
       { id: 2031, label: 'Verande in PVC',         href: '/serramenti/verande-in-pvc'          },
       { id: 204, label: 'Persiane in Alluminio',   href: '/serramenti/persiane-in-alluminio'   },
-      { id: 205,  label: 'Imbotti & Cassonetti',      href: '/serramenti/imbotti'                 },
-      { id: 2051, label: 'Tapparelle Manuali',       href: '/serramenti/tapparelle-manuali'      },
-      { id: 2052, label: 'Tapparelle Motorizzate', href: '/serramenti/tapparelle-motorizzate'  },
+      { id: 205,  label: 'Imbotti',                   href: '/serramenti/imbotti'                 },
+      { id: 2052, label: 'Tapparelle Motorizzazione', href: '/serramenti/tapparelle-motorizzazione' },
       { id: 206,  label: 'Veneziane',              href: '/serramenti/veneziane'               },
-      { id: 208, label: 'Vetrate',                 href: '/serramenti/vetrate'                 },
+      { id: 208, label: 'Vetrine',                 href: '/serramenti/vetrine'                 },
+      { id: 2082, label: 'Vetrate Panoramiche',    href: '/serramenti/vetrate-panoramiche'     },
       { id: 2081, label: 'Pergole Bioclimatiche',  href: '/serramenti/pergole-bioclimatiche'   },
       { id: 209, label: 'Lucernai',                href: '/serramenti/lucernai'                },
       { id: 210, label: 'Zanzariere',              href: '/serramenti/zanzariere'              },
@@ -38,13 +38,14 @@ export const categoryGroups: CategoryGroup[] = [
   },
   {
     id: 'metallurgia',
-    label: 'Metallurgia',
+    label: 'Ferro e Acciaio',
     href: '/metallurgia',
     pages: [
       { id: 2119, label: 'Porte Corazzate',           href: '/metallurgia/porte-corazzate'            },
-      { id: 212,  label: 'Porte Blindate',           href: '/metallurgia/porte-blindate'             },
+      { id: 2124, label: 'Porte Blindate Riv. Legno',      href: '/metallurgia/porte-blindate-legno'      },
+      { id: 2125, label: 'Porte Blindate Riv. Alluminio',  href: '/metallurgia/porte-blindate-alluminio'  },
+      { id: 2126, label: 'Porte Blindate Riv. PVC',        href: '/metallurgia/porte-blindate-pvc'        },
       { id: 2120, label: 'Porte Antincendio',        href: '/metallurgia/porte-antincendio'          },
-      { id: 213,  label: 'Pannelli Bugnato Alluminio', href: '/metallurgia/pannelli-bugnato-alluminio' },
       { id: 214, label: 'Cancelli',                   href: '/metallurgia/cancelli'                   },
       { id: 215, label: 'Grate',                      href: '/metallurgia/grate'                      },
       { id: 216, label: 'Ringhiere',                  href: '/metallurgia/ringhiere'                  },
@@ -59,6 +60,21 @@ export const categoryGroups: CategoryGroup[] = [
       { id: 222, label: 'Casseforti',                 href: '/metallurgia/casseforti'                 },
       { id: 2221, label: 'Tetti Coibentati',          href: '/metallurgia/tetti-coibentati'           },
       { id: 2222, label: 'Grondaie',                  href: '/metallurgia/grondaie'                   },
+    ],
+  },
+  {
+    id: 'legno',
+    label: 'Legno',
+    href: '/legno',
+    pages: [
+      { id: 242, label: 'Porte Interne',           href: '/legno/porte-interne'           },
+      { id: 243, label: 'Porte a Scomparsa',        href: '/legno/porte-scrigno'           },
+      { id: 244, label: 'Cucine',                  href: '/legno/cucine'                  },
+      { id: 245, label: 'Mobili in Massello',      href: '/legno/mobili-in-massello'      },
+      { id: 246, label: 'Mobili Tamburati',        href: '/legno/mobili-tamburati'        },
+      { id: 247, label: 'Parquet',                 href: '/legno/parquet'                 },
+      { id: 248, label: 'Rivestimento Compensato', href: '/legno/rivestimento-compensato' },
+      { id: 249, label: 'Infissi in Legno',        href: '/legno/infissi-in-legno'        },
     ],
   },
   {
@@ -85,21 +101,6 @@ export const categoryGroups: CategoryGroup[] = [
       { id: 239, label: 'Pulizia Finale',         href: '/edilizia/pulizia-finale'         },
       { id: 240, label: 'Piscine',                href: '/edilizia/piscine'                },
       { id: 241, label: 'Solarium',               href: '/edilizia/solarium'               },
-    ],
-  },
-  {
-    id: 'legno',
-    label: 'Legno',
-    href: '/legno',
-    pages: [
-      { id: 242, label: 'Porte Interne',           href: '/legno/porte-interne'           },
-      { id: 243, label: 'Porte Scrigno',           href: '/legno/porte-scrigno'           },
-      { id: 244, label: 'Cucine',                  href: '/legno/cucine'                  },
-      { id: 245, label: 'Mobili in Massello',      href: '/legno/mobili-in-massello'      },
-      { id: 246, label: 'Mobili Tamburati',        href: '/legno/mobili-tamburati'        },
-      { id: 247, label: 'Parquet',                 href: '/legno/parquet'                 },
-      { id: 248, label: 'Rivestimento Compensato', href: '/legno/rivestimento-compensato' },
-      { id: 249, label: 'Infissi in Legno',        href: '/legno/infissi-in-legno'        },
     ],
   },
   {
@@ -176,18 +177,72 @@ export const clientPages: NavPage[] = [
 
 // Voci singole in barra (non dentro un dropdown): Shop prima di Cataloghi
 export const standalonePages: NavPage[] = [
-  { id: 41, label: 'Shop',      href: '/shop'               },
+  { id: 41, label: 'Shop On Line', href: '/shop'          },
   { id: 38, label: 'Cataloghi', href: '/chi-siamo/cataloghi' },
 ]
 
-// Pagine Prodotti: pagine vetrina top-level, sempre pubbliche
+// Pagine Riqualificazione Energetica (ex "Prodotti"): pagine vetrina top-level, sempre pubbliche.
+// Nomi/id storici (280-285, Infissi/Verande/Persiane/Porte Blindate/Strutture
+// Metalliche/Ristrutturazioni) sostituiti dal 2026-07-21: le pagine restano
+// online e raggiungibili via URL diretto, ma non più in nav/footer/admin.
 export const prodottiPages: NavPage[] = [
-  { id: 280, label: 'Infissi',                        href: '/infissi'                        },
-  { id: 281, label: 'Verande',                        href: '/verande'                        },
-  { id: 282, label: 'Persiane',                       href: '/persiane'                        },
-  { id: 283, label: 'Porte Blindate',                 href: '/porte-blindate'                  },
-  { id: 284, label: 'Strutture Metalliche',           href: '/strutture-metalliche'            },
-  { id: 285, label: 'Ristrutturazioni Chiavi in Mano', href: '/ristrutturazioni-chiavi-in-mano' },
+  { id: 290, label: 'Infissi in Alluminio a Taglio Termico', href: '/serramenti/infissi-in-alluminio-taglio-termico'                     },
+  { id: 291, label: 'Infissi in PVC',           href: '/serramenti/infissi-in-pvc'                                                     },
+  { id: 292, label: 'Infissi in Legno',         href: '/legno/infissi-in-legno'                                                        },
+  { id: 293, label: 'Infissi in Legno-Alluminio', href: '/serramenti/infissi-in-legno-alluminio'                                       },
+  { id: 294, label: 'Persiane in Alluminio',    href: '/serramenti/persiane-in-alluminio'                                              },
+  { id: 295, label: 'Persiane in PVC',          href: '/serramenti/persiane-in-pvc'                                                    },
+  { id: 296, label: 'Imbotti',                  href: '/serramenti/imbotti'                                                            },
+  { id: 297, label: 'Cassonetti in PVC',        href: '/serramenti/cassonetti-in-pvc'                                                  },
+  { id: 298, label: 'Tapparelle in Alluminio',  href: '/serramenti/tapparelle-in-alluminio'                                            },
+  { id: 299, label: 'Tapparelle in PVC',        href: '/serramenti/tapparelle-in-pvc'                                                  },
+]
+
+// Raggruppamento visivo (non cliccabile) delle voci sopra nel dropdown di navbar/menu mobile.
+export const prodottiSubgroups: { label: string; pageIds: number[] }[] = [
+  { label: 'Infissi Isolanti Termoacustici', pageIds: [290, 291, 292, 293] },
+  { label: 'Sistemi Oscuranti',              pageIds: [294, 295, 296, 297, 298, 299] },
+]
+
+// Pagine "Comfort e Spazi Esterni": voce di menu nuova, flat (nessuna sottocategoria),
+// che riusa le pagine reali già esistenti sotto Serramenti (stessi id/href: se una
+// pagina viene disabilitata dal pannello "Pagine visibili" sparisce da entrambe le nav).
+export const comfortSpaziEsterniPages: NavPage[] = [
+  { id: 2082, label: 'Vetrate Panoramiche',   href: '/serramenti/vetrate-panoramiche'   },
+  { id: 2081, label: 'Pergole Bioclimatiche', href: '/serramenti/pergole-bioclimatiche' },
+  { id: 203,  label: 'Verande in Alluminio',  href: '/serramenti/verande-in-alluminio'  },
+  { id: 2031, label: 'Verande in PVC',        href: '/serramenti/verande-in-pvc'        },
+  { id: 210,  label: 'Zanzariere',            href: '/serramenti/zanzariere'            },
+]
+
+// Pagine "Antintrusione e Sicurezza": voce di menu nuova, flat, che riusa le pagine
+// reali già esistenti sotto Metallurgia (stessi id/href, stesso principio di comfortSpaziEsterniPages).
+export const antintrusioneSicurezzaPages: NavPage[] = [
+  { id: 2124, label: 'Porte Blindate Riv. Legno',      href: '/metallurgia/porte-blindate-legno'      },
+  { id: 2125, label: 'Porte Blindate Riv. Alluminio',  href: '/metallurgia/porte-blindate-alluminio'  },
+  { id: 2126, label: 'Porte Blindate Riv. PVC',        href: '/metallurgia/porte-blindate-pvc'        },
+  { id: 215,  label: 'Grate',          href: '/metallurgia/grate'          },
+  { id: 214,  label: 'Cancelli',       href: '/metallurgia/cancelli'       },
+]
+
+// Pagine "Carpenteria d'Arredo": voce di menu nuova, flat, che riusa le pagine
+// reali già esistenti sotto Metallurgia (stessi id/href, stesso principio delle voci sopra).
+export const carpenteriaArredoPages: NavPage[] = [
+  { id: 2201, label: 'Scale a Rampe',     href: '/metallurgia/scale-a-rampe'     },
+  { id: 2202, label: 'Scale a Chiocciola', href: '/metallurgia/scale-a-chiocciola' },
+  { id: 216,  label: 'Ringhiere',         href: '/metallurgia/ringhiere'         },
+  { id: 217,  label: 'Balconi',           href: '/metallurgia/balconi'           },
+]
+
+// Pagine "Ristrutturazioni Chiavi in Mano": voce di menu nuova, flat. Edilizia e Arredo
+// riusano gli hub categoria già esistenti; Pratiche/Impianti/Mobili sono pagine nuove
+// generiche/segnaposto (2026-07-21), contenuto e collegamenti da definire in seguito.
+export const ristrutturazioniChiaviInManoPages: NavPage[] = [
+  { id: 300, label: 'Pratiche',  href: '/ristrutturazioni-chiavi-in-mano/pratiche' },
+  { id: 301, label: 'Edilizia',  href: '/edilizia'                                 },
+  { id: 302, label: 'Impianti',  href: '/ristrutturazioni-chiavi-in-mano/impianti' },
+  { id: 303, label: 'Mobili',    href: '/ristrutturazioni-chiavi-in-mano/mobili'   },
+  { id: 304, label: 'Arredi',    href: '/arredi'                                   },
 ]
 
 // Colori placeholder per i riquadri della home (sostituire con immagini reali)

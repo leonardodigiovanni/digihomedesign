@@ -15,14 +15,14 @@ import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = {
-  title: 'Vetrate Commerciali a Palermo â€” Alluminio su Misura per Negozi',
-  description: 'Vetrate commerciali a Palermo in alluminio su misura: ingressi con porta e vetrata fissa, sistemi scorrevoli e pieghevoli per negozi, show-room e ristoranti.',
-  alternates: { canonical: 'https://www.digi-home-design.com/serramenti/vetrate' },
+  title: 'Tapparelle in PVC a Palermo — Manuali su Misura',
+  description: 'Tapparelle manuali in PVC coibentato a Palermo: a cinghia, manovella o moschettone, con avvolgitore a cassonetto incassato o a vista. Alto isolamento termoacustico.',
+  alternates: { canonical: 'https://www.digi-home-design.com/serramenti/tapparelle-in-pvc' },
   robots: { index: true, follow: true },
   openGraph: {
-    title: 'Vetrate Commerciali a Palermo â€” Alluminio su Misura per Negozi',
-    description: 'Vetrate commerciali a Palermo in alluminio su misura: ingressi con porta e vetrata fissa, sistemi scorrevoli e pieghevoli per negozi, show-room e ristoranti.',
-    url: 'https://www.digi-home-design.com/serramenti/vetrate',
+    title: 'Tapparelle in PVC a Palermo — Manuali su Misura',
+    description: 'Tapparelle manuali in PVC coibentato a Palermo: a cinghia, manovella o moschettone, con avvolgitore a cassonetto incassato o a vista. Alto isolamento termoacustico.',
+    url: 'https://www.digi-home-design.com/serramenti/tapparelle-in-pvc',
     type: 'website',
   },
 }
@@ -106,7 +106,7 @@ async function getCatalogoData(nomeCategoria: string, sottocatSlug: string) {
 }
 
 export default async function Page() {
-  const catalogo = await getCatalogoData('serramenti', 'vetrate')
+  const catalogo = await getCatalogoData('serramenti', 'tapparelle-in-pvc')
   const cookieStore = await cookies()
   const role = cookieStore.get('session_role')?.value ?? ''
   const isStaff = role === 'admin' || role === 'dipendente'
@@ -141,7 +141,7 @@ export default async function Page() {
         const parts = [p.numero || `#${p.id}`]
         if (p.cliente_nome) parts.push(p.cliente_nome)
         if (p.descrizione) parts.push(p.descrizione)
-        return { id: p.id, label: parts.join(' â€” ') }
+        return { id: p.id, label: parts.join(' — ') }
       })
     } catch {}
     finally { await db2.end() }
@@ -150,39 +150,39 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Vetrate<ShortcutStar />
+        <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Tapparelle in PVC<ShortcutStar />
       </p>
-      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Vetrate Commerciali a Palermo</h1>
+      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Tapparelle in PVC a Palermo</h1>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
         <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '16px' }}>
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/tapparelle-manuali/legno.png" alt="Tapparella in PVC effetto legno" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Fotografia da scegliere</span>
+                <span className="testo-articoli">Tapparella in PVC effetto legno</span>
               </div>
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/tapparelle-manuali/tapparelle.jpg" alt="Tapparelle in PVC su misura" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Fotografia da scegliere</span>
+                <span className="testo-articoli">Tapparelle in PVC su misura</span>
               </div>
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Progettiamo e installiamo <strong>vetrate commerciali a Palermo</strong> su misura per negozi, show-room, ristoranti, banche e uffici: sistemi in alluminio strutturale con vetro stratificato di sicurezza, ingressi con porta a battente o scorrevole automatica, facciate continue vetrate e sistemi a libro per l&apos;apertura totale del fronte su strada.
+              Forniamo e installiamo <strong>tapparelle manuali in PVC coibentato a Palermo</strong>: a cinghia, a manovella laterale o a moschettone, con avvolgitore a cassonetto incassato o a vista. Le doghe in PVC coibentato garantiscono un ottimo isolamento termico e acustico, riducendo i ponti freddi e il rumore proveniente dall&apos;esterno.
             </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              I profili in alluminio sono disponibili in sezione sottile per la massima visibilitÃ  del prodotto esposto, con finitura in qualsiasi colore RAL o anodizzatura. Il vetro viene scelto in base alle esigenze di sicurezza (stratificato 33.1 o 44.2), isolamento termico e resistenza al vento (calcolo NTC 2018).
+              Disponibili in tutti i colori RAL e con finiture effetto legno. Se invece cerchi maggiore robustezza e resistenza in ambienti marini o ad alta umidità, valuta la versione <Link href="/serramenti/tapparelle-in-alluminio" style={{ color: '#8a6800', textDecoration: 'underline' }}>in alluminio</Link>.
             </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Ogni progetto viene accompagnato da un disegno tecnico in pianta e prospetto per l&apos;approvazione prima della produzione. Contattaci per un sopralluogo gratuito a Palermo e provincia.
+              Ogni tapparella viene misurata sul posto e realizzata su misura. Contattaci per un preventivo gratuito a Palermo e provincia.
             </p>
           </div>
         </div>
@@ -197,7 +197,7 @@ export default async function Page() {
             cartNonVuoto={cartNonVuoto}
             submitLabel="Conferma"
             fixedCat="serramenti"
-            fixedSottocat="vetrate"
+            fixedSottocat="tapparelle-in-pvc"
           />
         )}
 
@@ -214,7 +214,7 @@ export default async function Page() {
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>{(() => {
         const cerca = catalogo
           ? `${catalogo.categoria.nome}`
-          : 'serramenti/vetrate/non trovata'
+          : 'serramenti/tapparelle-in-pvc/non trovata'
         const trova = catalogo && catalogo.voci.length > 0
           ? catalogo.voci.map(v => `(${v.nome}:${v.serie}:${v.pdf_label})/${v.sottocategoria ?? 'nessuno'}`).join('+')
           : 'nessuno'
