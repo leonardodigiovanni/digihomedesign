@@ -8,6 +8,7 @@ import {
   rimuoviDaCarrello, salvaCarrelloComePreventivo, svuotaCarrello,
   aggiornaArticoloCarrello, aggiungiArticoloAlCarrello,
   applicaCaratteristicaAlCarrello, fetchCaratteristicheOpt,
+  pulisciCarrelloOrfani,
   type OptCarItem,
 } from '@/app/brand/cataloghi/actions'
 import { DropdownLoginForm } from '@/components/header-auth'
@@ -64,6 +65,8 @@ export type CaratteristicaListino = {
   richiede_tipo_colore_acc: number
   richiede_tipo_vetro: number
   richiede_tipo_montaggio: number
+  foto_url?: string | null
+  escluso?: number
 }
 
 export type ArticoloCarrello = {
@@ -197,6 +200,7 @@ export default function CarrelloClient({
   postSaveHref,
   isApp,
   filtriLabels,
+  hasOrfani = false,
 }: {
   articoli: ArticoloCarrello[]
   isLoggedIn: boolean
@@ -209,8 +213,16 @@ export default function CarrelloClient({
   postSaveHref?: string
   isApp?: boolean
   filtriLabels?: Record<number, string>
+  hasOrfani?: boolean
 }) {
   const router = useRouter()
+
+  // Righe cookie non più risolvibili (articolo cancellato dal listino): ripulisce
+  // il cookie una volta sola così il badge nella nav torna a coincidere col visibile.
+  useEffect(() => {
+    if (hasOrfani) pulisciCarrelloOrfani().then(() => router.refresh())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasOrfani])
   const [delPending,    startDel]    = useTransition()
   const [savePending,   startSave]   = useTransition()
   const [clearPending,  startClear]  = useTransition()
@@ -225,6 +237,7 @@ export default function CarrelloClient({
   const [duplicaVals, setDuplicaVals] = useState<Omit<EditVals, 'desc'>>({ q: 1, ante: 1, l: 0, h: 0, colore: '', note: '' })
   const [lacunaFilter, setLacunaFilter]     = useState('')
   const [lacunaSelected, setLacunaSelected] = useState<number | null>(null)
+  const [caratteristicaVista, setCaratteristicaVista] = useState<'elenco' | 'immagini'>('elenco')
   const [previewArt, setPreviewArt] = useState<ArticoloCarrello | null>(null)
   const [isTouch, setIsTouch] = useState(false)
   useEffect(() => { setIsTouch(window.matchMedia('(pointer: coarse)').matches) }, [])
@@ -535,7 +548,21 @@ export default function CarrelloClient({
             </p>
 
             <div style={fieldS}>
-              <label style={lblS}>Scegli la caratteristica da applicare</label>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 6 }}>
+                <label style={{ ...lblS, margin: 0 }}>Scegli la caratteristica da applicare</label>
+                <div style={{ display: 'flex', gap: 4 }}>
+                  <button type="button" onClick={() => setCaratteristicaVista('elenco')}
+                    className={caratteristicaVista === 'elenco' ? b('btn-black', isApp) : b('btn-gray', isApp)}
+                    style={{ fontSize: 12, padding: '4px 10px' }}>
+                    ☰ Elenco
+                  </button>
+                  <button type="button" onClick={() => setCaratteristicaVista('immagini')}
+                    className={caratteristicaVista === 'immagini' ? b('btn-black', isApp) : b('btn-gray', isApp)}
+                    style={{ fontSize: 12, padding: '4px 10px' }}>
+                    ▦ Immagini
+                  </button>
+                </div>
+              </div>
               <input
                 type="text"
                 placeholder="Cerca per descrizione, produttore…"
@@ -543,37 +570,86 @@ export default function CarrelloClient({
                 value={lacunaFilter}
                 onChange={e => { setLacunaFilter(e.target.value); setLacunaSelected(null) }}
               />
-              <div style={{ border: '1px solid #ddd', borderRadius: 6, maxHeight: 260, overflowY: 'auto' }}>
-                {filtrate.length === 0 ? (
-                  <p style={{ fontSize: 14, color: '#1a1a1a', margin: 0, padding: '12px 14px' }}>Nessun risultato.</p>
-                ) : filtrate.map((c, i) => {
-                  const isSel = lacunaSelected === c.id
-                  const magg = c.sconto_articolo < 0 ? Math.abs(c.sconto_articolo) : null
-                  return (
-                    <div
-                      key={c.id}
-                      onClick={() => setLacunaSelected(c.id)}
-                      style={{
-                        padding: '10px 14px',
-                        borderBottom: i < filtrate.length - 1 ? '1px solid #ececec' : 'none',
-                        cursor: 'pointer',
-                        background: isSel ? '#e8f4e8' : '#fff',
-                        minHeight: 48,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        userSelect: 'none',
-                      }}
-                    >
-                      <span style={{ fontSize: 14, fontWeight: isSel ? 700 : 400, color: '#1a1a1a', lineHeight: 1.4 }}>
-                        {c.produttore ? `${c.produttore} · ` : ''}{c.descrizione}
-                        {magg && <span style={{ color: '#b45000', fontWeight: 600 }}> (Magg. del {magg}%)</span>}
-                      </span>
-                      {c.categoria && <span style={{ fontSize: 14, color: '#1a1a1a', marginTop: 2 }}>{c.categoria}</span>}
+              {caratteristicaVista === 'elenco' ? (
+                <div style={{ border: '1px solid #ddd', borderRadius: 6, maxHeight: 260, overflowY: 'auto' }}>
+                  {filtrate.length === 0 ? (
+                    <p style={{ fontSize: 14, color: '#1a1a1a', margin: 0, padding: '12px 14px' }}>Nessun risultato.</p>
+                  ) : filtrate.map((c, i) => {
+                    const isSel = lacunaSelected === c.id
+                    const magg = c.sconto_articolo < 0 ? Math.abs(c.sconto_articolo) : null
+                    return (
+                      <div
+                        key={c.id}
+                        onClick={() => setLacunaSelected(c.id)}
+                        style={{
+                          padding: '10px 14px',
+                          borderBottom: i < filtrate.length - 1 ? '1px solid #ececec' : 'none',
+                          cursor: 'pointer',
+                          background: isSel ? '#e8f4e8' : '#fff',
+                          minHeight: 48,
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                          userSelect: 'none',
+                        }}
+                      >
+                        <span style={{ fontSize: 14, fontWeight: isSel ? 700 : 400, color: '#1a1a1a', lineHeight: 1.4 }}>
+                          {c.produttore ? `${c.produttore} · ` : ''}{c.descrizione}
+                          {magg && <span style={{ color: '#b45000', fontWeight: 600 }}> (Magg. del {magg}%)</span>}
+                        </span>
+                        {c.categoria && <span style={{ fontSize: 14, color: '#1a1a1a', marginTop: 2 }}>{c.categoria}</span>}
+                      </div>
+                    )
+                  })}
+                </div>
+              ) : (
+                <div style={{ border: '1px solid #ddd', borderRadius: 6, maxHeight: 320, overflowY: 'auto', padding: 10 }}>
+                  {filtrate.length === 0 ? (
+                    <p style={{ fontSize: 14, color: '#1a1a1a', margin: 0 }}>Nessun risultato.</p>
+                  ) : (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(96px, 1fr))', gap: 8 }}>
+                      {filtrate.map(c => {
+                        const isSel = lacunaSelected === c.id
+                        const magg = c.sconto_articolo < 0 ? Math.abs(c.sconto_articolo) : null
+                        return (
+                          <div
+                            key={c.id}
+                            onClick={() => setLacunaSelected(c.id)}
+                            style={{
+                              border: isSel ? '2px solid #266626' : '1px solid #ddd',
+                              borderRadius: 6, overflow: 'hidden', cursor: 'pointer', userSelect: 'none',
+                              background: isSel ? '#e8f4e8' : '#fff', display: 'flex', flexDirection: 'column',
+                            }}
+                          >
+                            <div style={{ position: 'relative', width: '100%', aspectRatio: '1 / 1', background: '#f7f7f7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                              {c.foto_url ? (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img
+                                  src={c.foto_url.startsWith('http') ? c.foto_url : c.foto_url.startsWith('/') ? c.foto_url : `/${c.foto_url}`}
+                                  alt={c.descrizione}
+                                  style={{ width: '100%', height: '100%', objectFit: 'contain', opacity: c.escluso === 1 ? 0.4 : 1 }}
+                                />
+                              ) : (
+                                <span style={{ fontSize: 10, color: '#bbb', textAlign: 'center', padding: 6 }}>Nessuna foto</span>
+                              )}
+                              {c.foto_url && c.escluso === 1 && (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img src="/images/app/escluso.png" alt="ESCLUSO" style={{ position: 'absolute', top: '-20%', left: '-20%', width: '140%', height: '140%', objectFit: 'contain', pointerEvents: 'none' }} />
+                              )}
+                            </div>
+                            <div style={{ padding: '6px 6px', textAlign: 'center' }}>
+                              <span style={{ fontSize: 11, fontWeight: isSel ? 700 : 400, color: '#1a1a1a', lineHeight: 1.3 }}>
+                                {c.produttore ? `${c.produttore} · ` : ''}{c.descrizione}
+                                {magg && <span style={{ color: '#b45000', fontWeight: 600 }}> (Magg. {magg}%)</span>}
+                              </span>
+                            </div>
+                          </div>
+                        )
+                      })}
                     </div>
-                  )
-                })}
-              </div>
+                  )}
+                </div>
+              )}
             </div>
 
             <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginTop: 8, alignItems: 'center' }}>

@@ -124,6 +124,44 @@ export async function rimuoviDaCarrello(index: number): Promise<void> {
   saveCartCookie(cs, filtered)
 }
 
+// ─── Pulizia righe orfane (articolo cancellato dal listino dopo l'aggiunta al
+// carrello): il cookie non viene mai aggiornato quando un listino sparisce dal
+// DB, quindi la riga smette di risolversi e sparisce dalla pagina ma resta nel
+// cookie contando comunque nel badge — qui la si rimuove per davvero (in
+// cascata anche le eventuali caratteristiche figlie), così il badge torna a
+// coincidere con quello che si vede. ──────────────────────────────────────────
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function idListiniValidi(db: any, ids: number[]): Promise<Set<number>> {
+  if (ids.length === 0) return new Set()
+  const ph = ids.map(() => '?').join(',')
+  const [rows] = await db.query(`SELECT id FROM listini WHERE id IN (${ph})`, ids) as [{ id: number }[], unknown]
+  return new Set(rows.map(r => r.id))
+}
+
+function rimuoviOrfani(cart: CartItem[], idsValidi: Set<number>): CartItem[] {
+  const removedUids = new Set(
+    cart.filter(i => i.tipo !== 'caratteristica' && i.id > 0 && !idsValidi.has(i.id)).map(i => i.uid)
+  )
+  return cart.filter(i => {
+    if (i.tipo !== 'caratteristica' && i.id > 0 && !idsValidi.has(i.id)) return false
+    if (i.parent != null && removedUids.has(i.parent)) return false
+    return true
+  })
+}
+
+export async function pulisciCarrelloOrfani(): Promise<void> {
+  const cs = await cookies()
+  const cart = normalizeCart(cs.get('digi_cart')?.value ?? '')
+  const ids = [...new Set(cart.filter(i => i.tipo !== 'caratteristica' && i.id > 0).map(i => i.id))]
+  if (ids.length === 0) return
+  const db = await getConnection()
+  let idsValidi: Set<number>
+  try { idsValidi = await idListiniValidi(db, ids) } finally { await db.end() }
+  const cleaned = rimuoviOrfani(cart, idsValidi)
+  if (cleaned.length !== cart.length) saveCartCookie(cs, cleaned)
+}
+
 // ─── Aggiorna articolo esistente nel carrello ─────────────────────────────────
 
 export async function aggiornaArticoloCarrello(
@@ -329,6 +367,19 @@ export async function rimuoviDaCarrelloAcquisti(index: number): Promise<void> {
   const removedUid = cart[index].uid
   const filtered = cart.filter((item, i) => i !== index && item.parent !== removedUid)
   saveCartAcquistiCookie(cs, filtered)
+}
+
+// Stessa pulizia orfani di pulisciCarrelloOrfani, per il cookie digi_cart_acquisti.
+export async function pulisciCarrelloAcquistiOrfani(): Promise<void> {
+  const cs = await cookies()
+  const cart = normalizeCartAcquisti(cs.get('digi_cart_acquisti')?.value ?? '')
+  const ids = [...new Set(cart.filter(i => i.tipo !== 'caratteristica' && i.id > 0).map(i => i.id))]
+  if (ids.length === 0) return
+  const db = await getConnection()
+  let idsValidi: Set<number>
+  try { idsValidi = await idListiniValidi(db, ids) } finally { await db.end() }
+  const cleaned = rimuoviOrfani(cart, idsValidi)
+  if (cleaned.length !== cart.length) saveCartAcquistiCookie(cs, cleaned)
 }
 
 export async function aggiornaArticoloCarrelloAcquisti(

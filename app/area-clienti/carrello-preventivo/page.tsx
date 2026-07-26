@@ -269,7 +269,7 @@ export default async function Page() {
     try {
       const [cr] = await db2.query(
         `SELECT id, categoria, produttore, descrizione, unita, prezzo_vendita, sconto_articolo,
-                richiede_tipo_colore, richiede_tipo_colore_acc, richiede_tipo_vetro, richiede_tipo_montaggio
+                richiede_tipo_colore, richiede_tipo_colore_acc, richiede_tipo_vetro, richiede_tipo_montaggio, foto_url, escluso
          FROM listini
          WHERE disponibile = 1
            AND principale = 0
@@ -293,6 +293,8 @@ export default async function Page() {
         richiede_tipo_colore_acc: Number(r.richiede_tipo_colore_acc ?? 0),
         richiede_tipo_vetro:      Number(r.richiede_tipo_vetro      ?? 0),
         richiede_tipo_montaggio:  Number(r.richiede_tipo_montaggio  ?? 0),
+        foto_url:            r.foto_url ? String(r.foto_url) : null,
+        escluso:             Number(r.escluso ?? 0),
       }))
     } finally { await db2.end() }
   } catch {}
@@ -415,11 +417,15 @@ export default async function Page() {
     } catch {}
   }
 
+  // Righe del cookie che non risolvono più contro listini (articolo cancellato):
+  // spariscono dalla vista ma restano nel cookie, gonfiando il badge in layout.tsx.
+  const hasOrfani = cart.filter(i => i.tipo !== 'caratteristica').length !== articoli.filter(a => a?.tipo !== 'caratteristica').length
+
   return (
     <div className="page-content-wrapper" style={{ margin: '8px 0', padding: '0 0 8px', color: '#444', fontSize: 15, lineHeight: 1.8 }}>
 
 <ShortcutStar href="/area-clienti/carrello-preventivo" />
-<CarrelloClient articoli={articoli} isLoggedIn={isLoggedIn} scontoClientePct={scontoClientePct} caratteristiche={caratteristiche} listini={listini} percorsiPerListino={percorsiPerListino} filtriLabels={filtriLabels} />
+<CarrelloClient articoli={articoli} isLoggedIn={isLoggedIn} scontoClientePct={scontoClientePct} caratteristiche={caratteristiche} listini={listini} percorsiPerListino={percorsiPerListino} filtriLabels={filtriLabels} hasOrfani={hasOrfani} />
 
       {isStaff && (
         <div style={{ marginTop: 56, borderTop: '2px solid #e8e8e8', paddingTop: 40 }}>

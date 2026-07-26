@@ -141,13 +141,15 @@ export default async function Page() {
     prezzo_vendita: number; sconto_articolo: number
     richiede_tipo_colore: number; richiede_tipo_colore_acc: number
     richiede_tipo_vetro: number; richiede_tipo_montaggio: number
+    foto_url: string | null; escluso: number
   }[] = []
   try {
     const db = await getConnection()
     try {
       const [cr] = await db.query(
         `SELECT id, categoria, produttore, descrizione, unita, prezzo_vendita, sconto_articolo,
-                richiede_tipo_colore, richiede_tipo_colore_acc, richiede_tipo_vetro, richiede_tipo_montaggio
+                richiede_tipo_colore, richiede_tipo_colore_acc, richiede_tipo_vetro, richiede_tipo_montaggio,
+                foto_url, escluso
          FROM listini
          WHERE (richiede_tipo_colore = 1 OR richiede_tipo_colore_acc = 1 OR richiede_tipo_vetro = 1 OR richiede_tipo_montaggio = 1)
            AND disponibile = 1 AND principale = 0
@@ -165,14 +167,20 @@ export default async function Page() {
         richiede_tipo_colore_acc: Number(r.richiede_tipo_colore_acc ?? 0),
         richiede_tipo_vetro:      Number(r.richiede_tipo_vetro      ?? 0),
         richiede_tipo_montaggio:  Number(r.richiede_tipo_montaggio  ?? 0),
+        foto_url:            r.foto_url ? String(r.foto_url) : null,
+        escluso:             Number(r.escluso ?? 0),
       }))
     } finally { await db.end() }
   } catch {}
 
+  // Righe del cookie che non risolvono più contro listini (articolo cancellato):
+  // spariscono dalla vista ma restano nel cookie, gonfiando il badge in layout.tsx.
+  const hasOrfani = cart.filter(i => i.tipo !== 'caratteristica').length !== articoli.filter(a => a?.tipo !== 'caratteristica').length
+
   return (
     <div className="page-content-wrapper" style={{ margin: '8px 0', padding: '0 0 8px', color: '#444', fontSize: 15, lineHeight: 1.8 }}>
       <ShortcutStar href="/area-clienti/carrello-acquisti" />
-      <CarrelloAcquistiClient articoli={articoli} isLoggedIn={isLoggedIn} caratteristiche={caratteristiche} registrazioniDisabilitate={registrazioniDisabilitate} scontoClientePct={scontoClientePct} />
+      <CarrelloAcquistiClient articoli={articoli} isLoggedIn={isLoggedIn} caratteristiche={caratteristiche} registrazioniDisabilitate={registrazioniDisabilitate} scontoClientePct={scontoClientePct} hasOrfani={hasOrfani} />
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>pagina revisionata</p>
     </div>
   )
