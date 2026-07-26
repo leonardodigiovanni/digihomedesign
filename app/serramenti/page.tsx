@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 
 const subcategories = [
   { href: '/serramenti/infissi-in-alluminio-taglio-termico', label: 'Infissi in Alluminio a Taglio Termico', desc: 'Finestre e porte-finestre in alluminio a taglio termico, eleganti e durevoli.' },
-  { href: '/serramenti/infissi-in-alluminio-freddo',         label: 'Infissi in Alluminio a Freddo',         desc: 'Infissi in alluminio senza taglio termico per verande, box e ambienti non riscaldati.' },
+  { href: '/serramenti/infissi-in-alluminio-freddo',         label: 'Infissi in Alluminio Freddo',           desc: 'Infissi in alluminio senza taglio termico per verande, box e ambienti non riscaldati.' },
   { href: '/serramenti/infissi-in-pvc',           label: 'Infissi in PVC',           desc: 'Infissi in PVC multicamera ad alta efficienza termica e acustica.' },
   { href: '/serramenti/infissi-in-legno-alluminio', label: 'Infissi in Legno-Alluminio', desc: 'Interno in legno naturale, esterno in alluminio resistente agli agenti atmosferici.' },
   { href: '/serramenti/verande-in-alluminio',     label: 'Verande in Alluminio',     desc: 'Verande in alluminio e vetro per vivere gli spazi esterni tutto l\'anno.' },

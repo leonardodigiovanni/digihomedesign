@@ -20,7 +20,7 @@ export const categoryGroups: CategoryGroup[] = [
     label: 'Serramenti',
     href: '/serramenti',
     pages: [
-      { id: 201, label: 'Infissi in Alluminio a Freddo', href: '/serramenti/infissi-in-alluminio-freddo' },
+      { id: 201, label: 'Infissi in Alluminio Freddo', href: '/serramenti/infissi-in-alluminio-freddo' },
       { id: 202, label: 'Infissi in PVC',          href: '/serramenti/infissi-in-pvc'          },
       { id: 203,  label: 'Verande in Alluminio',    href: '/serramenti/verande-in-alluminio'    },
       { id: 2031, label: 'Verande in PVC',         href: '/serramenti/verande-in-pvc'          },

@@ -18,12 +18,12 @@ import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = {
-  title: 'Infissi in Alluminio a Freddo a Palermo — Su Misura',
+  title: 'Infissi in Alluminio Freddo a Palermo — Su Misura',
   description: 'Infissi in alluminio a freddo (senza taglio termico) a Palermo: finestre e porte-finestre su misura, per verande, box e ambienti non riscaldati.',
   alternates: { canonical: 'https://www.digi-home-design.com/serramenti/infissi-in-alluminio-freddo' },
   robots: { index: true, follow: true },
   openGraph: {
-    title: 'Infissi in Alluminio a Freddo a Palermo — Su Misura',
+    title: 'Infissi in Alluminio Freddo a Palermo — Su Misura',
     description: 'Infissi in alluminio a freddo (senza taglio termico) a Palermo: finestre e porte-finestre su misura, per verande, box e ambienti non riscaldati.',
     url: 'https://www.digi-home-design.com/serramenti/infissi-in-alluminio-freddo',
     type: 'website',
@@ -172,9 +172,9 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Infissi in Alluminio a Freddo<ShortcutStar />
+        <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Infissi in Alluminio Freddo<ShortcutStar />
       </p>
-      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Infissi in Alluminio a Freddo a Palermo</h1>
+      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Infissi in Alluminio Freddo a Palermo</h1>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 

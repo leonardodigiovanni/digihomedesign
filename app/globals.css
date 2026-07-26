@@ -1356,7 +1356,7 @@ body {
    Scroll orizzontale con fade già gestisce lo spazio, quindi i contenuti
    non devono rimpicciolirsi/andare a capo per adattarsi */
 .sticky-bottom-bar-row {
-  background: #77809f;
+  background: #d97030;
 }
 .sticky-bottom-bar-row > * {
   flex-shrink: 0;
