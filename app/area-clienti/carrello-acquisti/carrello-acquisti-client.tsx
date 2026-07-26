@@ -822,25 +822,25 @@ export default function CarrelloAcquistiClient({
                               <div style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: 10 }}>
                                 {showColore && (
                                   <button type="button" onClick={() => handleAggiungiLacuna(root, 'tipo_colore')}
-                                    style={{ height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, whiteSpace: 'nowrap', borderRadius: 21, border: '1px solid #000', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>
+                                    className={b('btn-orange', isApp)} style={{ height: 42, padding: '0 8px', fontSize: 14, whiteSpace: 'nowrap' }}>
                                     + Colore
                                   </button>
                                 )}
                                 {showColoreAcc && (
                                   <button type="button" onClick={() => handleAggiungiLacuna(root, 'tipo_colore_acc')}
-                                    style={{ height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, whiteSpace: 'nowrap', borderRadius: 21, border: '1px solid #000', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>
+                                    className={b('btn-orange', isApp)} style={{ height: 42, padding: '0 8px', fontSize: 14, whiteSpace: 'nowrap' }}>
                                     + Accessori
                                   </button>
                                 )}
                                 {showVetro && (
                                   <button type="button" onClick={() => handleAggiungiLacuna(root, 'tipo_vetro')}
-                                    style={{ height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, whiteSpace: 'nowrap', borderRadius: 21, border: '1px solid #000', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>
+                                    className={b('btn-orange', isApp)} style={{ height: 42, padding: '0 8px', fontSize: 14, whiteSpace: 'nowrap' }}>
                                     + Vetro
                                   </button>
                                 )}
                                 {showMontaggio && (
                                   <button type="button" onClick={() => handleAggiungiLacuna(root, 'tipo_montaggio')}
-                                    style={{ height: 42, padding: '0 8px', fontSize: 14, fontWeight: 700, whiteSpace: 'nowrap', borderRadius: 21, border: '1px solid #000', cursor: 'pointer', background: 'repeating-linear-gradient(135deg,rgba(255,255,255,0.12) 0px,rgba(255,255,255,0.12) 1px,transparent 1px,transparent 6px),linear-gradient(135deg,#e0916a 0%,#ffbfa0 30%,#ffd4be 50%,#ffbfa0 70%,#e0916a 100%)', color: '#000', boxShadow: '0 2px 8px rgba(200,100,60,0.3),inset 0 1px 0 rgba(255,220,200,0.4)' }}>
+                                    className={b('btn-orange', isApp)} style={{ height: 42, padding: '0 8px', fontSize: 14, whiteSpace: 'nowrap' }}>
                                     + Montaggio
                                   </button>
                                 )}

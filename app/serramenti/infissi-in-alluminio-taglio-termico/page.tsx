@@ -102,7 +102,7 @@ async function getCatalogoData(nomeCategoria: string, sottocatSlug: string) {
       )
       const articoliPerListino: Record<string, ArticoloListino[]> = { '0': artRows as ArticoloListino[] }
       const [rowsAcq] = await db.query(
-        `SELECT id, descrizione, produttore, serie, unita, prezzo_vendita, max_acquistabile
+        `SELECT id, descrizione, produttore, serie, unita, prezzo_vendita, max_acquistabile, foto_url, prezzo_promo
          FROM listini
          WHERE disponibile = 1 AND acquistabile = 1
            AND id IN (SELECT listino_id FROM listini_percorsi WHERE LOWER(REPLACE(TRIM(categoria), '-', ' ')) = ?)

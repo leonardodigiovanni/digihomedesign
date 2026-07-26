@@ -41,7 +41,7 @@ async function getCatalogoData(nomeCategoria: string) {
       )
       const voceList = vociRows as { id: number; nome: string; serie: string; pdf_filename: string; pdf_label: string; descrizione: string | null; sottocategoria?: string | null }[]
       await db.execute(`ALTER TABLE listini ADD COLUMN principale TINYINT(1) NOT NULL DEFAULT 1`).catch(() => {})
-      const COLS = 'id, descrizione, produttore, serie, unita, prezzo_acquisto, prezzo_vendita, sconto_articolo, richiede_larghezza, richiede_altezza, richiede_quantita, richiede_piano, richiede_km, richiede_peso, richiede_tipo_colore, richiede_tipo_vetro, richiede_tipo_montaggio, schema_url, max_acquistabile'
+      const COLS = 'id, descrizione, produttore, serie, unita, prezzo_acquisto, prezzo_vendita, sconto_articolo, richiede_larghezza, richiede_altezza, richiede_quantita, richiede_piano, richiede_km, richiede_peso, richiede_tipo_colore, richiede_tipo_vetro, richiede_tipo_montaggio, schema_url, foto_url, max_acquistabile'
       const [rows] = await db.query(
         `SELECT ${COLS} FROM listini
          WHERE disponibile = 1 AND preventivabile = 1 AND principale = 1
@@ -51,7 +51,7 @@ async function getCatalogoData(nomeCategoria: string) {
       )
       const articoliPerListino: Record<string, ArticoloListino[]> = { '0': rows as ArticoloListino[] }
       const [rowsAcq] = await db.query(
-        `SELECT id, descrizione, produttore, serie, unita, prezzo_vendita, max_acquistabile
+        `SELECT id, descrizione, produttore, serie, unita, prezzo_vendita, max_acquistabile, foto_url, prezzo_promo
          FROM listini
          WHERE disponibile = 1 AND acquistabile = 1
            AND id IN (SELECT listino_id FROM listini_percorsi WHERE LOWER(REPLACE(TRIM(categoria), '-', ' ')) = ?)

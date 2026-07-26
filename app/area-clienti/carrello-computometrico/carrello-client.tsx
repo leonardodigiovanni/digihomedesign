@@ -236,7 +236,10 @@ export default function CarrelloComputometricoClient({
   }
   const fieldS: React.CSSProperties = { marginBottom: 12 }
 
-  const listiniAsForm = articoli as unknown as ArticoloListino[]
+  // Aggiungendo un elemento figlio (parentUid) va offerto il pool secondario
+  // (principale=0), aggiungendo un articolo principale invece solo principale=1.
+  const listiniPerModaleAggiungi = (parentUid?: number) =>
+    (articoli.filter(a => a.principale === (parentUid != null ? 0 : 1)) as unknown as ArticoloListino[])
 
   // Raggruppa solo le righe primarie (senza parentUid)
   type Gruppo = { key: string; label: string; righe: RigaCarrello[] }
@@ -268,7 +271,7 @@ export default function CarrelloComputometricoClient({
             style={{ width: '100%', maxWidth: 720, padding: '0 16px', boxSizing: 'border-box', marginTop: 'auto', marginBottom: 'auto' }}
           >
             <AggiungiArticoloForm
-              articoli={listiniAsForm}
+              articoli={listiniPerModaleAggiungi(modal.parentUid)}
               isLoggedIn={isLoggedIn}
               onConfirm={handleConfirm}
               onClose={onClose}

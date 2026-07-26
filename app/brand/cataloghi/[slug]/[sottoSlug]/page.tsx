@@ -81,7 +81,7 @@ async function getData(slug: string, sottoSlug: string) {
     `, [sottoNome, catNome, sottoNome])
 
     const [rowsAcq] = await db.query(
-      `SELECT id, descrizione, produttore, serie, unita, prezzo_vendita, max_acquistabile
+      `SELECT id, descrizione, produttore, serie, unita, prezzo_vendita, max_acquistabile, foto_url, prezzo_promo
        FROM listini WHERE disponibile = 1 AND acquistabile = 1
          AND id IN (SELECT listino_id FROM listini_percorsi WHERE categoria = ? AND sottocategoria = ?)
        ORDER BY descrizione ASC`,

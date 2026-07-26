@@ -54,7 +54,7 @@ async function getArticoli(): Promise<{ articoli: ArticoloComputabile[]; percors
              l.schema_url, l.logo_url
       FROM listini l
       LEFT JOIN listini_percorsi lp ON lp.listino_id = l.id
-      WHERE l.disponibile = 1 AND l.computabile = 1 AND l.principale = 1
+      WHERE l.disponibile = 1 AND l.computabile = 1
       ORDER BY COALESCE(lp.categoria, l.categoria), l.produttore, l.serie, l.descrizione
     `) as [Record<string, unknown>[], unknown]
 

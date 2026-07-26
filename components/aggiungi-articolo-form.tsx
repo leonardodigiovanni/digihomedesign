@@ -27,6 +27,7 @@ export type ArticoloListino = {
   richiede_tipo_vetro?: number
   richiede_tipo_montaggio?: number
   schema_url?: string | null
+  foto_url?: string | null
   logo_url?: string | null
   max_acquistabile?: number | null
   filtro_1?: number
@@ -65,6 +66,23 @@ const FILTRI_MODELLO_N = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const
 function flagN(a: ArticoloListino, n: number): number {
   const key = `filtro_${n}` as keyof ArticoloListino
   return (a[key] as number | undefined) ?? 0
+}
+
+// Immagine per la griglia thumbnail: preferisce lo schema tecnico (infissi), altrimenti
+// la foto prodotto vera e propria — così anche i prodotti senza schema hanno una miniatura.
+function immagineGriglia(a: ArticoloListino): string | null {
+  const raw = a.schema_url || a.foto_url
+  if (!raw) return null
+  return raw.startsWith('http') ? raw : raw.startsWith('/') ? raw : `/${raw}`
+}
+
+// Chiave di raggruppamento della griglia: gli articoli che condividono la stessa immagine
+// (stesso schema, es. varianti misura/colore di un infisso) restano in un'unica tile — chi
+// invece non ha nessuna immagine ottiene una chiave unica per articolo, cosi' compare comunque
+// come tile a se' (placeholder "nessuna foto") invece di sparire dalla griglia: N articoli in
+// lista devono sempre corrispondere a N tile visibili, mai meno.
+function chiaveGriglia(a: ArticoloListino): string {
+  return immagineGriglia(a) ?? `__noimg-${a.id}`
 }
 
 export default function AggiungiArticoloForm({
@@ -248,7 +266,7 @@ export default function AggiungiArticoloForm({
     if (filtriModelloAttivi.size > 0) {
       lista = lista.filter(a => [...filtriModelloAttivi].every(n => flagN(a, n) === 1))
     }
-    if (schemaFiltro) lista = lista.filter(a => a.schema_url === schemaFiltro)
+    if (schemaFiltro) lista = lista.filter(a => chiaveGriglia(a) === schemaFiltro)
     const seen = new Set<string>()
     return lista.filter(a => {
       const lbl = labelOf(a)
@@ -265,19 +283,19 @@ export default function AggiungiArticoloForm({
     }
     const map = new Map<string, ArticoloListino[]>()
     for (const a of base) {
-      if (!a.schema_url) continue
-      const items = map.get(a.schema_url) ?? []
+      const key = chiaveGriglia(a)
+      const items = map.get(key) ?? []
       items.push(a)
-      map.set(a.schema_url, items)
+      map.set(key, items)
     }
     return [...map.entries()]
-      .map(([url, items]) => {
+      .map(([key, items]) => {
         // Badge logo solo se il gruppo è di una marca sola (schema condiviso da marche diverse resta ambiguo)
         const marcheGruppo = new Set(items.map(i => i.produttore))
         const badgeLogo = marcheGruppo.size === 1 ? (items.find(i => i.logo_url)?.logo_url ?? null) : null
         const rif = items[0]
         return {
-          url, count: items.length, badgeLogo,
+          key, url: immagineGriglia(rif), count: items.length, badgeLogo,
           materiale: rif.materiale ?? '', tipologia: rif.tipologia ?? '',
           produttore: rif.produttore ?? '', serie: rif.serie ?? '',
         }
@@ -545,13 +563,13 @@ export default function AggiungiArticoloForm({
           {/* Griglia schema */}
           {thumbnailsData.length > 0 && (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: 8 }}>
-              {thumbnailsData.map(({ url, count, badgeLogo }) => {
-                const isSelected = schemaFiltro === url
+              {thumbnailsData.map(({ key, url, count, badgeLogo }) => {
+                const isSelected = schemaFiltro === key
                 return (
                   <button
-                    key={url}
+                    key={key}
                     type="button"
-                    onClick={() => setSchemaFiltro(isSelected ? null : url)}
+                    onClick={() => setSchemaFiltro(isSelected ? null : key)}
                     title={count > 1 ? `${count} articoli` : undefined}
                     style={{
                       display: 'flex', flexDirection: 'column', padding: 0, background: '#fff', cursor: 'pointer',
@@ -560,7 +578,13 @@ export default function AggiungiArticoloForm({
                       boxShadow: isSelected ? '0 0 0 2px rgba(200,150,12,0.25)' : 'none',
                     }}
                   >
-                    <img src={url} alt="" style={{ display: 'block', width: '100%', height: 70, objectFit: 'contain', background: '#fff' }} />
+                    {url ? (
+                      <img src={url} alt="" style={{ display: 'block', width: '100%', height: 70, objectFit: 'contain', background: '#fff' }} />
+                    ) : (
+                      <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: 70, background: '#f7f7f7', color: '#bbb', fontSize: 9, textAlign: 'center', padding: 4, boxSizing: 'border-box' }}>
+                        Nessuna foto
+                      </span>
+                    )}
                     {badgeLogo && (
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 24, background: '#fff', flexShrink: 0 }}>
                         <img src={badgeLogo} alt="" style={{ maxWidth: '80%', maxHeight: 18, objectFit: 'contain' }} />

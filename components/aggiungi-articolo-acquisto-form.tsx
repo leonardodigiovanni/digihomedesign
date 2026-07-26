@@ -13,6 +13,32 @@ export type ArticoloListinoAcquisto = {
   unita: string
   prezzo_vendita: number
   max_acquistabile: number | null
+  foto_url?: string | null
+  prezzo_promo?: number | null
+}
+
+// Stessa convenzione di aggiungi-articolo-form.tsx: normalizza il path della foto.
+function immagineDi(a: ArticoloListinoAcquisto): string | null {
+  const raw = a.foto_url
+  if (!raw) return null
+  return raw.startsWith('http') ? raw : raw.startsWith('/') ? raw : `/${raw}`
+}
+
+// Stesso schema prezzo di PrezzoAmazon (components/ecommerce-shop.tsx): un solo
+// prezzo, oppure promo in rosso + normale barrato se prezzo_promo è impostato e diverso.
+function PrezzoTile({ a }: { a: ArticoloListinoAcquisto }) {
+  if (!a.prezzo_vendita) return null
+  const normale = Number(a.prezzo_vendita)
+  const promo = a.prezzo_promo != null ? Number(a.prezzo_promo) : null
+  if (promo == null || promo === normale) {
+    return <span style={{ fontSize: 12, fontWeight: 700, color: '#0f1111' }}>€ {normale.toFixed(2)}</span>
+  }
+  return (
+    <span style={{ display: 'inline-flex', gap: 6, alignItems: 'baseline', flexWrap: 'wrap', justifyContent: 'center' }}>
+      <span style={{ fontSize: 12, fontWeight: 700, color: '#c0392b' }}>€ {promo.toFixed(2)}</span>
+      <span style={{ fontSize: 11, color: '#888', textDecoration: 'line-through' }}>€ {normale.toFixed(2)}</span>
+    </span>
+  )
 }
 
 type UnitaMode = 'pz' | 'kg' | 't' | 'ml' | 'mq'
@@ -40,6 +66,7 @@ export default function AggiungiArticoloAcquistoForm({ articoli, isApp }: { arti
   const [selectedId, setSelectedId] = useState<number>(articoli[0]?.id ?? 0)
   const [result, setResult] = useState<CartResult | null>(null)
   const [isPending, startTransition] = useTransition()
+  const [vista, setVista] = useState<'elenco' | 'immagini'>('elenco')
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -69,20 +96,68 @@ export default function AggiungiArticoloAcquistoForm({ articoli, isApp }: { arti
       {step === 'select' && (
         <div style={{ display: 'flex', flexDirection: isApp ? 'column' : 'row', gap: 8, flexWrap: isApp ? undefined : 'wrap', alignItems: isApp ? 'stretch' : 'flex-end' }}>
           <div style={isApp ? {} : { flex: '2 1 260px' }}>
-            <label className="testo-articoli" style={{ display: 'block', marginBottom: 3 }}>Articolo</label>
-            <SelectLookup
-              value={String(selectedId)}
-              onChange={v => setSelectedId(Number(v))}
-              options={articoli.map(a => {
-                const parts = [a.descrizione, a.produttore, a.serie].filter(Boolean)
-                if (a.prezzo_vendita > 0) parts.push(`(€${Number(a.prezzo_vendita).toFixed(2)}${a.unita ? ` al ${a.unita}` : ''})`)
-                else if (a.unita) parts.push(a.unita)
-                const label = parts.join(' - ')
-                const stock = a.max_acquistabile === 0 ? ' [ESAURITO]' : a.max_acquistabile != null ? ` [Max ${a.max_acquistabile}]` : ''
-                return { value: String(a.id), label: `${label}${stock}` }
-              })}
-              style={inpStyle}
-            />
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 3 }}>
+              <label className="testo-articoli" style={{ margin: 0 }}>Articolo</label>
+              <div style={{ display: 'flex', gap: 4 }}>
+                <button type="button" onClick={() => setVista('elenco')}
+                  className={vista === 'elenco' ? b('btn-black', isApp) : b('btn-gray', isApp)}
+                  style={{ fontSize: 12, padding: '4px 10px' }}>
+                  ☰ Elenco
+                </button>
+                <button type="button" onClick={() => setVista('immagini')}
+                  className={vista === 'immagini' ? b('btn-black', isApp) : b('btn-gray', isApp)}
+                  style={{ fontSize: 12, padding: '4px 10px' }}>
+                  ▦ Immagini
+                </button>
+              </div>
+            </div>
+            {vista === 'elenco' ? (
+              <SelectLookup
+                value={String(selectedId)}
+                onChange={v => setSelectedId(Number(v))}
+                options={articoli.map(a => {
+                  const parts = [a.descrizione, a.produttore, a.serie].filter(Boolean)
+                  if (a.prezzo_vendita > 0) parts.push(`(€${Number(a.prezzo_vendita).toFixed(2)}${a.unita ? ` al ${a.unita}` : ''})`)
+                  else if (a.unita) parts.push(a.unita)
+                  const label = parts.join(' - ')
+                  const stock = a.max_acquistabile === 0 ? ' [ESAURITO]' : a.max_acquistabile != null ? ` [Max ${a.max_acquistabile}]` : ''
+                  return { value: String(a.id), label: `${label}${stock}` }
+                })}
+                style={inpStyle}
+              />
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(96px, 1fr))', gap: 8, maxHeight: 320, overflowY: 'auto', border: '1px solid #ddd', borderRadius: 6, padding: 10, background: '#fff' }}>
+                {articoli.map(a => {
+                  const isSel = a.id === selectedId
+                  const esauritoA = a.max_acquistabile === 0
+                  const url = immagineDi(a)
+                  return (
+                    <div key={a.id} onClick={() => setSelectedId(a.id)}
+                      style={{
+                        border: isSel ? '2px solid #266626' : '1px solid #ddd', borderRadius: 6, overflow: 'hidden',
+                        cursor: 'pointer', userSelect: 'none', background: isSel ? '#e8f4e8' : '#fff',
+                        display: 'flex', flexDirection: 'column', opacity: esauritoA ? 0.5 : 1,
+                      }}>
+                      <div style={{ width: '100%', aspectRatio: '1 / 1', background: '#f7f7f7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {url ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={url} alt={a.descrizione} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                        ) : (
+                          <span style={{ fontSize: 10, color: '#bbb', textAlign: 'center', padding: 6 }}>Nessuna foto</span>
+                        )}
+                      </div>
+                      <div style={{ padding: '6px 6px', display: 'flex', flexDirection: 'column', gap: 3, alignItems: 'center', textAlign: 'center' }}>
+                        <span style={{ fontSize: 11, fontWeight: isSel ? 700 : 400, color: '#1a1a1a', lineHeight: 1.3 }}>
+                          {a.produttore ? `${a.produttore} · ` : ''}{a.descrizione}
+                          {esauritoA && <span style={{ color: '#c0392b', fontWeight: 600 }}> (Esaurito)</span>}
+                        </span>
+                        {!esauritoA && <PrezzoTile a={a} />}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
           </div>
           <button
             type="button"
