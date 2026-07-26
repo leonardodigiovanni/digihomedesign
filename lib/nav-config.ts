@@ -178,7 +178,8 @@ export const clientPages: NavPage[] = [
 // Voci singole in barra (non dentro un dropdown): Shop prima di Cataloghi
 export const standalonePages: NavPage[] = [
   { id: 41, label: 'Shop On Line', href: '/shop'          },
-  { id: 38, label: 'Cataloghi', href: '/chi-siamo/cataloghi' },
+  { id: 42, label: 'Promozioni', href: '/promozioni' },
+  { id: 38, label: 'Cataloghi', href: '/cataloghi' },
 ]
 
 // Pagine Riqualificazione Energetica (ex "Prodotti"): pagine vetrina top-level, sempre pubbliche.
@@ -281,6 +282,7 @@ export const adminPages: NavPage[] = [
   { id: 65, label: 'Area di Test',        href: '/amministrazione/area-di-test',    roles: ['admin'] },
   { id: 66, label: 'B2B',                 href: '/amministrazione/b2b',             roles: ['admin'] },
   { id: 67, label: 'B2C',                 href: '/amministrazione/b2c',             roles: ['admin'] },
+  { id: 68, label: 'Immagini Categorie e Promo', href: '/amministrazione/immagini-categorie', roles: ['admin'] },
 ]
 
 // Pagine Fornitori: visibili solo a dipendenti e admin

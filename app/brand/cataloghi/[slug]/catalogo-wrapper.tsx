@@ -97,7 +97,6 @@ export default function CatalogoWrapper({
   const catalogoLabel = (n: number) => filtriCatalogoLabels?.[n] ?? `C${n}`
   const [selectedVoce, setSelectedVoce] = useState<Voce | null>(null)
 
-  const [formSottocat, setFormSottocat] = useState('')
   const [faseSel, setFaseSel] = useState('')
   const [materialeSel, setMaterialeSel] = useState('')
   const [tipologiaSel, setTipologiaSel] = useState('')
@@ -106,7 +105,7 @@ export default function CatalogoWrapper({
   const [filtriPdf, setFiltriPdf] = useState<Set<number>>(new Set())
   const [filtriModello, setFiltriModello] = useState<Set<number>>(new Set())
   const [savedFilters, setSavedFilters] = useState<{
-    formSottocat: string; faseSel: string; materialeSel: string; tipologiaSel: string
+    faseSel: string; materialeSel: string; tipologiaSel: string
     ambienteSel: string; fasciaSel: string; filtriModello: Set<number>
   } | null>(null)
 
@@ -123,9 +122,10 @@ export default function CatalogoWrapper({
   // Cascade — opzioni da unione voci+articoli; voci senza campo passano sempre.
   // Voci: match esatto (sono i cataloghi stessi). Articoli: match tollerante — un
   // articolo senza quel campo compilato non è stato ristretto, quindi va bene comunque.
-  const sottocatOpt = [...new Set([...voci.map(v => v.sottocategoria), ...articoliPool.map(a => a.sottocategoria)].filter(Boolean))].sort() as string[]
-  const post1 = formSottocat ? voci.filter(v => v.sottocategoria?.toLowerCase() === formSottocat.toLowerCase()) : voci
-  const art1  = formSottocat ? articoliPool.filter(a => !a.sottocategoria || a.sottocategoria.toLowerCase() === formSottocat.toLowerCase()) : articoliPool
+  // (La sottocategoria non è più un filtro qui: è un livello di navigazione a sé —
+  // /cataloghi/[categoria]/[sottocategoria] — quindi voci/articoli arrivano già filtrati.)
+  const post1 = voci
+  const art1  = articoliPool
 
   const faseOpt = [...new Set([...post1.map(v => v.fase), ...art1.map(a => a.fase)].filter(Boolean))].sort() as string[]
   const post2 = faseSel ? post1.filter(v => v.fase === faseSel) : post1
@@ -196,7 +196,7 @@ export default function CatalogoWrapper({
     articoliPool.some(a => a.sottocategoria || a.fase || a.materiale || a.tipologia || a.ambiente || a.fascia)
 
   function resetFiltri() {
-    setFormSottocat(''); setFaseSel(''); setMaterialeSel('')
+    setFaseSel(''); setMaterialeSel('')
     setTipologiaSel(''); setAmbienteSel(''); setFasciaSel('')
     setFiltriPdf(new Set()); setFiltriModello(new Set())
   }
@@ -208,7 +208,7 @@ export default function CatalogoWrapper({
   // classificazione dell'articolo. Chiudendo (voce=null): ripristina i filtri precedenti.
   function selectVoce(voce: Voce | null) {
     if (voce) {
-      setSavedFilters({ formSottocat, faseSel, materialeSel, tipologiaSel, ambienteSel, fasciaSel, filtriModello: new Set(filtriModello) })
+      setSavedFilters({ faseSel, materialeSel, tipologiaSel, ambienteSel, fasciaSel, filtriModello: new Set(filtriModello) })
       setFaseSel(voce.fase ?? '')
       setMaterialeSel(voce.materiale ?? '')
       setTipologiaSel(voce.tipologia ?? '')
@@ -218,7 +218,6 @@ export default function CatalogoWrapper({
       for (const n of MODELLO_N) { if (flagModello(voce, n) === 1) m.add(n) }
       setFiltriModello(m)
     } else if (savedFilters) {
-      setFormSottocat(savedFilters.formSottocat)
       setFaseSel(savedFilters.faseSel)
       setMaterialeSel(savedFilters.materialeSel)
       setTipologiaSel(savedFilters.tipologiaSel)
@@ -330,7 +329,6 @@ export default function CatalogoWrapper({
             articoli={artFiltrati}
             lockedCat={fixedCat}
             lockedSottocat={fixedSottocat}
-            onSottocatChange={fixedSottocat ? undefined : v => setFormSottocat(v)}
             isStaff={isStaff}
             isLoggedIn={isLoggedIn}
             preventiviBozza={preventiviBozza}

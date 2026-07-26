@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation'
 const STAFF_PREFIXES = ['/area-lavoro', '/clienti', '/amministrazione', '/disegno']
 const STAFF_ROLES = ['admin', 'dipendente', 'venditore', 'magazzino', 'ragioniere', 'commercialista', 'direttore', 'marketing', 'email', 'operaio']
 const CLIENT_WIDTH_PATHS = ['/clienti/preventivi/', '/area-clienti/carrello-preventivo', '/area-clienti/carrello-acquisti', '/area-clienti/carrello-computometrico']
+const PUBLIC_FULL_WIDTH_PREFIXES = ['/shop', '/promozioni', '/cataloghi']
 
 export default function MainWrapper({ children, role }: { children: React.ReactNode; role: string }) {
   const pathname = usePathname()
@@ -13,6 +14,7 @@ export default function MainWrapper({ children, role }: { children: React.ReactN
     !forceClientWidth && (
       pathname === '/' ||
       STAFF_PREFIXES.some(p => pathname.startsWith(p)) ||
+      PUBLIC_FULL_WIDTH_PREFIXES.some(p => pathname.startsWith(p)) ||
       (pathname.startsWith('/area-clienti/') && isStaffRole)
     )
   return (

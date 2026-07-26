@@ -6,7 +6,7 @@ import { useScrollEdgeMask } from '@/lib/use-scroll-edge-mask'
 import { mergeRefs } from '@/lib/merge-refs'
 import { useStickyBottomBarValue } from '@/lib/sticky-bottom-bar-context'
 
-export const BAR_HEIGHT = 60
+export const BAR_HEIGHT = 44
 
 /**
  * Barra oro (stesso colore della navbar) fissa in fondo allo schermo, su ogni pagina del sito (non la

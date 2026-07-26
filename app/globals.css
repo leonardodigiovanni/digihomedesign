@@ -172,8 +172,8 @@ a:active, a:active img, a:focus img {
 }
 .nav-arrow-btn {
   position: absolute;
-  top: 1px;
-  height: calc(100% - 1px);
+  top: 0;
+  height: 100%;
   width: 42px;
   z-index: 10;
   border: none;
@@ -199,7 +199,7 @@ a:active, a:active img, a:focus img {
 .cart-btn {
   border: none;
   cursor: pointer;
-  background: #f7b2c3;
+  background: #dba820;
   transition: filter 0.15s;
 }
 .cart-btn:hover { filter: brightness(1.12); }
@@ -1356,7 +1356,7 @@ body {
    Scroll orizzontale con fade già gestisce lo spazio, quindi i contenuti
    non devono rimpicciolirsi/andare a capo per adattarsi */
 .sticky-bottom-bar-row {
-  background: #dba820;
+  background: #77809f;
 }
 .sticky-bottom-bar-row > * {
   flex-shrink: 0;

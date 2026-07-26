@@ -7,6 +7,8 @@ import { revalidatePath } from 'next/cache'
 import { readSettings } from '@/lib/settings'
 import { hasPageAccess } from '@/lib/permissions'
 import { syncListinoPercorsi, ensurePercorsiTables } from '@/lib/percorsi'
+import { listinoHaPercorsiPromo, ensurePromoTables } from '@/lib/promo'
+import { ensureShopPercorsiTables } from '@/lib/shop-percorsi'
 
 async function checkAccess() {
   const cookieStore = await cookies()
@@ -81,6 +83,8 @@ async function ensureTable() {
   await db.execute(`ALTER TABLE listini ADD COLUMN ambiente      VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
   await db.execute(`ALTER TABLE listini ADD COLUMN fascia        VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
   await db.execute(`ALTER TABLE listini ADD COLUMN escluso       TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN prezzo_promo  DECIMAL(10,2) NULL`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN fine_promozione DATE NULL`).catch(() => {})
   await db.end()
 }
 
@@ -113,6 +117,10 @@ export async function addArticolo(_: AddResult | null, fd: FormData): Promise<Ad
   const abbr            = ((fd.get('abbr') as string) ?? '').trim()
   const minimoRaw       = (fd.get('minimo') as string)?.trim()
   const minimo          = minimoRaw !== '' && minimoRaw != null ? parseFloat(minimoRaw) : null
+  const prezzoPromoRaw  = (fd.get('prezzo_promo') as string)?.trim()
+  const prezzo_promo    = prezzoPromoRaw !== '' && prezzoPromoRaw != null ? parseFloat(prezzoPromoRaw) : null
+  const finePromoRaw    = (fd.get('fine_promozione') as string)?.trim()
+  const fine_promozione = finePromoRaw !== '' && finePromoRaw != null ? finePromoRaw : null
 
   if (!categoria || !descrizione || !unita)
     return { ok: false, error: 'Categoria, descrizione e unità sono obbligatori.' }
@@ -121,8 +129,8 @@ export async function addArticolo(_: AddResult | null, fd: FormData): Promise<Ad
   const db = await getConnection()
   try {
     const [ins] = await db.execute(
-      'INSERT INTO listini (categoria, sottocategoria, fase, materiale, tipologia, ambiente, produttore, serie, descrizione, fascia, unita, prezzo_acquisto, prezzo_vendita, note, fornitore_id, max_acquistabile, sconto_articolo, costante, abbr, minimo) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-      [categoria, sottocategoria, fase, materiale, tipologia, ambiente, produttore, serie, descrizione, fascia, unita, prezzo_acquisto, prezzo_vendita, note, fornitore_id, max_acquistabile, sconto_articolo, costante, abbr, minimo]
+      'INSERT INTO listini (categoria, sottocategoria, fase, materiale, tipologia, ambiente, produttore, serie, descrizione, fascia, unita, prezzo_acquisto, prezzo_vendita, note, fornitore_id, max_acquistabile, sconto_articolo, costante, abbr, minimo, prezzo_promo, fine_promozione) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+      [categoria, sottocategoria, fase, materiale, tipologia, ambiente, produttore, serie, descrizione, fascia, unita, prezzo_acquisto, prezzo_vendita, note, fornitore_id, max_acquistabile, sconto_articolo, costante, abbr, minimo, prezzo_promo, fine_promozione]
     ) as [{ insertId: number }, unknown]
     await ensurePercorsiTables(db).catch(() => {})
     await syncListinoPercorsi(db, ins.insertId, categoria, sottocategoria).catch(() => {})
@@ -158,6 +166,10 @@ export async function updateArticolo(_: MutResult | null, fd: FormData): Promise
   const abbr            = ((fd.get('abbr') as string) ?? '').trim()
   const minimoRaw2      = (fd.get('minimo') as string)?.trim()
   const minimo          = minimoRaw2 !== '' && minimoRaw2 != null ? parseFloat(minimoRaw2) : null
+  const prezzoPromoRaw2 = (fd.get('prezzo_promo') as string)?.trim()
+  const prezzo_promo    = prezzoPromoRaw2 !== '' && prezzoPromoRaw2 != null ? parseFloat(prezzoPromoRaw2) : null
+  const finePromoRaw2   = (fd.get('fine_promozione') as string)?.trim()
+  const fine_promozione = finePromoRaw2 !== '' && finePromoRaw2 != null ? finePromoRaw2 : null
 
   if (isNaN(id) || !categoria || !descrizione || !unita)
     return { ok: false, error: 'Dati non validi.' }
@@ -165,9 +177,14 @@ export async function updateArticolo(_: MutResult | null, fd: FormData): Promise
   await ensureTable()
   const db = await getConnection()
   try {
+    if (await listinoHaPercorsiPromo(db, id)) {
+      if (prezzo_promo == null || prezzo_promo >= prezzo_vendita) {
+        return { ok: false, error: 'Questo articolo ha percorsi Promo assegnati: Prezzo Promo è obbligatorio e deve essere inferiore al Prezzo Vendita.' }
+      }
+    }
     await db.execute(
-      'UPDATE listini SET categoria=?, sottocategoria=?, fase=?, materiale=?, tipologia=?, ambiente=?, produttore=?, serie=?, descrizione=?, fascia=?, unita=?, prezzo_acquisto=?, prezzo_vendita=?, note=?, fornitore_id=?, max_acquistabile=?, sconto_articolo=?, costante=?, abbr=?, minimo=? WHERE id=?',
-      [categoria, sottocategoria, fase, materiale, tipologia, ambiente, produttore, serie, descrizione, fascia, unita, prezzo_acquisto, prezzo_vendita, note, fornitore_id, max_acquistabile, sconto_articolo, costante, abbr, minimo, id]
+      'UPDATE listini SET categoria=?, sottocategoria=?, fase=?, materiale=?, tipologia=?, ambiente=?, produttore=?, serie=?, descrizione=?, fascia=?, unita=?, prezzo_acquisto=?, prezzo_vendita=?, note=?, fornitore_id=?, max_acquistabile=?, sconto_articolo=?, costante=?, abbr=?, minimo=?, prezzo_promo=?, fine_promozione=? WHERE id=?',
+      [categoria, sottocategoria, fase, materiale, tipologia, ambiente, produttore, serie, descrizione, fascia, unita, prezzo_acquisto, prezzo_vendita, note, fornitore_id, max_acquistabile, sconto_articolo, costante, abbr, minimo, prezzo_promo, fine_promozione, id]
     )
     await ensurePercorsiTables(db).catch(() => {})
     await syncListinoPercorsi(db, id, categoria, sottocategoria).catch(() => {})
@@ -320,14 +337,14 @@ export async function cloneArticolo(_: AddResult | null, fd: FormData): Promise<
          disponibile, preventivabile, acquistabile, principale, caratteristica,
          richiede_larghezza, richiede_altezza, richiede_quantita, richiede_piano,
          richiede_km, richiede_peso, richiede_tipo_colore, richiede_tipo_colore_acc,
-         richiede_tipo_vetro, richiede_tipo_montaggio, foto_url)
+         richiede_tipo_vetro, richiede_tipo_montaggio, foto_url, prezzo_promo, fine_promozione)
        SELECT
         categoria, produttore, serie, ?, unita, prezzo_acquisto, prezzo_vendita,
         note, fornitore_id, max_acquistabile, sconto_articolo, costante, abbr, minimo,
         disponibile, preventivabile, acquistabile, principale, caratteristica,
         richiede_larghezza, richiede_altezza, richiede_quantita, richiede_piano,
         richiede_km, richiede_peso, richiede_tipo_colore, richiede_tipo_colore_acc,
-        richiede_tipo_vetro, richiede_tipo_montaggio, foto_url
+        richiede_tipo_vetro, richiede_tipo_montaggio, foto_url, prezzo_promo, fine_promozione
        FROM listini WHERE id=?`,
       [nuovaDescrizione, sourceId]
     ) as [{ insertId: number }, unknown]
@@ -335,6 +352,18 @@ export async function cloneArticolo(_: AddResult | null, fd: FormData): Promise<
     await db.execute(
       `INSERT IGNORE INTO listini_percorsi (listino_id, categoria, sottocategoria)
        SELECT ?, categoria, sottocategoria FROM listini_percorsi WHERE listino_id = ?`,
+      [ins.insertId, sourceId]
+    ).catch(() => {})
+    await ensureShopPercorsiTables(db).catch(() => {})
+    await db.execute(
+      `INSERT IGNORE INTO shop_percorsi (listino_id, categoria, sottocategoria)
+       SELECT ?, categoria, sottocategoria FROM shop_percorsi WHERE listino_id = ?`,
+      [ins.insertId, sourceId]
+    ).catch(() => {})
+    await ensurePromoTables(db).catch(() => {})
+    await db.execute(
+      `INSERT IGNORE INTO promo_percorsi (listino_id, categoria, sottocategoria)
+       SELECT ?, categoria, sottocategoria FROM promo_percorsi WHERE listino_id = ?`,
       [ins.insertId, sourceId]
     ).catch(() => {})
     revalidatePath('/area-lavoro/listini')
@@ -366,6 +395,7 @@ const CAMPI_TESTO: Record<string, string> = {
 }
 const CAMPI_NUMERICI: Record<string, string> = {
   minimo: 'minimo', p_acq: 'prezzo_acquisto', p_vnd: 'prezzo_vendita', costante: 'costante', sconto: 'sconto_articolo',
+  promo: 'prezzo_promo',
 }
 const CAMPI_BOOL: Record<string, string> = {
   escluso: 'escluso',
@@ -389,7 +419,7 @@ function isNullToken(v: string): boolean {
 }
 
 export type BulkResult =
-  | { ok: true; aggiornati: number; percorsiInseriti: number }
+  | { ok: true; aggiornati: number; percorsiInseriti: number; shopPercorsiInseriti: number; promoPercorsiInseriti: number; promoSaltati: number }
   | { ok: false; error: string }
 
 export async function updateMassivo(ids: number[], valori: Record<string, string>): Promise<BulkResult> {
@@ -462,8 +492,51 @@ export async function updateMassivo(ids: number[], valori: Record<string, string
       }
     }
 
+    let shopPercorsiInseriti = 0
+    const psc = (valori.percorso_shop_categoria ?? '').trim()
+    const pss = (valori.percorso_shop_sottocategoria ?? '').trim()
+    if (psc) {
+      await ensureShopPercorsiTables(db)
+      for (const id of ids) {
+        const [r] = await db.execute(
+          `INSERT IGNORE INTO shop_percorsi (listino_id, categoria, sottocategoria) VALUES (?, ?, ?)`,
+          [id, psc, pss]
+        ) as [{ affectedRows: number }, unknown]
+        if (r.affectedRows > 0) shopPercorsiInseriti++
+      }
+    }
+
+    // Percorsi promo: stessa regola già valida per il singolo articolo — richiede
+    // prezzo_promo impostato e inferiore a prezzo_vendita. Verificata sui valori
+    // già aggiornati sopra (un bulk può impostare prezzo_promo nella stessa chiamata).
+    let promoPercorsiInseriti = 0
+    let promoSaltati = 0
+    const ppc = (valori.percorso_promo_categoria ?? '').trim()
+    const pps = (valori.percorso_promo_sottocategoria ?? '').trim()
+    if (ppc) {
+      await ensurePromoTables(db)
+      const placeholders = ids.map(() => '?').join(',')
+      const [prezziRows] = await db.query(
+        `SELECT id, prezzo_vendita, prezzo_promo FROM listini WHERE id IN (${placeholders})`,
+        ids
+      )
+      const prezzi = new Map(
+        (prezziRows as { id: number; prezzo_vendita: number; prezzo_promo: number | null }[])
+          .map(r => [r.id, { vendita: Number(r.prezzo_vendita), promo: r.prezzo_promo != null ? Number(r.prezzo_promo) : null }])
+      )
+      for (const id of ids) {
+        const p = prezzi.get(id)
+        if (!p || p.promo == null || p.promo >= p.vendita) { promoSaltati++; continue }
+        const [r] = await db.execute(
+          `INSERT IGNORE INTO promo_percorsi (listino_id, categoria, sottocategoria) VALUES (?, ?, ?)`,
+          [id, ppc, pps]
+        ) as [{ affectedRows: number }, unknown]
+        if (r.affectedRows > 0) promoPercorsiInseriti++
+      }
+    }
+
     revalidatePath('/area-lavoro/listini')
-    return { ok: true, aggiornati, percorsiInseriti }
+    return { ok: true, aggiornati, percorsiInseriti, shopPercorsiInseriti, promoPercorsiInseriti, promoSaltati }
   } finally { await db.end() }
 }
 

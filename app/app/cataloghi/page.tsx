@@ -5,6 +5,7 @@ import type { CategoriaCard } from '@/app/brand/cataloghi/page'
 import SetActionBar from '@/app/app/set-action-bar'
 import InfoCard from '@/app/app/info-card'
 import { ensurePercorsiTables } from '@/lib/percorsi'
+import { ensureCategoriaImmaginiTables, getCategorieConImmagine } from '@/lib/categoria-immagini'
 
 function toSlug(nome: string): string {
   return nome
@@ -18,13 +19,13 @@ async function getCategorie(): Promise<CategoriaCard[]> {
   const db = await getConnection()
   try {
     await ensurePercorsiTables(db)
-    const [rows] = await db.query(
-      `SELECT DISTINCT categoria FROM catalogo_voci_percorsi WHERE categoria != '' ORDER BY categoria ASC`
-    ) as [{ categoria: string }[], unknown]
-    return (rows as { categoria: string }[]).map((r, i) => ({
+    await ensureCategoriaImmaginiTables(db)
+    const righe = await getCategorieConImmagine(db, 'cataloghi')
+    return righe.map((r, i) => ({
       id: i,
       nome: r.categoria,
       slug: toSlug(r.categoria),
+      immagine: r.immagine_url,
     }))
   } finally {
     await db.end()

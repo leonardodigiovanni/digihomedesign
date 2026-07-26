@@ -24,15 +24,23 @@ const nextConfig: NextConfig = {
       { source: '/serramenti/infissi-in-alluminio', destination: '/serramenti/infissi-in-alluminio-taglio-termico', permanent: true },
       { source: '/serramenti/tapparelle-manuali', destination: '/serramenti/tapparelle-in-alluminio', permanent: true },
       { source: '/serramenti/tapparelle-motorizzate', destination: '/serramenti/tapparelle-motorizzazione', permanent: true },
+      // Cataloghi uscito da sotto "Chi Siamo": URL pubblico ora è /cataloghi. I redirect
+      // vengono valutati prima dei rewrite, quindi questo vince sul rewrite generico
+      // /chi-siamo/:path* qui sotto.
+      { source: '/chi-siamo/cataloghi', destination: '/cataloghi', permanent: true },
+      { source: '/chi-siamo/cataloghi/:path*', destination: '/cataloghi/:path*', permanent: true },
     ]
   },
   // "brand" resta il nome della cartella sotto app/ (nessuna modifica ai file/import
   // interni, zero rischio per i ~130 file che dipendono da app/brand/cataloghi), ma
-  // in giro per il sito le pagine vanno raggiunte con l'URL pubblico /chi-siamo.
+  // in giro per il sito le pagine vanno raggiunte con l'URL pubblico /chi-siamo
+  // (eccetto cataloghi, che ha un proprio prefisso pubblico /cataloghi — vedi redirect sopra).
   async rewrites() {
     return [
       { source: '/chi-siamo', destination: '/brand' },
       { source: '/chi-siamo/:path*', destination: '/brand/:path*' },
+      { source: '/cataloghi', destination: '/brand/cataloghi' },
+      { source: '/cataloghi/:path*', destination: '/brand/cataloghi/:path*' },
     ]
   },
   webpack: (config) => {

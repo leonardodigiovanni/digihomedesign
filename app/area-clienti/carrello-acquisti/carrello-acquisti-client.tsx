@@ -72,7 +72,7 @@ export default function CarrelloAcquistiClient({
   caratteristiche = [],
   registrazioniDisabilitate = false,
   scontoClientePct = 0,
-  cataloghiHref = '/chi-siamo/cataloghi',
+  cataloghiHref = '/cataloghi',
   pagamentoHref = '/area-clienti/carrello-acquisti/pagamento',
   stampaHref = '/area-clienti/carrello-acquisti/stampa',
   loginRedirectHref = '/area-clienti/carrello-acquisti',

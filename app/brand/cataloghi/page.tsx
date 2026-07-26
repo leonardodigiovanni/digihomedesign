@@ -4,13 +4,14 @@ import { getConnection } from '@/lib/db'
 import type { Metadata } from 'next'
 import { CatalogoGrid } from './catalogo-grid'
 import { ensurePercorsiTables } from '@/lib/percorsi'
+import { ensureCategoriaImmaginiTables, getCategorieConImmagine } from '@/lib/categoria-immagini'
 import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = {
   title: 'Cataloghi — Digi Home Design Palermo',
   description: 'Scarica i cataloghi prodotti di Digi Home Design: infissi, verande, persiane, imbotti, zanzariere e molto altro.',
-  alternates: { canonical: 'https://www.digi-home-design.com/chi-siamo/cataloghi' },
+  alternates: { canonical: 'https://www.digi-home-design.com/cataloghi' },
 }
 
 function toSlug(nome: string): string {
@@ -21,19 +22,19 @@ function toSlug(nome: string): string {
     .replace(/^-|-$/g, '')
 }
 
-export type CategoriaCard = { id: number; nome: string; slug: string }
+export type CategoriaCard = { id: number; nome: string; slug: string; immagine: string | null }
 
 async function getCategorie(): Promise<CategoriaCard[]> {
   const db = await getConnection()
   try {
     await ensurePercorsiTables(db)
-    const [rows] = await db.query(
-      `SELECT DISTINCT categoria FROM catalogo_voci_percorsi WHERE categoria != '' ORDER BY categoria ASC`
-    ) as [{ categoria: string }[], unknown]
-    return (rows as { categoria: string }[]).map((r, i) => ({
+    await ensureCategoriaImmaginiTables(db)
+    const righe = await getCategorieConImmagine(db, 'cataloghi')
+    return righe.map((r, i) => ({
       id: i,
       nome: r.categoria,
       slug: toSlug(r.categoria),
+      immagine: r.immagine_url,
     }))
   } finally {
     await db.end()
@@ -53,7 +54,7 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/chi-siamo" style={{ color: '#888', textDecoration: 'underline' }}>Chi Siamo</Link> / Cataloghi<ShortcutStar />
+        <Link href="/" style={{ color: '#888', textDecoration: 'underline' }}>Home</Link> / Cataloghi<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Cataloghi</h1>
       <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '24px 28px', marginBottom: 8 }}>
@@ -67,8 +68,8 @@ export default async function Page() {
       )}
 
       <StickyBottomBarContent>
-        <Link href="/chi-siamo" className="btn-black fs-12">
-        ← Torna a Chi Siamo
+        <Link href="/" className="btn-black fs-12">
+        ← Home
         </Link>
         {!loggedIn && (
         <Link href="/aiuto/guida-preventivo" className="btn-black fs-12">

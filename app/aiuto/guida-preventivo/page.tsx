@@ -106,7 +106,7 @@ export default async function GuidaPreventivo() {
 
         <StickyBottomBarContent>
           <Link href="/" className="btn-black fs-12">← Home</Link>
-          <Link href="/chi-siamo/cataloghi" className="btn-black fs-12">Cataloghi →</Link>
+          <Link href="/cataloghi" className="btn-black fs-12">Cataloghi →</Link>
           {cartNonVuoto && (
           <Link href="/area-clienti/carrello-preventivo" className="btn-black fs-12">Carrello preventivi →</Link>
           )}

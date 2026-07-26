@@ -5,6 +5,8 @@ import SelectLookup from '@/components/select-lookup'
 import { useRouter } from 'next/navigation'
 import { addArticolo, updateArticolo, deleteArticolo, cloneArticolo, toggleDisponibile, togglePreventivabile, toggleAcquistabile, toggleComputabile, togglePrincipale, toggleCaratteristica, toggleEscluso, toggleColonnaBooleana, updateSchedaTecnica, clearImmagine, updateMassivo, type MutResult, type AddResult } from './actions'
 import { addPercorsoListino, removePercorsoListino, type Percorso } from '@/lib/percorsi'
+import { addPercorsoShop, removePercorsoShop } from '@/lib/shop-percorsi'
+import { addPercorsoPromo, removePercorsoPromo } from '@/lib/promo'
 
 // ─── Tipi ─────────────────────────────────────────────────────────────────────
 
@@ -27,6 +29,8 @@ export type Articolo = {
   unita: string
   prezzo_acquisto: number
   prezzo_vendita: number
+  prezzo_promo: number | null
+  fine_promozione: string | null
   note: string | null
   disponibile: number
   preventivabile: number
@@ -74,26 +78,26 @@ export type Articolo = {
 
 // ─── Visibilità colonne ────────────────────────────────────────────────────────
 
-const COL_KEYS = ['percorsi','cat','fase','mat','tipo','amb','descr','fascia','prod','logo','serie','forn','schema','foto','escluso','unita','minimo','p_acq','p_vnd','costante','abbr','sconto','margine','note','richiede','filtri','azioni'] as const
+const COL_KEYS = ['percorsi','percshop','percpromo','cat','fase','mat','tipo','amb','descr','fascia','prod','logo','serie','forn','schema','foto','escluso','unita','minimo','p_acq','p_vnd','costante','abbr','sconto','promo','fine_promo','margine','note','richiede','filtri','azioni'] as const
 type ColKey = typeof COL_KEYS[number]
 
 const COL_LABELS: Record<ColKey, string> = {
-  percorsi: 'Percorsi', cat: 'Categoria',
+  percorsi: 'Percorsi', percshop: 'Shop', percpromo: 'Promo', cat: 'Categoria',
   fase: 'Fase', mat: 'Materiale', tipo: 'Tipologia', amb: 'Ambiente',
   descr: 'Descriz.', fascia: 'Fascia', prod: 'Marca', logo: 'Logo', serie: 'Serie', forn: 'Fornitore',
   schema: 'Schema', foto: 'Foto', escluso: 'Escluso', unita: 'Unità',
   minimo: 'Minimo', p_acq: 'P.Acq', p_vnd: 'P.Vnd', costante: 'Cost.',
-  abbr: 'Abbr', sconto: 'Sconto', margine: 'Margine', note: 'Note',
+  abbr: 'Abbr', sconto: 'Sconto', promo: 'P.Promo', fine_promo: 'Fine Promo', margine: 'Margine', note: 'Note',
   richiede: 'Richiede…', filtri: 'Filtri', azioni: 'Azioni',
 }
 
 const COL_DEFAULT: Record<ColKey, boolean> = {
-  percorsi: true, cat: true,
+  percorsi: true, percshop: true, percpromo: true, cat: true,
   fase: true, mat: true, tipo: true, amb: true,
   descr: true, fascia: true, prod: true, logo: true, serie: true, forn: true,
   schema: true, foto: true, escluso: true, unita: true,
   minimo: false, p_acq: true, p_vnd: true, costante: false,
-  abbr: false, sconto: true, margine: true, note: true,
+  abbr: false, sconto: true, promo: true, fine_promo: true, margine: true, note: true,
   richiede: true, filtri: true, azioni: true,
 }
 
@@ -523,6 +527,16 @@ function NuovoArticoloForm({ articoli, fornitori, onDone }: {
         <div>
           <label style={lbl}>Sconto articolo %</label>
           <input name="sconto_articolo" type="number" step="0.01" min="-100" max="100" defaultValue="0" style={inp} placeholder="0 = nessuno, neg. = magg." />
+        </div>
+
+        <div>
+          <label style={lbl}>Prezzo Promo (€)</label>
+          <input name="prezzo_promo" type="number" step="0.01" min="0" style={inp} placeholder="vuoto = nessuna promo" />
+        </div>
+
+        <div>
+          <label style={lbl}>Fine Promozione</label>
+          <input name="fine_promozione" type="date" style={inp} />
         </div>
 
       </div>
@@ -1092,11 +1106,133 @@ function PercorsiPanel({ percorsi, listinoId }: { percorsi: Percorso[]; listinoI
   )
 }
 
+// ─── Pannello percorsi generico (Shop / Promo) ─────────────────────────────────
+// Stessa meccanica di PercorsiPanel (drag&drop coppie categoria/sottocategoria),
+// parametrizzato per essere riusato sia per shop_percorsi che per promo_percorsi.
+
+function PercorsiGenericPanel({ percorsi, listinoId, dndKey, chipBg, addBg, onAdd, onRemove }: {
+  percorsi: Percorso[]
+  listinoId: number
+  dndKey: string
+  chipBg: string
+  addBg: string
+  onAdd: (listinoId: number, categoria: string, sottocategoria: string) => Promise<{ ok: boolean; error?: string }>
+  onRemove: (id: number) => Promise<{ ok: boolean }>
+}) {
+  const router = useRouter()
+  const [catInput, setCatInput] = useState('')
+  const [sottoInput, setSottoInput] = useState('')
+  const [adding, setAdding] = useState(false)
+  const [removing, setRemoving] = useState<number | null>(null)
+  const [isDragOver, setIsDragOver] = useState(false)
+  const [dropping, setDropping] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  async function handleAdd() {
+    if (!catInput.trim()) return
+    setAdding(true)
+    setError(null)
+    const res = await onAdd(listinoId, catInput.trim(), sottoInput.trim())
+    if (res.ok) { setCatInput(''); setSottoInput(''); router.refresh() }
+    else setError(res.error ?? 'Errore inserimento.')
+    setAdding(false)
+  }
+  async function handleRemove(id: number) {
+    setRemoving(id)
+    await onRemove(id)
+    router.refresh()
+    setRemoving(null)
+  }
+  async function handleDrop(e: React.DragEvent) {
+    e.preventDefault()
+    setIsDragOver(false)
+    setError(null)
+    try {
+      const { categoria, sottocategoria } = JSON.parse(e.dataTransfer.getData(dndKey))
+      setDropping(true)
+      const res = await onAdd(listinoId, categoria, sottocategoria)
+      if (res.ok) router.refresh()
+      else setError(res.error ?? 'Errore inserimento.')
+    } catch {}
+    setDropping(false)
+  }
+
+  const chip: React.CSSProperties = {
+    borderRadius: 3, padding: '2px 5px', fontSize: 10, fontWeight: 600, whiteSpace: 'nowrap',
+  }
+  const miniInp: React.CSSProperties = {
+    fontSize: 10, padding: '2px 4px', border: '1px solid #ccc', borderRadius: 3, width: 70,
+  }
+  return (
+    <div
+      onDragOver={e => { e.preventDefault(); setIsDragOver(true) }}
+      onDragLeave={() => setIsDragOver(false)}
+      onDrop={handleDrop}
+      style={{
+        display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: '3px 4px', alignItems: 'center',
+        borderRadius: 4, padding: isDragOver ? 3 : 0,
+        background: isDragOver ? '#fffde7' : undefined,
+        outline: isDragOver ? '2px dashed #f9a825' : undefined,
+        opacity: dropping ? 0.6 : 1,
+      }}
+    >
+      {percorsi.map(p => (
+        <React.Fragment key={p.id}>
+          <span
+            draggable
+            onDragStart={e => {
+              e.dataTransfer.setData(dndKey, JSON.stringify({ categoria: p.categoria, sottocategoria: p.sottocategoria }))
+              e.dataTransfer.effectAllowed = 'copy'
+            }}
+            style={{ ...chip, background: chipBg, cursor: 'grab' }}
+            title={`Trascina su un'altra voce per copiare: ${p.categoria} / ${p.sottocategoria || '(wildcard)'}`}
+          >{p.categoria}</span>
+          <span
+            draggable
+            onDragStart={e => {
+              e.dataTransfer.setData(dndKey, JSON.stringify({ categoria: p.categoria, sottocategoria: p.sottocategoria }))
+              e.dataTransfer.effectAllowed = 'copy'
+            }}
+            style={{ ...chip, background: chipBg, cursor: 'grab' }}
+          >{p.sottocategoria}</span>
+          <button onClick={() => handleRemove(p.id)} disabled={removing === p.id}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#c62828', fontSize: 12, padding: 0, lineHeight: 1, fontWeight: 700 }}>
+            ✕
+          </button>
+        </React.Fragment>
+      ))}
+      <input value={catInput} onChange={e => setCatInput(e.target.value)}
+        placeholder="categoria" style={miniInp} />
+      <input value={sottoInput} onChange={e => setSottoInput(e.target.value)}
+        placeholder="sottocategoria" style={miniInp} />
+      <button onClick={handleAdd} disabled={adding || !catInput.trim()}
+        style={{ fontSize: 10, padding: '2px 5px', background: addBg, color: '#fff', border: 'none', borderRadius: 3, cursor: 'pointer', fontWeight: 700 }}>
+        +
+      </button>
+      {error && (
+        <div style={{ gridColumn: '1 / -1', fontSize: 9, color: '#c62828', fontWeight: 600 }}>{error}</div>
+      )}
+    </div>
+  )
+}
+
+function ShopPercorsiPanel({ percorsi, listinoId }: { percorsi: Percorso[]; listinoId: number }) {
+  return <PercorsiGenericPanel percorsi={percorsi} listinoId={listinoId} dndKey="percorso-shop"
+    chipBg="#e3edfa" addBg="#1565c0" onAdd={addPercorsoShop} onRemove={removePercorsoShop} />
+}
+
+function PromoPercorsiPanel({ percorsi, listinoId }: { percorsi: Percorso[]; listinoId: number }) {
+  return <PercorsiGenericPanel percorsi={percorsi} listinoId={listinoId} dndKey="percorso-promo"
+    chipBg="#fde8f0" addBg="#c2185b" onAdd={addPercorsoPromo} onRemove={removePercorsoPromo} />
+}
+
 // ─── Riga normale ─────────────────────────────────────────────────────────────
 
-function RigaNormale({ art, percorsi, onEdit, onScheda, onDelete, onAction, pending, filtriLabels }: {
+function RigaNormale({ art, percorsi, shopPercorsi, promoPercorsi, onEdit, onScheda, onDelete, onAction, pending, filtriLabels }: {
   art: Articolo
   percorsi: Percorso[]
+  shopPercorsi: Percorso[]
+  promoPercorsi: Percorso[]
   onEdit: () => void
   onScheda: () => void
   onDelete: () => void
@@ -1114,9 +1250,15 @@ function RigaNormale({ art, percorsi, onEdit, onScheda, onDelete, onAction, pend
   const hasDati = art.profilo_frontale_mm != null || art.profilo_profondita_mm != null || art.trasmittanza_uw != null
 
   return (
-    <tr onDoubleClick={onEdit} onClick={onAction} style={{ cursor: 'pointer', background: nonDisp ? '#f9f9f9' : undefined }} title="Doppio click per modificare">
+    <tr onDoubleClick={e => { e.stopPropagation(); onEdit() }} onClick={onAction} style={{ cursor: 'pointer', background: nonDisp ? '#f9f9f9' : undefined }} title="Doppio click per modificare">
       <td style={{ ...td, ...vis('percorsi'), padding: '6px 8px', verticalAlign: 'top', minWidth: 200 }} onClick={e => e.stopPropagation()}>
         <PercorsiPanel percorsi={percorsi} listinoId={art.id} />
+      </td>
+      <td style={{ ...td, ...vis('percshop'), padding: '6px 8px', verticalAlign: 'top', minWidth: 180 }} onClick={e => e.stopPropagation()}>
+        <ShopPercorsiPanel percorsi={shopPercorsi} listinoId={art.id} />
+      </td>
+      <td style={{ ...td, ...vis('percpromo'), padding: '6px 8px', verticalAlign: 'top', minWidth: 180 }} onClick={e => e.stopPropagation()}>
+        <PromoPercorsiPanel percorsi={promoPercorsi} listinoId={art.id} />
       </td>
       <td style={{ ...td, ...vis('cat') }}>
         {art.categoria ? <span style={{ background: '#e8e8f8', borderRadius: 3, padding: '2px 7px', fontSize: 11, fontWeight: 600 }}>{art.categoria}</span> : null}
@@ -1160,6 +1302,14 @@ function RigaNormale({ art, percorsi, onEdit, onScheda, onDelete, onAction, pend
               {art.sconto_articolo < 0 ? `+${Math.abs(art.sconto_articolo)}%` : `${art.sconto_articolo}%`}
             </span>
           : <span style={{ color: '#ccc' }}>—</span>}
+      </td>
+      <td style={{ ...td, textAlign: 'right', ...vis('promo') }}>
+        {art.prezzo_promo != null && art.prezzo_promo !== art.prezzo_vendita
+          ? <span style={{ color: '#c62828', fontWeight: 700 }}>{fmt(art.prezzo_promo)}</span>
+          : <span style={{ color: '#ccc' }}>—</span>}
+      </td>
+      <td style={{ ...td, textAlign: 'center', color: '#aaa', fontSize: 11, ...vis('fine_promo') }}>
+        {art.fine_promozione ?? ''}
       </td>
       <td style={{ ...td, textAlign: 'center', ...vis('margine') }}>
         {m ? <span style={{ color: m.color, fontWeight: 700, fontSize: 11 }}>{m.pct}</span> : null}
@@ -1251,9 +1401,11 @@ function RigaEdit({ art, categorie, produttori, fornitori, onDone, onSaved }: {
 
   return (
     <tr ref={trRef} style={{ background: '#fffdf0' }}>
-      <input type="hidden" name="sottocategoria" value={art.sottocategoria ?? ''} readOnly />
       <td style={{ ...tde, ...vis('percorsi') }} />
+      <td style={{ ...tde, ...vis('percshop') }} />
+      <td style={{ ...tde, ...vis('percpromo') }} />
       <td style={{ ...tde, ...vis('cat') }}>
+        <input type="hidden" name="sottocategoria" value={art.sottocategoria ?? ''} readOnly />
         <input name="categoria" defaultValue={art.categoria} required style={{ ...inp, minWidth: 90 }}
           list="cat-list-edit" placeholder="Categoria" />
         <datalist id="cat-list-edit">{categorie.map(c => <option key={c} value={c} />)}</datalist>
@@ -1297,6 +1449,8 @@ function RigaEdit({ art, categorie, produttori, fornitori, onDone, onSaved }: {
       <td style={{ ...tde, ...vis('costante') }}><input name="costante" type="number" step="0.0001" defaultValue={art.costante} style={{ ...inp, width: 80, textAlign: 'right' }} /></td>
       <td style={{ ...tde, ...vis('abbr') }}><input name="abbr" defaultValue={art.abbr} style={{ ...inp, width: 70 }} placeholder="abbr" /></td>
       <td style={{ ...tde, ...vis('sconto') }}><input name="sconto_articolo" type="number" step="0.01" min="-100" max="100" defaultValue={art.sconto_articolo} style={{ ...inp, width: 60, textAlign: 'right' }} /></td>
+      <td style={{ ...tde, ...vis('promo') }}><input name="prezzo_promo" type="number" step="0.01" min="0" defaultValue={art.prezzo_promo ?? ''} style={{ ...inp, width: 70, textAlign: 'right' }} placeholder="—" /></td>
+      <td style={{ ...tde, ...vis('fine_promo') }}><input name="fine_promozione" type="date" defaultValue={art.fine_promozione ?? ''} style={{ ...inp, width: 120 }} /></td>
       <td style={{ ...tde, ...vis('margine') }} />
       <td style={{ ...tde, ...vis('note') }}>
         <input name="note" defaultValue={art.note ?? ''} style={{ ...inp, marginBottom: 3 }} placeholder="Note" />
@@ -1322,7 +1476,7 @@ function RigaEdit({ art, categorie, produttori, fornitori, onDone, onSaved }: {
 
 // ─── Componente principale ────────────────────────────────────────────────────
 
-export default function ListiniClient({ articoli, fornitori, percorsiPerListino, filtriLabels, loghiDisponibili }: { articoli: Articolo[]; fornitori: Fornitore[]; percorsiPerListino: Record<number, Percorso[]>; filtriLabels: Record<number, string>; loghiDisponibili: string[] }) {
+export default function ListiniClient({ articoli, fornitori, percorsiPerListino, shopPercorsiPerListino, promoPercorsiPerListino, filtriLabels, loghiDisponibili }: { articoli: Articolo[]; fornitori: Fornitore[]; percorsiPerListino: Record<number, Percorso[]>; shopPercorsiPerListino: Record<number, Percorso[]>; promoPercorsiPerListino: Record<number, Percorso[]>; filtriLabels: Record<number, string>; loghiDisponibili: string[] }) {
   const [filtroTesto, setFiltroTesto]               = useState('')
   const [filtroCategoria, setFiltroCategoria]       = useState('')
   const [filtroSottocategoria, setFiltroSottocategoria] = useState('')
@@ -1342,6 +1496,7 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
   const [lastId, setLastId]                 = useState<number | null>(null)
   const [isCloning, setIsCloning]           = useState(false)
   const [colVis, setColVis]                 = useState<Record<ColKey, boolean>>(COL_DEFAULT)
+  const [filtriOpen, setFiltriOpen]         = useState(false)
   const [cf, setCf] = useState<Record<string, string>>({})
   const setCfV = (k: string, v: string) => setCf(prev => ({ ...prev, [k]: v }))
   const [valoriOpen, setValoriOpen] = useState(false)
@@ -1450,6 +1605,8 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
   }
 
   const allPercorsi = useMemo(() => Object.values(percorsiPerListino).flat(), [percorsiPerListino])
+  const allShopPercorsi = useMemo(() => Object.values(shopPercorsiPerListino).flat(), [shopPercorsiPerListino])
+  const allPromoPercorsi = useMemo(() => Object.values(promoPercorsiPerListino).flat(), [promoPercorsiPerListino])
   const categorie   = useMemo(() => [...new Set(allPercorsi.map(p => p.categoria))].sort(), [allPercorsi])
   const sottocategorie = useMemo(() => {
     const src = filtroCategoria
@@ -1466,15 +1623,18 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
   const fasce       = useMemo(() => [...new Set(articoli.map(a => a.fascia).filter(Boolean) as string[])].sort(), [articoli])
 
   // ─── Valori distinti per la riga di filtri per-colonna ───────────────────────
-  const percorsiCoppie = useMemo(() => {
+  function coppieDa(lista: Percorso[]) {
     const map = new Map<string, { categoria: string; sottocategoria: string }>()
-    allPercorsi.forEach(p => {
+    lista.forEach(p => {
       if (!p.sottocategoria) return
       const k = `${p.categoria}|||${p.sottocategoria}`
       if (!map.has(k)) map.set(k, { categoria: p.categoria, sottocategoria: p.sottocategoria })
     })
     return [...map.entries()].sort((a, b) => a[0].localeCompare(b[0]))
-  }, [allPercorsi])
+  }
+  const percorsiCoppie = useMemo(() => coppieDa(allPercorsi), [allPercorsi])
+  const shopPercorsiCoppie = useMemo(() => coppieDa(allShopPercorsi), [allShopPercorsi])
+  const promoPercorsiCoppie = useMemo(() => coppieDa(allPromoPercorsi), [allPromoPercorsi])
   const categorieArt = useMemo(() => [...new Set(articoli.map(a => a.categoria).filter(Boolean))].sort(), [articoli])
   const descrizioni   = useMemo(() => [...new Set(articoli.map(a => a.descrizione).filter(Boolean))].sort(), [articoli])
   const loghiPresenti = useMemo(() => {
@@ -1493,6 +1653,7 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
   const costantePresenti = useMemo(() => [...new Set(articoli.map(a => a.costante).filter(v => v !== 0))].sort((a, b) => a - b), [articoli])
   const abbrPresenti = useMemo(() => [...new Set(articoli.map(a => a.abbr).filter(Boolean))].sort(), [articoli])
   const scontoPresenti = useMemo(() => [...new Set(articoli.map(a => a.sconto_articolo).filter(v => v !== 0))].sort((a, b) => a - b), [articoli])
+  const prezzoPromoPresenti = useMemo(() => [...new Set(articoli.map(a => a.prezzo_promo).filter((v): v is number => v != null))].sort((a, b) => a - b), [articoli])
   const marginePresenti = useMemo(() => {
     const set = new Set<string>()
     articoli.forEach(a => { const m = margine(a.prezzo_acquisto, a.prezzo_vendita); if (m) set.add(m.pct) })
@@ -1528,6 +1689,16 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
       const [pc, ps] = cf.percorso.split('|||')
       if (!percorsi.some(p => p.categoria === pc && p.sottocategoria === ps)) return false
     }
+    if (cf.percorso_shop) {
+      const [pc, ps] = cf.percorso_shop.split('|||')
+      const sp = shopPercorsiPerListino[a.id] ?? []
+      if (!sp.some(p => p.categoria === pc && p.sottocategoria === ps)) return false
+    }
+    if (cf.percorso_promo) {
+      const [pc, ps] = cf.percorso_promo.split('|||')
+      const pp = promoPercorsiPerListino[a.id] ?? []
+      if (!pp.some(p => p.categoria === pc && p.sottocategoria === ps)) return false
+    }
     if (cf.categoria    && a.categoria    !== cf.categoria)    return false
     if (cf.fase         && a.fase         !== cf.fase)         return false
     if (cf.materiale    && a.materiale    !== cf.materiale)    return false
@@ -1547,6 +1718,7 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
     if (cf.costante     && String(a.costante) !== cf.costante) return false
     if (cf.abbr         && a.abbr         !== cf.abbr)         return false
     if (cf.sconto       && String(a.sconto_articolo) !== cf.sconto) return false
+    if (cf.promo        && String(a.prezzo_promo ?? '') !== cf.promo) return false
     if (cf.margine) {
       const m = margine(a.prezzo_acquisto, a.prezzo_vendita)
       if (!m || m.pct !== cf.margine) return false
@@ -1570,7 +1742,7 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
       return a.descrizione.toLowerCase().includes(t) || a.produttore.toLowerCase().includes(t) || a.fornitore_nome.toLowerCase().includes(t) || (a.note ?? '').toLowerCase().includes(t)
     }
     return true
-  }), [articoli, percorsiPerListino, filtroCategoria, filtroSottocategoria, filtroProduttore, filtroSerie, filtroFornitore, filtroTesto, filtroDisp, filtroFase, filtroMateriale, filtroTipologia, filtroAmbiente, filtroFascia, cf])
+  }), [articoli, percorsiPerListino, shopPercorsiPerListino, promoPercorsiPerListino, filtroCategoria, filtroSottocategoria, filtroProduttore, filtroSerie, filtroFornitore, filtroTesto, filtroDisp, filtroFase, filtroMateriale, filtroTipologia, filtroAmbiente, filtroFascia, cf])
 
   const schedaArt = schedaId !== null ? (articoli.find(a => a.id === schedaId) ?? null) : null
 
@@ -1604,6 +1776,9 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
     const res = await updateMassivo(ids, valori)
     setSubmittingValori(false)
     if (res.ok) {
+      if (res.promoSaltati > 0) {
+        alert(`${res.promoSaltati} articol${res.promoSaltati === 1 ? 'o' : 'i'} non ${res.promoSaltati === 1 ? 'è stato aggiunto' : 'sono stati aggiunti'} al percorso Promo: manca un Prezzo Promo inferiore al Prezzo Vendita.`)
+      }
       setValori({})
       setValoriOpen(false)
       router.refresh()
@@ -1640,7 +1815,19 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
           ))}
         </div>
 
-        {/* Barra filtri */}
+        {/* Barra filtri — togglabile, chiusa di default */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: filtriOpen ? 8 : 16 }}>
+          <button
+            type="button"
+            onClick={() => setFiltriOpen(o => !o)}
+            className="btn-gray"
+            style={{ fontSize: 12 }}
+          >
+            {filtriOpen ? '▴ Nascondi filtri' : '▾ Filtri'}
+          </button>
+          <span style={{ fontSize: 13, color: '#888' }}>{filtrati.length} articoli</span>
+        </div>
+        {filtriOpen && (
         <div style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
           <SelectLookup value={filtroCategoria} onChange={v => { setFiltroCategoria(v); setFiltroSottocategoria('') }}
             options={[{ value: '', label: 'Tutte le categorie' }, ...categorie.map(c => ({ value: c, label: c }))]}
@@ -1678,8 +1865,8 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
           <SelectLookup value={filtroDisp} onChange={v => setFiltroDisp(v as 'tutti' | 'disp' | 'nondisp')}
             options={[{ value: 'tutti', label: 'Tutti gli stati' }, { value: 'disp', label: 'Solo disponibili' }, { value: 'nondisp', label: 'Solo non disponibili' }]}
             style={selInp} />
-          <span style={{ fontSize: 13, color: '#888' }}>{filtrati.length} articoli</span>
         </div>
+        )}
 
         {/* Pulsanti nuovo / ripeti */}
         {!nuovoOpen ? (
@@ -1696,7 +1883,7 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
         )}
 
           <div ref={scrollRef} style={{ overflowX: 'auto', overflowY: 'auto', maxHeight: gridMaxHeight }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+            <table data-no-shortcut-dblclick style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
                 {valoriOpen && (
                   <tr>
@@ -1728,6 +1915,18 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
                         >✕</button>
                         <ValField value={valori.percorso_categoria ?? ''} onChange={v => setValoreV('percorso_categoria', v)} placeholder="categoria" width={90} />
                         <ValField value={valori.percorso_sottocategoria ?? ''} onChange={v => setValoreV('percorso_sottocategoria', v)} placeholder="sottocat." width={90} />
+                      </div>
+                    </th>
+                    <th style={{ ...thV, ...thVis('percshop') }}>
+                      <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+                        <ValField value={valori.percorso_shop_categoria ?? ''} onChange={v => setValoreV('percorso_shop_categoria', v)} placeholder="categoria" width={90} />
+                        <ValField value={valori.percorso_shop_sottocategoria ?? ''} onChange={v => setValoreV('percorso_shop_sottocategoria', v)} placeholder="sottocat." width={90} />
+                      </div>
+                    </th>
+                    <th style={{ ...thV, ...thVis('percpromo') }}>
+                      <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+                        <ValField value={valori.percorso_promo_categoria ?? ''} onChange={v => setValoreV('percorso_promo_categoria', v)} placeholder="categoria" width={90} />
+                        <ValField value={valori.percorso_promo_sottocategoria ?? ''} onChange={v => setValoreV('percorso_promo_sottocategoria', v)} placeholder="sottocat." width={90} />
                       </div>
                     </th>
                     <th style={{ ...thV, ...thVis('cat') }}>
@@ -1789,6 +1988,10 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
                     <th style={{ ...thV, textAlign: 'center', ...thVis('sconto') }}>
                       <ValField value={valori.sconto ?? ''} onChange={v => setValoreV('sconto', v)} width={60} />
                     </th>
+                    <th style={{ ...thV, textAlign: 'right', ...thVis('promo') }}>
+                      <ValField value={valori.promo ?? ''} onChange={v => setValoreV('promo', v)} width={60} />
+                    </th>
+                    <th style={{ ...thV, ...thVis('fine_promo') }} />
                     <th style={{ ...thV, textAlign: 'center', ...thVis('margine') }} />
                     <th style={{ ...thV, ...thVis('note') }}>
                       <ValField value={valori.note ?? ''} onChange={v => setValoreV('note', v)} width={140} />
@@ -1843,6 +2046,14 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
                       <ColFilter value={cf.percorso ?? ''} onChange={v => setCfV('percorso', v)}
                         options={percorsiCoppie.map(([k, p]) => ({ value: k, label: `${p.categoria} / ${p.sottocategoria}` }))} />
                     </div>
+                  </th>
+                  <th style={{ ...thF, ...thVis('percshop') }}>
+                    <ColFilter value={cf.percorso_shop ?? ''} onChange={v => setCfV('percorso_shop', v)}
+                      options={shopPercorsiCoppie.map(([k, p]) => ({ value: k, label: `${p.categoria} / ${p.sottocategoria}` }))} />
+                  </th>
+                  <th style={{ ...thF, ...thVis('percpromo') }}>
+                    <ColFilter value={cf.percorso_promo ?? ''} onChange={v => setCfV('percorso_promo', v)}
+                      options={promoPercorsiCoppie.map(([k, p]) => ({ value: k, label: `${p.categoria} / ${p.sottocategoria}` }))} />
                   </th>
                   <th style={{ ...thF, ...thVis('cat') }}>
                     <ColFilter value={cf.categoria ?? ''} onChange={v => setCfV('categoria', v)}
@@ -1922,6 +2133,11 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
                     <ColFilter value={cf.sconto ?? ''} onChange={v => setCfV('sconto', v)}
                       options={scontoPresenti.map(v => ({ value: String(v), label: `${v}%` }))} width={60} />
                   </th>
+                  <th style={{ ...thF, textAlign: 'right', ...thVis('promo') }}>
+                    <ColFilter value={cf.promo ?? ''} onChange={v => setCfV('promo', v)}
+                      options={prezzoPromoPresenti.map(v => ({ value: String(v), label: fmt(v) }))} width={70} />
+                  </th>
+                  <th style={{ ...thF, ...thVis('fine_promo') }} />
                   <th style={{ ...thF, textAlign: 'center', ...thVis('margine') }}>
                     <ColFilter value={cf.margine ?? ''} onChange={v => setCfV('margine', v)}
                       options={marginePresenti.map(v => ({ value: v, label: v }))} width={70} />
@@ -1957,6 +2173,8 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
                 </tr>
                 <tr>
                   <th style={{ ...thS, ...thVis('percorsi') }}>Percorsi</th>
+                  <th style={{ ...thS, color: '#64b5f6', ...thVis('percshop') }}>Shop</th>
+                  <th style={{ ...thS, color: '#f48fb1', ...thVis('percpromo') }}>Promo</th>
                   <th style={{ ...thS, ...thVis('cat') }}>Categoria</th>
                   <th style={{ ...thS, ...thVis('fase') }}>Fase</th>
                   <th style={{ ...thS, ...thVis('mat') }}>Materiale</th>
@@ -1978,6 +2196,8 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
                   <th style={{ ...thS, textAlign: 'right', color: '#b0bec5', fontSize: 10, ...thVis('costante') }}>Costante</th>
                   <th style={{ ...thS, color: '#b0bec5', fontSize: 10, ...thVis('abbr') }}>Abbr</th>
                   <th style={{ ...thS, textAlign: 'center', color: '#ffb74d', ...thVis('sconto') }}>Sconto %</th>
+                  <th style={{ ...thS, textAlign: 'right', color: '#f48fb1', ...thVis('promo') }}>P. Promo €</th>
+                  <th style={{ ...thS, textAlign: 'center', color: '#b0bec5', fontSize: 10, ...thVis('fine_promo') }}>Fine Promo</th>
                   <th style={{ ...thS, textAlign: 'center', ...thVis('margine') }}>Margine</th>
                   <th style={{ ...thS, ...thVis('note') }}>Note / Max</th>
                   <th style={{ ...thS, textAlign: 'center', color: '#80cbc4', ...thVis('richiede') }}>larghezza</th>
@@ -2006,6 +2226,8 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
                     ? <RigaEdit key={art.id} art={art} categorie={categorie} produttori={produttori} fornitori={fornitori} onDone={() => setEditId(null)} onSaved={(id) => setLastId(id)} />
                     : <RigaNormale key={art.id} art={art}
                         percorsi={percorsiPerListino[art.id] ?? []}
+                        shopPercorsi={shopPercorsiPerListino[art.id] ?? []}
+                        promoPercorsi={promoPercorsiPerListino[art.id] ?? []}
                         onEdit={() => setEditId(art.id)}
                         onScheda={() => setSchedaId(art.id)}
                         onDelete={() => handleDelete(art.id)}

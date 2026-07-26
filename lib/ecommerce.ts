@@ -6,6 +6,7 @@ export type ArticoloEcommerce = {
   serie?: string | null
   unita: string
   prezzo_vendita: number
+  prezzo_promo?: number | null
   max_acquistabile: number | null
   foto_url: string | null
   richiede_tipo_colore: number
@@ -34,17 +35,4 @@ export function toEcommerceSlug(categoria: string): string {
     .normalize('NFD').replace(/[̀-ͯ]/g, '')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '')
-}
-
-// Macro-sezioni dello shop (hub /shop). Per ora unica sezione "arredi" che
-// raggruppa tutti i prodotti acquistabili — la vera categorizzazione (per reparto,
-// offerte, combo, ecc.) va ancora decisa e sarà rivista.
-export type MacroSezione = { slug: string; nome: string; descrizione: string }
-
-export const ECOMMERCE_MACRO_SEZIONI: MacroSezione[] = [
-  { slug: 'arredi', nome: 'Arredi', descrizione: 'Quadri, divani e complementi d\'arredo pronti per essere spediti a casa tua.' },
-]
-
-export function getMacroSezione(slug: string): MacroSezione | undefined {
-  return ECOMMERCE_MACRO_SEZIONI.find(m => m.slug === slug)
 }

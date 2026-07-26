@@ -23,7 +23,7 @@ const pages = [
   { label: 'Galleria',              href: '/chi-siamo/galleria',              desc: 'Foto e video dei nostri lavori completati: ristrutturazioni, serramenti e molto altro.' },
   { label: 'Contatti',              href: '/chi-siamo/contatti',              desc: 'Dove siamo, come raggiungerci e tutti i recapiti per richiedere un preventivo.' },
   { label: 'Partners',              href: '/chi-siamo/partners',              desc: 'I brand e i fornitori con cui collaboriamo per garantire qualità e affidabilità.' },
-  { label: 'Cataloghi',             href: '/chi-siamo/cataloghi',             desc: 'Sfoglia i cataloghi dei prodotti disponibili: serramenti, porte, arredi e altro e componi il tuo preventivo senza registrazione.' },
+  { label: 'Cataloghi',             href: '/cataloghi',                       desc: 'Sfoglia i cataloghi dei prodotti disponibili: serramenti, porte, arredi e altro e componi il tuo preventivo senza registrazione.' },
   { label: 'Condizioni di Vendita', href: '/chi-siamo/condizioni-di-vendita', desc: 'Termini e condizioni che regolano i nostri contratti di fornitura e posa.' },
   { label: 'Documenti Legali',      href: '/chi-siamo/templates-documenti',   desc: 'Documenti legali ufficiali: Privacy Policy & Cookie Policy e Consenso Marketing, Newsletter e SMS, scaricabili in PDF.' },
 ]

@@ -46,15 +46,20 @@ export default function FornitoreForm() {
 
   return (
     <>
-      <button
-        onClick={() => setAperto(true)}
-        className="cta-home-btn"
-        style={{ width: 'auto', height: 'auto', padding: '10px 24px 16px', cursor: 'pointer', border: 'none', gap: 8, justifyContent: 'flex-start' }}
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/images/cta/fornitori-digi.png" alt="Fornitore" width={75} height={75} style={{ objectFit: 'contain', display: 'block' }} />
-        <span className="testo-cta animato">Diventa nostro Fornitore</span>
-      </button>
+      <div className="home-hero-cta">
+        <button
+          onClick={() => setAperto(true)}
+          className="cta-home-btn"
+          style={{ cursor: 'pointer', border: 'none' }}
+        >
+          <div className="cta-row">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <div><img src="/images/cta/fornitori-digi.png" alt="Fornitore" style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%' }} /></div>
+            <span className="testo-cta"><span className="animato">Diventa nostro<br />Fornitore</span></span>
+          </div>
+          <span className="cta-sub">Compila Modulo di Contatto</span>
+        </button>
+      </div>
 
       {aperto && (
         <div

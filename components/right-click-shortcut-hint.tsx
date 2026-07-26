@@ -12,9 +12,11 @@ const COUNTDOWN_S = 5
 
 const INTERACTIVE_SELECTOR = 'button, a, input, select, textarea, label, [role="button"], [contenteditable="true"]'
 
-/** true se il doppio click è avvenuto su (o dentro) un elemento cliccabile/interattivo della pagina */
+/** true se il doppio click è avvenuto su (o dentro) un elemento cliccabile/interattivo della pagina,
+ *  oppure dentro un contenitore che gestisce già da sé il doppio click (marcato con l'attributo
+ *  data-no-shortcut-dblclick, es. le griglie con "doppio click per modificare") */
 function isOnInteractiveElement(target: EventTarget | null): boolean {
-  return target instanceof Element && target.closest(INTERACTIVE_SELECTOR) != null
+  return target instanceof Element && (target.closest(INTERACTIVE_SELECTOR) != null || target.closest('[data-no-shortcut-dblclick]') != null)
 }
 
 /**
@@ -70,13 +72,16 @@ export default function RightClickShortcutHint() {
     }
     function onKeyDown(e: KeyboardEvent) { if (e.key === 'Escape') hide() }
 
-    document.addEventListener('dblclick', show)
+    // Fase di cattura: il controllo su e.target avviene PRIMA che qualunque
+    // handler React (bubble, es. onDoubleClick di una riga con stopPropagation)
+    // possa girare — niente corse tra i due, l'esclusione è sempre affidabile.
+    document.addEventListener('dblclick', show, true)
     document.addEventListener('mousedown', hide)
     window.addEventListener('scroll', hide, { passive: true, capture: true })
     document.addEventListener('keydown', onKeyDown)
     return () => {
       clearCountdown()
-      document.removeEventListener('dblclick', show)
+      document.removeEventListener('dblclick', show, true)
       document.removeEventListener('mousedown', hide)
       window.removeEventListener('scroll', hide, true)
       document.removeEventListener('keydown', onKeyDown)

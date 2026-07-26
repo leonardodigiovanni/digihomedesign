@@ -102,7 +102,7 @@ export default async function GuidaComputometrico() {
 
         <StickyBottomBarContent>
           <Link href="/" className="btn-black fs-12">← Home</Link>
-          <Link href="/chi-siamo/cataloghi" className="btn-black fs-12">Cataloghi →</Link>
+          <Link href="/cataloghi" className="btn-black fs-12">Cataloghi →</Link>
         </StickyBottomBarContent>
 
       </div>

@@ -1,6 +1,28 @@
 # Sezione "Promozioni" (nav tra Shop On Line e Cataloghi)
 
-Stato: **in attesa di conferma**
+Stato: **completato** (2026-07-25)
+
+## Riepilogo modifiche effettive
+
+Implementato secondo il piano concordato, con i chiarimenti finali: `prezzo_promo` nullable senza validazione (se null si comporta come prima, un solo prezzo); dettaglio prodotto riusa `/shop/[macro]/[id]` (link fisso a `/shop/arredi/[id]`, unica macro esistente oggi); gestione gruppi promo dentro `area-lavoro/listini` con drag&drop, niente pagina admin dedicata.
+
+- `lib/promo.ts` — **nuovo**: tabelle `promo_gruppi`/`promo_gruppi_articoli` (idempotenti), `addGruppoPromoListino` (crea il gruppo al volo se il nome non esiste, slug auto-generato con gestione collisioni), `removeGruppoPromoListino`.
+- `app/area-lavoro/listini/actions.ts` — colonna `listini.prezzo_promo` (idempotente), campo incluso in `addArticolo`/`updateArticolo`/aggiornamento massivo (`CAMPI_NUMERICI.promo`).
+- `app/area-lavoro/listini/page.tsx` — carica `gruppiPromoPerListino`, passato al client.
+- `app/area-lavoro/listini/listini-client.tsx` — nuova colonna **"Gruppi Promo"** (component `GruppiPromoPanel`, drag&drop identico a `PercorsiPanel`: chip trascinabili tra righe, input libero + "+" per creare/assegnare, "✕" per rimuovere) e nuova colonna **"P.Promo"** editabile (form aggiunta, riga di modifica, riga valori per bulk-update, filtro colonne). Mostrata in rosso in tabella solo se diversa dal prezzo normale.
+- `lib/nav-config.ts` — nuova entry `standalonePages` id 42 "Promozioni" (`/promozioni`), tra Shop On Line e Cataloghi.
+- `lib/ecommerce.ts` — `ArticoloEcommerce.prezzo_promo` aggiunto al tipo.
+- `app/shop/[macro]/page.tsx` e `app/shop/[macro]/[id]/page.tsx` — `prezzo_promo` incluso nelle query.
+- `components/ecommerce-shop.tsx` — `PrezzoAmazon` mostra doppio prezzo (promo in rosso + normale barrato) solo quando `prezzo_promo` è impostato e diverso dal normale; altrimenti comportamento invariato.
+- `app/promozioni/page.tsx` — **nuovo**, hub pubblico: elenco gruppi attivi con almeno un articolo, card con conteggio articoli.
+- `app/promozioni/[gruppo]/page.tsx` — **nuovo**, risolve il gruppo per slug, griglia articoli (join `promo_gruppi_articoli` → `listini`, solo disponibili/acquistabili), ogni card linka al dettaglio esistente `/shop/arredi/[id]`.
+
+## ⚠️ Nota — checkout non ancora aggiornato
+
+Il carrello acquisti e il checkout Stripe (`app/area-clienti/carrello-acquisti/*`, `checkout-action.ts`) continuano a usare `prezzo_vendita` + lo sconto percentuale `sconto_articolo` esistente, **non** il nuovo `prezzo_promo`. Il campo è per ora solo *mostrato* (comparazione prezzo normale/promo), non ancora *addebitato* in fase di acquisto. Se vuoi che l'articolo in promo venga effettivamente pagato al prezzo promo, va integrato separatamente nella logica di calcolo del carrello/checkout — non l'ho toccata per non allargare ulteriormente lo scope senza una richiesta esplicita.
+
+---
+
 
 ## Obiettivo
 

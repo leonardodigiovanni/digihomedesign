@@ -164,7 +164,7 @@ export default async function Page({ searchParams }: Props) {
 
       <StickyBottomBarContent>
         <Link href="/area-clienti/ordini" className="btn-black fs-12">I miei ordini →</Link>
-        <Link href="/chi-siamo/cataloghi" className="btn-black fs-12">Continua a sfogliare</Link>
+        <Link href="/cataloghi" className="btn-black fs-12">Continua a sfogliare</Link>
       </StickyBottomBarContent>
     </div>
   )

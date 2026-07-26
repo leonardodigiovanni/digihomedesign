@@ -136,13 +136,62 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
     updateArrows()
   }
 
-  // Chiudi tutto al cambio pagina e resetta scroll
+  // Scorrimento graduale al passaggio del mouse sulle frecce (hover), indipendente
+  // dal salto "a pagina" del click gestito da scrollNav.
+  const hoverDir   = useRef<'left' | 'right' | null>(null)
+  const hoverRaf   = useRef<number | null>(null)
+  const hoverLastTs = useRef<number | null>(null)
+  const HOVER_SPEED = 160 // px/sec
+
+  function hoverStep(ts: number) {
+    const container = scrollRef.current
+    const inner     = innerRef.current
+    const dir       = hoverDir.current
+    if (!container || !inner || !dir) { hoverRaf.current = null; hoverLastTs.current = null; return }
+    const maxScroll = inner.offsetWidth - container.offsetWidth
+    const last = hoverLastTs.current ?? ts
+    const dt = (ts - last) / 1000
+    hoverLastTs.current = ts
+    if (maxScroll <= 0) { hoverRaf.current = null; return }
+    let next = scrollPos.current + (dir === 'right' ? 1 : -1) * HOVER_SPEED * dt
+    next = Math.max(0, Math.min(next, maxScroll))
+    scrollPos.current = next
+    inner.style.marginLeft = `-${next}px`
+    updateArrows()
+    if ((dir === 'right' && next < maxScroll) || (dir === 'left' && next > 0)) {
+      hoverRaf.current = requestAnimationFrame(hoverStep)
+    } else {
+      hoverRaf.current = null
+      hoverLastTs.current = null
+    }
+  }
+
+  function startHoverScroll(direction: 'left' | 'right') {
+    hoverDir.current = direction
+    hoverLastTs.current = null
+    if (hoverRaf.current == null) hoverRaf.current = requestAnimationFrame(hoverStep)
+  }
+
+  function stopHoverScroll() {
+    hoverDir.current = null
+    if (hoverRaf.current != null) { cancelAnimationFrame(hoverRaf.current); hoverRaf.current = null }
+    hoverLastTs.current = null
+  }
+
+  useEffect(() => stopHoverScroll, [])
+
+  // Chiudi tutto al cambio pagina. Lo scroll orizzontale della nav NON si
+  // resetta più in navigazione normale (l'utente vuole restare nella stessa
+  // posizione per vedere subito la nuova selezione e riaprire la stessa
+  // tendina) — le due righe sono commentate, non rimosse: il reset completo
+  // resta disponibile per i cambi "importanti" (login/logout), vedi effect
+  // dedicato su [role, username] qui sotto.
   useEffect(() => {
     setMenuOpen(false)
     setMobileOpenSection(null)
     if (skipSectionClose.current) { skipSectionClose.current = false } else { setSectionOpen(false) }
-    scrollPos.current = 0
-    if (innerRef.current) innerRef.current.style.marginLeft = '0'
+    // scrollPos.current = 0
+    // if (innerRef.current) innerRef.current.style.marginLeft = '0'
     updateArrows()
     // In questo layout è "body" (non la finestra) l'elemento che scrolla
     // davvero (per via di html{overflow-y:scroll} + body{height:100%}).
@@ -153,6 +202,14 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
     document.documentElement.scrollTop = 0
     window.scrollTo(0, 0)
   }, [pathname])
+
+  // Reset completo dello scroll orizzontale della nav: solo sui cambi
+  // "importanti" (login, logout, cambio utente) — qui i due `=0` restano attivi.
+  useEffect(() => {
+    scrollPos.current = 0
+    if (innerRef.current) innerRef.current.style.marginLeft = '0'
+    updateArrows()
+  }, [role, username])
 
   // Chiudi menu mobile se il browser diventa largo; aggiorna frecce al resize
   useEffect(() => {
@@ -254,7 +311,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
         {/* Area scrollabile — le frecce sono dentro, in position:absolute, coprono gli item parziali */}
         <div className="nav-scroll" ref={scrollRef}>
         {canLeft && (
-          <button className="nav-arrow-btn nav-arrow-btn-left" onClick={() => scrollNav('left')} aria-label="Scorri sinistra">
+          <button className="nav-arrow-btn nav-arrow-btn-left" onClick={() => scrollNav('left')} onMouseEnter={() => startHoverScroll('left')} onMouseLeave={stopHoverScroll} aria-label="Scorri sinistra">
             <svg viewBox="0 0 14 12" width="14" height="12" fill="currentColor"><path d="M14 0 L8 6 L14 12 Z M6 0 L0 6 L6 12 Z"/></svg>
           </button>
         )}
@@ -389,7 +446,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
           )}
         </div>{/* fine nav-scroll-inner */}
         {canRight && (
-          <button className={`nav-arrow-btn nav-arrow-btn-right${primoGruppoSilver ? ' nav-arrow-btn-silver' : ''}`} onClick={() => scrollNav('right')} aria-label="Scorri destra">
+          <button className={`nav-arrow-btn nav-arrow-btn-right${primoGruppoSilver ? ' nav-arrow-btn-silver' : ''}`} onClick={() => scrollNav('right')} onMouseEnter={() => startHoverScroll('right')} onMouseLeave={stopHoverScroll} aria-label="Scorri destra">
             <svg viewBox="0 0 14 12" width="14" height="12" fill="currentColor"><path d="M0 0 L6 6 L0 12 Z M8 0 L14 6 L8 12 Z"/></svg>
           </button>
         )}
@@ -406,7 +463,9 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
           const showAcquisti   = cartAcquistiCount > 0
           if (!showComputo && !showPreventivo && !showAcquisti) return null
           return (
-        <div style={{ flexShrink: 0, paddingRight: 4, borderLeft: '1px solid #d98aa8', background: '#f7b2c3', display: 'flex', alignItems: 'center', gap: 0 }}>
+        <>
+        {primoGruppoSilver && <div style={{ flexShrink: 0, width: 3, alignSelf: 'stretch', background: '#1a1a1a' }} />}
+        <div style={{ flexShrink: 0, paddingRight: 4, borderLeft: '1px solid #a07808', background: '#dba820', display: 'flex', alignItems: 'center', gap: 0 }}>
           {showComputo && (
           <Link
             href="/area-clienti/carrello-computometrico"
@@ -473,6 +532,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
           </>
           )}
         </div>
+        </>
           )
         })()}
       </div>
@@ -495,7 +555,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             </span>
           )}
         </button>
-        <div style={{ marginLeft: 'auto', paddingRight: 12, background: '#f7b2c3', display: 'flex', alignItems: 'center', height: '100%', gap: 0 }}>
+        <div style={{ marginLeft: 'auto', paddingRight: 12, background: '#dba820', display: 'flex', alignItems: 'center', height: '100%', gap: 0 }}>
           {(() => {
             const showComputo    = computoCount > 0 && computometricoAbilitato
             const showPreventivo = cartCount > 0 && preventiviAbilitato

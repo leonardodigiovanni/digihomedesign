@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { getConnection } from '@/lib/db'
 import type { Metadata } from 'next'
-import AggiungiArticolo, { type ArticoloListino } from '../aggiungi-articolo'
+import AggiungiArticolo, { type ArticoloListino } from '../../aggiungi-articolo'
 import VoceViewer from './voce-viewer'
 import type { PreventivoDestOption } from '@/app/brand/cataloghi/actions'
 import { LISTINO_COLS } from '@/lib/catalogo-matching'
@@ -11,7 +11,7 @@ import { ensurePercorsiTables } from '@/lib/percorsi'
 import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import ShortcutStar from '@/components/shortcut-star'
 
-type Props = { params: Promise<{ slug: string; voceSlug: string }> }
+type Props = { params: Promise<{ slug: string; sottoSlug: string; voceSlug: string }> }
 
 function toSlug(nome: string): string {
   return nome
@@ -21,7 +21,9 @@ function toSlug(nome: string): string {
     .replace(/^-|-$/g, '')
 }
 
-async function getData(slug: string, voceSlug: string) {
+const LABEL_GENERALE = 'Generale'
+
+async function getData(slug: string, sottoSlug: string, voceSlug: string) {
   const db = await getConnection()
   try {
     await ensurePercorsiTables(db)
@@ -32,40 +34,48 @@ async function getData(slug: string, voceSlug: string) {
     const catNome = (catRows as { categoria: string }[]).find(r => toSlug(r.categoria) === slug)?.categoria
     if (!catNome) return null
 
+    const [subRows] = await db.query(
+      `SELECT DISTINCT sottocategoria FROM catalogo_voci_percorsi WHERE categoria = ?`,
+      [catNome]
+    ) as [{ sottocategoria: string }[], unknown]
+    const subMatch = (subRows as { sottocategoria: string }[]).find(r => (r.sottocategoria ? toSlug(r.sottocategoria) : 'generale') === sottoSlug)
+    if (subMatch === undefined) return null
+    const sottoNome = subMatch.sottocategoria
+
     const [vociRows] = await db.query(`
       SELECT DISTINCT cv.id, cv.nome, cv.pdf_filename, cv.pdf_label
       FROM catalogo_voci cv
       JOIN catalogo_voci_percorsi vp ON vp.voce_id = cv.id
-      WHERE vp.categoria = ?
+      WHERE vp.categoria = ? AND vp.sottocategoria = ?
       ORDER BY cv.nome ASC
-    `, [catNome])
+    `, [catNome, sottoNome])
     const voceId = parseInt(voceSlug)
     const voce = (vociRows as { id: number; nome: string; pdf_filename: string; pdf_label: string }[])
       .find(v => isNaN(voceId) ? toSlug(v.nome) === voceSlug : v.id === voceId)
     if (!voce) return null
 
-    return { categoria: { nome: catNome }, voce }
+    return { categoria: { nome: catNome }, sottocategoria: { nome: sottoNome, label: sottoNome || LABEL_GENERALE }, voce }
   } finally {
     await db.end()
   }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug, voceSlug } = await params
-  const data = await getData(slug, voceSlug)
+  const { slug, sottoSlug, voceSlug } = await params
+  const data = await getData(slug, sottoSlug, voceSlug)
   if (!data) return { title: 'Catalogo non trovato' }
-  const { categoria, voce } = data
+  const { categoria, sottocategoria, voce } = data
   return {
-    title: `${voce.pdf_label || voce.nome} — ${categoria.nome} — Digi Home Design Palermo`,
+    title: `${voce.pdf_label || voce.nome} — ${categoria.nome} — ${sottocategoria.label} — Digi Home Design Palermo`,
     robots: { index: false },
   }
 }
 
 export default async function Page({ params }: Props) {
-  const { slug, voceSlug } = await params
-  const data = await getData(slug, voceSlug)
+  const { slug, sottoSlug, voceSlug } = await params
+  const data = await getData(slug, sottoSlug, voceSlug)
   if (!data) notFound()
-  const { categoria, voce } = data
+  const { categoria, sottocategoria, voce } = data
 
   const cookieStore = await cookies()
   const role = cookieStore.get('session_role')?.value ?? ''
@@ -165,14 +175,14 @@ export default async function Page({ params }: Props) {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/chi-siamo" style={{ color: '#888', textDecoration: 'underline' }}>Chi Siamo</Link>
+        <Link href="/cataloghi" style={{ color: '#888', textDecoration: 'underline' }}>Cataloghi</Link>
         {' / '}
-        <Link href="/chi-siamo/cataloghi" style={{ color: '#888', textDecoration: 'underline' }}>Cataloghi</Link>
+        <Link href={`/cataloghi/${slug}`} style={{ color: '#888', textDecoration: 'underline' }}>{categoria.nome}</Link>
         {' / '}
-        <Link href={`/chi-siamo/cataloghi/${slug}`} style={{ color: '#888', textDecoration: 'underline' }}>{categoria.nome}</Link>
+        <Link href={`/cataloghi/${slug}/${sottoSlug}`} style={{ color: '#888', textDecoration: 'underline' }}>{sottocategoria.label}</Link>
         {' / '}{voce.pdf_label || voce.nome}<ShortcutStar />
       </p>
-      <VoceViewer voce={voce} backHref={`/chi-siamo/cataloghi/${slug}`} />
+      <VoceViewer voce={voce} backHref={`/cataloghi/${slug}/${sottoSlug}`} />
 
       {articoliPreventivo.length > 0 && (
         <>
@@ -189,7 +199,7 @@ export default async function Page({ params }: Props) {
       )}
 
       <StickyBottomBarContent>
-        <Link href={`/chi-siamo/cataloghi/${slug}`} className="btn-black fs-12">
+        <Link href={`/cataloghi/${slug}/${sottoSlug}`} className="btn-black fs-12">
           ← Torna a cataloghi
         </Link>
         {cartNonVuoto && (

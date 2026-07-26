@@ -3,12 +3,12 @@ import { notFound } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { getConnection } from '@/lib/db'
 import AggiungiArticolo, { type ArticoloListino } from '@/app/brand/cataloghi/[slug]/aggiungi-articolo'
-import VoceViewer from '@/app/brand/cataloghi/[slug]/[voceSlug]/voce-viewer'
+import VoceViewer from '@/app/brand/cataloghi/[slug]/[sottoSlug]/[voceSlug]/voce-viewer'
 import type { PreventivoDestOption } from '@/app/brand/cataloghi/actions'
 import { LISTINO_COLS } from '@/lib/catalogo-matching'
 import { ensurePercorsiTables } from '@/lib/percorsi'
 
-type Props = { params: Promise<{ slug: string; voceSlug: string }> }
+type Props = { params: Promise<{ slug: string; sottoSlug: string; voceSlug: string }> }
 
 function toSlug(nome: string): string {
   return nome
@@ -18,7 +18,9 @@ function toSlug(nome: string): string {
     .replace(/^-|-$/g, '')
 }
 
-async function getData(slug: string, voceSlug: string) {
+const LABEL_GENERALE = 'Generale'
+
+async function getData(slug: string, sottoSlug: string, voceSlug: string) {
   const db = await getConnection()
   try {
     await ensurePercorsiTables(db)
@@ -29,29 +31,37 @@ async function getData(slug: string, voceSlug: string) {
     const catNome = (catRows as { categoria: string }[]).find(r => toSlug(r.categoria) === slug)?.categoria
     if (!catNome) return null
 
+    const [subRows] = await db.query(
+      `SELECT DISTINCT sottocategoria FROM catalogo_voci_percorsi WHERE categoria = ?`,
+      [catNome]
+    ) as [{ sottocategoria: string }[], unknown]
+    const subMatch = (subRows as { sottocategoria: string }[]).find(r => (r.sottocategoria ? toSlug(r.sottocategoria) : 'generale') === sottoSlug)
+    if (subMatch === undefined) return null
+    const sottoNome = subMatch.sottocategoria
+
     const [vociRows] = await db.query(`
       SELECT DISTINCT cv.id, cv.nome, cv.pdf_filename, cv.pdf_label
       FROM catalogo_voci cv
       JOIN catalogo_voci_percorsi vp ON vp.voce_id = cv.id
-      WHERE vp.categoria = ?
+      WHERE vp.categoria = ? AND vp.sottocategoria = ?
       ORDER BY cv.nome ASC
-    `, [catNome])
+    `, [catNome, sottoNome])
     const voceId = parseInt(voceSlug)
     const voce = (vociRows as { id: number; nome: string; pdf_filename: string; pdf_label: string }[])
       .find(v => isNaN(voceId) ? toSlug(v.nome) === voceSlug : v.id === voceId)
     if (!voce) return null
 
-    return { categoria: { nome: catNome }, voce }
+    return { categoria: { nome: catNome }, sottocategoria: { nome: sottoNome, label: sottoNome || LABEL_GENERALE }, voce }
   } finally {
     await db.end()
   }
 }
 
 export default async function Page({ params }: Props) {
-  const { slug, voceSlug } = await params
-  const data = await getData(slug, voceSlug)
+  const { slug, sottoSlug, voceSlug } = await params
+  const data = await getData(slug, sottoSlug, voceSlug)
   if (!data) notFound()
-  const { categoria, voce } = data
+  const { categoria, sottocategoria, voce } = data
 
   const cookieStore = await cookies()
   const role = cookieStore.get('session_role')?.value ?? ''
@@ -154,6 +164,8 @@ export default async function Page({ params }: Props) {
         <Link href="/app/cataloghi" style={{ color: '#888', textDecoration: 'underline' }}>Cataloghi</Link>
         {' / '}
         <Link href={`/app/cataloghi/${slug}`} style={{ color: '#888', textDecoration: 'underline' }}>{categoria.nome}</Link>
+        {' / '}
+        <Link href={`/app/cataloghi/${slug}/${sottoSlug}`} style={{ color: '#888', textDecoration: 'underline' }}>{sottocategoria.label}</Link>
         {' / '}{voce.pdf_label || voce.nome}
       </p>
       <VoceViewer voce={voce} />
@@ -173,7 +185,7 @@ export default async function Page({ params }: Props) {
       )}
 
       <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-        <Link href={`/app/cataloghi/${slug}`} className="btn-black-app fs-12" style={{ flex: 1 }}>
+        <Link href={`/app/cataloghi/${slug}/${sottoSlug}`} className="btn-black-app fs-12" style={{ flex: 1 }}>
           ← Torna a cataloghi
         </Link>
         {cartNonVuoto && (

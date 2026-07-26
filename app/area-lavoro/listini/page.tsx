@@ -6,6 +6,8 @@ import { getConnection } from '@/lib/db'
 import ListiniClient, { type Articolo, type Fornitore } from './listini-client'
 import type { Metadata } from 'next'
 import { ensurePercorsiTables, type Percorso } from '@/lib/percorsi'
+import { ensureShopPercorsiTables, type PercorsoShop } from '@/lib/shop-percorsi'
+import { ensurePromoTables, type PercorsoPromo } from '@/lib/promo'
 import { getFiltriModelloLabels } from '@/lib/filtri-modello-labels'
 import { LOGHI_PARTNERS } from '@/lib/loghi-partners'
 import ShortcutStar from '@/components/shortcut-star'
@@ -14,7 +16,7 @@ export const metadata: Metadata = {
   title: 'Listini',
 }
 
-async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[]; percorsiPerListino: Record<number, Percorso[]>; filtriLabels: Record<number, string>; loghiDisponibili: string[] }> {
+async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[]; percorsiPerListino: Record<number, Percorso[]>; shopPercorsiPerListino: Record<number, PercorsoShop[]>; promoPercorsiPerListino: Record<number, PercorsoPromo[]>; filtriLabels: Record<number, string>; loghiDisponibili: string[] }> {
   const db = await getConnection()
   try {
     await db.execute(`
@@ -80,10 +82,12 @@ async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[]
     await db.execute(`ALTER TABLE listini ADD COLUMN fascia        VARCHAR(100) NULL DEFAULT NULL`).catch(() => {})
     await db.execute(`ALTER TABLE listini ADD COLUMN escluso       TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE listini ADD COLUMN computabile   TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN prezzo_promo  DECIMAL(10,2) NULL`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN fine_promozione DATE NULL`).catch(() => {})
 
     const [rows] = await db.query(`
       SELECT l.id, l.categoria, l.sottocategoria, l.fase, l.materiale, l.tipologia, l.ambiente, l.produttore, l.descrizione, l.fascia, l.unita,
-             l.prezzo_acquisto, l.prezzo_vendita, l.note, l.disponibile, l.preventivabile, l.acquistabile, l.max_acquistabile,
+             l.prezzo_acquisto, l.prezzo_vendita, l.prezzo_promo, l.fine_promozione, l.note, l.disponibile, l.preventivabile, l.acquistabile, l.max_acquistabile,
              l.sconto_articolo, l.serie, l.principale, l.caratteristica,
              l.richiede_larghezza, l.richiede_altezza, l.richiede_quantita, l.richiede_piano,
              l.richiede_km, l.richiede_peso, l.richiede_tipo_colore, l.richiede_tipo_colore_acc, l.richiede_tipo_vetro, l.richiede_tipo_montaggio, l.costante, l.abbr, l.minimo,
@@ -103,6 +107,8 @@ async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[]
       ...r,
       prezzo_acquisto:       parseFloat(String(r.prezzo_acquisto ?? 0)),
       prezzo_vendita:        parseFloat(String(r.prezzo_vendita  ?? 0)),
+      prezzo_promo:          r.prezzo_promo != null ? parseFloat(String(r.prezzo_promo)) : null,
+      fine_promozione:       r.fine_promozione ? (r.fine_promozione instanceof Date ? r.fine_promozione.toISOString().slice(0, 10) : String(r.fine_promozione)) : null,
       disponibile:           Number(r.disponibile    ?? 1),
       preventivabile:        Number(r.preventivabile ?? 1),
       acquistabile:          Number(r.acquistabile   ?? 0),
@@ -165,10 +171,26 @@ async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[]
       percorsiPerListino[r.listino_id].push({ id: r.id, categoria: r.categoria, sottocategoria: r.sottocategoria })
     }
 
+    await ensureShopPercorsiTables(db)
+    const [shopPercorsiRows] = await db.query('SELECT id, listino_id, categoria, sottocategoria FROM shop_percorsi ORDER BY id ASC')
+    const shopPercorsiPerListino: Record<number, PercorsoShop[]> = {}
+    for (const r of shopPercorsiRows as { id: number; listino_id: number; categoria: string; sottocategoria: string }[]) {
+      if (!shopPercorsiPerListino[r.listino_id]) shopPercorsiPerListino[r.listino_id] = []
+      shopPercorsiPerListino[r.listino_id].push({ id: r.id, categoria: r.categoria, sottocategoria: r.sottocategoria })
+    }
+
+    await ensurePromoTables(db)
+    const [promoPercorsiRows] = await db.query('SELECT id, listino_id, categoria, sottocategoria FROM promo_percorsi ORDER BY id ASC')
+    const promoPercorsiPerListino: Record<number, PercorsoPromo[]> = {}
+    for (const r of promoPercorsiRows as { id: number; listino_id: number; categoria: string; sottocategoria: string }[]) {
+      if (!promoPercorsiPerListino[r.listino_id]) promoPercorsiPerListino[r.listino_id] = []
+      promoPercorsiPerListino[r.listino_id].push({ id: r.id, categoria: r.categoria, sottocategoria: r.sottocategoria })
+    }
+
     const filtriLabels = await getFiltriModelloLabels(db)
     const loghiDisponibili = LOGHI_PARTNERS
 
-    return { articoli, fornitori, percorsiPerListino, filtriLabels, loghiDisponibili }
+    return { articoli, fornitori, percorsiPerListino, shopPercorsiPerListino, promoPercorsiPerListino, filtriLabels, loghiDisponibili }
   } finally {
     await db.end()
   }
@@ -182,7 +204,7 @@ export default async function Page() {
   const settings = await readSettings()
   if (!hasPageAccess(role, 25, settings)) redirect('/')
 
-  const { articoli, fornitori, percorsiPerListino, filtriLabels, loghiDisponibili } = await getData()
+  const { articoli, fornitori, percorsiPerListino, shopPercorsiPerListino, promoPercorsiPerListino, filtriLabels, loghiDisponibili } = await getData()
 
   return (
     <div>
@@ -190,7 +212,7 @@ export default async function Page() {
       <p style={{ color: '#000', fontSize: 13, marginBottom: 24 }}>
         Prezzi di acquisto e vendita per articoli e lavorazioni. Doppio click su una riga per modificarla.
       </p>
-      <ListiniClient articoli={articoli} fornitori={fornitori} percorsiPerListino={percorsiPerListino} filtriLabels={filtriLabels} loghiDisponibili={loghiDisponibili} />
+      <ListiniClient articoli={articoli} fornitori={fornitori} percorsiPerListino={percorsiPerListino} shopPercorsiPerListino={shopPercorsiPerListino} promoPercorsiPerListino={promoPercorsiPerListino} filtriLabels={filtriLabels} loghiDisponibili={loghiDisponibili} />
     </div>
   )
 }

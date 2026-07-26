@@ -134,7 +134,7 @@ type ModalState =
 
 type EditVals = { q: number; ante: number; l: number; h: number; colore: string; note: string; desc: string }
 
-function LoginBanner({ hasLacune, cataloghiHref = '/chi-siamo/cataloghi', isApp }: { hasLacune: boolean; cataloghiHref?: string; isApp?: boolean }) {
+function LoginBanner({ hasLacune, cataloghiHref = '/cataloghi', isApp }: { hasLacune: boolean; cataloghiHref?: string; isApp?: boolean }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
@@ -192,7 +192,7 @@ export default function CarrelloClient({
   caratteristiche = [],
   listini = [],
   percorsiPerListino = {},
-  cataloghiHref = '/chi-siamo/cataloghi',
+  cataloghiHref = '/cataloghi',
   stampaHref = '/area-clienti/carrello-preventivo/stampa',
   postSaveHref,
   isApp,
