@@ -27,6 +27,7 @@ export type Articolo = {
   descrizione: string
   fascia: string | null
   unita: string
+  base_calcolo: string | null
   prezzo_acquisto: number
   prezzo_vendita: number
   prezzo_promo: number | null
@@ -51,6 +52,7 @@ export type Articolo = {
   caratteristica: number
   richiede_larghezza: number
   richiede_altezza: number
+  richiede_altezza3d: number
   richiede_quantita: number
   richiede_piano: number
   richiede_km: number
@@ -78,14 +80,14 @@ export type Articolo = {
 
 // ─── Visibilità colonne ────────────────────────────────────────────────────────
 
-const COL_KEYS = ['percorsi','percshop','percpromo','cat','fase','mat','tipo','amb','descr','fascia','prod','logo','serie','forn','schema','foto','escluso','unita','minimo','p_acq','p_vnd','costante','abbr','sconto','promo','fine_promo','margine','note','richiede','filtri','azioni'] as const
+const COL_KEYS = ['percorsi','percshop','percpromo','cat','fase','mat','tipo','amb','descr','fascia','prod','logo','serie','forn','schema','foto','escluso','unita','basecalc','minimo','p_acq','p_vnd','costante','abbr','sconto','promo','fine_promo','margine','note','richiede','filtri','azioni'] as const
 type ColKey = typeof COL_KEYS[number]
 
 const COL_LABELS: Record<ColKey, string> = {
   percorsi: 'Percorsi', percshop: 'Shop', percpromo: 'Promo', cat: 'Categoria',
   fase: 'Fase', mat: 'Materiale', tipo: 'Tipologia', amb: 'Ambiente',
   descr: 'Descriz.', fascia: 'Fascia', prod: 'Marca', logo: 'Logo', serie: 'Serie', forn: 'Fornitore',
-  schema: 'Schema', foto: 'Foto', escluso: 'Escluso', unita: 'Unità',
+  schema: 'Schema', foto: 'Foto', escluso: 'Escluso', unita: 'Unità', basecalc: 'Base calc.',
   minimo: 'Minimo', p_acq: 'P.Acq', p_vnd: 'P.Vnd', costante: 'Cost.',
   abbr: 'Abbr', sconto: 'Sconto', promo: 'P.Promo', fine_promo: 'Fine Promo', margine: 'Margine', note: 'Note',
   richiede: 'Richiede…', filtri: 'Filtri', azioni: 'Azioni',
@@ -95,7 +97,7 @@ const COL_DEFAULT: Record<ColKey, boolean> = {
   percorsi: true, percshop: true, percpromo: true, cat: true,
   fase: true, mat: true, tipo: true, amb: true,
   descr: true, fascia: true, prod: true, logo: true, serie: true, forn: true,
-  schema: true, foto: true, escluso: true, unita: true,
+  schema: true, foto: true, escluso: true, unita: true, basecalc: true,
   minimo: false, p_acq: true, p_vnd: true, costante: false,
   abbr: false, sconto: true, promo: true, fine_promo: true, margine: true, note: true,
   richiede: true, filtri: true, azioni: true,
@@ -112,6 +114,19 @@ function useVis() {
 // ─── Costanti ─────────────────────────────────────────────────────────────────
 
 const UNITA_PREDEFINITE = ['m²', 'ml', 'kg', 't', 'pz', 'h', 'corpo']
+
+// Per le voci di lavorazione del computometrico: quale formula usare per ricavare
+// la quantità dalle 3 misure dell'ambiente padre (L, H2D, H3D). Vuoto = comportamento
+// diretto attuale (L×H2D per m², L per ml). Vedi carrello-computometrico/carrello-client.tsx.
+const BASE_CALCOLO_OPTIONS = [
+  { value: '', label: '— diretta —' },
+  { value: 'pavimento', label: 'Pavimento/Soffitto (L×H2D)' },
+  { value: 'pareti', label: 'Pareti (perimetro×H3D)' },
+  { value: 'perimetro', label: 'Perimetro (ml)' },
+]
+const BASE_CALCOLO_LABELS: Record<string, string> = {
+  pavimento: 'Pavimento', pareti: 'Pareti', perimetro: 'Perimetro',
+}
 
 // Etichette (label/title) vengono dal set globale filtriLabels — modificabile solo dal pannello Cataloghi
 const FILTRI_FIELDS = [
@@ -158,6 +173,7 @@ function FiltriGrid({ renderItem, titleFor }: { renderItem: (n: number) => React
 const RICHIEDE_FIELDS = [
   { key: 'richiede_larghezza',        label: 'larghezza' },
   { key: 'richiede_altezza',          label: 'altezza' },
+  { key: 'richiede_altezza3d',        label: 'altezza_3d' },
   { key: 'richiede_quantita',         label: 'quantita' },
   { key: 'richiede_piano',            label: 'piano' },
   { key: 'richiede_km',               label: 'km' },
@@ -502,6 +518,13 @@ function NuovoArticoloForm({ articoli, fornitori, onDone }: {
               options={[...UNITA_PREDEFINITE.map(u => ({ value: u, label: u })), { value: '__altro__', label: '+ Altra…' }]}
               style={inp} />
           )}
+        </div>
+
+        <div>
+          <label style={lbl}>Base di calcolo (voci ambiente)</label>
+          <select name="base_calcolo" defaultValue="" style={inp}>
+            {BASE_CALCOLO_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+          </select>
         </div>
 
         <div>
@@ -1287,6 +1310,9 @@ function RigaNormale({ art, percorsi, shopPercorsi, promoPercorsi, onEdit, onSch
         <ToggleEsclusoBtn art={art} />
       </td>
       <td style={{ ...td, textAlign: 'center', color: '#666', ...vis('unita') }}>{art.unita}</td>
+      <td style={{ ...td, textAlign: 'center', ...vis('basecalc') }}>
+        {art.base_calcolo ? <span style={{ background: '#e8f0f8', borderRadius: 3, padding: '2px 7px', fontSize: 11, fontWeight: 600 }}>{BASE_CALCOLO_LABELS[art.base_calcolo] ?? art.base_calcolo}</span> : <span style={{ color: '#ccc' }}>—</span>}
+      </td>
       <td style={{ ...td, textAlign: 'center', color: '#666', ...vis('minimo') }}>{art.minimo ?? ''}</td>
       <td style={{ ...td, textAlign: 'right', color: '#1565c0', fontWeight: 600, ...vis('p_acq') }}>{fmt(art.prezzo_acquisto)}</td>
       <td style={{ ...td, textAlign: 'right', color: '#2e7d32', fontWeight: 600, ...vis('p_vnd') }}>{fmt(art.prezzo_vendita)}</td>
@@ -1325,6 +1351,7 @@ function RigaNormale({ art, percorsi, shopPercorsi, promoPercorsi, onEdit, onSch
       </td>
       <td style={{ ...td, textAlign: 'center', ...vis('richiede') }}><ToggleCheckbox id={art.id} colonna="richiede_larghezza"   valore={art.richiede_larghezza} /></td>
       <td style={{ ...td, textAlign: 'center', ...vis('richiede') }}><ToggleCheckbox id={art.id} colonna="richiede_altezza"    valore={art.richiede_altezza} /></td>
+      <td style={{ ...td, textAlign: 'center', ...vis('richiede') }}><ToggleCheckbox id={art.id} colonna="richiede_altezza3d"  valore={art.richiede_altezza3d} /></td>
       <td style={{ ...td, textAlign: 'center', ...vis('richiede') }}><ToggleCheckbox id={art.id} colonna="richiede_quantita"   valore={art.richiede_quantita} /></td>
       <td style={{ ...td, textAlign: 'center', ...vis('richiede') }}><ToggleCheckbox id={art.id} colonna="richiede_piano"      valore={art.richiede_piano} /></td>
       <td style={{ ...td, textAlign: 'center', ...vis('richiede') }}><ToggleCheckbox id={art.id} colonna="richiede_km"         valore={art.richiede_km} /></td>
@@ -1442,6 +1469,11 @@ function RigaEdit({ art, categorie, produttori, fornitori, onDone, onSaved }: {
             options={[...UNITA_PREDEFINITE.map(u => ({ value: u, label: u })), { value: '__altro__', label: '+' }]}
             style={{ ...inp, width: 70 }} />
         )}
+      </td>
+      <td style={{ ...tde, ...vis('basecalc') }}>
+        <select name="base_calcolo" defaultValue={art.base_calcolo ?? ''} style={{ ...inp, width: 90 }}>
+          {BASE_CALCOLO_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+        </select>
       </td>
       <td style={{ ...tde, ...vis('minimo') }}><input name="minimo" type="number" step="0.0001" min="0" defaultValue={art.minimo ?? ''} style={{ ...inp, width: 70, textAlign: 'right' }} placeholder="—" /></td>
       <td style={{ ...tde, ...vis('p_acq') }}><input name="prezzo_acquisto" type="number" step="0.01" min="0" defaultValue={art.prezzo_acquisto} required style={{ ...inp, width: 80, textAlign: 'right' }} /></td>
@@ -1712,6 +1744,7 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
     if (cf.fornitore    && String(a.fornitore_id ?? '') !== cf.fornitore) return false
     if (cf.escluso      && String(a.escluso) !== cf.escluso)   return false
     if (cf.unita        && a.unita        !== cf.unita)        return false
+    if (cf.base_calcolo && (a.base_calcolo ?? '') !== cf.base_calcolo) return false
     if (cf.minimo       && String(a.minimo ?? '') !== cf.minimo) return false
     if (cf.p_acq        && String(a.prezzo_acquisto) !== cf.p_acq) return false
     if (cf.p_vnd        && String(a.prezzo_vendita)  !== cf.p_vnd) return false
@@ -1970,6 +2003,9 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
                     <th style={{ ...thV, textAlign: 'center', ...thVis('unita') }}>
                       <ValField value={valori.unita ?? ''} onChange={v => setValoreV('unita', v)} width={60} />
                     </th>
+                    <th style={{ ...thV, textAlign: 'center', ...thVis('basecalc') }}>
+                      <ValField value={valori.base_calcolo ?? ''} onChange={v => setValoreV('base_calcolo', v)} width={90} />
+                    </th>
                     <th style={{ ...thV, textAlign: 'center', ...thVis('minimo') }}>
                       <ValField value={valori.minimo ?? ''} onChange={v => setValoreV('minimo', v)} width={60} />
                     </th>
@@ -2109,6 +2145,10 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
                     <ColFilter value={cf.unita ?? ''} onChange={v => setCfV('unita', v)}
                       options={unitaPresenti.map(v => ({ value: v, label: v }))} width={60} />
                   </th>
+                  <th style={{ ...thF, textAlign: 'center', ...thVis('basecalc') }}>
+                    <ColFilter value={cf.base_calcolo ?? ''} onChange={v => setCfV('base_calcolo', v)}
+                      options={BASE_CALCOLO_OPTIONS.filter(o => o.value).map(o => ({ value: o.value, label: BASE_CALCOLO_LABELS[o.value] }))} width={90} />
+                  </th>
                   <th style={{ ...thF, textAlign: 'center', ...thVis('minimo') }}>
                     <ColFilter value={cf.minimo ?? ''} onChange={v => setCfV('minimo', v)}
                       options={minimoPresenti.map(v => ({ value: String(v), label: String(v) }))} width={60} />
@@ -2190,6 +2230,7 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
                   <th style={{ ...thS, width: 140, ...thVis('foto') }}>Foto prodotto</th>
                   <th style={{ ...thS, textAlign: 'center', ...thVis('escluso') }}>Escluso</th>
                   <th style={{ ...thS, textAlign: 'center', ...thVis('unita') }}>Unità</th>
+                  <th style={{ ...thS, textAlign: 'center', ...thVis('basecalc') }}>Base calc.</th>
                   <th style={{ ...thS, textAlign: 'center', color: '#b0bec5', fontSize: 10, ...thVis('minimo') }}>Minimo</th>
                   <th style={{ ...thS, textAlign: 'right', color: '#90caf9', ...thVis('p_acq') }}>P. Acquisto €</th>
                   <th style={{ ...thS, textAlign: 'right', color: '#a5d6a7', ...thVis('p_vnd') }}>P. Vendita €</th>
@@ -2202,6 +2243,7 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
                   <th style={{ ...thS, ...thVis('note') }}>Note / Max</th>
                   <th style={{ ...thS, textAlign: 'center', color: '#80cbc4', ...thVis('richiede') }}>larghezza</th>
                   <th style={{ ...thS, textAlign: 'center', color: '#80cbc4', ...thVis('richiede') }}>altezza</th>
+                  <th style={{ ...thS, textAlign: 'center', color: '#80cbc4', ...thVis('richiede') }}>altezza_3d</th>
                   <th style={{ ...thS, textAlign: 'center', color: '#80cbc4', ...thVis('richiede') }}>quantita</th>
                   <th style={{ ...thS, textAlign: 'center', color: '#80cbc4', ...thVis('richiede') }}>piano</th>
                   <th style={{ ...thS, textAlign: 'center', color: '#80cbc4', ...thVis('richiede') }}>km</th>

@@ -6,7 +6,7 @@ import { aggiungiArticolo, rimuoviArticolo, associaCliente, aggiornaDatiPreventi
 import PreviewInfisso from '@/components/preview-infisso'
 import { b } from '@/lib/btn'
 import SelectLookup from '@/components/select-lookup'
-import { hasPercorso, valoriPercorso } from '@/lib/percorsi-match'
+import { hasPercorso, valoriPercorso, matchesPercorsi } from '@/lib/percorsi-match'
 import ShortcutStar from '@/components/shortcut-star'
 import { usePageTitleOverride } from '@/lib/page-title-override-context'
 import { useCurrentUrl } from '@/lib/use-current-url'
@@ -1591,22 +1591,6 @@ function InoltraModal({
 // ─── Matching percorsi (cat+sottocat, sottocat vuota = wildcard) ──────────────
 
 type PercorsoEntry = { categoria: string; sottocategoria: string }
-
-function matchesPercorsi(
-  aId: number, aCat: string,
-  bId: number, bCat: string,
-  map: Record<number, PercorsoEntry[]>
-): boolean {
-  const ap = map[aId] ?? []
-  const bp = map[bId] ?? []
-  if (!ap.length || !bp.length) return aCat === bCat
-  return ap.some(a =>
-    bp.some(b =>
-      a.categoria === b.categoria &&
-      (!a.sottocategoria || a.sottocategoria === b.sottocategoria)
-    )
-  )
-}
 
 // ─── Componente principale ────────────────────────────────────────────────────
 

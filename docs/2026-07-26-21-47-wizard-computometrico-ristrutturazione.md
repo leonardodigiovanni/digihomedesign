@@ -1,6 +1,6 @@
 # Wizard "computometrico ristrutturazione": ambienti + voci a crocette
 
-Stato: proposta — in attesa di conferma
+Stato: completato
 
 ## Obiettivo
 
@@ -60,3 +60,22 @@ Popolare `listini` (via pannello admin già esistente) con:
 - `AggiungiArticoloForm` (selezione singola con dettaglio misure) resta lo strumento per scegliere l'ambiente; cambia solo lo strumento per le voci secondarie.
 
 Confermi che proceda con questa struttura quando deciderai di passare al codice?
+
+## Riepilogo implementazione
+
+Fatto esattamente come pianificato:
+
+- `lib/percorsi-match.ts`: aggiunta `matchesPercorsi` (estratta dalla duplicazione in `carrello-preventivo/carrello-client.tsx` e `clienti/preventivi/[id]/preventivo-client.tsx`, che ora la importano da qui invece di ridefinirla).
+- `app/area-clienti/carrello-computometrico/carrello-client.tsx`:
+  - Nuovo tipo di modale `voci` (checkbox multiple, ricerca testuale, sostituisce l'uso di `AggiungiArticoloForm` per le voci secondarie — `AggiungiArticoloForm` resta usato solo per scegliere l'ambiente).
+  - Pool voci filtrato con `matchesPercorsi(voce, ambiente)`.
+  - Bottoni "Applica" (ambiente corrente) e "Applica a tutti gli ambienti" (comparso solo se esiste più di un ambiente; una voce incompatibile con un ambiente viene saltata silenziosamente).
+  - Ereditarietà larghezza/altezza dall'ambiente padre per voci `m²`/`ml`, quantità fissa 1 per le altre.
+  - Prezzi nascosti per `cliente` (per riga, in tabella e nella modale voci), sempre visibili e modificabili per `admin`/`dipendente` (prop `isStaff`, calcolata in `page.tsx`); il totale finale resta sempre visibile a entrambi.
+  - Modale "Modifica articolo" estesa con campo quantità (tutti) e prezzo unitario (solo staff), ricalcola il totale riga al salvataggio.
+- `app/area-clienti/carrello-computometrico/actions.ts`: nuova `addRigheCarrello` (batch insert), `updateNoteCarrello` generalizzata in `updateRigaCarrello` (note/quantità/prezzo/totale).
+- `app/area-clienti/carrello-computometrico/page.tsx`: passa `isStaff` (già calcolato) al client.
+
+Non incluso in questo giro (lavoro dati, non codice): popolare `listini` con gli ambienti e le voci di lavorazione vere, con i percorsi `ambiente/<tipo-stanza>` — senza questi dati il flusso è pronto ma la modale voci risulterà vuota finché non si crea almeno un ambiente e delle voci `computabile=1, principale=0` con percorso coerente.
+
+`npx tsc --noEmit` e `npx eslint` puliti su tutti i file toccati (solo errori preesistenti e non correlati rimangono, verificati riga per riga).

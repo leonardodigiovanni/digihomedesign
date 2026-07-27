@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import type { Metadata } from 'next'
 import ShortcutStar from '@/components/shortcut-star'
+import ApriBtnComputometrico from './apri-btn'
 
 export const metadata: Metadata = { title: 'Computi Metrici' }
 
@@ -148,10 +149,7 @@ export default async function Page() {
                 return (
                   <tr key={p.id} style={{ height: 80 }}>
                     <td style={td}>
-                      <a href={`/area-clienti/computometrici/${p.id}`}
-                        style={{ fontWeight: 700, color: '#7a6000', textDecoration: 'none', fontSize: 15 }}>
-                        {p.numero || `#${p.id}`}
-                      </a>
+                      <ApriBtnComputometrico id={p.id} numero={p.numero} />
                     </td>
                     {isStaff && <td style={{ ...td, maxWidth: 120, whiteSpace: 'normal', wordBreak: 'break-word' }}>{p.cliente_nome || '—'}</td>}
                     <td style={{ ...td, maxWidth: 180, whiteSpace: 'normal', wordBreak: 'break-word' }}>{p.descrizione}</td>

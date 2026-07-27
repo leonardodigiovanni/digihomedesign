@@ -221,6 +221,14 @@ export default function CarrelloAcquistiClient({
   const totaleQuantita = articoli.filter(a => !a.parent && a.tipo !== 'caratteristica').reduce((s, a) => s + (Number(a.quantita) || 0), 0)
   const hasLacuneAperte = articoli.some(a => !a.parent && a.tipo !== 'caratteristica' && getLacuneAperte(a).length > 0)
 
+  // Aggiorna solo il badge navbar (colore verde/arancione in base a lacune aperte)
+  useEffect(() => {
+    try {
+      localStorage.setItem('acquisti_completo', hasLacuneAperte ? '0' : '1')
+      window.dispatchEvent(new CustomEvent('acquisti-completo-changed', { detail: { completo: !hasLacuneAperte } }))
+    } catch {}
+  }, [hasLacuneAperte])
+
   function hasEditableFields(_a: ArticoloCarrelloAcquisti): boolean {
     return true
   }

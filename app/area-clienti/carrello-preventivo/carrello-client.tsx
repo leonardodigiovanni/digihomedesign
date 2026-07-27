@@ -14,6 +14,7 @@ import {
 import { DropdownLoginForm } from '@/components/header-auth'
 import SelectLookup from '@/components/select-lookup'
 import AggiungiArticoloForm, { type ArticoloListino, type ConfirmData as AggConfirmData } from '@/components/aggiungi-articolo-form'
+import { matchesPercorsi, type PercorsoEntry } from '@/lib/percorsi-match'
 
 export type ListinoItem = {
   id: number
@@ -106,26 +107,6 @@ export type ArticoloCarrello = {
   bar_color_acc?: string | null
 }
 
-type PercorsoEntry = { categoria: string; sottocategoria: string }
-
-// aId = caratteristica, bId = articolo primario
-// Regola: se la caratteristica ha sottocat vuota → wildcard (basta stessa categoria)
-//         se la caratteristica ha sottocat piena → match esatto (cat + sottocat)
-function matchesPercorsi(
-  aId: number, aCat: string,
-  bId: number, bCat: string,
-  map: Record<number, PercorsoEntry[]>
-): boolean {
-  const ap = map[aId] ?? []
-  const bp = map[bId] ?? []
-  if (!ap.length || !bp.length) return aCat === bCat
-  return ap.some(a =>
-    bp.some(b =>
-      a.categoria === b.categoria &&
-      (!a.sottocategoria || a.sottocategoria === b.sottocategoria)
-    )
-  )
-}
 
 type ModalState =
   | null
@@ -301,6 +282,14 @@ export default function CarrelloClient({
 
   const hasLacuneAperte = articoli.some(a => !a.parent && a.tipo !== 'caratteristica' && getLacuneAperte(a).length > 0)
   const hasDaDefinire = articoli.some(a => !a.parent && a.tipo !== 'caratteristica' && calcolaPrezzo(a, articoli) === 0 && (a.sconto_articolo ?? 0) !== 100)
+
+  // Aggiorna solo il badge navbar (colore verde/arancione in base a lacune aperte)
+  useEffect(() => {
+    try {
+      localStorage.setItem('preventivo_completo', hasLacuneAperte ? '0' : '1')
+      window.dispatchEvent(new CustomEvent('preventivo-completo-changed', { detail: { completo: !hasLacuneAperte } }))
+    } catch {}
+  }, [hasLacuneAperte])
 
   // ── modal openers ──────────────────────────────────────────────────────────
 

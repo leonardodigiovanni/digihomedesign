@@ -61,6 +61,8 @@ async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[]
     await db.execute(`ALTER TABLE listini ADD COLUMN richiede_tipo_colore_acc TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE listini ADD COLUMN richiede_tipo_vetro       TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE listini ADD COLUMN richiede_tipo_montaggio TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN richiede_altezza3d      TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+    await db.execute(`ALTER TABLE listini ADD COLUMN base_calcolo VARCHAR(20) NULL DEFAULT NULL`).catch(() => {})
     await db.execute(`ALTER TABLE listini ADD COLUMN costante DECIMAL(10,4) NOT NULL DEFAULT 0`).catch(() => {})
     await db.execute(`ALTER TABLE listini ADD COLUMN abbr VARCHAR(50) NOT NULL DEFAULT ''`).catch(() => {})
     await db.execute(`ALTER TABLE listini ADD COLUMN minimo DECIMAL(10,4) NULL DEFAULT NULL`).catch(() => {})
@@ -88,8 +90,8 @@ async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[]
     const [rows] = await db.query(`
       SELECT l.id, l.categoria, l.sottocategoria, l.fase, l.materiale, l.tipologia, l.ambiente, l.produttore, l.descrizione, l.fascia, l.unita,
              l.prezzo_acquisto, l.prezzo_vendita, l.prezzo_promo, l.fine_promozione, l.note, l.disponibile, l.preventivabile, l.acquistabile, l.max_acquistabile,
-             l.sconto_articolo, l.serie, l.principale, l.caratteristica,
-             l.richiede_larghezza, l.richiede_altezza, l.richiede_quantita, l.richiede_piano,
+             l.sconto_articolo, l.serie, l.principale, l.caratteristica, l.base_calcolo,
+             l.richiede_larghezza, l.richiede_altezza, l.richiede_altezza3d, l.richiede_quantita, l.richiede_piano,
              l.richiede_km, l.richiede_peso, l.richiede_tipo_colore, l.richiede_tipo_colore_acc, l.richiede_tipo_vetro, l.richiede_tipo_montaggio, l.costante, l.abbr, l.minimo,
              l.Filtro_1, l.Filtro_2, l.Filtro_3, l.Filtro_4, l.Filtro_5,
              l.Filtro_6, l.Filtro_7, l.Filtro_8, l.Filtro_9, l.Filtro_10,
@@ -119,6 +121,7 @@ async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[]
       caratteristica:        Number(r.caratteristica ?? 1),
       richiede_larghezza:    Number(r.richiede_larghezza  ?? 0),
       richiede_altezza:      Number(r.richiede_altezza    ?? 0),
+      richiede_altezza3d:    Number(r.richiede_altezza3d  ?? 0),
       richiede_quantita:     Number(r.richiede_quantita   ?? 0),
       richiede_piano:        Number(r.richiede_piano      ?? 0),
       richiede_km:           Number(r.richiede_km         ?? 0),
@@ -155,6 +158,7 @@ async function getData(): Promise<{ articoli: Articolo[]; fornitori: Fornitore[]
       tipologia:             r.tipologia      ? String(r.tipologia)      : null,
       ambiente:              r.ambiente       ? String(r.ambiente)       : null,
       fascia:                r.fascia         ? String(r.fascia)         : null,
+      base_calcolo:          r.base_calcolo   ? String(r.base_calcolo)   : null,
       escluso:               Number(r.escluso ?? 0),
       computabile:           Number(r.computabile ?? 0),
     })) as Articolo[]

@@ -3,12 +3,16 @@ import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import type { Metadata } from 'next'
 import ShortcutStar from '@/components/shortcut-star'
+import EliminaBtn from './elimina-btn'
+import ClienteSelector, { type ClienteOption } from './cliente-selector'
+import ApriBtnComputometrico from '@/app/area-clienti/computometrici/apri-btn'
 
 export const metadata: Metadata = { title: 'Computi Metrici Clienti' }
 
 type Computometrico = {
   id: number
   numero: string
+  cliente_id: number | null
   cliente_nome: string
   creato_da: string | null
   descrizione: string
@@ -60,6 +64,7 @@ async function getData(): Promise<Computometrico[]> {
     return (rows as Record<string, unknown>[]).map(r => ({
       id:              Number(r.id),
       numero:          String(r.numero ?? ''),
+      cliente_id:      r.cliente_id != null ? Number(r.cliente_id) : null,
       cliente_nome:    String(r.cliente_nome ?? ''),
       creato_da:       r.creato_da ? String(r.creato_da) : null,
       descrizione:     String(r.descrizione ?? ''),
@@ -72,12 +77,25 @@ async function getData(): Promise<Computometrico[]> {
   finally { await db.end() }
 }
 
+async function getClienti(): Promise<ClienteOption[]> {
+  const db = await getConnection()
+  try {
+    const [rows] = await db.query(
+      `SELECT id, COALESCE(NULLIF(TRIM(ragione_sociale), ''), CONCAT(TRIM(cognome), ' ', TRIM(nome))) AS label FROM clienti ORDER BY label ASC`
+    ) as [Record<string, unknown>[], unknown]
+    return (rows as Record<string, unknown>[])
+      .map(c => ({ id: Number(c.id), label: String(c.label ?? '').trim() }))
+      .filter(c => c.label !== '')
+  } catch { return [] }
+  finally { await db.end() }
+}
+
 export default async function Page() {
   const cookieStore = await cookies()
   const role = cookieStore.get('session_role')?.value ?? ''
   if (role !== 'admin' && role !== 'dipendente') redirect('/')
 
-  const items = await getData()
+  const [items, clienti] = await Promise.all([getData(), getClienti()])
 
   const thStyle: React.CSSProperties = {
     padding: '9px 14px', fontSize: 11, fontWeight: 600, color: '#888',
@@ -127,12 +145,11 @@ export default async function Page() {
                 return (
                   <tr key={p.id}>
                     <td style={tdStyle}>
-                      <a href={`/area-clienti/computometrici/${p.id}`}
-                        style={{ fontWeight: 700, color: '#7a6000', textDecoration: 'none' }}>
-                        {p.numero || `#${p.id}`}
-                      </a>
+                      <ApriBtnComputometrico id={p.id} numero={p.numero} />
                     </td>
-                    <td style={tdStyle}>{p.cliente_nome || '—'}</td>
+                    <td style={tdStyle}>
+                      <ClienteSelector computometrico_id={p.id} cliente_id={p.cliente_id} clienti={clienti} />
+                    </td>
                     <td style={{ ...tdStyle, color: '#888', fontSize: 12 }}>{p.creato_da || '—'}</td>
                     <td style={tdStyle}>{p.descrizione}</td>
                     <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>{p.data}</td>
@@ -150,10 +167,7 @@ export default async function Page() {
                       {p.visibile_cliente ? 'Sì' : 'No'}
                     </td>
                     <td style={{ ...tdStyle, textAlign: 'right' }}>
-                      <a href={`/area-clienti/computometrici/${p.id}`}
-                        style={{ color: '#2b6cb0', fontWeight: 600, fontSize: 12, textDecoration: 'none' }}>
-                        Apri →
-                      </a>
+                      <EliminaBtn id={p.id} />
                     </td>
                   </tr>
                 )

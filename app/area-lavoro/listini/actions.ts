@@ -62,6 +62,8 @@ async function ensureTable() {
   await db.execute(`ALTER TABLE listini ADD COLUMN richiede_tipo_colore     TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
   await db.execute(`ALTER TABLE listini ADD COLUMN richiede_tipo_colore_acc TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
   await db.execute(`ALTER TABLE listini ADD COLUMN richiede_tipo_vetro       TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN richiede_altezza3d        TINYINT(1) NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE listini ADD COLUMN base_calcolo VARCHAR(20) NULL DEFAULT NULL`).catch(() => {})
   await db.execute(`ALTER TABLE listini ADD COLUMN costante DECIMAL(10,4) NOT NULL DEFAULT 0`).catch(() => {})
   await db.execute(`ALTER TABLE listini ADD COLUMN abbr VARCHAR(50) NOT NULL DEFAULT ''`).catch(() => {})
   await db.execute(`ALTER TABLE listini MODIFY COLUMN abbr VARCHAR(255) NOT NULL DEFAULT ''`).catch(() => {})
@@ -105,6 +107,7 @@ export async function addArticolo(_: AddResult | null, fd: FormData): Promise<Ad
   const descrizione     = (fd.get('descrizione')     as string)?.trim()
   const fascia          = (fd.get('fascia')          as string)?.trim() || null
   const unita           = (fd.get('unita')           as string)?.trim()
+  const base_calcolo    = (fd.get('base_calcolo')    as string)?.trim() || null
   const prezzo_acquisto = parseFloat((fd.get('prezzo_acquisto') as string) ?? '0')
   const prezzo_vendita  = parseFloat((fd.get('prezzo_vendita')  as string) ?? '0')
   const note            = (fd.get('note')            as string)?.trim() ?? ''
@@ -129,8 +132,8 @@ export async function addArticolo(_: AddResult | null, fd: FormData): Promise<Ad
   const db = await getConnection()
   try {
     const [ins] = await db.execute(
-      'INSERT INTO listini (categoria, sottocategoria, fase, materiale, tipologia, ambiente, produttore, serie, descrizione, fascia, unita, prezzo_acquisto, prezzo_vendita, note, fornitore_id, max_acquistabile, sconto_articolo, costante, abbr, minimo, prezzo_promo, fine_promozione) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-      [categoria, sottocategoria, fase, materiale, tipologia, ambiente, produttore, serie, descrizione, fascia, unita, prezzo_acquisto, prezzo_vendita, note, fornitore_id, max_acquistabile, sconto_articolo, costante, abbr, minimo, prezzo_promo, fine_promozione]
+      'INSERT INTO listini (categoria, sottocategoria, fase, materiale, tipologia, ambiente, produttore, serie, descrizione, fascia, unita, base_calcolo, prezzo_acquisto, prezzo_vendita, note, fornitore_id, max_acquistabile, sconto_articolo, costante, abbr, minimo, prezzo_promo, fine_promozione) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+      [categoria, sottocategoria, fase, materiale, tipologia, ambiente, produttore, serie, descrizione, fascia, unita, base_calcolo, prezzo_acquisto, prezzo_vendita, note, fornitore_id, max_acquistabile, sconto_articolo, costante, abbr, minimo, prezzo_promo, fine_promozione]
     ) as [{ insertId: number }, unknown]
     await ensurePercorsiTables(db).catch(() => {})
     await syncListinoPercorsi(db, ins.insertId, categoria, sottocategoria).catch(() => {})
@@ -154,6 +157,7 @@ export async function updateArticolo(_: MutResult | null, fd: FormData): Promise
   const descrizione     = (fd.get('descrizione')     as string)?.trim()
   const fascia          = (fd.get('fascia')          as string)?.trim() || null
   const unita           = (fd.get('unita')           as string)?.trim()
+  const base_calcolo    = (fd.get('base_calcolo')    as string)?.trim() || null
   const prezzo_acquisto = parseFloat((fd.get('prezzo_acquisto') as string) ?? '0')
   const prezzo_vendita  = parseFloat((fd.get('prezzo_vendita')  as string) ?? '0')
   const note            = (fd.get('note')            as string)?.trim() ?? ''
@@ -183,8 +187,8 @@ export async function updateArticolo(_: MutResult | null, fd: FormData): Promise
       }
     }
     await db.execute(
-      'UPDATE listini SET categoria=?, sottocategoria=?, fase=?, materiale=?, tipologia=?, ambiente=?, produttore=?, serie=?, descrizione=?, fascia=?, unita=?, prezzo_acquisto=?, prezzo_vendita=?, note=?, fornitore_id=?, max_acquistabile=?, sconto_articolo=?, costante=?, abbr=?, minimo=?, prezzo_promo=?, fine_promozione=? WHERE id=?',
-      [categoria, sottocategoria, fase, materiale, tipologia, ambiente, produttore, serie, descrizione, fascia, unita, prezzo_acquisto, prezzo_vendita, note, fornitore_id, max_acquistabile, sconto_articolo, costante, abbr, minimo, prezzo_promo, fine_promozione, id]
+      'UPDATE listini SET categoria=?, sottocategoria=?, fase=?, materiale=?, tipologia=?, ambiente=?, produttore=?, serie=?, descrizione=?, fascia=?, unita=?, base_calcolo=?, prezzo_acquisto=?, prezzo_vendita=?, note=?, fornitore_id=?, max_acquistabile=?, sconto_articolo=?, costante=?, abbr=?, minimo=?, prezzo_promo=?, fine_promozione=? WHERE id=?',
+      [categoria, sottocategoria, fase, materiale, tipologia, ambiente, produttore, serie, descrizione, fascia, unita, base_calcolo, prezzo_acquisto, prezzo_vendita, note, fornitore_id, max_acquistabile, sconto_articolo, costante, abbr, minimo, prezzo_promo, fine_promozione, id]
     )
     await ensurePercorsiTables(db).catch(() => {})
     await syncListinoPercorsi(db, id, categoria, sottocategoria).catch(() => {})
@@ -300,7 +304,7 @@ export async function toggleEscluso(_: MutResult | null, fd: FormData): Promise<
   } finally { await db.end() }
 }
 
-const COLONNE_BOOL_ALLOWED = ['richiede_larghezza','richiede_altezza','richiede_quantita','richiede_piano','richiede_km','richiede_peso','richiede_tipo_colore','richiede_tipo_colore_acc','richiede_tipo_vetro','richiede_tipo_montaggio','Filtro_1','Filtro_2','Filtro_3','Filtro_4','Filtro_5','Filtro_6','Filtro_7','Filtro_8','Filtro_9','Filtro_10']
+const COLONNE_BOOL_ALLOWED = ['richiede_larghezza','richiede_altezza','richiede_altezza3d','richiede_quantita','richiede_piano','richiede_km','richiede_peso','richiede_tipo_colore','richiede_tipo_colore_acc','richiede_tipo_vetro','richiede_tipo_montaggio','Filtro_1','Filtro_2','Filtro_3','Filtro_4','Filtro_5','Filtro_6','Filtro_7','Filtro_8','Filtro_9','Filtro_10']
 
 export async function toggleColonnaBooleana(_: MutResult | null, fd: FormData): Promise<MutResult> {
   await checkAccess()
@@ -332,17 +336,17 @@ export async function cloneArticolo(_: AddResult | null, fd: FormData): Promise<
 
     const [ins] = await db.execute(
       `INSERT INTO listini
-        (categoria, produttore, serie, descrizione, unita, prezzo_acquisto, prezzo_vendita,
+        (categoria, produttore, serie, descrizione, unita, base_calcolo, prezzo_acquisto, prezzo_vendita,
          note, fornitore_id, max_acquistabile, sconto_articolo, costante, abbr, minimo,
-         disponibile, preventivabile, acquistabile, principale, caratteristica,
-         richiede_larghezza, richiede_altezza, richiede_quantita, richiede_piano,
+         disponibile, preventivabile, acquistabile, principale, caratteristica, computabile,
+         richiede_larghezza, richiede_altezza, richiede_altezza3d, richiede_quantita, richiede_piano,
          richiede_km, richiede_peso, richiede_tipo_colore, richiede_tipo_colore_acc,
          richiede_tipo_vetro, richiede_tipo_montaggio, foto_url, prezzo_promo, fine_promozione)
        SELECT
-        categoria, produttore, serie, ?, unita, prezzo_acquisto, prezzo_vendita,
+        categoria, produttore, serie, ?, unita, base_calcolo, prezzo_acquisto, prezzo_vendita,
         note, fornitore_id, max_acquistabile, sconto_articolo, costante, abbr, minimo,
-        disponibile, preventivabile, acquistabile, principale, caratteristica,
-        richiede_larghezza, richiede_altezza, richiede_quantita, richiede_piano,
+        disponibile, preventivabile, acquistabile, principale, caratteristica, computabile,
+        richiede_larghezza, richiede_altezza, richiede_altezza3d, richiede_quantita, richiede_piano,
         richiede_km, richiede_peso, richiede_tipo_colore, richiede_tipo_colore_acc,
         richiede_tipo_vetro, richiede_tipo_montaggio, foto_url, prezzo_promo, fine_promozione
        FROM listini WHERE id=?`,
@@ -391,7 +395,7 @@ export async function clearImmagine(_: MutResult | null, fd: FormData): Promise<
 const CAMPI_TESTO: Record<string, string> = {
   categoria: 'categoria', fase: 'fase', materiale: 'materiale', tipologia: 'tipologia',
   ambiente: 'ambiente', descrizione: 'descrizione', fascia: 'fascia', produttore: 'produttore',
-  logo: 'logo_url', serie: 'serie', unita: 'unita', abbr: 'abbr', note: 'note',
+  logo: 'logo_url', serie: 'serie', unita: 'unita', base_calcolo: 'base_calcolo', abbr: 'abbr', note: 'note',
 }
 const CAMPI_NUMERICI: Record<string, string> = {
   minimo: 'minimo', p_acq: 'prezzo_acquisto', p_vnd: 'prezzo_vendita', costante: 'costante', sconto: 'sconto_articolo',
@@ -401,7 +405,7 @@ const CAMPI_BOOL: Record<string, string> = {
   escluso: 'escluso',
   disponibile: 'disponibile', preventivabile: 'preventivabile', acquistabile: 'acquistabile',
   computabile: 'computabile', principale: 'principale', caratteristica: 'caratteristica',
-  richiede_larghezza: 'richiede_larghezza', richiede_altezza: 'richiede_altezza', richiede_quantita: 'richiede_quantita',
+  richiede_larghezza: 'richiede_larghezza', richiede_altezza: 'richiede_altezza', richiede_altezza3d: 'richiede_altezza3d', richiede_quantita: 'richiede_quantita',
   richiede_piano: 'richiede_piano', richiede_km: 'richiede_km', richiede_peso: 'richiede_peso',
   richiede_tipo_colore: 'richiede_tipo_colore', richiede_tipo_colore_acc: 'richiede_tipo_colore_acc',
   richiede_tipo_vetro: 'richiede_tipo_vetro', richiede_tipo_montaggio: 'richiede_tipo_montaggio',
@@ -411,7 +415,7 @@ const CAMPI_BOOL: Record<string, string> = {
 
 // Colonne che accettano NULL in DB: la convenzione "NULL" (case-insensitive) scritta in un campo
 // azzera la colonna. Le colonne testuali/numeriche NOT NULL vengono azzerate a '' / 0 invece.
-const TESTO_NULLABLE = new Set(['fase', 'materiale', 'tipologia', 'ambiente', 'fascia', 'logo', 'note'])
+const TESTO_NULLABLE = new Set(['fase', 'materiale', 'tipologia', 'ambiente', 'fascia', 'logo', 'note', 'base_calcolo'])
 const NUMERICI_NULLABLE = new Set(['minimo'])
 
 function isNullToken(v: string): boolean {

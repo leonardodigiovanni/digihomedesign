@@ -19,6 +19,7 @@ export type ArticoloListino = {
   sconto_articolo?: number | null
   richiede_larghezza?: number
   richiede_altezza?: number
+  richiede_altezza3d?: number
   richiede_quantita?: number
   richiede_piano?: number
   richiede_km?: number
@@ -53,6 +54,7 @@ export type ConfirmData = {
   listinoId: number
   larghezza?: number
   altezza?: number
+  altezza3d?: number
   quantita?: number
   piano?: number
   km?: number
@@ -156,7 +158,7 @@ export default function AggiungiArticoloForm({
   useEffect(() => {
     const sel = artFiltrati.find(a => a.id === selectedId) ?? artFiltrati[0]
     const hasRequired = !!(sel && (
-      sel.richiede_larghezza === 1 || sel.richiede_altezza === 1 ||
+      sel.richiede_larghezza === 1 || sel.richiede_altezza === 1 || sel.richiede_altezza3d === 1 ||
       sel.richiede_quantita === 1  || sel.richiede_piano === 1   ||
       sel.richiede_km === 1        || sel.richiede_peso === 1
     ))
@@ -336,6 +338,7 @@ export default function AggiungiArticoloForm({
         listinoId: selected.id,
         larghezza: parseFloat(formData.get('larghezza') as string) || undefined,
         altezza:   parseFloat(formData.get('altezza')   as string) || undefined,
+        altezza3d: parseFloat(formData.get('altezza3d') as string) || undefined,
         quantita:  parseFloat(formData.get('quantita')  as string) || undefined,
         piano:     parseFloat(formData.get('piano')     as string) || undefined,
         km:        parseFloat(formData.get('km')        as string) || undefined,
@@ -645,14 +648,20 @@ export default function AggiungiArticoloForm({
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
             {selected.richiede_larghezza === 1 && (
               <label className="testo-articoli" style={{ ...lbl, gridColumn: '1 / -1' }}>
-                Larghezza (cm) *
+                {selected.richiede_altezza3d === 1 ? 'Larghezza (L, cm) *' : 'Larghezza (cm) *'}
                 <input name="larghezza" type="number" min={0} step="0.1" required style={inpStyle} />
               </label>
             )}
             {selected.richiede_altezza === 1 && (
               <label className="testo-articoli" style={{ ...lbl, gridColumn: '1 / -1' }}>
-                Altezza (cm) *
+                {selected.richiede_altezza3d === 1 ? 'Altezza 2D (H2D, cm) *' : 'Altezza (cm) *'}
                 <input name="altezza" type="number" min={0} step="0.1" required style={inpStyle} />
+              </label>
+            )}
+            {selected.richiede_altezza3d === 1 && (
+              <label className="testo-articoli" style={{ ...lbl, gridColumn: '1 / -1' }}>
+                Altezza 3D (H3D, cm) *
+                <input name="altezza3d" type="number" min={0} step="0.1" required style={inpStyle} />
               </label>
             )}
             {(selected.richiede_quantita === 1 || forceQuantita) && (

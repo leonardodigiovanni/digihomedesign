@@ -46,6 +46,37 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
     return () => window.removeEventListener('computo-count-changed', handle)
   }, [])
 
+  // Colore badge carrelli: verde se completo/salvabile, arancione se ci sono
+  // lacune aperte (caratteristiche obbligatorie mancanti). Il computometrico non
+  // ha ancora questo concetto, resta sempre completo finché non ne avrà uno.
+  const [computoCompleto, setComputoCompleto] = useState(true)
+  const [preventivoCompleto, setPreventivoCompleto] = useState(true)
+  const [acquistiCompleto, setAcquistiCompleto] = useState(true)
+
+  useEffect(() => {
+    try { setComputoCompleto(localStorage.getItem('computo_completo') !== '0') } catch {}
+    function handle(e: Event) { setComputoCompleto((e as CustomEvent<{ completo: boolean }>).detail.completo) }
+    window.addEventListener('computo-completo-changed', handle)
+    return () => window.removeEventListener('computo-completo-changed', handle)
+  }, [])
+
+  useEffect(() => {
+    try { setPreventivoCompleto(localStorage.getItem('preventivo_completo') !== '0') } catch {}
+    function handle(e: Event) { setPreventivoCompleto((e as CustomEvent<{ completo: boolean }>).detail.completo) }
+    window.addEventListener('preventivo-completo-changed', handle)
+    return () => window.removeEventListener('preventivo-completo-changed', handle)
+  }, [])
+
+  useEffect(() => {
+    try { setAcquistiCompleto(localStorage.getItem('acquisti_completo') !== '0') } catch {}
+    function handle(e: Event) { setAcquistiCompleto((e as CustomEvent<{ completo: boolean }>).detail.completo) }
+    window.addEventListener('acquisti-completo-changed', handle)
+    return () => window.removeEventListener('acquisti-completo-changed', handle)
+  }, [])
+
+  const BADGE_VERDE = '#1a9e2a'
+  const BADGE_ARANCIONE = '#e65100'
+
   useEffect(() => {
     function handle(e: Event) {
       setLiveAvvisiCount((e as CustomEvent<{ count: number }>).detail.count)
@@ -477,7 +508,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             {computoCount > 0 && (
               <span style={{
                 position: 'absolute', top: 4, right: 1,
-                background: '#1a9e2a', color: '#fff', borderRadius: '50%',
+                background: computoCompleto ? BADGE_VERDE : BADGE_ARANCIONE, color: '#fff', borderRadius: '50%',
                 minWidth: 18, height: 18, fontSize: 11, fontWeight: 700,
                 display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
                 padding: '0 4px',
@@ -499,7 +530,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             <img src="/images/carrello/carrello-preventivo-t.png" alt="Carrello preventivo" style={{ height: 38, width: 38, display: 'block', objectFit: 'contain', transform: 'translateY(-1px)' }} />
             <span style={{
               position: 'absolute', top: 4, right: 1,
-              background: '#2b8fcf', color: '#fff', borderRadius: '50%',
+              background: preventivoCompleto ? BADGE_VERDE : BADGE_ARANCIONE, color: '#fff', borderRadius: '50%',
               minWidth: 18, height: 18, fontSize: 11, fontWeight: 700,
               display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
               padding: '0 4px',
@@ -521,7 +552,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             <img src="/images/carrello/acquisti.png" alt="Carrello acquisti" style={{ height: 41, width: 41, display: 'block', objectFit: 'contain' }} />
             <span className="fs-9" style={{
               position: 'absolute', top: 4, right: 1,
-              background: '#e65100', color: '#fff', borderRadius: '50%',
+              background: acquistiCompleto ? BADGE_VERDE : BADGE_ARANCIONE, color: '#fff', borderRadius: '50%',
               minWidth: 18, height: 18, fontSize: 11, fontWeight: 700,
               display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
               padding: '0 4px',
@@ -573,7 +604,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             {computoCount > 0 && (
               <span style={{
                 position: 'absolute', top: 4, right: 1,
-                background: '#1a9e2a', color: '#fff', borderRadius: '50%',
+                background: computoCompleto ? BADGE_VERDE : BADGE_ARANCIONE, color: '#fff', borderRadius: '50%',
                 minWidth: 18, height: 18, fontSize: 11, fontWeight: 700,
                 display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
                 padding: '0 4px',
@@ -595,7 +626,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             <img src="/images/carrello/carrello-preventivo-t.png" alt="Carrello preventivo" style={{ height: 38, width: 38, display: 'block', objectFit: 'contain', transform: 'translateY(-1px)' }} />
             <span style={{
               position: 'absolute', top: 4, right: 0,
-              background: '#2b8fcf', color: '#fff', borderRadius: '50%',
+              background: preventivoCompleto ? BADGE_VERDE : BADGE_ARANCIONE, color: '#fff', borderRadius: '50%',
               minWidth: 18, height: 18, fontSize: 11, fontWeight: 700,
               display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
               padding: '0 4px',
@@ -617,7 +648,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             <img src="/images/carrello/acquisti.png" alt="Carrello acquisti" style={{ height: 41, width: 41, display: 'block', objectFit: 'contain' }} />
             <span style={{
               position: 'absolute', top: 4, right: 0,
-              background: '#e65100', color: '#fff', borderRadius: '50%',
+              background: acquistiCompleto ? BADGE_VERDE : BADGE_ARANCIONE, color: '#fff', borderRadius: '50%',
               minWidth: 18, height: 18, fontSize: 11, fontWeight: 700,
               display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
               padding: '0 4px',

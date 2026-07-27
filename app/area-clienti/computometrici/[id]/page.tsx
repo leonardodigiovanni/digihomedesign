@@ -1,8 +1,10 @@
+import React from 'react'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { getConnection } from '@/lib/db'
 import type { Metadata } from 'next'
 import ShortcutStar from '@/components/shortcut-star'
+import RiprendiBtn from './riprendi-btn'
 
 export const metadata: Metadata = { title: 'Computo Metrico' }
 
@@ -21,11 +23,17 @@ type Testata = {
 
 type Riga = {
   id: number
+  parent_id: number | null
   listino_id: number | null
   categoria: string
+  produttore: string
+  serie: string
   descrizione: string
   unita: string
   quantita: number
+  larghezza_cm: number | null
+  altezza_cm: number | null
+  altezza3d_cm: number | null
   prezzo_unitario: number
   totale_riga: number
   note: string | null
@@ -74,6 +82,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     const raw = tRows[0]
 
     // Clienti possono vedere solo i propri
+    let owned = false
     if (!isStaff) {
       const [uRows] = await db.execute(
         'SELECT cliente_id FROM users WHERE username = ? LIMIT 1', [username]
@@ -81,7 +90,8 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       const clienteId = uRows[0]?.cliente_id ?? null
       const ownedByClienteId = clienteId !== null && Number(raw.cliente_id) === clienteId
       const ownedByUsername  = raw.cliente_id == null && String(raw.creato_da ?? '') === username
-      if (!ownedByClienteId && !ownedByUsername) redirect('/area-clienti/computometrici')
+      owned = ownedByClienteId || ownedByUsername
+      if (!owned) redirect('/area-clienti/computometrici')
     }
 
     const testata: Testata = {
@@ -96,6 +106,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       note:            raw.note ? String(raw.note) : null,
       visibile_cliente: Number(raw.visibile_cliente ?? 1),
     }
+    const canResume = testata.stato === 'bozza' && (isStaff || owned)
 
     const [righeRows] = await db.query(`
       SELECT * FROM computometrico_articoli
@@ -105,16 +116,37 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
     const righe: Riga[] = (righeRows as Record<string, unknown>[]).map(r => ({
       id:             Number(r.id),
+      parent_id:      r.parent_id != null ? Number(r.parent_id) : null,
       listino_id:     r.listino_id != null ? Number(r.listino_id) : null,
       categoria:      String(r.categoria ?? ''),
+      produttore:     String(r.produttore ?? ''),
+      serie:          String(r.serie ?? ''),
       descrizione:    String(r.descrizione ?? ''),
       unita:          String(r.unita ?? 'pz'),
       quantita:       Number(r.quantita ?? 0),
+      larghezza_cm:   r.larghezza_cm   != null ? Number(r.larghezza_cm)   : null,
+      altezza_cm:     r.altezza_cm     != null ? Number(r.altezza_cm)     : null,
+      altezza3d_cm:   r.altezza3d_cm   != null ? Number(r.altezza3d_cm)   : null,
       prezzo_unitario: Number(r.prezzo_unitario ?? 0),
       totale_riga:    Number(r.totale_riga ?? 0),
       note:           r.note ? String(r.note) : null,
       ordine:         Number(r.ordine ?? 0),
     }))
+
+    // Raggruppa per ambiente (categoria+produttore+serie), stesso schema del
+    // carrello live: ogni riga radice (senza parent_id) è un ambiente, con le
+    // sue voci figlie subito sotto — qui sempre visibili, è una vista di consultazione.
+    type Gruppo = { key: string; label: string; radici: { radice: Riga; figli: Riga[] }[] }
+    const gruppi: Gruppo[] = []
+    for (const radice of righe.filter(r => r.parent_id == null)) {
+      const key = `${radice.categoria}||${radice.produttore}||${radice.serie}`
+      let g = gruppi.find(x => x.key === key)
+      if (!g) {
+        g = { key, label: [radice.categoria, radice.produttore, radice.serie].filter(Boolean).join(' · '), radici: [] }
+        gruppi.push(g)
+      }
+      g.radici.push({ radice, figli: righe.filter(r => r.parent_id === radice.id) })
+    }
 
     const totale = righe.reduce((s, r) => s + r.totale_riga, 0)
 
@@ -145,6 +177,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
             <span style={{ background: statoBg, color: statoColor, padding: '4px 14px', borderRadius: 14, fontSize: 12, fontWeight: 700, border: '1px solid #ddd' }}>
               {testata.stato}
             </span>
+            {canResume && <RiprendiBtn id={testata.id} />}
             <a href="/area-clienti/computometrici" className="btn-gray" style={{ padding: '0 20px', height: 36, lineHeight: '36px', borderRadius: 18 }}>
               ← Elenco
             </a>
@@ -175,52 +208,75 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
           </div>
         </div>
 
-        {/* Tabella righe */}
+        {/* Gruppi ambiente → voci, stesso schema del carrello live (sola lettura, sempre espanso) */}
         {righe.length === 0 ? (
           <p style={{ color: '#aaa', fontSize: 14 }}>Nessun articolo in questo computo metrico.</p>
         ) : (
-          <div style={{
-            overflowX: 'auto', borderRadius: '8px 8px 0 0',
-            border: '1px solid #c8960c',
-            boxShadow: '0 4px 24px rgba(200,150,12,0.12)',
-          }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff' }}>
-              <thead>
-                <tr>
-                  <th style={thStyle}>#</th>
-                  <th style={thStyle}>Articolo</th>
-                  <th style={{ ...thStyle, textAlign: 'right' }}>Q.tà</th>
-                  <th style={thStyle}>U.M.</th>
-                  <th style={{ ...thStyle, textAlign: 'right' }}>€/u.</th>
-                  <th style={{ ...thStyle, textAlign: 'right' }}>Totale</th>
-                  {righe.some(r => r.note) && <th style={thStyle}>Nota</th>}
-                </tr>
-              </thead>
-              <tbody>
-                {righe.map((r, i) => {
-                  const isLast = i === righe.length - 1
-                  const td = isLast ? { ...tdStyle, borderBottom: 'none' } : tdStyle
-                  return (
-                    <tr key={r.id} style={{ height: 60 }}>
-                      <td style={{ ...td, color: '#aaa', fontSize: 11 }}>{i + 1}</td>
-                      <td style={td}>
-                        <div style={{ fontWeight: 600 }}>{r.descrizione}</div>
-                        <div style={{ fontSize: 11, color: '#888' }}>{r.categoria}</div>
-                      </td>
-                      <td style={{ ...td, textAlign: 'right' }}>{r.quantita}</td>
-                      <td style={{ ...td, color: '#888', fontSize: 12 }}>{r.unita}</td>
-                      <td style={{ ...td, textAlign: 'right' }}>€ {fmt(r.prezzo_unitario)}</td>
-                      <td style={{ ...td, textAlign: 'right', fontWeight: 700, color: '#276749' }}>
-                        € {fmt(r.totale_riga)}
-                      </td>
-                      {righe.some(rr => rr.note) && (
-                        <td style={{ ...td, fontSize: 12, color: '#777' }}>{r.note ?? ''}</td>
-                      )}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            {gruppi.map(g => (
+              <div key={g.key} style={{
+                overflowX: 'auto', borderRadius: 8,
+                border: '1px solid #c8960c',
+                boxShadow: '0 4px 24px rgba(200,150,12,0.12)',
+              }}>
+                <div style={{ background: '#fffdf2', padding: '6px 14px', borderBottom: '1px solid #c8960c', fontSize: 12, fontWeight: 700, color: '#7a6000' }}>
+                  {g.label}
+                </div>
+                <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff' }}>
+                  <thead>
+                    <tr>
+                      <th style={thStyle}>Articolo</th>
+                      <th style={{ ...thStyle, textAlign: 'right' }}>Q.tà</th>
+                      <th style={thStyle}>U.M.</th>
+                      {isStaff && <th style={{ ...thStyle, textAlign: 'right' }}>€/u.</th>}
+                      {isStaff && <th style={{ ...thStyle, textAlign: 'right' }}>Totale</th>}
                     </tr>
-                  )
-                })}
-              </tbody>
-            </table>
+                  </thead>
+                  <tbody>
+                    {g.radici.map(({ radice, figli }) => {
+                      const parts: string[] = []
+                      if (radice.larghezza_cm)   parts.push(`L:${radice.larghezza_cm}`)
+                      if (radice.altezza_cm)     parts.push(`H2D:${radice.altezza_cm}`)
+                      if (radice.altezza3d_cm)   parts.push(`H3D:${radice.altezza3d_cm}`)
+                      return (
+                        <React.Fragment key={radice.id}>
+                          <tr style={{ background: '#fff' }}>
+                            <td style={tdStyle}>
+                              <div style={{ fontWeight: 600 }}>{radice.descrizione}</div>
+                              {parts.length > 0 && <div style={{ fontSize: 11, color: '#888' }}>{parts.join(' · ')}</div>}
+                              {radice.note && <div style={{ fontSize: 11, color: '#888', fontStyle: 'italic' }}>{radice.note}</div>}
+                            </td>
+                            <td style={{ ...tdStyle, textAlign: 'right' }}>{radice.quantita}</td>
+                            <td style={{ ...tdStyle, color: '#888', fontSize: 12 }}>{radice.unita}</td>
+                            {isStaff && <td style={{ ...tdStyle, textAlign: 'right' }}>€ {fmt(radice.prezzo_unitario)}</td>}
+                            {isStaff && <td style={{ ...tdStyle, textAlign: 'right', fontWeight: 700, color: '#276749' }}>€ {fmt(radice.totale_riga)}</td>}
+                          </tr>
+                          {figli.map(f => {
+                            const fParts: string[] = []
+                            if (f.larghezza_cm) fParts.push(`L:${f.larghezza_cm}`)
+                            if (f.altezza_cm)   fParts.push(`H2D:${f.altezza_cm}`)
+                            if (f.altezza3d_cm) fParts.push(`H3D:${f.altezza3d_cm}`)
+                            return (
+                              <tr key={f.id} style={{ background: '#fffdf2' }}>
+                                <td style={{ ...tdStyle, paddingLeft: 28 }}>
+                                  {f.descrizione}
+                                  {fParts.length > 0 && <div style={{ fontSize: 11, color: '#888' }}>{fParts.join(' · ')}</div>}
+                                  {f.note && <div style={{ fontSize: 11, color: '#888', fontStyle: 'italic' }}>{f.note}</div>}
+                                </td>
+                                <td style={{ ...tdStyle, textAlign: 'right' }}>{f.quantita}</td>
+                                <td style={{ ...tdStyle, color: '#888', fontSize: 12 }}>{f.unita}</td>
+                                {isStaff && <td style={{ ...tdStyle, textAlign: 'right' }}>€ {fmt(f.prezzo_unitario)}</td>}
+                                {isStaff && <td style={{ ...tdStyle, textAlign: 'right', fontWeight: 700, color: '#276749' }}>€ {fmt(f.totale_riga)}</td>}
+                              </tr>
+                            )
+                          })}
+                        </React.Fragment>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            ))}
           </div>
         )}
 
