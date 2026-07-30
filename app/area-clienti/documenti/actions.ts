@@ -29,7 +29,7 @@ export async function uploadDocumento(_prev: { error?: string }, formData: FormD
     const uploadForm = new FormData()
     uploadForm.set('file', file)
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'}/api/upload-documento`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'}/api/upload-documento`, {
       method: 'POST',
       body: uploadForm,
     })
