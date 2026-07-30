@@ -224,7 +224,7 @@ export default function OrdineClient({ ordine, articoli }: { ordine: OrdineInfo;
                               <td style={{ ...tdS, padding: 4, textAlign: 'center' }}>
                                 {child.foto_url && (
                                   // eslint-disable-next-line @next/next/no-img-element
-                                  <img src={child.foto_url.startsWith('/') ? child.foto_url : `/${child.foto_url}`}
+                                  <img src={child.foto_url.startsWith('http') ? child.foto_url : child.foto_url.startsWith('/') ? child.foto_url : `/${child.foto_url}`}
                                     alt="" style={{ width: 42, height: 42, objectFit: 'cover', borderRadius: 4, display: 'block', margin: '0 auto' }} />
                                 )}
                               </td>
@@ -305,7 +305,7 @@ export default function OrdineClient({ ordine, articoli }: { ordine: OrdineInfo;
               />
             ) : previewArt.foto_url ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={previewArt.foto_url.startsWith('/') ? previewArt.foto_url : `/${previewArt.foto_url}`}
+              <img src={previewArt.foto_url.startsWith('http') ? previewArt.foto_url : previewArt.foto_url.startsWith('/') ? previewArt.foto_url : `/${previewArt.foto_url}`}
                 alt={previewArt.descrizione}
                 style={{ maxWidth: '100%', maxHeight: '100vh', objectFit: 'contain', display: 'block' }} />
             ) : null}

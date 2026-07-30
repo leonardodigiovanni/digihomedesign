@@ -96,7 +96,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         ?? articoli.find(c => c.parent_id === a.id && isNotAcc(c) && c.listino_foto_url)
       const fotoUrl = child?.listino_foto_url
       if (fotoUrl) {
-        const normalized = fotoUrl.startsWith('/') ? fotoUrl : `/${fotoUrl}`
+        const normalized = fotoUrl.startsWith('http') ? fotoUrl : fotoUrl.startsWith('/') ? fotoUrl : `/${fotoUrl}`
         a.bar_color = await extractAvgColor(normalized)
       }
       const rawChildAcc = (artRows as Record<string, unknown>[]).find(
@@ -104,7 +104,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       )
       const fotoAcc = rawChildAcc?.listino_foto_url != null ? String(rawChildAcc.listino_foto_url) : ''
       if (fotoAcc) {
-        const normalized = fotoAcc.startsWith('/') ? fotoAcc : `/${fotoAcc}`
+        const normalized = fotoAcc.startsWith('http') ? fotoAcc : fotoAcc.startsWith('/') ? fotoAcc : `/${fotoAcc}`
         a.bar_color_acc = await extractAvgColor(normalized)
       }
     }))

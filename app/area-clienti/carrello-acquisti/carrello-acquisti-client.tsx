@@ -626,7 +626,7 @@ export default function CarrelloAcquistiClient({
             ) : previewItem.foto_url ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={previewItem.foto_url.startsWith('/') ? previewItem.foto_url : `/${previewItem.foto_url}`}
+                src={previewItem.foto_url.startsWith('http') ? previewItem.foto_url : previewItem.foto_url.startsWith('/') ? previewItem.foto_url : `/${previewItem.foto_url}`}
                 alt={previewItem.descrizione}
                 style={{ maxWidth: '100%', maxHeight: '100vh', objectFit: 'contain', display: 'block' }}
               />
@@ -782,7 +782,7 @@ export default function CarrelloAcquistiClient({
                             {child.foto_url && (
                               // eslint-disable-next-line @next/next/no-img-element
                               <img
-                                src={child.foto_url.startsWith('/') ? child.foto_url : `/${child.foto_url}`}
+                                src={child.foto_url.startsWith('http') ? child.foto_url : child.foto_url.startsWith('/') ? child.foto_url : `/${child.foto_url}`}
                                 alt=""
                                 style={{ width: 42, height: 42, objectFit: 'cover', borderRadius: 4, display: 'block', margin: '0 auto' }}
                               />

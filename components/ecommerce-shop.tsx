@@ -167,7 +167,7 @@ function ProductCard({ a, hrefBase, onAggiungi }: { a: ArticoloEcommerce; hrefBa
         {a.foto_url ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={a.foto_url.startsWith('/') ? a.foto_url : `/${a.foto_url}`}
+            src={a.foto_url.startsWith('http') ? a.foto_url : a.foto_url.startsWith('/') ? a.foto_url : `/${a.foto_url}`}
             alt={a.descrizione}
             style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
           />

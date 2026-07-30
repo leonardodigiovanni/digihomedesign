@@ -13,7 +13,7 @@ export default function ProdottoDettaglio({ articolo }: { articolo: ArticoloEcom
         {articolo.foto_url ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={articolo.foto_url.startsWith('/') ? articolo.foto_url : `/${articolo.foto_url}`}
+            src={articolo.foto_url.startsWith('http') ? articolo.foto_url : articolo.foto_url.startsWith('/') ? articolo.foto_url : `/${articolo.foto_url}`}
             alt={articolo.descrizione}
             style={{ width: 280, aspectRatio: '1 / 1', objectFit: 'contain', borderRadius: 10, background: '#f7f7f7', flexShrink: 0 }}
           />

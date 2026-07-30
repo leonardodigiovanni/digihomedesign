@@ -116,7 +116,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       const child = articoli.find(c => c.parent_id === a.id && isNotAcc(c) && /color/i.test(c.tipo_prodotto + ' ' + c.modello))
         ?? articoli.find(c => c.parent_id === a.id && isNotAcc(c) && c.listino_foto_url)
       if (child?.listino_foto_url) {
-        const normalized = child.listino_foto_url.startsWith('/') ? child.listino_foto_url : `/${child.listino_foto_url}`
+        const normalized = child.listino_foto_url.startsWith('http') ? child.listino_foto_url : child.listino_foto_url.startsWith('/') ? child.listino_foto_url : `/${child.listino_foto_url}`
         a.bar_color = await extractAvgColor(normalized)
       }
       const rawChildAcc = (artRows as Record<string, unknown>[]).find(
@@ -124,7 +124,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       )
       const fotoAcc = rawChildAcc?.listino_foto_url != null ? String(rawChildAcc.listino_foto_url) : ''
       if (fotoAcc) {
-        const normalized = fotoAcc.startsWith('/') ? fotoAcc : `/${fotoAcc}`
+        const normalized = fotoAcc.startsWith('http') ? fotoAcc : fotoAcc.startsWith('/') ? fotoAcc : `/${fotoAcc}`
         a.bar_color_acc = await extractAvgColor(normalized)
       }
     }))
