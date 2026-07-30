@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { CategoriaImmagine, SottocategoriaImmagine, TipoCategoriaImmagini, TipoConSottocategoria, SlotImmagine } from '@/lib/categoria-immagini'
-import { rimuoviImmagineCategoria } from './actions'
+import { rimuoviImmagineCategoria, copiaImmagineCategoria } from './actions'
 
 // Un solo listener "paste" globale (in ImmaginiCategorieClient) smista il file
 // incollato allo slot attualmente attivo — stesso meccanismo di ImgUploadRow in
@@ -26,9 +26,31 @@ function ImmagineSlotBox({ tipo, categoria, sottocategoria, slot, urlIniziale, a
   const [uploading, setUploading] = useState(false)
   const [err, setErr] = useState<string | null>(null)
   const [pasteFlash, setPasteFlash] = useState(false)
+  const [isDragOver, setIsDragOver] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const key = `${tipo}|||${categoria}|||${sottocategoria}|||${slot}`
   const isTarget = activeKey === key
+
+  function handleDragStart(e: React.DragEvent) {
+    e.dataTransfer.setData('immagine-categoria', JSON.stringify({ tipo, categoria, sottocategoria, slot }))
+    e.dataTransfer.effectAllowed = 'copy'
+  }
+  async function handleDrop(e: React.DragEvent) {
+    e.preventDefault()
+    setIsDragOver(false)
+    const raw = e.dataTransfer.getData('immagine-categoria')
+    if (!raw) return
+    let payload: { tipo: TipoCategoriaImmagini; categoria: string; sottocategoria: string; slot: SlotImmagine }
+    try { payload = JSON.parse(raw) } catch { return }
+    if (payload.tipo === tipo && payload.categoria === categoria && payload.sottocategoria === sottocategoria && payload.slot === slot) return
+    setErr(null)
+    setUploading(true)
+    const res = await copiaImmagineCategoria(payload.tipo, payload.categoria, payload.sottocategoria, payload.slot, tipo, categoria, sottocategoria, slot)
+    if (res.ok) setUrl(`${res.url}?t=${Date.now()}`)
+    else setErr(res.error)
+    setUploading(false)
+    router.refresh()
+  }
 
   async function handleFile(f: File) {
     setErr(null)
@@ -71,10 +93,19 @@ function ImmagineSlotBox({ tipo, categoria, sottocategoria, slot, urlIniziale, a
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 4, alignItems: 'center', width: 104, flexShrink: 0 }}>
-      <div style={{ width: 84, height: 84, borderRadius: 6, overflow: 'hidden', border: '1px solid #e3e3e3', background: '#f7f7f7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div
+        onDragOver={e => { e.preventDefault(); setIsDragOver(true) }}
+        onDragLeave={() => setIsDragOver(false)}
+        onDrop={handleDrop}
+        style={{
+          width: 84, height: 84, borderRadius: 6, overflow: 'hidden', background: '#f7f7f7',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          border: isDragOver ? '2px dashed #f9a825' : '1px solid #e3e3e3',
+        }}
+      >
         {url ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+          <img draggable onDragStart={handleDragStart} src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', cursor: 'grab' }} />
         ) : (
           <span className="fs-11" style={{ color: '#bbb' }}>Nessuna</span>
         )}

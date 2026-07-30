@@ -33,9 +33,9 @@ export async function POST(req: NextRequest) {
   if (!categoria) return NextResponse.json({ ok: false, error: 'Categoria mancante.' })
   if (slot !== 'categoria' && slot !== 'sottocategoria')
     return NextResponse.json({ ok: false, error: 'Slot non valido.' })
-  if (slot === 'sottocategoria' && tipo === 'cataloghi')
-    return NextResponse.json({ ok: false, error: 'I cataloghi non hanno immagine sottocategoria.' })
-  if (slot === 'sottocategoria' && !sottocategoria)
+  // I cataloghi ammettono sottocategoria vuota (voce "Generale" per i cataloghi
+  // senza sottocategoria) — shop/promo no, lì la sottocategoria è sempre richiesta.
+  if (slot === 'sottocategoria' && !sottocategoria && tipo !== 'cataloghi')
     return NextResponse.json({ ok: false, error: 'Sottocategoria mancante.' })
   if (!file || file.size === 0) return NextResponse.json({ ok: false, error: 'Nessun file ricevuto.' })
 

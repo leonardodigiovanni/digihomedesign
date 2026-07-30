@@ -7,6 +7,7 @@ import { resolveCategoria, resolveSottocategoria, percorsoValido, primoPercorso 
 import { toEcommerceSlug, type ArticoloEcommerce } from '@/lib/ecommerce'
 import ProdottoDettaglio from '@/components/prodotto-dettaglio'
 import ShortcutStar from '@/components/shortcut-star'
+import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 
 type Props = { params: Promise<{ categoria: string; sottocategoria: string; id: string }> }
 
@@ -68,11 +69,11 @@ export default async function Page({ params }: Props) {
 
       <ProdottoDettaglio articolo={articolo} />
 
-      <p style={{ marginTop: 16 }}>
+      <StickyBottomBarContent>
         <Link href={`/shop/${categoriaSlug}/${sottocategoriaSlug}`} className="btn-black fs-12" style={{ height: 42, padding: '0 20px', borderRadius: 21, display: 'inline-flex', alignItems: 'center', textDecoration: 'none' }}>
           ← Torna a {sottocategoria}
         </Link>
-      </p>
+      </StickyBottomBarContent>
     </div>
   )
 }

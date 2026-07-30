@@ -6,12 +6,45 @@ import { revalidatePath } from 'next/cache'
 import { getConnection } from '@/lib/db'
 import {
   clearImmagineCategoria, clearImmagineSottocategoria, ensureCategoriaImmaginiTables,
+  getImmagineCategoria, getImmagineSottocategoria, upsertImmagineCategoria, upsertImmagineSottocategoria,
   type TipoCategoriaImmagini, type TipoConSottocategoria, type SlotImmagine,
 } from '@/lib/categoria-immagini'
 
 async function checkAdmin() {
   const cookieStore = await cookies()
   if (cookieStore.get('session_role')?.value !== 'admin') redirect('/')
+}
+
+function revalidateTutte() {
+  revalidatePath('/amministrazione/immagini-categorie')
+  revalidatePath('/shop')
+  revalidatePath('/promozioni')
+  revalidatePath('/cataloghi')
+}
+
+// Copia l'URL di un'immagine già caricata da una casella (categoria o sottocategoria,
+// shop/promo/cataloghi) a un'altra, senza rifare l'upload — anche tra tipi/categorie diverse.
+export async function copiaImmagineCategoria(
+  sourceTipo: TipoCategoriaImmagini, sourceCategoria: string, sourceSottocategoria: string, sourceSlot: SlotImmagine,
+  destTipo: TipoCategoriaImmagini, destCategoria: string, destSottocategoria: string, destSlot: SlotImmagine
+): Promise<{ ok: true; url: string } | { ok: false; error: string }> {
+  await checkAdmin()
+  const db = await getConnection()
+  try {
+    await ensureCategoriaImmaginiTables(db)
+    const url = sourceSlot === 'categoria'
+      ? await getImmagineCategoria(db, sourceTipo, sourceCategoria)
+      : await getImmagineSottocategoria(db, sourceTipo as TipoConSottocategoria, sourceCategoria, sourceSottocategoria)
+    if (!url) return { ok: false, error: 'Immagine sorgente non trovata.' }
+
+    if (destSlot === 'categoria') await upsertImmagineCategoria(db, destTipo, destCategoria, url)
+    else await upsertImmagineSottocategoria(db, destTipo as TipoConSottocategoria, destCategoria, destSottocategoria, url)
+
+    revalidateTutte()
+    return { ok: true, url }
+  } finally {
+    await db.end()
+  }
 }
 
 export async function rimuoviImmagineCategoria(tipo: TipoCategoriaImmagini, categoria: string, sottocategoria: string, slot: SlotImmagine): Promise<void> {

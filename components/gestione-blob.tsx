@@ -1,8 +1,49 @@
 'use client'
 
 import { useState } from 'react'
+import { Document, Page, pdfjs } from 'react-pdf'
+
+pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`
 
 type BlobItem = { url: string; nome: string; size: number; occorrenze: number }
+
+const IMG_EXT = ['jpg', 'jpeg', 'png', 'webp', 'gif']
+const VIDEO_EXT = ['mp4', 'mov', 'webm', 'avi', 'mkv']
+
+function BlobThumb({ url, nome }: { url: string; nome: string }) {
+  const ext = nome.split('.').pop()?.toLowerCase() ?? ''
+  const [pdfError, setPdfError] = useState(false)
+  const boxStyle: React.CSSProperties = {
+    width: 40, height: 40, borderRadius: 4, flexShrink: 0, overflow: 'hidden',
+    background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 0,
+  }
+
+  if (IMG_EXT.includes(ext)) {
+    return (
+      <div style={boxStyle}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+      </div>
+    )
+  }
+
+  if (ext === 'pdf' && !pdfError) {
+    return (
+      <div style={boxStyle}>
+        <Document file={url} onLoadError={() => setPdfError(true)} onSourceError={() => setPdfError(true)}
+          loading={null} error={null}>
+          <Page pageNumber={1} width={40} renderTextLayer={false} renderAnnotationLayer={false} onRenderError={() => setPdfError(true)} />
+        </Document>
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ ...boxStyle, fontSize: 16 }}>
+      {ext === 'pdf' ? '📄' : VIDEO_EXT.includes(ext) ? '🎬' : '📦'}
+    </div>
+  )
+}
 
 export default function GestioneBlob({ prefix, label }: { prefix: string; label?: string }) {
   const [aperto, setAperto] = useState(false)
@@ -56,6 +97,7 @@ export default function GestioneBlob({ prefix, label }: { prefix: string; label?
           {!loading && blobs.length === 0 && <div style={{ fontSize: 12, color: '#888' }}>Nessun file su Vercel Blob.</div>}
           {blobs.map(b => (
             <div key={b.url} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', borderBottom: '1px solid #f0f0f0' }}>
+              <BlobThumb url={b.url} nome={b.nome} />
               <span style={{ flex: 1, fontSize: 12, wordBreak: 'break-all', color: '#333' }}>
                 {b.nome}{' '}
                 <span style={{ fontWeight: b.occorrenze === 0 ? 700 : 400, color: b.occorrenze === 0 ? '#c00' : '#999' }}>
