@@ -576,16 +576,16 @@ function NuovoArticoloForm({ articoli, fornitori, onDone }: {
 
 // ─── Riga upload immagine riusabile ──────────────────────────────────────────
 
-function BlobPickerModal({ prefix, onSelect, onClose }: { prefix: string; onSelect: (url: string) => void; onClose: () => void }) {
+function ImmaginePickerModal({ apiUrl, titolo, onSelect, onClose }: { apiUrl: string; titolo: string; onSelect: (url: string) => void; onClose: () => void }) {
   const [blobs, setBlobs] = useState<{ url: string; nome: string; occorrenze: number }[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch(`/api/blob/lista?prefix=${encodeURIComponent(prefix)}`)
+    fetch(apiUrl)
       .then(r => r.json())
       .then(d => setBlobs(d.blobs ?? []))
       .finally(() => setLoading(false))
-  }, [prefix])
+  }, [apiUrl])
 
   return (
     <div
@@ -597,11 +597,11 @@ function BlobPickerModal({ prefix, onSelect, onClose }: { prefix: string; onSele
         style={{ background: '#fff', borderRadius: 10, padding: 20, width: '100%', maxWidth: 520, maxHeight: '80vh', overflowY: 'auto', boxShadow: '0 8px 40px rgba(0,0,0,0.22)' }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-          <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700 }}>Scegli da Blob — Listini</h3>
+          <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700 }}>{titolo}</h3>
           <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 18, cursor: 'pointer', color: '#888', lineHeight: 1 }}>✕</button>
         </div>
         {loading && <p style={{ fontSize: 12, color: '#888' }}>Caricamento…</p>}
-        {!loading && blobs.length === 0 && <p style={{ fontSize: 12, color: '#888' }}>Nessun file su Vercel Blob.</p>}
+        {!loading && blobs.length === 0 && <p style={{ fontSize: 12, color: '#888' }}>Nessun file trovato.</p>}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))', gap: 8 }}>
           {blobs.map(b => (
             <button
@@ -624,7 +624,7 @@ function BlobPickerModal({ prefix, onSelect, onClose }: { prefix: string; onSele
   )
 }
 
-function ImgUploadRow({ preview, isTarget, pasteFlash, uploading, fileRef, onActivate, onFileChange, onBlobClick }: {
+function ImgUploadRow({ preview, isTarget, pasteFlash, uploading, fileRef, onActivate, onFileChange, onBlobClick, onFileLocaleClick }: {
   preview: string | null
   isTarget: boolean
   pasteFlash: boolean
@@ -633,8 +633,10 @@ function ImgUploadRow({ preview, isTarget, pasteFlash, uploading, fileRef, onAct
   onActivate: () => void
   onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   onBlobClick: () => void
+  onFileLocaleClick: () => void
 }) {
-  const nomeFile = preview ? decodeURIComponent(preview.split('?')[0].split('/').pop() ?? '') : null
+  const cleanUrl = preview ? preview.split('?')[0] : null
+  const nomeFile = cleanUrl ? `${cleanUrl.startsWith('https://') ? '(blob) ' : '(sito) '}${decodeURIComponent(cleanUrl.split('/').pop() ?? '')}` : null
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flexShrink: 0 }}>
@@ -674,6 +676,14 @@ function ImgUploadRow({ preview, isTarget, pasteFlash, uploading, fileRef, onAct
           >
             📂 Da Blob
           </button>
+          <button
+            type="button"
+            onClick={onFileLocaleClick}
+            disabled={uploading}
+            style={{ flex: 1, padding: '6px 14px', fontSize: 12, border: '1px solid #ccc', borderRadius: 4, background: '#f5f5f5', cursor: uploading ? 'wait' : 'pointer' }}
+          >
+            📁 Da file
+          </button>
         </div>
         <div
           onClick={onActivate}
@@ -708,6 +718,7 @@ function SchedaTecnicaModal({ art, onClose, loghiDisponibili }: { art: Articolo;
   const [pasteFlashSchema, setPasteFlashSchema] = useState(false)
   const [pasteTarget, setPasteTarget] = useState<'foto' | 'schema'>('foto')
   const [blobPickerFor, setBlobPickerFor] = useState<'foto' | 'schema' | null>(null)
+  const [filePickerFor, setFilePickerFor] = useState<'foto' | 'schema' | null>(null)
   const fileRef       = useRef<HTMLInputElement>(null)
   const fileRefSchema = useRef<HTMLInputElement>(null)
 
@@ -766,8 +777,9 @@ function SchedaTecnicaModal({ art, onClose, loghiDisponibili }: { art: Articolo;
     uploadFile(f, tipo)
   }
 
-  async function pickFromBlob(url: string, tipo: 'foto' | 'schema') {
+  async function pickFromUrl(url: string, tipo: 'foto' | 'schema') {
     setBlobPickerFor(null)
+    setFilePickerFor(null)
     setUploadErr(null)
     setUploading(true)
     try {
@@ -823,6 +835,7 @@ function SchedaTecnicaModal({ art, onClose, loghiDisponibili }: { art: Articolo;
               onActivate={() => setPasteTarget('foto')}
               onFileChange={e => handleFile(e, 'foto')}
               onBlobClick={() => setBlobPickerFor('foto')}
+              onFileLocaleClick={() => setFilePickerFor('foto')}
             />
           </div>
 
@@ -837,6 +850,7 @@ function SchedaTecnicaModal({ art, onClose, loghiDisponibili }: { art: Articolo;
               onActivate={() => setPasteTarget('schema')}
               onFileChange={e => handleFile(e, 'schema')}
               onBlobClick={() => setBlobPickerFor('schema')}
+              onFileLocaleClick={() => setFilePickerFor('schema')}
             />
           </div>
 
@@ -916,10 +930,19 @@ function SchedaTecnicaModal({ art, onClose, loghiDisponibili }: { art: Articolo;
       </div>
 
       {blobPickerFor && (
-        <BlobPickerModal
-          prefix="listini/"
+        <ImmaginePickerModal
+          apiUrl="/api/blob/lista?prefix=listini/"
+          titolo="Scegli da Blob — Listini"
           onClose={() => setBlobPickerFor(null)}
-          onSelect={url => pickFromBlob(url, blobPickerFor)}
+          onSelect={url => pickFromUrl(url, blobPickerFor)}
+        />
+      )}
+      {filePickerFor && (
+        <ImmaginePickerModal
+          apiUrl="/api/listini/file-locali"
+          titolo="Scegli da file locali — Listini"
+          onClose={() => setFilePickerFor(null)}
+          onSelect={url => pickFromUrl(url, filePickerFor)}
         />
       )}
     </div>
@@ -1253,15 +1276,21 @@ function ImgCell({ artId, url, tipo, alt, escluso, height = 90 }: { artId: numbe
     })
   }
 
+  const provenienzaBorder = url ? (url.startsWith('https://') ? '1px solid #2e7d32' : '1px solid #c62828') : undefined
+
   return (
     <div
-      style={{ position: 'relative', width: '100%', height, outline: isDragOver ? '2px dashed #f9a825' : undefined, opacity: saving ? 0.6 : 1 }}
+      title={url ? (url.startsWith('https://') ? 'Immagine da Vercel Blob' : 'Immagine da sottodirectory del sito') : undefined}
+      style={{
+        position: 'relative', width: '100%', height, boxSizing: 'border-box',
+        border: provenienzaBorder, outline: isDragOver ? '2px dashed #f9a825' : undefined, opacity: saving ? 0.6 : 1,
+      }}
       onDragOver={e => { e.preventDefault(); setIsDragOver(true) }}
       onDragLeave={() => setIsDragOver(false)}
       onDrop={handleDrop}
     >
       {url
-        ? <img draggable onDragStart={handleDragStart} src={url} alt={alt} style={{ display: 'block', width: '100%', height, objectFit: 'contain', background: '#f5f5f5', borderRadius: 3, opacity: escluso ? 0.4 : 1, cursor: 'grab' }} />
+        ? <img draggable onDragStart={handleDragStart} src={url} alt={alt} style={{ display: 'block', width: '100%', height: '100%', objectFit: 'contain', background: '#f5f5f5', borderRadius: 3, opacity: escluso ? 0.4 : 1, cursor: 'grab' }} />
         : <div style={{ width: '100%', height, background: '#f5f5f5', borderRadius: 3 }} />
       }
       {url && escluso && (
