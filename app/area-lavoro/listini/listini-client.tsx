@@ -576,7 +576,55 @@ function NuovoArticoloForm({ articoli, fornitori, onDone }: {
 
 // ─── Riga upload immagine riusabile ──────────────────────────────────────────
 
-function ImgUploadRow({ preview, isTarget, pasteFlash, uploading, fileRef, onActivate, onFileChange }: {
+function BlobPickerModal({ prefix, onSelect, onClose }: { prefix: string; onSelect: (url: string) => void; onClose: () => void }) {
+  const [blobs, setBlobs] = useState<{ url: string; nome: string; occorrenze: number }[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch(`/api/blob/lista?prefix=${encodeURIComponent(prefix)}`)
+      .then(r => r.json())
+      .then(d => setBlobs(d.blobs ?? []))
+      .finally(() => setLoading(false))
+  }, [prefix])
+
+  return (
+    <div
+      onClick={onClose}
+      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 2100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
+    >
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{ background: '#fff', borderRadius: 10, padding: 20, width: '100%', maxWidth: 520, maxHeight: '80vh', overflowY: 'auto', boxShadow: '0 8px 40px rgba(0,0,0,0.22)' }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+          <h3 style={{ margin: 0, fontSize: 14, fontWeight: 700 }}>Scegli da Blob — Listini</h3>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 18, cursor: 'pointer', color: '#888', lineHeight: 1 }}>✕</button>
+        </div>
+        {loading && <p style={{ fontSize: 12, color: '#888' }}>Caricamento…</p>}
+        {!loading && blobs.length === 0 && <p style={{ fontSize: 12, color: '#888' }}>Nessun file su Vercel Blob.</p>}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))', gap: 8 }}>
+          {blobs.map(b => (
+            <button
+              key={b.url} type="button" onClick={() => onSelect(b.url)}
+              style={{ border: '1px solid #e0e0e0', borderRadius: 6, padding: 4, cursor: 'pointer', background: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}
+            >
+              <div style={{ width: '100%', height: 70, borderRadius: 4, overflow: 'hidden', background: '#f5f5f5' }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={b.url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+              </div>
+              <span style={{ fontSize: 9, color: '#999', wordBreak: 'break-all', textAlign: 'center' }}>{b.nome}</span>
+              <span style={{ fontSize: 9, fontWeight: b.occorrenze === 0 ? 700 : 400, color: b.occorrenze === 0 ? '#c00' : '#999' }}>
+                {b.occorrenze} {b.occorrenze === 1 ? 'occorrenza' : 'occorrenze'}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function ImgUploadRow({ preview, isTarget, pasteFlash, uploading, fileRef, onActivate, onFileChange, onBlobClick }: {
   preview: string | null
   isTarget: boolean
   pasteFlash: boolean
@@ -584,32 +632,49 @@ function ImgUploadRow({ preview, isTarget, pasteFlash, uploading, fileRef, onAct
   fileRef: React.RefObject<HTMLInputElement | null>
   onActivate: () => void
   onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onBlobClick: () => void
 }) {
+  const nomeFile = preview ? decodeURIComponent(preview.split('?')[0].split('/').pop() ?? '') : null
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-      <div
-        onClick={() => fileRef.current?.click()}
-        style={{
-          width: 110, height: 90, border: '2px dashed #ccc', borderRadius: 6,
-          cursor: 'pointer', overflow: 'hidden', background: '#f5f5f5',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-        }}
-      >
-        {preview
-          ? <img src={preview} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-          : <span style={{ fontSize: 11, color: '#bbb', textAlign: 'center', padding: 8 }}>Clicca per<br/>caricare</span>
-        }
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flexShrink: 0 }}>
+        <div
+          onClick={() => fileRef.current?.click()}
+          style={{
+            width: 110, height: 90, border: '2px dashed #ccc', borderRadius: 6,
+            cursor: 'pointer', overflow: 'hidden', background: '#f5f5f5',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}
+        >
+          {preview
+            ? <img src={preview} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            : <span style={{ fontSize: 11, color: '#bbb', textAlign: 'center', padding: 8 }}>Clicca per<br/>caricare</span>
+          }
+        </div>
+        {nomeFile && (
+          <span style={{ fontSize: 9, color: '#999', wordBreak: 'break-all', maxWidth: 110, textAlign: 'center' }}>{nomeFile}</span>
+        )}
       </div>
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
         <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={onFileChange} />
-        <button
-          type="button"
-          onClick={() => fileRef.current?.click()}
-          disabled={uploading}
-          style={{ padding: '6px 14px', fontSize: 12, border: '1px solid #ccc', borderRadius: 4, background: '#f5f5f5', cursor: uploading ? 'wait' : 'pointer' }}
-        >
-          {uploading ? 'Caricamento…' : 'Scegli file…'}
-        </button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            disabled={uploading}
+            style={{ flex: 1, padding: '6px 14px', fontSize: 12, border: '1px solid #ccc', borderRadius: 4, background: '#f5f5f5', cursor: uploading ? 'wait' : 'pointer' }}
+          >
+            {uploading ? 'Caricamento…' : 'Scegli file…'}
+          </button>
+          <button
+            type="button"
+            onClick={onBlobClick}
+            disabled={uploading}
+            style={{ flex: 1, padding: '6px 14px', fontSize: 12, border: '1px solid #ccc', borderRadius: 4, background: '#f5f5f5', cursor: uploading ? 'wait' : 'pointer' }}
+          >
+            📂 Da Blob
+          </button>
+        </div>
         <div
           onClick={onActivate}
           style={{
@@ -642,6 +707,7 @@ function SchedaTecnicaModal({ art, onClose, loghiDisponibili }: { art: Articolo;
   const [pasteFlash,       setPasteFlash]       = useState(false)
   const [pasteFlashSchema, setPasteFlashSchema] = useState(false)
   const [pasteTarget, setPasteTarget] = useState<'foto' | 'schema'>('foto')
+  const [blobPickerFor, setBlobPickerFor] = useState<'foto' | 'schema' | null>(null)
   const fileRef       = useRef<HTMLInputElement>(null)
   const fileRefSchema = useRef<HTMLInputElement>(null)
 
@@ -700,6 +766,23 @@ function SchedaTecnicaModal({ art, onClose, loghiDisponibili }: { art: Articolo;
     uploadFile(f, tipo)
   }
 
+  async function pickFromBlob(url: string, tipo: 'foto' | 'schema') {
+    setBlobPickerFor(null)
+    setUploadErr(null)
+    setUploading(true)
+    try {
+      const res = await impostaImmagineUrl(art.id, tipo, url)
+      if (res.ok) {
+        if (tipo === 'foto') setPreview(url + '?t=' + Date.now())
+        else setPreviewSchema(url + '?t=' + Date.now())
+      } else {
+        setUploadErr(res.error)
+      }
+    } finally {
+      setUploading(false)
+    }
+  }
+
   const numInp: React.CSSProperties = {
     padding: '6px 8px', border: '1px solid #ccc', borderRadius: 4,
     fontSize: 13, fontFamily: 'inherit', width: '100%', boxSizing: 'border-box',
@@ -739,6 +822,7 @@ function SchedaTecnicaModal({ art, onClose, loghiDisponibili }: { art: Articolo;
               fileRef={fileRef}
               onActivate={() => setPasteTarget('foto')}
               onFileChange={e => handleFile(e, 'foto')}
+              onBlobClick={() => setBlobPickerFor('foto')}
             />
           </div>
 
@@ -752,6 +836,7 @@ function SchedaTecnicaModal({ art, onClose, loghiDisponibili }: { art: Articolo;
               fileRef={fileRefSchema}
               onActivate={() => setPasteTarget('schema')}
               onFileChange={e => handleFile(e, 'schema')}
+              onBlobClick={() => setBlobPickerFor('schema')}
             />
           </div>
 
@@ -829,6 +914,14 @@ function SchedaTecnicaModal({ art, onClose, loghiDisponibili }: { art: Articolo;
           </div>
         </form>
       </div>
+
+      {blobPickerFor && (
+        <BlobPickerModal
+          prefix="listini/"
+          onClose={() => setBlobPickerFor(null)}
+          onSelect={url => pickFromBlob(url, blobPickerFor)}
+        />
+      )}
     </div>
   )
 }
