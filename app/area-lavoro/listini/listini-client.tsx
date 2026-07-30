@@ -1276,11 +1276,13 @@ function ImgCell({ artId, url, tipo, alt, escluso, height = 90 }: { artId: numbe
     })
   }
 
-  const provenienzaBorder = url ? (url.startsWith('https://') ? '1px solid #2e7d32' : '1px solid #c62828') : undefined
+  const isBlob = url ? url.startsWith('https://') : false
+  const provenienzaBorder = url ? (isBlob ? '1px solid #2e7d32' : '1px solid #c62828') : undefined
+  const nomeFile = url ? `${isBlob ? '(blob)' : '(sito)'}${decodeURIComponent(url.split('?')[0].split('/').pop() ?? '')}` : undefined
 
   return (
     <div
-      title={url ? (url.startsWith('https://') ? 'Immagine da Vercel Blob' : 'Immagine da sottodirectory del sito') : undefined}
+      title={nomeFile}
       style={{
         position: 'relative', width: '100%', height, boxSizing: 'border-box',
         border: provenienzaBorder, outline: isDragOver ? '2px dashed #f9a825' : undefined, opacity: saving ? 0.6 : 1,
