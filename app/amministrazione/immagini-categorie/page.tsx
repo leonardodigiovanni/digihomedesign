@@ -6,6 +6,7 @@ import { ensurePromoTables } from '@/lib/promo'
 import { ensurePercorsiTables } from '@/lib/percorsi'
 import { ensureCategoriaImmaginiTables, pulisciImmaginiOrfane, getCategorieConImmagine, getCoppieConImmagine } from '@/lib/categoria-immagini'
 import ImmaginiCategorieClient from './immagini-categorie-client'
+import GestioneBlob from '@/components/gestione-blob'
 
 export default async function Page() {
   const cookieStore = await cookies()
@@ -40,6 +41,7 @@ export default async function Page() {
         promoCategorie={promoCategorie} promoSottocategorie={promoSottocategorie}
         catalogiCategorie={catalogiCategorie} catalogiSottocategorie={catalogiSottocategorie}
       />
+      <GestioneBlob prefix="categoria-immagini/" label="Gestione Blob — Immagini categorie" />
     </div>
   )
 }

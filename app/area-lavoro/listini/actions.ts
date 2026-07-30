@@ -390,6 +390,45 @@ export async function clearImmagine(_: MutResult | null, fd: FormData): Promise<
   } finally { await db.end() }
 }
 
+function colonnaImmagine(tipo: string): string | null {
+  return tipo === 'schema' ? 'schema_url' : tipo === 'foto' ? 'foto_url' : tipo === 'logo' ? 'logo_url' : null
+}
+
+// Copia l'URL immagine da una casella (articolo+tipo) sorgente a una casella di arrivo,
+// anche di colonna diversa (es. foto -> schema): la sorgente non viene toccata,
+// la destinazione viene sovrascritta (insert se vuota, update se già presente).
+export async function copiaImmagine(sourceId: number, sourceTipo: string, destId: number, destTipo: string): Promise<MutResult> {
+  await checkAccess()
+  if (sourceId === destId && sourceTipo === destTipo) return { ok: true }
+  const colSource = colonnaImmagine(sourceTipo)
+  const colDest = colonnaImmagine(destTipo)
+  if (!colSource || !colDest) return { ok: false, error: 'Tipo non valido.' }
+  const db = await getConnection()
+  try {
+    const [rows] = await db.query(`SELECT ${colSource} AS url FROM listini WHERE id=?`, [sourceId])
+    const src = (rows as { url: string | null }[])[0]
+    if (!src?.url) return { ok: false, error: 'Immagine sorgente non trovata.' }
+    await db.execute(`UPDATE listini SET ${colDest}=? WHERE id=?`, [src.url, destId])
+    revalidatePath('/area-lavoro/listini')
+    return { ok: true }
+  } finally { await db.end() }
+}
+
+// Scrive un URL già esistente (es. immagine "in transito" caricata su Blob una sola volta)
+// direttamente nella colonna di destinazione, senza leggere da nessuna riga sorgente.
+export async function impostaImmagineUrl(destId: number, destTipo: string, url: string): Promise<MutResult> {
+  await checkAccess()
+  const col = colonnaImmagine(destTipo)
+  if (!col) return { ok: false, error: 'Tipo non valido.' }
+  if (!url) return { ok: false, error: 'URL mancante.' }
+  const db = await getConnection()
+  try {
+    await db.execute(`UPDATE listini SET ${col}=? WHERE id=?`, [url, destId])
+    revalidatePath('/area-lavoro/listini')
+    return { ok: true }
+  } finally { await db.end() }
+}
+
 // ─── Aggiornamento massivo (riga valori) ──────────────────────────────────────
 
 const CAMPI_TESTO: Record<string, string> = {

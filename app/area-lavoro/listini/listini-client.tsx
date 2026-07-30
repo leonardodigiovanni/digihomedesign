@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useActionState, useTransition, useRef, useEffect, useContext, createContext } from 'react'
 import SelectLookup from '@/components/select-lookup'
 import { useRouter } from 'next/navigation'
-import { addArticolo, updateArticolo, deleteArticolo, cloneArticolo, toggleDisponibile, togglePreventivabile, toggleAcquistabile, toggleComputabile, togglePrincipale, toggleCaratteristica, toggleEscluso, toggleColonnaBooleana, updateSchedaTecnica, clearImmagine, updateMassivo, type MutResult, type AddResult } from './actions'
+import { addArticolo, updateArticolo, deleteArticolo, cloneArticolo, toggleDisponibile, togglePreventivabile, toggleAcquistabile, toggleComputabile, togglePrincipale, toggleCaratteristica, toggleEscluso, toggleColonnaBooleana, updateSchedaTecnica, clearImmagine, copiaImmagine, impostaImmagineUrl, updateMassivo, type MutResult, type AddResult } from './actions'
 import { addPercorsoListino, removePercorsoListino, type Percorso } from '@/lib/percorsi'
 import { addPercorsoShop, removePercorsoShop } from '@/lib/shop-percorsi'
 import { addPercorsoPromo, removePercorsoPromo } from '@/lib/promo'
@@ -1005,13 +1005,170 @@ function ToggleEsclusoBtn({ art }: { art: Articolo }) {
   )
 }
 
+// ─── Casella di transito (incolla da clipboard, upload lazy) ─────────────────
+
+const TransitoCtx = createContext<{ resolveUrl: () => Promise<string | null> }>({ resolveUrl: async () => null })
+
+function useImmagineTransito() {
+  const [active, setActive] = useState(false)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [uploadedUrl, setUploadedUrl] = useState<string | null>(null)
+  const fileRef = useRef<File | null>(null)
+  const uploadedRef = useRef<string | null>(null)
+
+  function setLocalFile(f: File) {
+    fileRef.current = f
+    uploadedRef.current = null
+    setUploadedUrl(null)
+    setPreviewUrl(prev => {
+      if (prev) URL.revokeObjectURL(prev)
+      return URL.createObjectURL(f)
+    })
+  }
+
+  useEffect(() => {
+    if (!active) return
+    function handlePaste(e: ClipboardEvent) {
+      const items = e.clipboardData?.items
+      if (!items) return
+      for (const item of Array.from(items)) {
+        if (item.type.startsWith('image/')) {
+          const f = item.getAsFile()
+          if (f) setLocalFile(f)
+          break
+        }
+      }
+    }
+    document.addEventListener('paste', handlePaste)
+    return () => document.removeEventListener('paste', handlePaste)
+  }, [active])
+
+  async function resolveUrl(): Promise<string | null> {
+    if (uploadedRef.current) return uploadedRef.current
+    const f = fileRef.current
+    if (!f) return null
+    const fd = new FormData()
+    fd.set('foto', f)
+    const res = await fetch('/api/listini/transito', { method: 'POST', body: fd })
+    const data = await res.json().catch(() => ({ ok: false })) as { ok: boolean; url?: string }
+    if (data.ok && data.url) {
+      uploadedRef.current = data.url
+      fileRef.current = null
+      setUploadedUrl(data.url)
+      setPreviewUrl(prev => { if (prev) URL.revokeObjectURL(prev); return null })
+      return data.url
+    }
+    return null
+  }
+
+  function clear() {
+    setPreviewUrl(prev => { if (prev) URL.revokeObjectURL(prev); return null })
+    setUploadedUrl(null)
+    fileRef.current = null
+    uploadedRef.current = null
+  }
+
+  return { active, setActive, previewUrl, uploadedUrl, resolveUrl, clear, setLocalFile }
+}
+
+function ImmagineTransitoBox({ t }: { t: ReturnType<typeof useImmagineTransito> }) {
+  const displaySrc = t.uploadedUrl ?? t.previewUrl
+  const fileRef = useRef<HTMLInputElement>(null)
+
+  function handleDragStart(e: React.DragEvent) {
+    e.dataTransfer.setData('immagine-listino', JSON.stringify({ staging: true }))
+    e.dataTransfer.effectAllowed = 'copy'
+  }
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0]
+    if (f) t.setLocalFile(f)
+    e.target.value = ''
+  }
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+      <div
+        onClick={() => t.setActive(true)}
+        title="Clicca per attivare, poi Ctrl+V per incollare un'immagine dagli appunti"
+        style={{
+          position: 'relative', width: 90, height: 60, flexShrink: 0,
+          border: `2px dashed ${t.active ? '#2b6cb0' : '#ccc'}`, borderRadius: 5,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          background: '#fafafa', cursor: 'pointer', overflow: 'hidden',
+        }}
+      >
+        {displaySrc
+          ? <img draggable onDragStart={handleDragStart} src={displaySrc} alt="immagine in transito"
+              style={{ width: '100%', height: '100%', objectFit: 'contain', cursor: 'grab' }} />
+          : <span style={{ fontSize: 10, color: t.active ? '#2b6cb0' : '#aaa', textAlign: 'center', padding: 4 }}>
+              {t.active ? '📋 Ctrl+V qui' : '📋 Clicca e Ctrl+V'}
+            </span>
+        }
+        {displaySrc && (
+          <button type="button" onClick={e => { e.stopPropagation(); t.clear() }} title="Svuota" style={{
+            position: 'absolute', top: 2, right: 2, width: 16, height: 16, padding: 0, lineHeight: 1,
+            fontSize: 10, fontWeight: 700, background: 'rgba(180,30,30,0.85)', color: '#fff',
+            border: 'none', borderRadius: 3, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>×</button>
+        )}
+      </div>
+      <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
+      <button type="button" onClick={() => fileRef.current?.click()} className="btn-gray" style={{ fontSize: 11, padding: '4px 10px' }}>
+        Carica…
+      </button>
+    </div>
+  )
+}
+
 function ImgCell({ artId, url, tipo, alt, escluso, height = 90 }: { artId: number; url: string | null; tipo: 'schema' | 'foto' | 'logo'; alt: string; escluso?: boolean; height?: number }) {
   const [, startT] = React.useTransition()
   const router = useRouter()
+  const { resolveUrl } = useContext(TransitoCtx)
+  const [isDragOver, setIsDragOver] = useState(false)
+  const [saving, setSaving] = useState(false)
+
+  function handleDragStart(e: React.DragEvent) {
+    e.dataTransfer.setData('immagine-listino', JSON.stringify({ artId, tipo }))
+    e.dataTransfer.effectAllowed = 'copy'
+  }
+  function handleDrop(e: React.DragEvent) {
+    e.preventDefault()
+    setIsDragOver(false)
+    const raw = e.dataTransfer.getData('immagine-listino')
+    if (!raw) return
+    let payload: { artId?: number; tipo?: string; staging?: boolean }
+    try { payload = JSON.parse(raw) } catch { return }
+
+    if (payload.staging) {
+      setSaving(true)
+      startT(async () => {
+        const url = await resolveUrl()
+        if (url) await impostaImmagineUrl(artId, tipo, url)
+        router.refresh()
+        setSaving(false)
+      })
+      return
+    }
+
+    if (payload.artId == null || !payload.tipo) return
+    if (payload.artId === artId && payload.tipo === tipo) return
+    setSaving(true)
+    startT(async () => {
+      await copiaImmagine(payload.artId as number, payload.tipo as string, artId, tipo)
+      router.refresh()
+      setSaving(false)
+    })
+  }
+
   return (
-    <div style={{ position: 'relative', width: '100%', height }}>
+    <div
+      style={{ position: 'relative', width: '100%', height, outline: isDragOver ? '2px dashed #f9a825' : undefined, opacity: saving ? 0.6 : 1 }}
+      onDragOver={e => { e.preventDefault(); setIsDragOver(true) }}
+      onDragLeave={() => setIsDragOver(false)}
+      onDrop={handleDrop}
+    >
       {url
-        ? <img src={url} alt={alt} style={{ display: 'block', width: '100%', height, objectFit: 'contain', background: '#f5f5f5', borderRadius: 3, opacity: escluso ? 0.4 : 1 }} />
+        ? <img draggable onDragStart={handleDragStart} src={url} alt={alt} style={{ display: 'block', width: '100%', height, objectFit: 'contain', background: '#f5f5f5', borderRadius: 3, opacity: escluso ? 0.4 : 1, cursor: 'grab' }} />
         : <div style={{ width: '100%', height, background: '#f5f5f5', borderRadius: 3 }} />
       }
       {url && escluso && (
@@ -1537,6 +1694,7 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
   const hasValori = Object.values(valori).some(v => v !== '')
   const [submittingValori, setSubmittingValori] = useState(false)
   const router = useRouter()
+  const transito = useImmagineTransito()
 
   useEffect(() => {
     try {
@@ -1903,18 +2061,20 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
 
         {/* Pulsanti nuovo / ripeti */}
         {!nuovoOpen ? (
-          <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+          <div style={{ display: 'flex', gap: 8, marginBottom: 16, alignItems: 'center' }}>
             <button className="btn-green" onClick={() => setNuovoOpen(true)}>+ Nuovo articolo</button>
             <button className="btn-green" onClick={handleClone} disabled={lastId === null || isCloning}
               style={{ opacity: lastId === null ? 0.4 : 1 }}>
               {isCloning ? 'Clonazione…' : '+ Ripeti articolo'}
             </button>
+            <ImmagineTransitoBox t={transito} />
           </div>
         ) : (
           <NuovoArticoloForm articoli={articoli} fornitori={fornitori}
             onDone={(newId) => { if (newId) setLastId(newId); setNuovoOpen(false) }} />
         )}
 
+        <TransitoCtx.Provider value={{ resolveUrl: transito.resolveUrl }}>
           <div ref={scrollRef} style={{ overflowX: 'auto', overflowY: 'auto', maxHeight: gridMaxHeight }}>
             <table data-no-shortcut-dblclick style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
@@ -2280,6 +2440,7 @@ export default function ListiniClient({ articoli, fornitori, percorsiPerListino,
               </tbody>
             </table>
           </div>
+        </TransitoCtx.Provider>
 
         {schedaArt && <SchedaTecnicaModal art={schedaArt} onClose={() => setSchedaId(null)} loghiDisponibili={loghiDisponibili} />}
       </div>

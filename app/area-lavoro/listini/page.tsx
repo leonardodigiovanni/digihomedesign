@@ -11,6 +11,7 @@ import { ensurePromoTables, type PercorsoPromo } from '@/lib/promo'
 import { getFiltriModelloLabels } from '@/lib/filtri-modello-labels'
 import { LOGHI_PARTNERS } from '@/lib/loghi-partners'
 import ShortcutStar from '@/components/shortcut-star'
+import GestioneBlob from '@/components/gestione-blob'
 
 export const metadata: Metadata = {
   title: 'Listini',
@@ -217,6 +218,7 @@ export default async function Page() {
         Prezzi di acquisto e vendita per articoli e lavorazioni. Doppio click su una riga per modificarla.
       </p>
       <ListiniClient articoli={articoli} fornitori={fornitori} percorsiPerListino={percorsiPerListino} shopPercorsiPerListino={shopPercorsiPerListino} promoPercorsiPerListino={promoPercorsiPerListino} filtriLabels={filtriLabels} loghiDisponibili={loghiDisponibili} />
+      <GestioneBlob prefix="listini/" label="Gestione Blob — Listini" />
     </div>
   )
 }

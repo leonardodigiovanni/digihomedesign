@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-type BlobItem = { url: string; nome: string; size: number }
+type BlobItem = { url: string; nome: string; size: number; occorrenze: number }
 
 export default function GestioneBlob({ prefix, label }: { prefix: string; label?: string }) {
   const [aperto, setAperto] = useState(false)
@@ -57,7 +57,10 @@ export default function GestioneBlob({ prefix, label }: { prefix: string; label?
           {blobs.map(b => (
             <div key={b.url} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', borderBottom: '1px solid #f0f0f0' }}>
               <span style={{ flex: 1, fontSize: 12, wordBreak: 'break-all', color: '#333' }}>
-                {b.nome}
+                {b.nome}{' '}
+                <span style={{ fontWeight: b.occorrenze === 0 ? 700 : 400, color: b.occorrenze === 0 ? '#c00' : '#999' }}>
+                  ({b.occorrenze} {b.occorrenze === 1 ? 'occorrenza' : 'occorrenze'})
+                </span>
               </span>
               <span style={{ fontSize: 11, color: '#aaa', flexShrink: 0 }}>{fmt(b.size)}</span>
               <a href={b.url} target="_blank" rel="noreferrer" className="btn-black"

@@ -5,6 +5,7 @@ import type { Metadata } from 'next'
 import { UploadDocumentoForm } from './upload-form'
 import { DocumentiFiltri } from './filtri'
 import ShortcutStar from '@/components/shortcut-star'
+import GestioneBlob from '@/components/gestione-blob'
 
 export const metadata: Metadata = { title: 'Documenti Clienti' }
 
@@ -80,6 +81,7 @@ export default async function Page() {
         ? <p style={{ color: '#aaa', fontSize: 14 }}>Nessun documento disponibile.</p>
         : <DocumentiFiltri documenti={documenti} clienti={clienti} />
       }
+      <GestioneBlob prefix="documenti/" label="Gestione Blob — Documenti Clienti" />
       <div className="IsDebug fs-11" style={{marginTop:8}}>pagina revisionata</div>
     </div>
   )

@@ -5,6 +5,7 @@ import { hasPageAccess } from '@/lib/permissions'
 import { getConnection } from '@/lib/db'
 import MarketingClient, { type Record_ } from './marketing-client'
 import ShortcutStar from '@/components/shortcut-star'
+import GestioneBlob from '@/components/gestione-blob'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -55,6 +56,7 @@ export default async function Page() {
         Registro delle campagne e azioni di marketing.
       </p>
       <MarketingClient records={records} />
+      <GestioneBlob prefix="marketing/" label="Gestione Blob — Marketing" />
     </div>
   )
 }
