@@ -3,7 +3,7 @@ import { cookies } from 'next/headers'
 import { getConnection } from '@/lib/db'
 import { readSettings } from '@/lib/settings'
 import { hasPageAccess } from '@/lib/permissions'
-import { put, del } from '@vercel/blob'
+import { put } from '@vercel/blob'
 import { isConvertibleImageExt, toWebpFile } from '@/lib/image-convert'
 
 export async function POST(req: NextRequest) {
@@ -37,13 +37,6 @@ export async function POST(req: NextRequest) {
 
   const db = await getConnection()
   try {
-    const [rows] = await db.query(`SELECT ${col} AS url FROM listini WHERE id=? LIMIT 1`, [id]) as [Record<string, unknown>[], unknown]
-    const oldUrl = rows[0]?.url as string | null
-
-    if (oldUrl && oldUrl.startsWith('https://')) {
-      await del(oldUrl).catch(() => {})
-    }
-
     const filename = `${id}-${tipo}-${Date.now()}.${uploadExt}`
     const blob = await put(`listini/${filename}`, uploadFile, { access: 'public' })
 

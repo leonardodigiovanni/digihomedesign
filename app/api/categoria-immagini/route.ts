@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { getConnection } from '@/lib/db'
-import { put, del } from '@vercel/blob'
+import { put } from '@vercel/blob'
 import {
-  ensureCategoriaImmaginiTables, getImmagineCategoria, getImmagineSottocategoria,
+  ensureCategoriaImmaginiTables,
   upsertImmagineCategoria, upsertImmagineSottocategoria,
   type TipoCategoriaImmagini, type TipoConSottocategoria, type SlotImmagine,
 } from '@/lib/categoria-immagini'
@@ -52,11 +52,6 @@ export async function POST(req: NextRequest) {
   const db = await getConnection()
   try {
     await ensureCategoriaImmaginiTables(db)
-
-    const oldUrl = slot === 'categoria'
-      ? await getImmagineCategoria(db, tipo, categoria)
-      : await getImmagineSottocategoria(db, tipo as TipoConSottocategoria, categoria, sottocategoria)
-    if (oldUrl && oldUrl.startsWith('https://')) await del(oldUrl).catch(() => {})
 
     const filename = `${tipo}-${safe(categoria)}-${safe(sottocategoria)}-${slot}-${Date.now()}.${uploadExt}`
     const blob = await put(`categoria-immagini/${filename}`, uploadFile, { access: 'public' })
