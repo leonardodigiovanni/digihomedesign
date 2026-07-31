@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import Image from 'next/image'
 import { useEdgeAutoScroll } from '@/lib/use-edge-auto-scroll'
 import { useScrollEdgeMask } from '@/lib/use-scroll-edge-mask'
 import { mergeRefs } from '@/lib/merge-refs'
@@ -11,6 +12,25 @@ const THUMB_W = 64
 const THUMB_H = 40
 const GAP = 8
 const SLOT = THUMB_W + GAP
+
+// La card grande carica la sua immagine via next/image, quindi il .src risolto
+// e' gia' un URL proxato /_next/image?url=<path originale>&w=<taglia grande>&q=...
+// Estraendo il path originale da li' (invece di riusare l'URL cosi' com'e'), la
+// mini-mappa puo' chiedere a next/image una SUA variante piccola (64x40) invece
+// di scaricare/mostrare la variante grande — evita il warning Lighthouse
+// "immagine piu' grande del necessario per le dimensioni visualizzate".
+function rawImageSrc(el: HTMLImageElement): string {
+  try {
+    const u = new URL(el.src, window.location.origin)
+    if (u.pathname === '/_next/image') {
+      const raw = u.searchParams.get('url')
+      if (raw) return raw
+    }
+    return u.pathname + u.search
+  } catch {
+    return el.src
+  }
+}
 
 export default function HeroCardsScroll({ children }: { children: React.ReactNode }) {
   const autoScrollRef = useEdgeAutoScroll<HTMLDivElement>({ axis: 'x' })
@@ -32,11 +52,14 @@ export default function HeroCardsScroll({ children }: { children: React.ReactNod
     const container = containerRef.current
     if (!container) return
     const cards = Array.from(container.querySelectorAll<HTMLElement>(':scope > .page-card'))
-    setMinis(cards.map(el => ({
-      el,
-      src: el.querySelector('img')?.src ?? '',
-      label: el.querySelector('.testo-articoli')?.textContent ?? '',
-    })))
+    setMinis(cards.map(el => {
+      const img = el.querySelector('img')
+      return {
+        el,
+        src: img ? rawImageSrc(img) : '',
+        label: el.querySelector('.testo-articoli')?.textContent ?? '',
+      }
+    }))
   }, [children])
 
   // Scroll/estensione reali della riga principale + quante miniature entrano
@@ -142,8 +165,7 @@ export default function HeroCardsScroll({ children }: { children: React.ReactNod
                 }}
               >
                 {m.src && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={m.src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                  <Image src={m.src} alt="" width={THUMB_W} height={THUMB_H} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                 )}
               </button>
             ))}

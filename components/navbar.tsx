@@ -320,6 +320,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
 
   const linkStyle = (href: string): React.CSSProperties => ({
     padding: '0 5px',
+    minWidth: 24,
     height: 46,
     display: 'flex',
     alignItems: 'center',
