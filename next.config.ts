@@ -7,8 +7,6 @@ const nextConfig: NextConfig = {
   outputFileTracingExcludes: {
     '*': [
       './public/**',
-      './node_modules/@img/**',
-      './node_modules/sharp/build/**',
     ],
   },
   images: {
