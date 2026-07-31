@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
+import { attachScrollArrows } from './scroll-edge-arrows'
 
-function computeMask(el: HTMLElement, fadePx: number) {
+function computeMask(el: HTMLElement, fadePx: number, arrows: ReturnType<typeof attachScrollArrows>) {
   const maxScroll = el.scrollWidth - el.clientWidth
   const fadeLeft  = maxScroll > 1 && el.scrollLeft > 1
   const fadeRight = maxScroll > 1 && el.scrollLeft < maxScroll - 1
@@ -15,6 +16,7 @@ function computeMask(el: HTMLElement, fadePx: number) {
   }
   el.style.maskImage = mask
   el.style.setProperty('-webkit-mask-image', mask)
+  arrows.setVisible(fadeLeft, fadeRight)
 }
 
 /**
@@ -29,7 +31,8 @@ export function useScrollEdgeMaskForSelector(selector: string, fadePx = 40) {
     const cleanups = new Map<HTMLElement, () => void>()
 
     function attach(el: HTMLElement) {
-      const update = () => computeMask(el, fadePx)
+      const arrows = attachScrollArrows(el)
+      const update = () => computeMask(el, fadePx, arrows)
       update()
       el.addEventListener('scroll', update, { passive: true })
       const ro = new ResizeObserver(update)
@@ -37,6 +40,7 @@ export function useScrollEdgeMaskForSelector(selector: string, fadePx = 40) {
       cleanups.set(el, () => {
         el.removeEventListener('scroll', update)
         ro.disconnect()
+        arrows.cleanup()
       })
     }
 

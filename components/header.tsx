@@ -103,9 +103,10 @@ export default function Header({
       className={isFixedEffect ? EFFECT_CLASS[headerBgMode] : ''}
       style={{
         ...dynamicStyle,
+        background: '#000',
         borderBottom: `1px solid ${borderColor}`,
         padding: '0 16px',
-        height: 92,
+        height: 90,
         overflow: 'visible',
         position: 'relative',
         ...(isRgbEffect ? { position: 'relative' } : {}),
@@ -116,10 +117,19 @@ export default function Header({
       )}
       {shimmerClass && <div className={shimmerClass} />}
 
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', position: 'relative', zIndex: 1 }}>
-        <Link href="/" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, textDecoration: 'none', color: 'inherit', outline: 'none', cursor: 'pointer' }}>
-          <Image src="/images/header/DIGIHOMEDESIGN.png" alt="Home Design" width={80} height={80} unoptimized style={{ objectFit: 'contain', display: 'block', marginTop: 8 }} />
+      <div style={{
+        display: 'flex', justifyContent: 'flex-start', alignItems: 'center', height: '100%', gap: 8,
+        position: 'relative', zIndex: 1,
+      }}>
+        <Link href="/" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, textDecoration: 'none', color: 'inherit', outline: 'none', cursor: 'pointer', flexShrink: 0, marginTop: 4 }}>
+          <Image src="/images/header/DIGIHOMEDESIGN.png" alt="Home Design" width={80} height={80} unoptimized style={{ objectFit: 'contain', display: 'block' }} />
         </Link>
+        <div style={{ textAlign: 'left', fontSize: 13, fontWeight: 700, letterSpacing: '0.02em', lineHeight: 1.3, whiteSpace: 'nowrap' }}>
+          <div style={{ color: '#999' }}>Serramenti</div>
+          <div style={{ color: '#999' }}>Sicurezza</div>
+          <div style={{ color: '#999' }}>Ristrutturazioni</div>
+          <div style={{ color: '#fff' }}>Home Design</div>
+        </div>
       </div>
       <div style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', zIndex: 20 }}>
         <HeaderAuth username={username} registrazioniDisabilitate={registrazioniDisabilitate} forceDropdown />

@@ -1,4 +1,5 @@
 import { useCallback, useRef } from 'react'
+import { attachScrollArrows } from './scroll-edge-arrows'
 
 /**
  * Applica una maschera di sfumatura (mask-image) ai bordi di un contenitore
@@ -21,6 +22,8 @@ export function useScrollEdgeMask<T extends HTMLElement>(fadePx = 40) {
     cleanupRef.current = null
     if (!el) return
 
+    const arrows = attachScrollArrows(el)
+
     function update() {
       if (!el) return
       const maxScroll = el.scrollWidth - el.clientWidth
@@ -38,6 +41,7 @@ export function useScrollEdgeMask<T extends HTMLElement>(fadePx = 40) {
 
       el.style.maskImage = mask
       el.style.setProperty('-webkit-mask-image', mask)
+      arrows.setVisible(fadeLeft, fadeRight)
     }
 
     update()
@@ -50,6 +54,7 @@ export function useScrollEdgeMask<T extends HTMLElement>(fadePx = 40) {
       el.removeEventListener('scroll', update)
       ro.disconnect()
       window.removeEventListener('resize', update)
+      arrows.cleanup()
     }
   }, [fadePx])
 

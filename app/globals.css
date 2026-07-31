@@ -66,6 +66,30 @@ a:active, a:active img, a:focus img {
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+/* Titolo hero: 3 parole/coppie separate da pallini "&middot;", che diventano
+   3, 2 o 1 riga a seconda della larghezza schermo. I pallini compaiono solo
+   tra parole sulla stessa riga — dove la riga va a capo, niente pallino,
+   solo lo spazio a capo (vedi titolo-brk-*). */
+
+/* <640px: 3 righe — [Infissi · Verande] [Persiane · Porte] [Ristrutturazioni] */
+.titolo-dot-std { display: none; }
+.titolo-brk-std { display: block; }
+.titolo-dot-j3  { display: inline; }
+.titolo-brk-j3  { display: none; }
+
+/* 640–999px: 2 righe — [Infissi · Verande · Persiane] [Porte · Ristrutturazioni] */
+@media (min-width: 640px) {
+  .titolo-dot-std { display: inline; }
+  .titolo-brk-std { display: none; }
+  .titolo-dot-j3  { display: none; }
+  .titolo-brk-j3  { display: block; }
+}
+
+/* >=1000px: 1 riga — Infissi · Verande · Persiane · Porte · Ristrutturazioni */
+@media (min-width: 1000px) {
+  .titolo-dot-j3  { display: inline; }
+  .titolo-brk-j3  { display: none; }
+}
 
 .testo-articoli {
   font-family: var(--font-sans), sans-serif;
@@ -355,22 +379,23 @@ body {
 .page-card {
   display: flex;
   flex-direction: column;
-  border-radius: 20px;
+  border-radius: 20px 20px 1px 1px;
   overflow: hidden;
   text-decoration: none;
-  border: 2px solid transparent;
+  border: 1px solid transparent;
   background: #dba820;
   box-shadow: 0 2px 8px rgba(200,150,12,0.35);
   transition: transform 0.15s, box-shadow 0.15s;
 }
 .home-hero-cards .page-card {
-  flex: 0 0 480px !important;
-  width: 480px !important;
+  flex: 0 0 576px !important;
+  width: 576px !important;
+  max-width: 576px !important;
   scroll-snap-align: start;
 }
 .home-hero-cards .page-card > div:first-child {
-  height: 297px !important;
-  min-height: 297px !important;
+  height: 356px !important;
+  min-height: 356px !important;
   flex: none !important;
 }
 .page-card > div:last-child {
@@ -385,7 +410,7 @@ body {
   top: 2px;
   font-weight: 700 !important;
   font-style: italic !important;
-  font-size: 15px !important;
+  font-size: 14px !important;
   line-height: 19px !important;
   padding: 0px 16px;
   border-radius: 10px;
@@ -515,8 +540,9 @@ body {
 .home-hero-text  { order: 3; }
 /* Fade ai bordi: gestito dinamicamente da useScrollEdgeMask (lib/use-scroll-edge-mask.ts),
    che accende/spegne il fade lato per lato in base a cosa c'è ancora da scrollare */
-.home-hero-cards { order: 2; }
+.home-hero-cards { order: 0; }
 .home-hero-cta {
+  order: 2;
   display: flex;
   flex-direction: row;
   gap: 10px;

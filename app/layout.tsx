@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, Cinzel } from 'next/font/google'
 import { cookies, headers } from 'next/headers'
 import Header from '@/components/header'
 import Navbar from '@/components/navbar'
@@ -39,6 +39,14 @@ export const viewport: Viewport = {
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-sans',
+  display: 'swap',
+})
+
+// Font ornamentale, solo per la scritta "Home Design" sotto il logo header.
+const ornamental = Cinzel({
+  subsets: ['latin'],
+  variable: '--font-ornamental',
+  weight: ['700', '900'],
   display: 'swap',
 })
 
@@ -134,7 +142,7 @@ export default async function RootLayout({
   // Per le rotte /app/* restituiamo solo html+body con il children (app-shell)
   if (isAppRoute) {
     return (
-      <html lang="it" className={inter.variable}>
+      <html lang="it" className={`${inter.variable} ${ornamental.variable}`}>
         <body>
           <PwaRegister />
           {children}
@@ -253,7 +261,7 @@ export default async function RootLayout({
   const bannerCircolare = settings.bannerCircolare
 
   return (
-    <html lang="it" className={inter.variable}>
+    <html lang="it" className={`${inter.variable} ${ornamental.variable}`}>
       <body style={isPageEffect ? {} : { background: `rgba(${pageBg.r}, ${pageBg.g}, ${pageBg.b}, ${pageBg.a / 100})` }}>
         <HomeShortcutsProvider key={username ?? 'anon'} loggedIn={!!username} role={role} rolePermissions={rolePermissions} disabledPages={settings.disabledPages}>
         <PageTitleOverrideProvider>

@@ -102,11 +102,6 @@ export default async function Page() {
       <VideoButton url={VIDEO_URL} videoId={VIDEO_ID} label="Video youtube 1" hint={videoTitle} />
     </HomeShortcutsContent>
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 16, marginBottom: 16 }}>
-      <p style={{ textAlign: 'center', margin: 0, padding: 0, lineHeight: 1.5 }}>
-      <span className="testo-titoli" style={{ display: 'block' }}>Infissi &middot; Verande</span>
-      <span className="testo-titoli" style={{ display: 'block' }}>Persiane &middot; Porte</span>
-      <span className="testo-titoli" style={{ display: 'block' }}>Ristrutturazioni</span>
-      </p>
       <div className="home-hero">
         <HeroCtaScroll>
           <Link href={ctaPreventivi} className="cta-home-btn">
@@ -225,8 +220,8 @@ export default async function Page() {
         {/* ── Serramenti ── */}
         {ok('/serramenti/infissi-in-alluminio-taglio-termico') && (
         <Link href="/serramenti/infissi-in-alluminio-taglio-termico" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/infissi-in-alluminio/porta-finestra-2-ante.jpg" alt="Infissi in Alluminio a Taglio Termico" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
-          <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Infissi in Alluminio a Taglio Termico</span></div>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/infissi-in-alluminio/porta-finestra-2-ante.jpg" alt="Infissi Alluminio Taglio Termico" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Infissi Alluminio Taglio Termico</span></div>
         </Link>
         )}
         {ok('/serramenti/infissi-in-pvc') && (

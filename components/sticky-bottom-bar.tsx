@@ -7,6 +7,7 @@ import { mergeRefs } from '@/lib/merge-refs'
 import { useStickyBottomBarValue } from '@/lib/sticky-bottom-bar-context'
 
 export const BAR_HEIGHT = 44
+const GAP_HEIGHT = 6
 
 /**
  * Barra oro (stesso colore della navbar) fissa in fondo allo schermo, su ogni pagina del sito (non la
@@ -50,7 +51,20 @@ export default function StickyBottomBar() {
 
   return (
     <>
-      <div aria-hidden style={{ height: BAR_HEIGHT, flexShrink: 0 }} />
+      <div aria-hidden style={{ height: BAR_HEIGHT + GAP_HEIGHT, flexShrink: 0 }} />
+      <div
+        aria-hidden
+        style={{
+          position: 'fixed',
+          left: 0,
+          right: scrollbarWidth,
+          bottom: BAR_HEIGHT,
+          zIndex: 200,
+          height: GAP_HEIGHT,
+          background: '#fff',
+          pointerEvents: 'none',
+        }}
+      />
       <div
         ref={mergeRefs(autoScrollRef, maskRef)}
         className="sticky-bottom-bar-row"
