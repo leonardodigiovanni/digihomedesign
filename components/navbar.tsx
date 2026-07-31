@@ -404,7 +404,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
               <button
                 onClick={() => { if (!sectionOpen) { skipSectionClose.current = true; router.push('/chi-siamo') } setSectionOpen(o => !o) }}
                 className={linkClass(isActive('/chi-siamo'))}
-                style={{ ...linkStyle('/chi-siamo'), height: 'auto', flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4 }}
+                style={{ ...linkStyle('/chi-siamo'), height: 'auto', minHeight: 46, flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4 }}
               >
                 <span>Chi Siamo<ShortcutStar href="/chi-siamo" small outline /></span>
                 <span>{sectionOpen ? '▴' : '▾'}</span>
@@ -957,7 +957,7 @@ function InternalDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/area-lavoro'), height: 'auto', flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4 }}>
+      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/area-lavoro'), height: 'auto', minHeight: 46, flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4 }}>
         <span>Area Lavoro</span>
         <span>{open ? '▴' : '▾'}</span>
         {!open && unread > 0 && (
@@ -1023,7 +1023,7 @@ function ProdottiDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/prodotti'), height: 'auto', flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4, padding: '0 6px' }}>
+      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/prodotti'), height: 'auto', minHeight: 46, flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4, padding: '0 6px' }}>
         <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
           <span>Riqualificazione</span>
           <span>Energetica</span>
@@ -1098,7 +1098,7 @@ function ComfortDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/comfort-e-spazi-esterni'), height: 'auto', flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4, padding: '0 6px' }}>
+      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/comfort-e-spazi-esterni'), height: 'auto', minHeight: 46, flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4, padding: '0 6px' }}>
         <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
           <span>Spazi Esterni</span>
           <span>e Comfort</span>
@@ -1157,7 +1157,7 @@ function AntintrusioneDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/antintrusione-e-sicurezza'), height: 'auto', flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4, padding: '0 6px' }}>
+      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/antintrusione-e-sicurezza'), height: 'auto', minHeight: 46, flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4, padding: '0 6px' }}>
         <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
           <span>Antintrusione</span>
           <span>e Sicurezza</span>
@@ -1216,7 +1216,7 @@ function CarpenteriaDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle("/carpenteria-d-arredo"), height: 'auto', flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4, padding: '0 6px' }}>
+      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle("/carpenteria-d-arredo"), height: 'auto', minHeight: 46, flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4, padding: '0 6px' }}>
         <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
           <span>Carpenteria</span>
           <span>d&apos;Arredo</span>
@@ -1277,7 +1277,7 @@ function RistrutturazioniDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/ristrutturazioni-chiavi-in-mano'), height: 'auto', flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4, padding: '0 6px' }}>
+      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/ristrutturazioni-chiavi-in-mano'), height: 'auto', minHeight: 46, flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4, padding: '0 6px' }}>
         <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
           <span>Ristrutturazioni</span>
           <span>Chiavi in Mano</span>
@@ -1344,7 +1344,7 @@ function AiutoDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/aiuto'), height: 'auto', flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4 }}>
+      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/aiuto'), height: 'auto', minHeight: 46, flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4 }}>
         <span>Aiuto</span>
         <span>{open ? '▴' : '▾'}</span>
       </button>
@@ -1396,7 +1396,7 @@ function PreferitiDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className="nav-link testo-nav-bar" style={{ ...linkStyle('/preferiti'), height: 'auto', flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4, textDecoration: 'none' }}>
+      <button onClick={() => setOpen(o => !o)} className="nav-link testo-nav-bar" style={{ ...linkStyle('/preferiti'), height: 'auto', minHeight: 46, flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4, textDecoration: 'none' }}>
         <span>Preferiti</span>
         <span>{open ? '▴' : '▾'}</span>
       </button>
@@ -1452,7 +1452,7 @@ function AdminDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/amministrazione'), height: 'auto', flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4 }}>
+      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/amministrazione'), height: 'auto', minHeight: 46, flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4 }}>
         <span>Amministrazione</span>
         <span>{open ? '▴' : '▾'}</span>
       </button>
@@ -1535,7 +1535,7 @@ function CategoryDropdown({
       <button
         onClick={() => { if (!open) router.push(group.href); setOpen(o => !o) }}
         className={linkClass(isActive(group.href))}
-        style={{ ...linkStyle(group.href), height: 'auto', flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4 }}
+        style={{ ...linkStyle(group.href), height: 'auto', minHeight: 46, flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4 }}
       >
         {group.id === 'metallurgia' ? (
           <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
@@ -1620,7 +1620,7 @@ function FornitoriDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/area-fornitori'), height: 'auto', flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4 }}>
+      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/area-fornitori'), height: 'auto', minHeight: 46, flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4 }}>
         <span>Area Fornitori</span>
         <span>{open ? '▴' : '▾'}</span>
       </button>
@@ -1676,7 +1676,7 @@ function ClientiDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/clienti'), height: 'auto', flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4 }}>
+      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/clienti'), height: 'auto', minHeight: 46, flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4 }}>
         <span>Area Clienti</span>
         <span>{open ? '▴' : '▾'}</span>
       </button>
@@ -1761,7 +1761,7 @@ function AreaClientiDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/area-clienti'), height: 'auto', flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4 }}>
+      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/area-clienti'), height: 'auto', minHeight: 46, flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4 }}>
         <span>Area Personale</span>
         <span>{open ? '▴' : '▾'}</span>
         {!open && unread > 0 && (
