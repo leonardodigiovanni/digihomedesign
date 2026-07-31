@@ -24,7 +24,7 @@ export default function Page() {
         {/* Foto 1 — Francesco */}
         <div className="page-card storia-card-1" style={{ boxShadow: '0 8px 28px rgba(0,0,0,0.25)', marginBottom: 32, width: 240, marginLeft: 'auto', marginRight: 'auto' }}>
           <div style={{ width: '100%' }}>
-            <Image src="/images/storia/francesco.png" alt="Francesco" width={240} height={148} style={{ width: '100%', height: 'auto', display: 'block' }} />
+            <Image src="/images/storia/francesco.webp" alt="Francesco" width={240} height={148} style={{ width: '100%', height: 'auto', display: 'block' }} />
           </div>
           <div style={{ padding: '14px 16px' }}>
             <span className="testo-articoli">Francesco</span>
@@ -57,7 +57,7 @@ export default function Page() {
         {/* Foto 2 — I pupi stampati */}
         <div className="page-card storia-card-2" style={{ boxShadow: '0 6px 22px rgba(0,0,0,0.2)', width: 240, marginLeft: 'auto', marginRight: 'auto' }}>
           <div style={{ width: '100%' }}>
-            <Image src="/images/storia/pupi-carretto-siciliano.png" alt="Pupi e carretto siciliano" width={240} height={148} style={{ width: '100%', height: 'auto', display: 'block' }} />
+            <Image src="/images/storia/pupi-carretto-siciliano.webp" alt="Pupi e carretto siciliano" width={240} height={148} style={{ width: '100%', height: 'auto', display: 'block' }} />
           </div>
           <div style={{ padding: '14px 16px' }}>
             <span className="testo-articoli">I pupi stampati</span>

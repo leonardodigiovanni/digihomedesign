@@ -125,7 +125,7 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/metallurgia/saracinesche-motorizzate/marrone.jpg" alt="Saracinesca motorizzata marrone in garage" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/metallurgia/saracinesche-motorizzate/marrone.webp" alt="Saracinesca motorizzata marrone in garage" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Saracinesca motorizzata per garage</span>
@@ -133,7 +133,7 @@ export default async function Page() {
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/metallurgia/saracinesche-motorizzate/saracinesca.jpeg" alt="Saracinesca motorizzata avvolgibile in acciaio" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/metallurgia/saracinesche-motorizzate/saracinesca.webp" alt="Saracinesca motorizzata avvolgibile in acciaio" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Saracinesca motorizzata avvolgibile</span>

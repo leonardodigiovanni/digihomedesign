@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
+import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { clientPages, standalonePages, visibleAdminPages, visibleInternalPages, visibleFornitoriPages, visibleClientiPages, aiutoPages, categoryGroups, areaClientiPages, prodottiPages, prodottiSubgroups, comfortSpaziEsterniPages, antintrusioneSicurezzaPages, carpenteriaArredoPages, ristrutturazioniChiaviInManoPages, type NavPage, type CategoryGroup } from '@/lib/nav-config'
@@ -348,7 +349,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
         )}
         <div className="nav-scroll-inner" ref={innerRef}>
           <Link href="/" className={linkClass(isActive('/'))} style={{ ...linkStyle('/'), display: 'inline-flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', gap: 2, marginLeft: 8, position: 'relative' }} aria-label="Home">
-            <img src="/images/header/home.png" alt="Home" style={{ height: 30, width: 30, display: 'block', objectFit: 'contain', marginTop: -3 }} />
+            <Image src="/images/header/home.webp" alt="Home" width={30} height={30} style={{ height: 30, width: 30, display: 'block', objectFit: 'contain', marginTop: -3 }} />
           </Link>
 
           {prodottiItems.length > 0 && (
@@ -504,7 +505,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             className="cart-btn"
             style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 41, height: 41, marginTop: 1, textDecoration: 'none' }}
           >
-            <img src="/images/carrello/carrello-computometrici.png" alt="Computo metrico" style={{ height: 41, width: 41, display: 'block', objectFit: 'contain' }} />
+            <Image src="/images/carrello/carrello-computometrici.webp" alt="Computo metrico" width={41} height={41} style={{ height: 41, width: 41, display: 'block', objectFit: 'contain' }} />
             {computoCount > 0 && (
               <span style={{
                 position: 'absolute', top: 4, right: 1,
@@ -527,7 +528,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             className="cart-btn"
             style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 41, height: 41, marginTop: 1, textDecoration: 'none' }}
           >
-            <img src="/images/carrello/carrello-preventivo-t.png" alt="Carrello preventivo" style={{ height: 38, width: 38, display: 'block', objectFit: 'contain', transform: 'translateY(-1px)' }} />
+            <Image src="/images/carrello/carrello-preventivo-t.webp" alt="Carrello preventivo" width={38} height={38} style={{ height: 38, width: 38, display: 'block', objectFit: 'contain', transform: 'translateY(-1px)' }} />
             <span style={{
               position: 'absolute', top: 4, right: 1,
               background: preventivoCompleto ? BADGE_VERDE : BADGE_ARANCIONE, color: '#fff', borderRadius: '50%',
@@ -549,7 +550,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             className="cart-btn"
             style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 41, height: 41, marginTop: 1, textDecoration: 'none' }}
           >
-            <img src="/images/carrello/acquisti.png" alt="Carrello acquisti" style={{ height: 41, width: 41, display: 'block', objectFit: 'contain' }} />
+            <Image src="/images/carrello/acquisti.webp" alt="Carrello acquisti" width={41} height={41} style={{ height: 41, width: 41, display: 'block', objectFit: 'contain' }} />
             <span className="fs-9" style={{
               position: 'absolute', top: 4, right: 1,
               background: acquistiCompleto ? BADGE_VERDE : BADGE_ARANCIONE, color: '#fff', borderRadius: '50%',
@@ -600,7 +601,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             className="cart-btn"
             style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 41, height: 41, marginTop: 1, textDecoration: 'none' }}
           >
-            <img src="/images/carrello/carrello-computometrici.png" alt="Computo metrico" style={{ height: 41, width: 41, display: 'block', objectFit: 'contain' }} />
+            <Image src="/images/carrello/carrello-computometrici.webp" alt="Computo metrico" width={41} height={41} style={{ height: 41, width: 41, display: 'block', objectFit: 'contain' }} />
             {computoCount > 0 && (
               <span style={{
                 position: 'absolute', top: 4, right: 1,
@@ -623,7 +624,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             className="cart-btn"
             style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 41, height: 41, marginTop: 1, textDecoration: 'none' }}
           >
-            <img src="/images/carrello/carrello-preventivo-t.png" alt="Carrello preventivo" style={{ height: 38, width: 38, display: 'block', objectFit: 'contain', transform: 'translateY(-1px)' }} />
+            <Image src="/images/carrello/carrello-preventivo-t.webp" alt="Carrello preventivo" width={38} height={38} style={{ height: 38, width: 38, display: 'block', objectFit: 'contain', transform: 'translateY(-1px)' }} />
             <span style={{
               position: 'absolute', top: 4, right: 0,
               background: preventivoCompleto ? BADGE_VERDE : BADGE_ARANCIONE, color: '#fff', borderRadius: '50%',
@@ -645,7 +646,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             className="cart-btn"
             style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 41, height: 41, marginTop: 1, textDecoration: 'none' }}
           >
-            <img src="/images/carrello/acquisti.png" alt="Carrello acquisti" style={{ height: 41, width: 41, display: 'block', objectFit: 'contain' }} />
+            <Image src="/images/carrello/acquisti.webp" alt="Carrello acquisti" width={41} height={41} style={{ height: 41, width: 41, display: 'block', objectFit: 'contain' }} />
             <span style={{
               position: 'absolute', top: 4, right: 0,
               background: acquistiCompleto ? BADGE_VERDE : BADGE_ARANCIONE, color: '#fff', borderRadius: '50%',

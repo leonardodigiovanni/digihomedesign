@@ -570,7 +570,7 @@ function caratteristicheHTML(children: Record<string, unknown>[], parentPrezzo: 
     return `<div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid #ececec;">
       <div style="width:80px;height:56px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
         ${fotoUrl
-          ? `<div style="position:relative;width:80px;height:56px;"><img src="${fotoAttr}" alt="" style="max-width:80px;max-height:56px;object-fit:contain;display:block;border:1px solid #ccc;${n(c.escluso) === 1 ? 'opacity:0.4;' : ''}"/>${n(c.escluso) === 1 ? `<img src="/images/app/escluso.png" alt="ESCLUSO" style="position:absolute;top:-20%;left:-20%;width:140%;height:140%;object-fit:contain;pointer-events:none;"/>` : ''}</div>`
+          ? `<div style="position:relative;width:80px;height:56px;"><img src="${fotoAttr}" alt="" style="max-width:80px;max-height:56px;object-fit:contain;display:block;border:1px solid #ccc;${n(c.escluso) === 1 ? 'opacity:0.4;' : ''}"/>${n(c.escluso) === 1 ? `<img src="/images/app/escluso.webp" alt="ESCLUSO" style="position:absolute;top:-20%;left:-20%;width:140%;height:140%;object-fit:contain;pointer-events:none;"/>` : ''}</div>`
           : `<div style="width:80px;height:56px;background:#ececec;border-radius:2px;"></div>`}
       </div>
       <div style="flex:1;font-size:10.5px;color:#333;line-height:1.4;">${label || 'Caratteristica'}</div>
@@ -629,7 +629,7 @@ function caratteristichePreviewHTML(children: Record<string, unknown>[], parentP
     return `<div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid #ececec;">
       <div style="width:80px;height:56px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
         ${fotoUrl
-          ? `<div style="position:relative;width:80px;height:56px;"><img src="${fotoAttr}" alt="" style="max-width:80px;max-height:56px;object-fit:contain;display:block;border:1px solid #ccc;${n(c.escluso) === 1 ? 'opacity:0.4;' : ''}"/>${n(c.escluso) === 1 ? `<img src="/images/app/escluso.png" alt="ESCLUSO" style="position:absolute;top:-20%;left:-20%;width:140%;height:140%;object-fit:contain;pointer-events:none;"/>` : ''}</div>`
+          ? `<div style="position:relative;width:80px;height:56px;"><img src="${fotoAttr}" alt="" style="max-width:80px;max-height:56px;object-fit:contain;display:block;border:1px solid #ccc;${n(c.escluso) === 1 ? 'opacity:0.4;' : ''}"/>${n(c.escluso) === 1 ? `<img src="/images/app/escluso.webp" alt="ESCLUSO" style="position:absolute;top:-20%;left:-20%;width:140%;height:140%;object-fit:contain;pointer-events:none;"/>` : ''}</div>`
           : `<div style="width:80px;height:56px;background:#ececec;border-radius:2px;"></div>`}
       </div>
       <div style="flex:1;font-size:10.5px;color:#333;line-height:1.4;">${label || 'Caratteristica'}</div>
@@ -725,7 +725,7 @@ function articoloBlockHTML(parent: Record<string, unknown>, children: Record<str
     </div>` : ''}
     <div style="width:156px;flex-shrink:0;border-left:1px solid #e0e0e0;padding:6px;display:flex;align-items:center;justify-content:center;background:#fcfcfc;">
       ${fotoUrl
-        ? `<div style="position:relative;width:100%;height:124px;display:flex;align-items:center;justify-content:center;"><img src="${fotoAttr}" alt="Scheda tecnica" style="display:block;max-width:100%;max-height:124px;object-fit:contain;margin:0 auto;${n(parent.escluso) === 1 ? 'opacity:0.4;' : ''}" />${n(parent.escluso) === 1 ? `<img src="/images/app/escluso.png" alt="ESCLUSO" style="position:absolute;top:-20%;left:-20%;width:140%;height:140%;object-fit:contain;pointer-events:none;"/>` : ''}</div>`
+        ? `<div style="position:relative;width:100%;height:124px;display:flex;align-items:center;justify-content:center;"><img src="${fotoAttr}" alt="Scheda tecnica" style="display:block;max-width:100%;max-height:124px;object-fit:contain;margin:0 auto;${n(parent.escluso) === 1 ? 'opacity:0.4;' : ''}" />${n(parent.escluso) === 1 ? `<img src="/images/app/escluso.webp" alt="ESCLUSO" style="position:absolute;top:-20%;left:-20%;width:140%;height:140%;object-fit:contain;pointer-events:none;"/>` : ''}</div>`
         : `<div style="font-size:10px;color:#b0b0b0;text-align:center;">Nessuna immagine<br/>scheda tecnica</div>`}
     </div>
   </div>
@@ -797,7 +797,7 @@ function riepilogoChiusuraHtml(): string {
   return `<div style="font-size:12px;color:#333;line-height:1.6;margin-top:10px;margin-bottom:6px;">
   <div style="margin-bottom:2px;">Restando a Sua completa disposizione per qualsiasi chiarimento o approfondimento, porgiamo</div>
   <div style="font-weight:bold;">Cordiali saluti</div>
-  <img src="/images/carrello/sigla.png" style="height:90px;display:block;margin-top:-20px;" />
+  <img src="/images/carrello/sigla.webp" style="height:90px;display:block;margin-top:-20px;" />
 </div>`
 }
 
@@ -881,7 +881,7 @@ function buildVolantinoCoverHtml(settings: AppSettings): string {
   return (
     `<div style="width:794px;height:1123px;position:relative;overflow:hidden;font-family:'Times New Roman',Times,serif;box-sizing:border-box;">` +
     `<div style="width:100%;height:${HH}px;position:relative;overflow:hidden;">` +
-      `<img src="/images/volantino/chiave.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"/>` +
+      `<img src="/images/volantino/chiave.webp" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"/>` +
       `<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:${Math.round(HH*0.04)-5}px;gap:1px;">` +
         `<img src="/images/icons/DIGIHOMEDESIGN - nero.png" alt="logo" style="height:${Math.round(HH*0.20)}px;width:auto;margin-top:20px;"/>` +
       `</div>` +
@@ -905,9 +905,9 @@ function buildVolantinoCoverHtml(settings: AppSettings): string {
       `<div style="position:absolute;top:10px;left:0;right:0;text-align:center;font-size:20px;font-weight:900;color:${footerText};letter-spacing:0.08em;text-transform:uppercase;line-height:1.25;text-shadow:1px 1px 3px rgba(0,0,0,0.2);">Servizi Gratuiti Pensati Per Te<br/>Disponibili su Sito e App</div>` +
       `<div style="position:absolute;top:80px;bottom:10px;left:50%;transform:translateX(-50%);width:2px;background:rgba(0,0,0,0.25);border-radius:1px;"></div>` +
       `<div style="position:absolute;top:70px;left:28%;right:51%;text-align:center;font-size:13px;font-weight:700;color:${footerText};letter-spacing:0.04em;text-transform:uppercase;line-height:1.6;">Calcola il tuo preventivo in autonomia per l&apos;acquisto di serramenti. Basta scegliere modello, colore, misure</div>` +
-      `<img src="/images/volantino/mano-t.png" alt="" style="position:absolute;left:0;bottom:-4px;height:${Math.round(HF*1.05)}px;width:auto;"/>` +
+      `<img src="/images/volantino/mano-t.webp" alt="" style="position:absolute;left:0;bottom:-4px;height:${Math.round(HF*1.05)}px;width:auto;"/>` +
       `<div style="position:absolute;top:70px;left:51%;right:26%;text-align:center;font-size:13px;font-weight:700;color:${footerText};letter-spacing:0.04em;text-transform:uppercase;line-height:1.6;">Segui i lavori nel tuo cantiere da remoto. Accedendo alla tua area personale troverai video e foto aggiornati dai nostri addetti in tempo reale</div>` +
-      `<img src="/images/volantino/app.png" alt="" style="position:absolute;right:12px;top:12px;height:${HF-24}px;width:auto;"/>` +
+      `<img src="/images/volantino/app.webp" alt="" style="position:absolute;right:12px;top:12px;height:${HF-24}px;width:auto;"/>` +
     `</div>` +
     `<div style="width:100%;height:${HZ}px;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px 20px;box-sizing:border-box;">` +
       `<div style="font-size:17px;font-weight:700;color:#fff;letter-spacing:0.05em;text-align:center;text-transform:uppercase;">Approfitta della scontistica per il lancio del marchio</div>` +
@@ -918,7 +918,7 @@ function buildVolantinoCoverHtml(settings: AppSettings): string {
         `<span style="font-size:17px;font-weight:500;color:#fff;letter-spacing:0.03em;">info@digi-home-design.com</span>` +
       `</div>` +
     `</div>` +
-    `<img src="/images/app/TIMBRO-TRASP.png" alt="" style="position:absolute;top:675px;left:205px;width:140px;height:auto;pointer-events:none;"/>` +
+    `<img src="/images/app/TIMBRO-TRASP.webp" alt="" style="position:absolute;top:675px;left:205px;width:140px;height:auto;pointer-events:none;"/>` +
     `</div>`
   )
 }
@@ -929,11 +929,11 @@ function buildAppCoverHtml(): string {
   const H_HEADER = 100, H_SCREEN = 323, H_FEAT = 210, H_PAY = 162, H_FED = 88, H_QUAL = 65, H_SOON = 105, H_SOCIAL = 70
 
   const screenshots = [
-    { src: '/images/app/preventivo.jpg',     label: 'PREVENTIVI' },
-    { src: '/images/app/lavori-cantiere.jpg', label: 'CANTIERI' },
-    { src: '/images/app/foto-cantiere.jpg',   label: 'FOTO CANTIERE' },
-    { src: '/images/app/avvisi.jpg',           label: 'AVVISI' },
-    { src: '/images/app/preview-infisso.jpg', label: 'PREVIEW INFISSO' },
+    { src: '/images/app/preventivo.webp',     label: 'PREVENTIVI' },
+    { src: '/images/app/lavori-cantiere.webp', label: 'CANTIERI' },
+    { src: '/images/app/foto-cantiere.webp',   label: 'FOTO CANTIERE' },
+    { src: '/images/app/avvisi.webp',           label: 'AVVISI' },
+    { src: '/images/app/preview-infisso.webp', label: 'PREVIEW INFISSO' },
   ]
   const features = [
     { title: 'Preventivi online',       desc: 'Configura serramenti e richiedi preventivi ufficiali direttamente dallo smartphone.' },
@@ -990,7 +990,7 @@ function buildAppCoverHtml(): string {
     `<div style="width:794px;height:1123px;position:relative;overflow:hidden;font-family:'Times New Roman',Times,serif;box-sizing:border-box;background:#fff;">` +
 
     `<div style="width:100%;height:${H_HEADER}px;background:#f2f2f2;display:flex;align-items:center;padding:0 32px;gap:24px;box-sizing:border-box;">` +
-      `<img src="/images/icons/DIGI-HOME-DESIGN-APP.png" alt="logo" style="height:72px;width:auto;flex-shrink:0;border-radius:16px;background:#000;padding:2px 5px;"/>` +
+      `<img src="/images/icons/DIGI-HOME-DESIGN-APP.webp" alt="logo" style="height:72px;width:auto;flex-shrink:0;border-radius:16px;background:#000;padding:2px 5px;"/>` +
       `<div style="flex:1;">` +
         `<div style="font-size:34px;font-weight:900;color:#c8960c;letter-spacing:0.18em;margin-bottom:6px;">DIGI App</div>` +
         `<div style="font-size:24px;font-weight:900;color:#1a1a1a;line-height:1.2;letter-spacing:0.06em;">Tutto quello che ti serve sempre a portata di mano.</div>` +
@@ -1017,13 +1017,13 @@ function buildAppCoverHtml(): string {
         pay_items +
       `</div>` +
       `<div style="display:flex;align-items:center;justify-content:center;flex-shrink:0;">` +
-        `<img src="/images/app/pagamenti-stripe.png" alt="Pagamenti" style="height:${H_PAY - 24}px;width:auto;object-fit:contain;border:1px solid rgba(0,0,0,0.15);border-radius:6px;"/>` +
+        `<img src="/images/app/pagamenti-stripe.webp" alt="Pagamenti" style="height:${H_PAY - 24}px;width:auto;object-fit:contain;border:1px solid rgba(0,0,0,0.15);border-radius:6px;"/>` +
       `</div>` +
     `</div>` +
 
     `<div style="width:100%;height:${H_FED}px;background:#f2f2f2;padding:10px 32px 4px 16px;box-sizing:border-box;overflow:hidden;border-top:2px solid #c8960c;display:flex;gap:16px;">` +
       `<div style="display:flex;align-items:center;justify-content:center;flex-shrink:0;">` +
-        `<img src="/images/app/sconti-premi.png" alt="Sconti e Premi" style="height:${H_FED - 20}px;width:auto;object-fit:contain;border:1px solid rgba(0,0,0,0.15);border-radius:6px;"/>` +
+        `<img src="/images/app/sconti-premi.webp" alt="Sconti e Premi" style="height:${H_FED - 20}px;width:auto;object-fit:contain;border:1px solid rgba(0,0,0,0.15);border-radius:6px;"/>` +
       `</div>` +
       `<div style="flex:1;min-width:0;padding-left:105px;">` +
         `<div style="font-size:14px;font-weight:800;color:#c8960c;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:8px;">SCONTI e PREMI: SAPPIAMO COME RICAMBIARE IL TUO AFFETTO</div>` +
@@ -1116,7 +1116,7 @@ function header1Html(data: string, numero: string, clienteNome: string, clienteI
     <div style="font-size:10px;color:rgba(255,255,255,0.72);line-height:1.7;">Tel: +39 351 871 6731</div>
   </div>
   <div style="flex:1;display:flex;justify-content:center;">
-    <img src="/images/header/DIGIHOMEDESIGN.png" alt="Logo" style="height:70px;object-fit:contain;display:block;"/>
+    <img src="/images/header/DIGIHOMEDESIGN.webp" alt="Logo" style="height:70px;object-fit:contain;display:block;"/>
   </div>
   <div style="flex:1;"></div>
 </div>
@@ -1209,7 +1209,7 @@ function extraLastHtml(artRows: Record<string, unknown>[], totale: string, scont
 
 function accettazioneHtml(isProv = false): string {
   const avviso = isProv ? `<div style="margin-bottom:12px;padding:8px 12px;border:1px solid #e53e3e;border-radius:4px;color:#c00;font-size:11px;font-weight:600;line-height:1.5;text-align:justify;text-transform:uppercase;">Questo preventivo è provvisorio e non può essere accettato.<br/>A titolo esemplificativo le proponiamo lo schema di accettazione nel futuro preventivo ufficiale.</div>` : ''
-  const timbroOverlay = isProv ? `<img src="/images/app/NO-SIGN-TRASP.png" style="position:absolute;bottom:0;left:62%;transform:translateX(-50%);width:130px;opacity:0.85;pointer-events:none;" />` : ''
+  const timbroOverlay = isProv ? `<img src="/images/app/NO-SIGN-TRASP.webp" style="position:absolute;bottom:0;left:62%;transform:translateX(-50%);width:130px;opacity:0.85;pointer-events:none;" />` : ''
   return `<div style="margin-top:8px;padding-top:8px;font-size:12px;line-height:1.4;color:#222;font-family:'Times New Roman',Times,serif;">
   ${avviso}
   <div style="font-size:11px;font-weight:bold;text-align:center;text-decoration:underline;letter-spacing:.04em;margin-bottom:8px;">ACCETTAZIONE</div>

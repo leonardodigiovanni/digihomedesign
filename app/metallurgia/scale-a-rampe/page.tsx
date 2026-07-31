@@ -133,7 +133,7 @@ export default async function Page() {
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/metallurgia/scale-a-rampa/photo_2026-04-15_23-24-19.jpg" alt="Scala a rampe installata" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/metallurgia/scale-a-rampa/photo_2026-04-15_23-24-19.webp" alt="Scala a rampe installata" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Scala a rampe installata</span>

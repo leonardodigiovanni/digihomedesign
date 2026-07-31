@@ -230,7 +230,7 @@ export default function Footer({
       <p className="testo-indice" style={{ textAlign: 'center', margin: 0, fontSize: 10 }}>
         © 2026  -  DIGI Home Design S.R.L.
       </p>
-      <Image src="/images/footer/oooooo.png" alt="logo" width={34} height={22} id="subfooter-logo" unoptimized style={{ display: 'block' }} />
+      <Image src="/images/footer/oooooo.webp" alt="logo" width={34} height={22} id="subfooter-logo" style={{ display: 'block' }} />
       <p className="testo-indice" style={{ textAlign: 'center', margin: 0, fontSize: 10 }}>
         Tutti i diritti sono riservati all&apos;autore
       </p>

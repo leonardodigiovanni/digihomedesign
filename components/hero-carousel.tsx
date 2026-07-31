@@ -5,7 +5,7 @@ import Image from 'next/image'
 
 const slides: { img: string; title: string; text: React.ReactNode }[] = [
   {
-    img: '/images/carousel/porta-finestra-2-ante.jpg',
+    img: '/images/carousel/porta-finestra-2-ante.webp',
     title: 'Infissi in alluminio',
     text: (<>
       <strong>Infissi in alluminio a Palermo: design, resistenza e isolamento per ogni ambiente</strong><br /><br />
@@ -20,7 +20,7 @@ const slides: { img: string; title: string; text: React.ReactNode }[] = [
     </>),
   },
   {
-    img: '/images/manutenzione/under-contruction.jpg',
+    img: '/images/manutenzione/under-contruction.webp',
     title: 'Infissi in PVC',
     text: (<>
       <strong>Infissi in PVC a Palermo: comfort, risparmio energetico e praticità</strong><br /><br />
@@ -35,7 +35,7 @@ const slides: { img: string; title: string; text: React.ReactNode }[] = [
     </>),
   },
   {
-    img: '/images/carousel/veranda-sportelli-scorrevoli.jpg',
+    img: '/images/carousel/veranda-sportelli-scorrevoli.webp',
     title: 'Verande in alluminio',
     text: (<>
       <strong>Verande in alluminio a Palermo: eleganza, luminosità e funzionalità per i tuoi spazi</strong><br /><br />
@@ -50,7 +50,7 @@ const slides: { img: string; title: string; text: React.ReactNode }[] = [
     </>),
   },
   {
-    img: '/images/manutenzione/under-contruction.jpg',
+    img: '/images/manutenzione/under-contruction.webp',
     title: 'Verande in PVC',
     text: (<>
       <strong>Verande in PVC a Palermo: una soluzione pratica e conveniente per chiudere gli spazi esterni</strong><br /><br />
@@ -65,7 +65,7 @@ const slides: { img: string; title: string; text: React.ReactNode }[] = [
     </>),
   },
   {
-    img: '/images/carousel/persiane-in-alluminio.jpg',
+    img: '/images/carousel/persiane-in-alluminio.webp',
     title: 'Persiane in alluminio',
     text: (<>
       <strong>Persiane in alluminio a Palermo: sicurezza, durata e stile per la tua casa</strong><br /><br />
@@ -80,7 +80,7 @@ const slides: { img: string; title: string; text: React.ReactNode }[] = [
     </>),
   },
   {
-    img: '/images/carousel/imbotti-in-alluminio.jpg',
+    img: '/images/carousel/imbotti-in-alluminio.webp',
     title: 'Imbotti in alluminio',
     text: (<>
       <strong>Imbotti in alluminio con tapparelle coibentate a Palermo: protezione, isolamento e finiture di qualità</strong><br /><br />

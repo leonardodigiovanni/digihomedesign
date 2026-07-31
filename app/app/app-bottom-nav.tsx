@@ -21,7 +21,7 @@ const GOLD: React.CSSProperties = {
 
 const HomeSvg = () => (
   <div style={GOLD}>
-    <img src="/images/header/home.png" alt="Home" style={{ width: 41, height: 41, objectFit: 'contain', display: 'block', marginTop: -7 }} />
+    <Image src="/images/header/home.webp" alt="Home" width={41} height={41} style={{ width: 41, height: 41, objectFit: 'contain', display: 'block', marginTop: -7 }} />
   </div>
 )
 
@@ -44,7 +44,7 @@ function CarrelloIcon({ count }: { count: number }) {
   return (
     <div style={{ position: 'relative', width: 44, height: 44 }}>
       <div style={{ ...GOLD, overflow: 'hidden' }}>
-        <img src="/images/carrello/acquisti.png" alt="Carrello acquisti" style={{ width: 36, height: 36, objectFit: 'contain', display: 'block' }} />
+        <Image src="/images/carrello/acquisti.webp" alt="Carrello acquisti" width={36} height={36} style={{ width: 36, height: 36, objectFit: 'contain', display: 'block' }} />
       </div>
       <span style={{
         position: 'absolute', top: 2, right: 0,
@@ -63,7 +63,7 @@ function PreventivatoreIcon({ count }: { count: number }) {
   return (
     <div style={{ position: 'relative', width: 44, height: 44 }}>
       <div style={{ ...GOLD, overflow: 'hidden' }}>
-        <img src="/images/carrello/carrello-preventivo-t.png" alt="Carrello preventivo" style={{ width: 30, height: 30, objectFit: 'contain', display: 'block' }} />
+        <Image src="/images/carrello/carrello-preventivo-t.webp" alt="Carrello preventivo" width={30} height={30} style={{ width: 30, height: 30, objectFit: 'contain', display: 'block' }} />
       </div>
       <span style={{
         position: 'absolute', top: 2, right: 0,

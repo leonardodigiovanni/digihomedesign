@@ -159,7 +159,7 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/pergole-bioclimatiche/orientabili.jpg" alt="Pergola bioclimatica con lamelle orientabili su terrazza" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/pergole-bioclimatiche/orientabili.webp" alt="Pergola bioclimatica con lamelle orientabili su terrazza" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Pergola con lamelle orientabili</span>
@@ -167,7 +167,7 @@ export default async function Page() {
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/pergole-bioclimatiche/pergole.jpg" alt="Pergole bioclimatiche su balconi in alluminio bianco" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/pergole-bioclimatiche/pergole.webp" alt="Pergole bioclimatiche su balconi in alluminio bianco" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Pergole bioclimatiche in alluminio</span>

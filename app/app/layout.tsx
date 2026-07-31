@@ -49,7 +49,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       {/* Top bar */}
       <header className="app-topbar">
         <Link href="/app" style={{ display: 'flex', justifyContent: 'center', textDecoration: 'none' }}>
-          <Image src="/images/header/DIGIHOMEDESIGN.png" alt="DIGI Home Design" width={80} height={80} unoptimized loading="eager" style={{ objectFit: 'contain', display: 'block' }} />
+          <Image src="/images/header/DIGIHOMEDESIGN.webp" alt="DIGI Home Design" width={80} height={80} loading="eager" style={{ objectFit: 'contain', display: 'block' }} />
         </Link>
         <InstallBtn />
         <div className="app-topbar-user">

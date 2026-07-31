@@ -354,7 +354,7 @@ export default function VolantinoClient({
           <div style={{ width: '100%', height: H_HEADER, position: 'relative', overflow: 'hidden' }}>
             {/* Immagine di sfondo chiave */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/volantino/chiave.png" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+            <img src="/images/volantino/chiave.webp" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
             {/* Logo centrato in alto */}
             <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: Math.round(H_HEADER * 0.04) - 5, gap: 1 }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -471,7 +471,7 @@ export default function VolantinoClient({
             </div>
             {/* Immagine sinistra */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/volantino/mano-t.png" alt="Mano" style={{
+            <img src="/images/volantino/mano-t.webp" alt="Mano" style={{
               position: 'absolute',
               left: 0,
               bottom: -4,
@@ -496,7 +496,7 @@ export default function VolantinoClient({
             </div>
             {/* Immagine destra */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/volantino/app.png" alt="App" style={{
+            <img src="/images/volantino/app.webp" alt="App" style={{
               position: 'absolute',
               right: 12,
               top: 12,
@@ -527,7 +527,7 @@ export default function VolantinoClient({
 
           {/* Timbro sovrapposto */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/app/TIMBRO-TRASP.png" alt="" style={{ position: 'absolute', top: 675, left: 205, width: 140, height: 'auto', pointerEvents: 'none' }} />
+          <img src="/images/app/TIMBRO-TRASP.webp" alt="" style={{ position: 'absolute', top: 675, left: 205, width: 140, height: 'auto', pointerEvents: 'none' }} />
         </div>
       </div>
 

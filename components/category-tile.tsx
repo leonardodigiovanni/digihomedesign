@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 // Immagine mostrata quando la coppia categoria/sottocategoria non ha ancora
 // un'immagine associata in "Immagini categorie e promo" (amministrazione).
-export const CATEGORY_TILE_PLACEHOLDER = '/images/manutenzione/sito_manutenzione.png'
+export const CATEGORY_TILE_PLACEHOLDER = '/images/manutenzione/sito_manutenzione.webp'
 
 export const CATEGORY_TILE_WIDTH = 220
 

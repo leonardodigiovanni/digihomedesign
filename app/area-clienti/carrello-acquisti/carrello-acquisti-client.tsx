@@ -477,7 +477,7 @@ export default function CarrelloAcquistiClient({
                               )}
                               {c.foto_url && c.escluso === 1 && (
                                 // eslint-disable-next-line @next/next/no-img-element
-                                <img src="/images/app/escluso.png" alt="ESCLUSO" style={{ position: 'absolute', top: '-20%', left: '-20%', width: '140%', height: '140%', objectFit: 'contain', pointerEvents: 'none' }} />
+                                <img src="/images/app/escluso.webp" alt="ESCLUSO" style={{ position: 'absolute', top: '-20%', left: '-20%', width: '140%', height: '140%', objectFit: 'contain', pointerEvents: 'none' }} />
                               )}
                             </div>
                             <div style={{ padding: '6px 6px', textAlign: 'center' }}>

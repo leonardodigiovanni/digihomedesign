@@ -2,7 +2,7 @@ import Image from 'next/image'
 import PartnerForm from '@/components/partner-form'
 
 const LOGO_PARTNERS = [
-  { src: '/images/brand/partners/edilsider.png', alt: 'Edilsider', href: '#' },
+  { src: '/images/brand/partners/edilsider.webp', alt: 'Edilsider', href: '#' },
 ]
 
 export default function PartnersBlock() {

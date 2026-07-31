@@ -34,7 +34,7 @@ export default async function GuidaPreventivo() {
         <div className="vetrina-foto-row">
           <div className="page-card" style={{ boxShadow: '0 8px 28px rgba(0,0,0,0.25)' }}>
             <div style={{ position: 'relative', width: '100%', height: 148 }}>
-              <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="300px" style={{ objectFit: 'cover' }} />
+              <Image src="/images/manutenzione/sito_manutenzione.webp" alt="Anteprima" fill sizes="300px" style={{ objectFit: 'cover' }} />
             </div>
             <div style={{ padding: '14px 16px' }}>
               <span className="testo-articoli">Fotografia da scegliere</span>
@@ -42,7 +42,7 @@ export default async function GuidaPreventivo() {
           </div>
           <div className="page-card" style={{ boxShadow: '0 6px 22px rgba(0,0,0,0.2)' }}>
             <div style={{ position: 'relative', width: '100%', height: 148 }}>
-              <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="300px" style={{ objectFit: 'cover' }} />
+              <Image src="/images/manutenzione/sito_manutenzione.webp" alt="Anteprima" fill sizes="300px" style={{ objectFit: 'cover' }} />
             </div>
             <div style={{ padding: '14px 16px' }}>
               <span className="testo-articoli">Fotografia da scegliere</span>

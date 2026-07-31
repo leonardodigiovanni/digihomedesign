@@ -122,7 +122,7 @@ export default function Header({
         position: 'relative', zIndex: 1,
       }}>
         <Link href="/" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, textDecoration: 'none', color: 'inherit', outline: 'none', cursor: 'pointer', flexShrink: 0, marginTop: 4 }}>
-          <Image src="/images/header/DIGIHOMEDESIGN.png" alt="Home Design" width={80} height={80} unoptimized style={{ objectFit: 'contain', display: 'block' }} />
+          <Image src="/images/header/DIGIHOMEDESIGN.webp" alt="Home Design" width={80} height={80} style={{ objectFit: 'contain', display: 'block' }} />
         </Link>
         <div style={{ textAlign: 'left', fontSize: 13, fontWeight: 700, letterSpacing: '0.02em', lineHeight: 1.3, whiteSpace: 'nowrap' }}>
           <div style={{ color: '#999' }}>Serramenti</div>

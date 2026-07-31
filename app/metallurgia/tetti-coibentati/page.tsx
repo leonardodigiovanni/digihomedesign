@@ -125,7 +125,7 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/metallurgia/tetti-coibentati/photo_2026-04-15_23-21-19.jpg" alt="Tetto coibentato realizzato" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/metallurgia/tetti-coibentati/photo_2026-04-15_23-21-19.webp" alt="Tetto coibentato realizzato" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Tetto coibentato realizzato</span>
@@ -133,7 +133,7 @@ export default async function Page() {
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/metallurgia/tetti-coibentati/photo_2026-04-15_23-21-22.jpg" alt="Copertura metallica coibentata" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/metallurgia/tetti-coibentati/photo_2026-04-15_23-21-22.webp" alt="Copertura metallica coibentata" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Copertura metallica coibentata</span>

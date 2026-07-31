@@ -669,7 +669,7 @@ function caratteristicheHTML(children: ArtRow[], allArts: ArtRow[], parentPrezzo
     return `<div style="display:flex;align-items:center;gap:8px;padding:2px 0;border-bottom:1px solid #ececec;">
       <div style="width:80px;height:56px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
         ${fotoUrl
-          ? `<div style="position:relative;width:80px;height:56px;"><img src="${fotoAttr}" alt="" style="max-width:80px;max-height:56px;object-fit:contain;display:block;border:1px solid #888;${c.escluso === 1 ? 'opacity:0.4;' : ''}"/>${c.escluso === 1 ? `<img src="/images/app/escluso.png" alt="ESCLUSO" style="position:absolute;top:-20%;left:-20%;width:140%;height:140%;object-fit:contain;pointer-events:none;"/>` : ''}</div>`
+          ? `<div style="position:relative;width:80px;height:56px;"><img src="${fotoAttr}" alt="" style="max-width:80px;max-height:56px;object-fit:contain;display:block;border:1px solid #888;${c.escluso === 1 ? 'opacity:0.4;' : ''}"/>${c.escluso === 1 ? `<img src="/images/app/escluso.webp" alt="ESCLUSO" style="position:absolute;top:-20%;left:-20%;width:140%;height:140%;object-fit:contain;pointer-events:none;"/>` : ''}</div>`
           : `<div style="width:80px;height:56px;background:#ececec;border-radius:2px;"></div>`}
       </div>
       <div style="flex:1;font-size:10.5px;color:#333;line-height:1.4;">${label || 'Caratteristica'}</div>
@@ -711,7 +711,7 @@ function caratteristichePreviewHTML(children: ArtRow[], allArts: ArtRow[], paren
     return `<div style="display:flex;align-items:center;gap:8px;padding:2px 0;border-bottom:1px solid #ececec;">
       <div style="width:80px;height:56px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
         ${fotoUrl
-          ? `<div style="position:relative;width:80px;height:56px;"><img src="${fotoAttr}" alt="" style="max-width:80px;max-height:56px;object-fit:contain;display:block;border:1px solid #888;${c.escluso === 1 ? 'opacity:0.4;' : ''}"/>${c.escluso === 1 ? `<img src="/images/app/escluso.png" alt="ESCLUSO" style="position:absolute;top:-20%;left:-20%;width:140%;height:140%;object-fit:contain;pointer-events:none;"/>` : ''}</div>`
+          ? `<div style="position:relative;width:80px;height:56px;"><img src="${fotoAttr}" alt="" style="max-width:80px;max-height:56px;object-fit:contain;display:block;border:1px solid #888;${c.escluso === 1 ? 'opacity:0.4;' : ''}"/>${c.escluso === 1 ? `<img src="/images/app/escluso.webp" alt="ESCLUSO" style="position:absolute;top:-20%;left:-20%;width:140%;height:140%;object-fit:contain;pointer-events:none;"/>` : ''}</div>`
           : `<div style="width:80px;height:56px;background:#ececec;border-radius:2px;"></div>`}
       </div>
       <div style="flex:1;font-size:10.5px;color:#333;line-height:1.4;">${label || 'Caratteristica'}</div>
@@ -783,7 +783,7 @@ function articoloBlockHTML(parent: ArtRow, children: ArtRow[], allArts: ArtRow[]
     ${fotoUrl ? `<div style="width:156px;flex-shrink:0;border-left:1px solid #e0e0e0;padding:6px;display:flex;align-items:center;justify-content:center;background:#fcfcfc;">
       <div style="position:relative;width:100%;height:124px;display:flex;align-items:center;justify-content:center;">
         <img src="${fotoAttr}" alt="Foto" style="display:block;max-width:100%;max-height:124px;object-fit:contain;margin:0 auto;${parent.escluso === 1 ? 'opacity:0.4;' : ''}" />
-        ${parent.escluso === 1 ? `<img src="/images/app/escluso.png" alt="ESCLUSO" style="position:absolute;top:-20%;left:-20%;width:140%;height:140%;object-fit:contain;pointer-events:none;"/>` : ''}
+        ${parent.escluso === 1 ? `<img src="/images/app/escluso.webp" alt="ESCLUSO" style="position:absolute;top:-20%;left:-20%;width:140%;height:140%;object-fit:contain;pointer-events:none;"/>` : ''}
       </div>
     </div>` : `<div style="width:156px;flex-shrink:0;border-left:1px solid #e0e0e0;padding:6px;display:flex;align-items:center;justify-content:center;background:#fcfcfc;">
       <div style="font-size:10px;color:#b0b0b0;text-align:center;">Nessuna immagine<br/>scheda tecnica</div>
@@ -844,7 +844,7 @@ ${totaleNoteHtml(totale, hasDaDefinire)}
 <div style="font-size:12px;color:#333;line-height:1.6;margin-top:10px;margin-bottom:6px;">
   <div style="margin-bottom:2px;">Restando a Sua completa disposizione per qualsiasi chiarimento o approfondimento, porgiamo</div>
   <div style="font-weight:bold;">Cordiali saluti</div>
-  <img src="/images/carrello/sigla.png" style="height:90px;display:block;margin-top:-20px;" />
+  <img src="/images/carrello/sigla.webp" style="height:90px;display:block;margin-top:-20px;" />
 </div>
 <div style="position:absolute;bottom:${PAD_BOT}px;left:${PAD_SIDE}px;right:${PAD_SIDE}px;">
   <div style="font-size:10px;padding:6px 12px;background:#f5f5f5;border:1px solid #ddd;line-height:1.5;color:#555;">
@@ -884,7 +884,7 @@ function header1Html(data: string, numero: string, clienteNome: string, clienteI
     <div style="font-size:10px;color:rgba(255,255,255,0.72);line-height:1.7;">Tel: +39 351 871 6731</div>
   </div>
   <div style="flex:1;display:flex;justify-content:center;">
-    <img src="/images/header/DIGIHOMEDESIGN.png" alt="Logo" style="height:70px;object-fit:contain;display:block;"/>
+    <img src="/images/header/DIGIHOMEDESIGN.webp" alt="Logo" style="height:70px;object-fit:contain;display:block;"/>
   </div>
   <div style="flex:1;"></div>
 </div>
@@ -947,7 +947,7 @@ function accettazioneHtml(): string {
   <div style="margin-left:12px;margin-bottom:12px;">• procedura di Firma Elettronica Avanzata con OTP dall'area personale del sito.</div>
   <div style="display:flex;justify-content:space-between;font-size:12px;color:#333;margin-top:24px;">
     <div>Luogo e data, ________________,___________</div>
-    <div style="position:relative;">PER ACCETTAZIONE ________________________________________________<img src="/images/app/NO-SIGN-TRASP.png" style="position:absolute;bottom:0;left:62%;transform:translateX(-50%);width:130px;opacity:0.85;pointer-events:none;" /></div>
+    <div style="position:relative;">PER ACCETTAZIONE ________________________________________________<img src="/images/app/NO-SIGN-TRASP.webp" style="position:absolute;bottom:0;left:62%;transform:translateX(-50%);width:130px;opacity:0.85;pointer-events:none;" /></div>
   </div>
 </div>`
 }

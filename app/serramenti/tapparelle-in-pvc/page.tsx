@@ -159,7 +159,7 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/tapparelle-manuali/legno.png" alt="Tapparella in PVC effetto legno" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/tapparelle-manuali/legno.webp" alt="Tapparella in PVC effetto legno" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Tapparella in PVC effetto legno</span>
@@ -167,7 +167,7 @@ export default async function Page() {
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/tapparelle-manuali/tapparelle.jpg" alt="Tapparelle in PVC su misura" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/tapparelle-manuali/tapparelle.webp" alt="Tapparelle in PVC su misura" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Tapparelle in PVC su misura</span>

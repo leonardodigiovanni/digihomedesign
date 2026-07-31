@@ -39,25 +39,25 @@ export default async function AppPage() {
 
         <div className="vetrina-foto-row">
           <div className="page-card" style={{ boxShadow: '0 8px 28px rgba(0,0,0,0.25)' }}>
-            <Image src="/images/app/preventivo.jpg" alt="Preventivo serramenti" width={240} height={148} style={{ width: '100%', height: 'auto', display: 'block' }} />
+            <Image src="/images/app/preventivo.webp" alt="Preventivo serramenti" width={240} height={148} style={{ width: '100%', height: 'auto', display: 'block' }} />
             <div style={{ padding: '14px 16px' }}>
               <span className="testo-articoli">Preventivi serramenti</span>
             </div>
           </div>
           <div className="page-card" style={{ boxShadow: '0 6px 22px rgba(0,0,0,0.2)' }}>
-            <Image src="/images/app/lavori-cantiere.jpg" alt="Lista cantieri" width={240} height={148} style={{ width: '100%', height: 'auto', display: 'block' }} />
+            <Image src="/images/app/lavori-cantiere.webp" alt="Lista cantieri" width={240} height={148} style={{ width: '100%', height: 'auto', display: 'block' }} />
             <div style={{ padding: '14px 16px' }}>
               <span className="testo-articoli">Lista cantieri</span>
             </div>
           </div>
           <div className="page-card" style={{ boxShadow: '0 8px 28px rgba(0,0,0,0.25)' }}>
-            <Image src="/images/app/foto-cantiere.jpg" alt="Cantiere in tempo reale" width={240} height={148} style={{ width: '100%', height: 'auto', display: 'block' }} />
+            <Image src="/images/app/foto-cantiere.webp" alt="Cantiere in tempo reale" width={240} height={148} style={{ width: '100%', height: 'auto', display: 'block' }} />
             <div style={{ padding: '14px 16px' }}>
               <span className="testo-articoli">Cantiere in tempo reale</span>
             </div>
           </div>
           <div className="page-card" style={{ boxShadow: '0 6px 22px rgba(0,0,0,0.2)' }}>
-            <Image src="/images/app/avvisi.jpg" alt="Avvisi e notifiche" width={240} height={148} style={{ width: '100%', height: 'auto', display: 'block' }} />
+            <Image src="/images/app/avvisi.webp" alt="Avvisi e notifiche" width={240} height={148} style={{ width: '100%', height: 'auto', display: 'block' }} />
             <div style={{ padding: '14px 16px' }}>
               <span className="testo-articoli">Avvisi e notifiche</span>
             </div>

@@ -53,7 +53,7 @@ const ornamental = Cinzel({
 const BASE_URL = process.env.NODE_ENV === 'production'
   ? 'https://www.digi-home-design.com'
   : 'http://localhost:3000'
-const OG_IMAGE  = `${BASE_URL}/images/icons/DIGI-HOME-DESIGN-APP.png`
+const OG_IMAGE  = `${BASE_URL}/images/icons/DIGI-HOME-DESIGN-APP.webp`
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
@@ -325,7 +325,7 @@ export default async function RootLayout({
             <PreventiviProvider abilitato={preventiviAbilitato}>
               {inManutenzione ? (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '50vh', gap: 20, textAlign: 'center' }}>
-                  <Image src="/images/manutenzione/sito_manutenzione.png" alt="Manutenzione" width={108} height={108} priority style={{ objectFit: 'contain' }} />
+                  <Image src="/images/manutenzione/sito_manutenzione.webp" alt="Manutenzione" width={108} height={108} priority style={{ objectFit: 'contain' }} />
                   <p className="fs-28" style={{ fontWeight: 600, color: '#444', maxWidth: 600, lineHeight: 1.6, margin: 0, textAlign: 'center' }}>
                     Stiamo lavorando per migliorare il sito.<br />
                     Torneremo online al più presto. Ci scusiamo per il disagio.

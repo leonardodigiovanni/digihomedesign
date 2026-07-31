@@ -77,7 +77,7 @@ function buildPages(arts: ArtRow[], clienteNome: string, data: string, totale: s
     <div style="font-size:10px;color:#555;line-height:1.55;margin-top:3px;">P.IVA: 07407080824 &nbsp;|&nbsp; Tel: +39 351 871 6731<br/>info@digi-home-design.com</div>
   </td>
   <td style="vertical-align:top;text-align:right;width:50%;">
-    <img src="/images/volantino/nome_tr.png" alt="Logo 2" style="height:46px;"/>
+    <img src="/images/volantino/nome_tr.webp" alt="Logo 2" style="height:46px;"/>
   </td>
 </tr></table>
 <hr style="border:none;border-top:2px solid #4a0080;margin:0 0 12px;"/>

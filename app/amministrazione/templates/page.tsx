@@ -15,7 +15,7 @@ const DEFAULT_PROVVISORIO_HEADER =
   `Via Roberto Antiochia 3, 90121 Palermo (PA)<br/>P.IVA: 07407080824 &nbsp;|&nbsp; Tel: +39 351 871 6731<br/>info@digi-home-design.com` +
   `</div></td>` +
   `<td style="vertical-align:top;text-align:right;width:50%;">` +
-  `<img src="/images/volantino/nome_tr.png" alt="Logo 2" style="height:46px;"/></td>` +
+  `<img src="/images/volantino/nome_tr.webp" alt="Logo 2" style="height:46px;"/></td>` +
   `</tr></table>` +
   `<hr style="border:none;border-top:2px solid #1a3a5c;margin:0 0 12px;"/>` +
   `<table style="width:100%;margin-bottom:12px;border-collapse:collapse;"><tr>` +
@@ -41,7 +41,7 @@ const DEFAULT_DISEGNO_HTML = (w: number, h: number) =>
   `<div style="font-family:Arial,Helvetica,sans-serif;width:${w}px;height:${h}px;padding:36px 44px 50px;box-sizing:border-box;overflow:hidden;position:relative;background:#fff;">` +
   `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">` +
   `<img src="/images/volantino/dg-t.png" alt="Logo" style="height:40px;display:block;" />` +
-  `<img src="/images/volantino/nome_tr.png" alt="" style="height:40px;display:block;" /></div>` +
+  `<img src="/images/volantino/nome_tr.webp" alt="" style="height:40px;display:block;" /></div>` +
   `<hr style="border:none;border-top:2px solid #1a3a5c;margin:0 0 10px;" />` +
   `<div style="text-align:right;font-size:10px;color:#666;margin-bottom:8px;">{{data}}</div>` +
   `{{titolo}}` +

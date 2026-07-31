@@ -32,7 +32,7 @@ export default function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card" style={{ flex: '1 1 220px', maxWidth: 480 }}>
               <div style={{ position: 'relative', width: '100%', aspectRatio: '1/1' }}>
-                <Image src="/images/manutenzione/sito_manutenzione.png" alt="Anteprima" fill sizes="(max-width: 480px) 100vw, 480px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/manutenzione/sito_manutenzione.webp" alt="Anteprima" fill sizes="(max-width: 480px) 100vw, 480px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Fotografia da scegliere</span>

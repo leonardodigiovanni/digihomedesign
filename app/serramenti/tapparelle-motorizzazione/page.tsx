@@ -159,7 +159,7 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/tapparelle-motorizzate/motorizzata.jpg" alt="Tapparella motorizzata in alluminio grigio antracite" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/tapparelle-motorizzate/motorizzata.webp" alt="Tapparella motorizzata in alluminio grigio antracite" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Tapparella motorizzata in alluminio</span>
@@ -167,7 +167,7 @@ export default async function Page() {
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/tapparelle-motorizzate/verde.jpg" alt="Tapparella motorizzata verde su terrazza vista mare" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/tapparelle-motorizzate/verde.webp" alt="Tapparella motorizzata verde su terrazza vista mare" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Tapparella motorizzata verde</span>

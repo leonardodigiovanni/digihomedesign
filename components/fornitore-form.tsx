@@ -1,6 +1,7 @@
 'use client'
 
 import { useActionState, useEffect, useState } from 'react'
+import Image from 'next/image'
 import { inviaPartnership } from '@/app/partner-actions'
 import type { PartnershipResult } from '@/app/partner-actions'
 
@@ -53,8 +54,7 @@ export default function FornitoreForm() {
           style={{ cursor: 'pointer', border: 'none' }}
         >
           <div className="cta-row">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <div><img src="/images/cta/fornitori-digi.png" alt="Fornitore" style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%' }} /></div>
+            <div><Image src="/images/cta/fornitori-digi.webp" alt="Fornitore" width={60} height={40} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%' }} /></div>
             <span className="testo-cta"><span className="animato">Diventa nostro<br />Fornitore</span></span>
           </div>
           <span className="cta-sub">Compila Modulo di Contatto</span>

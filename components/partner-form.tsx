@@ -1,6 +1,7 @@
 'use client'
 
 import { useActionState, useEffect, useState } from 'react'
+import Image from 'next/image'
 import { inviaPartnership } from '@/app/partner-actions'
 import type { PartnershipResult } from '@/app/partner-actions'
 
@@ -53,7 +54,7 @@ export default function PartnerForm() {
         style={{ width: 'auto', height: 'auto', padding: '10px 24px 16px', cursor: 'pointer', border: 'none', gap: 8, justifyContent: 'flex-start' }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-<img src="/images/cta/partnership-con-digi-trasparente.png" alt="Partnership" width={75} height={75} style={{ objectFit: 'contain', display: 'block', background: 'transparent' }} />
+<Image src="/images/cta/partnership-con-digi-trasparente.webp" alt="Partnership" width={75} height={75} style={{ objectFit: 'contain', display: 'block', background: 'transparent' }} />
         <span className="testo-cta animato">Diventa nostro Partner</span>
       </button>
 

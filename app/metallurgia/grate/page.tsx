@@ -125,7 +125,7 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/metallurgia/grate/grata-fissa.png" alt="Grata fissa" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/metallurgia/grate/grata-fissa.webp" alt="Grata fissa" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Grata fissa</span>
@@ -133,7 +133,7 @@ export default async function Page() {
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/metallurgia/grate/grata1s.png" alt="Grata a rombi" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/metallurgia/grate/grata1s.webp" alt="Grata a rombi" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Grata a rombi</span>

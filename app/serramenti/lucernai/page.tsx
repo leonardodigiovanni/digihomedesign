@@ -159,7 +159,7 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/lucernai/alluminio.jpg" alt="Lucernaio in alluminio apribile su terrazza" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/lucernai/alluminio.webp" alt="Lucernaio in alluminio apribile su terrazza" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Lucernaio in alluminio apribile</span>
@@ -167,7 +167,7 @@ export default async function Page() {
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/lucernai/lucernario-aerazione.jpg" alt="Lucernario a pavimento per aerazione" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/lucernai/lucernario-aerazione.webp" alt="Lucernario a pavimento per aerazione" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Lucernario per aerazione</span>

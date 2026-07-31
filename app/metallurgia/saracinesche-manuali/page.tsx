@@ -125,7 +125,7 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/metallurgia/saracinesce-manuali/basculante.jpg" alt="Basculante manuale in garage" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/metallurgia/saracinesce-manuali/basculante.webp" alt="Basculante manuale in garage" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Basculante manuale per garage</span>
@@ -133,7 +133,7 @@ export default async function Page() {
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/metallurgia/saracinesce-manuali/saracinesca.jpg" alt="Saracinesca manuale in garage" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/metallurgia/saracinesce-manuali/saracinesca.webp" alt="Saracinesca manuale in garage" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
                 <span className="testo-articoli">Saracinesca manuale per garage</span>

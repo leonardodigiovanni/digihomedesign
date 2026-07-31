@@ -1296,7 +1296,7 @@ function ImgCell({ artId, url, tipo, alt, escluso, height = 90 }: { artId: numbe
         : <div style={{ width: '100%', height, background: '#f5f5f5', borderRadius: 3 }} />
       }
       {url && escluso && (
-        <img src="/images/app/escluso.png" alt="ESCLUSO" style={{ position: 'absolute', top: '-20%', left: '-20%', width: '140%', height: '140%', objectFit: 'contain', pointerEvents: 'none' }} />
+        <img src="/images/app/escluso.webp" alt="ESCLUSO" style={{ position: 'absolute', top: '-20%', left: '-20%', width: '140%', height: '140%', objectFit: 'contain', pointerEvents: 'none' }} />
       )}
       {url && (
         <form style={{ position: 'absolute', top: 2, right: 2 }} action={async fd => {

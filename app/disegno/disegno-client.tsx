@@ -2089,7 +2089,7 @@ export default function DisegnoClient() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/images/volantino/dg-t.png" alt="Logo" style={{ height: '40px', display: 'block' }} />
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/images/volantino/nome_tr.png" alt="" style={{ height: '40px', display: 'block' }} />
+              <img src="/images/volantino/nome_tr.webp" alt="" style={{ height: '40px', display: 'block' }} />
             </div>
             <hr style={{ border: 'none', borderTop: '2px solid #1a3a5c', margin: '0 0 10px' }} />
             <div style={{ textAlign: 'right', fontSize: '10px', color: '#666', marginBottom: '8px' }}>{new Date().toLocaleDateString('it-IT')}</div>

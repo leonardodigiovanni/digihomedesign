@@ -38,10 +38,12 @@ function VideoButton({ url, videoId, label, hint }: { url: string; videoId: stri
       style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', height: 32, gap: 8, padding: '0 12px 0 8px' }}
     >
       <div style={{ position: 'relative', width: 42, height: 24, flexShrink: 0 }}>
-        <img
+        <Image
           src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
           alt="Anteprima video"
-          style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 3, display: 'block' }}
+          fill
+          sizes="42px"
+          style={{ objectFit: 'cover', borderRadius: 3, display: 'block' }}
         />
         <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{
@@ -106,28 +108,28 @@ export default async function Page() {
         <HeroCtaScroll>
           <Link href={ctaPreventivi} className="cta-home-btn">
             <div className="cta-row">
-              <div><Image src="/images/cta/preventivo-online.png" alt="Preventivo" width={130} height={130} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} /></div>
+              <div><Image src="/images/cta/preventivo-online.webp" alt="Preventivo" width={130} height={130} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} /></div>
               <span className="testo-cta"><span className="animato">Preventivo<br />Online &amp; Gratis</span></span>
             </div>
             <span className="cta-sub">Porte &amp; Serramenti</span>
           </Link>
           <Link href={ctaComputometrico} className="cta-home-btn">
             <div className="cta-row">
-              <div><Image src="/images/cta/computometrico-online.png" alt="Computo Metrico" width={130} height={130} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} /></div>
+              <div><Image src="/images/cta/computometrico-online.webp" alt="Computo Metrico" width={130} height={130} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} /></div>
               <span className="testo-cta"><span className="animato">Computo Metrico<br />Online &amp; Gratis</span></span>
             </div>
             <span className="cta-sub">Edilizia &amp; Strutture &amp; Scale &amp; Recinzioni</span>
           </Link>
           <Link href={ctaCantiere} className="cta-home-btn">
             <div className="cta-row">
-              <div><Image src="/images/cta/cantiere-online.png" alt="Cantiere" width={130} height={130} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} /></div>
+              <div><Image src="/images/cta/cantiere-online.webp" alt="Cantiere" width={130} height={130} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} /></div>
               <span className="testo-cta"><span className="animato">Segui il cantiere<br />Online &amp; Gratis</span></span>
             </div>
             <span className="cta-sub">Foto &amp; Video</span>
           </Link>
           <Link href="/app-download" className="cta-home-btn cta-home-btn-app">
             <div className="cta-row">
-              <div><Image src="/images/cta/digi-home-design-srl-app.png" alt="App" width={70} height={70} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} unoptimized /></div>
+              <div><Image src="/images/cta/digi-home-design-srl-app.webp" alt="App" width={70} height={70} style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%', flexShrink: 1 }} /></div>
               <span className="testo-cta"><span className="animato">Utilizza i nostri Servizi<br />Online &amp; Gratis</span></span>
             </div>
             <span className="cta-sub">Download DIGIApp</span>
@@ -220,19 +222,19 @@ export default async function Page() {
         {/* ── Serramenti ── */}
         {ok('/serramenti/infissi-in-alluminio-taglio-termico') && (
         <Link href="/serramenti/infissi-in-alluminio-taglio-termico" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/infissi-in-alluminio/porta-finestra-2-ante.jpg" alt="Infissi Alluminio Taglio Termico" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/infissi-in-alluminio/porta-finestra-2-ante.webp" alt="Infissi Alluminio Taglio Termico" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Infissi Alluminio Taglio Termico</span></div>
         </Link>
         )}
         {ok('/serramenti/infissi-in-pvc') && (
         <Link href="/serramenti/infissi-in-pvc" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/infissi-in-pvc/PVC.jpg" alt="Infissi in PVC" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/infissi-in-pvc/PVC.webp" alt="Infissi in PVC" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Infissi in PVC</span></div>
         </Link>
         )}
         {ok('/serramenti/verande-in-alluminio') && (
         <Link href="/serramenti/verande-in-alluminio" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/verande-in-alluminio/veranda.png" alt="Verande in Alluminio" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/verande-in-alluminio/veranda.webp" alt="Verande in Alluminio" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Verande in Alluminio</span></div>
         </Link>
         )}
@@ -246,19 +248,19 @@ export default async function Page() {
         */}
         {ok('/serramenti/persiane-in-alluminio') && (
         <Link href="/serramenti/persiane-in-alluminio" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/persiane-in-alluminio/persiana-alluminio.png" alt="Persiane in Alluminio" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/persiane-in-alluminio/persiana-alluminio.webp" alt="Persiane in Alluminio" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Persiane in Alluminio</span></div>
         </Link>
         )}
         {ok('/serramenti/imbotti') && (
         <Link href="/serramenti/imbotti" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/imbotti-in-alluminio/imbotto.png" alt="Imbotti" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/imbotti-in-alluminio/imbotto.webp" alt="Imbotti" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Imbotti</span></div>
         </Link>
         )}
         {ok('/serramenti/tapparelle-in-alluminio') && (
         <Link href="/serramenti/tapparelle-in-alluminio" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/tapparelle-manuali/tapparelle.jpg" alt="Tapparelle in Alluminio" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/tapparelle-manuali/tapparelle.webp" alt="Tapparelle in Alluminio" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Tapparelle in Alluminio</span></div>
         </Link>
         )}
@@ -288,25 +290,25 @@ export default async function Page() {
         */}
         {ok('/serramenti/zanzariere') && (
         <Link href="/serramenti/zanzariere" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/zanzariere/zanzariera%20sc.jpg" alt="Zanzariere" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/zanzariere/zanzariera%20sc.webp" alt="Zanzariere" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Zanzariere</span></div>
         </Link>
         )}
         {ok('/serramenti/vetrine') && (
         <Link href="/serramenti/vetrine" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/vetrate/vetrata.png" alt="Vetrine" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/vetrate/vetrata.webp" alt="Vetrine" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Vetrine</span></div>
         </Link>
         )}
         {ok('/serramenti/pergole-bioclimatiche') && (
         <Link href="/serramenti/pergole-bioclimatiche" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/pergole-bioclimatiche/pergole.jpg" alt="Pergole Bioclimatiche" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/pergole-bioclimatiche/pergole.webp" alt="Pergole Bioclimatiche" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Pergole Bioclimatiche</span></div>
         </Link>
         )}
         {ok('/serramenti/box-doccia') && (
         <Link href="/serramenti/box-doccia" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/box-doccia/box-doccia-rettangolare.png" alt="Box Doccia" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/box-doccia/box-doccia-rettangolare.webp" alt="Box Doccia" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Box Doccia</span></div>
         </Link>
         )}
@@ -861,74 +863,74 @@ export default async function Page() {
           </h2>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, justifyContent: 'center', alignItems: 'center' }}>
             {[
-              { src: '/images/brand/partners/3M.png',                alt: '3M',                  href: '#' },
-              { src: '/images/brand/partners/alphacan.png',          alt: 'Alphacan',            href: '#' },
-              { src: '/images/brand/partners/alsistem.png',          alt: 'Alsistem',            href: '#' },
-              { src: '/images/brand/partners/ALU-ITALIA.png',        alt: 'Alu Italia',          href: '#' },
-              { src: '/images/brand/partners/AMAZON.png',            alt: 'Amazon',              href: '#' },
-              { src: '/images/brand/partners/ARGO.png',              alt: 'Argo',                href: '#' },
-              { src: '/images/brand/partners/ARISTON.png',           alt: 'Ariston',             href: '#' },
-              { src: '/images/brand/partners/BEGHELLI.png',          alt: 'Beghelli',            href: '#' },
-              { src: '/images/brand/partners/BETA.png',              alt: 'Beta',                href: '#' },
-              { src: '/images/brand/partners/BLACK-DECKER.png',      alt: 'Black & Decker',      href: '#' },
-              { src: '/images/brand/partners/BOSH.png',              alt: 'Bosch',               href: '#' },
-              { src: '/images/brand/partners/BOSTIK.png',            alt: 'Bostik',              href: '#' },
-              { src: '/images/brand/partners/BRICO-CENTER.png',      alt: 'Brico Center',        href: '#' },
-              { src: '/images/brand/partners/CANDY.png',             alt: 'Candy',               href: '#' },
-              { src: '/images/brand/partners/CANON.png',             alt: 'Canon',               href: '#' },
-              { src: '/images/brand/partners/CISA.png',              alt: 'CISA',                href: '#' },
-              { src: '/images/brand/partners/COMAS.png',             alt: 'Comas',               href: '#' },
-              { src: '/images/brand/partners/DAIKIN.png',            alt: 'Daikin',              href: '#' },
-              { src: '/images/brand/partners/DEGHI.png',             alt: 'Deghi',               href: '#' },
-              { src: '/images/brand/partners/DELONGHI.png',          alt: 'DeLonghi',            href: '#' },
-              { src: '/images/brand/partners/DEWALT.png',            alt: 'DeWalt',              href: '#' },
-              { src: '/images/brand/partners/DIGAL.png',             alt: 'Digal',               href: '#' },
-              { src: '/images/brand/partners/edilsider.png',         alt: 'Edilsider',           href: '#' },
-              { src: '/images/brand/partners/ELECTROLUX.png',        alt: 'Electrolux',          href: '#' },
-              { src: '/images/brand/partners/FAAC.png',              alt: 'FAAC',                href: '#' },
-              { src: '/images/brand/partners/FAI.png',               alt: 'FAI',                 href: '#' },
-              { src: '/images/brand/partners/FINSTRAL.png',          alt: 'Finstral',            href: '#' },
-              { src: '/images/brand/partners/FISCHER.png',           alt: 'Fischer',             href: '#' },
-              { src: '/images/brand/partners/GDM.png',               alt: 'GDM',                 href: '#' },
-              { src: '/images/brand/partners/GTHERMIC.png',          alt: 'Gthermic',            href: '#' },
-              { src: '/images/brand/partners/HAIER.png',             alt: 'Haier',               href: '#' },
-              { src: '/images/brand/partners/HISENSE.png',           alt: 'Hisense',             href: '#' },
-              { src: '/images/brand/partners/IMPERIAL.png',          alt: 'Imperial',            href: '#' },
-              { src: '/images/brand/partners/INDINVEST.png',         alt: 'Indinvest',           href: '#' },
-              { src: '/images/brand/partners/LEROY-MERLIN.png',      alt: 'Leroy Merlin',        href: '#' },
-              { src: '/images/brand/partners/LEVANTE.png',           alt: 'Levante',             href: '#' },
-              { src: '/images/brand/partners/LG.png',                alt: 'LG',                  href: '#' },
-              { src: '/images/brand/partners/LOCTITE.png',           alt: 'Loctite',             href: '#' },
-              { src: '/images/brand/partners/MAPEI.png',             alt: 'Mapei',               href: '#' },
-              { src: '/images/brand/partners/MAX-MEYER.png',         alt: 'Max Meyer',           href: '#' },
-              { src: '/images/brand/partners/METRA.png',             alt: 'Metra',               href: '#' },
-              { src: '/images/brand/partners/MITSUBISHI.png',        alt: 'Mitsubishi',          href: '#' },
-              { src: '/images/brand/partners/MONDO-CONVENIENZA.png', alt: 'Mondo Convenienza',   href: '#' },
-              { src: '/images/brand/partners/moskout.png',           alt: 'Moskout',             href: '#' },
-              { src: '/images/brand/partners/MOTTURA.png',           alt: 'Mottura',             href: '#' },
-              { src: '/images/brand/partners/MOULINEX.png',          alt: 'Moulinex',            href: '#' },
-              { src: '/images/brand/partners/PALAZZOLO.png',         alt: 'Palazzolo',           href: '#' },
-              { src: '/images/brand/partners/PANASONIC.png',         alt: 'Panasonic',           href: '#' },
-              { src: '/images/brand/partners/PATTEX.png',            alt: 'Pattex',              href: '#' },
-              { src: '/images/brand/partners/PROFIL-PLASTIC.png',    alt: 'Profil Plastic',      href: '#' },
-              { src: '/images/brand/partners/REHAU.png',             alt: 'Rehau',               href: '#' },
-              { src: '/images/brand/partners/ROLLTEK.png',           alt: 'Rolltek',             href: '#' },
-              { src: '/images/brand/partners/SALAMANDER.png',        alt: 'Salamander',          href: '#' },
-              { src: '/images/brand/partners/SAMSUNG.png',           alt: 'Samsung',             href: '#' },
-              { src: '/images/brand/partners/SARATOGA.png',          alt: 'Saratoga',            href: '#' },
-              { src: '/images/brand/partners/SCHUCO.png',            alt: 'Schüco',              href: '#' },
-              { src: '/images/brand/partners/SCOTCH.png',            alt: 'Scotch',              href: '#' },
-              { src: '/images/brand/partners/SCRIGNO.png',           alt: 'Scrigno',             href: '#' },
-              { src: '/images/brand/partners/SHARKNET.png',          alt: 'Sharknet',            href: '#' },
-              { src: '/images/brand/partners/SIEMENS.png',           alt: 'Siemens',             href: '#' },
-              { src: '/images/brand/partners/SIRTAL.png',            alt: 'Sirtal',              href: '#' },
-              { src: '/images/brand/partners/TOSHIBA.png',           alt: 'Toshiba',             href: '#' },
-              { src: '/images/brand/partners/TWIN-SYSTEMS.png',      alt: 'Twin Systems',        href: '#' },
-              { src: '/images/brand/partners/TYTAN.png',             alt: 'Tytan',               href: '#' },
-              { src: '/images/brand/partners/VIMAR.png',             alt: 'Vimar',               href: '#' },
-              { src: '/images/brand/partners/VORTICE.png',           alt: 'Vortice',             href: '#' },
-              { src: '/images/brand/partners/WHIRLPOOL.png',         alt: 'Whirlpool',           href: '#' },
-              { src: '/images/brand/partners/WURTH.png',             alt: 'Würth',               href: '#' },
+              { src: '/images/brand/partners/3M.webp',                alt: '3M',                  href: '#' },
+              { src: '/images/brand/partners/alphacan.webp',          alt: 'Alphacan',            href: '#' },
+              { src: '/images/brand/partners/alsistem.webp',          alt: 'Alsistem',            href: '#' },
+              { src: '/images/brand/partners/ALU-ITALIA.webp',        alt: 'Alu Italia',          href: '#' },
+              { src: '/images/brand/partners/AMAZON.webp',            alt: 'Amazon',              href: '#' },
+              { src: '/images/brand/partners/ARGO.webp',              alt: 'Argo',                href: '#' },
+              { src: '/images/brand/partners/ARISTON.webp',           alt: 'Ariston',             href: '#' },
+              { src: '/images/brand/partners/BEGHELLI.webp',          alt: 'Beghelli',            href: '#' },
+              { src: '/images/brand/partners/BETA.webp',              alt: 'Beta',                href: '#' },
+              { src: '/images/brand/partners/BLACK-DECKER.webp',      alt: 'Black & Decker',      href: '#' },
+              { src: '/images/brand/partners/BOSH.webp',              alt: 'Bosch',               href: '#' },
+              { src: '/images/brand/partners/BOSTIK.webp',            alt: 'Bostik',              href: '#' },
+              { src: '/images/brand/partners/BRICO-CENTER.webp',      alt: 'Brico Center',        href: '#' },
+              { src: '/images/brand/partners/CANDY.webp',             alt: 'Candy',               href: '#' },
+              { src: '/images/brand/partners/CANON.webp',             alt: 'Canon',               href: '#' },
+              { src: '/images/brand/partners/CISA.webp',              alt: 'CISA',                href: '#' },
+              { src: '/images/brand/partners/COMAS.webp',             alt: 'Comas',               href: '#' },
+              { src: '/images/brand/partners/DAIKIN.webp',            alt: 'Daikin',              href: '#' },
+              { src: '/images/brand/partners/DEGHI.webp',             alt: 'Deghi',               href: '#' },
+              { src: '/images/brand/partners/DELONGHI.webp',          alt: 'DeLonghi',            href: '#' },
+              { src: '/images/brand/partners/DEWALT.webp',            alt: 'DeWalt',              href: '#' },
+              { src: '/images/brand/partners/DIGAL.webp',             alt: 'Digal',               href: '#' },
+              { src: '/images/brand/partners/edilsider.webp',         alt: 'Edilsider',           href: '#' },
+              { src: '/images/brand/partners/ELECTROLUX.webp',        alt: 'Electrolux',          href: '#' },
+              { src: '/images/brand/partners/FAAC.webp',              alt: 'FAAC',                href: '#' },
+              { src: '/images/brand/partners/FAI.webp',               alt: 'FAI',                 href: '#' },
+              { src: '/images/brand/partners/FINSTRAL.webp',          alt: 'Finstral',            href: '#' },
+              { src: '/images/brand/partners/FISCHER.webp',           alt: 'Fischer',             href: '#' },
+              { src: '/images/brand/partners/GDM.webp',               alt: 'GDM',                 href: '#' },
+              { src: '/images/brand/partners/GTHERMIC.webp',          alt: 'Gthermic',            href: '#' },
+              { src: '/images/brand/partners/HAIER.webp',             alt: 'Haier',               href: '#' },
+              { src: '/images/brand/partners/HISENSE.webp',           alt: 'Hisense',             href: '#' },
+              { src: '/images/brand/partners/IMPERIAL.webp',          alt: 'Imperial',            href: '#' },
+              { src: '/images/brand/partners/INDINVEST.webp',         alt: 'Indinvest',           href: '#' },
+              { src: '/images/brand/partners/LEROY-MERLIN.webp',      alt: 'Leroy Merlin',        href: '#' },
+              { src: '/images/brand/partners/LEVANTE.webp',           alt: 'Levante',             href: '#' },
+              { src: '/images/brand/partners/LG.webp',                alt: 'LG',                  href: '#' },
+              { src: '/images/brand/partners/LOCTITE.webp',           alt: 'Loctite',             href: '#' },
+              { src: '/images/brand/partners/MAPEI.webp',             alt: 'Mapei',               href: '#' },
+              { src: '/images/brand/partners/MAX-MEYER.webp',         alt: 'Max Meyer',           href: '#' },
+              { src: '/images/brand/partners/METRA.webp',             alt: 'Metra',               href: '#' },
+              { src: '/images/brand/partners/MITSUBISHI.webp',        alt: 'Mitsubishi',          href: '#' },
+              { src: '/images/brand/partners/MONDO-CONVENIENZA.webp', alt: 'Mondo Convenienza',   href: '#' },
+              { src: '/images/brand/partners/moskout.webp',           alt: 'Moskout',             href: '#' },
+              { src: '/images/brand/partners/MOTTURA.webp',           alt: 'Mottura',             href: '#' },
+              { src: '/images/brand/partners/MOULINEX.webp',          alt: 'Moulinex',            href: '#' },
+              { src: '/images/brand/partners/PALAZZOLO.webp',         alt: 'Palazzolo',           href: '#' },
+              { src: '/images/brand/partners/PANASONIC.webp',         alt: 'Panasonic',           href: '#' },
+              { src: '/images/brand/partners/PATTEX.webp',            alt: 'Pattex',              href: '#' },
+              { src: '/images/brand/partners/PROFIL-PLASTIC.webp',    alt: 'Profil Plastic',      href: '#' },
+              { src: '/images/brand/partners/REHAU.webp',             alt: 'Rehau',               href: '#' },
+              { src: '/images/brand/partners/ROLLTEK.webp',           alt: 'Rolltek',             href: '#' },
+              { src: '/images/brand/partners/SALAMANDER.webp',        alt: 'Salamander',          href: '#' },
+              { src: '/images/brand/partners/SAMSUNG.webp',           alt: 'Samsung',             href: '#' },
+              { src: '/images/brand/partners/SARATOGA.webp',          alt: 'Saratoga',            href: '#' },
+              { src: '/images/brand/partners/SCHUCO.webp',            alt: 'Schüco',              href: '#' },
+              { src: '/images/brand/partners/SCOTCH.webp',            alt: 'Scotch',              href: '#' },
+              { src: '/images/brand/partners/SCRIGNO.webp',           alt: 'Scrigno',             href: '#' },
+              { src: '/images/brand/partners/SHARKNET.webp',          alt: 'Sharknet',            href: '#' },
+              { src: '/images/brand/partners/SIEMENS.webp',           alt: 'Siemens',             href: '#' },
+              { src: '/images/brand/partners/SIRTAL.webp',            alt: 'Sirtal',              href: '#' },
+              { src: '/images/brand/partners/TOSHIBA.webp',           alt: 'Toshiba',             href: '#' },
+              { src: '/images/brand/partners/TWIN-SYSTEMS.webp',      alt: 'Twin Systems',        href: '#' },
+              { src: '/images/brand/partners/TYTAN.webp',             alt: 'Tytan',               href: '#' },
+              { src: '/images/brand/partners/VIMAR.webp',             alt: 'Vimar',               href: '#' },
+              { src: '/images/brand/partners/VORTICE.webp',           alt: 'Vortice',             href: '#' },
+              { src: '/images/brand/partners/WHIRLPOOL.webp',         alt: 'Whirlpool',           href: '#' },
+              { src: '/images/brand/partners/WURTH.webp',             alt: 'Würth',               href: '#' },
             ].map(m => (
               <a key={m.alt} href={m.href} target={m.href !== '#' ? '_blank' : undefined} rel="noopener noreferrer"
                 className="partner-logo-box"
