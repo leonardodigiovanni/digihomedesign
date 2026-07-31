@@ -72,7 +72,7 @@ function buildPages(arts: ArtRow[], clienteNome: string, data: string, totale: s
   const header1 = `
 <table style="width:100%;margin-bottom:14px;border-collapse:collapse;"><tr>
   <td style="vertical-align:top;width:50%;">
-    <img src="/images/volantino/dg-t.png" alt="Logo" style="height:46px;margin-bottom:7px;display:block;"/>
+    <img src="/images/header/DIGIHOMEDESIGN.webp" alt="Logo" style="height:46px;margin-bottom:7px;display:block;"/>
     <div style="font-size:15px;font-weight:bold;color:#1a3a5c;">Digi Home Design S.r.l.</div>
     <div style="font-size:10px;color:#555;line-height:1.55;margin-top:3px;">P.IVA: 07407080824 &nbsp;|&nbsp; Tel: +39 351 871 6731<br/>info@digi-home-design.com</div>
   </td>
@@ -106,7 +106,7 @@ function buildPages(arts: ArtRow[], clienteNome: string, data: string, totale: s
 
   const headerN = `
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-  <img src="/images/volantino/dg-t.png" alt="Logo" style="height:28px;display:block;"/>
+  <img src="/images/header/DIGIHOMEDESIGN.webp" alt="Logo" style="height:28px;display:block;"/>
   <div style="font-size:10px;color:#555;text-align:right;line-height:1.5;">
     <strong style="color:#4a0080;">Digi Home Design S.r.l.</strong> &nbsp;|&nbsp;
     Ordine Acquisto — ${data} &nbsp;|&nbsp; <em>continua</em>

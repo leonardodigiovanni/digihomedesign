@@ -95,8 +95,8 @@ export default function PreviewInfisso({
     )
   }
 
-  const stanzaSrc = `/images/preview/${combo.stanza}.png`
-  const sfondoSrc = `/images/preview/${combo.sfondo}.png`
+  const stanzaSrc = `/images/preview/${combo.stanza}.webp`
+  const sfondoSrc = `/images/preview/${combo.sfondo}.webp`
 
   // SVG adattato all'AR reale della stanza (H fisso, W calcolato) → nessun crop
   const H = 550

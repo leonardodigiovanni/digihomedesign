@@ -2087,7 +2087,7 @@ export default function DisegnoClient() {
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/images/volantino/dg-t.png" alt="Logo" style={{ height: '40px', display: 'block' }} />
+              <img src="/images/header/DIGIHOMEDESIGN.webp" alt="Logo" style={{ height: '40px', display: 'block' }} />
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/images/volantino/nome_tr.webp" alt="" style={{ height: '40px', display: 'block' }} />
             </div>
