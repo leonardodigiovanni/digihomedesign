@@ -7,6 +7,7 @@ import {
   upsertImmagineCategoria, upsertImmagineSottocategoria,
   type TipoCategoriaImmagini, type TipoConSottocategoria, type SlotImmagine,
 } from '@/lib/categoria-immagini'
+import { isConvertibleImageExt, toWebpFile } from '@/lib/image-convert'
 
 function safe(s: string): string {
   return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'x'
@@ -45,6 +46,9 @@ export async function POST(req: NextRequest) {
   if (file.size > 5 * 1024 * 1024)
     return NextResponse.json({ ok: false, error: 'File troppo grande (max 5 MB).' })
 
+  const uploadFile = isConvertibleImageExt(ext) ? await toWebpFile(file) : file
+  const uploadExt  = isConvertibleImageExt(ext) ? 'webp' : ext
+
   const db = await getConnection()
   try {
     await ensureCategoriaImmaginiTables(db)
@@ -54,8 +58,8 @@ export async function POST(req: NextRequest) {
       : await getImmagineSottocategoria(db, tipo as TipoConSottocategoria, categoria, sottocategoria)
     if (oldUrl && oldUrl.startsWith('https://')) await del(oldUrl).catch(() => {})
 
-    const filename = `${tipo}-${safe(categoria)}-${safe(sottocategoria)}-${slot}-${Date.now()}.${ext}`
-    const blob = await put(`categoria-immagini/${filename}`, file, { access: 'public' })
+    const filename = `${tipo}-${safe(categoria)}-${safe(sottocategoria)}-${slot}-${Date.now()}.${uploadExt}`
+    const blob = await put(`categoria-immagini/${filename}`, uploadFile, { access: 'public' })
 
     if (slot === 'categoria') await upsertImmagineCategoria(db, tipo, categoria, blob.url)
     else await upsertImmagineSottocategoria(db, tipo as TipoConSottocategoria, categoria, sottocategoria, blob.url)

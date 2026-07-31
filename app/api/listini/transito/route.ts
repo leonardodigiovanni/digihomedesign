@@ -3,6 +3,7 @@ import { cookies } from 'next/headers'
 import { readSettings } from '@/lib/settings'
 import { hasPageAccess } from '@/lib/permissions'
 import { put } from '@vercel/blob'
+import { isConvertibleImageExt, toWebpFile } from '@/lib/image-convert'
 
 export async function POST(req: NextRequest) {
   const cookieStore = await cookies()
@@ -25,6 +26,9 @@ export async function POST(req: NextRequest) {
   if (file.size > 5 * 1024 * 1024)
     return NextResponse.json({ ok: false, error: 'File troppo grande (max 5 MB).' })
 
-  const blob = await put(`listini/transito-${Date.now()}.${ext}`, file, { access: 'public' })
+  const uploadFile = isConvertibleImageExt(ext) ? await toWebpFile(file) : file
+  const uploadExt  = isConvertibleImageExt(ext) ? 'webp' : ext
+
+  const blob = await put(`listini/transito-${Date.now()}.${uploadExt}`, uploadFile, { access: 'public' })
   return NextResponse.json({ ok: true, url: blob.url })
 }

@@ -4,6 +4,7 @@ import { getConnection } from '@/lib/db'
 import { readSettings } from '@/lib/settings'
 import { hasPageAccess } from '@/lib/permissions'
 import { put, del } from '@vercel/blob'
+import { isConvertibleImageExt, toWebpFile } from '@/lib/image-convert'
 
 export async function POST(req: NextRequest) {
   const cookieStore = await cookies()
@@ -31,6 +32,9 @@ export async function POST(req: NextRequest) {
   if (file.size > 5 * 1024 * 1024)
     return NextResponse.json({ ok: false, error: 'File troppo grande (max 5 MB).' })
 
+  const uploadFile = isConvertibleImageExt(ext) ? await toWebpFile(file) : file
+  const uploadExt  = isConvertibleImageExt(ext) ? 'webp' : ext
+
   const db = await getConnection()
   try {
     const [rows] = await db.query(`SELECT ${col} AS url FROM listini WHERE id=? LIMIT 1`, [id]) as [Record<string, unknown>[], unknown]
@@ -40,8 +44,8 @@ export async function POST(req: NextRequest) {
       await del(oldUrl).catch(() => {})
     }
 
-    const filename = `${id}-${tipo}-${Date.now()}.${ext}`
-    const blob = await put(`listini/${filename}`, file, { access: 'public' })
+    const filename = `${id}-${tipo}-${Date.now()}.${uploadExt}`
+    const blob = await put(`listini/${filename}`, uploadFile, { access: 'public' })
 
     await db.execute(`UPDATE listini SET ${col}=? WHERE id=?`, [blob.url, id])
 
