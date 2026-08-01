@@ -127,6 +127,28 @@ a:active, a:active img, a:focus img {
   }
 }
 
+/* ── Header: loghi centrati; sotto 768px si scosta dal bottone Accedi invece di restare centrati ── */
+.header-logos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: absolute;
+  left: 50%;
+  top: 0;
+  height: 100%;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+@media (max-width: 480px) {
+  .header-logos {
+    left: 0;
+    right: 170px;
+    justify-content: flex-start;
+    transform: none;
+  }
+}
+
 /* ── Grid bottoni responsive ── */
 .btn-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
 @media (max-width: 640px) {

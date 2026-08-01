@@ -47,7 +47,7 @@ export default function FornitoreForm() {
 
   return (
     <>
-      <div className="home-hero-cta">
+      <div className="home-hero-cta" style={{ overflow: 'visible' }}>
         <button
           onClick={() => setAperto(true)}
           className="cta-home-btn"

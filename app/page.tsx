@@ -931,14 +931,19 @@ export default async function Page() {
               { src: '/images/brand/partners/VORTICE.webp',           alt: 'Vortice',             href: '#' },
               { src: '/images/brand/partners/WHIRLPOOL.webp',         alt: 'Whirlpool',           href: '#' },
               { src: '/images/brand/partners/WURTH.webp',             alt: 'Würth',               href: '#' },
-            ].map(m => (
-              <a key={m.alt} href={m.href} target={m.href !== '#' ? '_blank' : undefined} rel="noopener noreferrer"
-                className="partner-logo-box"
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 8px', height: 52, border: '2px solid #c8960c', borderRadius: 6, background: '#fff', flexShrink: 0 }}
-              >
-                <Image src={m.src} alt={m.alt} width={130} height={40} className="partner-logo-img" style={{ objectFit: 'contain' }} />
-              </a>
-            ))}
+            ].map(m => {
+              const boxStyle: React.CSSProperties = { display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 8px', height: 52, border: '1px solid #fff', borderRadius: 6, background: '#fff', flexShrink: 0 }
+              const img = <Image src={m.src} alt={m.alt} width={130} height={40} className="partner-logo-img" style={{ objectFit: 'contain' }} />
+              return m.href !== '#' ? (
+                <a key={m.alt} href={m.href} target="_blank" rel="noopener noreferrer" className="partner-logo-box" style={boxStyle}>
+                  {img}
+                </a>
+              ) : (
+                <div key={m.alt} className="partner-logo-box" style={boxStyle}>
+                  {img}
+                </div>
+              )
+            })}
           </div>
 
           <FornitoreForm />
