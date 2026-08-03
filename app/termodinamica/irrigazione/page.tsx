@@ -61,7 +61,7 @@ export default function Page() {
         </div>
 
         <StickyBottomBarContent>
-          <Link href="/termodinamica" className="btn-black fs-12">← Torna a Termodinamica</Link>
+          <Link href="/termodinamica" className="btn-black fs-12">← Termodinamica</Link>
           <CtaPreventivo />
           <CtaCantiere />
           <Link href="/chi-siamo/contatti" className="btn-black fs-12">Chiedi info</Link>

@@ -13,8 +13,10 @@ import { readSettings } from '@/lib/settings'
 import { categoryGroups } from '@/lib/nav-config'
 import type { Metadata } from 'next'
 
-const VIDEO_ID = 'WrMGGouem3c'
-const VIDEO_URL = `https://www.youtube.com/watch?v=${VIDEO_ID}&list=RDWrMGGouem3c&start_radio=1`
+const VIDEO_ID = '1aZGOyeKcrg'
+const VIDEO_URL = `https://www.youtube.com/watch?v=${VIDEO_ID}`
+const VIDEO2_ID = 'P5ygwAPPQq8'
+const VIDEO2_URL = `https://www.youtube.com/watch?v=${VIDEO2_ID}`
 
 async function getVideoTitle(url: string): Promise<string> {
   try {
@@ -80,6 +82,7 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const videoTitle = await getVideoTitle(VIDEO_URL)
+  const video2Title = await getVideoTitle(VIDEO2_URL)
   const cookieStore = await cookies()
   const username = cookieStore.get('session_user')?.value
   const role = cookieStore.get('session_role')?.value ?? ''
@@ -101,7 +104,8 @@ export default async function Page() {
   return (
     <>
     <HomeShortcutsContent role={role || null} rolePermissions={rolePermissions} disabledPages={disabledPages}>
-      <VideoButton url={VIDEO_URL} videoId={VIDEO_ID} label="Video youtube 1" hint={videoTitle} />
+      <VideoButton url={VIDEO_URL} videoId={VIDEO_ID} label="Incentivi Riqualificazione Energetica 2026" hint={videoTitle} />
+      <VideoButton url={VIDEO2_URL} videoId={VIDEO2_ID} label="Tutti Bonus CASA 2026" hint={video2Title} />
     </HomeShortcutsContent>
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 16, marginBottom: 16 }}>
       <div className="home-hero">

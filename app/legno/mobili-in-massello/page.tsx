@@ -169,7 +169,7 @@ export default async function Page() {
         )}
 
         <StickyBottomBarContent>
-          <Link href="/legno" className="btn-black fs-12">← Torna a Legno</Link>
+          <Link href="/legno" className="btn-black fs-12">← Legno</Link>
           <CtaPreventivo />
           <CtaCantiere />
         </StickyBottomBarContent>

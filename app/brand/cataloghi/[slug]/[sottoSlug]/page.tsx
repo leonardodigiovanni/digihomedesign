@@ -279,7 +279,7 @@ export default async function Page({ params }: Props) {
 
         <StickyBottomBarContent>
           <Link href={`/cataloghi/${slug}`} className="btn-black fs-12">
-            ← Torna a {categoria.nome}
+            ← {categoria.nome}
           </Link>
           {cartNonVuoto && (
             <Link href="/area-clienti/carrello-preventivo" className="btn-black fs-12">

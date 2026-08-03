@@ -7,7 +7,9 @@ import { mergeRefs } from '@/lib/merge-refs'
 import { useStickyBottomBarValue } from '@/lib/sticky-bottom-bar-context'
 
 export const BAR_HEIGHT = 44
-const GAP_HEIGHT = 6
+export const BAR_HEIGHT_NARROW = 64
+export const NARROW_BREAKPOINT = 620
+export const GAP_HEIGHT = 6
 
 /**
  * Barra oro (stesso colore della navbar) fissa in fondo allo schermo, su ogni pagina del sito (non la
@@ -29,6 +31,7 @@ const GAP_HEIGHT = 6
 export default function StickyBottomBar() {
   const content = useStickyBottomBarValue()
   const [scrollbarWidth, setScrollbarWidth] = useState(0)
+  const [isNarrow, setIsNarrow] = useState(false)
 
   useEffect(() => {
     function measure() {
@@ -44,6 +47,16 @@ export default function StickyBottomBar() {
     }
   }, [])
 
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${NARROW_BREAKPOINT}px)`)
+    setIsNarrow(mq.matches)
+    const onChange = (e: MediaQueryListEvent) => setIsNarrow(e.matches)
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+
+  const barHeight = isNarrow ? BAR_HEIGHT_NARROW : BAR_HEIGHT
+
   const autoScrollRef = useEdgeAutoScroll<HTMLDivElement>({ axis: 'x' })
   const maskRef = useScrollEdgeMask<HTMLDivElement>(40)
 
@@ -51,14 +64,14 @@ export default function StickyBottomBar() {
 
   return (
     <>
-      <div aria-hidden style={{ height: BAR_HEIGHT + GAP_HEIGHT, flexShrink: 0 }} />
+      <div aria-hidden style={{ height: barHeight + GAP_HEIGHT, flexShrink: 0 }} />
       <div
         aria-hidden
         style={{
           position: 'fixed',
           left: 0,
           right: scrollbarWidth,
-          bottom: BAR_HEIGHT,
+          bottom: barHeight,
           zIndex: 200,
           height: GAP_HEIGHT,
           background: '#fff',
@@ -74,7 +87,7 @@ export default function StickyBottomBar() {
           right: scrollbarWidth,
           bottom: 0,
           zIndex: 200,
-          height: BAR_HEIGHT,
+          height: barHeight,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'safe center',

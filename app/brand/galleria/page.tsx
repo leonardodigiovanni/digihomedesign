@@ -25,7 +25,7 @@ export default function Page() {
         </div>
       </div>
       <StickyBottomBarContent>
-        <Link href="/chi-siamo" className="btn-black fs-12">← Torna a Chi Siamo</Link>
+        <Link href="/chi-siamo" className="btn-black fs-12">← Chi Siamo</Link>
       </StickyBottomBarContent>
     </div>
   )

@@ -26,6 +26,7 @@ import ShortcutHintPopup from '@/components/shortcut-hint-popup'
 import ManutenzioneWatcher from '@/components/manutenzione-watcher'
 import MainWrapper from '@/components/main-wrapper'
 import { PreventiviProvider } from '@/lib/preventivi-flag-context'
+import { NavDropdownProvider } from '@/lib/nav-dropdown-context'
 import './globals.css'
 
 export const viewport: Viewport = {
@@ -263,6 +264,7 @@ export default async function RootLayout({
       <body style={isPageEffect ? {} : { background: `rgba(${pageBg.r}, ${pageBg.g}, ${pageBg.b}, ${pageBg.a / 100})` }}>
         <HomeShortcutsProvider key={username ?? 'anon'} loggedIn={!!username} role={role} rolePermissions={rolePermissions} disabledPages={settings.disabledPages}>
         <PageTitleOverrideProvider>
+        <NavDropdownProvider>
 
         {/* Sfondo pagina con effetto (fixed, sotto tutto) */}
         {isPageEffect && (
@@ -356,6 +358,7 @@ export default async function RootLayout({
           />
         )}
 
+        </NavDropdownProvider>
         </PageTitleOverrideProvider>
         </HomeShortcutsProvider>
       </body>

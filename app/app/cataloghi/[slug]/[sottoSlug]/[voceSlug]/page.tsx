@@ -186,7 +186,7 @@ export default async function Page({ params }: Props) {
 
       <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
         <Link href={`/app/cataloghi/${slug}/${sottoSlug}`} className="btn-black-app fs-12" style={{ flex: 1 }}>
-          ← Torna a cataloghi
+          ← cataloghi
         </Link>
         {cartNonVuoto && (
           <Link href="/app/carrello-preventivo" className="btn-black-app fs-12" style={{ flex: 1 }}>

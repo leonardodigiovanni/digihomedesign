@@ -199,6 +199,19 @@ export const prodottiPages: NavPage[] = [
   { id: 299, label: 'Tapparelle in PVC',        href: '/serramenti/tapparelle-in-pvc'                                                  },
 ]
 
+// Vicini (precedente/successivo) di una pagina Riqualificazione Energetica nella sequenza
+// 1-10, saltando quelle disattivate da pannello admin (disabledPages) così la numerazione
+// resta compatta. Usato per i bottoni dinamici "torna"/"vai" nello sticky di ogni pagina.
+export function getProdottiNeighbors(currentId: number, disabledPages: number[]): { prev: NavPage | null; next: NavPage | null } {
+  const visible = prodottiPages.filter(p => !disabledPages.includes(p.id))
+  const idx = visible.findIndex(p => p.id === currentId)
+  if (idx === -1) return { prev: null, next: null }
+  return {
+    prev: idx > 0 ? visible[idx - 1] : null,
+    next: idx < visible.length - 1 ? visible[idx + 1] : null,
+  }
+}
+
 // Raggruppamento visivo (non cliccabile) delle voci sopra nel dropdown di navbar/menu mobile.
 export const prodottiSubgroups: { label: string; pageIds: number[] }[] = [
   { label: 'Infissi Isolanti Termoacustici', pageIds: [290, 291, 292, 293] },

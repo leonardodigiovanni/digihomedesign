@@ -200,7 +200,7 @@ export default async function Page() {
         )}
 
         <StickyBottomBarContent>
-          <Link href="/serramenti" className="btn-black fs-12">← Torna a Serramenti</Link>
+          <Link href="/serramenti" className="btn-black fs-12">← Serramenti</Link>
           <CtaPreventivo />
           <CtaCantiere />
         </StickyBottomBarContent>

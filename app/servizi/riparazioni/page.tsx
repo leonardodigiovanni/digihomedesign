@@ -61,7 +61,7 @@ export default function Page() {
         </div>
 
         <StickyBottomBarContent>
-          <Link href="/servizi" className="btn-black fs-12">← Torna a Servizi</Link>
+          <Link href="/servizi" className="btn-black fs-12">← Servizi</Link>
           <CtaPreventivo />
           <CtaCantiere />
           <Link href="/chi-siamo/contatti" className="btn-black fs-12">Chiedi info</Link>

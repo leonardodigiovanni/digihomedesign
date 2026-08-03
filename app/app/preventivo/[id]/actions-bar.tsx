@@ -7,7 +7,7 @@ export default function PreventivoActionsBar({ id }: { id: number }) {
   return (
     <SetActionBar>
       <Link href="/app/preventivo" className="btn-black-app fs-12" style={{ margin: '0 auto' }}>
-        ← Torna a lista preventivi
+        ← lista preventivi
       </Link>
     </SetActionBar>
   )

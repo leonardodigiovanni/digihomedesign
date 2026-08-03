@@ -11,6 +11,9 @@ import type { PreventivoDestOption } from '@/app/brand/cataloghi/actions'
 import AggiungiArticoloAcquistoForm from '@/components/aggiungi-articolo-acquisto-form'
 import type { ArticoloListinoAcquisto } from '@/components/aggiungi-articolo-acquisto-form'
 import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
+import { readSettings } from '@/lib/settings'
+import { getProdottiNeighbors } from '@/lib/nav-config'
+import NavDropdownTriggerButton from '@/components/nav-dropdown-trigger-button'
 import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = {
@@ -71,6 +74,8 @@ async function getCatalogoData(nomeCategoria: string) {
 }
 
 export default async function Page() {
+  const { disabledPages } = await readSettings()
+  const { prev, next } = getProdottiNeighbors(292, disabledPages)
   const CERCA = 'Infissi in Legno'
   const catalogo = await getCatalogoData(CERCA)
   const cookieStore = await cookies()
@@ -163,9 +168,11 @@ export default async function Page() {
         )}
 
         <StickyBottomBarContent>
-          <Link href="/legno" className="btn-black fs-12">← Torna a Legno</Link>
+          <Link href="/legno" className="btn-black fs-12">← Legno</Link>
+          {prev ? <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link> : <Link href="/" className="btn-gold fs-12">← Home</Link>}
           <CtaPreventivo />
           <CtaCantiere />
+          {next ? <Link href={next.href} className="btn-blue fs-12">{next.label} →</Link> : <NavDropdownTriggerButton dropdownId="comfort" label="Spazi Esterni e Comfort →" />}
         </StickyBottomBarContent>
       </div>
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>{(() => {

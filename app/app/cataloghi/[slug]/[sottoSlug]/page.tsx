@@ -236,11 +236,11 @@ export default async function Page({ params }: Props) {
 
       <SetActionBar key={cartNonVuoto ? '1' : '0'}>
         <Link href={`/app/cataloghi/${slug}`} className="btn-black-app fs-12" style={cartNonVuoto ? { flex: 1 } : { margin: '0 auto' }}>
-          ← Torna a {categoria.nome}
+          ← {categoria.nome}
         </Link>
         {cartNonVuoto && (
           <Link href="/app/carrello-preventivo" className="btn-black-app fs-12" style={{ flex: 1 }}>
-            ← Torna a simulazione
+            ← simulazione
           </Link>
         )}
       </SetActionBar>

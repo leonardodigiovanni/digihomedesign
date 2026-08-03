@@ -77,7 +77,7 @@ export default async function Page({ params }: Props) {
 
       <p style={{ marginTop: 16 }}>
         <Link href={`/promozioni/${categoriaSlug}/${sottocategoriaSlug}`} className="btn-black fs-12" style={{ height: 42, padding: '0 20px', borderRadius: 21, display: 'inline-flex', alignItems: 'center', textDecoration: 'none' }}>
-          ← Torna a {sottocategoria}
+          ← {sottocategoria}
         </Link>
       </p>
     </div>

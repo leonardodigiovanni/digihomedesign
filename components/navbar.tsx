@@ -9,6 +9,7 @@ import { clientPages, standalonePages, visibleAdminPages, visibleInternalPages, 
 import HeaderAuth from '@/components/header-auth'
 import ShortcutStar from '@/components/shortcut-star'
 import { useHomeShortcuts } from '@/lib/home-shortcuts-context'
+import { useNavDropdownRequest, type AnchorRect } from '@/lib/nav-dropdown-context'
 
 // Pagine spostate dal dropdown di categoria a un menu "flat" dedicato (es. Comfort
 // e Spazi Esterni): restano nell'array categoryGroups (serve al pannello admin
@@ -852,11 +853,37 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
   )
 }
 
-function useDropdownAlign(open: boolean): React.RefObject<HTMLDivElement> {
+function useDropdownAlign(open: boolean, anchorRect?: AnchorRect | null): React.RefObject<HTMLDivElement> {
   const ref = useRef<HTMLDivElement>(null)
   useLayoutEffect(() => {
     const el = ref.current
     if (!el || !open) return
+
+    // Ancorato allo sticky bottom bar (trigger lontano, in fondo allo schermo):
+    // si sviluppa verso l'alto a partire dal bottone cliccato, non dal link in navbar.
+    if (anchorRect) {
+      el.style.position = 'fixed'
+      el.style.top = 'auto'
+      el.style.bottom = `${window.innerHeight - anchorRect.top}px`
+      el.style.maxWidth = `${window.innerWidth - 16}px`
+      el.style.overflowX = 'auto'
+
+      el.style.left = `${anchorRect.left + anchorRect.width / 2}px`
+      el.style.right = 'auto'
+      el.style.transform = 'translateX(-50%)'
+
+      const eRect = el.getBoundingClientRect()
+      if (eRect.right > window.innerWidth - 8) {
+        el.style.left = 'auto'
+        el.style.right = '8px'
+        el.style.transform = 'none'
+      } else if (eRect.left < 8) {
+        el.style.left = '8px'
+        el.style.right = 'auto'
+        el.style.transform = 'none'
+      }
+      return
+    }
 
     const trigger = el.parentElement
     if (!trigger) return
@@ -864,6 +891,7 @@ function useDropdownAlign(open: boolean): React.RefObject<HTMLDivElement> {
 
     // fixed sfugge a overflow-x:clip su nav-scroll
     el.style.position = 'fixed'
+    el.style.bottom = 'auto'
     el.style.top = `${tRect.bottom}px`
     el.style.maxWidth = `${window.innerWidth - 16}px`
     el.style.overflowX = 'auto'
@@ -884,7 +912,7 @@ function useDropdownAlign(open: boolean): React.RefObject<HTMLDivElement> {
       el.style.right = 'auto'
       el.style.transform = 'none'
     }
-  }, [open])
+  }, [open, anchorRect])
   return ref as React.RefObject<HTMLDivElement>
 }
 
@@ -1083,22 +1111,36 @@ function ComfortDropdown({
   linkClass: (active: boolean) => string
 }) {
   const [open, setOpen] = useState(false)
+  const [stickyAnchor, setStickyAnchor] = useState<AnchorRect | null>(null)
   const ref = useRef<HTMLDivElement>(null)
-  const alignRef = useDropdownAlign(open)
+  const alignRef = useDropdownAlign(open, stickyAnchor)
+  const { request, consume } = useNavDropdownRequest()
 
   useEffect(() => {
     function handle(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+      const target = e.target as HTMLElement
+      if (ref.current && !ref.current.contains(target) && !target.closest('[data-nav-dropdown-trigger="comfort"]')) {
+        setOpen(false)
+        setStickyAnchor(null)
+      }
     }
     document.addEventListener('mousedown', handle)
     return () => document.removeEventListener('mousedown', handle)
   }, [])
 
+  useEffect(() => {
+    if (request?.id === 'comfort') {
+      setOpen(o => !o)
+      setStickyAnchor(request.anchorRect)
+      consume()
+    }
+  }, [request, consume])
+
   const anyActive = items.some(p => isActive(p.href))
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/comfort-e-spazi-esterni'), height: 'auto', minHeight: 46, flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4, padding: '0 6px' }}>
+      <button onClick={() => { setOpen(o => !o); setStickyAnchor(null) }} className={linkClass(anyActive)} style={{ ...linkStyle('/comfort-e-spazi-esterni'), height: 'auto', minHeight: 46, flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4, padding: '0 6px' }}>
         <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
           <span>Spazi Esterni</span>
           <span>e Comfort</span>

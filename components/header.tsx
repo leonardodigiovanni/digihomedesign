@@ -122,10 +122,9 @@ export default function Header({
           <Image src="/images/header/DIGIHOMEDESIGN.webp" alt="Home Design" width={80} height={80} style={{ objectFit: 'contain', display: 'block' }} />
         </Link>
         <div style={{ textAlign: 'left', fontSize: 13, fontWeight: 700, letterSpacing: '0.02em', lineHeight: 1.3, whiteSpace: 'nowrap' }}>
-          <div style={{ color: '#999' }}>Serramenti</div>
-          <div style={{ color: '#999' }}>Sicurezza</div>
+          <div style={{ color: '#999' }}>Serramenti &bull; Sicurezza</div>
           <div style={{ color: '#999' }}>Ristrutturazioni</div>
-          <div style={{ color: '#fff' }}>Home Design</div>
+          <div style={{ color: '#fff', fontSize: 17 }}>Home Design</div>
         </div>
       </div>
       <div style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', zIndex: 20 }}>
