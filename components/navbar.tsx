@@ -9,7 +9,8 @@ import { clientPages, standalonePages, visibleAdminPages, visibleInternalPages, 
 import HeaderAuth from '@/components/header-auth'
 import ShortcutStar from '@/components/shortcut-star'
 import { useHomeShortcuts } from '@/lib/home-shortcuts-context'
-import { useNavDropdownRequest, type AnchorRect } from '@/lib/nav-dropdown-context'
+import { useNavDropdownRequest } from '@/lib/nav-dropdown-context'
+import { BAR_HEIGHT, BAR_HEIGHT_NARROW, NARROW_BREAKPOINT, GAP_HEIGHT } from '@/components/sticky-bottom-bar'
 
 interface NavbarProps {
   role: string | null
@@ -843,7 +844,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
   )
 }
 
-function useDropdownAlign(open: boolean, anchorRect?: AnchorRect | null): React.RefObject<HTMLDivElement> {
+function useDropdownAlign(open: boolean, stickyTriggerId?: string | null): React.RefObject<HTMLDivElement> {
   const ref = useRef<HTMLDivElement>(null)
   useLayoutEffect(() => {
     const el = ref.current
@@ -851,14 +852,22 @@ function useDropdownAlign(open: boolean, anchorRect?: AnchorRect | null): React.
 
     // Ancorato allo sticky bottom bar (trigger lontano, in fondo allo schermo):
     // si sviluppa verso l'alto a partire dal bottone cliccato, non dal link in navbar.
-    if (anchorRect) {
+    // La posizione del bottone viene letta "fresca" dal DOM proprio ora (non passata
+    // via state), per evitare coordinate stale/sbagliate.
+    if (stickyTriggerId) {
+      const triggerEl = document.querySelector<HTMLElement>(`[data-nav-dropdown-trigger="${stickyTriggerId}"]`)
+      if (!triggerEl) return
+      const tRect = triggerEl.getBoundingClientRect()
+      const isNarrow = window.matchMedia(`(max-width: ${NARROW_BREAKPOINT}px)`).matches
+      const barHeight = isNarrow ? BAR_HEIGHT_NARROW : BAR_HEIGHT
+
       el.style.position = 'fixed'
       el.style.top = 'auto'
-      el.style.bottom = `${window.innerHeight - anchorRect.top}px`
+      el.style.bottom = `${barHeight + GAP_HEIGHT}px`
       el.style.maxWidth = `${window.innerWidth - 16}px`
       el.style.overflowX = 'auto'
 
-      el.style.left = `${anchorRect.left + anchorRect.width / 2}px`
+      el.style.left = `${tRect.left + tRect.width / 2}px`
       el.style.right = 'auto'
       el.style.transform = 'translateX(-50%)'
 
@@ -902,7 +911,7 @@ function useDropdownAlign(open: boolean, anchorRect?: AnchorRect | null): React.
       el.style.right = 'auto'
       el.style.transform = 'none'
     }
-  }, [open, anchorRect])
+  }, [open, stickyTriggerId])
   return ref as React.RefObject<HTMLDivElement>
 }
 
@@ -1026,9 +1035,9 @@ function ProdottiDropdown({
   linkClass: (active: boolean) => string
 }) {
   const [open, setOpen] = useState(false)
-  const [stickyAnchor, setStickyAnchor] = useState<AnchorRect | null>(null)
+  const [viaSticky, setViaSticky] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
-  const alignRef = useDropdownAlign(open, stickyAnchor)
+  const alignRef = useDropdownAlign(open, viaSticky ? 'prodotti' : null)
   const { request, consume } = useNavDropdownRequest()
 
   useEffect(() => {
@@ -1036,7 +1045,7 @@ function ProdottiDropdown({
       const target = e.target as HTMLElement
       if (ref.current && !ref.current.contains(target) && !target.closest('[data-nav-dropdown-trigger="prodotti"]')) {
         setOpen(false)
-        setStickyAnchor(null)
+        setViaSticky(false)
       }
     }
     document.addEventListener('mousedown', handle)
@@ -1046,7 +1055,7 @@ function ProdottiDropdown({
   useEffect(() => {
     if (request?.id === 'prodotti') {
       setOpen(o => !o)
-      setStickyAnchor(request.anchorRect)
+      setViaSticky(true)
       consume()
     }
   }, [request, consume])
@@ -1055,7 +1064,7 @@ function ProdottiDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => { setOpen(o => !o); setStickyAnchor(null) }} className={linkClass(anyActive)} style={{ ...linkStyle('/prodotti'), height: 'auto', minHeight: 46, flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4, padding: '0 6px' }}>
+      <button onClick={() => { setOpen(o => !o); setViaSticky(false) }} className={linkClass(anyActive)} style={{ ...linkStyle('/prodotti'), height: 'auto', minHeight: 46, flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4, padding: '0 6px' }}>
         <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
           <span>Riqualificazione</span>
           <span>Energetica</span>
@@ -1115,9 +1124,9 @@ function ComfortDropdown({
   linkClass: (active: boolean) => string
 }) {
   const [open, setOpen] = useState(false)
-  const [stickyAnchor, setStickyAnchor] = useState<AnchorRect | null>(null)
+  const [viaSticky, setViaSticky] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
-  const alignRef = useDropdownAlign(open, stickyAnchor)
+  const alignRef = useDropdownAlign(open, viaSticky ? 'comfort' : null)
   const { request, consume } = useNavDropdownRequest()
 
   useEffect(() => {
@@ -1125,7 +1134,7 @@ function ComfortDropdown({
       const target = e.target as HTMLElement
       if (ref.current && !ref.current.contains(target) && !target.closest('[data-nav-dropdown-trigger="comfort"]')) {
         setOpen(false)
-        setStickyAnchor(null)
+        setViaSticky(false)
       }
     }
     document.addEventListener('mousedown', handle)
@@ -1135,7 +1144,7 @@ function ComfortDropdown({
   useEffect(() => {
     if (request?.id === 'comfort') {
       setOpen(o => !o)
-      setStickyAnchor(request.anchorRect)
+      setViaSticky(true)
       consume()
     }
   }, [request, consume])
@@ -1144,7 +1153,7 @@ function ComfortDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => { setOpen(o => !o); setStickyAnchor(null) }} className={linkClass(anyActive)} style={{ ...linkStyle('/comfort-e-spazi-esterni'), height: 'auto', minHeight: 46, flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4, padding: '0 6px' }}>
+      <button onClick={() => { setOpen(o => !o); setViaSticky(false) }} className={linkClass(anyActive)} style={{ ...linkStyle('/comfort-e-spazi-esterni'), height: 'auto', minHeight: 46, flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4, padding: '0 6px' }}>
         <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
           <span>Spazi Esterni</span>
           <span>e Comfort</span>
@@ -1188,9 +1197,9 @@ function AntintrusioneDropdown({
   linkClass: (active: boolean) => string
 }) {
   const [open, setOpen] = useState(false)
-  const [stickyAnchor, setStickyAnchor] = useState<AnchorRect | null>(null)
+  const [viaSticky, setViaSticky] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
-  const alignRef = useDropdownAlign(open, stickyAnchor)
+  const alignRef = useDropdownAlign(open, viaSticky ? 'antintrusione' : null)
   const { request, consume } = useNavDropdownRequest()
 
   useEffect(() => {
@@ -1198,7 +1207,7 @@ function AntintrusioneDropdown({
       const target = e.target as HTMLElement
       if (ref.current && !ref.current.contains(target) && !target.closest('[data-nav-dropdown-trigger="antintrusione"]')) {
         setOpen(false)
-        setStickyAnchor(null)
+        setViaSticky(false)
       }
     }
     document.addEventListener('mousedown', handle)
@@ -1208,7 +1217,7 @@ function AntintrusioneDropdown({
   useEffect(() => {
     if (request?.id === 'antintrusione') {
       setOpen(o => !o)
-      setStickyAnchor(request.anchorRect)
+      setViaSticky(true)
       consume()
     }
   }, [request, consume])
@@ -1217,7 +1226,7 @@ function AntintrusioneDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => { setOpen(o => !o); setStickyAnchor(null) }} className={linkClass(anyActive)} style={{ ...linkStyle('/antintrusione-e-sicurezza'), height: 'auto', minHeight: 46, flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4, padding: '0 6px' }}>
+      <button onClick={() => { setOpen(o => !o); setViaSticky(false) }} className={linkClass(anyActive)} style={{ ...linkStyle('/antintrusione-e-sicurezza'), height: 'auto', minHeight: 46, flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4, padding: '0 6px' }}>
         <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
           <span>Antintrusione</span>
           <span>e Sicurezza</span>
@@ -1261,9 +1270,9 @@ function CarpenteriaDropdown({
   linkClass: (active: boolean) => string
 }) {
   const [open, setOpen] = useState(false)
-  const [stickyAnchor, setStickyAnchor] = useState<AnchorRect | null>(null)
+  const [viaSticky, setViaSticky] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
-  const alignRef = useDropdownAlign(open, stickyAnchor)
+  const alignRef = useDropdownAlign(open, viaSticky ? 'carpenteria' : null)
   const { request, consume } = useNavDropdownRequest()
 
   useEffect(() => {
@@ -1271,7 +1280,7 @@ function CarpenteriaDropdown({
       const target = e.target as HTMLElement
       if (ref.current && !ref.current.contains(target) && !target.closest('[data-nav-dropdown-trigger="carpenteria"]')) {
         setOpen(false)
-        setStickyAnchor(null)
+        setViaSticky(false)
       }
     }
     document.addEventListener('mousedown', handle)
@@ -1281,7 +1290,7 @@ function CarpenteriaDropdown({
   useEffect(() => {
     if (request?.id === 'carpenteria') {
       setOpen(o => !o)
-      setStickyAnchor(request.anchorRect)
+      setViaSticky(true)
       consume()
     }
   }, [request, consume])
@@ -1290,7 +1299,7 @@ function CarpenteriaDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => { setOpen(o => !o); setStickyAnchor(null) }} className={linkClass(anyActive)} style={{ ...linkStyle("/carpenteria-d-arredo"), height: 'auto', minHeight: 46, flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4, padding: '0 6px' }}>
+      <button onClick={() => { setOpen(o => !o); setViaSticky(false) }} className={linkClass(anyActive)} style={{ ...linkStyle("/carpenteria-d-arredo"), height: 'auto', minHeight: 46, flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4, padding: '0 6px' }}>
         <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
           <span>Carpenteria</span>
           <span>d&apos;Arredo</span>
@@ -1336,9 +1345,9 @@ function RistrutturazioniDropdown({
   computometricoHref: string
 }) {
   const [open, setOpen] = useState(false)
-  const [stickyAnchor, setStickyAnchor] = useState<AnchorRect | null>(null)
+  const [viaSticky, setViaSticky] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
-  const alignRef = useDropdownAlign(open, stickyAnchor)
+  const alignRef = useDropdownAlign(open, viaSticky ? 'ristrutturazioni' : null)
   const { request, consume } = useNavDropdownRequest()
 
   useEffect(() => {
@@ -1346,7 +1355,7 @@ function RistrutturazioniDropdown({
       const target = e.target as HTMLElement
       if (ref.current && !ref.current.contains(target) && !target.closest('[data-nav-dropdown-trigger="ristrutturazioni"]')) {
         setOpen(false)
-        setStickyAnchor(null)
+        setViaSticky(false)
       }
     }
     document.addEventListener('mousedown', handle)
@@ -1356,7 +1365,7 @@ function RistrutturazioniDropdown({
   useEffect(() => {
     if (request?.id === 'ristrutturazioni') {
       setOpen(o => !o)
-      setStickyAnchor(request.anchorRect)
+      setViaSticky(true)
       consume()
     }
   }, [request, consume])
@@ -1365,7 +1374,7 @@ function RistrutturazioniDropdown({
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => { setOpen(o => !o); setStickyAnchor(null) }} className={linkClass(anyActive)} style={{ ...linkStyle('/ristrutturazioni-chiavi-in-mano'), height: 'auto', minHeight: 46, flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4, padding: '0 6px' }}>
+      <button onClick={() => { setOpen(o => !o); setViaSticky(false) }} className={linkClass(anyActive)} style={{ ...linkStyle('/ristrutturazioni-chiavi-in-mano'), height: 'auto', minHeight: 46, flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4, padding: '0 6px' }}>
         <span style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
           <span>Ristrutturazioni</span>
           <span>Chiavi in Mano</span>
@@ -1583,7 +1592,7 @@ function CategoryDropdown({
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
-  const [stickyAnchor, setStickyAnchor] = useState<AnchorRect | null>(null)
+  const [viaSticky, setViaSticky] = useState(false)
   const triggerRef = useRef<HTMLDivElement>(null)
   const dropRef = useRef<HTMLDivElement>(null)
   const dropdownId = `cat-${group.id}`
@@ -1595,11 +1604,18 @@ function CategoryDropdown({
     if (!open || !triggerRef.current || !dropRef.current) return
     const el = dropRef.current
 
-    if (stickyAnchor) {
+    if (viaSticky) {
       // Ancorato allo sticky bottom bar: si sviluppa verso l'alto dal bottone cliccato.
+      // Posizione letta fresca dal DOM (non passata via state) per evitare coordinate stale.
+      const triggerEl = document.querySelector<HTMLElement>(`[data-nav-dropdown-trigger="${dropdownId}"]`)
+      if (!triggerEl) return
+      const tr = triggerEl.getBoundingClientRect()
+      const isNarrow = window.matchMedia(`(max-width: ${NARROW_BREAKPOINT}px)`).matches
+      const barHeight = isNarrow ? BAR_HEIGHT_NARROW : BAR_HEIGHT
+
       el.style.top = 'auto'
-      el.style.bottom = `${window.innerHeight - stickyAnchor.top}px`
-      el.style.left = `${stickyAnchor.left + stickyAnchor.width / 2}px`
+      el.style.bottom = `${barHeight + GAP_HEIGHT}px`
+      el.style.left = `${tr.left + tr.width / 2}px`
       el.style.right = 'auto'
       el.style.transform = 'translateX(-50%)'
       const er = el.getBoundingClientRect()
@@ -1631,7 +1647,7 @@ function CategoryDropdown({
       el.style.right = 'auto'
       el.style.transform = 'none'
     }
-  }, [open, stickyAnchor])
+  }, [open, viaSticky, dropdownId])
 
   useEffect(() => {
     if (!open) return
@@ -1639,7 +1655,7 @@ function CategoryDropdown({
       const t = e.target as Node
       if (!triggerRef.current?.contains(t) && !dropRef.current?.contains(t) && !(t as HTMLElement).closest(`[data-nav-dropdown-trigger="${dropdownId}"]`)) {
         setOpen(false)
-        setStickyAnchor(null)
+        setViaSticky(false)
       }
     }
     document.addEventListener('mousedown', handle)
@@ -1649,7 +1665,7 @@ function CategoryDropdown({
   useEffect(() => {
     if (request?.id === dropdownId) {
       setOpen(o => !o)
-      setStickyAnchor(request.anchorRect)
+      setViaSticky(true)
       consume()
     }
   }, [request, dropdownId, consume])
@@ -1657,7 +1673,7 @@ function CategoryDropdown({
   return (
     <div ref={triggerRef} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
       <button
-        onClick={() => { if (!open) router.push(group.href); setOpen(o => !o); setStickyAnchor(null) }}
+        onClick={() => { if (!open) router.push(group.href); setOpen(o => !o); setViaSticky(false) }}
         className={linkClass(isActive(group.href))}
         style={{ ...linkStyle(group.href), height: 'auto', minHeight: 46, flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4 }}
       >
