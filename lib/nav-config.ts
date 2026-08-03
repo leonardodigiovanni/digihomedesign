@@ -163,6 +163,27 @@ export const categoryGroups: CategoryGroup[] = [
   },
 ]
 
+// Pagine spostate dal dropdown di categoria a un menu "flat" dedicato (es. Comfort
+// e Spazi Esterni): restano nell'array categoryGroups (serve al pannello admin
+// "Pagine visibili" per il toggle), ma non vengono più duplicate nel dropdown
+// della categoria di origine — l'URL sotto /serramenti/* non cambia.
+export const HIDDEN_FROM_CATEGORY: Record<string, number[]> = {
+  serramenti: [2082, 2081, 203, 2031, 210, 202, 204, 205],
+  metallurgia: [2124, 2125, 2126, 215, 214, 2201, 2202, 216, 217],
+  legno: [249],
+}
+
+// Vicini (precedente/successivo) di una pagina in una categoryGroup, tenendo conto sia
+// di disabledPages sia di HIDDEN_FROM_CATEGORY (le pagine "spostate" non contano come
+// vicine qui: appartengono logicamente a un'altra sezione).
+export function getCategoryGroupNeighbors(groupId: string, currentId: number, disabledPages: number[]): { prev: NavPage | null; next: NavPage | null } {
+  const group = categoryGroups.find(g => g.id === groupId)
+  if (!group) return { prev: null, next: null }
+  const hidden = HIDDEN_FROM_CATEGORY[groupId] ?? []
+  const visible = group.pages.filter(p => !disabledPages.includes(p.id) && !hidden.includes(p.id))
+  return getSectionNeighbors(visible, currentId, disabledPages)
+}
+
 // Pagine Chi Siamo (ex "Brand"): area pubblica sito vetrina.
 // Le pagine vivono ancora sotto app/brand/* (nessuna modifica ai file), ma sono
 // raggiunte con l'URL pubblico /chi-siamo/* grazie al rewrite in next.config.ts.
@@ -199,17 +220,22 @@ export const prodottiPages: NavPage[] = [
   { id: 299, label: 'Tapparelle in PVC',        href: '/serramenti/tapparelle-in-pvc'                                                  },
 ]
 
-// Vicini (precedente/successivo) di una pagina Riqualificazione Energetica nella sequenza
-// 1-10, saltando quelle disattivate da pannello admin (disabledPages) così la numerazione
-// resta compatta. Usato per i bottoni dinamici "torna"/"vai" nello sticky di ogni pagina.
-export function getProdottiNeighbors(currentId: number, disabledPages: number[]): { prev: NavPage | null; next: NavPage | null } {
-  const visible = prodottiPages.filter(p => !disabledPages.includes(p.id))
+// Vicini (precedente/successivo) di una pagina all'interno di una sequenza ordinata di
+// NavPage, saltando quelle disattivate da pannello admin (disabledPages) così la
+// numerazione resta compatta. Usato per i bottoni dinamici blu "torna"/"vai" nello
+// sticky di ogni pagina (intra-sezione).
+export function getSectionNeighbors(pages: NavPage[], currentId: number, disabledPages: number[]): { prev: NavPage | null; next: NavPage | null } {
+  const visible = pages.filter(p => !disabledPages.includes(p.id))
   const idx = visible.findIndex(p => p.id === currentId)
   if (idx === -1) return { prev: null, next: null }
   return {
     prev: idx > 0 ? visible[idx - 1] : null,
     next: idx < visible.length - 1 ? visible[idx + 1] : null,
   }
+}
+
+export function getProdottiNeighbors(currentId: number, disabledPages: number[]) {
+  return getSectionNeighbors(prodottiPages, currentId, disabledPages)
 }
 
 // Raggruppamento visivo (non cliccabile) delle voci sopra nel dropdown di navbar/menu mobile.
@@ -229,6 +255,10 @@ export const comfortSpaziEsterniPages: NavPage[] = [
   { id: 210,  label: 'Zanzariere',            href: '/serramenti/zanzariere'            },
 ]
 
+export function getComfortNeighbors(currentId: number, disabledPages: number[]) {
+  return getSectionNeighbors(comfortSpaziEsterniPages, currentId, disabledPages)
+}
+
 // Pagine "Antintrusione e Sicurezza": voce di menu nuova, flat, che riusa le pagine
 // reali già esistenti sotto Metallurgia (stessi id/href, stesso principio di comfortSpaziEsterniPages).
 export const antintrusioneSicurezzaPages: NavPage[] = [
@@ -239,6 +269,10 @@ export const antintrusioneSicurezzaPages: NavPage[] = [
   { id: 214,  label: 'Cancelli',       href: '/metallurgia/cancelli'       },
 ]
 
+export function getAntintrusioneNeighbors(currentId: number, disabledPages: number[]) {
+  return getSectionNeighbors(antintrusioneSicurezzaPages, currentId, disabledPages)
+}
+
 // Pagine "Carpenteria d'Arredo": voce di menu nuova, flat, che riusa le pagine
 // reali già esistenti sotto Metallurgia (stessi id/href, stesso principio delle voci sopra).
 export const carpenteriaArredoPages: NavPage[] = [
@@ -247,6 +281,10 @@ export const carpenteriaArredoPages: NavPage[] = [
   { id: 216,  label: 'Ringhiere',         href: '/metallurgia/ringhiere'         },
   { id: 217,  label: 'Balconi',           href: '/metallurgia/balconi'           },
 ]
+
+export function getCarpenteriaNeighbors(currentId: number, disabledPages: number[]) {
+  return getSectionNeighbors(carpenteriaArredoPages, currentId, disabledPages)
+}
 
 // Pagine "Ristrutturazioni Chiavi in Mano": voce di menu nuova, flat. Edilizia e Arredo
 // riusano gli hub categoria già esistenti; Pratiche/Impianti/Mobili sono pagine nuove
@@ -258,6 +296,10 @@ export const ristrutturazioniChiaviInManoPages: NavPage[] = [
   { id: 303, label: 'Mobili',    href: '/ristrutturazioni-chiavi-in-mano/mobili'   },
   { id: 304, label: 'Arredi',    href: '/arredi'                                   },
 ]
+
+export function getRistrutturazioniNeighbors(currentId: number, disabledPages: number[]) {
+  return getSectionNeighbors(ristrutturazioniChiaviInManoPages, currentId, disabledPages)
+}
 
 // Colori placeholder per i riquadri della home (sostituire con immagini reali)
 export const cardColors = [

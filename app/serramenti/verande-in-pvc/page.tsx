@@ -12,6 +12,8 @@ import type { PreventivoDestOption } from '@/app/brand/cataloghi/actions'
 import AggiungiArticoloAcquistoForm from '@/components/aggiungi-articolo-acquisto-form'
 import type { ArticoloListinoAcquisto } from '@/components/aggiungi-articolo-acquisto-form'
 import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
+import { readSettings } from '@/lib/settings'
+import { getComfortNeighbors } from '@/lib/nav-config'
 import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = {
@@ -106,6 +108,8 @@ async function getCatalogoData(nomeCategoria: string, sottocatSlug: string) {
 }
 
 export default async function Page() {
+  const { disabledPages } = await readSettings()
+  const { prev, next } = getComfortNeighbors(2031, disabledPages)
   const catalogo = await getCatalogoData('serramenti', 'verande-in-pvc')
   const cookieStore = await cookies()
   const role = cookieStore.get('session_role')?.value ?? ''
@@ -201,8 +205,10 @@ export default async function Page() {
 
         <StickyBottomBarContent>
           <Link href="/serramenti" className="btn-black fs-12">← Serramenti</Link>
+          {prev && <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link>}
           <CtaPreventivo />
           <CtaCantiere />
+          {next && <Link href={next.href} className="btn-blue fs-12">{next.label} →</Link>}
         </StickyBottomBarContent>
       </div>
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>{(() => {

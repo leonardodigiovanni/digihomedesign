@@ -12,6 +12,8 @@ import AggiungiArticoloAcquistoForm from '@/components/aggiungi-articolo-acquist
 import type { ArticoloListinoAcquisto } from '@/components/aggiungi-articolo-acquisto-form'
 import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import ShortcutStar from '@/components/shortcut-star'
+import { readSettings } from '@/lib/settings'
+import { getAntintrusioneNeighbors } from '@/lib/nav-config'
 
 export const metadata: Metadata = {
   title: 'Grate di Sicurezza a Palermo — Finestre e Vani in Ferro',
@@ -71,6 +73,8 @@ async function getCatalogoData(nomeCategoria: string) {
 }
 
 export default async function Page() {
+  const { disabledPages } = await readSettings()
+  const { prev, next } = getAntintrusioneNeighbors(215, disabledPages)
   const CERCA = 'Grate'
   const catalogo = await getCatalogoData(CERCA)
   const cookieStore = await cookies()
@@ -164,8 +168,10 @@ export default async function Page() {
 
         <StickyBottomBarContent>
           <Link href="/metallurgia" className="btn-black fs-12">← Metallurgia</Link>
+          {prev && <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link>}
           <CtaPreventivo />
           <CtaCantiere />
+          {next && <Link href={next.href} className="btn-blue fs-12">{next.label} →</Link>}
         </StickyBottomBarContent>
       </div>
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>{(() => {

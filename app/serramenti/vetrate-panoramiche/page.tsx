@@ -5,6 +5,9 @@ import CtaPreventivo from '@/components/cta-preventivo'
 import CtaCantiere from '@/components/cta-cantiere'
 import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import ShortcutStar from '@/components/shortcut-star'
+import { readSettings } from '@/lib/settings'
+import { getComfortNeighbors } from '@/lib/nav-config'
+import NavDropdownTriggerButton from '@/components/nav-dropdown-trigger-button'
 
 export const metadata: Metadata = {
   title: 'Vetrate Panoramiche a Palermo — Pareti Vetrate Scorrevoli su Misura',
@@ -19,7 +22,9 @@ export const metadata: Metadata = {
   },
 }
 
-export default function Page() {
+export default async function Page() {
+  const { disabledPages } = await readSettings()
+  const { prev, next } = getComfortNeighbors(2082, disabledPages)
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
@@ -56,8 +61,10 @@ export default function Page() {
 
         <StickyBottomBarContent>
           <Link href="/serramenti" className="btn-black fs-12">← Serramenti</Link>
+          {prev ? <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link> : <NavDropdownTriggerButton dropdownId="prodotti" label="← Riqualificazione Energetica" />}
           <CtaPreventivo />
           <CtaCantiere />
+          {next ? <Link href={next.href} className="btn-blue fs-12">{next.label} →</Link> : <NavDropdownTriggerButton dropdownId="antintrusione" label="Antintrusione e Sicurezza →" />}
         </StickyBottomBarContent>
       </div>
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>tipo pagina fototesto contatti (contenuto nuovo, nessun catalogo DB collegato ancora)</p>
