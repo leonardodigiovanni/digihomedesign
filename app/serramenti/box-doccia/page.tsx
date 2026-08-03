@@ -13,6 +13,9 @@ import AggiungiArticoloAcquistoForm from '@/components/aggiungi-articolo-acquist
 import type { ArticoloListinoAcquisto } from '@/components/aggiungi-articolo-acquisto-form'
 import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import ShortcutStar from '@/components/shortcut-star'
+import { readSettings } from '@/lib/settings'
+import { getCategoryGroupNeighbors } from '@/lib/nav-config'
+import NavDropdownTriggerButton from '@/components/nav-dropdown-trigger-button'
 
 export const metadata: Metadata = {
   title: 'Box Doccia a Palermo â€” Vetro Temperato su Misura',
@@ -106,6 +109,8 @@ async function getCatalogoData(nomeCategoria: string, sottocatSlug: string) {
 }
 
 export default async function Page() {
+  const { disabledPages } = await readSettings()
+  const { prev, next } = getCategoryGroupNeighbors('serramenti', 207, disabledPages)
   const catalogo = await getCatalogoData('serramenti', 'box-doccia')
   const cookieStore = await cookies()
   const role = cookieStore.get('session_role')?.value ?? ''
@@ -207,8 +212,10 @@ export default async function Page() {
 
         <StickyBottomBarContent>
           <Link href="/serramenti" className="btn-black fs-12">← Serramenti</Link>
+          {prev && <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link>}
           <CtaPreventivo />
           <CtaCantiere />
+          {next ? <Link href={next.href} className="btn-blue fs-12">{next.label} →</Link> : <NavDropdownTriggerButton dropdownId="cat-metallurgia" label="Ferro e Acciaio →" />}
         </StickyBottomBarContent>
       </div>
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>{(() => {
