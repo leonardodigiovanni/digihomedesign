@@ -159,31 +159,39 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/imbotti-in-alluminio/20240802_183635.webp" alt="Cassonetto in PVC installato" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/cassonetti/cassonetto-bianco.webp" alt="Cassonetto in PVC bianco" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Cassonetto installato</span>
+                <span className="testo-articoli">Bianco</span>
               </div>
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/imbotti-in-alluminio/cassonetto_mediterraneo-800x533.webp" alt="Cassonetto in PVC" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/cassonetti/Colore-legno.webp" alt="Cassonetto in PVC color legno" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Cassonetto coibentato</span>
+                <span className="testo-articoli">Legno</span>
               </div>
             </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              I vecchi cassonetti in muratura o cemento sono tra i punti più deboli dell&apos;involucro edilizio: privi di isolamento, disperdono calore e favoriscono la formazione di condensa. Sostituirli con un <strong>cassonetto coibentato in PVC a Palermo</strong> elimina questo ponte termico con un intervento mirato e poco invasivo.
+              I vecchi cassonetti in muratura o cemento sono tra i punti più deboli dell&apos;involucro edilizio: privi di isolamento, disperdono calore e favoriscono la formazione di condensa. Sostituirli con un cassonetto coibentato in PVC a Palermo elimina questo ponte termico con un intervento mirato e poco invasivo. I nostri cassonetti integrano un pannello isolante interno, ispezionabile per la manutenzione dell&apos;avvolgibile, e si abbinano per colore e finitura all&apos;infisso in PVC o alluminio già installato o di nuova fornitura.
             </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              I nostri cassonetti integrano un pannello isolante interno, ispezionabile per la manutenzione dell&apos;avvolgibile, e si abbinano per colore e finitura all&apos;infisso in PVC o alluminio già installato o di nuova fornitura.
+              Ti seguiamo in ogni fase del progetto: preventivo gratuito, sopralluogo, rilievo misure, fornitura, posa in opera, sigillatura e smaltimento vecchi cassonetti, con un servizio completo e professionale.
             </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Il sopralluogo gratuito valuta lo stato del cassonetto esistente e la soluzione di sostituzione più adatta, anche in presenza di tapparelle motorizzate. Contattaci per un preventivo gratuito.
-            </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16, background: '#e8f7e8', border: '1px solid #9dd49d', borderRadius: 20, padding: 16 }}>
+              <Image src="/images/cta/emoticon2.webp" alt="" width={64} height={64} style={{ objectFit: 'contain', flexShrink: 0 }} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <p className="testo-articoli" style={{ margin: 0, fontWeight: 700, color: '#8a6800' }}>
+                  Articolo disponibile per preventivi Online
+                </p>
+                <p className="testo-articoli" style={{ margin: 0, fontStyle: 'italic' }}>
+                  Per farti risparmiare tempo prezioso, puoi utilizzare il nostro preventivatore online: inserisci in autonomia misure e configurazione del serramento per ottenere una stima immediata del costo. Se il preventivo ti soddisfa, fisseremo un sopralluogo per il rilievo definitivo delle misure e la conferma dell&apos;offerta, che normalmente si discosta di poco dalla simulazione iniziale.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 

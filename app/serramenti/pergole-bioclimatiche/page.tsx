@@ -162,7 +162,7 @@ export default async function Page() {
                 <Image src="/images/serramenti/pergole-bioclimatiche/orientabili.webp" alt="Pergola bioclimatica con lamelle orientabili su terrazza" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Pergola con lamelle orientabili</span>
+                <span className="testo-articoli">Lamelle orientabili</span>
               </div>
             </div>
             <div className="page-card">
@@ -170,19 +170,13 @@ export default async function Page() {
                 <Image src="/images/serramenti/pergole-bioclimatiche/pergole.webp" alt="Pergole bioclimatiche su balconi in alluminio bianco" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Pergole bioclimatiche in alluminio</span>
+                <span className="testo-articoli">Lamelle Fisse</span>
               </div>
             </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Progettiamo e installiamo <strong>pergole bioclimatiche a Palermo</strong> su misura per terrazzi, giardini e spazi commerciali: struttura in alluminio con lamelle orientabili motorizzate per regolare luce e ventilazione, canaline di scolo integrate per la pioggia e chiusure laterali in vetro scorrevole o zip screen.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Ogni pergola è dotata di sistema di controllo motorizzato (telecomando, app o integrazione domotica) per l&apos;apertura e chiusura delle lamelle, oltre a illuminazione LED integrata e opzioni di riscaldamento e sensori pioggia/vento.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Ogni progetto viene accompagnato da un disegno tecnico in pianta e prospetto per l&apos;approvazione prima della produzione. Contattaci per un sopralluogo gratuito a Palermo e provincia.
+              Vendiamo e installiamo pergole bioclimatiche su misura per terrazzi, giardini e spazi commerciali: struttura in alluminio con lamelle orientabili motorizzate per regolare luce e ventilazione con sistema di controllo motorizzato.
             </p>
           </div>
         </div>

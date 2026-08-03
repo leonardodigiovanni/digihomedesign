@@ -159,31 +159,42 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/infissi-in-pvc/pvc-alphaluce.webp" alt="Infissi in PVC Alphaluce" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/infissi-in-pvc/PVC_vista_esterna.webp" alt="Infisso in PVC a battente" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Infissi in PVC Alphaluce</span>
+                <span className="testo-articoli">Battente</span>
               </div>
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/infissi-in-pvc/Inalpha-Prestigio21.webp" alt="Infissi in PVC Inalpha Prestigio" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/infissi-in-pvc/PVC_vista_interna.webp" alt="Infisso in PVC a ribalta" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Infissi in PVC Inalpha Prestigio</span>
+                <span className="testo-articoli">Ribalta</span>
               </div>
             </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Gli infissi in PVC a Palermo offrono il miglior rapporto qualità-prezzo per l&apos;isolamento termoacustico: i profili multicamera a 5, 6 o 7 camere raggiungono valori di trasmittanza termica Uf fino a 0,95 W/m²K, tra i più bassi sul mercato. Il PVC è un materiale intrinsecamente isolante, non necessita di taglio termico aggiuntivo e garantisce lunga durata senza manutenzione.
+              Gli infissi in PVC rappresentano una delle soluzioni più apprezzate per chi cerca isolamento termico e acustico, risparmio energetico, durata nel tempo e minima manutenzione. Grazie alle elevate prestazioni isolanti del PVC, migliorano il comfort abitativo e contribuiscono a ridurre i consumi energetici.
             </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Installiamo sistemi dei principali brand europei — VEKA, Rehau, KBE, Aluplast — in versione bianca, foliata in varie essenze di legno e in colorazione integrale. Le ante sono disponibili nelle tipologie a battente, a vasistas, scorrevole parallela e alzante-scorrevole, abbinate a vetrocamera con gas argon e Low-E per la massima efficienza.
+              Vendiamo e installiamo serramenti su misura nelle versioni a battente, vasistas, scorrevoli e a libro, disponibili in un&apos;ampia gamma di colori e finiture.
             </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Il servizio è chiavi in mano: sopralluogo, rilievo, fornitura, posa e smaltimento dei vecchi infissi. Contattaci per un preventivo gratuito a Palermo e provincia.
+              Ti seguiamo in ogni fase del progetto: preventivo gratuito, sopralluogo, rilievo misure, fornitura, posa in opera, sigillatura e smaltimento vecchi infissi, con un servizio completo e professionale.
             </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16, background: '#e8f7e8', border: '1px solid #9dd49d', borderRadius: 20, padding: 16 }}>
+              <Image src="/images/cta/emoticon2.webp" alt="" width={64} height={64} style={{ objectFit: 'contain', flexShrink: 0 }} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <p className="testo-articoli" style={{ margin: 0, fontWeight: 700, color: '#8a6800' }}>
+                  Articolo disponibile per preventivi Online
+                </p>
+                <p className="testo-articoli" style={{ margin: 0, fontStyle: 'italic' }}>
+                  Per farti risparmiare tempo prezioso, puoi utilizzare il nostro preventivatore online: inserisci in autonomia misure e configurazione del serramento per ottenere una stima immediata del costo. Se il preventivo ti soddisfa, fisseremo un sopralluogo per il rilievo definitivo delle misure e la conferma dell&apos;offerta, che normalmente si discosta di poco dalla simulazione iniziale.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 

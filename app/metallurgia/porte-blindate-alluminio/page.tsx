@@ -125,30 +125,24 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/metallurgia/porte-blindate/porta-laccata.webp" alt="Porta blindata con rivestimento in alluminio" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/metallurgia/porte-blindate/alluminio-verde.webp" alt="Porta blindata bugnata alluminio verde" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Porta blindata rivestita in alluminio</span>
+                <span className="testo-articoli">Verde</span>
               </div>
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/metallurgia/porte-blindate/serratura.webp" alt="Serratura di sicurezza multipunto" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/metallurgia/porte-blindate/alluminio-fucsia.webp" alt="Porta blindata bugnata alluminio fucsia" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Serratura di sicurezza multipunto</span>
+                <span className="testo-articoli">Fucsia</span>
               </div>
             </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Forniamo e installiamo <strong>porte blindate con rivestimento in alluminio a Palermo</strong> certificate dalla classe 3 alla classe 6 secondo la norma UNI EN 1627: la scelta della classe dipende dal livello di rischio e dal contesto abitativo o commerciale. Ogni porta è dotata di serratura multipunto con chiusura perimetrale, cerniere anti-scasso e pannello esterno in acciaio da almeno 1,5 mm.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Le ante sono rivestite esternamente in alluminio anodizzato o verniciato a polvere, resistente agli agenti atmosferici e adatto anche a porte esposte all&apos;esterno. Installiamo modelli con apertura a destra, sinistra, doppia anta e scorrevole. La posa include la rimozione della vecchia porta, la posa del controtelaio in acciaio e il sigillamento perimetrale.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Collaboriamo con i principali marchi italiani — Dierre, Alias, Oikos, Bertolotto Blindate. Contattaci per un sopralluogo e un preventivo gratuito.
+              Vendiamo e installiamo porte blindate con pannello bugnato di alluminio colore e fantasia a scelta, certificate dalla classe 3 alla classe 6 secondo la norma UNI EN 1627. Ogni porta è dotata di serratura multipunto con chiusura perimetrale, cilindro europeo, occhio magico, ferretto notte, pomello, cerniere anti-scasso e lamiera esterna in ferro da almeno 2,5 mm.
             </p>
           </div>
         </div>

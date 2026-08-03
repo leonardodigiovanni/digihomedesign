@@ -113,17 +113,19 @@ a:active, a:active img, a:focus img {
   .page-content-wrapper { max-width: 100% !important; margin-left: 0 !important; margin-right: 0 !important; padding-left: 0 !important; padding-right: 0 !important; }
 }
 
-/* ── Loghi marchi partner: 2 per riga anche su cellulare ── */
+/* ── Loghi marchi partner: 3 per riga su cellulare ── */
 @media (max-width: 480px) {
+  .partner-logo-grid {
+    gap: 8px !important;
+  }
   .partner-logo-box {
-    width: calc(50% - 8px) !important;
     padding: 0 4px !important;
-    height: 44px !important;
+    height: 40px !important;
     box-sizing: border-box;
   }
   .partner-logo-img {
-    width: 100px !important;
-    height: 32px !important;
+    width: 84px !important;
+    height: 28px !important;
   }
 }
 
@@ -448,7 +450,7 @@ body {
   gap: 8px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  justify-content: safe center;
+  justify-content: space-evenly;
   padding-bottom: 4px;
   margin-bottom: 8px;
 }

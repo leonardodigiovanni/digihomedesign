@@ -174,15 +174,9 @@ export default async function Page() {
               </div>
             </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Gli <strong>infissi in legno-alluminio a Palermo</strong> uniscono il meglio dei due materiali: il legno all&apos;interno regala calore, isolamento naturale e la possibilità di scegliere tra diverse essenze, mentre l&apos;alluminio esterno protegge dagli agenti atmosferici senza bisogno di verniciature periodiche.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Il rivestimento in alluminio esterno resiste a pioggia, sole e salsedine, mantenendo intatto l&apos;aspetto nel tempo con manutenzione praticamente nulla, mentre l&apos;anta interna in legno può essere trattata e rifinita secondo i gusti dell&apos;ambiente. Disponibili nelle stesse tipologie di apertura degli infissi tradizionali: a battente, a vasistas, scorrevoli.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Il servizio comprende sopralluogo, rilievo quote, fornitura e posa in opera. Contattaci per un preventivo gratuito.
+              Gli infissi in legno-alluminio uniscono il meglio dei due materiali: il legno all&apos;interno regala calore, isolamento naturale e la possibilità di scegliere tra diverse essenze, mentre l&apos;alluminio esterno protegge dagli agenti atmosferici senza bisogno di verniciature periodiche.
             </p>
           </div>
         </div>

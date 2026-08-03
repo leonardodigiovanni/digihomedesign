@@ -162,7 +162,7 @@ export default async function Page() {
                 <Image src="/images/serramenti/verande-in-alluminio/20251108_120024.webp" alt="Veranda in alluminio installata" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Veranda in alluminio installata</span>
+                <span className="testo-articoli">Fisso Sagomato</span>
               </div>
             </div>
             <div className="page-card">
@@ -170,19 +170,13 @@ export default async function Page() {
                 <Image src="/images/serramenti/verande-in-alluminio/photo_2026-04-15_23-21-54.webp" alt="Veranda in alluminio su misura" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Veranda in alluminio su misura</span>
+                <span className="testo-articoli">Scorrevole</span>
               </div>
             </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Realizziamo <strong>verande in alluminio su misura a Palermo</strong> con vetro temperato o stratificato: verande a pannelli fissi, a vetri scorrevoli su binario, con ante a libro e sistemi bioclimatici con tetto a lamelle orientabili per la ventilazione naturale. Trasformiamo balconi, terrazze e giardini in ambienti vivibili tutto l&apos;anno, protetti dal vento, dalla pioggia e dal sole estivo.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              I profili in alluminio a taglio termico garantiscono comfort termoacustico anche nei mesi invernali, mentre i vetri basso-emissivi riducono il surriscaldamento estivo. Le tende interne o integrate nel vetro (vetro con veneziana incorporata) completano il controllo solare senza interventi successivi.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Gestiamo le pratiche SCIA o i permessi necessari in Comune di Palermo e provincia. Contattaci per un sopralluogo gratuito e un progetto su misura.
+              Vendiamo e installiamo verande in alluminio su misura con doppio o triplo vetro stratificato per trasformare balconi, terrazze e giardini in ambienti vivibili tutto l&apos;anno, protetti dal vento, dalla pioggia e dal sole estivo. I profili in alluminio a taglio termico garantiscono comfort termoacustico anche nei mesi invernali, mentre i vetri basso-emissivi riducono il surriscaldamento estivo.
             </p>
           </div>
         </div>

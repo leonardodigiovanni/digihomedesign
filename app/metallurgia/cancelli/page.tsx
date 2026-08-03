@@ -140,15 +140,9 @@ export default async function Page() {
               </div>
             </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Progettiamo e installiamo <strong>cancelli su misura a Palermo</strong>: carrabili scorrevoli, a battente singolo e doppio, a libro e sollevabili in ferro zincato, acciaio inox o alluminio estruso. I cancelli vengono realizzati in officina su disegno tecnico e verniciati a polvere epossidica per la massima resistenza agli agenti atmosferici.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Installiamo automazioni per apertura motorizzata con operatori interrati o a braccio dei principali marchi — FAAC, Nice, BFT, Came — con telecomandi, tastiere a codice, videocitofoni e lettori di transponder. I sistemi sono predisposti per l&apos;integrazione con impianti domotici e videosorveglianza.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Realizziamo anche cancelletti pedonali a fianco e recinzioni perimetrali abbinate. Contattaci per un sopralluogo gratuito e un progetto con rendering 3D.
+              Vendiamo e installiamo cancelli su misura: carrabili scorrevoli, a battente singolo e doppio, in ferro o acciaio inox. Realizzazioni con ferro pieno, scatolare, quadro, piatto e tondo, con elementi in ferro battuto, trattati con antiruggine e verniciati a scelta tra spruzzo e pennello. Installiamo automazioni per apertura motorizzata a braccio, fotocellule, avviso sonoro.
             </p>
           </div>
         </div>

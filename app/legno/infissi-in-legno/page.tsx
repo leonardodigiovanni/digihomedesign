@@ -140,15 +140,9 @@ export default async function Page() {
               </div>
             </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Gli <strong>infissi in legno a Palermo</strong> rappresentano la scelta classica per chi cerca estetica senza tempo unita a eccellenti prestazioni termoacustiche. Realizziamo finestre, porte-finestre e scorrevoli in legno massiccio — larice, meranti, iroko — con vetrocamera a bassa emissività e ferramenta di qualità europea.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Proponiamo anche il sistema <strong>legno-alluminio</strong>: la parte interna in legno garantisce calore e bellezza, mentre il rivestimento esterno in alluminio protegge dall&apos;aggressione degli agenti atmosferici, eliminando quasi del tutto la manutenzione periodica della verniciatura.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Ogni infisso viene realizzato su misura con sopralluogo incluso, installazione professionale e garanzia sul prodotto e sulla posa. Contattaci per un preventivo gratuito a Palermo e provincia.
+              Gli infissi in legno sono la scelta ideale per chi desidera unire eleganza, comfort e prestazioni di isolamento termico e acustico. Realizziamo finestre, porte-finestre e serramenti scorrevoli su misura, utilizzando essenze di qualità e vetri ad alte prestazioni.
             </p>
           </div>
         </div>

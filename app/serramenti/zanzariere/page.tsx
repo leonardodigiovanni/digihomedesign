@@ -159,30 +159,24 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/zanzariere/zanzariera.webp" alt="Zanzariera su misura" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/zanzariere/zanzariera.webp" alt="Zanzariera scorrevole orizzontale" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Zanzariera su misura</span>
+                <span className="testo-articoli">Scorrevole orizzontale</span>
               </div>
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/zanzariere/zanzariere.webp" alt="Zanzariere installate" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/zanzariere/zanzariera sc.webp" alt="Zanzariera scorrevole verticale" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Zanzariere installate</span>
+                <span className="testo-articoli">Scorrevole verticale</span>
               </div>
             </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Realizziamo e installiamo <strong>zanzariere su misura a Palermo</strong> per ogni tipo di apertura: a telaio fisso estraibile per finestre standard, a rullo verticale con molla a richiamoautomatico, plissÃ© orizzontale per porte-finestre e balconi, scorrevoli su binario laterale per grandi aperture e zanzariere a soffitto per verande e porticati.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              I telai sono in alluminio anodizzato o verniciato, abbinabili al colore degli infissi esistenti. Le reti sono disponibili in fibra di vetro standard, in acciaio inox per ambienti marini, anti-polline ad alta densitÃ  e con trattamento antizanzara larvicida. I sistemi a rullo con cassonetto integrato nell&apos;infisso sono la soluzione piÃ¹ elegante perchÃ© invisibili quando non in uso.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Ogni zanzariera viene misurata sul posto e prodotta su misura in pochi giorni. Contattaci per un preventivo gratuito a Palermo e provincia.
+              Vendiamo e installiamo zanzariere su misura per ogni tipo di apertura: a telaio fisso estraibile per finestre standard, a rullo verticale con molla a richiamo automatico, plissé orizzontale per porte-finestre e balconi, a carrarmato, scorrevoli su binario laterale per grandi aperture e zanzariere a soffitto per verande e porticati. I telai sono in alluminio anodizzato o verniciato, abbinabili al colore degli infissi esistenti.
             </p>
           </div>
         </div>

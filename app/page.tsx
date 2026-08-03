@@ -138,17 +138,12 @@ export default async function Page() {
         <div className="home-hero-text" style={{ borderRadius: 20, background: '#fff', border: '1px solid #c8960c' }}>
           <div style={{ padding: '28px 28px 24px' }}>
           <p className="testo-articoli">
-            DIGI Home Design nasce da oltre 60 anni di esperienza nel settore della lavorazione del ferro e dei serramenti. Da realtà artigiana a conduzione familiare, stimata nella città di Palermo, l&apos;azienda si è evoluta nel tempo fino a diventare una realtà moderna e innovativa, capace di integrare competenze nell&apos;edilizia, nelle ristrutturazioni e nella riqualificazione energetica.<br /><br />
-            Alla base del nostro percorso ci sono la passione per il design d&apos;interni e la volontà di offrire soluzioni complete per abitazioni e spazi commerciali. Dalla progettazione alla posa in opera, ogni intervento viene seguito con cura artigianale, precisione e attenzione al dettaglio.<br /><br />
-            Nel corso degli anni abbiamo ampliato la nostra offerta, abbracciando diversi ambiti: dai serramenti alla falegnameria, dall&apos;impiantistica alle opere edili, fino alle ristrutturazioni chiavi in mano. Il tutto con un unico interlocutore, in grado di coordinare ogni fase del lavoro.<br /><br />
-            Oggi ci proponiamo come partner di fiducia per chi desidera migliorare, recuperare o valorizzare il proprio immobile. Gestiamo l&apos;intero processo, semplificando la comunicazione tra le figure coinvolte e sollevando il committente da problematiche organizzative, tecniche e gestionali.<br /><br />
-            Siamo al fianco delle famiglie con soluzioni durevoli, prezzi onesti e competitivi, occupandoci di interventi che spaziano dai serramenti alle opere edili, fino ai lavori di ristrutturazione ed efficientamento energetico.<br /><br />
-            Per rendere l&apos;esperienza ancora più semplice e trasparente, mettiamo a disposizione due servizi esclusivi e completamente gratuiti:<br /><br />
-            — <span>Preventivi Immediati Online</span>:<br />
-            Senza registrazione e in completa autonomia, grazie a un widget semplice, veloce e intuitivo. Registrandoti, potrai inoltre scoprire offerte dedicate, sconti fedeltà progressivi, premialità referral &ldquo;porta un amico&rdquo; e accedere a finanziamenti convenzionati, per realizzare i tuoi progetti anche con comode rate mensili.<br /><br />
-            — <span>Monitoraggio del Cantiere Online</span>:<br />
-            Un servizio pensato per seguire i lavori ovunque ti trovi e in qualsiasi momento, attraverso aggiornamenti giornalieri, rapporti di lavoro, foto e video documentali. Accedendo alla tua area personale, potrai verificare in modo semplice e trasparente l&apos;avanzamento del cantiere.<br /><br />
-            Affidati a un&apos;azienda che unisce esperienza artigiana, innovazione e servizi evoluti per aiutarti a realizzare la casa dei tuoi sogni.
+            <strong style={{ fontSize: 'calc(1em + 2px)' }}>DIGI Home Design</strong> nasce da oltre 60 anni di esperienza nella lavorazione del ferro e dei serramenti. Oggi è un punto di riferimento a Palermo per ristrutturazioni, edilizia, serramenti ed efficientamento energetico, offrendo un servizio completo con un unico interlocutore.<br /><br />
+            Seguiamo ogni progetto dalla progettazione alla consegna, con cura artigianale, precisione e soluzioni su misura per abitazioni e spazi commerciali.<br /><br />
+            Per rendere tutto più semplice, offriamo anche due servizi gratuiti:<br /><br />
+            — <span>Preventivi online immediati</span>, con offerte dedicate, programmi fedeltà, bonus referral e finanziamenti convenzionati.<br />
+            — <span>Monitoraggio del cantiere online</span>, con aggiornamenti, foto e video consultabili in qualsiasi momento dalla tua area personale.<br /><br />
+            Esperienza, qualità, trasparenza e innovazione: tutto ciò che serve per realizzare e valorizzare il tuo immobile.
           </p>
           </div>
         </div>
@@ -229,13 +224,13 @@ export default async function Page() {
         {ok('/serramenti/infissi-in-pvc') && (
         <Link href="/serramenti/infissi-in-pvc" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
           <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/infissi-in-pvc/PVC.webp" alt="Infissi in PVC" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
-          <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Infissi in PVC</span></div>
+          <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Infissi PVC</span></div>
         </Link>
         )}
         {ok('/serramenti/verande-in-alluminio') && (
         <Link href="/serramenti/verande-in-alluminio" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
           <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/verande-in-alluminio/veranda.webp" alt="Verande in Alluminio" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
-          <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Verande in Alluminio</span></div>
+          <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Verande Alluminio</span></div>
         </Link>
         )}
         {/*
@@ -248,20 +243,20 @@ export default async function Page() {
         */}
         {ok('/serramenti/persiane-in-alluminio') && (
         <Link href="/serramenti/persiane-in-alluminio" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/persiane-in-alluminio/persiana-alluminio.webp" alt="Persiane in Alluminio" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
-          <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Persiane in Alluminio</span></div>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/persiane-in-alluminio/persiana.webp" alt="Persiane in Alluminio" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Persiane Alluminio</span></div>
         </Link>
         )}
-        {ok('/serramenti/imbotti') && (
-        <Link href="/serramenti/imbotti" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/imbotti-in-alluminio/imbotto.webp" alt="Imbotti" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
-          <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Imbotti</span></div>
+        {ok('/serramenti/monoblocchi') && (
+        <Link href="/serramenti/monoblocchi" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/monoblocchi/monoblocco-persiana.webp" alt="Monoblocchi" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Sistemi Monoblocco</span></div>
         </Link>
         )}
         {ok('/serramenti/tapparelle-in-alluminio') && (
         <Link href="/serramenti/tapparelle-in-alluminio" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
           <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/tapparelle-manuali/tapparelle.webp" alt="Tapparelle in Alluminio" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
-          <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Tapparelle in Alluminio</span></div>
+          <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Tapparelle Alluminio & PVC</span></div>
         </Link>
         )}
         {/*
@@ -296,8 +291,8 @@ export default async function Page() {
         )}
         {ok('/serramenti/vetrine') && (
         <Link href="/serramenti/vetrine" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
-          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/vetrate/vetrata.webp" alt="Vetrine" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
-          <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Vetrine</span></div>
+          <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/vetrate/vetrata.webp" alt="Vetrate" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
+          <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Vetrate Panoramiche</span></div>
         </Link>
         )}
         {ok('/serramenti/pergole-bioclimatiche') && (
@@ -856,12 +851,10 @@ export default async function Page() {
       {/* Vendiamo Marchi di valore */}
       <div className="page-section-wrapper" style={{ margin: 0 }}>
         <div style={{ borderRadius: 20, padding: '28px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, background: '#fff', border: '1px solid #c8960c' }}>
-          <h2 className="testo-articoli" style={{ textAlign: 'center', margin: 0, display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <span>Vendiamo le migliori Marche</span>
-            <span>Selezioniamo Fornitori Qualificati e Affidabili</span>
-            <span>Utilizziamo Attrezzature e Prodotti di Qualità</span>
+          <h2 className="testo-articoli" style={{ textAlign: 'center', margin: 0 }}>
+            Marchi leader &bull; Partner affidabili &bull; Qualità garantita
           </h2>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, justifyContent: 'center', alignItems: 'center' }}>
+          <div className="partner-logo-grid" style={{ display: 'flex', flexWrap: 'wrap', gap: 16, justifyContent: 'center', alignItems: 'center' }}>
             {[
               { src: '/images/brand/partners/3M.webp',                alt: '3M',                  href: '#' },
               { src: '/images/brand/partners/alphacan.webp',          alt: 'Alphacan',            href: '#' },
@@ -960,16 +953,9 @@ export default async function Page() {
         <div style={{ borderRadius: 20, padding: '28px 24px', color: '#444', fontSize: 15, lineHeight: 1.8, background: '#fff', border: '1px solid #c8960c' }}>
           <div className="seo-block-flex">
             <div>
-              <h2 className="testo-articoli" style={{ marginBottom: 6, marginTop: 0 }}>
-                Serramenti, verande, tettoie e porte di qualità, per la tua casa o il tuo ufficio, realizzati su misura e in tempi rapidissimi
+              <h2 className="effetto-3d" style={{ marginBottom: 6, marginTop: 0, fontSize: 22, fontWeight: 700, lineHeight: 1.3 }}>
+                Serramenti, Sicurezza e Ristrutturazioni in tempi brevi!
               </h2>
-              <ul className="testo-articoli" style={{ margin: 0, lineHeight: 2, paddingLeft: 18 }}>
-                <li>Vendita + consegna diretta + montaggio a <strong>Palermo e Provincia</strong> entro <strong>30 giorni</strong></li>
-                <li>Vendita + consegna diretta + montaggio in tutto il <strong>resto della Sicilia</strong> entro <strong>45 giorni</strong></li>
-                <li>Vendita + consegna mezzo corriere nel <strong>resto d&apos;Italia</strong> entro <strong>60 giorni</strong> (montaggio concordabile)</li>
-                {/* <li>Vendita + consegna mezzo corriere nel <strong>resto d&apos;Europa</strong> entro <strong>90 giorni</strong></li> */}
-                {/* <li>Vendita + consegna mezzo corriere nel <strong>resto del Mondo</strong> entro <strong>120 giorni</strong></li> */}
-              </ul>
             </div>
             {/* Cronometro SVG */}
             <svg xmlns="http://www.w3.org/2000/svg" width="110" height="130" viewBox="0 0 110 130" fill="none" style={{ flexShrink: 0 }}>
@@ -1014,13 +1000,10 @@ export default async function Page() {
             </svg>
           </div>
           <p className="testo-articoli">
-            Siamo specialisti in <Link href="/infissi" aria-label="infissi-a-palermo" style={{ color: '#1a1a1a', fontWeight: 700 }}>infissi</Link> e <Link href="/serramenti" aria-label="serramenti-a-palermo" style={{ color: '#1a1a1a', fontWeight: 700 }}>serramenti</Link>: finestre, porte-finestre e scorrevoli su misura, installati e garantiti.
-            Realizziamo <Link href="/verande" aria-label="verande-a-palermo" style={{ color: '#1a1a1a', fontWeight: 700 }}>verande</Link> per vivere gli spazi esterni tutto l&apos;anno, e montiamo <Link href="/porte-blindate" aria-label="porte-blindate-a-palermo" style={{ color: '#1a1a1a', fontWeight: 700 }}>porte blindate</Link> e blindature antintrusione per la massima sicurezza.
-            Le nostre <Link href="/persiane" aria-label="persiane-a-palermo" style={{ color: '#1a1a1a', fontWeight: 700 }}>persiane in alluminio</Link> coniugano estetica e durata nel tempo.
-          </p>
-          <p className="testo-articoli" style={{ marginTop: 12 }}>
-            Ci occupiamo di <Link href="/ristrutturazioni-chiavi-in-mano" aria-label="ristrutturazioni-chiavi-in-mano-a-palermo" style={{ color: '#1a1a1a', fontWeight: 700 }}>ristrutturazioni chiavi in mano</Link> a Palermo e Provincia: dal progetto alla consegna, un unico referente segue ogni fase del lavoro.
-            Progettiamo e installiamo anche <Link href="/strutture-metalliche" aria-label="strutture-metalliche-a-palermo" style={{ color: '#1a1a1a', fontWeight: 700 }}>strutture metalliche</Link>{' '}— tettoie, pensiline, scale e pergolati — con prodotti di qualità e lavorazioni a regola d&apos;arte.
+            Vendiamo e installiamo serramenti, verande e tettoie su misura per abitazioni e uffici, garantendo tempi rapidi di produzione, consegna e installazione.<br /><br />
+            Proteggiamo la tua casa con porte blindate, cancelli e grate, realizzati su misura, certificati, resistenti e progettati per garantire la massima sicurezza.<br /><br />
+            Realizziamo ristrutturazioni chiavi in mano, con un unico referente che coordina ogni fase del progetto fino alla consegna, offrendo un servizio organizzato e professionale.<br /><br />
+            Spediamo rapidamente in tutta Italia tutti i prodotti acquistabili nel nostro Shop Online.
           </p>
         </div>
       </div>

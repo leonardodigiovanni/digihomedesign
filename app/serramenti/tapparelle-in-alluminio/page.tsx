@@ -162,7 +162,7 @@ export default async function Page() {
                 <Image src="/images/serramenti/tapparelle-manuali/legno.webp" alt="Tapparella in alluminio effetto legno" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Tapparella in alluminio effetto legno</span>
+                <span className="testo-articoli">Coibentata Color Legno</span>
               </div>
             </div>
             <div className="page-card">
@@ -170,20 +170,28 @@ export default async function Page() {
                 <Image src="/images/serramenti/tapparelle-manuali/tapparelle.webp" alt="Tapparelle in alluminio su misura" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Tapparelle in alluminio su misura</span>
+                <span className="testo-articoli">Coibentata Colore Grigio</span>
               </div>
             </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Forniamo e installiamo <strong>tapparelle manuali in alluminio estruso a Palermo</strong>: a cinghia, a manovella laterale o a moschettone, con avvolgitore a cassonetto incassato o a vista. Le doghe in alluminio sono leggere, resistenti alla corrosione e ideali per ambienti marini o ad alta umidità, con una durata superiore nel tempo rispetto ad altri materiali.
+              Forniamo e installiamo tapparelle in alluminio coibentato su misura, una soluzione ideale per migliorare l&apos;isolamento termico e acustico della tua casa, aumentare il comfort abitativo e contribuire al risparmio energetico. L&apos;alluminio coibentato garantisce resistenza agli agenti atmosferici, lunga durata e minima manutenzione, mantenendo nel tempo funzionalità ed estetica. Disponibili in un&apos;ampia gamma di colori e finiture, si adattano perfettamente a qualsiasi stile architettonico, dal classico al moderno.
             </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Disponibili in tutti i colori RAL e con finiture effetto legno. Rispetto alla versione in PVC coibentato, l&apos;isolamento termoacustico è inferiore: per ambienti riscaldati dove conta soprattutto il risparmio energetico consigliamo la versione <Link href="/serramenti/tapparelle-in-pvc" style={{ color: '#8a6800', textDecoration: 'underline' }}>in PVC</Link>.
+              Ti seguiamo in ogni fase del progetto: preventivo gratuito, sopralluogo, rilievo misure, fornitura, posa in opera, sigillatura e smaltimento vecchie tapparelle, con un servizio completo e professionale.
             </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Ogni tapparella viene misurata sul posto e realizzata su misura. Contattaci per un preventivo gratuito a Palermo e provincia.
-            </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16, background: '#e8f7e8', border: '1px solid #9dd49d', borderRadius: 20, padding: 16 }}>
+              <Image src="/images/cta/emoticon2.webp" alt="" width={64} height={64} style={{ objectFit: 'contain', flexShrink: 0 }} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <p className="testo-articoli" style={{ margin: 0, fontWeight: 700, color: '#8a6800' }}>
+                  Articolo disponibile per preventivi Online
+                </p>
+                <p className="testo-articoli" style={{ margin: 0, fontStyle: 'italic' }}>
+                  Per farti risparmiare tempo prezioso, puoi utilizzare il nostro preventivatore online: inserisci in autonomia misure e configurazione del serramento per ottenere una stima immediata del costo. Se il preventivo ti soddisfa, fisseremo un sopralluogo per il rilievo definitivo delle misure e la conferma dell&apos;offerta, che normalmente si discosta di poco dalla simulazione iniziale.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 

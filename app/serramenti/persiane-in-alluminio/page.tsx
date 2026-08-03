@@ -162,7 +162,7 @@ export default async function Page() {
                 <Image src="/images/serramenti/persiane-in-alluminio/persiana.webp" alt="Persiana in alluminio" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Persiana in alluminio</span>
+                <span className="testo-articoli">Su strada color Legno</span>
               </div>
             </div>
             <div className="page-card">
@@ -170,20 +170,31 @@ export default async function Page() {
                 <Image src="/images/serramenti/persiane-in-alluminio/bianca.webp" alt="Persiana bianca" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Persiana bianca</span>
+                <span className="testo-articoli">Su balcone colore bianco</span>
               </div>
             </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Forniamo e installiamo <strong>persiane in alluminio su misura a Palermo</strong>: a battente con stecche orientabili o fisse, scorrevoli su binario laterale, a pannelli e a libro. Le persiane proteggono dall&apos;irraggiamento solare estivo â€” fondamentale in Sicilia â€” garantendo allo stesso tempo ventilazione e oscuramento regolabile.
+              Le persiane in alluminio sono ideali per proteggere la casa dal sole, migliorare il comfort abitativo e garantire privacy, sicurezza e una corretta ventilazione degli ambienti.
             </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              I profili in alluminio estruso vengono verniciati a polvere in qualsiasi colore RAL, con stecche orientate a 45Â° o 90Â°: una soluzione che garantisce lunga durata e assenza di manutenzione.
+              Vendiamo persiane a battente, scorrevoli, a libro e con lamelle fisse o orientabili, disponibili in un&apos;ampia gamma di colori e finiture. L&apos;alluminio assicura resistenza agli agenti atmosferici, lunga durata e una manutenzione minima.
             </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Ogni persiana viene misurata sul posto e realizzata su misura con accessori di chiusura inclusi. Contattaci per un preventivo gratuito.
+              Ti seguiamo in ogni fase del progetto: preventivo gratuito, sopralluogo, rilievo misure, fornitura, posa in opera, sigillatura e smaltimento vecchie persiane, con un servizio completo e professionale.
             </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16, background: '#e8f7e8', border: '1px solid #9dd49d', borderRadius: 20, padding: 16 }}>
+              <Image src="/images/cta/emoticon2.webp" alt="" width={64} height={64} style={{ objectFit: 'contain', flexShrink: 0 }} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <p className="testo-articoli" style={{ margin: 0, fontWeight: 700, color: '#8a6800' }}>
+                  Articolo disponibile per preventivi Online
+                </p>
+                <p className="testo-articoli" style={{ margin: 0, fontStyle: 'italic' }}>
+                  Per farti risparmiare tempo prezioso, puoi utilizzare il nostro preventivatore online: inserisci in autonomia misure e configurazione del serramento per ottenere una stima immediata del costo. Se il preventivo ti soddisfa, fisseremo un sopralluogo per il rilievo definitivo delle misure e la conferma dell&apos;offerta, che normalmente si discosta di poco dalla simulazione iniziale.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 

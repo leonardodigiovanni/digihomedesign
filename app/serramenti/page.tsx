@@ -27,7 +27,7 @@ const subcategories = [
   { href: '/serramenti/verande-in-pvc',           label: 'Verande in PVC',           desc: 'Verande in PVC multicamera ad alta efficienza termica e acustica.' },
   { href: '/serramenti/persiane-in-alluminio',    label: 'Persiane in Alluminio',    desc: 'Persiane in alluminio per oscuramento e protezione solare.' },
   { href: '/serramenti/persiane-in-pvc',          label: 'Persiane in PVC',          desc: 'Persiane in PVC leggere e a zero manutenzione per oscuramento e protezione solare.' },
-  { href: '/serramenti/imbotti',                  label: 'Imbotti',                  desc: 'Imbotti in alluminio e PVC per il rivestimento dei vani finestra.' },
+  { href: '/serramenti/monoblocchi',              label: 'Monoblocchi',              desc: 'Monoblocchi in alluminio e PVC per il rivestimento dei vani finestra.' },
   { href: '/serramenti/cassonetti-in-pvc',        label: 'Cassonetti in PVC',        desc: 'Cassonetti coibentati in PVC per eliminare il ponte termico dei cassonetti tradizionali.' },
   { href: '/serramenti/tapparelle-in-alluminio',  label: 'Tapparelle in Alluminio',  desc: 'Tapparelle manuali in alluminio a manovella, cinghia o moschettone.' },
   { href: '/serramenti/tapparelle-in-pvc',        label: 'Tapparelle in PVC',        desc: 'Tapparelle manuali in PVC coibentato ad alta efficienza termoacustica.' },

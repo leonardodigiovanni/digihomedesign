@@ -185,7 +185,7 @@ export default async function Page() {
                 <Image src="/images/serramenti/infissi-in-alluminio/infisso-balcone.webp" alt="Infisso balcone" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Infisso balcone</span>
+                <span className="testo-articoli">Porta Balcone</span>
               </div>
             </div>
             <div className="page-card">
@@ -193,20 +193,31 @@ export default async function Page() {
                 <Image src="/images/serramenti/infissi-in-alluminio/infisso-finestra.webp" alt="Infisso finestra" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Infisso finestra</span>
+                <span className="testo-articoli">Finestra</span>
               </div>
             </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Gli <strong>infissi in alluminio a taglio termico a Palermo</strong> rappresentano la scelta ideale per chi cerca durata, minima manutenzione e design contemporaneo. Il taglio termico — una barriera in poliammide che interrompe il ponte termico tra il profilo esterno e quello interno — garantisce elevate prestazioni di isolamento termoacustico, riducendo sensibilmente i consumi energetici.
+              Gli infissi in alluminio a taglio termico sono la soluzione ideale per chi desidera resistenza, design moderno, elevate prestazioni di isolamento termico e acustico e una manutenzione minima. Grazie alla tecnologia a taglio termico, migliorano il comfort abitativo e contribuiscono a ridurre i consumi energetici.
             </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Lavoriamo con sistemi certificati dei principali produttori — Schüco, Metra, Reynaers, Wicona — nelle versioni a battente, a vasistas, scorrevole alzante e a libro. Le finiture disponibili includono verniciatura a polvere in qualsiasi colore RAL, anodizzazione e legno-alluminio per l&apos;interno.
+              Vendiamo e installiamo serramenti su misura nelle versioni a battente, vasistas, scorrevoli e a libro, disponibili in un&apos;ampia gamma di colori e finiture.
             </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Il servizio comprende sopralluogo, rilievo quote, fornitura con vetrocamera selezionata, posa in opera e sigillatura perimetrale. Contattaci per un preventivo gratuito.
+              Ti seguiamo in ogni fase del progetto: preventivo gratuito, sopralluogo, rilievo misure, fornitura, posa in opera, sigillatura e smaltimento vecchi infissi, con un servizio completo e professionale.
             </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16, background: '#e8f7e8', border: '1px solid #9dd49d', borderRadius: 20, padding: 16 }}>
+              <Image src="/images/cta/emoticon2.webp" alt="" width={64} height={64} style={{ objectFit: 'contain', flexShrink: 0 }} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <p className="testo-articoli" style={{ margin: 0, fontWeight: 700, color: '#8a6800' }}>
+                  Articolo disponibile per preventivi Online
+                </p>
+                <p className="testo-articoli" style={{ margin: 0, fontStyle: 'italic' }}>
+                  Per farti risparmiare tempo prezioso, puoi utilizzare il nostro preventivatore online: inserisci in autonomia misure e configurazione del serramento per ottenere una stima immediata del costo. Se il preventivo ti soddisfa, fisseremo un sopralluogo per il rilievo definitivo delle misure e la conferma dell&apos;offerta, che normalmente si discosta di poco dalla simulazione iniziale.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 

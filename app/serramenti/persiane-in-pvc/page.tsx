@@ -159,30 +159,24 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/persiane-in-alluminio/persiana.webp" alt="Persiana in PVC" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/persiane-in-pvc/verde.webp" alt="Persiana in PVC verde" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Persiana in PVC</span>
+                <span className="testo-articoli">Verde</span>
               </div>
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/persiane-in-alluminio/bianca.webp" alt="Persiana bianca in PVC" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/persiane-in-pvc/grigia.webp" alt="Persiana in PVC grigia" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Persiana bianca in PVC</span>
+                <span className="testo-articoli">Grigia</span>
               </div>
             </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Forniamo e installiamo <strong>persiane in PVC su misura a Palermo</strong>: una soluzione leggera ed economica che schermano l&apos;irraggiamento solare diretto e riducono il surriscaldamento estivo degli ambienti, senza il peso e i costi di manutenzione di altri materiali.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Il PVC non richiede verniciature periodiche e resiste all&apos;esposizione prolungata a sole e salsedine tipica del clima costiero palermitano, mantenendo colore e funzionalità delle cerniere nel tempo. Disponibili a stecche fisse o orientabili, in diverse colorazioni. Se cerchi invece maggiore robustezza strutturale, valuta la versione <Link href="/serramenti/persiane-in-alluminio" style={{ color: '#8a6800', textDecoration: 'underline' }}>in alluminio</Link>.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Ogni persiana viene misurata sul posto e realizzata su misura con accessori di chiusura inclusi. Contattaci per un preventivo gratuito.
+              Le persiane in PVC sono una soluzione pratica ed economica per proteggere gli ambienti dal sole, migliorare il comfort estivo e garantire un buon livello di oscuramento e privacy. Il PVC offre leggerezza, resistenza agli agenti atmosferici e minima manutenzione, senza necessità di verniciature periodiche. Le persiane sono disponibili con stecche fisse o orientabili e in diverse colorazioni per adattarsi a ogni stile abitativo.
             </p>
           </div>
         </div>

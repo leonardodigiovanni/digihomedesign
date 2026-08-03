@@ -159,30 +159,24 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/manutenzione/sito_manutenzione.webp" alt="Anteprima" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/verande-in-pvc/balcone.webp" alt="Veranda in PVC su balcone" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Fotografia da scegliere</span>
+                <span className="testo-articoli">Balcone</span>
               </div>
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/manutenzione/sito_manutenzione.webp" alt="Anteprima" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/verande-in-pvc/Giardino.webp" alt="Veranda in PVC in giardino" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Fotografia da scegliere</span>
+                <span className="testo-articoli">Giardino</span>
               </div>
             </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Realizziamo <strong>verande in PVC su misura a Palermo</strong> con profili multicamera ad alta efficienza termica e acustica: verande a vetri scorrevoli, fissi o a battente per trasformare balconi e terrazze in ambienti chiusi e vivibili tutto l&apos;anno. Il PVC garantisce ottimo isolamento e non richiede manutenzione periodica, resistendo a umiditÃ , salsedine e raggi UV.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              I profili in PVC rinforzato con barra in acciaio assicurano soliditÃ  strutturale e durata nel tempo. Disponibili in diversi colori e finiture â€” bianco, effetto legno, antracite â€” per adattarsi all&apos;estetica di ogni edificio. I vetri doppi o tripli camera completano il pacchetto isolante per il massimo comfort nelle stagioni piÃ¹ fredde.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Gestiamo le pratiche SCIA o i permessi necessari in Comune di Palermo e provincia. Contattaci per un sopralluogo gratuito e un preventivo su misura.
+              Vendiamo e installiamo verande in PVC su misura con doppio o triplo vetro stratificato per trasformare balconi, terrazze e giardini in ambienti vivibili tutto l&apos;anno, protetti dal vento, dalla pioggia e dal sole estivo. I profili in PVC termico garantiscono comfort termoacustico anche nei mesi invernali, mentre i vetri basso-emissivi riducono il surriscaldamento estivo ad un prezzo molto conveniente.
             </p>
           </div>
         </div>

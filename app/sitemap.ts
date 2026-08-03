@@ -80,7 +80,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/serramenti/infissi-in-alluminio-freddo',
     '/serramenti/avvolgibili-motorizzati',
     '/serramenti/box-doccia',
-    '/serramenti/imbotti',
+    '/serramenti/monoblocchi',
     '/serramenti/cassonetti-in-pvc',
     '/serramenti/infissi-in-pvc',
     '/serramenti/infissi-in-legno-alluminio',

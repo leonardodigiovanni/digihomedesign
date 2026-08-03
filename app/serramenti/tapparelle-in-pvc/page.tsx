@@ -159,31 +159,39 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/tapparelle-manuali/legno.webp" alt="Tapparella in PVC effetto legno" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/tapparelle-pvc/marrone.webp" alt="Tapparella in PVC marrone" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Tapparella in PVC effetto legno</span>
+                <span className="testo-articoli">Marrone</span>
               </div>
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/tapparelle-manuali/tapparelle.webp" alt="Tapparelle in PVC su misura" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/tapparelle-pvc/celeste.webp" alt="Tapparella in PVC celeste" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Tapparelle in PVC su misura</span>
+                <span className="testo-articoli">Celeste</span>
               </div>
             </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Forniamo e installiamo <strong>tapparelle manuali in PVC coibentato a Palermo</strong>: a cinghia, a manovella laterale o a moschettone, con avvolgitore a cassonetto incassato o a vista. Le doghe in PVC coibentato garantiscono un ottimo isolamento termico e acustico, riducendo i ponti freddi e il rumore proveniente dall&apos;esterno.
+              Le tapparelle in PVC su misura sono una soluzione pratica ed economica per migliorare il comfort della tua casa, offrendo un buon isolamento termico e acustico, privacy e protezione dal sole. Il PVC è un materiale leggero, resistente agli agenti atmosferici e di facile manutenzione, ideale per un utilizzo quotidiano e duraturo. Disponibili in un&apos;ampia gamma di colori e finiture, si integrano perfettamente con qualsiasi stile di abitazione.
             </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Disponibili in tutti i colori RAL e con finiture effetto legno. Se invece cerchi maggiore robustezza e resistenza in ambienti marini o ad alta umidità, valuta la versione <Link href="/serramenti/tapparelle-in-alluminio" style={{ color: '#8a6800', textDecoration: 'underline' }}>in alluminio</Link>.
+              Ti seguiamo in ogni fase del progetto: preventivo gratuito, sopralluogo, rilievo misure, fornitura, posa in opera, sigillatura e smaltimento vecchie tapparelle, con un servizio completo e professionale.
             </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Ogni tapparella viene misurata sul posto e realizzata su misura. Contattaci per un preventivo gratuito a Palermo e provincia.
-            </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16, background: '#e8f7e8', border: '1px solid #9dd49d', borderRadius: 20, padding: 16 }}>
+              <Image src="/images/cta/emoticon2.webp" alt="" width={64} height={64} style={{ objectFit: 'contain', flexShrink: 0 }} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <p className="testo-articoli" style={{ margin: 0, fontWeight: 700, color: '#8a6800' }}>
+                  Articolo disponibile per preventivi Online
+                </p>
+                <p className="testo-articoli" style={{ margin: 0, fontStyle: 'italic' }}>
+                  Per farti risparmiare tempo prezioso, puoi utilizzare il nostro preventivatore online: inserisci in autonomia misure e configurazione del serramento per ottenere una stima immediata del costo. Se il preventivo ti soddisfa, fisseremo un sopralluogo per il rilievo definitivo delle misure e la conferma dell&apos;offerta, che normalmente si discosta di poco dalla simulazione iniziale.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 

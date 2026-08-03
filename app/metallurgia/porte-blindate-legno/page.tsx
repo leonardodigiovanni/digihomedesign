@@ -125,30 +125,24 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/metallurgia/porte-blindate/porta-laccata.webp" alt="Porta blindata con rivestimento in legno" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/metallurgia/porte-blindate/Legno-lavorato.webp" alt="Porta blindata rivestimento legno lavorato" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Porta blindata rivestita in legno</span>
+                <span className="testo-articoli">Legno lavorato</span>
               </div>
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/metallurgia/porte-blindate/serratura.webp" alt="Serratura di sicurezza multipunto" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/metallurgia/porte-blindate/legno-liscio.webp" alt="Porta blindata rivestimento legno liscio" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Serratura di sicurezza multipunto</span>
+                <span className="testo-articoli">Legno liscio</span>
               </div>
             </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Forniamo e installiamo <strong>porte blindate con rivestimento in legno a Palermo</strong> certificate dalla classe 3 alla classe 6 secondo la norma UNI EN 1627: la scelta della classe dipende dal livello di rischio e dal contesto abitativo o commerciale. Ogni porta è dotata di serratura multipunto con chiusura perimetrale, cerniere anti-scasso e pannello esterno in acciaio da almeno 1,5 mm.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Le ante sono rivestite esternamente in legno impiallacciato, disponibile in diverse essenze e finiture, per integrarsi con l&apos;estetica classica o moderna dell&apos;ambiente. Installiamo modelli con apertura a destra, sinistra, doppia anta e scorrevole. La posa include la rimozione della vecchia porta, la posa del controtelaio in acciaio e il sigillamento perimetrale.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Collaboriamo con i principali marchi italiani — Dierre, Alias, Oikos, Bertolotto Blindate. Contattaci per un sopralluogo e un preventivo gratuito.
+              Vendiamo e installiamo porte blindate con rivestimento in legno liscio, laccato, disegno preesistente, certificate dalla classe 3 alla classe 6 secondo la norma UNI EN 1627. Ogni porta è dotata di serratura multipunto con chiusura perimetrale, cilindro europeo, occhio magico, ferretto notte, pomello, cerniere anti-scasso e lamiera esterna in ferro da almeno 2,5 mm.
             </p>
           </div>
         </div>

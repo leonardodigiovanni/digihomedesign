@@ -15,14 +15,14 @@ import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = {
-  title: 'Imbotti a Palermo â€” Rivestimento Vani Finestra in Alluminio e PVC',
-  description: 'Imbotti a Palermo in alluminio e PVC per il rivestimento dei vani finestra: eliminano ponti termici, proteggono la muratura e danno un aspetto finito all\'infisso.',
-  alternates: { canonical: 'https://www.digi-home-design.com/serramenti/imbotti' },
+  title: 'Monoblocchi a Palermo — Rivestimento Vani Finestra in Alluminio e PVC',
+  description: 'Monoblocchi a Palermo in alluminio e PVC per il rivestimento dei vani finestra: eliminano ponti termici, proteggono la muratura e danno un aspetto finito all\'infisso.',
+  alternates: { canonical: 'https://www.digi-home-design.com/serramenti/monoblocchi' },
   robots: { index: true, follow: true },
   openGraph: {
-    title: 'Imbotti a Palermo â€” Rivestimento Vani Finestra in Alluminio e PVC',
-    description: 'Imbotti a Palermo in alluminio e PVC per il rivestimento dei vani finestra: eliminano ponti termici, proteggono la muratura e danno un aspetto finito all\'infisso.',
-    url: 'https://www.digi-home-design.com/serramenti/imbotti',
+    title: 'Monoblocchi a Palermo — Rivestimento Vani Finestra in Alluminio e PVC',
+    description: 'Monoblocchi a Palermo in alluminio e PVC per il rivestimento dei vani finestra: eliminano ponti termici, proteggono la muratura e danno un aspetto finito all\'infisso.',
+    url: 'https://www.digi-home-design.com/serramenti/monoblocchi',
     type: 'website',
   },
 }
@@ -106,7 +106,7 @@ async function getCatalogoData(nomeCategoria: string, sottocatSlug: string) {
 }
 
 export default async function Page() {
-  const catalogo = await getCatalogoData('serramenti', 'imbotti')
+  const catalogo = await getCatalogoData('serramenti', 'monoblocchi')
   const cookieStore = await cookies()
   const role = cookieStore.get('session_role')?.value ?? ''
   const isStaff = role === 'admin' || role === 'dipendente'
@@ -141,7 +141,7 @@ export default async function Page() {
         const parts = [p.numero || `#${p.id}`]
         if (p.cliente_nome) parts.push(p.cliente_nome)
         if (p.descrizione) parts.push(p.descrizione)
-        return { id: p.id, label: parts.join(' â€” ') }
+        return { id: p.id, label: parts.join(' — ') }
       })
     } catch {}
     finally { await db2.end() }
@@ -150,40 +150,48 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Imbotti<ShortcutStar />
+        <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Monoblocchi<ShortcutStar />
       </p>
-      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Imbotti a Palermo</h1>
+      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Monoblocchi a Palermo</h1>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
         <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '16px' }}>
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/imbotti-in-alluminio/20240802_183635.webp" alt="Imbotti in alluminio installati" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/monoblocchi/monoblocco-serranda.webp" alt="Monoblocco con serranda" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Imbotti in alluminio installati</span>
+                <span className="testo-articoli">Serranda</span>
               </div>
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/serramenti/imbotti-in-alluminio/cassonetto_mediterraneo-800x533.webp" alt="Cassonetto mediterraneo in alluminio" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/monoblocchi/monoblocco-persiana.webp" alt="Monoblocco con persiana" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Cassonetto mediterraneo in alluminio</span>
+                <span className="testo-articoli">Persiana</span>
               </div>
             </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Gli <strong>imbotti in alluminio e PVC a Palermo</strong> rivestono il vano finestra tra il telaio dell&apos;infisso e la muratura esterna, eliminando i ponti termici perimetrali, proteggendo l&apos;intonaco dall&apos;umiditÃ  di infiltrazione e conferendo all&apos;apertura un aspetto pulito e rifinito. Sono realizzati su misura per adattarsi a qualsiasi spessore di muro e profonditÃ  del vano.
+              I monoblocchi in alluminio e PVC completano il vano finestra creando una finitura estetica pulita e ordinata tra il serramento e la muratura. Contribuiscono a migliorare l&apos;isolamento del perimetro, proteggono dagli agenti esterni e aiutano a prevenire problemi legati a umidità e infiltrazioni. Realizzati su misura per ogni esigenza, si adattano a diversi spessori di parete e profondità del vano.
             </p>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Gli imbotti in alluminio vengono verniciati nello stesso colore dell&apos;infisso per continuitÃ  estetica, mentre quelli in PVC sono disponibili in bianco e in versione foliata. La posa avviene con aggancio a clips o con viti a scomparsa, senza bisogno di opere murarie aggiuntive, e il giunto perimetrale viene sigillato con silicone neutro per la tenuta all&apos;acqua.
+              Ti seguiamo in ogni fase del progetto: preventivo gratuito, sopralluogo, rilievo misure, fornitura, posa in opera, sigillatura e smaltimento vecchi monoblocchi, con un servizio completo e professionale.
             </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Vengono installati contestualmente alla posa degli infissi o come intervento autonomo su serramenti esistenti. Contattaci per un preventivo gratuito.
-            </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16, background: '#e8f7e8', border: '1px solid #9dd49d', borderRadius: 20, padding: 16 }}>
+              <Image src="/images/cta/emoticon2.webp" alt="" width={64} height={64} style={{ objectFit: 'contain', flexShrink: 0 }} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <p className="testo-articoli" style={{ margin: 0, fontWeight: 700, color: '#8a6800' }}>
+                  Articolo disponibile per preventivi Online
+                </p>
+                <p className="testo-articoli" style={{ margin: 0, fontStyle: 'italic' }}>
+                  Per farti risparmiare tempo prezioso, puoi utilizzare il nostro preventivatore online: inserisci in autonomia misure e configurazione del serramento per ottenere una stima immediata del costo. Se il preventivo ti soddisfa, fisseremo un sopralluogo per il rilievo definitivo delle misure e la conferma dell&apos;offerta, che normalmente si discosta di poco dalla simulazione iniziale.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -197,7 +205,7 @@ export default async function Page() {
             cartNonVuoto={cartNonVuoto}
             submitLabel="Conferma"
             fixedCat="serramenti"
-            fixedSottocat="imbotti"
+            fixedSottocat="monoblocchi"
           />
         )}
 
@@ -214,7 +222,7 @@ export default async function Page() {
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>{(() => {
         const cerca = catalogo
           ? `${catalogo.categoria.nome}`
-          : 'serramenti/imbotti/non trovata'
+          : 'serramenti/monoblocchi/non trovata'
         const trova = catalogo && catalogo.voci.length > 0
           ? catalogo.voci.map(v => `(${v.nome}:${v.serie}:${v.pdf_label})/${v.sottocategoria ?? 'nessuno'}`).join('+')
           : 'nessuno'
@@ -223,4 +231,3 @@ export default async function Page() {
     </div>
   )
 }
-

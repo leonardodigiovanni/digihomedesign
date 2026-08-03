@@ -10,7 +10,7 @@ import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = {
   title: 'Cataloghi — Digi Home Design Palermo',
-  description: 'Scarica i cataloghi prodotti di Digi Home Design: infissi, verande, persiane, imbotti, zanzariere e molto altro.',
+  description: 'Scarica i cataloghi prodotti di Digi Home Design: infissi, verande, persiane, monoblocchi, zanzariere e molto altro.',
   alternates: { canonical: 'https://www.digi-home-design.com/cataloghi' },
 }
 
