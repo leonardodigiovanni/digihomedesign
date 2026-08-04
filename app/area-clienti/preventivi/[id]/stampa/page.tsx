@@ -651,7 +651,7 @@ function buildVolantinoCoverHtml(settings: AppSettings): string {
   return (
     `<div style="width:794px;height:1123px;position:relative;overflow:hidden;font-family:'Times New Roman',Times,serif;box-sizing:border-box;">` +
     `<div style="width:100%;height:${HH}px;position:relative;overflow:hidden;">` +
-      `<img src="/images/volantino/chiave.webp" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"/>` +
+      `<img src="/images/volantino/chiave2.webp" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"/>` +
       `<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:${Math.round(HH*0.04)-5}px;gap:1px;">` +
         `<img src="/images/icons/DIGIHOMEDESIGN - nero.png" alt="logo" style="height:${Math.round(HH*0.20)}px;width:auto;margin-top:20px;"/>` +
       `</div>` +
@@ -688,7 +688,7 @@ function buildVolantinoCoverHtml(settings: AppSettings): string {
         `<span style="font-size:17px;font-weight:500;color:#fff;letter-spacing:0.03em;">info@digi-home-design.com</span>` +
       `</div>` +
     `</div>` +
-    `<img src="/images/app/TIMBRO-TRASP.webp" alt="" style="position:absolute;top:675px;left:205px;width:140px;height:auto;pointer-events:none;"/>` +
+    `<img src="/images/app/TIMBRO-TRASP.webp" alt="" style="position:absolute;top:675px;left:205px;width:140px;height:auto;pointer-events:none;z-index:10;"/>` +
     `</div>`
   )
 }

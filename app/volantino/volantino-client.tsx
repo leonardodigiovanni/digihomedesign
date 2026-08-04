@@ -71,6 +71,18 @@ function buildBg(mode: BgMode, bg: Rgba): React.CSSProperties {
   return {}
 }
 
+// Colore testo leggibile in base allo sfondo — stessa logica di bgTextColor() nella stampa PDF
+// (app/area-clienti/preventivi/[id]/stampa/page.tsx), altrimenti un testo a colore fisso può finire
+// nero su nero (o bianco su bianco) se lo sfondo configurato cambia.
+function bgTextColor(mode: BgMode, bg: Rgba): string {
+  const { r, g, b } = bg
+  if (mode.startsWith('rgb')) {
+    const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+    return lum > 0.5 ? '#1a1a1a' : '#ffffff'
+  }
+  return '#1a1a1a'
+}
+
 // ─── Sezione volantino (applica classe CSS o stile inline) ────────────────────
 
 function Section({ mode, bg, height, zIndex, children }: { mode: BgMode; bg: Rgba; height: number; zIndex?: number; children?: React.ReactNode }) {
@@ -181,6 +193,8 @@ export default function VolantinoClient({
   const [shareUnsupported, setShareUnsupported] = useState(false)
   const [containerW, setContainerW]         = useState(PREVIEW_W)
   const [isMobile, setIsMobile]             = useState(false)
+
+  const footerText = bgTextColor(footerBgMode, footerBg)
 
   // Rileva mobile (schermo stretto) per lo scaling adattivo
   useEffect(() => {
@@ -354,7 +368,7 @@ export default function VolantinoClient({
           <div style={{ width: '100%', height: H_HEADER, position: 'relative', overflow: 'hidden' }}>
             {/* Immagine di sfondo chiave */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/volantino/chiave.webp" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+            <img src="/images/volantino/chiave2.webp" alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
             {/* Logo centrato in alto */}
             <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: Math.round(H_HEADER * 0.04) - 5, gap: 1 }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -433,7 +447,7 @@ export default function VolantinoClient({
               textAlign: 'center',
               fontSize: 20,
               fontWeight: 900,
-              color: '#000',
+              color: footerText,
               letterSpacing: '0.08em',
               textTransform: 'uppercase',
               lineHeight: 1.25,
@@ -462,7 +476,7 @@ export default function VolantinoClient({
               textAlign: 'center',
               fontSize: 13,
               fontWeight: 700,
-              color: '#000',
+              color: footerText,
               letterSpacing: '0.04em',
               textTransform: 'uppercase',
               lineHeight: 1.6,
@@ -487,7 +501,7 @@ export default function VolantinoClient({
               textAlign: 'center',
               fontSize: 13,
               fontWeight: 700,
-              color: '#000',
+              color: footerText,
               letterSpacing: '0.04em',
               textTransform: 'uppercase',
               lineHeight: 1.6,
@@ -527,7 +541,7 @@ export default function VolantinoClient({
 
           {/* Timbro sovrapposto */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/app/TIMBRO-TRASP.webp" alt="" style={{ position: 'absolute', top: 675, left: 205, width: 140, height: 'auto', pointerEvents: 'none' }} />
+          <img src="/images/app/TIMBRO-TRASP.webp" alt="" style={{ position: 'absolute', top: 675, left: 205, width: 140, height: 'auto', pointerEvents: 'none', zIndex: 10 }} />
         </div>
       </div>
 
