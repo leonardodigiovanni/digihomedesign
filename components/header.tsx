@@ -121,10 +121,12 @@ export default function Header({
         <Link href="/" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, textDecoration: 'none', color: 'inherit', outline: 'none', cursor: 'pointer', flexShrink: 0, marginTop: 4 }}>
           <Image src="/images/header/DIGIHOMEDESIGN.webp" alt="Home Design" width={80} height={80} style={{ objectFit: 'contain', display: 'block' }} />
         </Link>
-        <div style={{ textAlign: 'left', fontSize: 13, fontWeight: 700, letterSpacing: '0.02em', lineHeight: 1.3, whiteSpace: 'nowrap' }}>
-          <div style={{ color: '#999' }}>Serramenti &bull; Sicurezza</div>
-          <div style={{ color: '#999' }}>Ristrutturazioni</div>
-          <div style={{ color: '#fff', fontSize: 17 }}>Home Design</div>
+        <div style={{ display: 'inline-block', whiteSpace: 'nowrap', lineHeight: 1.2, fontSize: 13, fontWeight: 600, color: '#999' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}><span>Serramenti</span><span>+</span></div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}><span>Sicurezza</span><span>+</span></div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}><span>Ristrutturazioni</span><span>=</span></div>
+          <div style={{ borderTop: '1px solid #555', margin: '3px 0' }} />
+          <div style={{ color: '#fff', fontWeight: 700, fontSize: 17 }}>DIGI Home Design</div>
         </div>
       </div>
       <div style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', zIndex: 20 }}>
