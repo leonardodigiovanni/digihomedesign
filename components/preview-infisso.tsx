@@ -1,6 +1,7 @@
 'use client'
 import React, { useMemo, useState } from 'react'
-import { tcTaProfileRatio } from '@/lib/disegno-infisso'
+import { extractTcTa } from '@/lib/abbr-layout'
+import { drawInfisso, innerRect, adaptiveStroke, type DrawSink } from '@/lib/infisso-drawing'
 
 const MOSTRA_PAVIMENTO_SOFFITTO = false
 
@@ -127,316 +128,50 @@ export default function PreviewInfisso({
   const pt = Math.max(7,  Math.round(iW * 0.040))
 
   // ── Rendering Tc/Ta ──────────────────────────────────────────────────────────
-  const abbrUp = (abbr ?? '').trim().toUpperCase()
-  if (abbrUp.startsWith('TC(') || abbrUp.startsWith('TA(')) {
-    const isTa = abbrUp.startsWith('TA(')
-    const Pmm  = (profilo_mm ?? 80) * (2 / 3)
-
-    // Spessore profilo in px dalla scala della stanza (uguale orizzontale e verticale)
-    const profilePx = Math.round(Math.max(6, (Pmm / 10) * pxPerCm))
-    const pxW = profilePx
-    const pxH = profilePx
+  const abbrTcTa = extractTcTa(abbr ?? '')
+  if (abbrTcTa) {
+    const isTa = abbrTcTa.isTa
+    const profMm = profilo_mm ?? 80
+    // Spessore in px dalla scala della stanza (uguale orizzontale e verticale):
+    // telaio (Tc/Ta + divisori T/P) = metà del profilo, ante/ribalta/vasistas = profilo intero.
+    const mmToPx = (mm: number) => Math.round(Math.max(6, (mm / 10) * pxPerCm))
+    const pxTelaio = mmToPx(profMm / 2)
+    const pxAnta   = mmToPx(profMm)
     const bc = bar_color ?? '#d8d4cc'
+    const hwFill = bar_color_acc ?? bc
+    // Contorni: riempimento piatto ovunque (niente chiaroscuro/gradienti) + bordo 1px, colore
+    // derivato dal colore infisso (un po' più scuro se chiaro, più chiaro se scuro) per farlo risaltare.
+    const FRAME_STROKE = adaptiveStroke(bc)
+    // Fermavetro (fissi + interno delle ante/ribalte/vasistas): sempre 20mm, indipendente dal profilo.
+    const fvPx = Math.max(2, (20 / 10) * pxPerCm)
+    // Porta (isBalcone): soglia sull'altezza propria, base a terra. Finestra: la base dell'anta qui
+    // non è il pavimento (sollevata di liftPx), quindi puntiamo alla stessa altezza ~130cm da terra
+    // delle porte alte, scontando il sollevamento — non alla base dell'anta.
+    const liftCm = isBalcone ? 0 : liftPx / pxPerCm
+    const handleFromBottomCm = isBalcone
+      ? (altezza_cm >= 200 ? 130 : 35)
+      : Math.max(10, 130 - liftCm)
 
-    // Poligoni in coord SVG (identici al PDF, scalati a iW×iH)
-    const top    = `${iX},${iY} ${iX+iW},${iY} ${iX+iW-pxW},${iY+pxH} ${iX+pxW},${iY+pxH}`
-    const right  = isTa
-      ? `${iX+iW},${iY} ${iX+iW},${iY+iH} ${iX+iW-pxW},${iY+iH} ${iX+iW-pxW},${iY+pxH}`
-      : `${iX+iW},${iY} ${iX+iW},${iY+iH} ${iX+iW-pxW},${iY+iH-pxH} ${iX+iW-pxW},${iY+pxH}`
-    const left   = isTa
-      ? `${iX},${iY} ${iX+pxW},${iY+pxH} ${iX+pxW},${iY+iH} ${iX},${iY+iH}`
-      : `${iX},${iY} ${iX+pxW},${iY+pxH} ${iX+pxW},${iY+iH-pxH} ${iX},${iY+iH}`
-    const bottom = `${iX},${iY+iH} ${iX+iW},${iY+iH} ${iX+iW-pxW},${iY+iH-pxH} ${iX+pxW},${iY+iH-pxH}`
-
-    // Apertura interna per mostrare lo sfondo
-    const innerX = iX + pxW
-    const innerY = iY + pxH
-    const innerW = iW - 2 * pxW
-    const innerH = isTa ? iH - pxH : iH - 2 * pxH
     const clipId = `tc_${Math.round(iX)}_${Math.round(iY)}`
+    const { innerX, innerY, innerW, innerH } = innerRect(isTa, iX, iY, iW, iH, pxTelaio)
 
-    // Divisori interni T/P e fissi F()
-    const tcContent = (abbr ?? '').trim().match(/^T[CA]\((.*)\)$/i)?.[1] ?? ''
-    const dividers: React.ReactElement[] = []
-    const sn = (v: number) => Math.round(v) + 0.5
-    const fvPx = Math.max(2, pxW / 2)
-    let fvKey = 0
-    const darken = (hex: string, f = 0.72): string => {
-      const h = hex.replace(/^#/, '')
-      const full = h.length === 3 ? h.split('').map(c => c+c).join('') : h
-      const m = full.match(/.{2}/g)
-      if (!m || m.length < 3) return hex
-      return '#' + m.slice(0, 3).map(ch => Math.max(0, Math.round(parseInt(ch, 16) * f)).toString(16).padStart(2, '0')).join('')
-    }
-    const mixWhite = (hex: string, amt: number): string => {
-      const h = hex.replace(/^#/, ''), full = h.length === 3 ? h.split('').map(c=>c+c).join('') : h
-      const m = full.match(/.{2}/g)
-      if (!m || m.length < 3) return hex
-      return '#' + m.slice(0,3).map(ch => { const v = parseInt(ch,16); return Math.min(255, Math.round(v + (255-v)*amt)).toString(16).padStart(2,'0') }).join('')
-    }
-    const sc    = darken(bc)
-    const scHw  = darken(bc, 0.62)
-    const bcHi  = mixWhite(bc, 0.55)
-    const bcMid = mixWhite(bc, 0.24)
-    const bcLo  = darken(bc, 0.80)
-    const bcDrk = darken(bc, 0.58)
-    const gTop  = `g-top-${clipId}`, gBot = `g-bot-${clipId}`
-    const gLft  = `g-lft-${clipId}`, gRgt = `g-rgt-${clipId}`
-    const gHw   = `g-hw-${clipId}`
-    const bca    = bar_color_acc ?? null
-    const scHwA  = bca ? darken(bca, 0.62)   : scHw
-    const bcHiA  = bca ? mixWhite(bca, 0.55) : bcHi
-    const bcLoA  = bca ? darken(bca, 0.80)   : bcLo
-    const bcMidA = bca ? mixWhite(bca, 0.24) : bcMid
-    const gHwa   = `g-hwa-${clipId}`
-
-    const pushFermavetri = (ax: number, ay: number, aw: number, ah: number) => {
-      const k = fvKey++
-      const fvS = { stroke: sc, strokeWidth: 1, vectorEffect: 'non-scaling-stroke' } as const
-      dividers.push(<rect key={`fv-t${k}`} x={ax}           y={ay}         width={aw}   height={fvPx}         fill={bc} {...fvS}/>)
-      dividers.push(<rect key={`fv-b${k}`} x={ax}           y={ay+ah-fvPx} width={aw}   height={fvPx}         fill={bc} {...fvS}/>)
-      dividers.push(<rect key={`fv-l${k}`} x={ax}           y={ay+fvPx}    width={fvPx} height={ah-2*fvPx}    fill={bc} {...fvS}/>)
-      dividers.push(<rect key={`fv-r${k}`} x={ax+aw-fvPx}   y={ay+fvPx}    width={fvPx} height={ah-2*fvPx}    fill={bc} {...fvS}/>)
+    const elements: React.ReactElement[] = []
+    let elKey = 0
+    const sink: DrawSink = {
+      rect: (x, y, w, h, opts) => {
+        elements.push(<rect key={elKey++} x={x} y={y} width={w} height={h} fill={opts.fill ?? 'none'} stroke={opts.stroke ?? 'none'} strokeWidth={opts.strokeWidth ?? 1} rx={opts.rx} vectorEffect="non-scaling-stroke"/>)
+      },
+      polygon: (points, opts) => {
+        elements.push(<polygon key={elKey++} points={points.map(([x, y]) => `${x},${y}`).join(' ')} fill={opts.fill ?? 'none'} stroke={opts.stroke ?? 'none'}/>)
+      },
+      line: (x1, y1, x2, y2, opts) => {
+        elements.push(<line key={elKey++} x1={x1} y1={y1} x2={x2} y2={y2} stroke={opts?.stroke ?? FRAME_STROKE} strokeWidth={opts?.strokeWidth ?? 1} strokeDasharray={opts?.dash} vectorEffect="non-scaling-stroke"/>)
+      },
     }
 
-    const diagPx = (x1: number, y1: number, x2: number, y2: number, key: string) => {
-      dividers.push(<line key={key} x1={x1} y1={y1} x2={x2} y2={y2} stroke={sc} strokeWidth={1} vectorEffect="non-scaling-stroke"/>)
-    }
-
-    let antaKey = 0
-    const drawAnta = (
-      ax: number, ay: number, aw: number, ah: number,
-      hingeLeft: boolean, handleLeft: boolean, handleRight: boolean,
-      kind: 'anta' | 'ribalta' | 'vasistas', innerFisso: boolean, innerContent = ''
-    ) => {
-      const k = antaKey++
-      const p = pxW
-      const aS = { stroke: sc, strokeWidth: 1, vectorEffect: 'non-scaling-stroke' } as const
-      dividers.push(<polygon key={`a-top${k}`} points={`${ax},${ay} ${ax+aw},${ay} ${ax+aw-p},${ay+p} ${ax+p},${ay+p}`}             fill={`url(#${gTop})`} {...aS}/>)
-      dividers.push(<polygon key={`a-bot${k}`} points={`${ax},${ay+ah} ${ax+aw},${ay+ah} ${ax+aw-p},${ay+ah-p} ${ax+p},${ay+ah-p}`} fill={`url(#${gTop})`} {...aS}/>)
-      dividers.push(<polygon key={`a-lft${k}`} points={`${ax},${ay} ${ax+p},${ay+p} ${ax+p},${ay+ah-p} ${ax},${ay+ah}`}             fill={`url(#${gLft})`} {...aS}/>)
-      dividers.push(<polygon key={`a-rgt${k}`} points={`${ax+aw},${ay} ${ax+aw-p},${ay+p} ${ax+aw-p},${ay+ah-p} ${ax+aw},${ay+ah}`} fill={`url(#${gLft})`} {...aS}/>)
-      dividers.push(<line key={`a-sp-t${k}`} x1={ax} y1={ay} x2={ax+aw} y2={ay} stroke="rgba(255,255,255,0.55)" strokeWidth={1} vectorEffect="non-scaling-stroke"/>)
-      dividers.push(<line key={`a-sp-l${k}`} x1={ax} y1={ay} x2={ax} y2={ay+ah} stroke="rgba(255,255,255,0.28)" strokeWidth={0.8} vectorEffect="non-scaling-stroke"/>)
-      diagPx(ax,    ay,    ax+p,    ay+p,    `a-d1-${k}`)
-      diagPx(ax+aw, ay,    ax+aw-p, ay+p,    `a-d2-${k}`)
-      diagPx(ax,    ay+ah, ax+p,    ay+ah-p, `a-d3-${k}`)
-      diagPx(ax+aw, ay+ah, ax+aw-p, ay+ah-p, `a-d4-${k}`)
-      if (kind === 'vasistas') {
-        // cerniere orizzontali in basso
-        const hvW = Math.max(5, 20 * pxPerCm)
-        const hvH = Math.max(1.5, 2.5 * pxPerCm)
-        const hy  = ay + ah - hvH
-        const hx1 = ax + p
-        const hx2 = ax + aw - p - hvW
-        dividers.push(<rect key={`a-vh1${k}`}  x={hx1} y={hy} width={hvW} height={hvH} fill={`url(#${gHwa})`} stroke={scHwA} strokeWidth={1.5} vectorEffect="non-scaling-stroke"/>)
-        dividers.push(<line key={`a-vhs1${k}`} x1={hx1} y1={hy} x2={hx1+hvW} y2={hy} stroke={bcHiA} strokeWidth={1} vectorEffect="non-scaling-stroke"/>)
-        dividers.push(<line key={`a-vhv1${k}`} x1={hx1+hvW/2} y1={hy} x2={hx1+hvW/2} y2={hy+hvH} stroke={scHwA} strokeWidth={1} vectorEffect="non-scaling-stroke"/>)
-        dividers.push(<rect key={`a-vh2${k}`}  x={hx2} y={hy} width={hvW} height={hvH} fill={`url(#${gHwa})`} stroke={scHwA} strokeWidth={1.5} vectorEffect="non-scaling-stroke"/>)
-        dividers.push(<line key={`a-vhs2${k}`} x1={hx2} y1={hy} x2={hx2+hvW} y2={hy} stroke={bcHiA} strokeWidth={1} vectorEffect="non-scaling-stroke"/>)
-        dividers.push(<line key={`a-vhv2${k}`} x1={hx2+hvW/2} y1={hy} x2={hx2+hvW/2} y2={hy+hvH} stroke={scHwA} strokeWidth={1} vectorEffect="non-scaling-stroke"/>)
-        // chiusura in alto al centro
-        const clW = Math.max(4, 6 * pxPerCm)
-        const clH = Math.max(2, p * 0.55)
-        const clX = ax + aw / 2 - clW / 2
-        const clY = ay
-        const clRx = Math.max(0.5, clW * 0.2)
-        dividers.push(<rect key={`a-vcl${k}`}  x={clX} y={clY} width={clW} height={clH} rx={clRx} fill={`url(#${gHwa})`} stroke={scHwA} strokeWidth={1.5} vectorEffect="non-scaling-stroke"/>)
-        dividers.push(<line key={`a-vcls${k}`} x1={clX} y1={clY} x2={clX+clW} y2={clY} stroke={bcHiA} strokeWidth={1} vectorEffect="non-scaling-stroke"/>)
-        const pvW = Math.max(1, clW * 0.18)
-        const pvH = Math.max(2, p * 0.55)
-        const pvX = clX + clW / 2 - pvW / 2
-        dividers.push(<rect key={`a-vpv${k}`} x={pvX} y={clY+clH} width={pvW} height={pvH} rx={Math.max(0.3, pvW*0.25)} fill={`url(#${gHwa})`} stroke={scHwA} strokeWidth={1} vectorEffect="non-scaling-stroke"/>)
-      } else {
-        // cerniere laterali 20×200mm
-        const hW = Math.max(1.5, 2.5 * pxPerCm)
-        const hH = Math.max(5, 20 * pxPerCm)
-        const hx = hingeLeft ? ax : ax+aw-hW
-        dividers.push(<rect key={`a-h1${k}`}  x={hx} y={ay+p}       width={hW} height={hH} fill={`url(#${gHwa})`} stroke={scHwA} strokeWidth={1.5} vectorEffect="non-scaling-stroke"/>)
-        dividers.push(<line key={`a-hsp1${k}`} x1={hx} y1={ay+p}    x2={hx+hW} y2={ay+p}   stroke={bcHiA} strokeWidth={1} vectorEffect="non-scaling-stroke"/>)
-        dividers.push(<line key={`a-hm1${k}`}  x1={sn(hx)} y1={sn(ay+p+hH/2)} x2={sn(hx+hW)} y2={sn(ay+p+hH/2)} stroke={scHwA} strokeWidth={1} vectorEffect="non-scaling-stroke"/>)
-        dividers.push(<rect key={`a-h2${k}`}  x={hx} y={ay+ah-p-hH} width={hW} height={hH} fill={`url(#${gHwa})`} stroke={scHwA} strokeWidth={1.5} vectorEffect="non-scaling-stroke"/>)
-        dividers.push(<line key={`a-hsp2${k}`} x1={hx} y1={ay+ah-p-hH} x2={hx+hW} y2={ay+ah-p-hH} stroke={bcHiA} strokeWidth={1} vectorEffect="non-scaling-stroke"/>)
-        dividers.push(<line key={`a-hm2${k}`}  x1={sn(hx)} y1={sn(ay+ah-p-hH/2)} x2={sn(hx+hW)} y2={sn(ay+ah-p-hH/2)} stroke={scHwA} strokeWidth={1} vectorEffect="non-scaling-stroke"/>)
-        if (handleLeft || handleRight) {
-          const mW = Math.max(2, 3.0 * pxPerCm)
-          const mH = Math.max(5, 20 * pxPerCm)
-          const fromBottomCm = altezza_cm >= 200 ? 135 : 35
-          const mx = handleLeft ? ax + (p - mW) / 2 : ax+aw-p + (p - mW) / 2
-          const my = (ay+ah-p) - fromBottomCm*pxPerCm - mH/2
-          const rx = Math.max(1, mW * 0.3)
-          dividers.push(<rect key={`a-m${k}`}   x={mx} y={my} width={mW} height={mH} rx={rx} fill={`url(#${gHwa})`} stroke={scHwA} strokeWidth={1.5} vectorEffect="non-scaling-stroke"/>)
-          dividers.push(<line key={`a-msp${k}`} x1={mx} y1={my} x2={mx+mW} y2={my} stroke={bcHiA} strokeWidth={1} vectorEffect="non-scaling-stroke"/>)
-        }
-      }
-      const iX0 = ax+p, iY0 = ay+p, iW0 = aw-2*p, iH0 = ah-2*p
-      if (innerContent) {
-        const si = (s: string): string[] => {
-          const r: string[] = []; let d = 0, c = ''
-          for (const ch of s) {
-            if (ch === '(') d++; else if (ch === ')') d--
-            if ((ch === '-' || ch === '+') && d === 0) { r.push(c); c = '' } else c += ch
-          }
-          return c.length > 0 ? [...r, c] : r
-        }
-        const iParts = si(innerContent)
-        const hasTi = iParts.some(t => t.trim().toUpperCase() === 'T')
-        if (hasTi) {
-          type IT = { ki: 'a'; cm: number|null } | { ki: 'T' }
-          const iToks: IT[] = iParts.map(t => {
-            const u = t.trim().toUpperCase()
-            if (u === 'T') return { ki: 'T' as const }
-            const nm = u.match(/^(\d+(?:\.\d+)?)\(/)
-            return { ki: 'a' as const, cm: nm ? parseFloat(nm[1]) : null }
-          })
-          const iAreas = iToks.filter((t): t is { ki: 'a'; cm: number|null } => t.ki === 'a')
-          const nT = iToks.filter(t => t.ki === 'T').length
-          const fixedH = iAreas.reduce((s, a) => s + (a.cm != null ? a.cm * pxPerCm : 0), 0)
-          const nVar = iAreas.filter(a => a.cm == null).length
-          const vH = nVar > 0 ? (iH0 - nT * p - fixedH) / nVar : 0
-          const lastA = [...iToks].reverse().find(t => t.ki === 'a') as { ki: 'a'; cm: number|null }|undefined
-          let iCur = iY0
-          let tiKey = 0
-          for (const it of iToks) {
-            if (it.ki === 'a') {
-              const isLast = it === lastA
-              const aH = isLast ? (iY0 + iH0) - iCur : Math.round(it.cm != null ? it.cm * pxPerCm : vH)
-              pushFermavetri(iX0, iCur, iW0, aH)
-              iCur += aH
-            } else {
-              dividers.push(<rect key={`a-ti-${k}-${tiKey++}`} x={iX0} y={iCur} width={iW0} height={p} fill={bc} stroke={sc} strokeWidth={1} vectorEffect="non-scaling-stroke"/>)
-              iCur += p
-            }
-          }
-        } else {
-          pushFermavetri(iX0, iY0, iW0, iH0)
-        }
-      } else {
-        pushFermavetri(iX0, iY0, iW0, iH0)
-      }
-    }
-
-    if (tcContent.trim()) {
-      // Split su '-' o '+' rispettando parentesi bilanciate
-      const splitTP = (s: string): string[] => {
-        const r: string[] = []; let d = 0, c = ''
-        for (const ch of s) {
-          if (ch === '(') d++; else if (ch === ')') d--
-          if ((ch === '-' || ch === '+') && d === 0) { r.push(c); c = '' } else c += ch
-        }
-        return c.length > 0 ? [...r, c] : r
-      }
-      const tryAnta = (u: string) => {
-        if (/^V\(.*\)$/i.test(u)) return { antaKind: 'vasistas' as const, hingeLeft: false, handleLeft: false, handleRight: false, innerFisso: false, innerContent: '' }
-        const m = u.match(/^([CM]?)([AR])([CM]?)\((.*)\)$/)
-        if (!m) return null
-        return { antaKind: (m[2] === 'R' ? 'ribalta' : 'anta') as 'anta'|'ribalta'|'vasistas',
-          hingeLeft: m[1] === 'C', handleLeft: m[1] === 'M', handleRight: m[3] === 'M',
-          innerFisso: m[4] === 'F()' || m[4].includes('(F())'), innerContent: m[4] }
-      }
-      type LeafInfo = { antaKind: 'anta'|'ribalta'|'vasistas'|null; hingeLeft: boolean; handleLeft: boolean; handleRight: boolean; innerFisso: boolean; innerContent?: string }
-      type AreaTok = ({ type: 'area'; cm: number | null; kind: 'leaf'; fisso: boolean } & LeafInfo)
-                   | { type: 'area'; cm: number | null; kind: 'sub'; content: string }
-      type DivTok  = { type: 'div'; kind: 'T' | 'P' }
-      type Tok = AreaTok | DivTok
-
-      const blank    = (cm: number | null): AreaTok => ({ type: 'area', cm, kind: 'leaf', fisso: false, antaKind: null, hingeLeft: false, handleLeft: false, handleRight: false, innerFisso: false })
-      const fissoTok = (cm: number | null): AreaTok => ({ type: 'area', cm, kind: 'leaf', fisso: true,  antaKind: null, hingeLeft: false, handleLeft: false, handleRight: false, innerFisso: false })
-
-      // Tokenizza un livello di contenuto (il top-level di Tc/Ta, oppure l'interno di un wrapper
-      // N(...)/X(...)): divisori T/P, ante/fissi diretti (foglie), oppure — se il contenuto di un
-      // wrapper non si riduce a un caso semplice (lista di ante, F(), vuoto) — un sotto-livello da
-      // disegnare ricorsivamente con la stessa funzione (vedi `layout` più sotto).
-      const tokenize = (content: string): Tok[] => {
-        const toks: Tok[] = []
-        for (const raw of splitTP(content)) {
-          const u = raw.trim().toUpperCase()
-          if (u === 'T') { toks.push({ type: 'div', kind: 'T' }); continue }
-          if (u === 'P') { toks.push({ type: 'div', kind: 'P' }); continue }
-          const direct = tryAnta(u)
-          if (direct) { toks.push({ type: 'area', cm: null, kind: 'leaf', fisso: false, ...direct }); continue }
-
-          // NUMBER(INNER): 85(F()), 160(cAm()), 120() ecc. — LETTER(INNER): X(F()), X(cAm()) ecc.
-          const nm = u.match(/^(\d+(?:\.\d+)?)\((.*)\)$/)
-          const xm = nm ? null : u.match(/^[A-Z]\((.+)\)$/)
-          if (nm || xm) {
-            const totalCm = nm ? parseFloat(nm[1]) : null
-            const inner = (nm ? nm[2] : xm![1]).trim()
-            if (inner === '')     { toks.push(blank(totalCm)); continue }
-            if (inner === 'F()')  { toks.push(fissoTok(totalCm)); continue }
-            // tryAnta usa (.*) non bilanciato: va provato come "singola anta" SOLO se inner non ha
-            // già un '+'/'-' di primo livello, altrimenti matcherebbe a sproposito ingoiando il resto
-            // (es. "CA()+AC()" letta come una sola anta con innerContent spazzatura ")+AC(").
-            if (splitTP(inner).length === 1) {
-              const single = tryAnta(inner)
-              if (single) { toks.push({ type: 'area', cm: totalCm, kind: 'leaf', fisso: false, ...single }); continue }
-            }
-            // Contenuto non riducibile a un caso semplice (singola anta, F(), vuoto): diventa un
-            // sotto-livello, disegnato ricorsivamente una volta noto il suo riquadro.
-            toks.push({ type: 'area', cm: totalCm, kind: 'sub', content: inner }); continue
-          }
-
-          if (u === 'F()') { toks.push(fissoTok(null)); continue }
-          toks.push(blank(null))
-        }
-        return toks
-      }
-
-      // Calcola posizione/dimensione (px + cm) di ogni token in un riquadro e disegna: le foglie
-      // direttamente (drawAnta/pushFermavetri), i sotto-livelli richiamando se stessa sul riquadro
-      // appena calcolato — stessa identica formula usata finora per gli slot variabili singoli
-      // (spazio residuo diviso per il numero di slot variabili), solo applicabile a qualunque profondità.
-      const layout = (toks: Tok[], bx: number, by: number, bw: number, bh: number, bwCm: number, bhCm: number) => {
-        const areaToks = toks.filter((t): t is AreaTok => t.type === 'area')
-        if (areaToks.length === 0) return
-        const axisH = toks.some(t => t.type === 'div' && t.kind === 'T')
-        const divKind: 'T' | 'P' = axisH ? 'T' : 'P'
-        const nDiv = toks.filter(t => t.type === 'div' && t.kind === divKind).length
-        const totalCm = axisH ? bhCm : bwCm
-        const totalPx = axisH ? bh : bw
-        const pxDiv = axisH ? pxH : pxW
-        const fixedSumCm = areaToks.reduce((s, a) => a.cm != null ? s + a.cm : s, 0)
-        const nVar = areaToks.filter(a => a.cm == null).length
-        const fixedSumPx = totalCm > 0 ? (fixedSumCm / totalCm) * totalPx : 0
-        const varPx = nVar > 0 ? (totalPx - nDiv * pxDiv - fixedSumPx) / nVar : 0
-        const varCm = nVar > 0 ? Math.max(0, (totalCm - fixedSumCm) / nVar) : 0
-        const fallback = nVar > 0 && varPx <= 0
-        const equalPx = (totalPx - nDiv * pxDiv) / Math.max(1, areaToks.length)
-        const lastAreaTok = [...toks].reverse().find((t): t is AreaTok => t.type === 'area')
-        let cursor = axisH ? by : bx
-        let cmCursor = 0
-        for (const tok of toks) {
-          if (tok.type === 'div') {
-            if (tok.kind !== divKind) continue
-            if (axisH) dividers.push(<rect key={`d${dividers.length}`} x={bx}     y={cursor} width={bw}  height={pxH} fill={bc} stroke={sc} strokeWidth={1} vectorEffect="non-scaling-stroke"/>)
-            else       dividers.push(<rect key={`d${dividers.length}`} x={cursor} y={by}     width={pxW} height={bh}  fill={bc} stroke={sc} strokeWidth={1} vectorEffect="non-scaling-stroke"/>)
-            cursor += pxDiv
-            continue
-          }
-          const isLast = tok === lastAreaTok
-          const sizePx = isLast
-            ? (axisH ? (by + bh) - cursor : (bx + bw) - cursor)
-            : Math.round(fallback ? equalPx : (tok.cm != null ? (tok.cm / totalCm) * totalPx : varPx))
-          const sizeCm = isLast ? Math.max(0, totalCm - cmCursor) : (tok.cm != null ? tok.cm : varCm)
-          const ax = axisH ? bx : cursor
-          const ay = axisH ? cursor : by
-          const aw = axisH ? bw : sizePx
-          const ah = axisH ? sizePx : bh
-          if (tok.kind === 'leaf') {
-            if (tok.fisso) pushFermavetri(ax, ay, aw, ah)
-            else if (tok.antaKind) drawAnta(ax, ay, aw, ah, tok.hingeLeft, tok.handleLeft, tok.handleRight, tok.antaKind, tok.innerFisso, tok.innerContent)
-          } else {
-            const subCmW = axisH ? bwCm : sizeCm
-            const subCmH = axisH ? sizeCm : bhCm
-            layout(tokenize(tok.content), ax, ay, aw, ah, subCmW, subCmH)
-          }
-          cursor += sizePx
-          cmCursor += sizeCm
-        }
-      }
-
-      layout(tokenize(tcContent), innerX, innerY, innerW, innerH, larghezza_cm, altezza_cm)
-    }
+    drawInfisso(sink, isTa, iX, iY, iW, iH, abbrTcTa.content, larghezza_cm, altezza_cm, {
+      fill: bc, hwFill, stroke: FRAME_STROKE, pxTelaio, pxAnta, fvPx, pxPerCm, handleFromBottomCm,
+    })
 
     return (
       <svg viewBox={`0 0 ${W} ${H}`} width="100%"
@@ -445,70 +180,19 @@ export default function PreviewInfisso({
           <clipPath id={clipId}>
             <rect x={innerX} y={innerY} width={innerW} height={innerH}/>
           </clipPath>
-          <linearGradient id={gTop} x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
-            <stop offset="0%"   stopColor={bcHi}/>
-            <stop offset="45%"  stopColor={bc}/>
-            <stop offset="100%" stopColor={bcLo}/>
-          </linearGradient>
-          <linearGradient id={gTop} x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
-            <stop offset="0%"   stopColor={bcDrk}/>
-            <stop offset="55%"  stopColor={bc}/>
-            <stop offset="100%" stopColor={bcMid}/>
-          </linearGradient>
-          <linearGradient id={gLft} x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox">
-            <stop offset="0%"   stopColor={bcHi}/>
-            <stop offset="50%"  stopColor={bc}/>
-            <stop offset="100%" stopColor={bcLo}/>
-          </linearGradient>
-          <linearGradient id={gHw} x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox">
-            <stop offset="0%"   stopColor={bcLo}/>
-            <stop offset="32%"  stopColor={bcHi}/>
-            <stop offset="65%"  stopColor={bcMid}/>
-            <stop offset="100%" stopColor={bcLo}/>
-          </linearGradient>
-          <linearGradient id={gHwa} x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox">
-            <stop offset="0%"   stopColor={bcLoA}/>
-            <stop offset="32%"  stopColor={bcHiA}/>
-            <stop offset="65%"  stopColor={bcMidA}/>
-            <stop offset="100%" stopColor={bcLoA}/>
-          </linearGradient>
         </defs>
 
         <image href={stanzaSrc} x={0} y={0} width={W} height={H} preserveAspectRatio="none"/>
 
         <g clipPath={`url(#${clipId})`}>
-          <image href={sfondoSrc} x={iX} y={iY} width={iW} height={iH} preserveAspectRatio="xMidYMid slice"/>
-          <rect x={innerX} y={innerY} width={innerW} height={innerH} fill="rgba(170,200,230,0.06)"/>
-          <polygon points={`${innerX},${innerY} ${innerX+innerW*0.42},${innerY} ${innerX},${innerY+innerH*0.28}`} fill="rgba(255,255,255,0.10)"/>
+          <image href={sfondoSrc} x={iX} y={iY} width={iW} height={iH} preserveAspectRatio="xMidYMid slice" opacity={0.94}/>
+          {/* velo vetro: tinta piatta uniforme, nessun gradiente/lucido — simula il vetro davanti allo sfondo */}
+          <rect x={innerX} y={innerY} width={innerW} height={innerH} fill="rgba(190,215,235,0.14)"/>
+          {/* finto riflesso: poligono bianco piatto in diagonale, nessun gradiente */}
+          <polygon points={`${innerX},${innerY} ${innerX+innerW*0.42},${innerY} ${innerX},${innerY+innerH*0.28}`} fill="rgba(255,255,255,0.16)"/>
         </g>
 
-        <polygon points={top}    fill={`url(#${gTop})`} stroke="none"/>
-        <polygon points={right}  fill={`url(#${gLft})`} stroke="none"/>
-        <polygon points={left}   fill={`url(#${gLft})`} stroke="none"/>
-        {!isTa && <polygon points={bottom} fill={`url(#${gTop})`} stroke="none"/>}
-        {/* luci speculari bordi esterni */}
-        <line x1={iX} y1={iY} x2={iX+iW} y2={iY} stroke="rgba(255,255,255,0.65)" strokeWidth={1.5} vectorEffect="non-scaling-stroke"/>
-        <line x1={iX} y1={iY} x2={iX} y2={iY+iH} stroke="rgba(255,255,255,0.30)" strokeWidth={1} vectorEffect="non-scaling-stroke"/>
-        {/* bordo esterno */}
-        {!isTa
-          ? <rect x={iX} y={iY} width={iW} height={iH} fill="none" stroke={sc} strokeWidth={1} vectorEffect="non-scaling-stroke"/>
-          : <path d={`M ${iX},${iY+iH} L ${iX},${iY} L ${iX+iW},${iY} L ${iX+iW},${iY+iH}`} fill="none" stroke={sc} strokeWidth={1} vectorEffect="non-scaling-stroke"/>
-        }
-        {/* bordi interni + diagonali 45° giunti */}
-        <line x1={innerX} y1={innerY} x2={innerX+innerW} y2={innerY} stroke={sc} strokeWidth={1} vectorEffect="non-scaling-stroke"/>
-        {!isTa && <line x1={innerX} y1={innerY+innerH} x2={innerX+innerW} y2={innerY+innerH} stroke={sc} strokeWidth={1} vectorEffect="non-scaling-stroke"/>}
-        <line x1={innerX}       y1={innerY} x2={innerX}       y2={innerY+innerH} stroke={sc} strokeWidth={1} vectorEffect="non-scaling-stroke"/>
-        <line x1={innerX+innerW} y1={innerY} x2={innerX+innerW} y2={innerY+innerH} stroke={sc} strokeWidth={1} vectorEffect="non-scaling-stroke"/>
-        <line x1={iX}    y1={iY}    x2={iX+pxW}    y2={iY+pxH}    stroke={sc} strokeWidth={1} vectorEffect="non-scaling-stroke"/>
-        <line x1={iX+iW} y1={iY}    x2={iX+iW-pxW} y2={iY+pxH}    stroke={sc} strokeWidth={1} vectorEffect="non-scaling-stroke"/>
-        {!isTa && <line x1={iX}    y1={iY+iH} x2={iX+pxW}    y2={iY+iH-pxH} stroke={sc} strokeWidth={1} vectorEffect="non-scaling-stroke"/>}
-        {!isTa && <line x1={iX+iW} y1={iY+iH} x2={iX+iW-pxW} y2={iY+iH-pxH} stroke={sc} strokeWidth={1} vectorEffect="non-scaling-stroke"/>}
-        <g clipPath={`url(#${clipId})`}>
-          {/* ombra interna */}
-          <rect x={innerX} y={innerY} width={innerW} height={4} fill="rgba(0,0,0,0.22)"/>
-          <rect x={innerX} y={innerY} width={4} height={innerH} fill="rgba(0,0,0,0.15)"/>
-          {dividers}
-        </g>
+        {elements}
 
         {MOSTRA_PAVIMENTO_SOFFITTO && <>
           <line x1={0} y1={ceilingY} x2={W} y2={ceilingY} stroke="blue" strokeWidth={1.5} strokeDasharray="6 3"/>

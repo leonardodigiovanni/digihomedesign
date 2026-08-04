@@ -1600,7 +1600,7 @@ function RigaNormale({ art, percorsi, shopPercorsi, promoPercorsi, onEdit, onSch
       <td style={{ ...td, textAlign: 'right', color: '#aaa', fontSize: 11, ...vis('costante') }}>
         {art.costante !== 0 ? art.costante : ''}
       </td>
-      <td style={{ ...td, color: '#aaa', fontSize: 11, ...vis('abbr') }}>
+      <td style={{ ...td, color: '#aaa', fontSize: 11, fontFamily: 'monospace', ...vis('abbr') }}>
         {art.abbr || ''}
       </td>
       <td style={{ ...td, textAlign: 'center', ...vis('sconto') }}>
@@ -1760,7 +1760,7 @@ function RigaEdit({ art, categorie, produttori, fornitori, onDone, onSaved }: {
       <td style={{ ...tde, ...vis('p_acq') }}><input name="prezzo_acquisto" type="number" step="0.01" min="0" defaultValue={art.prezzo_acquisto} required style={{ ...inp, width: 80, textAlign: 'right' }} /></td>
       <td style={{ ...tde, ...vis('p_vnd') }}><input name="prezzo_vendita" type="number" step="0.01" min="0" defaultValue={art.prezzo_vendita} required style={{ ...inp, width: 80, textAlign: 'right' }} /></td>
       <td style={{ ...tde, ...vis('costante') }}><input name="costante" type="number" step="0.0001" defaultValue={art.costante} style={{ ...inp, width: 80, textAlign: 'right' }} /></td>
-      <td style={{ ...tde, ...vis('abbr') }}><input name="abbr" defaultValue={art.abbr} style={{ ...inp, width: 70 }} placeholder="abbr" /></td>
+      <td style={{ ...tde, ...vis('abbr') }}><input name="abbr" defaultValue={art.abbr} style={{ ...inp, minWidth: 220, fontFamily: 'monospace' }} placeholder="abbr" /></td>
       <td style={{ ...tde, ...vis('sconto') }}><input name="sconto_articolo" type="number" step="0.01" min="-100" max="100" defaultValue={art.sconto_articolo} style={{ ...inp, width: 60, textAlign: 'right' }} /></td>
       <td style={{ ...tde, ...vis('promo') }}><input name="prezzo_promo" type="number" step="0.01" min="0" defaultValue={art.prezzo_promo ?? ''} style={{ ...inp, width: 70, textAlign: 'right' }} placeholder="—" /></td>
       <td style={{ ...tde, ...vis('fine_promo') }}><input name="fine_promozione" type="date" defaultValue={art.fine_promozione ?? ''} style={{ ...inp, width: 120 }} /></td>

@@ -20,6 +20,14 @@ const ESEMPI_ABBR: { label: string; abbr: string }[] = [
   { label: 'Anta (telaio Ta) con maniglia',             abbr: 'Ta(mAc(F()))' },
   { label: 'Gruppo 2 ante variabili + area fissa 55cm', abbr: 'Tc(X(cA(F())+mAc(F()))+P+55())' },
   { label: 'Gruppo ante + gruppo con proprio divisorio', abbr: 'Tc(X(cA(F())+mAc(F()))+P+X(F()+P+40()))' },
+  { label: 'Parentesi miste (), [], {} — stesso disegno',abbr: 'Tc[X(cA{F()}+mAc[F{}])+P+X{F[]+P+40{}}]' },
+  { label: 'Area 33% + anta variabile + anta variabile', abbr: 'Tc(33%(F())+P+cA(F())+P+mAc(F()))' },
+  { label: 'Aree 15% + 20% fisse, resto ad anta variabile', abbr: 'Tc(15%(F())+P+mAc(F())+P+20%(F()))' },
+  { label: 'Percentuale verticale dentro un\'anta (T interno)', abbr: 'Tc(cA(F())+mAc(X()+T+33%(F()))+P+33%(F()))' },
+  { label: 'Divisorio P con spessore custom 40mm (indipendente dal profilo)', abbr: 'Tc(cA(F())+P40+mAc(F()))' },
+  { label: 'Divisorio T con spessore custom 60mm + divisorio P normale', abbr: 'Tc(cA(F())+T60+mAc(F())+P+V(F()))' },
+  { label: '2 ante con zoccolo (Z), spessore default = profilo', abbr: 'Tc(CZ(F())+MZC(F()))' },
+  { label: 'Anta con zoccolo custom 120mm', abbr: 'Tc(cZ120m(F()))' },
 ]
 
 const lbl: React.CSSProperties = {

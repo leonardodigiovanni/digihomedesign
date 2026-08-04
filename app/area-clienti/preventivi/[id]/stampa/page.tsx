@@ -9,6 +9,8 @@ import { extractAvgColor } from '@/lib/extract-color'
 import { COND_PREV_OUTER_STYLE, COND_PREV_TITLE_HTML, condizioniPreventivoArticles } from '@/lib/templates/condizioni-preventivo'
 import { COND_VEND_OUTER_STYLE, COND_VEND_TITLE_HTML, condizioniVenditaArticles } from '@/lib/templates/condizioni-vendita'
 import { computeGlassGeometry } from '@/lib/disegno-infisso'
+import { extractTcTa } from '@/lib/abbr-layout'
+import { drawInfisso, adaptiveStroke, type DrawSink } from '@/lib/infisso-drawing'
 
 export const metadata: Metadata = { title: 'Stampa Preventivo' }
 
@@ -113,283 +115,51 @@ function disegnoTcTa(isTa: boolean, larghezza: number, altezza: number, profiloM
   const W = outerW + lmm + padRight, H = outerH + padTop + bmm
   const ox = lmm, oy = padTop
   const pxPerCmX = outerW / widthCm
-  const PROFILE_CM = profiloMm / 10
-  const pX = Math.round(Math.min(Math.max(4, PROFILE_CM * pxPerCmX), outerW * 0.44))
-  const pY = pX
-  const pc = barColor ?? '#d8d4cc', lc = '#000', sw = '1'
-  const darken = (hex: string, f = 0.72): string => {
-    const h = hex.replace(/^#/, '')
-    const full = h.length === 3 ? h.split('').map(c => c+c).join('') : h
-    const m = full.match(/.{2}/g)
-    if (!m || m.length < 3) return hex
-    return '#' + m.slice(0, 3).map(ch => Math.max(0, Math.round(parseInt(ch, 16) * f)).toString(16).padStart(2, '0')).join('')
+  // Spessore in px: telaio (Tc/Ta + divisori T/P) = metà del profilo, ante/ribalta/vasistas = profilo intero.
+  const mmToPx = (mm: number) => Math.round(Math.min(Math.max(4, (mm / 10) * pxPerCmX), outerW * 0.44))
+  const pxTelaio = mmToPx(profiloMm / 2)
+  const pxAnta = mmToPx(profiloMm)
+  const fill = barColor ?? '#d8d4cc'
+  const hwFill = barColorAcc ?? fill
+  const stroke = adaptiveStroke(fill)
+  // Fermavetro (fissi + interno delle ante/ribalte/vasistas): sempre 20mm, indipendente dal profilo.
+  const fvPx = Math.max(2, (20 / 10) * pxPerCmX)
+  // Il PDF è uno schema tecnico piatto, senza il concetto "sollevato da terra" della finestra
+  // nell'anteprima a schermo: soglia sull'altezza propria, come per una porta a terra.
+  const handleFromBottomCm = heightCm >= 200 ? 130 : 35
+
+  const parts: string[] = []
+  const f1 = (n: number) => n.toFixed(1)
+  const sink: DrawSink = {
+    rect: (x, y, w, h, o) => {
+      const rx = o.rx != null ? ` rx="${f1(o.rx)}"` : ''
+      parts.push(`<rect x="${f1(x)}" y="${f1(y)}" width="${f1(w)}" height="${f1(h)}" fill="${o.fill ?? 'none'}" stroke="${o.stroke ?? 'none'}" stroke-width="${o.strokeWidth ?? 1}" vector-effect="non-scaling-stroke"${rx}/>`)
+    },
+    polygon: (points, o) => {
+      const pts = points.map(([x, y]) => `${f1(x)},${f1(y)}`).join(' ')
+      parts.push(`<polygon points="${pts}" fill="${o.fill ?? 'none'}" stroke="${o.stroke ?? 'none'}"/>`)
+    },
+    line: (x1, y1, x2, y2, o) => {
+      const dash = o?.dash ? ` stroke-dasharray="${o.dash}"` : ''
+      parts.push(`<line x1="${f1(x1)}" y1="${f1(y1)}" x2="${f1(x2)}" y2="${f1(y2)}" stroke="${o?.stroke ?? stroke}" stroke-width="${o?.strokeWidth ?? 1}"${dash} vector-effect="non-scaling-stroke"/>`)
+    },
   }
-  const sc = darken(pc)
-  const pts = (coords: [number, number][]) => coords.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' ')
-  const top    = pts([[ox, oy],[ox+outerW, oy],[ox+outerW-pX, oy+pY],[ox+pX, oy+pY]])
-  const right  = isTa
-    ? pts([[ox+outerW, oy],[ox+outerW, oy+outerH],[ox+outerW-pX, oy+outerH],[ox+outerW-pX, oy+pY]])
-    : pts([[ox+outerW, oy],[ox+outerW, oy+outerH],[ox+outerW-pX, oy+outerH-pY],[ox+outerW-pX, oy+pY]])
-  const left   = isTa
-    ? pts([[ox, oy],[ox+pX, oy+pY],[ox+pX, oy+outerH],[ox, oy+outerH]])
-    : pts([[ox, oy],[ox+pX, oy+pY],[ox+pX, oy+outerH-pY],[ox, oy+outerH]])
-  const bottom = pts([[ox, oy+outerH],[ox+outerW, oy+outerH],[ox+outerW-pX, oy+outerH-pY],[ox+pX, oy+outerH-pY]])
-  const po = `stroke="${sc}" stroke-width="${sw}" vector-effect="non-scaling-stroke"`
-  const bars = [
-    `<polygon points="${top}"   fill="${pc}" stroke="none"/>`,
-    `<polygon points="${right}" fill="${pc}" stroke="none"/>`,
-    `<polygon points="${left}"  fill="${pc}" stroke="none"/>`,
-    ...(!isTa ? [`<polygon points="${bottom}" fill="${pc}" stroke="none"/>`] : []),
-  ]
-  const innerX = ox + pX, innerY = oy + pY
-  const innerW = outerW - 2 * pX, innerH = isTa ? outerH - pY : outerH - 2 * pY
-  const divRects: string[] = []
-  const fvPx = Math.max(2, pX / 2)
-  const sn = (v: number) => (Math.round(v) + 0.5).toFixed(1)
-  const ve = `vector-effect="non-scaling-stroke"`
-  const ln = (x1: number, y1: number, x2: number, y2: number) =>
-    `<line x1="${sn(x1)}" y1="${sn(y1)}" x2="${sn(x2)}" y2="${sn(y2)}" stroke="${sc}" stroke-width="${sw}" ${ve}/>`
-  const pushFermavetri = (ax: number, ay: number, aw: number, ah: number) => {
-    const r = (x: number, y: number, w: number, h: number) =>
-      `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" fill="${pc}" ${po}/>`
-    divRects.push(r(ax, ay, aw, fvPx))
-    divRects.push(r(ax, ay+ah-fvPx, aw, fvPx))
-    divRects.push(r(ax, ay+fvPx, fvPx, ah-2*fvPx))
-    divRects.push(r(ax+aw-fvPx, ay+fvPx, fvPx, ah-2*fvPx))
-  }
-  const drawAnta = (ax: number, ay: number, aw: number, ah: number, hingeLeft: boolean, handleLeft: boolean, handleRight: boolean, kind: 'anta'|'ribalta'|'vasistas', innerFisso: boolean, innerContent = '') => {
-    const p = pX, violet = barColorAcc ?? pc
-    divRects.push(`<polygon points="${pts([[ax,ay],[ax+aw,ay],[ax+aw-p,ay+p],[ax+p,ay+p]])}" fill="${pc}" ${po}/>`)
-    divRects.push(`<polygon points="${pts([[ax,ay+ah],[ax+aw,ay+ah],[ax+aw-p,ay+ah-p],[ax+p,ay+ah-p]])}" fill="${pc}" ${po}/>`)
-    divRects.push(`<polygon points="${pts([[ax,ay],[ax+p,ay+p],[ax+p,ay+ah-p],[ax,ay+ah]])}" fill="${pc}" ${po}/>`)
-    divRects.push(`<polygon points="${pts([[ax+aw,ay],[ax+aw-p,ay+p],[ax+aw-p,ay+ah-p],[ax+aw,ay+ah]])}" fill="${pc}" ${po}/>`)
-    divRects.push(ln(ax, ay, ax+p, ay+p))
-    divRects.push(ln(ax+aw, ay, ax+aw-p, ay+p))
-    divRects.push(ln(ax, ay+ah, ax+p, ay+ah-p))
-    divRects.push(ln(ax+aw, ay+ah, ax+aw-p, ay+ah-p))
-    if (kind === 'vasistas') {
-      const hvW = Math.max(5, 20 * pxPerCmX), hvH = Math.max(1.5, 2.5 * pxPerCmX)
-      const hy = ay + ah - hvH
-      const hx1 = ax + p, hx2 = ax + aw - p - hvW
-      divRects.push(`<rect x="${hx1.toFixed(1)}" y="${hy.toFixed(1)}" width="${hvW.toFixed(1)}" height="${hvH.toFixed(1)}" fill="${violet}" stroke="${sc}" stroke-width="${sw}" vector-effect="non-scaling-stroke"/>`)
-      divRects.push(ln(hx1, hy, hx1+hvW, hy))
-      divRects.push(ln(hx1+hvW/2, hy, hx1+hvW/2, hy+hvH))
-      divRects.push(`<rect x="${hx2.toFixed(1)}" y="${hy.toFixed(1)}" width="${hvW.toFixed(1)}" height="${hvH.toFixed(1)}" fill="${violet}" stroke="${sc}" stroke-width="${sw}" vector-effect="non-scaling-stroke"/>`)
-      divRects.push(ln(hx2, hy, hx2+hvW, hy))
-      divRects.push(ln(hx2+hvW/2, hy, hx2+hvW/2, hy+hvH))
-      const clW = Math.max(4, 6 * pxPerCmX), clH = Math.max(2, p * 0.55)
-      const clX = ax + aw / 2 - clW / 2, clY = ay
-      const clRx = Math.max(0.5, clW * 0.2)
-      divRects.push(`<rect x="${clX.toFixed(1)}" y="${clY.toFixed(1)}" width="${clW.toFixed(1)}" height="${clH.toFixed(1)}" rx="${clRx.toFixed(1)}" fill="${violet}" stroke="${sc}" stroke-width="${sw}" vector-effect="non-scaling-stroke"/>`)
-      divRects.push(ln(clX, clY, clX+clW, clY))
-      const pvW = Math.max(1, clW * 0.18), pvH = Math.max(2, p * 0.55)
-      const pvX = clX + clW / 2 - pvW / 2
-      divRects.push(`<rect x="${pvX.toFixed(1)}" y="${(clY+clH).toFixed(1)}" width="${pvW.toFixed(1)}" height="${pvH.toFixed(1)}" rx="${Math.max(0.3, pvW*0.25).toFixed(1)}" fill="${violet}" stroke="${sc}" stroke-width="${sw}" vector-effect="non-scaling-stroke"/>`)
-    } else {
-      const hW = Math.max(1.5, 2.5 * pxPerCmX), hH = Math.max(5, 20 * pxPerCmX)
-      const hx = hingeLeft ? ax : ax+aw-hW
-      divRects.push(`<rect x="${hx.toFixed(1)}" y="${(ay+p).toFixed(1)}" width="${hW.toFixed(1)}" height="${hH.toFixed(1)}" fill="${violet}" stroke="${sc}" stroke-width="${sw}" vector-effect="non-scaling-stroke"/>`)
-      divRects.push(ln(hx, ay+p+hH/2, hx+hW, ay+p+hH/2))
-      divRects.push(`<rect x="${hx.toFixed(1)}" y="${(ay+ah-p-hH).toFixed(1)}" width="${hW.toFixed(1)}" height="${hH.toFixed(1)}" fill="${violet}" stroke="${sc}" stroke-width="${sw}" vector-effect="non-scaling-stroke"/>`)
-      divRects.push(ln(hx, ay+ah-p-hH/2, hx+hW, ay+ah-p-hH/2))
-      if (handleLeft || handleRight) {
-        const mW = Math.max(2, 3.0 * pxPerCmX), mH = Math.max(5, 20 * pxPerCmX)
-        const fromBottomCm = heightCm >= 200 ? 135 : 35
-        const mx = handleLeft ? ax + (p - mW) / 2 : ax+aw-p + (p - mW) / 2
-        const my = (ay+ah-p) - fromBottomCm*pxPerCmX - mH/2
-        const rx = Math.max(1, mW * 0.3)
-        divRects.push(`<rect x="${mx.toFixed(1)}" y="${my.toFixed(1)}" width="${mW.toFixed(1)}" height="${mH.toFixed(1)}" fill="${violet}" stroke="${sc}" stroke-width="${sw}" vector-effect="non-scaling-stroke" rx="${rx.toFixed(1)}"/>`)
-      }
-    }
-    const iX0 = ax+p, iY0 = ay+p, iW0 = aw-2*p, iH0 = ah-2*p
-    if (innerContent) {
-      const si = (s: string): string[] => {
-        const r: string[] = []; let d = 0, c = ''
-        for (const ch of s) {
-          if (ch === '(') d++; else if (ch === ')') d--
-          if ((ch === '-' || ch === '+') && d === 0) { r.push(c); c = '' } else c += ch
-        }
-        return c.length > 0 ? [...r, c] : r
-      }
-      const iParts = si(innerContent)
-      const hasTi = iParts.some(t => t.trim().toUpperCase() === 'T')
-      if (hasTi) {
-        type IT = { ki: 'a'; cm: number|null } | { ki: 'T' }
-        const iToks: IT[] = iParts.map(t => {
-          const u = t.trim().toUpperCase()
-          if (u === 'T') return { ki: 'T' as const }
-          const nm = u.match(/^(\d+(?:\.\d+)?)\(/)
-          return { ki: 'a' as const, cm: nm ? parseFloat(nm[1]) : null }
-        })
-        const iAreas = iToks.filter((t): t is { ki: 'a'; cm: number|null } => t.ki === 'a')
-        const nT = iToks.filter(t => t.ki === 'T').length
-        const fixedH = iAreas.reduce((s, a) => s + (a.cm != null ? a.cm * pxPerCmX : 0), 0)
-        const nVar = iAreas.filter(a => a.cm == null).length
-        const vH = nVar > 0 ? (iH0 - nT * p - fixedH) / nVar : 0
-        const lastA = [...iToks].reverse().find(t => t.ki === 'a') as { ki: 'a'; cm: number|null }|undefined
-        let iCur = iY0
-        for (const it of iToks) {
-          if (it.ki === 'a') {
-            const isLast = it === lastA
-            const aH = isLast ? (iY0 + iH0) - iCur : Math.round(it.cm != null ? it.cm * pxPerCmX : vH)
-            pushFermavetri(iX0, iCur, iW0, aH)
-            iCur += aH
-          } else {
-            divRects.push(`<rect x="${iX0.toFixed(1)}" y="${iCur.toFixed(1)}" width="${iW0.toFixed(1)}" height="${p.toFixed(1)}" fill="${pc}" ${po}/>`)
-            iCur += p
-          }
-        }
-      } else {
-        pushFermavetri(iX0, iY0, iW0, iH0)
-      }
-    } else {
-      pushFermavetri(iX0, iY0, iW0, iH0)
-    }
-  }
-  if (content.trim()) {
-    const splitTP = (str: string): string[] => {
-      const r: string[] = []; let d = 0, c = ''
-      for (const ch of str) {
-        if (ch === '(') d++; else if (ch === ')') d--
-        if ((ch === '-' || ch === '+') && d === 0) { r.push(c); c = '' } else c += ch
-      }
-      return c.length > 0 ? [...r, c] : r
-    }
-    const tryAnta = (u: string) => {
-      if (/^V\(.*\)$/i.test(u)) return { antaKind: 'vasistas' as const, hingeLeft: false, handleLeft: false, handleRight: false, innerFisso: false, innerContent: '' }
-      const m = u.match(/^([CM]?)([AR])([CM]?)\((.*)\)$/)
-      if (!m) return null
-      return { antaKind: (m[2] === 'R' ? 'ribalta' : 'anta') as 'anta'|'ribalta'|'vasistas',
-        hingeLeft: m[1] === 'C', handleLeft: m[1] === 'M', handleRight: m[3] === 'M',
-        innerFisso: m[4] === 'F()' || m[4].includes('(F())'), innerContent: m[4] }
-    }
-    type AreaTok = { type: 'area'; cm: number|null; fisso: boolean; antaKind: 'anta'|'ribalta'|'vasistas'|null; hingeLeft: boolean; handleLeft: boolean; handleRight: boolean; innerFisso: boolean; innerContent?: string }
-    type DivTok  = { type: 'div'; kind: 'T'|'P' }
-    const tokens: (AreaTok|DivTok)[] = []
-    for (const t of splitTP(content)) {
-      const u = t.trim().toUpperCase()
-      if (u === 'T') { tokens.push({ type: 'div', kind: 'T' }); continue }
-      if (u === 'P') { tokens.push({ type: 'div', kind: 'P' }); continue }
-      const ai = tryAnta(u)
-      if (ai) { tokens.push({ type: 'area', cm: null, fisso: false, ...ai }); continue }
-      const nm = u.match(/^(\d+(?:\.\d+)?)\((.*)\)$/)
-      if (nm) {
-        const totalCm = parseFloat(nm[1]), inner = nm[2]
-        const ip = splitTP(inner).filter(p => p.trim().length > 0)
-        const ais = ip.map(p => tryAnta(p.trim().toUpperCase()))
-        if (ip.length > 0 && ais.every(a => a != null)) {
-          const perCm = totalCm / ip.length
-          ais.forEach(a => tokens.push({ type: 'area', cm: perCm, fisso: false, ...a! }))
-          continue
-        }
-        if (inner.trim() === 'F()') { tokens.push({ type: 'area', cm: totalCm, fisso: true, antaKind: null, hingeLeft: false, handleLeft: false, handleRight: false, innerFisso: false }); continue }
-        tokens.push({ type: 'area', cm: totalCm, fisso: false, antaKind: null, hingeLeft: false, handleLeft: false, handleRight: false, innerFisso: false }); continue
-      }
-      // X(anta(...)): area variabile che wrappa un anta — va controllata PRIMA di includes(F())
-      const xAntaM = u.match(/^[A-Z]\((.+)\)$/)
-      if (xAntaM) { const ia = tryAnta(xAntaM[1].trim()); if (ia) { tokens.push({ type: 'area', cm: null, fisso: false, ...ia }); continue } }
-      if (u === 'F()' || u.includes('(F())')) { tokens.push({ type: 'area', cm: null, fisso: true, antaKind: null, hingeLeft: false, handleLeft: false, handleRight: false, innerFisso: false }); continue }
-      tokens.push({ type: 'area', cm: null, fisso: false, antaKind: null, hingeLeft: false, handleLeft: false, handleRight: false, innerFisso: false })
-    }
-    const areaTokens = tokens.filter((t): t is AreaTok => t.type === 'area')
-    const hasDiv = tokens.some(t => t.type === 'div')
-    if (!hasDiv && areaTokens.some(a => a.fisso || a.antaKind != null)) {
-      const fixedSum = areaTokens.reduce((s, a) => a.cm != null ? s + (a.cm / widthCm) * innerW : s, 0)
-      const nVar = areaTokens.filter(a => a.cm == null).length
-      const varW = nVar > 0 ? (innerW - fixedSum) / nVar : 0
-      const fallback = varW <= 0
-      const equalW = innerW / Math.max(1, areaTokens.length)
-      let cur = innerX
-      for (let i = 0; i < areaTokens.length; i++) {
-        const tok = areaTokens[i]
-        const isLast = i === areaTokens.length - 1
-        const aW = isLast ? (innerX + innerW) - cur : Math.round(fallback ? equalW : (tok.cm != null ? (tok.cm / widthCm) * innerW : varW))
-        if (tok.fisso) pushFermavetri(cur, innerY, aW, innerH)
-        else if (tok.antaKind) drawAnta(cur, innerY, aW, innerH, tok.hingeLeft, tok.handleLeft, tok.handleRight, tok.antaKind, tok.innerFisso, tok.innerContent)
-        cur += aW
-      }
-    }
-    if (tokens.some(t => t.type === 'div' && t.kind === 'T')) {
-      const nDiv = tokens.filter(t => t.type === 'div' && t.kind === 'T').length
-      const fixedSum = areaTokens.reduce((s, a) => a.cm != null ? s + (a.cm / heightCm) * innerH : s, 0)
-      const nVar = areaTokens.filter(a => a.cm == null).length
-      const varH = nVar > 0 ? (innerH - nDiv * pY - fixedSum) / nVar : 0
-      const fallback = varH <= 0
-      const equalH = (innerH - nDiv * pY) / Math.max(1, areaTokens.length)
-      const lastAreaT = [...tokens].reverse().find(t => t.type === 'area')
-      let cursor = innerY
-      for (const tok of tokens) {
-        if (tok.type === 'area') {
-          const isLast = tok === lastAreaT
-          const aH = isLast ? (innerY + innerH) - cursor : Math.round(fallback ? equalH : (tok.cm != null ? (tok.cm / heightCm) * innerH : varH))
-          if (tok.fisso) pushFermavetri(innerX, cursor, innerW, aH)
-          else if (tok.antaKind) drawAnta(innerX, cursor, innerW, aH, tok.hingeLeft, tok.handleLeft, tok.handleRight, tok.antaKind, tok.innerFisso, tok.innerContent)
-          cursor += aH
-        } else if (tok.type === 'div' && tok.kind === 'T') {
-          divRects.push(`<rect x="${innerX.toFixed(1)}" y="${cursor.toFixed(1)}" width="${innerW.toFixed(1)}" height="${pY.toFixed(1)}" fill="${pc}" ${po}/>`)
-          cursor += pY
-        }
-      }
-    }
-    if (tokens.some(t => t.type === 'div' && t.kind === 'P')) {
-      const nDiv = tokens.filter(t => t.type === 'div' && t.kind === 'P').length
-      const fixedSum = areaTokens.reduce((s, a) => a.cm != null ? s + (a.cm / widthCm) * innerW : s, 0)
-      const nVar = areaTokens.filter(a => a.cm == null).length
-      const varW = nVar > 0 ? (innerW - nDiv * pX - fixedSum) / nVar : 0
-      const fallback = varW <= 0
-      const equalW = (innerW - nDiv * pX) / Math.max(1, areaTokens.length)
-      const lastAreaP = [...tokens].reverse().find(t => t.type === 'area')
-      let cursor = innerX
-      for (const tok of tokens) {
-        if (tok.type === 'area') {
-          const isLast = tok === lastAreaP
-          const aW = isLast ? (innerX + innerW) - cursor : Math.round(fallback ? equalW : (tok.cm != null ? (tok.cm / widthCm) * innerW : varW))
-          if (tok.fisso) pushFermavetri(cursor, innerY, aW, innerH)
-          else if (tok.antaKind) drawAnta(cursor, innerY, aW, innerH, tok.hingeLeft, tok.handleLeft, tok.handleRight, tok.antaKind, tok.innerFisso, tok.innerContent)
-          cursor += aW
-        } else if (tok.type === 'div' && tok.kind === 'P') {
-          divRects.push(`<rect x="${cursor.toFixed(1)}" y="${innerY.toFixed(1)}" width="${pX.toFixed(1)}" height="${innerH.toFixed(1)}" fill="${pc}" ${po}/>`)
-          cursor += pX
-        }
-      }
-    }
-  }
-  const clipId = `tc_${outerW}_${outerH}_${pX}_${isTa?1:0}`
-  const outerBorder = !isTa
-    ? `<rect x="${ox}" y="${oy}" width="${outerW}" height="${outerH}" fill="none" stroke="${sc}" stroke-width="${sw}" vector-effect="non-scaling-stroke"/>`
-    : `<path d="M ${ox},${oy+outerH} L ${ox},${oy} L ${ox+outerW},${oy} L ${ox+outerW},${oy+outerH}" fill="none" stroke="${sc}" stroke-width="${sw}" vector-effect="non-scaling-stroke"/>`
-  const frameLines = [
-    ln(innerX, innerY, innerX+innerW, innerY),
-    ...(!isTa ? [ln(innerX, innerY+innerH, innerX+innerW, innerY+innerH)] : []),
-    ln(innerX, innerY, innerX, innerY+innerH),
-    ln(innerX+innerW, innerY, innerX+innerW, innerY+innerH),
-    ln(ox, oy, ox+pX, oy+pY),
-    ln(ox+outerW, oy, ox+outerW-pX, oy+pY),
-    ...(!isTa ? [ln(ox, oy+outerH, ox+pX, oy+outerH-pY)] : []),
-    ...(!isTa ? [ln(ox+outerW, oy+outerH, ox+outerW-pX, oy+outerH-pY)] : []),
-  ]
+
+  drawInfisso(sink, isTa, ox, oy, outerW, outerH, content, widthCm, heightCm, {
+    fill, hwFill, stroke, pxTelaio, pxAnta, fvPx, pxPerCm: pxPerCmX, handleFromBottomCm,
+  })
+
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="display:block;margin:0 auto;flex-shrink:0;">
-  <defs><clipPath id="${clipId}"><rect x="${innerX}" y="${innerY}" width="${innerW}" height="${innerH}"/></clipPath></defs>
-  ${bars.join('\n  ')}
-  ${outerBorder}
-  ${frameLines.join('\n  ')}
-  <g clip-path="url(#${clipId})">
-    ${divRects.join('\n    ')}
-  </g>
-  ${larghezza > 0 ? `<text x="${(ox+outerW/2).toFixed(1)}" y="${(oy+outerH+12).toFixed(1)}" text-anchor="middle" font-size="9" fill="${lc}" font-family="'Times New Roman',Times,serif">${larghezza} cm</text>` : ''}
-  ${altezza > 0 ? `<text x="${(ox-10).toFixed(1)}" y="${(oy+outerH/2).toFixed(1)}" text-anchor="middle" font-size="9" fill="${lc}" font-family="'Times New Roman',Times,serif" transform="rotate(-90,${(ox-10).toFixed(1)},${(oy+outerH/2).toFixed(1)})">${altezza} cm</text>` : ''}
+  ${parts.join('\n  ')}
+  ${larghezza > 0 ? `<text x="${(ox+outerW/2).toFixed(1)}" y="${(oy+outerH+12).toFixed(1)}" text-anchor="middle" font-size="9" fill="#000" font-family="'Times New Roman',Times,serif">${larghezza} cm</text>` : ''}
+  ${altezza > 0 ? `<text x="${(ox-10).toFixed(1)}" y="${(oy+outerH/2).toFixed(1)}" text-anchor="middle" font-size="9" fill="#000" font-family="'Times New Roman',Times,serif" transform="rotate(-90,${(ox-10).toFixed(1)},${(oy+outerH/2).toFixed(1)})">${altezza} cm</text>` : ''}
 </svg>`
 }
 
 function disegnoSVGAbbr(abbr: string, larghezza: number, altezza: number, profiloMm = 70, barColor?: string | null, barColorAcc?: string | null): string {
-  const abbrUp = abbr.trim().toUpperCase()
-  if (abbrUp.startsWith('TC(')) {
-    const m = abbr.trim().match(/^TC\((.*)\)$/i)
-    return disegnoTcTa(false, larghezza, altezza, (profiloMm || 80) * 2 / 3, barColor, m ? m[1] : '', barColorAcc)
-  }
-  if (abbrUp.startsWith('TA(')) {
-    const m = abbr.trim().match(/^TA\((.*)\)$/i)
-    return disegnoTcTa(true, larghezza, altezza, (profiloMm || 80) * 2 / 3, barColor, m ? m[1] : '', barColorAcc)
+  const tcTa = extractTcTa(abbr)
+  if (tcTa) {
+    return disegnoTcTa(tcTa.isTa, larghezza, altezza, profiloMm || 80, barColor, tcTa.content, barColorAcc)
   }
   const chars = abbr.toUpperCase().replace(/[^SFAVRP]/g, '').split('')
   if (chars.length === 0) return disegnoSVG(larghezza, altezza, 1, profiloMm)
@@ -1267,8 +1037,7 @@ async function buildStampaData(opts: {
   const colorMap    = new Map<number, string>()
   const colorAccMap = new Map<number, string>()
   await Promise.all(roots.map(async p => {
-    const abbrUp = s(p.abbr).toUpperCase()
-    if (!abbrUp.startsWith('TC(') && !abbrUp.startsWith('TA(')) return
+    if (!extractTcTa(s(p.abbr))) return
     const id = n(p.id)
     const children = childrenMap.get(id) ?? []
     const notAcc = (c: Record<string, unknown>) => n(c.richiede_tipo_colore_acc) !== 1
