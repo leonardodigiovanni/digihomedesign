@@ -46,17 +46,29 @@ export function useEdgeAutoScroll<T extends HTMLElement>(options?: {
       if (!el) { dirRef.current = 0; return }
       const rect = el.getBoundingClientRect()
 
+      let dir: 0 | 1 | -1 = 0
       if (axis === 'x') {
-        if (e.clientY < rect.top || e.clientY > rect.bottom) { dirRef.current = 0; return }
-        if (e.clientX < rect.left + edgeZone) { dirRef.current = -1; ensureLoop() }
-        else if (e.clientX > rect.right - edgeZone) { dirRef.current = 1; ensureLoop() }
-        else dirRef.current = 0
+        if (e.clientY >= rect.top && e.clientY <= rect.bottom) {
+          if (e.clientX < rect.left + edgeZone) dir = -1
+          else if (e.clientX > rect.right - edgeZone) dir = 1
+        }
       } else {
-        if (e.clientX < rect.left || e.clientX > rect.right) { dirRef.current = 0; return }
-        if (e.clientY < rect.top + edgeZone) { dirRef.current = -1; ensureLoop() }
-        else if (e.clientY > rect.bottom - edgeZone) { dirRef.current = 1; ensureLoop() }
-        else dirRef.current = 0
+        if (e.clientX >= rect.left && e.clientX <= rect.right) {
+          if (e.clientY < rect.top + edgeZone) dir = -1
+          else if (e.clientY > rect.bottom - edgeZone) dir = 1
+        }
       }
+
+      // Ignora se il punto è coperto da un altro elemento (es. una tendina aperta
+      // sopra): la geometria da sola non basta, altrimenti lo scroll scatta anche
+      // sotto contenuto sovrapposto e invisibile in quel punto.
+      if (dir !== 0) {
+        const topEl = document.elementFromPoint(e.clientX, e.clientY)
+        if (!topEl || !el.contains(topEl)) dir = 0
+      }
+
+      dirRef.current = dir
+      if (dir !== 0) ensureLoop()
     }
 
     function stop() { dirRef.current = 0 }

@@ -1,7 +1,9 @@
 // Sopra alla sticky-bottom-bar (z-index 200) e a qualunque contenuto di pagina,
-// ma sotto alle modali (che partono da 2000+). Vince comunque il controllo
-// "sotto l'header sticky" in reposition(), che nasconde la freccia a prescindere
-// dallo z-index quando finirebbe dietro l'header (zIndex 100 — vedi layout.tsx).
+// ma sotto all'header sticky (zIndex 400 — vedi layout.tsx, così le sue tendine
+// restano sempre cliccabili sopra la freccia) e sotto alle modali (che partono
+// da 2000+). Vince comunque anche il controllo "sotto l'header sticky" in
+// reposition(), che nasconde la freccia a prescindere dallo z-index quando
+// finirebbe dietro l'header durante lo scroll di pagina.
 const Z_INDEX = 250
 
 // Stessa doppia freccia (icona "«"/"»") e stesse dimensioni (14x12) della navbar

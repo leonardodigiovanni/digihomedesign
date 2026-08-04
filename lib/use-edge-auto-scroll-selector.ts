@@ -58,6 +58,8 @@ export function useEdgeAutoScrollForSelector(selector: string, options?: {
 
     function onMouseMove(e: MouseEvent) {
       let active = false
+      let topEl: Element | null = null
+      let topElChecked = false
       for (const el of elements) {
         const rect = el.getBoundingClientRect()
         let dir: 1 | -1 | 0 = 0
@@ -71,6 +73,12 @@ export function useEdgeAutoScrollForSelector(selector: string, options?: {
             if (e.clientY < rect.top + edgeZone) dir = -1
             else if (e.clientY > rect.bottom - edgeZone) dir = 1
           }
+        }
+        // Ignora se il punto è coperto da un altro elemento (es. una tendina
+        // aperta sopra): calcolato una sola volta per evento, solo se serve.
+        if (dir !== 0) {
+          if (!topElChecked) { topEl = document.elementFromPoint(e.clientX, e.clientY); topElChecked = true }
+          if (!topEl || !el.contains(topEl)) dir = 0
         }
         dirs.set(el, dir)
         if (dir !== 0) active = true

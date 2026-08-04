@@ -279,7 +279,7 @@ export default async function RootLayout({
           </div>
         )}
 
-        <div id="site-sticky-header" style={{ position: 'sticky', top: 0, zIndex: 100 }}>
+        <div id="site-sticky-header" style={{ position: 'sticky', top: 0, zIndex: 400 }}>
           <Header headerBg={settings.headerBg} headerBgMode={settings.headerBgMode} username={username} registrazioniDisabilitate={settings.registrazioniDisabilitate} />
           {settings.bannerAbilitato && (
             <>
