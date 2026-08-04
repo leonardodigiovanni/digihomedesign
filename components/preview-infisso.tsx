@@ -334,114 +334,108 @@ export default function PreviewInfisso({
           hingeLeft: m[1] === 'C', handleLeft: m[1] === 'M', handleRight: m[3] === 'M',
           innerFisso: m[4] === 'F()' || m[4].includes('(F())'), innerContent: m[4] }
       }
-      type AreaTok = { type: 'area'; cm: number|null; fisso: boolean; antaKind: 'anta'|'ribalta'|'vasistas'|null; hingeLeft: boolean; handleLeft: boolean; handleRight: boolean; innerFisso: boolean; innerContent?: string }
-      type DivTok  = { type: 'div'; kind: 'T'|'P' }
-      const tokens: (AreaTok|DivTok)[] = []
-      for (const t of splitTP(tcContent)) {
-        const u = t.trim().toUpperCase()
-        if (u === 'T') { tokens.push({ type: 'div', kind: 'T' }); continue }
-        if (u === 'P') { tokens.push({ type: 'div', kind: 'P' }); continue }
-        const ai = tryAnta(u)
-        if (ai) { tokens.push({ type: 'area', cm: null, fisso: false, ...ai }); continue }
-        // NUMBER(INNER): 85(F()), 160(cAm()-Ac()), 120() ecc.
-        const nm = u.match(/^(\d+(?:\.\d+)?)\((.*)\)$/)
-        if (nm) {
-          const totalCm = parseFloat(nm[1]), inner = nm[2]
-          const ip = splitTP(inner).filter(p => p.trim().length > 0)
-          const ais = ip.map(p => tryAnta(p.trim().toUpperCase()))
-          if (ip.length > 0 && ais.every(a => a != null)) {
-            const perCm = totalCm / ip.length
-            ais.forEach(a => tokens.push({ type: 'area', cm: perCm, fisso: false, ...a! }))
+      type LeafInfo = { antaKind: 'anta'|'ribalta'|'vasistas'|null; hingeLeft: boolean; handleLeft: boolean; handleRight: boolean; innerFisso: boolean; innerContent?: string }
+      type AreaTok = ({ type: 'area'; cm: number | null; kind: 'leaf'; fisso: boolean } & LeafInfo)
+                   | { type: 'area'; cm: number | null; kind: 'sub'; content: string }
+      type DivTok  = { type: 'div'; kind: 'T' | 'P' }
+      type Tok = AreaTok | DivTok
+
+      const blank    = (cm: number | null): AreaTok => ({ type: 'area', cm, kind: 'leaf', fisso: false, antaKind: null, hingeLeft: false, handleLeft: false, handleRight: false, innerFisso: false })
+      const fissoTok = (cm: number | null): AreaTok => ({ type: 'area', cm, kind: 'leaf', fisso: true,  antaKind: null, hingeLeft: false, handleLeft: false, handleRight: false, innerFisso: false })
+
+      // Tokenizza un livello di contenuto (il top-level di Tc/Ta, oppure l'interno di un wrapper
+      // N(...)/X(...)): divisori T/P, ante/fissi diretti (foglie), oppure — se il contenuto di un
+      // wrapper non si riduce a un caso semplice (lista di ante, F(), vuoto) — un sotto-livello da
+      // disegnare ricorsivamente con la stessa funzione (vedi `layout` più sotto).
+      const tokenize = (content: string): Tok[] => {
+        const toks: Tok[] = []
+        for (const raw of splitTP(content)) {
+          const u = raw.trim().toUpperCase()
+          if (u === 'T') { toks.push({ type: 'div', kind: 'T' }); continue }
+          if (u === 'P') { toks.push({ type: 'div', kind: 'P' }); continue }
+          const direct = tryAnta(u)
+          if (direct) { toks.push({ type: 'area', cm: null, kind: 'leaf', fisso: false, ...direct }); continue }
+
+          // NUMBER(INNER): 85(F()), 160(cAm()), 120() ecc. — LETTER(INNER): X(F()), X(cAm()) ecc.
+          const nm = u.match(/^(\d+(?:\.\d+)?)\((.*)\)$/)
+          const xm = nm ? null : u.match(/^[A-Z]\((.+)\)$/)
+          if (nm || xm) {
+            const totalCm = nm ? parseFloat(nm[1]) : null
+            const inner = (nm ? nm[2] : xm![1]).trim()
+            if (inner === '')     { toks.push(blank(totalCm)); continue }
+            if (inner === 'F()')  { toks.push(fissoTok(totalCm)); continue }
+            // tryAnta usa (.*) non bilanciato: va provato come "singola anta" SOLO se inner non ha
+            // già un '+'/'-' di primo livello, altrimenti matcherebbe a sproposito ingoiando il resto
+            // (es. "CA()+AC()" letta come una sola anta con innerContent spazzatura ")+AC(").
+            if (splitTP(inner).length === 1) {
+              const single = tryAnta(inner)
+              if (single) { toks.push({ type: 'area', cm: totalCm, kind: 'leaf', fisso: false, ...single }); continue }
+            }
+            // Contenuto non riducibile a un caso semplice (singola anta, F(), vuoto): diventa un
+            // sotto-livello, disegnato ricorsivamente una volta noto il suo riquadro.
+            toks.push({ type: 'area', cm: totalCm, kind: 'sub', content: inner }); continue
+          }
+
+          if (u === 'F()') { toks.push(fissoTok(null)); continue }
+          toks.push(blank(null))
+        }
+        return toks
+      }
+
+      // Calcola posizione/dimensione (px + cm) di ogni token in un riquadro e disegna: le foglie
+      // direttamente (drawAnta/pushFermavetri), i sotto-livelli richiamando se stessa sul riquadro
+      // appena calcolato — stessa identica formula usata finora per gli slot variabili singoli
+      // (spazio residuo diviso per il numero di slot variabili), solo applicabile a qualunque profondità.
+      const layout = (toks: Tok[], bx: number, by: number, bw: number, bh: number, bwCm: number, bhCm: number) => {
+        const areaToks = toks.filter((t): t is AreaTok => t.type === 'area')
+        if (areaToks.length === 0) return
+        const axisH = toks.some(t => t.type === 'div' && t.kind === 'T')
+        const divKind: 'T' | 'P' = axisH ? 'T' : 'P'
+        const nDiv = toks.filter(t => t.type === 'div' && t.kind === divKind).length
+        const totalCm = axisH ? bhCm : bwCm
+        const totalPx = axisH ? bh : bw
+        const pxDiv = axisH ? pxH : pxW
+        const fixedSumCm = areaToks.reduce((s, a) => a.cm != null ? s + a.cm : s, 0)
+        const nVar = areaToks.filter(a => a.cm == null).length
+        const fixedSumPx = totalCm > 0 ? (fixedSumCm / totalCm) * totalPx : 0
+        const varPx = nVar > 0 ? (totalPx - nDiv * pxDiv - fixedSumPx) / nVar : 0
+        const varCm = nVar > 0 ? Math.max(0, (totalCm - fixedSumCm) / nVar) : 0
+        const fallback = nVar > 0 && varPx <= 0
+        const equalPx = (totalPx - nDiv * pxDiv) / Math.max(1, areaToks.length)
+        const lastAreaTok = [...toks].reverse().find((t): t is AreaTok => t.type === 'area')
+        let cursor = axisH ? by : bx
+        let cmCursor = 0
+        for (const tok of toks) {
+          if (tok.type === 'div') {
+            if (tok.kind !== divKind) continue
+            if (axisH) dividers.push(<rect key={`d${dividers.length}`} x={bx}     y={cursor} width={bw}  height={pxH} fill={bc} stroke={sc} strokeWidth={1} vectorEffect="non-scaling-stroke"/>)
+            else       dividers.push(<rect key={`d${dividers.length}`} x={cursor} y={by}     width={pxW} height={bh}  fill={bc} stroke={sc} strokeWidth={1} vectorEffect="non-scaling-stroke"/>)
+            cursor += pxDiv
             continue
           }
-          if (inner.trim() === 'F()') {
-            tokens.push({ type: 'area', cm: totalCm, fisso: true, antaKind: null, hingeLeft: false, handleLeft: false, handleRight: false, innerFisso: false }); continue
+          const isLast = tok === lastAreaTok
+          const sizePx = isLast
+            ? (axisH ? (by + bh) - cursor : (bx + bw) - cursor)
+            : Math.round(fallback ? equalPx : (tok.cm != null ? (tok.cm / totalCm) * totalPx : varPx))
+          const sizeCm = isLast ? Math.max(0, totalCm - cmCursor) : (tok.cm != null ? tok.cm : varCm)
+          const ax = axisH ? bx : cursor
+          const ay = axisH ? cursor : by
+          const aw = axisH ? bw : sizePx
+          const ah = axisH ? sizePx : bh
+          if (tok.kind === 'leaf') {
+            if (tok.fisso) pushFermavetri(ax, ay, aw, ah)
+            else if (tok.antaKind) drawAnta(ax, ay, aw, ah, tok.hingeLeft, tok.handleLeft, tok.handleRight, tok.antaKind, tok.innerFisso, tok.innerContent)
+          } else {
+            const subCmW = axisH ? bwCm : sizeCm
+            const subCmH = axisH ? sizeCm : bhCm
+            layout(tokenize(tok.content), ax, ay, aw, ah, subCmW, subCmH)
           }
-          tokens.push({ type: 'area', cm: totalCm, fisso: false, antaKind: null, hingeLeft: false, handleLeft: false, handleRight: false, innerFisso: false }); continue
-        }
-        // X(anta(...)): area variabile che wrappa un anta — va controllata PRIMA di includes(F())
-        const xAntaM = u.match(/^[A-Z]\((.+)\)$/)
-        if (xAntaM) { const ia = tryAnta(xAntaM[1].trim()); if (ia) { tokens.push({ type: 'area', cm: null, fisso: false, ...ia }); continue } }
-        // F() o X(F()): fisso variabile
-        if (u === 'F()' || u.includes('(F())')) {
-          tokens.push({ type: 'area', cm: null, fisso: true, antaKind: null, hingeLeft: false, handleLeft: false, handleRight: false, innerFisso: false }); continue
-        }
-        // X() o altra area variabile
-        tokens.push({ type: 'area', cm: null, fisso: false, antaKind: null, hingeLeft: false, handleLeft: false, handleRight: false, innerFisso: false })
-      }
-      const areaTokens = tokens.filter((t): t is AreaTok => t.type === 'area')
-      const hasDiv = tokens.some(t => t.type === 'div')
-
-      if (!hasDiv && areaTokens.some(a => a.fisso || a.antaKind != null)) {
-        const nArea = areaTokens.length
-        const fixedSum = areaTokens.reduce((s, a) => a.cm != null ? s + (a.cm / larghezza_cm) * innerW : s, 0)
-        const nVar = areaTokens.filter(a => a.cm == null).length
-        const varW = nVar > 0 ? (innerW - fixedSum) / nVar : 0
-        const fallback = varW <= 0
-        const equalW = innerW / Math.max(1, nArea)
-        let cur = innerX, firstNd = true
-        for (let i = 0; i < areaTokens.length; i++) {
-          const tok = areaTokens[i]
-          const isLast = i === areaTokens.length - 1
-          const aW = isLast ? (innerX + innerW) - cur : Math.round(fallback ? equalW : (tok.cm != null ? (tok.cm / larghezza_cm) * innerW : varW))
-          if (tok.fisso) pushFermavetri(cur, innerY, aW, innerH)
-          else if (tok.antaKind) drawAnta(cur, innerY, aW, innerH, tok.hingeLeft, tok.handleLeft, tok.handleRight, tok.antaKind, tok.innerFisso, tok.innerContent)
-          cur += aW
-          firstNd = false
+          cursor += sizePx
+          cmCursor += sizeCm
         }
       }
 
-      if (tokens.some(t => t.type === 'div' && t.kind === 'T')) {
-        const nDiv = tokens.filter(t => t.type === 'div' && t.kind === 'T').length
-        const nArea = areaTokens.length
-        const fixedSum = areaTokens.reduce((s, a) => a.cm != null ? s + (a.cm / altezza_cm) * innerH : s, 0)
-        const nVar = areaTokens.filter(a => a.cm == null).length
-        const varH = nVar > 0 ? (innerH - nDiv * pxH - fixedSum) / nVar : 0
-        const fallback = varH <= 0
-        const equalH = (innerH - nDiv * pxH) / Math.max(1, nArea)
-        const lastAreaTokT = [...tokens].slice().reverse().find(t => t.type === 'area')
-        let cursor = innerY, prevWasAreaT = false
-        for (const tok of tokens) {
-          if (tok.type === 'area') {
-            const isLast = tok === lastAreaTokT
-            const areaH = isLast ? (innerY + innerH) - cursor : Math.round(fallback ? equalH : (tok.cm != null ? (tok.cm / altezza_cm) * innerH : varH))
-            if (tok.fisso) pushFermavetri(innerX, cursor, innerW, areaH)
-            else if (tok.antaKind) drawAnta(innerX, cursor, innerW, areaH, tok.hingeLeft, tok.handleLeft, tok.handleRight, tok.antaKind, tok.innerFisso, tok.innerContent)
-            cursor += areaH
-            prevWasAreaT = true
-          } else if (tok.type === 'div' && tok.kind === 'T') {
-            prevWasAreaT = false
-            dividers.push(<rect key={`T${cursor}`} x={innerX} y={cursor} width={innerW} height={pxH} fill={bc} stroke={sc} strokeWidth={1} vectorEffect="non-scaling-stroke"/>)
-            cursor += pxH
-          }
-        }
-      }
-
-      if (tokens.some(t => t.type === 'div' && t.kind === 'P')) {
-        const nDiv = tokens.filter(t => t.type === 'div' && t.kind === 'P').length
-        const nArea = areaTokens.length
-        const fixedSum = areaTokens.reduce((s, a) => a.cm != null ? s + (a.cm / larghezza_cm) * innerW : s, 0)
-        const nVar = areaTokens.filter(a => a.cm == null).length
-        const varW = nVar > 0 ? (innerW - nDiv * pxW - fixedSum) / nVar : 0
-        const fallback = varW <= 0
-        const equalW = (innerW - nDiv * pxW) / Math.max(1, nArea)
-        const lastAreaTokP = [...tokens].slice().reverse().find(t => t.type === 'area')
-        let cursor = innerX, prevWasAreaP = false
-        for (const tok of tokens) {
-          if (tok.type === 'area') {
-            const isLast = tok === lastAreaTokP
-            const areaW = isLast ? (innerX + innerW) - cursor : Math.round(fallback ? equalW : (tok.cm != null ? (tok.cm / larghezza_cm) * innerW : varW))
-            if (tok.fisso) pushFermavetri(cursor, innerY, areaW, innerH)
-            else if (tok.antaKind) drawAnta(cursor, innerY, areaW, innerH, tok.hingeLeft, tok.handleLeft, tok.handleRight, tok.antaKind, tok.innerFisso, tok.innerContent)
-            cursor += areaW
-            prevWasAreaP = true
-          } else if (tok.type === 'div' && tok.kind === 'P') {
-            prevWasAreaP = false
-            dividers.push(<rect key={`P${cursor}`} x={cursor} y={innerY} width={pxW} height={innerH} fill={bc} stroke={sc} strokeWidth={1} vectorEffect="non-scaling-stroke"/>)
-            cursor += pxW
-          }
-        }
-      }
+      layout(tokenize(tcContent), innerX, innerY, innerW, innerH, larghezza_cm, altezza_cm)
     }
 
     return (
