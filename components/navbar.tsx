@@ -11,6 +11,7 @@ import ShortcutStar from '@/components/shortcut-star'
 import { useHomeShortcuts } from '@/lib/home-shortcuts-context'
 import { useNavDropdownRequest } from '@/lib/nav-dropdown-context'
 import { BAR_HEIGHT, BAR_HEIGHT_NARROW, NARROW_BREAKPOINT, GAP_HEIGHT } from '@/components/sticky-bottom-bar'
+import { mergeRefs } from '@/lib/merge-refs'
 
 interface NavbarProps {
   role: string | null
@@ -844,7 +845,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
   )
 }
 
-function useDropdownAlign(open: boolean, stickyTriggerId?: string | null): React.RefObject<HTMLDivElement> {
+function useDropdownAlign(open: boolean, triggerRef?: React.RefObject<HTMLElement | null>, stickyTriggerId?: string | null): React.RefObject<HTMLDivElement> {
   const ref = useRef<HTMLDivElement>(null)
   useLayoutEffect(() => {
     const el = ref.current
@@ -884,7 +885,9 @@ function useDropdownAlign(open: boolean, stickyTriggerId?: string | null): React
       return
     }
 
-    const trigger = el.parentElement
+    // Se il pannello è portato via document.body (le tendine con sticky trigger),
+    // el.parentElement non è più il wrapper del bottone: serve il triggerRef esplicito.
+    const trigger = triggerRef ? triggerRef.current : el.parentElement
     if (!trigger) return
     const tRect = trigger.getBoundingClientRect()
 
@@ -1036,14 +1039,18 @@ function ProdottiDropdown({
 }) {
   const [open, setOpen] = useState(false)
   const [viaSticky, setViaSticky] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
-  const alignRef = useDropdownAlign(open, viaSticky ? 'prodotti' : null)
+  const dropRef = useRef<HTMLDivElement>(null)
+  const alignRef = useDropdownAlign(open, ref, viaSticky ? 'prodotti' : null)
   const { request, consume } = useNavDropdownRequest()
+
+  useEffect(() => { setIsMounted(true) }, [])
 
   useEffect(() => {
     function handle(e: MouseEvent) {
       const target = e.target as HTMLElement
-      if (ref.current && !ref.current.contains(target) && !target.closest('[data-nav-dropdown-trigger="prodotti"]')) {
+      if (ref.current && !ref.current.contains(target) && !dropRef.current?.contains(target) && !target.closest('[data-nav-dropdown-trigger="prodotti"]')) {
         setOpen(false)
         setViaSticky(false)
       }
@@ -1071,13 +1078,13 @@ function ProdottiDropdown({
         </span>
         <span>{open ? '▴' : '▾'}</span>
       </button>
-      {open && (
-        <div ref={alignRef} style={{
-          position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
+      {isMounted && open && createPortal(
+        <div ref={mergeRefs(alignRef, dropRef)} style={{
+          position: 'fixed', top: '100%', left: '50%', transform: 'translateX(-50%)',
           background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
           boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 12,
           display: 'flex', flexDirection: 'column', gap: 8,
-          zIndex: 200, width: 'max-content',
+          zIndex: 9000, width: 'max-content',
         }}>
           <div style={{ display: 'flex', gap: 20 }}>
             {prodottiSubgroups.map(sg => {
@@ -1106,7 +1113,8 @@ function ProdottiDropdown({
           <Link href="/bonuss-riqualificazione" onClick={() => setOpen(false)} className="nav-banner-bonus">
             Scopri Bonus e Detrazioni Fiscali
           </Link>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )
@@ -1125,14 +1133,18 @@ function ComfortDropdown({
 }) {
   const [open, setOpen] = useState(false)
   const [viaSticky, setViaSticky] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
-  const alignRef = useDropdownAlign(open, viaSticky ? 'comfort' : null)
+  const dropRef = useRef<HTMLDivElement>(null)
+  const alignRef = useDropdownAlign(open, ref, viaSticky ? 'comfort' : null)
   const { request, consume } = useNavDropdownRequest()
+
+  useEffect(() => { setIsMounted(true) }, [])
 
   useEffect(() => {
     function handle(e: MouseEvent) {
       const target = e.target as HTMLElement
-      if (ref.current && !ref.current.contains(target) && !target.closest('[data-nav-dropdown-trigger="comfort"]')) {
+      if (ref.current && !ref.current.contains(target) && !dropRef.current?.contains(target) && !target.closest('[data-nav-dropdown-trigger="comfort"]')) {
         setOpen(false)
         setViaSticky(false)
       }
@@ -1160,13 +1172,13 @@ function ComfortDropdown({
         </span>
         <span>{open ? '▴' : '▾'}</span>
       </button>
-      {open && (
-        <div ref={alignRef} style={{
-          position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
+      {isMounted && open && createPortal(
+        <div ref={mergeRefs(alignRef, dropRef)} style={{
+          position: 'fixed', top: '100%', left: '50%', transform: 'translateX(-50%)',
           background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
           boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 12,
           display: 'grid', gridTemplateRows: 'repeat(6, auto)', gridAutoFlow: 'column', gridAutoColumns: 'max-content', gap: 2,
-          zIndex: 200, width: 'max-content', minWidth: 220,
+          zIndex: 9000, width: 'max-content', minWidth: 220,
         }}>
           {items.map(p => (
             <Link
@@ -1179,7 +1191,8 @@ function ComfortDropdown({
               <span>{p.label}<ShortcutStar href={p.href} small /></span>
             </Link>
           ))}
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )
@@ -1198,14 +1211,18 @@ function AntintrusioneDropdown({
 }) {
   const [open, setOpen] = useState(false)
   const [viaSticky, setViaSticky] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
-  const alignRef = useDropdownAlign(open, viaSticky ? 'antintrusione' : null)
+  const dropRef = useRef<HTMLDivElement>(null)
+  const alignRef = useDropdownAlign(open, ref, viaSticky ? 'antintrusione' : null)
   const { request, consume } = useNavDropdownRequest()
+
+  useEffect(() => { setIsMounted(true) }, [])
 
   useEffect(() => {
     function handle(e: MouseEvent) {
       const target = e.target as HTMLElement
-      if (ref.current && !ref.current.contains(target) && !target.closest('[data-nav-dropdown-trigger="antintrusione"]')) {
+      if (ref.current && !ref.current.contains(target) && !dropRef.current?.contains(target) && !target.closest('[data-nav-dropdown-trigger="antintrusione"]')) {
         setOpen(false)
         setViaSticky(false)
       }
@@ -1233,13 +1250,13 @@ function AntintrusioneDropdown({
         </span>
         <span>{open ? '▴' : '▾'}</span>
       </button>
-      {open && (
-        <div ref={alignRef} style={{
-          position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
+      {isMounted && open && createPortal(
+        <div ref={mergeRefs(alignRef, dropRef)} style={{
+          position: 'fixed', top: '100%', left: '50%', transform: 'translateX(-50%)',
           background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
           boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 12,
           display: 'grid', gridTemplateRows: 'repeat(6, auto)', gridAutoFlow: 'column', gridAutoColumns: 'max-content', gap: 2,
-          zIndex: 200, width: 'max-content', minWidth: 220,
+          zIndex: 9000, width: 'max-content', minWidth: 220,
         }}>
           {items.map(p => (
             <Link
@@ -1252,7 +1269,8 @@ function AntintrusioneDropdown({
               <span>{p.label}<ShortcutStar href={p.href} small /></span>
             </Link>
           ))}
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )
@@ -1271,14 +1289,18 @@ function CarpenteriaDropdown({
 }) {
   const [open, setOpen] = useState(false)
   const [viaSticky, setViaSticky] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
-  const alignRef = useDropdownAlign(open, viaSticky ? 'carpenteria' : null)
+  const dropRef = useRef<HTMLDivElement>(null)
+  const alignRef = useDropdownAlign(open, ref, viaSticky ? 'carpenteria' : null)
   const { request, consume } = useNavDropdownRequest()
+
+  useEffect(() => { setIsMounted(true) }, [])
 
   useEffect(() => {
     function handle(e: MouseEvent) {
       const target = e.target as HTMLElement
-      if (ref.current && !ref.current.contains(target) && !target.closest('[data-nav-dropdown-trigger="carpenteria"]')) {
+      if (ref.current && !ref.current.contains(target) && !dropRef.current?.contains(target) && !target.closest('[data-nav-dropdown-trigger="carpenteria"]')) {
         setOpen(false)
         setViaSticky(false)
       }
@@ -1306,13 +1328,13 @@ function CarpenteriaDropdown({
         </span>
         <span>{open ? '▴' : '▾'}</span>
       </button>
-      {open && (
-        <div ref={alignRef} style={{
-          position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
+      {isMounted && open && createPortal(
+        <div ref={mergeRefs(alignRef, dropRef)} style={{
+          position: 'fixed', top: '100%', left: '50%', transform: 'translateX(-50%)',
           background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
           boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 12,
           display: 'grid', gridTemplateRows: 'repeat(6, auto)', gridAutoFlow: 'column', gridAutoColumns: 'max-content', gap: 2,
-          zIndex: 200, width: 'max-content', minWidth: 220,
+          zIndex: 9000, width: 'max-content', minWidth: 220,
         }}>
           {items.map(p => (
             <Link
@@ -1325,7 +1347,8 @@ function CarpenteriaDropdown({
               <span>{p.label}<ShortcutStar href={p.href} small /></span>
             </Link>
           ))}
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )
@@ -1346,14 +1369,18 @@ function RistrutturazioniDropdown({
 }) {
   const [open, setOpen] = useState(false)
   const [viaSticky, setViaSticky] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
-  const alignRef = useDropdownAlign(open, viaSticky ? 'ristrutturazioni' : null)
+  const dropRef = useRef<HTMLDivElement>(null)
+  const alignRef = useDropdownAlign(open, ref, viaSticky ? 'ristrutturazioni' : null)
   const { request, consume } = useNavDropdownRequest()
+
+  useEffect(() => { setIsMounted(true) }, [])
 
   useEffect(() => {
     function handle(e: MouseEvent) {
       const target = e.target as HTMLElement
-      if (ref.current && !ref.current.contains(target) && !target.closest('[data-nav-dropdown-trigger="ristrutturazioni"]')) {
+      if (ref.current && !ref.current.contains(target) && !dropRef.current?.contains(target) && !target.closest('[data-nav-dropdown-trigger="ristrutturazioni"]')) {
         setOpen(false)
         setViaSticky(false)
       }
@@ -1381,13 +1408,13 @@ function RistrutturazioniDropdown({
         </span>
         <span>{open ? '▴' : '▾'}</span>
       </button>
-      {open && (
-        <div ref={alignRef} style={{
-          position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
+      {isMounted && open && createPortal(
+        <div ref={mergeRefs(alignRef, dropRef)} style={{
+          position: 'fixed', top: '100%', left: '50%', transform: 'translateX(-50%)',
           background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
           boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 12,
           display: 'flex', flexDirection: 'column', gap: 8,
-          zIndex: 200, width: 'max-content',
+          zIndex: 9000, width: 'max-content',
         }}>
           <div style={{
             display: 'grid', gridTemplateRows: 'repeat(6, auto)', gridAutoFlow: 'column', gridAutoColumns: 'max-content', gap: 2,
@@ -1408,7 +1435,8 @@ function RistrutturazioniDropdown({
           <Link href={computometricoHref} onClick={() => setOpen(false)} className="nav-banner-bonus">
             Calcola il Computo Metrico Online
           </Link>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )
