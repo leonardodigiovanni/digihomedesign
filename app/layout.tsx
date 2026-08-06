@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, Playfair_Display } from 'next/font/google'
+import { Inter, Lora } from 'next/font/google'
 import { cookies, headers } from 'next/headers'
 import Header from '@/components/header'
 import Navbar from '@/components/navbar'
@@ -41,13 +41,16 @@ const inter = Inter({
   display: 'swap',
 })
 
-// Font ornamentale, solo per la scritta "Home Design" sotto il logo header.
-// Playfair Display invece di Cinzel: minuscole vere (non small-caps) ma stesse
-// maiuscole con grazie appuntite.
-const ornamental = Playfair_Display({
+// Font ornamentale per la formula nell'header. Lora invece di Playfair Display:
+// stesso spirito (serif con maiuscole eleganti, minuscole vere non small-caps)
+// ma è un serif da testo, non da titolo — leggibile anche piccolo, dove
+// l'alto contrasto di Playfair (aste sottilissime) lo rendeva illeggibile.
+// Pesi 400+700 entrambi caricati: prima il 400 mancava e il browser
+// "sostituiva" ogni fontWeight:400 col 700 caricato, appesantendo il testo.
+const ornamental = Lora({
   subsets: ['latin'],
   variable: '--font-ornamental',
-  weight: ['700', '900'],
+  weight: ['400', '700'],
   display: 'swap',
 })
 
@@ -155,6 +158,7 @@ export default async function RootLayout({
   const cookieStore = await cookies()
   const username = cookieStore.get('session_user')?.value ?? null
   const role     = cookieStore.get('session_role')?.value ?? null
+  const claimDismesso = !!cookieStore.get('header_claim_dismesso')?.value
 
   const settings = await readSettings()
   let rolePermissions = settings.rolePermissions
@@ -282,7 +286,7 @@ export default async function RootLayout({
         )}
 
         <div id="site-sticky-header" style={{ position: 'sticky', top: 0, zIndex: 400 }}>
-          <Header headerBg={settings.headerBg} headerBgMode={settings.headerBgMode} username={username} registrazioniDisabilitate={settings.registrazioniDisabilitate} />
+          <Header headerBg={settings.headerBg} headerBgMode={settings.headerBgMode} username={username} registrazioniDisabilitate={settings.registrazioniDisabilitate} claimDismesso={claimDismesso} />
           {settings.bannerAbilitato && (
             <>
               <style>{`

@@ -3,12 +3,14 @@ import Link from 'next/link'
 import type { Rgba, BgMode } from '@/lib/settings'
 import { rgbGradient, rgbGradientInv, rgbBrushedBackground, rgbBrushedBackgroundInv, rgbBrushedBackgroundDark, rgbBrushedBackgroundDarkInv, rgbBoxShadow, rgbBorderColor } from '@/lib/bg-utils'
 import HeaderAuth from '@/components/header-auth'
+import HeaderClaim from '@/components/header-claim'
 
 interface HeaderProps {
   headerBg?: Rgba
   headerBgMode?: BgMode
   username?: string | null
   registrazioniDisabilitate?: boolean
+  claimDismesso?: boolean
 }
 
 const EFFECT_CLASS: Record<string, string> = {
@@ -90,6 +92,7 @@ export default function Header({
   headerBgMode = 'rgb',
   username,
   registrazioniDisabilitate,
+  claimDismesso = false,
 }: HeaderProps) {
   const isFixedEffect = headerBgMode in EFFECT_CLASS
   const isRgbEffect   = headerBgMode.startsWith('rgb_')
@@ -119,11 +122,7 @@ export default function Header({
       )}
       {shimmerClass && <div className={shimmerClass} />}
 
-      <div style={{ position: 'relative', zIndex: 1, margin: '0 -4px', borderBottom: '1px solid #999', paddingBottom: 4, textAlign: 'center' }}>
-        <div style={{ display: 'inline-block', color: '#e0b030', fontWeight: 700, fontSize: 'clamp(11px, 1.1vw, 14px)', lineHeight: 1.3 }}>
-          La formula vincente che quadra i conti per i lavori di casa
-        </div>
-      </div>
+      <HeaderClaim dismesso={claimDismesso} />
 
       <div className="header-top-row" style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', minHeight: 80 }}>
         <div />
@@ -137,10 +136,10 @@ export default function Header({
           </Link>
 
           <div className="header-formula-center" style={{ display: 'inline-block', whiteSpace: 'nowrap', lineHeight: 1.1, letterSpacing: '0.3px', fontSize: 'clamp(13px, 1.3vw, 16px)', fontWeight: 400, color: '#999', textAlign: 'left', fontFamily: 'var(--font-ornamental)' }}>
-            <div>Serramenti <span style={{ color: '#fff', fontWeight: 700 }}>+</span></div>
-            <div>Sicurezza <span style={{ color: '#fff', fontWeight: 700 }}>+</span></div>
-            <div>Ristrutturazioni <span style={{ color: '#fff', fontWeight: 700 }}>=</span></div>
-            <div style={{ borderTop: '1px solid #fff', margin: '1px 0' }} />
+            <div><span style={{ color: '#f5d060' }}>Serramenti</span> <span style={{ color: '#fff', fontWeight: 700 }}>+</span></div>
+            <div><span style={{ color: '#e2e2e2' }}>Sicurezza</span> <span style={{ color: '#fff', fontWeight: 700 }}>+</span></div>
+            <div><span style={{ color: '#d97030' }}>Ristrutturazioni</span> <span style={{ color: '#fff', fontWeight: 700 }}>=</span></div>
+            <div style={{ borderTop: '1px solid #fff', margin: '3px 0' }} />
             <div style={{ color: '#fff', fontWeight: 700 }}>DIGI Home Design</div>
           </div>
         </div>
