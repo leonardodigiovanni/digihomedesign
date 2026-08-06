@@ -3,6 +3,9 @@ import Image from 'next/image'
 import type { Metadata } from 'next'
 import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import ShortcutStar from '@/components/shortcut-star'
+import { readSettings } from '@/lib/settings'
+import { getClientPagesNeighbors } from '@/lib/nav-config'
+import NavDropdownTriggerButton from '@/components/nav-dropdown-trigger-button'
 
 export const metadata: Metadata = {
   title: 'La Nostra Storia — Digi Home Design Palermo',
@@ -10,7 +13,9 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://www.digi-home-design.com/chi-siamo/storia' },
 }
 
-export default function Page() {
+export default async function Page() {
+  const { disabledPages } = await readSettings()
+  const { next } = getClientPagesNeighbors(36, disabledPages)
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
@@ -68,6 +73,8 @@ export default function Page() {
 
       <StickyBottomBarContent>
         <Link href="/chi-siamo" className="btn-black fs-12">← Chi Siamo</Link>
+        <NavDropdownTriggerButton dropdownId="aiuto" label="← Aiuto" />
+        {next && <Link href={next.href} className="btn-blue fs-12">{next.label} →</Link>}
       </StickyBottomBarContent>
 
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>pagina revisionata</p>

@@ -4,6 +4,8 @@ import ContattoForm from './contatto-form'
 import type { Metadata } from 'next'
 import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import ShortcutStar from '@/components/shortcut-star'
+import { readSettings } from '@/lib/settings'
+import { getClientPagesNeighbors } from '@/lib/nav-config'
 
 function IconPhone() {
   return (
@@ -42,6 +44,8 @@ export default async function Page() {
   const cookieStore = await cookies()
   const username = cookieStore.get('session_user')?.value ?? null
   const role     = cookieStore.get('session_role')?.value ?? null
+  const { disabledPages } = await readSettings()
+  const { prev, next } = getClientPagesNeighbors(15, disabledPages)
 
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
@@ -98,6 +102,8 @@ export default async function Page() {
 
       <StickyBottomBarContent>
         <Link href="/chi-siamo" className="btn-black fs-12">← Chi Siamo</Link>
+        {prev && <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link>}
+        {next && <Link href={next.href} className="btn-blue fs-12">{next.label} →</Link>}
       </StickyBottomBarContent>
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>pagina revisionata</p>
     </div>

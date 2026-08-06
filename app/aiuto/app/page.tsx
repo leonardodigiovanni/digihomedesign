@@ -2,6 +2,8 @@
 import Image from 'next/image'
 import type { Metadata } from 'next'
 import QRCode from 'qrcode'
+import { readSettings } from '@/lib/settings'
+import { getAiutoNeighbors } from '@/lib/nav-config'
 import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import ShortcutStar from '@/components/shortcut-star'
 
@@ -17,6 +19,8 @@ export default async function AppPage() {
     margin: 2,
     color: { dark: '#1c1c1c', light: '#ffffff' },
   })
+  const { disabledPages } = await readSettings()
+  const { prev, next } = getAiutoNeighbors(103, disabledPages)
   return (
     <div style={{ padding: '0 0 64px' }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
@@ -101,6 +105,8 @@ export default async function AppPage() {
 
         <StickyBottomBarContent>
           <Link href="/" className="btn-black fs-12">← Home</Link>
+          {prev && <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link>}
+          {next && <Link href={next.href} className="btn-blue fs-12">{next.label} →</Link>}
           <Link href="/app-download" className="btn-black fs-12">Scarica l&apos;app →</Link>
         </StickyBottomBarContent>
 

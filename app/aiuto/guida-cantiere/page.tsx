@@ -2,6 +2,7 @@
 import Image from 'next/image'
 import type { Metadata } from 'next'
 import { readSettings } from '@/lib/settings'
+import { getAiutoNeighbors } from '@/lib/nav-config'
 import AccediDropdown from '@/components/accedi-dropdown'
 import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import ShortcutStar from '@/components/shortcut-star'
@@ -13,7 +14,8 @@ export const metadata: Metadata = {
 }
 
 export default async function GuidaCantiere() {
-  const { registrazioniDisabilitate } = await readSettings()
+  const { registrazioniDisabilitate, disabledPages } = await readSettings()
+  const { prev, next } = getAiutoNeighbors(102, disabledPages)
   return (
     <div style={{ padding: '0 0 64px' }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
@@ -94,6 +96,8 @@ export default async function GuidaCantiere() {
 
         <StickyBottomBarContent>
           <Link href="/" className="btn-black fs-12">← Home</Link>
+          {prev && <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link>}
+          {next && <Link href={next.href} className="btn-blue fs-12">{next.label} →</Link>}
           <Link href="/area-clienti/cantieri" className="btn-black fs-12">I miei cantieri →</Link>
         </StickyBottomBarContent>
 

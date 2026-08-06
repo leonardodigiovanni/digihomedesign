@@ -3,9 +3,11 @@ import Image from 'next/image'
 import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import { readSettings } from '@/lib/settings'
+import { getAiutoNeighbors } from '@/lib/nav-config'
 import AccediDropdown from '@/components/accedi-dropdown'
 import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import ShortcutStar from '@/components/shortcut-star'
+import NavDropdownTriggerButton from '@/components/nav-dropdown-trigger-button'
 
 export const metadata: Metadata = {
   title: 'Guida Preventivo Online',
@@ -14,7 +16,8 @@ export const metadata: Metadata = {
 }
 
 export default async function GuidaPreventivo() {
-  const { registrazioniDisabilitate } = await readSettings()
+  const { registrazioniDisabilitate, disabledPages } = await readSettings()
+  const { prev, next } = getAiutoNeighbors(101, disabledPages)
   const cookieStore = await cookies()
   const username = cookieStore.get('session_user')?.value ?? null
   const cartRaw = cookieStore.get('digi_cart')?.value
@@ -106,6 +109,8 @@ export default async function GuidaPreventivo() {
 
         <StickyBottomBarContent>
           <Link href="/" className="btn-black fs-12">← Home</Link>
+          {prev ? <Link href={prev.href} className="btn-gold fs-12">← {prev.label}</Link> : <NavDropdownTriggerButton dropdownId="cat-servizi" label="← Servizi" />}
+          {next && <Link href={next.href} className="btn-blue fs-12">{next.label} →</Link>}
           <Link href="/cataloghi" className="btn-black fs-12">Cataloghi →</Link>
           {cartNonVuoto && (
           <Link href="/area-clienti/carrello-preventivo" className="btn-black fs-12">Carrello preventivi →</Link>

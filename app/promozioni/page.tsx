@@ -6,6 +6,8 @@ import { getCategorieTopLevel } from '@/lib/categorie-percorsi'
 import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import ShortcutStar from '@/components/shortcut-star'
 import { CategoryTile, CATEGORY_TILE_WIDTH } from '@/components/category-tile'
+import { readSettings } from '@/lib/settings'
+import { getStandaloneNeighbors } from '@/lib/nav-config'
 
 export const metadata: Metadata = {
   title: 'Promozioni',
@@ -14,6 +16,8 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
+  const { disabledPages } = await readSettings()
+  const { prev, next } = getStandaloneNeighbors(42, disabledPages)
   const db = await getConnection()
   let categorie: Awaited<ReturnType<typeof getCategorieTopLevel>>
   try {
@@ -47,7 +51,8 @@ export default async function Page() {
 
       <StickyBottomBarContent>
         <Link href="/" className="btn-black fs-12">← Home</Link>
-        <Link href="/shop" className="btn-black fs-12">Shop On Line →</Link>
+        {prev && <Link href={prev.href} className="btn-gold fs-12">← {prev.label}</Link>}
+        {next && <Link href={next.href} className="btn-gold fs-12">{next.label} →</Link>}
       </StickyBottomBarContent>
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>tipo indice promozioni</p>
     </div>

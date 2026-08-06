@@ -2,6 +2,8 @@
 import type { Metadata } from 'next'
 import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import ShortcutStar from '@/components/shortcut-star'
+import { readSettings } from '@/lib/settings'
+import { getClientPagesNeighbors } from '@/lib/nav-config'
 
 export const metadata: Metadata = {
   title: 'Condizioni di Vendita — Digi Home Design Palermo',
@@ -9,7 +11,9 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://www.digi-home-design.com/chi-siamo/condizioni-di-vendita' },
 }
 
-export default function Page() {
+export default async function Page() {
+  const { disabledPages } = await readSettings()
+  const { prev, next } = getClientPagesNeighbors(39, disabledPages)
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
@@ -51,6 +55,8 @@ export default function Page() {
 
       <StickyBottomBarContent>
         <Link href="/chi-siamo" className="btn-black fs-12">← Chi Siamo</Link>
+        {prev && <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link>}
+        {next && <Link href={next.href} className="btn-blue fs-12">{next.label} →</Link>}
       </StickyBottomBarContent>
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>pagina revisionata</p>
     </div>

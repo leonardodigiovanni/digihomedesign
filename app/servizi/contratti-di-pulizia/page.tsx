@@ -7,6 +7,7 @@ import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import { readSettings } from '@/lib/settings'
 import { getCategoryGroupNeighbors } from '@/lib/nav-config'
 import ShortcutStar from '@/components/shortcut-star'
+import NavDropdownTriggerButton from '@/components/nav-dropdown-trigger-button'
 
 export const metadata: Metadata = {
   title: 'Contratti di Pulizia a Palermo — Residenziale e Commerciale',
@@ -69,7 +70,7 @@ export default async function Page() {
           {prev && <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link>}
           <CtaPreventivo />
           <CtaCantiere />
-          {next && <Link href={next.href} className="btn-blue fs-12">{next.label} →</Link>}
+          {next ? <Link href={next.href} className="btn-blue fs-12">{next.label} →</Link> : <NavDropdownTriggerButton dropdownId="aiuto" label="Aiuto →" />}
           <Link href="/chi-siamo/contatti" className="btn-black fs-12">Chiedi info</Link>
         </StickyBottomBarContent>
       </div>

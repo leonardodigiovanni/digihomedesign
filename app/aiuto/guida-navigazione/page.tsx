@@ -1,7 +1,10 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import { readSettings } from '@/lib/settings'
+import { getAiutoNeighbors } from '@/lib/nav-config'
 import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import ShortcutStar from '@/components/shortcut-star'
+import NavDropdownTriggerButton from '@/components/nav-dropdown-trigger-button'
 
 export const metadata: Metadata = {
   title: 'Guida alla Navigazione',
@@ -9,7 +12,9 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://www.digi-home-design.com/aiuto/guida-navigazione' },
 }
 
-export default function GuidaNavigazione() {
+export default async function GuidaNavigazione() {
+  const { disabledPages } = await readSettings()
+  const { prev } = getAiutoNeighbors(104, disabledPages)
   return (
     <div style={{ padding: '0 0 64px' }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
@@ -72,6 +77,8 @@ export default function GuidaNavigazione() {
 
         <StickyBottomBarContent>
           <Link href="/" className="btn-black fs-12">← Home</Link>
+          {prev && <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link>}
+          <NavDropdownTriggerButton dropdownId="chi-siamo" label="Chi Siamo →" />
         </StickyBottomBarContent>
 
       </div>

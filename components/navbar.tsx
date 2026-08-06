@@ -79,6 +79,8 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
     return () => window.removeEventListener('avvisi-count-changed', handle)
   }, [])
   const [sectionOpen, setSectionOpen] = useState(false)
+  const [chiSiamoViaSticky, setChiSiamoViaSticky] = useState(false)
+  const [chiSiamoMounted, setChiSiamoMounted] = useState(false)
   const [mobileOpenSection, setMobileOpenSection] = useState<string | null>(null)
   const toggleMobileSection = (key: string) => setMobileOpenSection(prev => prev === key ? null : key)
   const [canLeft,  setCanLeft]  = useState(false)
@@ -87,6 +89,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
   const pathname            = usePathname()
   const skipSectionClose    = useRef(false)
   const dropRef     = useRef<HTMLDivElement>(null)
+  const chiSiamoPanelRef = useRef<HTMLDivElement>(null)
   const scrollRef   = useRef<HTMLDivElement>(null)
   const innerRef    = useRef<HTMLDivElement>(null)
   const scrollPos   = useRef(0)
@@ -258,15 +261,28 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
   // Chiudi dropdown desktop cliccando fuori
   useEffect(() => {
     function handleOutside(e: MouseEvent) {
-      if (dropRef.current && !dropRef.current.contains(e.target as Node)) {
+      const target = e.target as HTMLElement
+      if (dropRef.current && !dropRef.current.contains(target) && !chiSiamoPanelRef.current?.contains(target) && !target.closest('[data-nav-dropdown-trigger="chi-siamo"]')) {
         setSectionOpen(false)
+        setChiSiamoViaSticky(false)
       }
     }
     document.addEventListener('mousedown', handleOutside)
     return () => document.removeEventListener('mousedown', handleOutside)
   }, [])
 
-  const brandDropRef = useDropdownAlign(sectionOpen)
+  const brandDropRef = useDropdownAlign(sectionOpen, dropRef, chiSiamoViaSticky ? 'chi-siamo' : null)
+  const { request: chiSiamoRequest, consume: consumeChiSiamo } = useNavDropdownRequest()
+
+  useEffect(() => { setChiSiamoMounted(true) }, [])
+
+  useEffect(() => {
+    if (chiSiamoRequest?.id === 'chi-siamo') {
+      setSectionOpen(o => !o)
+      setChiSiamoViaSticky(true)
+      consumeChiSiamo()
+    }
+  }, [chiSiamoRequest, consumeChiSiamo])
 
   const adminItems         = visibleAdminPages(role)
   const internalItems      = visibleInternalPages(role, rolePermissions).filter(p => !disabledPages.includes(p.id))
@@ -395,7 +411,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             <><NavSep />
             <div ref={dropRef} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
               <button
-                onClick={() => { if (!sectionOpen) { skipSectionClose.current = true; router.push('/chi-siamo') } setSectionOpen(o => !o) }}
+                onClick={() => { if (!sectionOpen) { skipSectionClose.current = true; router.push('/chi-siamo') } setSectionOpen(o => !o); setChiSiamoViaSticky(false) }}
                 className={linkClass(isActive('/chi-siamo'))}
                 style={{ ...linkStyle('/chi-siamo'), height: 'auto', minHeight: 46, flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4 }}
               >
@@ -403,9 +419,9 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
                 <span>{sectionOpen ? '▴' : '▾'}</span>
               </button>
 
-              {sectionOpen && (
-                <div ref={brandDropRef} style={{
-                  position: 'absolute',
+              {chiSiamoMounted && sectionOpen && createPortal(
+                <div ref={mergeRefs(brandDropRef, chiSiamoPanelRef)} style={{
+                  position: 'fixed',
                   top: '100%',
                   left: '50%',
                   transform: 'translateX(-50%)',
@@ -417,7 +433,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
                   display: 'flex',
                   flexDirection: 'column',
                   gap: 0,
-                  zIndex: 200,
+                  zIndex: 9000,
                   width: 'max-content',
                   minWidth: 200,
                 }}>
@@ -431,7 +447,8 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
                       <span>{p.label}<ShortcutStar href={p.href} small /></span>
                     </Link>
                   ))}
-                </div>
+                </div>,
+                document.body
               )}
             </div>
             </>
@@ -1454,32 +1471,50 @@ function AiutoDropdown({
   linkClass: (active: boolean) => string
 }) {
   const [open, setOpen] = useState(false)
+  const [viaSticky, setViaSticky] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
-  const alignRef = useDropdownAlign(open)
+  const dropRef = useRef<HTMLDivElement>(null)
+  const alignRef = useDropdownAlign(open, ref, viaSticky ? 'aiuto' : null)
+  const { request, consume } = useNavDropdownRequest()
+
+  useEffect(() => { setIsMounted(true) }, [])
 
   useEffect(() => {
     function handle(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+      const target = e.target as HTMLElement
+      if (ref.current && !ref.current.contains(target) && !dropRef.current?.contains(target) && !target.closest('[data-nav-dropdown-trigger="aiuto"]')) {
+        setOpen(false)
+        setViaSticky(false)
+      }
     }
     document.addEventListener('mousedown', handle)
     return () => document.removeEventListener('mousedown', handle)
   }, [])
 
+  useEffect(() => {
+    if (request?.id === 'aiuto') {
+      setOpen(o => !o)
+      setViaSticky(true)
+      consume()
+    }
+  }, [request, consume])
+
   const anyActive = items.some(p => isActive(p.href))
 
   return (
     <div ref={ref} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-      <button onClick={() => setOpen(o => !o)} className={linkClass(anyActive)} style={{ ...linkStyle('/aiuto'), height: 'auto', minHeight: 46, flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4 }}>
+      <button onClick={() => { setOpen(o => !o); setViaSticky(false) }} className={linkClass(anyActive)} style={{ ...linkStyle('/aiuto'), height: 'auto', minHeight: 46, flexDirection: 'row', alignItems: 'center', whiteSpace: 'normal', lineHeight: 1.15, gap: 4 }}>
         <span>Aiuto</span>
         <span>{open ? '▴' : '▾'}</span>
       </button>
-      {open && (
-        <div ref={alignRef} style={{
-          position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
+      {isMounted && open && createPortal(
+        <div ref={mergeRefs(alignRef, dropRef)} style={{
+          position: 'fixed', top: '100%', left: '50%', transform: 'translateX(-50%)',
           background: '#fdfcf8', border: '1px solid #c8960c', borderRadius: 6,
           boxShadow: '0 8px 24px rgba(0,0,0,0.1)', padding: 12,
           display: 'grid', gridTemplateRows: 'repeat(6, auto)', gridAutoFlow: 'column', gridAutoColumns: 'max-content', gap: 2,
-          zIndex: 200, width: 'max-content', minWidth: 220,
+          zIndex: 9000, width: 'max-content', minWidth: 220,
         }}>
           {items.map(p => (
             <Link
@@ -1492,7 +1527,8 @@ function AiutoDropdown({
               <span>{p.label}<ShortcutStar href={p.href} small /></span>
             </Link>
           ))}
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )

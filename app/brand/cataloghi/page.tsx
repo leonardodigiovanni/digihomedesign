@@ -7,6 +7,9 @@ import { ensurePercorsiTables } from '@/lib/percorsi'
 import { ensureCategoriaImmaginiTables, getCategorieConImmagine } from '@/lib/categoria-immagini'
 import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import ShortcutStar from '@/components/shortcut-star'
+import { readSettings } from '@/lib/settings'
+import { getStandaloneNeighbors } from '@/lib/nav-config'
+import NavDropdownTriggerButton from '@/components/nav-dropdown-trigger-button'
 
 export const metadata: Metadata = {
   title: 'Cataloghi — Digi Home Design Palermo',
@@ -46,6 +49,8 @@ async function getCategorie(): Promise<CategoriaCard[]> {
 export default async function Page() {
   const cookieStore = await cookies()
   const loggedIn = !!cookieStore.get('session_user')?.value
+  const { disabledPages } = await readSettings()
+  const { prev, next } = getStandaloneNeighbors(38, disabledPages)
 
   const categorie = await getCategorie()
 
@@ -71,6 +76,8 @@ export default async function Page() {
         <Link href="/" className="btn-black fs-12">
         ← Home
         </Link>
+        {prev && <Link href={prev.href} className="btn-gold fs-12">← {prev.label}</Link>}
+        {next ? <Link href={next.href} className="btn-gold fs-12">{next.label} →</Link> : <NavDropdownTriggerButton dropdownId="cat-serramenti" label="Serramenti →" />}
         {!loggedIn && (
         <Link href="/aiuto/guida-preventivo" className="btn-black fs-12">
         Vai alla guida →

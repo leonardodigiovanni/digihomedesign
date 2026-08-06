@@ -196,12 +196,23 @@ export const clientPages: NavPage[] = [
   { id: 40, label: 'Documenti Legali',      href: '/chi-siamo/templates-documenti'   },
 ]
 
+export function getClientPagesNeighbors(currentId: number, disabledPages: number[]) {
+  return getSectionNeighbors(clientPages, currentId, disabledPages)
+}
+
 // Voci singole in barra (non dentro un dropdown): Shop prima di Cataloghi
 export const standalonePages: NavPage[] = [
   { id: 41, label: 'Shop On Line', href: '/shop'          },
   { id: 42, label: 'Promozioni', href: '/promozioni' },
   { id: 38, label: 'Cataloghi', href: '/cataloghi' },
 ]
+
+// Vicini (precedente/successivo) tra le voci standalone stesse: non hanno una propria
+// sezione con sottopagine, quindi qui il bottone dinamico nello sticky è sempre "gold"
+// (voce di nav adiacente), mai "blu" (sorella nella stessa sezione).
+export function getStandaloneNeighbors(currentId: number, disabledPages: number[]) {
+  return getSectionNeighbors(standalonePages, currentId, disabledPages)
+}
 
 // Pagine Riqualificazione Energetica (ex "Prodotti"): pagine vetrina top-level, sempre pubbliche.
 // Nomi/id storici (280-285, Infissi/Verande/Persiane/Porte Blindate/Strutture
@@ -326,6 +337,10 @@ export const aiutoPages: NavPage[] = [
   { id: 103, label: 'Guida DigiApp',           href: '/aiuto/app'              },
   { id: 104, label: 'Guida alla Navigazione', href: '/aiuto/guida-navigazione' },
 ]
+
+export function getAiutoNeighbors(currentId: number, disabledPages: number[]) {
+  return getSectionNeighbors(aiutoPages, currentId, disabledPages)
+}
 
 // Pagine amministrazione: area amministrativa fissa
 export const adminPages: NavPage[] = [
