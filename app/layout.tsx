@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, Cinzel } from 'next/font/google'
+import { Inter, Playfair_Display } from 'next/font/google'
 import { cookies, headers } from 'next/headers'
 import Header from '@/components/header'
 import Navbar from '@/components/navbar'
@@ -42,7 +42,9 @@ const inter = Inter({
 })
 
 // Font ornamentale, solo per la scritta "Home Design" sotto il logo header.
-const ornamental = Cinzel({
+// Playfair Display invece di Cinzel: minuscole vere (non small-caps) ma stesse
+// maiuscole con grazie appuntite.
+const ornamental = Playfair_Display({
   subsets: ['latin'],
   variable: '--font-ornamental',
   weight: ['700', '900'],

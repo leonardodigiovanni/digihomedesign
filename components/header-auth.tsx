@@ -204,7 +204,7 @@ export default function HeaderAuth({ username, registrazioniDisabilitate, forceD
           className={isOpen ? 'btn-orange' : 'btn-black'}
           style={{ padding: '0 14px' }}
         >
-          {isOpen ? 'Chiudi ▴' : 'Accedi ▾'}
+          {isOpen ? 'Chiudi ▴' : 'Accedi'}
         </button>
         {isOpen && (
           <div style={{

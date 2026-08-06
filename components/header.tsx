@@ -105,10 +105,12 @@ export default function Header({
         ...dynamicStyle,
         background: '#000',
         borderBottom: `1px solid ${borderColor}`,
-        padding: '0 16px',
-        height: 90,
+        padding: '6px 16px 8px',
         overflow: 'visible',
         position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 4,
         ...(isRgbEffect ? { position: 'relative' } : {}),
       }}
     >
@@ -117,20 +119,35 @@ export default function Header({
       )}
       {shimmerClass && <div className={shimmerClass} />}
 
-      <div className="header-logos">
-        <Link href="/" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, textDecoration: 'none', color: 'inherit', outline: 'none', cursor: 'pointer', flexShrink: 0, marginTop: 4 }}>
-          <Image src="/images/header/DIGIHOMEDESIGN.webp" alt="Home Design" width={80} height={80} style={{ objectFit: 'contain', display: 'block' }} />
-        </Link>
-        <div style={{ display: 'inline-block', whiteSpace: 'nowrap', lineHeight: 1.2, fontSize: 13, fontWeight: 600, color: '#999' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}><span>Serramenti</span><span>+</span></div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}><span>Sicurezza</span><span>+</span></div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}><span>Ristrutturazioni</span><span>=</span></div>
-          <div style={{ borderTop: '1px solid #555', margin: '3px 0' }} />
-          <div style={{ color: '#fff', fontWeight: 700, fontSize: 17 }}>DIGI Home Design</div>
+      <div style={{ position: 'relative', zIndex: 1, margin: '0 -4px', borderBottom: '1px solid #999', paddingBottom: 4, textAlign: 'center' }}>
+        <div style={{ display: 'inline-block', color: '#e0b030', fontWeight: 700, fontSize: 'clamp(11px, 1.1vw, 14px)', lineHeight: 1.3 }}>
+          La formula vincente che quadra i conti per i lavori di casa
         </div>
       </div>
-      <div style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', zIndex: 20 }}>
-        <HeaderAuth username={username} registrazioniDisabilitate={registrazioniDisabilitate} forceDropdown />
+
+      <div className="header-top-row" style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', minHeight: 80 }}>
+        <div />
+
+        <div style={{ justifySelf: 'center', display: 'flex', alignItems: 'center', gap: 10 }}>
+          {/* marginBottom negativo: scende il logo (dentro il file c'è margine vuoto sotto le
+              lettere D/G) senza toccare l'allineamento centrato del gruppo — la "somma" a fianco
+              resta esattamente dov'era. */}
+          <Link href="/" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, textDecoration: 'none', color: 'inherit', outline: 'none', cursor: 'pointer', marginBottom: '-9px' }}>
+            <Image src="/images/header/DIGIHOMEDESIGN.webp" alt="Home Design" width={80} height={80} style={{ objectFit: 'contain', display: 'block' }} />
+          </Link>
+
+          <div className="header-formula-center" style={{ display: 'inline-block', whiteSpace: 'nowrap', lineHeight: 1.1, letterSpacing: '0.3px', fontSize: 'clamp(13px, 1.3vw, 16px)', fontWeight: 400, color: '#999', textAlign: 'left', fontFamily: 'var(--font-ornamental)' }}>
+            <div>Serramenti <span style={{ color: '#fff', fontWeight: 700 }}>+</span></div>
+            <div>Sicurezza <span style={{ color: '#fff', fontWeight: 700 }}>+</span></div>
+            <div>Ristrutturazioni <span style={{ color: '#fff', fontWeight: 700 }}>=</span></div>
+            <div style={{ borderTop: '1px solid #fff', margin: '1px 0' }} />
+            <div style={{ color: '#fff', fontWeight: 700 }}>DIGI Home Design</div>
+          </div>
+        </div>
+
+        <div style={{ justifySelf: 'end', zIndex: 20 }}>
+          <HeaderAuth username={username} registrazioniDisabilitate={registrazioniDisabilitate} forceDropdown />
+        </div>
       </div>
     </header>
   )
