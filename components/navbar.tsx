@@ -85,6 +85,19 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
   const toggleMobileSection = (key: string) => setMobileOpenSection(prev => prev === key ? null : key)
   const [canLeft,  setCanLeft]  = useState(false)
   const [canRight, setCanRight] = useState(false)
+  // Lo scroll continuo ad hoverStep (sotto) è pensato per un mouse vero: su touch
+  // il tap genera un mouseenter "finto" senza un corrispettivo mouseleave affidabile
+  // quando si solleva il dito, quindi lo scroll resta agganciato e continua da solo.
+  // (hover: hover) è vero solo sui dispositivi che supportano un hover reale — via
+  // stilo/mouse — mai sul touch, indipendentemente dalla larghezza schermo.
+  const [supportsHover, setSupportsHover] = useState(true)
+  useEffect(() => {
+    const mq = window.matchMedia('(hover: hover)')
+    setSupportsHover(mq.matches)
+    const handle = (e: MediaQueryListEvent) => setSupportsHover(e.matches)
+    mq.addEventListener('change', handle)
+    return () => mq.removeEventListener('change', handle)
+  }, [])
   const router              = useRouter()
   const pathname            = usePathname()
   const skipSectionClose    = useRef(false)
@@ -353,7 +366,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
         {/* Area scrollabile — le frecce sono dentro, in position:absolute, coprono gli item parziali */}
         <div className="nav-scroll" ref={scrollRef}>
         {canLeft && (
-          <button className="nav-arrow-btn nav-arrow-btn-left" onClick={() => scrollNav('left')} onMouseEnter={() => startHoverScroll('left')} onMouseLeave={stopHoverScroll} aria-label="Scorri sinistra">
+          <button className="nav-arrow-btn nav-arrow-btn-left" onClick={() => scrollNav('left')} onMouseEnter={supportsHover ? () => startHoverScroll('left') : undefined} onMouseLeave={supportsHover ? stopHoverScroll : undefined} aria-label="Scorri sinistra">
             <svg viewBox="0 0 14 12" width="14" height="12" fill="currentColor"><path d="M14 0 L8 6 L14 12 Z M6 0 L0 6 L6 12 Z"/></svg>
           </button>
         )}
@@ -489,7 +502,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
           )}
         </div>{/* fine nav-scroll-inner */}
         {canRight && (
-          <button className={`nav-arrow-btn nav-arrow-btn-right${primoGruppoSilver ? ' nav-arrow-btn-silver' : ''}`} onClick={() => scrollNav('right')} onMouseEnter={() => startHoverScroll('right')} onMouseLeave={stopHoverScroll} aria-label="Scorri destra">
+          <button className={`nav-arrow-btn nav-arrow-btn-right${primoGruppoSilver ? ' nav-arrow-btn-silver' : ''}`} onClick={() => scrollNav('right')} onMouseEnter={supportsHover ? () => startHoverScroll('right') : undefined} onMouseLeave={supportsHover ? stopHoverScroll : undefined} aria-label="Scorri destra">
             <svg viewBox="0 0 14 12" width="14" height="12" fill="currentColor"><path d="M0 0 L6 6 L0 12 Z M8 0 L14 6 L8 12 Z"/></svg>
           </button>
         )}
@@ -590,8 +603,17 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
           aria-label={menuOpen ? 'Chiudi menu' : 'Apri menu'}
           style={{ position: 'relative', fontWeight: 500 }}
         >
-          <span className="fs-18" style={{ width: 20, display: 'inline-block', textAlign: 'center' }}>{menuOpen ? '✕' : '☰'}</span>
-          Menu
+          {menuOpen ? (
+            <svg viewBox="0 0 18 18" width="40" height="18" preserveAspectRatio="xMidYMid meet" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" style={{ flexShrink: 0 }}>
+              <path d="M2 2 L16 16 M16 2 L2 16" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 26 18" width="40" height="18" fill="currentColor" style={{ flexShrink: 0 }}>
+              <rect y="0" width="26" height="2.5" rx="1.25" />
+              <rect y="7.75" width="26" height="2.5" rx="1.25" />
+              <rect y="15.5" width="26" height="2.5" rx="1.25" />
+            </svg>
+          )}
           {!menuOpen && (unreadEmailCount > 0 || liveAvvisiCount > 0) && (
             <span style={{ position: 'absolute', top: 4, right: 4, background: '#e53e3e', color: '#fff', borderRadius: '50%', minWidth: 18, height: 18, fontSize: 11, fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>
               {Math.min(99, unreadEmailCount + liveAvvisiCount)}

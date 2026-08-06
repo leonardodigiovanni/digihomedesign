@@ -20,6 +20,13 @@ export function useEdgeAutoScroll<T extends HTMLElement>(options?: {
   const frameRef = useRef<number | null>(null)
 
   useEffect(() => {
+    // Pensato per un mouse vero (segue clientX/clientY continuamente): su touch
+    // il tap genera un mousemove "finto" senza un mouseleave affidabile quando si
+    // solleva il dito, quindi lo scroll resta agganciato e continua da solo. Su
+    // dispositivi senza hover reale il listener non va proprio agganciato — resta
+    // solo lo scroll nativo col dito (i contenitori sono overflow-x:auto veri).
+    if (!window.matchMedia('(hover: hover)').matches) return
+
     let lastTs: number | null = null
 
     function tick(ts: number) {

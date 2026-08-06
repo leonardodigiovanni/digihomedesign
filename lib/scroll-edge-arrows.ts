@@ -43,18 +43,29 @@ export function attachScrollArrows(el: HTMLElement) {
 
   function reposition() {
     const rect = el.getBoundingClientRect()
-    const top = rect.top + rect.height / 2 - 6
-    left.style.top  = `${top}px`
-    right.style.top = `${top}px`
-    left.style.left  = `${rect.left + 10}px`
-    right.style.left = `${rect.right - 10 - 14}px`
 
     // Se l'elemento tracciato è scorso (in verticale) dietro l'header sticky,
     // la freccia va nascosta indipendentemente dallo z-index — altrimenti
     // resta a galleggiare sopra header/banner/nav durante lo scroll di pagina.
     const header = document.getElementById('site-sticky-header')
     const headerBottom = header ? header.getBoundingClientRect().bottom : 0
-    const hiddenByHeader = rect.bottom < headerBottom || top < headerBottom
+
+    // La freccia si ancora al centro della porzione VISIBILE del contenitore
+    // (quella sotto l'header), non del contenitore intero: per righe alte
+    // (es. le card hero, ~360px) il centro geometrico può finire dietro
+    // l'header ben prima che il contenitore sia davvero scomparso, nascondendo
+    // la freccia troppo presto — capitava soprattutto su schermi bassi
+    // (mobile), dove l'header occupa proporzionalmente più spazio verticale.
+    const visibleTop = Math.max(rect.top, headerBottom)
+    const hasVisiblePortion = rect.bottom > visibleTop
+    const top = (hasVisiblePortion ? (visibleTop + rect.bottom) / 2 : rect.top + rect.height / 2) - 6
+
+    left.style.top  = `${top}px`
+    right.style.top = `${top}px`
+    left.style.left  = `${rect.left + 10}px`
+    right.style.left = `${rect.right - 10 - 14}px`
+
+    const hiddenByHeader = !hasVisiblePortion
     left.style.display  = (wantLeft  && !hiddenByHeader) ? 'block' : 'none'
     right.style.display = (wantRight && !hiddenByHeader) ? 'block' : 'none'
   }
