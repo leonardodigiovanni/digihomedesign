@@ -17,7 +17,11 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'img.youtube.com', pathname: '/vi/**' },
     ],
   },
-  allowedDevOrigins: ['192.168.1.38'],
+  // Wildcard sull'ultimo ottetto invece di un IP fisso: il telefono di test cambia IP
+  // ad ogni rinnovo DHCP (era .37, poi .38, poi .39...) e ribloccava l'accesso dev da LAN
+  // ogni volta. Il matcher di Next.js (isCsrfOriginAllowed) spezza sui punti e tratta '*'
+  // come singolo segmento jolly — funziona anche sugli IPv4, non solo sui domini DNS.
+  allowedDevOrigins: ['192.168.1.*'],
   async redirects() {
     return [
       { source: '/porte-corazzate', destination: '/porte-blindate', permanent: true },
