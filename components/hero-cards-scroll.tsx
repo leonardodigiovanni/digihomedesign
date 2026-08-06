@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Image from 'next/image'
 import { useEdgeAutoScroll } from '@/lib/use-edge-auto-scroll'
 import { useScrollEdgeMask } from '@/lib/use-scroll-edge-mask'
+import { useElasticCardScroll } from '@/lib/use-elastic-card-scroll'
 import { mergeRefs } from '@/lib/merge-refs'
 
 type MiniCard = { el: HTMLElement; src: string; label: string }
@@ -35,7 +36,17 @@ function rawImageSrc(el: HTMLImageElement): string {
 export default function HeroCardsScroll({ children }: { children: React.ReactNode }) {
   const autoScrollRef = useEdgeAutoScroll<HTMLDivElement>({ axis: 'x' })
   const maskRef = useScrollEdgeMask<HTMLDivElement>(40)
+  const elasticRef = useElasticCardScroll<HTMLDivElement>({ targetWidth: 576, gap: 16, edgeClickZone: 40 })
   const containerRef = useRef<HTMLDivElement>(null)
+  // mergeRefs(...) chiamato inline creerebbe una funzione nuova ad ogni render, e
+  // React la tratterebbe come un ref "cambiato": cleanup+riattacco di TUTTI i ref
+  // combinati ad ogni render (qui capita ad ogni evento di scroll, per lo state
+  // della mini-mappa sotto). Innocuo per gli altri hook, ma smontava in continuazione
+  // anche il timer di snap di useElasticCardScroll, che non arrivava mai a scadenza.
+  const combinedRef = useMemo(
+    () => mergeRefs(autoScrollRef, maskRef, elasticRef, containerRef),
+    [autoScrollRef, maskRef, elasticRef, containerRef]
+  )
   const [minis, setMinis] = useState<MiniCard[]>([])
   const [visibleCount, setVisibleCount] = useState(0)
   const [windowStart, setWindowStart] = useState(0)
@@ -137,7 +148,7 @@ export default function HeroCardsScroll({ children }: { children: React.ReactNod
   return (
     <div>
       <div
-        ref={mergeRefs(autoScrollRef, maskRef, containerRef)}
+        ref={combinedRef}
         className="home-hero-cards"
         style={{ display: 'flex', gap: 16, overflowX: 'auto', padding: '8px 4px', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}
       >

@@ -397,10 +397,9 @@ body {
   transition: transform 0.15s, box-shadow 0.15s;
 }
 .home-hero-cards .page-card {
-  flex: 0 0 576px !important;
-  width: 576px !important;
-  max-width: 576px !important;
-  scroll-snap-align: start;
+  flex: 0 0 var(--card-w, 576px) !important;
+  width: var(--card-w, 576px) !important;
+  max-width: var(--card-w, 576px) !important;
 }
 .home-hero-cards .page-card > div:first-child {
   height: 356px !important;
