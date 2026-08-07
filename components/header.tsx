@@ -3,14 +3,12 @@ import Link from 'next/link'
 import type { Rgba, BgMode } from '@/lib/settings'
 import { rgbGradient, rgbGradientInv, rgbBrushedBackground, rgbBrushedBackgroundInv, rgbBrushedBackgroundDark, rgbBrushedBackgroundDarkInv, rgbBoxShadow, rgbBorderColor } from '@/lib/bg-utils'
 import HeaderAuth from '@/components/header-auth'
-import HeaderClaim from '@/components/header-claim'
 
 interface HeaderProps {
   headerBg?: Rgba
   headerBgMode?: BgMode
   username?: string | null
   registrazioniDisabilitate?: boolean
-  claimDismesso?: boolean
 }
 
 const EFFECT_CLASS: Record<string, string> = {
@@ -92,7 +90,6 @@ export default function Header({
   headerBgMode = 'rgb',
   username,
   registrazioniDisabilitate,
-  claimDismesso = false,
 }: HeaderProps) {
   const isFixedEffect = headerBgMode in EFFECT_CLASS
   const isRgbEffect   = headerBgMode.startsWith('rgb_')
@@ -108,7 +105,7 @@ export default function Header({
         ...dynamicStyle,
         background: '#000',
         borderBottom: `1px solid ${borderColor}`,
-        padding: '6px 16px 8px',
+        padding: '6px 8px 0',
         overflow: 'visible',
         position: 'relative',
         display: 'flex',
@@ -122,29 +119,22 @@ export default function Header({
       )}
       {shimmerClass && <div className={shimmerClass} />}
 
-      <HeaderClaim dismesso={claimDismesso} />
-
-      <div className="header-top-row" style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', minHeight: 80 }}>
-        <div />
-
-        <div style={{ justifySelf: 'center', display: 'flex', alignItems: 'center', gap: 10 }}>
-          {/* marginBottom negativo: scende il logo (dentro il file c'è margine vuoto sotto le
-              lettere D/G) senza toccare l'allineamento centrato del gruppo — la "somma" a fianco
-              resta esattamente dov'era. */}
-          <Link href="/" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, textDecoration: 'none', color: 'inherit', outline: 'none', cursor: 'pointer', marginBottom: '-9px' }}>
+      <div className="header-top-row" style={{ position: 'relative', zIndex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center', minHeight: 80 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <Link href="/" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, textDecoration: 'none', color: 'inherit', outline: 'none', cursor: 'pointer' }}>
             <Image src="/images/header/DIGIHOMEDESIGN.webp" alt="Home Design" width={80} height={80} style={{ objectFit: 'contain', display: 'block' }} />
           </Link>
 
-          <div className="header-formula-center" style={{ display: 'inline-block', whiteSpace: 'nowrap', lineHeight: 1.1, letterSpacing: '0.3px', fontSize: 'clamp(13px, 1.3vw, 16px)', fontWeight: 400, color: '#999', textAlign: 'left', fontFamily: 'var(--font-ornamental)' }}>
-            <div><span style={{ color: '#f5d060' }}>Serramenti</span> <span style={{ color: '#fff', fontWeight: 700 }}>+</span></div>
-            <div><span style={{ color: '#e2e2e2' }}>Sicurezza</span> <span style={{ color: '#fff', fontWeight: 700 }}>+</span></div>
-            <div><span style={{ color: '#d97030' }}>Ristrutturazioni</span> <span style={{ color: '#fff', fontWeight: 700 }}>=</span></div>
-            <div style={{ borderTop: '1px solid #fff', margin: '3px 0' }} />
-            <div style={{ color: '#fff', fontWeight: 700 }}>DIGI Home Design</div>
+          <div className="header-formula-center" style={{ display: 'inline-block', whiteSpace: 'nowrap', lineHeight: 0.95, letterSpacing: '0.3px', fontSize: 15, fontWeight: 400, color: '#999', textAlign: 'left', fontFamily: 'var(--font-ornamental)', transform: 'translateY(-4px)' }}>
+            <div><span style={{ color: '#e2e2e2', textTransform: 'uppercase' }}>Sicurezza</span> <span style={{ color: '#fff', fontWeight: 700 }}>+</span></div>
+            <div><span style={{ color: '#f5d060', textTransform: 'uppercase' }}>Serramenti</span> <span style={{ color: '#fff', fontWeight: 700 }}>+</span></div>
+            <div><span style={{ color: '#e39464', textTransform: 'uppercase' }}>Ristrutturazioni</span> <span style={{ color: '#fff', fontWeight: 700 }}>=</span></div>
+            <div style={{ borderTop: '1px solid #fff', margin: '1px 0' }} />
+            <div style={{ color: '#fff', textTransform: 'uppercase' }}>DIGI Home Design</div>
           </div>
         </div>
 
-        <div style={{ justifySelf: 'end', zIndex: 20 }}>
+        <div style={{ zIndex: 20 }}>
           <HeaderAuth username={username} registrazioniDisabilitate={registrazioniDisabilitate} forceDropdown />
         </div>
       </div>

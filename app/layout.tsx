@@ -158,7 +158,6 @@ export default async function RootLayout({
   const cookieStore = await cookies()
   const username = cookieStore.get('session_user')?.value ?? null
   const role     = cookieStore.get('session_role')?.value ?? null
-  const claimDismesso = !!cookieStore.get('header_claim_dismesso')?.value
 
   const settings = await readSettings()
   let rolePermissions = settings.rolePermissions
@@ -286,7 +285,7 @@ export default async function RootLayout({
         )}
 
         <div id="site-sticky-header" style={{ position: 'sticky', top: 0, zIndex: 400 }}>
-          <Header headerBg={settings.headerBg} headerBgMode={settings.headerBgMode} username={username} registrazioniDisabilitate={settings.registrazioniDisabilitate} claimDismesso={claimDismesso} />
+          <Header headerBg={settings.headerBg} headerBgMode={settings.headerBgMode} username={username} registrazioniDisabilitate={settings.registrazioniDisabilitate} />
           {settings.bannerAbilitato && (
             <>
               <style>{`
