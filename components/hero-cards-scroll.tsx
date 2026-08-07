@@ -13,6 +13,12 @@ const THUMB_W = 64
 const THUMB_H = 40
 const GAP = 8
 const SLOT = THUMB_W + GAP
+// Spazio riservato ai due bottoni "+N" ai lati della mini-mappa (min-width 32px
+// ciascuno + gap 6px ciascuno, arrotondato per sicurezza): il numero di miniature
+// visibili va calcolato lasciandogli posto, altrimenti su schermi stretti la riga
+// (miniature + bottoni) sborda oltre lo schermo — impercettibile su PC dove lo
+// sborda-mento è una frazione minima della riga, evidente sul cellulare.
+const SIDE_BUTTONS_RESERVE = 90
 
 // La card grande carica la sua immagine via next/image, quindi il .src risolto
 // e' gia' un URL proxato /_next/image?url=<path originale>&w=<taglia grande>&q=...
@@ -83,7 +89,7 @@ export default function HeroCardsScroll({ children }: { children: React.ReactNod
     function update() {
       if (!container) return
       setScroll({ left: container.scrollLeft, clientWidth: container.clientWidth })
-      setVisibleCount(Math.max(1, Math.floor(container.clientWidth / SLOT)))
+      setVisibleCount(Math.max(1, Math.floor((container.clientWidth - SIDE_BUTTONS_RESERVE) / SLOT)))
     }
     update()
     container.addEventListener('scroll', update, { passive: true })

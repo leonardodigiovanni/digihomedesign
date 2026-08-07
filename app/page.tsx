@@ -104,8 +104,8 @@ export default async function Page() {
   return (
     <>
     <HomeShortcutsContent role={role || null} rolePermissions={rolePermissions} disabledPages={disabledPages}>
-      <VideoButton url={VIDEO_URL} videoId={VIDEO_ID} label="Incentivi Riqualificazione Energetica 2026" hint={videoTitle} />
-      <VideoButton url={VIDEO2_URL} videoId={VIDEO2_ID} label="Tutti Bonus CASA 2026" hint={video2Title} />
+      <VideoButton url={VIDEO_URL} videoId={VIDEO_ID} label="Riqualificazione 2026" hint={videoTitle} />
+      <VideoButton url={VIDEO2_URL} videoId={VIDEO2_ID} label="Bonus casa 2026" hint={video2Title} />
     </HomeShortcutsContent>
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 16, marginBottom: 16 }}>
       <div className="home-hero">
