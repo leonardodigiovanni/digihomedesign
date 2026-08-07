@@ -163,30 +163,24 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/manutenzione/sito_manutenzione.webp" alt="Anteprima" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/vetrate/vetrina-negozio.webp" alt="Vetrina negozio" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Fotografia da scegliere</span>
+                <span className="testo-articoli">Vetrina negozio</span>
               </div>
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/manutenzione/sito_manutenzione.webp" alt="Anteprima" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/serramenti/vetrate/vetrata-commerciale.webp" alt="Vetrata commerciale" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Fotografia da scegliere</span>
+                <span className="testo-articoli">Vetrata commerciale</span>
               </div>
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Progettiamo e installiamo <strong>vetrate commerciali a Palermo</strong> su misura per negozi, show-room, ristoranti, banche e uffici: sistemi in alluminio strutturale con vetro stratificato di sicurezza, ingressi con porta a battente o scorrevole automatica, facciate continue vetrate e sistemi a libro per l&apos;apertura totale del fronte su strada.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              I profili in alluminio sono disponibili in sezione sottile per la massima visibilità del prodotto esposto, con finitura in qualsiasi colore RAL o anodizzatura. Il vetro viene scelto in base alle esigenze di sicurezza (stratificato 33.1 o 44.2), isolamento termico e resistenza al vento (calcolo NTC 2018).
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Ogni progetto viene accompagnato da un disegno tecnico in pianta e prospetto per l&apos;approvazione prima della produzione. Contattaci per un sopralluogo gratuito a Palermo e provincia.
+              Progettiamo e installiamo vetrate commerciali a Palermo su misura per negozi, show-room, ristoranti, banche e uffici: sistemi in alluminio strutturale con vetro stratificato di sicurezza, ingressi con porta a battente o scorrevole automatica.
             </p>
           </div>
         </div>

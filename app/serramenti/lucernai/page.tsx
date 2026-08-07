@@ -166,7 +166,7 @@ export default async function Page() {
                 <Image src="/images/serramenti/lucernai/alluminio.webp" alt="Lucernaio in alluminio apribile su terrazza" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Lucernaio in alluminio apribile</span>
+                <span className="testo-articoli">Apribile in alluminio</span>
               </div>
             </div>
             <div className="page-card">
@@ -174,19 +174,13 @@ export default async function Page() {
                 <Image src="/images/serramenti/lucernai/lucernario-aerazione.webp" alt="Lucernario a pavimento per aerazione" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Lucernario per aerazione</span>
+                <span className="testo-articoli">Per aerazione</span>
               </div>
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Installiamo <strong>lucernai a Palermo</strong> per portare luce naturale zenitale in ambienti privi di finestre laterali: bagni ciechi, corridoi, vani scale, sottotetti e ambienti commerciali. Le tipologie disponibili comprendono cupole in policarbonato a doppia camera, lucernai piani in vetro temperato stratificato su telaio in alluminio, e sistemi a shed con ventilazione naturale integrata.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              I lucernai apribili â€” a vasistas o a motore elettrico con sensore di pioggia â€” consentono la ventilazione naturale dell&apos;ambiente oltre all&apos;illuminazione. Per i piani inclinati gestiamo la sigillatura del controtelaio e la guaina di raccordo con il manto impermeabile per la massima tenuta all&apos;acqua.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Realizziamo anche la pratica SCIA per l&apos;apertura in copertura ove richiesta. Contattaci per un sopralluogo gratuito e un preventivo a Palermo.
+              Installiamo lucernai a Palermo.
             </p>
           </div>
         </div>

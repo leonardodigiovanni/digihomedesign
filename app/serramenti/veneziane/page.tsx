@@ -166,7 +166,7 @@ export default async function Page() {
                 <Image src="/images/serramenti/veneziane/alluminio.webp" alt="Veneziana in alluminio su finestra scorrevole" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Veneziana in alluminio</span>
+                <span className="testo-articoli">Alluminio</span>
               </div>
             </div>
             <div className="page-card">
@@ -174,19 +174,13 @@ export default async function Page() {
                 <Image src="/images/serramenti/veneziane/legno.webp" alt="Veneziana in legno per interni" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Veneziana in legno</span>
+                <span className="testo-articoli">Legno</span>
               </div>
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Forniamo e installiamo <strong>veneziane su misura a Palermo</strong> in tre configurazioni: veneziane da interno in alluminio con stecche da 16, 25 o 50 mm per uffici e abitazioni; veneziane esterne in alluminio estruso ad alta resistenza per la protezione solare delle facciate; e veneziane integrate nel vetrocamera â€” racchiuse tra i due vetri â€” per il controllo della luce senza polvere e senza manutenzione.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Le stecche sono orientabili e sollevabili tramite cordino, catena o motorizzazione. I colori disponibili coprono l&apos;intera gamma RAL con finiture opache, lucide e in legno vero per le versioni da interno di pregio. Le veneziane esterne sono motorizzabili e integrabili nei sistemi domotici per il controllo automatico in base all&apos;irraggiamento.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Ogni veneziana viene misurata sul posto e realizzata su misura. Contattaci per un preventivo gratuito a Palermo e provincia.
+              Forniamo e installiamo veneziane su misura a Palermo.
             </p>
           </div>
         </div>

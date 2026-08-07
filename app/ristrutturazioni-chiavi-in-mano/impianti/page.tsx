@@ -36,19 +36,16 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card" style={{ flex: '1 1 220px', maxWidth: 480 }}>
               <div style={{ position: 'relative', width: '100%', aspectRatio: '1/1' }}>
-                <Image src="/images/manutenzione/sito_manutenzione.webp" alt="Anteprima" fill sizes="(max-width: 480px) 100vw, 480px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/termodinamica/impianti.webp" alt="Impianti elettrici, idraulici e termici" fill sizes="(max-width: 480px) 100vw, 480px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Fotografia da scegliere</span>
+                <span className="testo-articoli">Impianti</span>
               </div>
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Nell&apos;ambito di una <strong>ristrutturazione chiavi in mano a Palermo</strong> ci occupiamo di impianti elettrici, idraulici e termici, dal progetto alla certificazione di conformità.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Contenuto in fase di definizione — pagina segnaposto in attesa dei dettagli definitivi sul servizio (a quali impianti/categorie collegarla).
+              Nell&apos;ambito di una ristrutturazione chiavi in mano a Palermo ci occupiamo di impianti elettrici, idraulici e termici, dal progetto alla certificazione di conformità.
             </p>
           </div>
         </div>

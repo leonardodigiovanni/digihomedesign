@@ -133,7 +133,7 @@ export default async function Page() {
                 <Image src="/images/metallurgia/scale-a-rampa/scala-laser-nera.webp" alt="Scala a rampe in ferro" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Scala a rampe in ferro</span>
+                <span className="testo-articoli">Taglio laser + legno</span>
               </div>
             </div>
             <div className="page-card">
@@ -141,19 +141,13 @@ export default async function Page() {
                 <Image src="/images/metallurgia/scale-a-rampa/photo_2026-04-15_23-24-19.webp" alt="Scala a rampe installata" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Scala a rampe installata</span>
+                <span className="testo-articoli">Inox antiscivolo</span>
               </div>
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Realizziamo <strong>scale a rampe in ferro e acciaio su misura a Palermo</strong>: scale a una, due o tre rampe con pianerottolo intermedio, struttura portante in ferro piatto o tubolare saldata in officina, gradini in legno massello, legno lamellare o lamiera mandorlata antiscivolo. Adatte per interni residenziali, soppalchi e accessi esterni.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Ogni scala viene progettata rispettando le proporzioni ergonomiche (alzata 17–18 cm, pedata 28–30 cm) e i requisiti della normativa UNI EN 14975. Le strutture vengono verniciate a polvere in qualsiasi colore RAL e assemblate in opera con tasselli chimici ad alta resistenza. Parapetti e corrimano sono abbinabili alle ringhiere dello stesso stile.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Contattaci per un sopralluogo gratuito e un preventivo su misura a Palermo e provincia.
+              Vendiamo e installiamo scale a rampe in ferro e acciaio su misura a Palermo, con gradini in legno o metallo, complete di pianerottoli, parapetti e corrimano.
             </p>
           </div>
         </div>

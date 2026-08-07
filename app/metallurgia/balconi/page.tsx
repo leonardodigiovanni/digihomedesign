@@ -133,7 +133,7 @@ export default async function Page() {
                 <Image src="/images/metallurgia/balconi/photo_2026-04-15_23-18-29.webp" alt="Balcone in ferro realizzato" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Balcone in ferro realizzato</span>
+                <span className="testo-articoli">Tondini</span>
               </div>
             </div>
             <div className="page-card">
@@ -141,19 +141,13 @@ export default async function Page() {
                 <Image src="/images/metallurgia/balconi/balcone.webp" alt="Balcone in ferro" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Balcone in ferro</span>
+                <span className="testo-articoli">Ornato</span>
               </div>
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Realizziamo <strong>strutture per balconi a Palermo</strong> in ferro e acciaio: mensole portanti, lamiere grecate per il piano di calpestio, profili perimetrali e parapetti decorativi. Interveniamo sia su nuove costruzioni che su ristrutturazioni, dove il vecchio balcone in cls risulta ammalorato e va sostituito con una struttura metallica più leggera e durabile.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Ogni struttura viene progettata con calcolo strutturale e trattata con zincatura a caldo o primer antiruggine più verniciatura a polvere per la massima resistenza agli agenti atmosferici, soprattutto in ambiente marino come quello palermitano. I parapetti possono essere in ferro battuto classico, acciaio inox moderno o con pannelli di vetro.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Collaboriamo con ingegneri strutturisti per le pratiche di SCIA o permesso di costruire ove necessario. Contattaci per un sopralluogo gratuito.
+              Vendiamo e installiamo strutture per balconi in ferro e acciaio su misura.
             </p>
           </div>
         </div>

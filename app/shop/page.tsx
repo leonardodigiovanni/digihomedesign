@@ -33,11 +33,6 @@ export default async function Page() {
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
         <Link href="/" style={{ color: '#888', textDecoration: 'underline' }}>Home</Link> / Shop On Line<ShortcutStar />
       </p>
-      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 12 }}>Shop On Line</h1>
-      <p className="testo-articoli" style={{ marginBottom: 16 }}>
-        Scegli una categoria per vedere i prodotti acquistabili.
-      </p>
-
       {categorie.length === 0 ? (
         <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '24px 16px', textAlign: 'center' }}>
           <p className="testo-articoli" style={{ margin: 0 }}>Nessuna categoria disponibile al momento.</p>

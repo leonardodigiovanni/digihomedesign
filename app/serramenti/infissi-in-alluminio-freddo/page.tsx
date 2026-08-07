@@ -203,13 +203,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Gli <strong>infissi in alluminio a freddo a Palermo</strong> — senza barriera di taglio termico tra profilo esterno e interno — sono la soluzione più economica per ambienti non riscaldati o dove l&apos;isolamento termico non è una priorità: verande non abitabili, box, depositi, tettoie e locali di servizio.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Stessa robustezza e durabilità dell&apos;alluminio a taglio termico, nelle versioni a battente, scorrevole e a vasistas, con verniciatura a polvere nei colori RAL o anodizzazione. Se invece l&apos;ambiente è abitato o riscaldato, consigliamo la versione <Link href="/serramenti/infissi-in-alluminio-taglio-termico" style={{ color: '#8a6800', textDecoration: 'underline' }}>a taglio termico</Link>, con isolamento termoacustico molto superiore.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Il servizio comprende sopralluogo, rilievo quote, fornitura e posa in opera. Contattaci per un preventivo gratuito.
+              Gli infissi in alluminio a freddo a Palermo — senza barriera di taglio termico tra profilo esterno e interno — sono la soluzione più economica per ambienti non riscaldati o dove l&apos;isolamento termico non è una priorità.
             </p>
           </div>
         </div>

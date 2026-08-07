@@ -167,7 +167,7 @@ export default async function Page() {
                 <Image src="/images/serramenti/box-doccia/box-doccia-rettangolare.webp" alt="Box doccia rettangolare" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Box doccia rettangolare</span>
+                <span className="testo-articoli">Rettangolare</span>
               </div>
             </div>
             <div className="page-card">
@@ -175,19 +175,13 @@ export default async function Page() {
                 <Image src="/images/serramenti/box-doccia/circolare90cm.webp" alt="Box doccia circolare" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Box doccia circolare</span>
+                <span className="testo-articoli">Semicircolare</span>
               </div>
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Realizziamo <strong>box doccia su misura a Palermo</strong> in vetro temperato da 6, 8 e 10 mm: a battente, scorrevole su binario, a libro e walk-in senza telaio per il massimo effetto minimalista. Ogni box viene misurato sul posto e tagliato alla dimensione esatta del piatto o della doccia a pavimento, senza spazi di infiltrazione.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              I profili di supporto sono in alluminio anodizzato argento, oro satinato, cromo lucido o nella moderna finitura nera opaca â€” abbinabile alla rubinetteria dark di tendenza. Il vetro Ã¨ disponibile trasparente, acidato satinato o con pellicola decorativa, ed Ã¨ trattato con anti-calcare permanente per facilitare la pulizia.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Installiamo anche docce in muratura con sola parete laterale e nicchie senza telaio. Contattaci per un sopralluogo gratuito e un preventivo su misura a Palermo.
+              Vendiamo e installiamo box doccia.
             </p>
           </div>
         </div>

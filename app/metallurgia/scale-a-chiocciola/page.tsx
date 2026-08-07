@@ -132,7 +132,7 @@ export default async function Page() {
                 <Image src="/images/metallurgia/scale-a-chiocciola/chiocciola.webp" alt="Scala a chiocciola interna in acciaio e legno" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Scala a chiocciola interna</span>
+                <span className="testo-articoli">Interna gradini legno</span>
               </div>
             </div>
             <div className="page-card">
@@ -140,19 +140,13 @@ export default async function Page() {
                 <Image src="/images/metallurgia/scale-a-chiocciola/chiocciola-esterna.webp" alt="Scala a chiocciola esterna in acciaio zincato" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Scala a chiocciola esterna</span>
+                <span className="testo-articoli">Esterna in metallo</span>
               </div>
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Realizziamo <strong>scale a chiocciola in ferro e acciaio su misura a Palermo</strong>: scale elicoidali compatte con palo centrale in tubo di acciaio, gradini a ventaglio in legno massello, lamiera mandorlata o acciaio inox, ideali per collegare soppalchi, sottotetti e livelli in spazi dove una scala tradizionale a rampe non è realizzabile.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Il diametro è personalizzabile da 120 a 200 cm per adattarsi all&apos;ingombro disponibile. I gradini vengono calcolati per garantire una pedata utile adeguata e un&apos;alzata regolare su tutta la rotazione. Corrimano e ringhiera elicoidale sono saldati al palo centrale e alle punte dei gradini per la massima rigidità strutturale.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Finitura a polvere in qualsiasi colore RAL. Contattaci per un sopralluogo gratuito e un preventivo su misura a Palermo e provincia.
+              Vendiamo e installiamo scale a chiocciola in ferro e acciaio su misura, con gradini in legno o metallo, complete di ringhiera e corrimano.
             </p>
           </div>
         </div>

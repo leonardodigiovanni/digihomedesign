@@ -61,11 +61,6 @@ export default async function Page() {
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
         <Link href="/" style={{ color: '#888', textDecoration: 'underline' }}>Home</Link> / Cataloghi<ShortcutStar />
       </p>
-      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Cataloghi</h1>
-      <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '24px 28px', marginBottom: 8 }}>
-        <p className="testo-articoli" style={{ margin: 0 }}>Consulta e scarica i cataloghi dei nostri prodotti, organizzati per categoria. Clicca su una categoria per vedere i depliant disponibili.</p>
-      </div>
-
       {vuoto ? (
         <p className="fs-14" style={{ color: '#aaa' }}>Nessun catalogo disponibile al momento.</p>
       ) : (

@@ -166,7 +166,7 @@ export default async function Page() {
                 <Image src="/images/serramenti/tapparelle-motorizzate/motorizzata.webp" alt="Tapparella motorizzata in alluminio grigio antracite" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Tapparella motorizzata in alluminio</span>
+                <span className="testo-articoli">Porta</span>
               </div>
             </div>
             <div className="page-card">
@@ -174,19 +174,13 @@ export default async function Page() {
                 <Image src="/images/serramenti/tapparelle-motorizzate/verde.webp" alt="Tapparella motorizzata verde su terrazza vista mare" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Tapparella motorizzata verde</span>
+                <span className="testo-articoli">Finestra</span>
               </div>
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Installiamo <strong>motorizzazioni per tapparelle a Palermo</strong> con motori tubulari silenziosi integrati nell&apos;avvolgitore: comando tramite pulsante a parete, telecomando radio o app da smartphone. Compatibili con i principali sistemi domotici — KNX, BTicino, Google Home, Alexa — per l&apos;automazione programmata in base all&apos;ora, alla luce solare e al vento.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              I motori — Somfy, Nice, Came, Rolly — sono dotati di finecorsa meccanico o elettronico e di sistema anti-ostacolo per la sicurezza di bambini e animali. La motorizzazione si applica indifferentemente a tapparelle in PVC coibentato, alluminio estruso o acciaio zincato: il materiale della tapparella incide sull&apos;isolamento termico, non la motorizzazione in sé.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Installiamo motorizzazioni su avvolgibili esistenti (retrofit) senza sostituire l&apos;intera tapparella, riducendo i costi di intervento. Contattaci per un sopralluogo gratuito e un preventivo a Palermo e provincia.
+              Installiamo motorizzazioni per tapparelle a Palermo, con comando da pulsante, telecomando o smartphone, anche su tapparelle esistenti.
             </p>
           </div>
         </div>

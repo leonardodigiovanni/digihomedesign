@@ -45,10 +45,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Nell&apos;ambito di una <strong>ristrutturazione chiavi in mano a Palermo</strong> forniamo mobili su misura per cucine, camere e zone giorno, in massello o tamburato.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Contenuto in fase di definizione — pagina segnaposto in attesa dei dettagli definitivi sul servizio (a quali pagine/categorie collegarla, es. Legno).
+              Nell&apos;ambito di una ristrutturazione chiavi in mano a Palermo forniamo mobili su misura per cucine, camere e zone giorno, in massello o tamburato.
             </p>
           </div>
         </div>
