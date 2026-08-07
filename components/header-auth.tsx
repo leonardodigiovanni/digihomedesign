@@ -210,7 +210,7 @@ export default function HeaderAuth({ username, registrazioniDisabilitate, forceD
           <div style={{
             position: 'absolute', top: 'calc(100% + 8px)', right: 0,
             background: '#fff', border: '1px solid #e0e0e0', borderRadius: 6,
-            boxShadow: '0 4px 20px rgba(0,0,0,0.12)', minWidth: 210, zIndex: 200,
+            boxShadow: '0 4px 20px rgba(0,0,0,0.12)', minWidth: 210, zIndex: 9000,
           }}>
             <DropdownLoginForm registrazioniDisabilitate={registrazioniDisabilitate} redirectTo={dropdownRedirectTo ?? pathname} />
           </div>
