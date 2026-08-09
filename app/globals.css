@@ -108,6 +108,10 @@ a:active, a:active img, a:focus img {
   -webkit-text-fill-color: transparent; 
 }
 
+.header-comparti-col {
+  width: 80px;
+}
+
 /* ── Layout responsive ── */
 @media (max-width: 640px) {
   .main-layout { padding-left: 0 !important; padding-right: 0 !important; }
@@ -130,8 +134,20 @@ a:active, a:active img, a:focus img {
   }
 }
 
-/* ── Header: sotto i 440px le 3 icone dei comparti spariscono, le etichette si impilano in verticale ── */
-@media (max-width: 440px) {
+/* ── Header: il gruppo comparti+DIGI Home Design sta a fianco del logo (in flow,
+   non più centrato/assoluto). Tra 320 e 240px si rimpicciolisce in modo
+   continuo, ancorato a sinistra (verso il logo), per non far traboccare
+   l'header quando lo spazio si riduce.
+   scale(W) = 0.00375*W - 0.2 → 1 a 320px, 0.7 a 240px ── */
+@media (max-width: 320px) {
+  .header-comparti-wrap {
+    transform-origin: left center;
+    transform: translateY(-3px) scale(clamp(0.7, calc(-0.2 + (100vw / 1px) * 0.00375), 1)) !important;
+  }
+}
+
+/* ── Header: sotto i 240px le 3 icone dei comparti spariscono, le etichette si impilano in verticale ── */
+@media (max-width: 240px) {
   .header-comparti-row {
     flex-direction: column !important;
     justify-content: center !important;
@@ -335,6 +351,9 @@ a:active, a:active img, a:focus img {
     border: none;
     cursor: pointer;
     touch-action: manipulation;
+  }
+  .header-auth-slot {
+    display: none;
   }
 }
 

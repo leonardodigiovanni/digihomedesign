@@ -695,6 +695,9 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             </>
             )
           })()}
+          <div style={{ marginLeft: 10 }}>
+            <HeaderAuth username={username} registrazioniDisabilitate={registrazioniDisabilitate} forceDropdown />
+          </div>
         </div>
       </div>
 
