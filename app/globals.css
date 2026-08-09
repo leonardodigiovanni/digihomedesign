@@ -49,8 +49,9 @@ a:active, a:active img, a:focus img {
 .fs-36 { font-size: 36px; color:black;}
 
 /* ── Banner ── */
-.testo-banner {  color: rgb(0, 0, 0);  font-size: 18px;
+.testo-banner {  color: rgb(255, 255, 255);  font-size: 16px;
   text-transform: uppercase;
+  line-height: 1;
 }
 
 .testo-titoli {
@@ -129,10 +130,24 @@ a:active, a:active img, a:focus img {
   }
 }
 
-/* ── Header: riga superiore logo/formula/accedi troppo stretta sotto 480px, la formula si nasconde ── */
-@media (max-width: 480px) {
-  .header-formula-center {
-    display: none;
+/* ── Header: sotto i 440px le 3 icone dei comparti spariscono, le etichette si impilano in verticale ── */
+@media (max-width: 440px) {
+  .header-comparti-row {
+    flex-direction: column !important;
+    justify-content: center !important;
+    gap: 1px !important;
+  }
+  .header-comparti-icon {
+    display: none !important;
+  }
+  .header-comparti-ristrutt {
+    margin-top: 0 !important;
+  }
+  .header-digi-word {
+    display: none !important;
+  }
+  .header-digi-diamond {
+    display: none !important;
   }
 }
 
@@ -1402,7 +1417,7 @@ body {
    Scroll orizzontale con fade già gestisce lo spazio, quindi i contenuti
    non devono rimpicciolirsi/andare a capo per adattarsi */
 .sticky-bottom-bar-row {
-  background: #d97030;
+  background: #e39464;
 }
 .sticky-bottom-bar-row > * {
   flex-shrink: 0;

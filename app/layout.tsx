@@ -300,7 +300,7 @@ export default async function RootLayout({
                 }
               `}</style>
               <div
-                style={{ height: 22, overflow: 'hidden', display: 'flex', alignItems: 'center', borderBottom: '1px solid #aaa', background: '#fff' }}
+                style={{ height: 22, overflow: 'hidden', display: 'flex', alignItems: 'center', borderBottom: '1px solid #e0e0e0', background: '#e39464' }}
               >
                 {bannerCircolare ? (
                   <span className="testo-banner" style={{

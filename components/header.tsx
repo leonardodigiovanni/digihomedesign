@@ -124,13 +124,25 @@ export default function Header({
           <Link href="/" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, textDecoration: 'none', color: 'inherit', outline: 'none', cursor: 'pointer' }}>
             <Image src="/images/header/DIGIHOMEDESIGN.webp" alt="Home Design" width={80} height={80} style={{ objectFit: 'contain', display: 'block' }} />
           </Link>
+        </div>
 
-          <div className="header-formula-center" style={{ display: 'inline-block', whiteSpace: 'nowrap', lineHeight: 0.95, letterSpacing: '0.3px', fontSize: 15, fontWeight: 400, color: '#999', textAlign: 'left', fontFamily: 'var(--font-ornamental)', transform: 'translateY(-4px)' }}>
-            <div><span style={{ color: '#e2e2e2', textTransform: 'uppercase' }}>Sicurezza</span> <span style={{ color: '#fff', fontWeight: 700 }}>+</span></div>
-            <div><span style={{ color: '#f5d060', textTransform: 'uppercase' }}>Serramenti</span> <span style={{ color: '#fff', fontWeight: 700 }}>+</span></div>
-            <div><span style={{ color: '#e39464', textTransform: 'uppercase' }}>Ristrutturazioni</span> <span style={{ color: '#fff', fontWeight: 700 }}>=</span></div>
-            <div style={{ borderTop: '1px solid #fff', margin: '1px 0' }} />
-            <div style={{ color: '#fff', textTransform: 'uppercase' }}>DIGI Home Design</div>
+        <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, margin: 'auto 0', transform: 'translate(-50%, -3px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: 'fit-content', height: 'fit-content', zIndex: 10 }}>
+          <div className="header-comparti-row" style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
+            <div className="header-comparti-col" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+              <Image className="header-comparti-icon" src="/images/icons/icona-serramenti.png" alt="Serramenti" width={316} height={339} style={{ height: 36, width: 'auto', objectFit: 'contain', display: 'block' }} />
+              <span style={{ whiteSpace: 'nowrap', fontSize: 10, fontWeight: 700, letterSpacing: '0.2px', fontFamily: 'var(--font-ornamental)', color: '#f5d060' }}>SERRAMENTI</span>
+            </div>
+            <div className="header-comparti-col header-comparti-ristrutt" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, marginTop: -5 }}>
+              <span style={{ whiteSpace: 'nowrap', fontSize: 10, fontWeight: 700, letterSpacing: '0.2px', fontFamily: 'var(--font-ornamental)', color: '#e39464' }}>RISTRUTTURAZIONI</span>
+              <Image className="header-comparti-icon" src="/images/icons/icona-ristrutturazioni.png" alt="Ristrutturazioni" width={421} height={343} style={{ height: 36, width: 'auto', objectFit: 'contain', display: 'block' }} />
+            </div>
+            <div className="header-comparti-col" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+              <Image className="header-comparti-icon" src="/images/icons/icona-sicurezza.png" alt="Sicurezza" width={307} height={357} style={{ height: 36, width: 'auto', objectFit: 'contain', display: 'block' }} />
+              <span style={{ whiteSpace: 'nowrap', fontSize: 10, fontWeight: 700, letterSpacing: '0.2px', fontFamily: 'var(--font-ornamental)', color: '#e2e2e2' }}>SICUREZZA</span>
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', background: '#fff', border: '1px solid #fff', boxShadow: 'inset 0 0 0 1px #000', borderRadius: 10, padding: '4px 8px', transform: 'translateZ(0)' }}>
+            <span style={{ whiteSpace: 'nowrap', lineHeight: 1, color: '#000', fontWeight: 700, fontSize: 15, letterSpacing: '0.3px', fontFamily: 'var(--font-ornamental)' }}><span className="header-digi-diamond" style={{ color: '#c8960c', fontSize: 14 }}>◆ </span><span className="header-digi-word">DIGI </span>Home Design <span className="header-digi-diamond" style={{ color: '#c8960c', fontSize: 14 }}> ◆</span></span>
           </div>
         </div>
 
