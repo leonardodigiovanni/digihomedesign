@@ -110,6 +110,8 @@ a:active, a:active img, a:focus img {
 
 .header-comparti-col {
   width: 86px;
+  min-width: 0;
+  flex-shrink: 0;
 }
 
 /* ── Layout responsive ── */

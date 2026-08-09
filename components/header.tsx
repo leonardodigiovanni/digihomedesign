@@ -128,15 +128,15 @@ export default function Header({
           <div className="header-comparti-wrap" style={{ transform: 'translateY(-3px)', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', width: 'fit-content', zIndex: 10 }}>
           <div className="header-comparti-row" style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'flex-start', gap: 4, marginBottom: 2 }}>
             <div className="header-comparti-col" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 0, marginRight: -8 }}>
-              <Image className="header-comparti-icon" src="/images/icons/icona-serramenti.png" alt="Serramenti" width={316} height={339} style={{ height: 22, width: 'auto', objectFit: 'contain', display: 'block' }} />
+              <Image unoptimized className="header-comparti-icon" src="/images/icons/icona-serramenti.png" alt="Serramenti" width={316} height={339} style={{ height: 22, width: 'auto', objectFit: 'contain', display: 'block' }} />
               <span style={{ whiteSpace: 'nowrap', fontSize: 10, fontWeight: 700, letterSpacing: '0.2px', fontFamily: 'var(--font-ornamental)', color: '#e2e2e2' }}>SERRAMENTI</span>
             </div>
             <div className="header-comparti-col header-comparti-ristrutt" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, marginTop: -5, marginLeft: -39 }}>
               <span style={{ whiteSpace: 'nowrap', fontSize: 10, fontWeight: 700, letterSpacing: '0.2px', fontFamily: 'var(--font-ornamental)', color: '#e39464' }}>RISTRUTTURAZIONI</span>
-              <Image className="header-comparti-icon" src="/images/icons/icona-ristrutturazioni.png" alt="Ristrutturazioni" width={421} height={343} style={{ height: 22, width: 'auto', objectFit: 'contain', display: 'block', position: 'relative', left: 4 }} />
+              <Image unoptimized className="header-comparti-icon" src="/images/icons/icona-ristrutturazioni.png" alt="Ristrutturazioni" width={421} height={343} style={{ height: 22, width: 'auto', objectFit: 'contain', display: 'block', position: 'relative', left: 4 }} />
             </div>
             <div className="header-comparti-col" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0, marginLeft: -47, width: 86 }}>
-              <Image className="header-comparti-icon" src="/images/icons/icona-sicurezza.png" alt="Sicurezza" width={307} height={357} style={{ height: 22, width: 'auto', objectFit: 'contain', display: 'block' }} />
+              <Image unoptimized className="header-comparti-icon" src="/images/icons/icona-sicurezza.png" alt="Sicurezza" width={307} height={357} style={{ height: 22, width: 'auto', objectFit: 'contain', display: 'block' }} />
               <span style={{ whiteSpace: 'nowrap', fontSize: 10, fontWeight: 700, letterSpacing: '0.2px', fontFamily: 'var(--font-ornamental)', color: '#f5d060' }}>SICUREZZA</span>
             </div>
           </div>
