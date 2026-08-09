@@ -146,13 +146,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Posiamo <strong>parquet a Palermo</strong> in legno massello, prefinito e laminato: pavimenti a listoni, a pannelli, a spina di pesce o con posature personalizzate. Lavoriamo con le principali essenze — rovere, noce, ciliegio, bambù — in vari formati e finiture: naturale oliato, laccato, spazzolato o affumicato.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Il servizio include la preparazione del sottofondo (massetto autolivellante se necessario), la posa incollata, flottante o chiodatura, la levigatura a terra e il trattamento finale con olio o vernice protettiva. Eseguiamo anche il ripristino e la levigatura di parquet esistenti danneggiati o semplicemente opachi.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Operiamo a Palermo e provincia con attrezzatura professionale e polvere aspirata direttamente dalla levigatrice. Contattaci per un sopralluogo gratuito e un preventivo al metro quadro.
+              Vendiamo e posiamo parquet.
             </p>
           </div>
         </div>

@@ -53,13 +53,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Al termine di ogni cantiere di ristrutturazione offriamo il servizio di <strong>pulizia finale post-lavori a Palermo</strong>: rimozione di polvere di cemento, residui di stucco, schizzi di pittura, adesivo per piastrelle e ogni altro residuo di lavorazione da pavimenti, infissi, vetri, sanitari e superfici tinteggiate.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Utilizziamo attrezzatura professionale — aspiratori HEPA, monospazzola, vapore secco — e prodotti specifici per ogni tipo di superficie: detergenti acidi diluiti per il cemento su ceramica, solventi delicati per i vetri, prodotti neutri per i parquet. Il risultato è un immobile consegnato pulito e pronto all&apos;uso.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Il servizio è disponibile sia come fase finale dei nostri cantieri che come intervento autonomo su cantieri di terzi. Contattaci per un preventivo in base alla metratura.
+              Offriamo il servizio di pulizia finale post-lavori.
             </p>
           </div>
         </div>

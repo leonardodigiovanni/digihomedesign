@@ -147,13 +147,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Realizziamo e installiamo <strong>porte corazzate su misura a Palermo</strong> in acciaio per abitazioni, uffici, magazzini e locali commerciali: struttura in lamiera d&apos;acciaio piegata e saldata, rinforzi interni perimetrali, serratura multipunto a tre o cinque punti di chiusura con catenacci superiori e inferiori. Ogni porta è costruita artigianalmente nelle nostre officine su misura del vano, eliminando la necessità di adattamenti in cantiere.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Il pannello esterno può essere rivestito in acciaio verniciato a polvere in qualsiasi colore RAL, lamiera bugnata o pannello decorativo su richiesta. Le cerniere in acciaio inox con cuscinetti garantiscono scorrimento fluido e resistenza nel tempo. Su richiesta installiamo serratura elettronica con codice, cilindro europeo ad alta sicurezza o sistema di apertura remota.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Contattaci per un sopralluogo gratuito e un preventivo su misura a Palermo e provincia.
+              Vendiamo e installiamo porte corazzate su misura.
             </p>
           </div>
         </div>

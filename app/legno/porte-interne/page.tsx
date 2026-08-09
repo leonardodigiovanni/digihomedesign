@@ -147,13 +147,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Forniamo e installiamo <strong>porte interne in legno a Palermo</strong> su misura: battenti singoli e doppi, scorrevoli a binario esterno o con kit filomuro, e soluzioni a soffietto. Lavoriamo con essenze naturali — rovere, noce, ciliegio, faggio — e con pannelli laccati o rivestiti in laminato per ogni gusto e budget.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              La posa in opera include la rimozione della vecchia porta, la preparazione del vano, il montaggio del telaio e dell&apos;anta, la regolazione delle cerniere e dei maniglioni, e il ritocco della tinteggiatura circostante. Lavoriamo in coordinamento con gli altri artigiani del cantiere per non creare ritardi.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Offriamo sopralluogo gratuito con campionario fisico delle finiture. Contattaci per un preventivo personalizzato.
+              Vendiamo e installiamo porte interne in legno.
             </p>
           </div>
         </div>

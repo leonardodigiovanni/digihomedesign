@@ -132,7 +132,7 @@ export default async function Page() {
                 <Image src="/images/metallurgia/armadi-blindati/blindati.webp" alt="Armadi blindati con serratura a chiave" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Armadi blindati per documenti e valori</span>
+                <span className="testo-articoli">Bianco</span>
               </div>
             </div>
             <div className="page-card">
@@ -140,19 +140,13 @@ export default async function Page() {
                 <Image src="/images/metallurgia/armadi-blindati/blindato.webp" alt="Armadio blindato con serratura elettronica a combinazione" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Armadio blindato con serratura elettronica</span>
+                <span className="testo-articoli">Grigio</span>
               </div>
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Forniamo e installiamo <strong>armadi blindati a Palermo</strong> per la custodia di armi da fuoco (omologati dal Ministero dell&apos;Interno), documenti riservati, valori e oggetti preziosi. Gli armadi sono costruiti in acciaio da 3 a 5 mm con serrature a chiave doppia mappa, a combinazione meccanica o elettronica con tastiera digitale.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Gli armadi per armi rispettano le disposizioni del TULPS e del D.M. 15/07/1997 sulla custodia obbligatoria: disponibili in vari formati per pistole, fucili, carabine e munizioni in scomparto separato e a norma. Forniamo il manuale tecnico per la pratica in Questura.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Gli armadi per documenti e valori sono disponibili in versione ignifuga (classe 60 o 120 minuti) con certificazione EN 1047-1. Contattaci per un preventivo gratuito.
+              Vendiamo e installiamo armadi blindati.
             </p>
           </div>
         </div>

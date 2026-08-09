@@ -147,13 +147,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              I <strong>rivestimenti in compensato</strong> offrono versatilità e calore a pareti, soffitti e superfici decorative, con un peso contenuto e una posa più rapida rispetto al massello. Utilizziamo pannelli multistrato di betulla, okumé e pioppo in diversi spessori, con finiture impiallacciate in essenza naturale, laccate o con pellicole decorative.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Le applicazioni sono molteplici: boiserie per soggiorni e camere, rivestimenti per scale e battiscopa, controsoffitti in legno, pareti attrezzate e fondali per librerie e armadi. Realizziamo anche pannelli sagomati e fresati a CNC per effetti decorativi su misura.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Disponibili pannelli idrorepellenti per bagni e cucine, e versioni ignifughe per ambienti pubblici e commerciali. Contattaci per un preventivo gratuito a Palermo e provincia.
+              Vendiamo e installiamo rivestimenti in compensato.
             </p>
           </div>
         </div>

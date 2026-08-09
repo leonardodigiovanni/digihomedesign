@@ -132,27 +132,21 @@ export default async function Page() {
                 <Image src="/images/metallurgia/scale-antincendio/antincendio.webp" alt="Scala antincendio in acciaio zincato" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Scala antincendio a chiocciola</span>
+                <span className="testo-articoli">Tavoliere semicircolare</span>
               </div>
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/metallurgia/scale-antincendio/antincendio.webp" alt="Scala antincendio esterna in acciaio zincato" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/metallurgia/scale-antincendio/antincendio2.webp" alt="Scala antincendio esterna in acciaio zincato" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Scala antincendio esterna</span>
+                <span className="testo-articoli">Tavoliere rettangolare</span>
               </div>
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Progettiamo e installiamo <strong>scale antincendio esterne a Palermo</strong> in acciaio zincato a caldo: scale di emergenza per edifici residenziali, condomini, uffici e attività commerciali soggette a controllo dei Vigili del Fuoco. La struttura portante in profilati UPN e IPE viene zincata a caldo per garantire la massima resistenza alla corrosione in ambiente esterno.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              I gradini sono in lamiera mandorlata antiscivolo da 3–4 mm con battitacco. Il parapetto perimetrale raggiunge l&apos;altezza minima di 100 cm con corrente intermedio e mancorrente in tubo tondo, come previsto dalla normativa UNI EN ISO 14122. Ogni scala viene progettata in conformità al D.M. 3 agosto 2015 e alle prescrizioni specifiche del SUAP e dei VVF.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Collaboriamo con tecnici abilitati per la pratica SCIA antincendio. Contattaci per un sopralluogo gratuito e un preventivo a Palermo e provincia.
+              Vendiamo e installiamo scale antincendio esterne.
             </p>
           </div>
         </div>

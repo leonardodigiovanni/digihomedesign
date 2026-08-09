@@ -147,13 +147,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Offriamo un servizio completo per il <strong>rivestimento e il rifacimento dei divani a Palermo</strong>: dalla scelta del tessuto alla realizzazione artigianale, fino alla consegna e al montaggio nel tuo spazio. Lavoriamo con stoffe tecniche, velluti, lini e materiali sintetici di alta qualità, selezionati per durabilità ed estetica.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Sia che tu voglia rinnovare un divano esistente o scegliere un rivestimento personalizzato per un acquisto nuovo, i nostri artigiani ti guidano nella selezione dei materiali più adatti allo stile della tua casa e all&apos;uso quotidiano. I tessuti disponibili coprono ogni gusto: dal classico al moderno, dall&apos;elegante al pratico.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Operiamo su tutto il territorio palermitano, con sopralluogo gratuito a domicilio. Contattaci per un preventivo personalizzato e scopri come trasformare il tuo divano con la qualità artigianale che ci contraddistingue dal 1972.
+              Vendiamo e rivestiamo divani.
             </p>
           </div>
         </div>

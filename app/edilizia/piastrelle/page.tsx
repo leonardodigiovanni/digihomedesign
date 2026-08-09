@@ -53,13 +53,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Posiamo <strong>piastrelle a Palermo</strong> per rivestimenti di bagni, cucine, docce, balconi e ambienti umidi: ceramica smaltata, gres porcellanato, klinker antiscivolo, mosaico in vetro e in pietra. Curiamo ogni dettaglio dalla preparazione del supporto alla stuccatura dei giunti con prodotti epossidici o cementizi.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Realizziamo pose a correre, sfalsate, a spina e pattern decorativi personalizzati. Per le docce a pavimento gestiamo le pendenze di scarico, la membrana impermeabilizzante sotto-piastrella e i profili di raccordo. Utilizziamo adesivi ad alta deformabilità per evitare distacchi nel tempo.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Offriamo anche il servizio di fornitura con selezione del materiale presso i nostri fornitori convenzionati. Contattaci per un preventivo gratuito.
+              Vendiamo e posiamo piastrelle.
             </p>
           </div>
         </div>

@@ -146,7 +146,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Vendiamo e installiamo grate di sicurezza a Palermo per la protezione di finestre, vani cantina e aperture di qualsiasi dimensione. Realizzazioni con ferro pieno, scatolare, quadro, piatto e tondo, acciaio inox, con saldature su tutte le giunzioni. Trattamento antiruggine e verniciatura a scelta tra spruzzo e pennello. Le grate sono disponibili in versione fissa a muro o apribile a cardine con serratura di sicurezza (obbligatoria come via di fuga per luoghi pubblici secondo il D.M. 9/04/1994). I pattern decorativi spaziano dal classico a lancia al moderno geometrico, con possibilità di inserire motivi personalizzati in ferro battuto.
+              Vendiamo e installiamo grate di sicurezza.
             </p>
           </div>
         </div>

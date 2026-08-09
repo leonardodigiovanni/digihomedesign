@@ -53,13 +53,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Forniamo e installiamo <strong>grandi elettrodomestici a Palermo</strong>: forni, piani cottura, lavastoviglie, frigoriferi, lavatrici e asciugatrici da incasso o liberi. Lavoriamo con i principali marchi — Bosch, Siemens, Whirlpool, Samsung, AEG — garantendo prodotti di qualità con garanzia ufficiale.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Il servizio comprende la fornitura, il trasporto, la posa in opera e il collegamento elettrico e idraulico a regola d&apos;arte. Per gli elettrodomestici da incasso gestiamo anche l&apos;adattamento del mobile e i fori di aerazione, in coordinamento con i mobilieri.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Ritiriamo e smaltiamo il vecchio elettrodomestico nel rispetto della normativa RAEE. Contattaci per un preventivo comprensivo di fornitura e installazione.
+              Vendiamo e installiamo elettrodomestici.
             </p>
           </div>
         </div>

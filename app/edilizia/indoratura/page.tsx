@@ -53,13 +53,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              L&apos;<strong>indoratura artigianale</strong> è una delle arti decorative più raffinate: l&apos;applicazione di foglia d&apos;oro, argento, rame e altri metalli preziosi su superfici architettoniche e mobili trasforma ogni ambiente in uno spazio di grande impatto visivo. Realizziamo indorature a Palermo su cornici, soffitti a cassettoni, capitelli, colonne, altari, specchiere e mobili antichi e moderni.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Utilizziamo la tecnica tradizionale a missione (olio o acqua) con foglia oro in libro da 23,75 carati, o tecniche moderne con polveri metalliche per grandi superfici. Ogni intervento è preceduto dalla preparazione del supporto con gesso e bolo armeno per garantire la massima brillantezza del metallo.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Eseguiamo anche restauro e ripristino di dorature esistenti scolorite o danneggiate. Contattaci per un preventivo gratuito a Palermo e provincia.
+              Eseguiamo indorature artigianali.
             </p>
           </div>
         </div>

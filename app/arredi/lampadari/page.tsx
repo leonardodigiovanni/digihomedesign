@@ -147,13 +147,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              L&apos;illuminazione è uno degli elementi che più influenzano l&apos;atmosfera di un ambiente. Proponiamo una selezione di <strong>lampadari e punti luce design</strong> per ogni stanza della casa: dal lampadario da salone di grande impatto visivo alle applique discrete per camera da letto, dalle sospensioni moderne per cucina e sala pranzo ai faretti da incasso per corridoi e bagni.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Tutti i prodotti sono selezionati tra marchi affidabili, con certificazioni di sicurezza e garanzia. Offriamo consulenza per la scelta del tipo di luce, della temperatura colore e della potenza in base all&apos;uso dell&apos;ambiente, con particolare attenzione all&apos;efficienza energetica (LED).
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              La fornitura include il montaggio professionale a cura dei nostri elettricisti abilitati. Operiamo a Palermo e provincia con sopralluogo gratuito.
+              Vendiamo e installiamo lampadari.
             </p>
           </div>
         </div>

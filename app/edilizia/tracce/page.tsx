@@ -53,13 +53,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Eseguiamo <strong>tracce e canalette a Palermo</strong> per il passaggio di impianti elettrici, idraulici, del gas e di climatizzazione: fresatura meccanica con carotatrice e flessibile, o demolizione manuale per interventi localizzati. Tracciamo pareti e soffitti seguendo il percorso ottimale indicato dall&apos;impiantista.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Dopo la posa delle tubazioni e dei corrugati da parte degli impiantisti, provvediamo alla chiusura delle tracce con malta di cemento o gesso, alla rasatura e all&apos;intonacatura di raccordo per un risultato pulito e pronto per la tinteggiatura.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Utilizziamo aspiratori industriali collegati alle frese per ridurre al minimo la polvere durante la lavorazione. Contattaci per un preventivo gratuito.
+              Eseguiamo tracce e canalette per impianti.
             </p>
           </div>
         </div>

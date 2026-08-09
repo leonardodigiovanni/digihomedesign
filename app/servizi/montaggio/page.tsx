@@ -53,13 +53,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Il nostro servizio di <strong>montaggio professionale a Palermo</strong> copre ogni esigenza: mobili, armadi, cucine, arredi su misura, infissi, serramenti, tende, lampadari e strutture metalliche. Che tu abbia acquistato da noi o altrove, i nostri montatori esperti garantiscono un lavoro preciso e curato.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Operiamo con attrezzatura professionale e rispettiamo i tempi concordati. Ogni montaggio include la verifica del corretto funzionamento del prodotto installato e la pulizia dell&apos;area di lavoro al termine dell&apos;intervento.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Disponibile per privati, imprese e condomini a Palermo e provincia. Richiedi un preventivo gratuito: ti forniremo un prezzo chiaro prima di iniziare qualsiasi lavoro.
+              Offriamo un servizio di montaggio.
             </p>
           </div>
         </div>

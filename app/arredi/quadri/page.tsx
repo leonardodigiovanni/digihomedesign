@@ -147,13 +147,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              La scelta giusta di un <strong>quadro</strong> può trasformare completamente l&apos;atmosfera di una stanza. Proponiamo una selezione curata di opere d&apos;arte, stampe fotografiche, dipinti e decorazioni murali adatte a ogni stile: dal classico al contemporaneo, dal minimalista al ricco di colore.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Offriamo consulenza personalizzata per abbinare il quadro giusto alle dimensioni della parete, ai colori dell&apos;ambiente e allo stile generale dell&apos;arredo. Il servizio include la fornitura, la cornice su misura e il montaggio professionale a domicilio.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Operiamo su tutto il territorio palermitano. Contattaci per una consulenza gratuita e scopri come valorizzare i tuoi spazi con l&apos;arte giusta.
+              Vendiamo e installiamo quadri.
             </p>
           </div>
         </div>

@@ -147,7 +147,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Vendiamo e installiamo cancelli su misura: carrabili scorrevoli, a battente singolo e doppio, in ferro o acciaio inox. Realizzazioni con ferro pieno, scatolare, quadro, piatto e tondo, con elementi in ferro battuto, trattati con antiruggine e verniciati a scelta tra spruzzo e pennello. Installiamo automazioni per apertura motorizzata a braccio, fotocellule, avviso sonoro.
+              Vendiamo e installiamo cancelli su misura.
             </p>
           </div>
         </div>

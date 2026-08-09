@@ -53,13 +53,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Progettiamo e installiamo <strong>impianti di irrigazione automatica a Palermo</strong> per giardini privati, terrazzi, aiuole condominiali e spazi verdi commerciali. Sistemi a goccia per orti e aiuole, irrigatori a pioggia per prati, e microirrigatori per vasi e fioriere: ogni soluzione è dimensionata sulle reali esigenze della vegetazione.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Gli impianti sono dotati di programmatori digitali o smart (controllabili da smartphone) per ottimizzare i consumi idrici in base alla stagione e alle condizioni climatiche. Integriamo sensori di pioggia e umidità per evitare sprechi.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Il servizio comprende sopralluogo gratuito, progettazione del layout, posa delle tubazioni interrate, collegamento alla rete idrica e collaudo finale. Contattaci per un preventivo su misura.
+              Progettiamo e installiamo impianti di irrigazione automatica.
             </p>
           </div>
         </div>

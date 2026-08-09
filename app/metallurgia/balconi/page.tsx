@@ -147,7 +147,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Vendiamo e installiamo strutture per balconi in ferro e acciaio su misura.
+              Vendiamo e installiamo balconi in ferro e acciaio su misura.
             </p>
           </div>
         </div>

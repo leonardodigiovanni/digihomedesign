@@ -53,13 +53,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              La muffa sulle pareti non è solo un problema estetico: danneggia la struttura e compromette la qualità dell&apos;aria indoor. Offriamo <strong>trattamenti antimuffa a Palermo</strong> con approccio a ciclo completo: rimozione meccanica della muffa esistente, disinfezione con biocidi certificati, trattamento della causa (umidità di risalita o di condensa) e applicazione di pitture antimuffa a lunga durata.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Per i casi di umidità di risalita capillare realizziamo barriere chimiche orizzontali con iniezione di silicone neutro o resine idrofobe. Per la condensa miglioriamo l&apos;isolamento termico delle superfici fredde con intonaci deumidificanti o pannelli termoisolanti sottili.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Ogni intervento è preceduto da un&apos;analisi della causa dell&apos;umidità. Contattaci per un sopralluogo gratuito a Palermo e provincia.
+              Eseguiamo trattamenti antimuffa.
             </p>
           </div>
         </div>

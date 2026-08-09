@@ -147,7 +147,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Vendiamo e installiamo scale a rampe in ferro e acciaio su misura a Palermo, con gradini in legno o metallo, complete di pianerottoli, parapetti e corrimano.
+              Vendiamo e installiamo scale a rampe su misura.
             </p>
           </div>
         </div>

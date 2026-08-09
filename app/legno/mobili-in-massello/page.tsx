@@ -146,13 +146,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              I <strong>mobili in legno massello</strong> sono l&apos;espressione più autentica dell&apos;artigianato del legno: costruiti in legno pieno senza pannelli di supporto, resistono nel tempo e migliorano con gli anni. Realizziamo armadi, librerie, comodini, tavoli, sedie e complementi su misura nelle essenze più pregiate: rovere, noce nazionale, ciliegio, castagno e frassino.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Ogni pezzo viene lavorato artigianalmente nel rispetto delle venature naturali del legno, con giunzioni a incastro o con tasselli in legno per la massima solidità. Le finiture includono oli naturali, cere, vernici all&apos;acqua o a solvente a seconda dell&apos;uso previsto.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Progettiamo su disegno del cliente o proponiamo soluzioni ad hoc per ogni ambiente. Contattaci per un preventivo gratuito.
+              Vendiamo e installiamo mobili in legno massello su misura.
             </p>
           </div>
         </div>

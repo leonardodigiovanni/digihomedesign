@@ -132,7 +132,7 @@ export default async function Page() {
                 <Image src="/images/metallurgia/strutture-portanti/photo_2026-04-15_23-19-07.webp" alt="Struttura metallica realizzata" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Struttura metallica realizzata</span>
+                <span className="testo-articoli">Ancoraggio chimico</span>
               </div>
             </div>
             <div className="page-card">
@@ -140,19 +140,13 @@ export default async function Page() {
                 <Image src="/images/metallurgia/strutture-portanti/photo_2026-04-15_23-19-13.webp" alt="Struttura portante in acciaio" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Struttura portante in acciaio</span>
+                <span className="testo-articoli">Bulloneria inox</span>
               </div>
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Progettiamo e realizziamo <strong>strutture metalliche a Palermo</strong>: tettoie per auto e cortili, pensiline per ingressi e marciapiedi, soppalchi abitativi e di servizio, capannoni industriali prefabbricati, pergolati e gazebo in acciaio verniciato. Ogni struttura è progettata con calcolo agli stati limite e realizzata in officina con profilati in acciaio S275 o S355.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              I componenti vengono zincati a caldo o trattati con ciclo epossidico-poliuretanico per la massima durabilità. Le coperture sono realizzate con lamiera grecata, pannelli sandwich coibentati, policarbonato alveolare o vetro strutturale a seconda delle esigenze.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Forniamo il progetto strutturale firmato da ingegnere abilitato per il deposito in Comune. Contattaci per un sopralluogo gratuito e un preventivo dettagliato.
+              Vendiamo e installiamo strutture portanti in metallo.
             </p>
           </div>
         </div>

@@ -53,13 +53,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Il <strong>comfort acustico</strong> è parte integrante della qualità abitativa. Progettiamo e installiamo soluzioni di isolamento acustico su misura per appartamenti, uffici, studi di registrazione, sale riunioni e locali commerciali a Palermo.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Le nostre soluzioni comprendono: contropareti con pannelli in lana di roccia o fibra di vetro, pavimenti galleggianti per ridurre i rumori da calpestio, controsoffitti fonoassorbenti e trattamenti delle giunzioni strutturali per eliminare i ponti acustici. Ogni soluzione viene progettata dopo un&apos;analisi delle frequenze e dei percorsi del rumore.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Rispettiamo la normativa DPCM 5/12/1997 sui requisiti acustici passivi degli edifici. Contattaci per una valutazione gratuita del tuo spazio.
+              Realizziamo isolamenti acustici.
             </p>
           </div>
         </div>

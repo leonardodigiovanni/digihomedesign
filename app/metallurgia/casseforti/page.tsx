@@ -132,7 +132,7 @@ export default async function Page() {
                 <Image src="/images/metallurgia/casseforti/cassaforte.webp" alt="Casseforti a mobile e a pavimento con serratura a chiave" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Casseforti a mobile e a pavimento</span>
+                <span className="testo-articoli">A pavimento</span>
               </div>
             </div>
             <div className="page-card">
@@ -140,19 +140,13 @@ export default async function Page() {
                 <Image src="/images/metallurgia/casseforti/cassasicura.webp" alt="Cassaforte da incasso a muro" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Casseforti da incasso a muro</span>
+                <span className="testo-articoli">A muro</span>
               </div>
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Forniamo e installiamo <strong>casseforti a Palermo</strong> certificate EN 1143-1 per abitazioni private, uffici, alberghi e attività commerciali: modelli da incasso a muro, a pavimento con ancoraggio in cls, da mobile e portatili. Le serrature disponibili sono a chiave doppia mappa, a combinazione meccanica, elettronica con codice PIN e biometrica con impronta digitale.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              La classe di resistenza (da I a VI) determina la protezione contro lo scasso: scegliamo insieme la classe più adatta in base al valore dei beni da custodire e al contesto di rischio. Le casseforti ignifughe (classe S60DIS o S120DIS) proteggono anche da incendio e acqua degli sprinkler.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              L&apos;installazione include il posizionamento, l&apos;ancoraggio strutturale e la programmazione della serratura. Contattaci per un preventivo gratuito a Palermo e provincia.
+              Vendiamo e installiamo casseforti.
             </p>
           </div>
         </div>

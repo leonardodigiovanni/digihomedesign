@@ -54,13 +54,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Progettiamo e realizziamo <strong>aree solarium a Palermo</strong> su terrazze, lastrici solari, giardini e bordo piscina: spazi attrezzati per il relax e l&apos;esposizione solare, con pavimentazioni drenanti antiscivolo in gres, pietra lavica, teak o composito WPC resistente ai raggi UV e all&apos;acqua.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Il progetto include la sistemazione del piano di calpestio con pendenze di deflusso, l&apos;impermeabilizzazione del sottofondo, l&apos;installazione di docce esterne, punti luce, prese di corrente IP67 e schermature solari — tende a vela, pergolati bioclimatici o gazebo in alluminio — per il comfort nelle ore più calde.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Ogni solarium è progettato su misura in base alle dimensioni dello spazio e alle esigenze del cliente. Contattaci per un sopralluogo e un progetto gratuito a Palermo e provincia.
+              Progettiamo e realizziamo aree solarium.
             </p>
           </div>
         </div>

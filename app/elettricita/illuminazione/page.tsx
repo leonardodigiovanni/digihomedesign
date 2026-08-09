@@ -53,13 +53,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Progettiamo sistemi di <strong>illuminazione LED a Palermo</strong> per ogni tipo di ambiente: abitazioni, uffici, negozi, ristoranti e spazi esterni. La luce giusta valorizza gli spazi, riduce i consumi e migliora il benessere visivo. Ogni progetto parte dall&apos;analisi delle esigenze illuminotecniche specifiche.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Installiamo faretti da incasso, binari elettrificati, strip LED, lampade a sospensione, illuminazione di sicurezza e sistemi di controllo intelligente (dimmer, sensori di presenza, timer). Per gli esterni progettiamo illuminazione di giardini, facciate, vialetti e aree parcheggio.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              La sostituzione con tecnologia LED consente risparmi fino all&apos;80% sui consumi rispetto alle lampade tradizionali. Contattaci per un progetto luce gratuito.
+              Vendiamo e installiamo sistemi di illuminazione.
             </p>
           </div>
         </div>

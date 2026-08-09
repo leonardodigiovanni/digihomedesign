@@ -147,7 +147,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Gli infissi in legno sono la scelta ideale per chi desidera unire eleganza, comfort e prestazioni di isolamento termico e acustico. Realizziamo finestre, porte-finestre e serramenti scorrevoli su misura, utilizzando essenze di qualità e vetri ad alte prestazioni.
+              Vendiamo e installiamo infissi in legno su misura.
             </p>
           </div>
         </div>

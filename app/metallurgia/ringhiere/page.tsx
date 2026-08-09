@@ -146,7 +146,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Vendiamo e installiamo ringhiere su misura in ferro, acciaio e vetro per scale, balconi, terrazze e soppalchi.
+              Vendiamo e installiamo ringhiere su misura.
             </p>
           </div>
         </div>

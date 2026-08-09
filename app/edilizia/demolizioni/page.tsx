@@ -54,13 +54,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Eseguiamo <strong>demolizioni selettive e totali a Palermo</strong>: abbattimento di tramezzi, muri non portanti, solai, pavimenti, rivestimenti e strutture in cls armato. Operiamo con attrezzatura meccanica e manuale a seconda delle condizioni del cantiere e delle strutture adiacenti da preservare.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Prima di ogni demolizione effettuiamo un sopralluogo tecnico per verificare la natura strutturale delle pareti, la presenza di impianti nascosti e le eventuali necessità di puntellamento. Lavoriamo in sicurezza nel rispetto del D.Lgs. 81/08.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Il servizio comprende la raccolta e il conferimento dei materiali di risulta a discarica autorizzata con formulario di trasporto. Contattaci per un preventivo gratuito.
+              Eseguiamo demolizioni selettive e totali.
             </p>
           </div>
         </div>

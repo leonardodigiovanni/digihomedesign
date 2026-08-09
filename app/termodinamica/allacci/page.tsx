@@ -54,13 +54,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Gestiamo le pratiche e i lavori per <strong>allacci idrici, gas ed elettrici a Palermo</strong>: dalle richieste agli enti erogatori fino alla posa delle tubazioni e al collaudo finale. Un unico interlocutore per tutte le utenze, con gestione completa della burocrazia e dei rapporti con i gestori di rete.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              I servizi includono: nuovi allacci per costruzioni e ristrutturazioni, spostamento di contatori e derivazioni, adeguamento degli impianti a nuove normative, scavi e ripristino del manto stradale in coordinamento con il Comune di Palermo.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Disponiamo di tecnici abilitati per lavori su gas (patentino installatori), impianti elettrici (D.M. 37/08) e impianti idrosanitari. Contattaci per una consulenza gratuita e un preventivo trasparente.
+              Gestiamo allacci idrici, gas ed elettrici.
             </p>
           </div>
         </div>

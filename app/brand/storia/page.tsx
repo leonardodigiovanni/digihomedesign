@@ -65,7 +65,7 @@ export default async function Page() {
             <Image src="/images/storia/pupi-carretto-siciliano.webp" alt="Pupi e carretto siciliano" width={240} height={148} style={{ width: '100%', height: 'auto', display: 'block' }} />
           </div>
           <div style={{ padding: '14px 16px' }}>
-            <span className="testo-articoli">I pupi stampati</span>
+            <span className="testo-articoli">I pupi siciliani</span>
           </div>
         </div>
 

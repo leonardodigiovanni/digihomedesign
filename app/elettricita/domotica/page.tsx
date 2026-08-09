@@ -53,13 +53,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Trasformiamo la tua abitazione in una <strong>smart home a Palermo</strong>: sistemi domotici per il controllo centralizzato di luci, tapparelle, riscaldamento, climatizzazione, irrigazione e antifurto, tutti gestibili da smartphone o tablet ovunque tu sia.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Lavoriamo con le principali piattaforme del mercato — KNX, BTicino Living Now, Philips Hue, Google Home, Amazon Alexa — adattando la soluzione alle caratteristiche dell&apos;immobile e al budget del cliente. I sistemi wireless sono installabili anche senza opere murarie, ideali per appartamenti in affitto o in ristrutturazione leggera.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              La domotica non è solo comodità: riduce i consumi energetici attraverso scenari automatizzati e programmazioni intelligenti. Contattaci per una demo gratuita e un preventivo su misura.
+              Vendiamo e installiamo sistemi domotici.
             </p>
           </div>
         </div>

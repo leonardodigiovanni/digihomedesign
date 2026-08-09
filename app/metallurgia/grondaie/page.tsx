@@ -133,7 +133,7 @@ export default async function Page() {
                 <Image src="/images/metallurgia/grondaie/Gronde-Testa-di-Moro.webp" alt="Grondaie in alluminio color testa di moro" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Grondaie in alluminio testa di moro</span>
+                <span className="testo-articoli">Testa di moro</span>
               </div>
             </div>
             <div className="page-card">
@@ -141,19 +141,13 @@ export default async function Page() {
                 <Image src="/images/metallurgia/grondaie/rame.webp" alt="Grondaie in rame su tetto in coppi" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Grondaie in rame</span>
+                <span className="testo-articoli">Rame</span>
               </div>
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Forniamo e installiamo <strong>grondaie e pluviali su misura a Palermo</strong> in alluminio preverniciato, rame e PVC: grondaie semicircolari e rettangolari con pluviali a sezione quadra o tonda, staffaggi in acciaio zincato e giunzioni a saldatura o a guarnizione. Gestiamo sia nuove installazioni che la sostituzione di grondaie esistenti deteriorate o inadeguate.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Le grondaie in alluminio preverniciato sono la soluzione più diffusa per durata e assenza di manutenzione: disponibili in oltre 20 colori RAL, resistenti alla corrosione e al sole siciliano. Le grondaie in rame offrono un aspetto più pregiato e una durata eccezionale, ideali per edifici storici o di pregio. Il PVC è la scelta economica per installazioni semplici.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Interveniamo anche per riparazioni, pulizia e adeguamento di grondaie esistenti. Contattaci per un sopralluogo e un preventivo gratuito a Palermo e provincia.
+              Vendiamo e installiamo grondaie e pluviali su misura.
             </p>
           </div>
         </div>

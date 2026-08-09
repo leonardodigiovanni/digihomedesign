@@ -53,13 +53,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Eseguiamo <strong>tinteggiature a Palermo</strong> per interni ed esterni: pitture traspiranti per ambienti abitativi, lavabili per cucine e bagni, ai silicati per facciate, termoriflettenti per terrazzi e coperture. Ogni ciclo include la preparazione delle superfici con stucco, carta vetrata e fondo isolante.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Lavoriamo con tintometro digitale per la riproduzione precisa di qualsiasi colore da campione o codice RAL/NCS. Operiamo con rullo, pennello e airless per grandi superfici. La protezione dei pavimenti, degli infissi e degli arredi è inclusa nel servizio.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Disponibile anche il servizio di consulenza colore gratuito per la scelta delle tonalità più adatte a ogni ambiente. Contattaci per un preventivo al metro quadro.
+              Eseguiamo tinteggiature per interni ed esterni.
             </p>
           </div>
         </div>

@@ -53,13 +53,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              La <strong>manutenzione regolare</strong> prolunga la vita di infissi, serramenti, verande, persiane e strutture metalliche, prevenendo guasti costosi e mantenendo l&apos;efficienza energetica dell&apos;edificio. Offriamo piani di manutenzione ordinaria personalizzati per privati, condomini e attività commerciali a Palermo.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Gli interventi di manutenzione includono: lubrificazione e regolazione delle parti mobili, controllo delle guarnizioni e dei sigillanti, verifica delle chiusure di sicurezza, pulizia dei profili e degli spazi di drenaggio, e ispezione generale dello stato di conservazione.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Proponiamo anche contratti di manutenzione annuale con visite programmate, per avere sempre tutto sotto controllo senza pensieri. Contattaci per un sopralluogo gratuito e un piano di manutenzione su misura.
+              Offriamo un servizio di manutenzione.
             </p>
           </div>
         </div>

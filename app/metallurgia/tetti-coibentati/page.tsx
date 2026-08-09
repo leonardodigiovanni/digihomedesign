@@ -129,10 +129,10 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/metallurgia/tetti-coibentati/photo_2026-04-15_23-21-19.webp" alt="Tetto coibentato realizzato" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/metallurgia/tetti-coibentati/greca.webp" alt="Copertura in lamiera grecata coibentata" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Tetto coibentato realizzato</span>
+                <span className="testo-articoli">Greca</span>
               </div>
             </div>
             <div className="page-card">
@@ -140,19 +140,13 @@ export default async function Page() {
                 <Image src="/images/metallurgia/tetti-coibentati/photo_2026-04-15_23-21-22.webp" alt="Copertura metallica coibentata" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Copertura metallica coibentata</span>
+                <span className="testo-articoli">Finto coppo</span>
               </div>
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Realizziamo e installiamo <strong>coperture metalliche coibentate a Palermo</strong> per abitazioni, ville, tettoie e capannoni industriali: pannelli sandwich con anima in poliuretano o lana di roccia, lamiera grecata zincata con strato isolante, coperture in alluminio e acciaio preverniciato. I tetti coibentati garantiscono ottimo isolamento termico, eliminano i ponti freddi e riducono significativamente il carico degli impianti di climatizzazione.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              I pannelli sandwich sono disponibili in spessori da 40 a 120 mm, con rivestimento esterno in acciaio zincato o alluminio in vari colori RAL. Realizziamo anche interventi di coibentazione su coperture esistenti con pannelli aggiuntivi o materassini isolanti sotto lamiera.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Gestiamo la posa completa dalla struttura portante alla copertura finita. Contattaci per un sopralluogo e un preventivo gratuito a Palermo e provincia.
+              Vendiamo e installiamo tetti coibentati.
             </p>
           </div>
         </div>

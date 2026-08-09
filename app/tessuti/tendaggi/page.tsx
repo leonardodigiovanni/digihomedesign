@@ -147,13 +147,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Progettiamo e installiamo <strong>tendaggi su misura a Palermo</strong> per ambienti residenziali e commerciali. La nostra offerta comprende tende da interno classiche, tende a pannello, tende a rullo, sistemi oscuranti e tessuti tecnici filtranti, tutti personalizzabili per dimensione, colore e materiale.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Ogni tendaggio viene realizzato su misura partendo dalle dimensioni reali delle tue finestre, garantendo un risultato impeccabile sia sotto il profilo estetico che funzionale. Utilizziamo tessuti certificati con proprietà di resistenza alla luce, facile lavabilità e lunga durata nel tempo.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Il servizio include sopralluogo gratuito, consulenza per la scelta del tessuto e del sistema di apertura, posa in opera e rimozione del vecchio tendaggio. Operiamo a Palermo e provincia con tempi certi e lavorazioni curate nei minimi dettagli.
+              Vendiamo e installiamo tendaggi su misura.
             </p>
           </div>
         </div>

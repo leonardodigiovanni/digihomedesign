@@ -54,13 +54,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Installiamo <strong>impianti di videosorveglianza a Palermo</strong> per abitazioni, condomini, uffici e attività commerciali: telecamere IP ad alta definizione, sistemi TVCC analogici, NVR e DVR con archiviazione locale o cloud, e accesso remoto da smartphone in tempo reale.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Progettiamo il posizionamento ottimale delle telecamere per massimizzare la copertura, minimizzare i punti ciechi e rispettare la normativa sulla privacy (GDPR). Installiamo sistemi con visione notturna, rilevazione del movimento, audio bidirezionale e notifiche push in caso di allarme.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              I sistemi sono integrabili con impianti antifurto, citofoni video e sistemi domotici. Forniamo tutta la documentazione per la conformità al Garante della Privacy. Contattaci per un sopralluogo gratuito e un preventivo su misura.
+              Vendiamo e installiamo impianti di videosorveglianza.
             </p>
           </div>
         </div>

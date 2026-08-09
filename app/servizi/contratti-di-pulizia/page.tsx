@@ -54,13 +54,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Proponiamo <strong>contratti di pulizia periodica a Palermo</strong> per abitazioni private, uffici, studi professionali e spazi commerciali. Le nostre squadre operano con prodotti certificati e attrezzatura professionale, garantendo igiene e cura in ogni ambiente.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              I contratti sono completamente personalizzabili: scegli la frequenza degli interventi (settimanale, bisettimanale, mensile), gli ambienti da includere e il tipo di pulizia (ordinaria, straordinaria, post-cantiere). Ogni contratto include un referente dedicato e un piano di interventi concordato.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Operiamo a Palermo e provincia. Il sopralluogo iniziale è gratuito e senza impegno: ti forniamo un preventivo dettagliato con il piano degli interventi prima di qualsiasi accordo.
+              Proponiamo contratti di pulizia periodica.
             </p>
           </div>
         </div>

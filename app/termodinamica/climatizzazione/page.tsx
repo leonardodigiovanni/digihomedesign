@@ -54,13 +54,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Installiamo e manuteniamo <strong>impianti di climatizzazione a Palermo</strong> per abitazioni, uffici e locali commerciali: sistemi monosplit, multisplit e VRF per edifici con più unità. Lavoriamo con i principali marchi del settore — Daikin, Mitsubishi, Fujitsu, Samsung — garantendo efficienza energetica e silenziosità.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Il servizio comprende sopralluogo gratuito, progettazione dell&apos;impianto, fornitura delle unità, posa dei circuiti frigoriferi e collaudo finale. Ci occupiamo anche della ricarica del gas refrigerante e della manutenzione periodica per mantenere le prestazioni nel tempo.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Tutti gli impianti vengono installati da tecnici certificati F-Gas in conformità alla normativa vigente. Contattaci per un preventivo gratuito.
+              Vendiamo e installiamo impianti di climatizzazione.
             </p>
           </div>
         </div>

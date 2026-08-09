@@ -146,13 +146,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              I <strong>soprammobili</strong> sono i dettagli che completano un arredo e rivelano la personalità di chi abita uno spazio. Proponiamo una selezione di complementi d&apos;arredo di qualità: vasi, sculture, centrotavola, oggettistica etnica e moderna, scelti per abbinarsi a ogni stile abitativo.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Collaboriamo con fornitori selezionati per offrirti pezzi originali e di qualità, con un occhio sempre attento al rapporto tra estetica e prezzo. Il servizio di consulenza è gratuito: ti aiutiamo a scegliere gli oggetti giusti in base agli ambienti da arredare e al budget disponibile.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Disponibile anche la fornitura per ambienti professionali, reception, uffici e spazi commerciali a Palermo e provincia.
+              Vendiamo soprammobili.
             </p>
           </div>
         </div>

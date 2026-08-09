@@ -146,13 +146,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Progettiamo e realizziamo <strong>cucine in legno su misura a Palermo</strong>: componibili con ante in legno naturale, noce, rovere o laccato, e cucine in muratura con rivestimenti in pietra o ceramica. Ogni cucina è progettata partendo dalla planimetria reale dello spazio, ottimizzando ergonomia e contenitori.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Il servizio è chiavi in mano: dalla progettazione 3D alla fornitura dei mobili, dal montaggio al collegamento degli elettrodomestici da incasso, fino alla posa del piano lavoro in legno, marmo, quarzo o acciaio. Gestiamo anche le opere murarie, idrauliche ed elettriche necessarie.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Collaboriamo con i principali produttori italiani di cucine per offrirti qualità certificata con garanzia pluriennale. Contattaci per una consulenza e un progetto gratuito.
+              Vendiamo e installiamo cucine su misura.
             </p>
           </div>
         </div>

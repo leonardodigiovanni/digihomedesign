@@ -53,13 +53,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Progettiamo e realizziamo <strong>impianti idraulici a Palermo</strong> per nuove costruzioni e ristrutturazioni: impianti idrosanitari, distribuzione acqua calda e fredda, sistemi di scarico e fognatura interna, impianti termici a pannelli radianti. Operiamo sia su edifici residenziali che commerciali e industriali.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Ogni impianto viene progettato nel rispetto della normativa UNI e realizzato con materiali certificati (tubi in rame, PPR, multicstrato). Al termine dei lavori forniamo la dichiarazione di conformità impianto (modulo CPI) e il collaudo con certificazione di tenuta.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Gestiamo anche interventi di manutenzione e riparazione urgente per perdite, intasamenti e guasti. Pronto intervento disponibile a Palermo e provincia. Contattaci per un preventivo gratuito.
+              Realizziamo impianti idraulici.
             </p>
           </div>
         </div>

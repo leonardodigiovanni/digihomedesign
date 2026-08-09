@@ -53,13 +53,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Le <strong>pompe di calore</strong> sono la soluzione più efficiente per riscaldare e raffrescare gli ambienti, con consumi energetici fino a 4 volte inferiori rispetto ai sistemi tradizionali. Installiamo sistemi aria-aria, aria-acqua e geotermici per abitazioni e uffici a Palermo, integrabili con pannelli solari e sistemi fotovoltaici.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Progettiamo l&apos;impianto in base alle caratteristiche dell&apos;edificio, al fabbisogno termico e all&apos;utilizzo previsto. I sistemi aria-acqua possono alimentare pannelli radianti a pavimento, fan coil o radiatori a bassa temperatura, garantendo il massimo comfort in ogni stagione.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Gli impianti a pompa di calore possono accedere al Conto Termico e ad altri incentivi statali. Ti assistiamo in tutte le pratiche burocratiche. Contattaci per un sopralluogo gratuito.
+              Vendiamo e installiamo pompe di calore.
             </p>
           </div>
         </div>

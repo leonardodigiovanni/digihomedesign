@@ -54,13 +54,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Realizziamo <strong>impianti elettrici civili e industriali a Palermo</strong> nel pieno rispetto della normativa CEI e del D.M. 37/08. Dalla progettazione alla messa in servizio, ogni intervento è eseguito da elettricisti abilitati con rilascio della dichiarazione di conformità (DICO).
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              I nostri servizi comprendono: nuovi impianti per costruzioni e ristrutturazioni, messa a norma di impianti obsoleti, ampliamenti e modifiche, installazione di quadri elettrici, impianti di terra e protezione da scariche atmosferiche, cablaggi strutturati e impianti speciali.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Operiamo su tutto il territorio palermitano con sopralluogo gratuito e preventivo trasparente. Contattaci per valutare il tuo intervento.
+              Realizziamo impianti elettrici civili e industriali.
             </p>
           </div>
         </div>

@@ -132,7 +132,7 @@ export default async function Page() {
                 <Image src="/images/metallurgia/saracinesche-motorizzate/marrone.webp" alt="Saracinesca motorizzata marrone in garage" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Saracinesca motorizzata per garage</span>
+                <span className="testo-articoli">Vista interna</span>
               </div>
             </div>
             <div className="page-card">
@@ -140,19 +140,13 @@ export default async function Page() {
                 <Image src="/images/metallurgia/saracinesche-motorizzate/saracinesca.webp" alt="Saracinesca motorizzata avvolgibile in acciaio" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Saracinesca motorizzata avvolgibile</span>
+                <span className="testo-articoli">Vista esterna</span>
               </div>
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Installiamo <strong>saracinesche motorizzate a Palermo</strong> per garage privati, negozi, magazzini e locali commerciali: avvolgibili in doghe di acciaio zincato, alluminio estruso e PVC coibentato, con motorizzazione a soffitto o laterale dei principali marchi — Hörmann, Novoferm, Grün, FAAC.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              I sistemi sono dotati di telecomando multi-frequenza, fotocellule di sicurezza e fermo meccanico anti-sollevamento. Su richiesta integriamo tastiere a codice, lettori badge e sistemi di apertura da smartphone. Per i locali commerciali proponiamo saracinesche con inserti in policarbonato per la vetrinatura notturna.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Offriamo anche il servizio di manutenzione e riparazione di saracinesche esistenti: sostituzione motore, guide, doghe danneggiate e centraline. Contattaci per un sopralluogo gratuito e un preventivo a Palermo e provincia.
+              Vendiamo e installiamo saracinesche motorizzate.
             </p>
           </div>
         </div>

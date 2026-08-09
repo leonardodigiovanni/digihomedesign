@@ -53,13 +53,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Realizziamo <strong>impermeabilizzazioni a Palermo</strong> per terrazzi praticabili e non, balconi, bagni, docce, coperture piane, fondamenta e pareti interrate. Utilizziamo guaine bituminose a caldo, membrane liquide poliuretaniche, guaine in EPDM e sistemi cristallizzanti per murature.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Prima di ogni impermeabilizzazione effettuiamo la diagnosi dell&apos;umidità e delle perdite attive, la rimozione del vecchio manto e la preparazione del supporto. Applichiamo i primer di aggrappaggio e il ciclo impermeabilizzante in più strati per garantire la tenuta nel tempo. Tutti gli interventi sono garantiti.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Disponiamo anche di sistemi di impermeabilizzazione sotto-piastrella per docce e terrazze rivestite. Contattaci per un sopralluogo gratuito a Palermo e provincia.
+              Realizziamo impermeabilizzazioni.
             </p>
           </div>
         </div>

@@ -54,13 +54,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Offriamo un servizio di <strong>riparazioni rapide e affidabili a Palermo</strong> per infissi, serramenti, porte, finestre, persiane, verande e arredi. I nostri tecnici qualificati intervengono con tempi certi, diagnosticano il problema e propongono la soluzione più efficace e conveniente.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Gestiamo riparazioni di ogni entità: dalla semplice sostituzione di una guarnizione o di un meccanismo di chiusura, fino al ripristino strutturale di ante, telai e strutture danneggiate. Utilizziamo ricambi originali o equivalenti certificati per garantire la durata dell&apos;intervento.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Il servizio è disponibile per privati, condomini e attività commerciali. Contattaci per un sopralluogo gratuito e un preventivo trasparente senza sorprese.
+              Offriamo un servizio di riparazioni.
             </p>
           </div>
         </div>

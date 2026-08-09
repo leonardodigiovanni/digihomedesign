@@ -132,7 +132,7 @@ export default async function Page() {
                 <Image src="/images/metallurgia/porte-antincendio/rei120.webp" alt="Porta antincendio REI 120 con maniglione antipanico" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Porta antincendio REI 120</span>
+                <span className="testo-articoli">REI 120</span>
               </div>
             </div>
             <div className="page-card">
@@ -140,19 +140,13 @@ export default async function Page() {
                 <Image src="/images/metallurgia/porte-antincendio/scorrevole-rei-60.webp" alt="Porta antincendio scorrevole REI 60" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Porta antincendio scorrevole REI 60</span>
+                <span className="testo-articoli">REI 60</span>
               </div>
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Forniamo e installiamo <strong>porte antincendio certificate REI a Palermo</strong> per la compartimentazione degli edifici: porte tagliafuoco REI 30, REI 60 e REI 120 in acciaio verniciato, con telaio a controtelaio in acciaio zincato, guarnizioni intumescenti e maniglione antipanico omologato. Obbligatorie nei vani scala, locali tecnici, garage condominiali e attività soggette a controllo VVF.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Ogni porta è corredata di marcatura CE, dichiarazione di prestazione (DoP) e certificato di prova EN 1634. Installiamo modelli a singola e doppia anta, con o senza maniglione antipanico, con chiudiporta aereo e selezionatore di chiusura per doppia anta. Su richiesta forniamo porte con oblò in vetro REI e passacavi a tenuta.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Collaboriamo con tecnici abilitati per la pratica SCIA antincendio. Contattaci per un sopralluogo e un preventivo gratuito a Palermo e provincia.
+              Vendiamo e installiamo porte antincendio certificate REI.
             </p>
           </div>
         </div>

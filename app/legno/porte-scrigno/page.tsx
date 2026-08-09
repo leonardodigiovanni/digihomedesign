@@ -146,13 +146,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              La <strong>porta scrigno</strong> — o porta a scomparsa — è la soluzione ideale per chi vuole massimizzare lo spazio e ottenere un effetto visivo pulito e continuo. L&apos;anta scorre all&apos;interno del controtelaio nascosto nella muratura, eliminando lo spazio occupato da battente e maniglia quando la porta è aperta.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Installiamo sistemi scrigno a Palermo per vani di qualsiasi dimensione, sia in fase di nuova costruzione che su muratura esistente con apertura del vano. I controtelai sono in acciaio zincato con guide silenziate; le ante possono essere in qualsiasi essenza, laccate o rivestite in vetro per effetto continuità con la parete.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Il sistema è disponibile anche in versione a doppia anta per aperture ampie. Contattaci per un sopralluogo gratuito e scopri la soluzione più adatta al tuo spazio.
+              Vendiamo e installiamo porte scrigno su misura.
             </p>
           </div>
         </div>

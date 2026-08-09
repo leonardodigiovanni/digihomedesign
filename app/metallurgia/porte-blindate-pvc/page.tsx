@@ -146,7 +146,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Vendiamo e installiamo porte blindate con pannello PVC colore e fantasia a scelta, certificate dalla classe 3 alla classe 6 secondo la norma UNI EN 1627. Ogni porta è dotata di serratura multipunto con chiusura perimetrale, cilindro europeo, occhio magico, ferretto notte, pomello, cerniere anti-scasso e lamiera esterna in ferro da almeno 2,5 mm.
+              Vendiamo e installiamo porte blindate rivestite in PVC.
             </p>
           </div>
         </div>

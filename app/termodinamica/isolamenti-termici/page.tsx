@@ -53,13 +53,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Un buon <strong>isolamento termico</strong> riduce drasticamente i consumi energetici, migliora il comfort abitativo e aumenta la classe energetica dell&apos;edificio. Realizziamo cappotti termici esterni, isolamenti di sottotetti, solai, pareti interne e contropareti con materiali certificati ad alta performance.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Utilizziamo pannelli in EPS, lana di roccia, fibra di legno e soluzioni a cappotto ventilato, scelti in base alle caratteristiche dell&apos;edificio e agli obiettivi energetici del cliente. Ogni intervento viene preceduto da una diagnosi energetica gratuita.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Gli interventi possono beneficiare degli incentivi fiscali vigenti (Superbonus, Ecobonus). Forniamo assistenza completa per la gestione delle pratiche. Contattaci per un sopralluogo gratuito a Palermo e provincia.
+              Realizziamo isolamenti termici.
             </p>
           </div>
         </div>

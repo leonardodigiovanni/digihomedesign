@@ -53,13 +53,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Palermo è tra le città italiane con la maggiore irradiazione solare: investire in <strong>pannelli solari fotovoltaici</strong> significa abbattere la bolletta elettrica e aumentare l&apos;autonomia energetica della tua abitazione o azienda. Progettiamo e installiamo impianti fotovoltaici residenziali e commerciali con sistemi di accumulo (batterie) per massimizzare l&apos;autoconsumo.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Realizziamo anche impianti solari termici per la produzione di acqua calda sanitaria, integrabili con la caldaia esistente o con la pompa di calore. Ogni impianto viene dimensionato sul reale fabbisogno energetico del cliente.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Gestiamo le pratiche per gli incentivi vigenti (Conto Energia, detrazione fiscale 50%) e le comunicazioni al GSE e al gestore di rete. Contattaci per un&apos;analisi energetica gratuita.
+              Vendiamo e installiamo pannelli solari.
             </p>
           </div>
         </div>

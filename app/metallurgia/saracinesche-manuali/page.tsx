@@ -132,7 +132,7 @@ export default async function Page() {
                 <Image src="/images/metallurgia/saracinesce-manuali/basculante.webp" alt="Basculante manuale in garage" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Basculante manuale per garage</span>
+                <span className="testo-articoli">Basculante</span>
               </div>
             </div>
             <div className="page-card">
@@ -140,19 +140,13 @@ export default async function Page() {
                 <Image src="/images/metallurgia/saracinesce-manuali/saracinesca.webp" alt="Saracinesca manuale in garage" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Saracinesca manuale per garage</span>
+                <span className="testo-articoli">Avvolgibile</span>
               </div>
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Forniamo e installiamo <strong>saracinesche manuali a Palermo</strong> per garage privati, negozi, magazzini e locali commerciali: avvolgibili in doghe di acciaio zincato, alluminio estruso e PVC coibentato con manovra a cinghia, molla di bilanciamento o moschettone. Soluzione affidabile e senza componenti elettrici, ideale dove non è disponibile l&apos;alimentazione o si preferisce la semplicità di utilizzo.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Le saracinesche manuali sono disponibili in larghezze fino a 4 m e altezze fino a 3,5 m. Le guide in acciaio zincato e il cassonetto di contenimento sono verniciati a polvere in qualsiasi colore RAL. Su richiesta installiamo serrature a lucchetto o cilindro per la chiusura di sicurezza notturna.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Offriamo anche il servizio di manutenzione e riparazione di saracinesche esistenti: sostituzione guide, doghe danneggiate e molle di bilanciamento. Contattaci per un sopralluogo gratuito e un preventivo a Palermo e provincia.
+              Vendiamo e installiamo saracinesche manuali.
             </p>
           </div>
         </div>

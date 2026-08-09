@@ -146,13 +146,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              I <strong>mobili tamburati</strong> combinano la struttura in legno con pannelli alleggeriti internamente, ottenendo superfici ampie e regolari con un peso ridotto rispetto al massello. Sono ideali per armadi con ante lisce e specchiate, librerie a tutta parete, sistemi componibili per ufficio e camerette.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Le finiture disponibili spaziano dal laccato lucido o opaco, all&apos;impiallacciato in essenza naturale, al rivestimento in melamminico per ambienti ad alto utilizzo. I bordi vengono rifiniti con ABS o impiallacciatura per un aspetto pulito e resistente all&apos;usura.
-            </p>
-            <p className="testo-articoli" style={{ margin: 0 }}>
-              Realizziamo su misura in base alle dimensioni del tuo spazio, con accessori interni (cassetti, portabiti, moduli scarpe) scelti insieme al cliente. Contattaci per un preventivo gratuito con progetto 3D.
+              Vendiamo e installiamo mobili tamburati su misura.
             </p>
           </div>
         </div>

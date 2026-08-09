@@ -146,7 +146,7 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Vendiamo e installiamo scale a chiocciola in ferro e acciaio su misura, con gradini in legno o metallo, complete di ringhiera e corrimano.
+              Vendiamo e installiamo scale a chiocciola su misura.
             </p>
           </div>
         </div>
