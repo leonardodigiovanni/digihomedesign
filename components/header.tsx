@@ -131,16 +131,16 @@ export default function Header({
               <Image className="header-comparti-icon" src="/images/icons/icona-serramenti.png" alt="Serramenti" width={316} height={339} style={{ height: 22, width: 'auto', objectFit: 'contain', display: 'block' }} />
               <span style={{ whiteSpace: 'nowrap', fontSize: 10, fontWeight: 700, letterSpacing: '0.2px', fontFamily: 'var(--font-ornamental)', color: '#e2e2e2' }}>SERRAMENTI</span>
             </div>
-            <div className="header-comparti-col header-comparti-ristrutt" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, marginTop: -5, marginLeft: -23 }}>
-              <span style={{ whiteSpace: 'nowrap', fontSize: 10, fontWeight: 700, letterSpacing: '0.2px', fontFamily: 'var(--font-ornamental)', color: '#e39464', position: 'relative', left: -2 }}>RISTRUTTURAZIONI</span>
-              <Image className="header-comparti-icon" src="/images/icons/icona-ristrutturazioni.png" alt="Ristrutturazioni" width={421} height={343} style={{ height: 22, width: 'auto', objectFit: 'contain', display: 'block' }} />
+            <div className="header-comparti-col header-comparti-ristrutt" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, marginTop: -5, marginLeft: -39 }}>
+              <span style={{ whiteSpace: 'nowrap', fontSize: 10, fontWeight: 700, letterSpacing: '0.2px', fontFamily: 'var(--font-ornamental)', color: '#e39464' }}>RISTRUTTURAZIONI</span>
+              <Image className="header-comparti-icon" src="/images/icons/icona-ristrutturazioni.png" alt="Ristrutturazioni" width={421} height={343} style={{ height: 22, width: 'auto', objectFit: 'contain', display: 'block', position: 'relative', left: 4 }} />
             </div>
-            <div className="header-comparti-col" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0, marginLeft: -30, width: 70 }}>
+            <div className="header-comparti-col" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0, marginLeft: -47, width: 86 }}>
               <Image className="header-comparti-icon" src="/images/icons/icona-sicurezza.png" alt="Sicurezza" width={307} height={357} style={{ height: 22, width: 'auto', objectFit: 'contain', display: 'block' }} />
               <span style={{ whiteSpace: 'nowrap', fontSize: 10, fontWeight: 700, letterSpacing: '0.2px', fontFamily: 'var(--font-ornamental)', color: '#f5d060' }}>SICUREZZA</span>
             </div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff', padding: '0px 3px 3px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 172, background: '#fff', padding: '0px 3px 3px' }}>
             <span style={{ whiteSpace: 'nowrap', lineHeight: 1, color: '#000', fontWeight: 700, fontSize: 15, letterSpacing: '0.3px', fontFamily: 'var(--font-ornamental)' }}><span className="header-digi-diamond" style={{ color: '#c8960c', fontSize: 14 }}>◆ </span><span className="header-digi-word">DIGI </span>Home Design <span className="header-digi-diamond" style={{ color: '#c8960c', fontSize: 14 }}> ◆</span></span>
           </div>
           </div>
