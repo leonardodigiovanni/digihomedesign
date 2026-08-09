@@ -133,15 +133,15 @@ export default function Header({
             </div>
             <div className="header-comparti-col header-comparti-ristrutt" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, marginTop: -5, marginLeft: -39 }}>
               <span style={{ whiteSpace: 'nowrap', fontSize: 10, fontWeight: 700, letterSpacing: '0.2px', fontFamily: 'var(--font-ornamental)', color: '#e39464' }}>RISTRUTTURAZIONI</span>
-              <Image unoptimized className="header-comparti-icon" src="/images/icons/icona-ristrutturazioni.png" alt="Ristrutturazioni" width={421} height={343} style={{ height: 22, width: 'auto', objectFit: 'contain', display: 'block', position: 'relative', left: 4 }} />
+              <Image unoptimized className="header-comparti-icon" src="/images/icons/icona-ristrutturazioni-rame.png" alt="Ristrutturazioni" width={421} height={343} style={{ height: 22, width: 'auto', objectFit: 'contain', display: 'block', position: 'relative', left: 4 }} />
             </div>
             <div className="header-comparti-col" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0, marginLeft: -47, width: 86 }}>
-              <Image unoptimized className="header-comparti-icon" src="/images/icons/icona-sicurezza.png" alt="Sicurezza" width={307} height={357} style={{ height: 22, width: 'auto', objectFit: 'contain', display: 'block' }} />
+              <Image unoptimized className="header-comparti-icon" src="/images/icons/icona-sicurezza-gold.png" alt="Sicurezza" width={307} height={357} style={{ height: 22, width: 'auto', objectFit: 'contain', display: 'block' }} />
               <span style={{ whiteSpace: 'nowrap', fontSize: 10, fontWeight: 700, letterSpacing: '0.2px', fontFamily: 'var(--font-ornamental)', color: '#f5d060' }}>SICUREZZA</span>
             </div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 172, background: '#fff', padding: '0px 3px 3px' }}>
-            <span style={{ whiteSpace: 'nowrap', lineHeight: 1, color: '#000', fontWeight: 700, fontSize: 15, letterSpacing: '0.3px', fontFamily: 'var(--font-ornamental)' }}><span className="header-digi-diamond" style={{ color: '#c8960c', fontSize: 14 }}>◆ </span><span className="header-digi-word">DIGI </span>Home Design <span className="header-digi-diamond" style={{ color: '#c8960c', fontSize: 14 }}> ◆</span></span>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 172, background: '#fff', border: '1px solid #000', boxShadow: '0 0 0 1px #fff', borderRadius: 10, padding: '1px 3px 3px' }}>
+            <span style={{ whiteSpace: 'nowrap', lineHeight: 1, color: '#000', fontWeight: 700, fontSize: 15, letterSpacing: '0.3px', fontFamily: 'var(--font-ornamental)' }}><span className="header-digi-word">DIGI{'  '}</span>Home{'  '}Design</span>
           </div>
           </div>
         </div>
