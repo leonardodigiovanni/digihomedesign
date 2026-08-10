@@ -3,6 +3,7 @@ import { Inter, Lora } from 'next/font/google'
 import { cookies, headers } from 'next/headers'
 import Header from '@/components/header'
 import Navbar from '@/components/navbar'
+import SiteSearchProvider from '@/components/site-search-provider'
 import Footer from '@/components/footer'
 import SitemapSection from '@/components/sitemap-section'
 import StickyBottomBar from '@/components/sticky-bottom-bar'
@@ -285,6 +286,7 @@ export default async function RootLayout({
         )}
 
         <div id="site-sticky-header" style={{ position: 'sticky', top: 0, zIndex: 400 }}>
+          <SiteSearchProvider>
           <Header headerBg={settings.headerBg} headerBgMode={settings.headerBgMode} username={username} registrazioniDisabilitate={settings.registrazioniDisabilitate} />
           {settings.bannerAbilitato && (
             <>
@@ -323,6 +325,7 @@ export default async function RootLayout({
             </>
           )}
           {!inManutenzione && <Navbar role={role} disabledPages={settings.disabledPages} rolePermissions={rolePermissions} username={username} registrazioniDisabilitate={settings.registrazioniDisabilitate} bannerAbilitato={settings.bannerAbilitato} cartCount={cartCount} cartAcquistiCount={cartAcquistiCount} unreadEmailCount={unreadEmailCount} unreadAvvisiCount={unreadAvvisiCount} clienteAbilitato={clienteAbilitato} />}
+          </SiteSearchProvider>
         </div>
 
         <StickyBottomBarProvider>

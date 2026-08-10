@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { clientPages, standalonePages, visibleAdminPages, visibleInternalPages, visibleFornitoriPages, visibleClientiPages, aiutoPages, categoryGroups, areaClientiPages, prodottiPages, prodottiSubgroups, comfortSpaziEsterniPages, antintrusioneSicurezzaPages, carpenteriaArredoPages, ristrutturazioniChiaviInManoPages, HIDDEN_FROM_CATEGORY, type NavPage, type CategoryGroup } from '@/lib/nav-config'
 import HeaderAuth from '@/components/header-auth'
+import SiteSearchButton from '@/components/site-search-button'
 import ShortcutStar from '@/components/shortcut-star'
 import { useHomeShortcuts } from '@/lib/home-shortcuts-context'
 import { useNavDropdownRequest } from '@/lib/nav-dropdown-context'
@@ -695,7 +696,8 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             </>
             )
           })()}
-          <div style={{ marginLeft: 10 }}>
+          <SiteSearchButton style={{ marginLeft: 10 }} />
+          <div style={{ marginLeft: 6 }}>
             <HeaderAuth username={username} registrazioniDisabilitate={registrazioniDisabilitate} forceDropdown />
           </div>
         </div>

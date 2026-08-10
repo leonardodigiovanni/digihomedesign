@@ -357,6 +357,9 @@ a:active, a:active img, a:focus img {
   .header-auth-slot {
     display: none;
   }
+  .header-search-slot {
+    display: none !important;
+  }
 }
 
 *, *::before, *::after {

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import type { Rgba, BgMode } from '@/lib/settings'
 import { rgbGradient, rgbGradientInv, rgbBrushedBackground, rgbBrushedBackgroundInv, rgbBrushedBackgroundDark, rgbBrushedBackgroundDarkInv, rgbBoxShadow, rgbBorderColor } from '@/lib/bg-utils'
 import HeaderAuth from '@/components/header-auth'
+import SiteSearchButton from '@/components/site-search-button'
 
 interface HeaderProps {
   headerBg?: Rgba
@@ -125,7 +126,7 @@ export default function Header({
             <Image src="/images/header/DIGIHOMEDESIGN.webp" alt="Home Design" width={80} height={80} style={{ objectFit: 'contain', display: 'block' }} />
           </Link>
 
-          <div className="header-comparti-wrap" style={{ transform: 'translateY(-3px)', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', width: 'fit-content', zIndex: 10 }}>
+          <div className="header-comparti-wrap" style={{ transform: 'translateY(-6px)', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', width: 'fit-content', zIndex: 10 }}>
           <div className="header-comparti-row" style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'flex-start', gap: 4, marginBottom: 12 }}>
             <div className="header-comparti-col" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 0, marginRight: -8 }}>
               <span style={{ whiteSpace: 'nowrap', fontSize: 10, fontWeight: 700, letterSpacing: '0.2px', fontFamily: 'var(--font-ornamental)', color: '#e2e2e2' }}>SERRAMENTI</span>
@@ -133,7 +134,7 @@ export default function Header({
             </div>
             <div className="header-comparti-col header-comparti-ristrutt" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, marginTop: 5, marginLeft: -39 }}>
               <Image unoptimized className="header-comparti-icon" src="/images/icons/icona-ristrutturazioni-rame.png" alt="Ristrutturazioni" width={421} height={343} style={{ height: 22, width: 'auto', objectFit: 'contain', display: 'block', position: 'relative', left: 4 }} />
-              <span style={{ whiteSpace: 'nowrap', fontSize: 10, fontWeight: 700, letterSpacing: '0.2px', fontFamily: 'var(--font-ornamental)', color: '#e39464' }}>RISTRUTTURAZIONI</span>
+              <span style={{ whiteSpace: 'nowrap', fontSize: 10, fontWeight: 700, letterSpacing: '0.2px', fontFamily: 'var(--font-ornamental)', color: '#e39464', position: 'relative', top: -1 }}>RISTRUTTURAZIONI</span>
             </div>
             <div className="header-comparti-col" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0, marginLeft: -47, width: 84 }}>
               <span style={{ whiteSpace: 'nowrap', fontSize: 10, fontWeight: 700, letterSpacing: '0.2px', fontFamily: 'var(--font-ornamental)', color: '#f5d060' }}>SICUREZZA</span>
@@ -146,8 +147,11 @@ export default function Header({
           </div>
         </div>
 
-        <div className="header-auth-slot" style={{ zIndex: 20 }}>
-          <HeaderAuth username={username} registrazioniDisabilitate={registrazioniDisabilitate} forceDropdown />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, zIndex: 20 }}>
+          <SiteSearchButton className="header-search-slot" />
+          <div className="header-auth-slot">
+            <HeaderAuth username={username} registrazioniDisabilitate={registrazioniDisabilitate} forceDropdown />
+          </div>
         </div>
       </div>
     </header>
