@@ -129,18 +129,18 @@ export default async function Page() {
           <div className="vetrina-foto-row">
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/manutenzione/sito_manutenzione.webp" alt="Anteprima" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/legno/mobili-tamburati/pino-bianco.webp" alt="Mobile tamburato color pino" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Fotografia da scegliere</span>
+                <span className="testo-articoli">Pino</span>
               </div>
             </div>
             <div className="page-card">
               <div style={{ position: 'relative', width: '100%', height: 148 }}>
-                <Image src="/images/manutenzione/sito_manutenzione.webp" alt="Anteprima" fill sizes="300px" style={{ objectFit: 'cover' }} />
+                <Image src="/images/legno/mobili-tamburati/bianco.webp" alt="Mobile tamburato bianco laccato" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Fotografia da scegliere</span>
+                <span className="testo-articoli">Bianco</span>
               </div>
             </div>
           </div>
