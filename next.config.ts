@@ -24,7 +24,20 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: ['192.168.1.*'],
   async redirects() {
     return [
+      // Host canonico: senza questo, il sito è raggiungibile identico su due
+      // hostname (con e senza www). Le pagine HTML se la cavano col canonical
+      // in <head>, ma i file statici in public/ (PDF, immagini...) non hanno un
+      // <head> — restano duplicati senza segnale, da qui i redirect sono
+      // valutati prima del filesystem/public (vedi next/dist/docs redirects.md),
+      // quindi coprono anche quelli.
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'digi-home-design.com' }],
+        destination: 'https://www.digi-home-design.com/:path*',
+        permanent: true,
+      },
       { source: '/porte-corazzate', destination: '/porte-blindate', permanent: true },
+      { source: '/serramenti/imbotti', destination: '/serramenti/monoblocchi', permanent: true },
       { source: '/metallurgia/porte-blindate', destination: '/metallurgia/porte-blindate-legno', permanent: true },
       { source: '/serramenti/infissi-in-alluminio', destination: '/serramenti/infissi-in-alluminio-taglio-termico', permanent: true },
       { source: '/serramenti/tapparelle-manuali', destination: '/serramenti/tapparelle-in-alluminio', permanent: true },

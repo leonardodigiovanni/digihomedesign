@@ -66,7 +66,7 @@ Al termine dell'implementazione:
 ## Key conventions
 
 - Page names and navigation structure live in `lib/nav-config.ts` — change labels/slugs there, not in individual files.
-- Client pages 2–15 use the dynamic route `app/pagine/[id]/page.tsx`.
+- Client pages have their own directory under `app/` (e.g. `app/brand/galleria/`, reached publicly via the `/chi-siamo/*` rewrite in `next.config.ts`). The old dynamic route `app/pagine/[id]/page.tsx` was removed 2026-08-11 (dead legacy code causing 404s/duplicate-content indexing issues — see `docs/2026-08-11-12-53-rimozione-rotta-pagine-id.md`).
 - Admin pages 16–20 each have their own directory under `app/`.
 - Inline styles are used throughout (no Tailwind classes in current code despite Tailwind being installed).
 - All UI text is in Italian.
