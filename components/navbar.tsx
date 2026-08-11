@@ -373,7 +373,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
         )}
         <div className="nav-scroll-inner" ref={innerRef}>
           <Link href="/" className={linkClass(isActive('/'))} style={{ ...linkStyle('/'), display: 'inline-flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', gap: 2, marginLeft: 8, position: 'relative' }} aria-label="Home">
-            <Image src="/images/header/home.webp" alt="Home" width={30} height={30} style={{ height: 30, width: 30, display: 'block', objectFit: 'contain', marginTop: -3 }} />
+            <Image src="/images/header/digi-home-tetto.webp" alt="Home" width={30} height={30} style={{ height: 30, width: 30, display: 'block', objectFit: 'contain', marginTop: -3 }} />
           </Link>
 
           {prodottiItems.length > 0 && (

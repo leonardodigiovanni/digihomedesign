@@ -21,7 +21,7 @@ const GOLD: React.CSSProperties = {
 
 const HomeSvg = () => (
   <div style={GOLD}>
-    <Image src="/images/header/home.webp" alt="Home" width={41} height={41} style={{ width: 41, height: 41, objectFit: 'contain', display: 'block', marginTop: -7 }} />
+    <Image src="/images/header/digi-home-tetto.webp" alt="Home" width={41} height={41} style={{ width: 41, height: 41, objectFit: 'contain', display: 'block', marginTop: -7 }} />
   </div>
 )
 
