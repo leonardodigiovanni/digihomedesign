@@ -148,6 +148,7 @@ export const categoryGroups: CategoryGroup[] = [
     pages: [
       { id: 267, label: 'Divani',   href: '/tessuti/divani'   },
       { id: 268, label: 'Tendaggi', href: '/tessuti/tendaggi' },
+      { id: 273, label: 'Tappeti',  href: '/tessuti/tappeti'  },
     ],
   },
   {

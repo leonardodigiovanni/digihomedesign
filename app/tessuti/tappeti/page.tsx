@@ -1,4 +1,4 @@
-﻿import Link from 'next/link'
+import Link from 'next/link'
 import Image from 'next/image'
 import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
@@ -17,14 +17,14 @@ import NavDropdownTriggerButton from '@/components/nav-dropdown-trigger-button'
 import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = {
-  title: 'Tendaggi a Palermo — Tende su Misura per Casa e Ufficio',
-  description: 'Tendaggi a Palermo su misura: tende da interno, tende a rullo, tende tecniche e oscuranti. Fornitura e posa in opera. Preventivo gratuito.',
-  alternates: { canonical: 'https://www.digi-home-design.com/tessuti/tendaggi' },
+  title: 'Tappeti a Palermo — Tappeti su Misura per Casa e Ufficio',
+  description: 'Tappeti a Palermo: tappeti classici, persiani e su misura per ogni ambiente. Fornitura e posa in opera. Preventivo gratuito.',
+  alternates: { canonical: 'https://www.digi-home-design.com/tessuti/tappeti' },
   robots: { index: true, follow: true },
   openGraph: {
-    title: 'Tendaggi a Palermo — Tende su Misura per Casa e Ufficio',
-    description: 'Tendaggi a Palermo su misura: tende da interno, tende a rullo, tende tecniche e oscuranti. Fornitura e posa in opera. Preventivo gratuito.',
-    url: 'https://www.digi-home-design.com/tessuti/tendaggi',
+    title: 'Tappeti a Palermo — Tappeti su Misura per Casa e Ufficio',
+    description: 'Tappeti a Palermo: tappeti classici, persiani e su misura per ogni ambiente. Fornitura e posa in opera. Preventivo gratuito.',
+    url: 'https://www.digi-home-design.com/tessuti/tappeti',
     type: 'website',
   },
 }
@@ -75,8 +75,8 @@ async function getCatalogoData(nomeCategoria: string) {
 
 export default async function Page() {
   const { disabledPages } = await readSettings()
-  const { prev, next } = getCategoryGroupNeighbors('tessuti', 268, disabledPages)
-  const CERCA = 'Tendaggi'
+  const { prev, next } = getCategoryGroupNeighbors('tessuti', 273, disabledPages)
+  const CERCA = 'Tappeti'
   const catalogo = await getCatalogoData(CERCA)
   const cookieStore = await cookies()
   const role = cookieStore.get('session_role')?.value ?? ''
@@ -121,33 +121,33 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/tessuti" style={{ color: '#888', textDecoration: 'underline' }}>Tessuti</Link> / Tendaggi<ShortcutStar />
+        <Link href="/tessuti" style={{ color: '#888', textDecoration: 'underline' }}>Tessuti</Link> / Tappeti<ShortcutStar />
       </p>
-      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Tendaggi a Palermo</h1>
+      <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Tappeti a Palermo</h1>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         <div style={{ background: '#fff', border: '1px solid #c8960c', borderRadius: 10, padding: '16px' }}>
           <div className="vetrina-foto-row">
-            <div className="page-card" style={{ flex: '1 1 220px', maxWidth: 480 }}>
-              <div style={{ position: 'relative', width: '100%', aspectRatio: '1/1' }}>
-                <Image src="/images/tessuti/tendaggi/ornata.webp" alt="Tenda ornata" fill sizes="(max-width: 480px) 100vw, 480px" style={{ objectFit: 'cover' }} />
+            <div className="page-card">
+              <div style={{ position: 'relative', width: '100%', height: 148 }}>
+                <Image src="/images/tessuti/tappeti/beige.webp" alt="Tappeto beige" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Tenda ornata</span>
+                <span className="testo-articoli">Beige</span>
               </div>
             </div>
-            <div className="page-card" style={{ flex: '1 1 220px', maxWidth: 480 }}>
-              <div style={{ position: 'relative', width: '100%', aspectRatio: '1/1' }}>
-                <Image src="/images/tessuti/tendaggi/verde.webp" alt="Tenda verde" fill sizes="(max-width: 480px) 100vw, 480px" style={{ objectFit: 'cover' }} />
+            <div className="page-card">
+              <div style={{ position: 'relative', width: '100%', height: 148 }}>
+                <Image src="/images/tessuti/tappeti/persiano.webp" alt="Tappeto persiano" fill sizes="300px" style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: '14px 16px' }}>
-                <span className="testo-articoli">Tenda verde</span>
+                <span className="testo-articoli">Persiano</span>
               </div>
             </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 24 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Vendiamo e installiamo tendaggi su misura.
+              Vendiamo e installiamo tappeti su misura.
             </p>
           </div>
         </div>
@@ -169,7 +169,7 @@ export default async function Page() {
 
         <StickyBottomBarContent>
           <Link href="/tessuti" className="btn-black fs-12">← Tessuti</Link>
-          {prev && <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link>}
+          {prev ? <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link> : <NavDropdownTriggerButton dropdownId="cat-arredi" label="← Arredi" />}
           <CtaPreventivo />
           <CtaCantiere />
           {next ? <Link href={next.href} className="btn-blue fs-12">{next.label} →</Link> : <NavDropdownTriggerButton dropdownId="cat-servizi" label="Servizi →" />}
