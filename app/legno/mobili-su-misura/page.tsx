@@ -6,28 +6,28 @@ import CtaCantiere from '@/components/cta-cantiere'
 import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import ShortcutStar from '@/components/shortcut-star'
 import { readSettings } from '@/lib/settings'
-import { getRistrutturazioniNeighbors } from '@/lib/nav-config'
+import { getCategoryGroupNeighbors } from '@/lib/nav-config'
 
 export const metadata: Metadata = {
-  title: 'Mobili su Misura a Palermo — Ristrutturazioni Chiavi in Mano',
-  description: 'Fornitura e realizzazione mobili su misura a Palermo nell\'ambito di una ristrutturazione chiavi in mano.',
-  alternates: { canonical: 'https://www.digi-home-design.com/ristrutturazioni-chiavi-in-mano/mobili' },
+  title: 'Mobili su Misura a Palermo — Cucine, Camere e Zone Giorno',
+  description: 'Mobili su misura a Palermo per cucine, camere e zone giorno, in legno massello o tamburato. Progettazione, fornitura e montaggio nell\'ambito di ogni ristrutturazione.',
+  alternates: { canonical: 'https://www.digi-home-design.com/legno/mobili-su-misura' },
   robots: { index: true, follow: true },
   openGraph: {
-    title: 'Mobili su Misura a Palermo — Ristrutturazioni Chiavi in Mano',
-    description: 'Fornitura e realizzazione mobili su misura a Palermo nell\'ambito di una ristrutturazione chiavi in mano.',
-    url: 'https://www.digi-home-design.com/ristrutturazioni-chiavi-in-mano/mobili',
+    title: 'Mobili su Misura a Palermo — Cucine, Camere e Zone Giorno',
+    description: 'Mobili su misura a Palermo per cucine, camere e zone giorno, in legno massello o tamburato. Progettazione, fornitura e montaggio nell\'ambito di ogni ristrutturazione.',
+    url: 'https://www.digi-home-design.com/legno/mobili-su-misura',
     type: 'website',
   },
 }
 
 export default async function Page() {
   const { disabledPages } = await readSettings()
-  const { prev, next } = getRistrutturazioniNeighbors(303, disabledPages)
+  const { prev, next } = getCategoryGroupNeighbors('legno', 303, disabledPages)
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/" style={{ color: '#888', textDecoration: 'underline' }}>Home</Link> / Ristrutturazioni Chiavi in Mano / Mobili<ShortcutStar />
+        <Link href="/legno" style={{ color: '#888', textDecoration: 'underline' }}>Legno</Link> / Mobili su Misura<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Mobili su Misura</h1>
 
@@ -42,21 +42,20 @@ export default async function Page() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <p className="testo-articoli" style={{ margin: 0 }}>
-              Nell&apos;ambito di una ristrutturazione chiavi in mano a Palermo forniamo mobili su misura per cucine, camere e zone giorno, in massello o tamburato.
+              Forniamo mobili su misura per cucine, camere e zone giorno, in massello o tamburato.
             </p>
           </div>
         </div>
 
         <StickyBottomBarContent>
-          <Link href="/" className="btn-black fs-12">← Home</Link>
+          <Link href="/legno" className="btn-black fs-12">← Legno</Link>
           {prev && <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link>}
           <CtaPreventivo />
           <CtaCantiere />
           {next && <Link href={next.href} className="btn-blue fs-12">{next.label} →</Link>}
-          <Link href="/chi-siamo/contatti" className="btn-black fs-12">Chiedi info</Link>
         </StickyBottomBarContent>
       </div>
-      <p className="IsDebug fs-11" style={{ marginTop: 8 }}>tipo pagina fototesto contatti (contenuto generico, da definire — valutare link a /legno)</p>
+      <p className="IsDebug fs-11" style={{ marginTop: 8 }}>tipo pagina fototesto contatti</p>
     </div>
   )
 }

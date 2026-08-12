@@ -4,6 +4,7 @@ import CtaPreventivo from '@/components/cta-preventivo'
 import CtaCantiere from '@/components/cta-cantiere'
 import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import ShortcutStar from '@/components/shortcut-star'
+import { readSettings } from '@/lib/settings'
 
 export const metadata: Metadata = {
   title: 'Elettricità a Palermo — Impianti, Fotovoltaico e Domotica',
@@ -19,15 +20,16 @@ export const metadata: Metadata = {
 }
 
 const subcategories = [
-  { href: '/elettricita/impianti-elettrici', label: 'Impianti Elettrici', desc: 'Progettazione e realizzazione di impianti elettrici civili e industriali a norma.' },
-  { href: '/elettricita/illuminazione',      label: 'Illuminazione',      desc: 'Sistemi di illuminazione LED per interni ed esterni, design e risparmio energetico.' },
-  { href: '/elettricita/elettrodomestici',   label: 'Elettrodomestici',   desc: 'Fornitura, installazione e collegamento di grandi e piccoli elettrodomestici.' },
-  { href: '/elettricita/pannelli-solari',    label: 'Pannelli Solari',    desc: 'Impianti fotovoltaici e termici per la produzione di energia rinnovabile.' },
-  { href: '/elettricita/domotica',           label: 'Domotica',           desc: 'Sistemi smart home per controllo luci, tapparelle, riscaldamento e sicurezza.' },
-  { href: '/elettricita/videosorveglianza',  label: 'Videosorveglianza',  desc: 'Impianti TVCC e sistemi di videosorveglianza IP per casa e ufficio.' },
+  { id: 250, href: '/elettricita/impianti-elettrici', label: 'Impianti Elettrici', desc: 'Progettazione e realizzazione di impianti elettrici civili e industriali a norma.' },
+  { id: 251, href: '/elettricita/illuminazione',      label: 'Illuminazione',      desc: 'Sistemi di illuminazione LED per interni ed esterni, design e risparmio energetico.' },
+  { id: 252, href: '/elettricita/elettrodomestici',   label: 'Elettrodomestici',   desc: 'Fornitura, installazione e collegamento di grandi e piccoli elettrodomestici.' },
+  { id: 253, href: '/elettricita/pannelli-solari',    label: 'Pannelli Solari',    desc: 'Impianti fotovoltaici e termici per la produzione di energia rinnovabile.' },
+  { id: 254, href: '/elettricita/domotica',           label: 'Domotica',           desc: 'Sistemi smart home per controllo luci, tapparelle, riscaldamento e sicurezza.' },
+  { id: 255, href: '/elettricita/videosorveglianza',  label: 'Videosorveglianza',  desc: 'Impianti TVCC e sistemi di videosorveglianza IP per casa e ufficio.' },
 ]
 
-export default function Page() {
+export default async function Page() {
+  const { disabledPages } = await readSettings()
   return (
     <div className="fs-15" style={{ padding: '0 4px 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
@@ -40,7 +42,7 @@ export default function Page() {
         Progettiamo e installiamo impianti elettrici, sistemi fotovoltaici, soluzioni domotiche e di sicurezza per abitazioni, uffici e spazi commerciali a Palermo. Tecnici abilitati D.M. 37/08.
       </p>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
-        {subcategories.map(s => (
+        {subcategories.filter(s => !disabledPages.includes(s.id)).map(s => (
           <Link key={s.href} href={s.href} style={{ flex: '1 1 240px', border: '1px solid #c8960c', borderRadius: 10, padding: '16px 14px', textDecoration: 'none', color: '#1a1a1a', background: '#fafafa' }}>
             <div className="fs-17" style={{ fontWeight: 700, marginBottom: 6 }}>{s.label}</div>
             <div className="fs-14" style={{ color: '#555', lineHeight: 1.6 }}>{s.desc}</div>

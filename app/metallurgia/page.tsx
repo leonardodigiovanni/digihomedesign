@@ -4,6 +4,7 @@ import CtaPreventivo from '@/components/cta-preventivo'
 import CtaCantiere from '@/components/cta-cantiere'
 import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import ShortcutStar from '@/components/shortcut-star'
+import { readSettings } from '@/lib/settings'
 
 export const metadata: Metadata = {
   title: 'Metallurgia a Palermo — Ferro, Acciaio e Alluminio su Misura',
@@ -19,28 +20,20 @@ export const metadata: Metadata = {
 }
 
 const subcategories = [
-  { href: '/metallurgia/porte-corazzate',            label: 'Porte Corazzate',            desc: 'Porte corazzate su misura in acciaio per abitazioni, uffici e locali commerciali.' },
-  { href: '/metallurgia/porte-blindate-legno',       label: 'Porte Blindate Riv. Legno',      desc: 'Porte blindate di sicurezza classe 3-6 con rivestimento esterno in legno.' },
-  { href: '/metallurgia/porte-blindate-alluminio',   label: 'Porte Blindate Riv. Alluminio',  desc: 'Porte blindate di sicurezza classe 3-6 con rivestimento esterno in alluminio.' },
-  { href: '/metallurgia/porte-blindate-pvc',         label: 'Porte Blindate Riv. PVC',        desc: 'Porte blindate di sicurezza classe 3-6 con rivestimento esterno in PVC.' },
-  { href: '/metallurgia/porte-antincendio',          label: 'Porte Antincendio',          desc: 'Porte REI certificate per compartimentazione antincendio in acciaio.' },
-  { href: '/metallurgia/cancelli',                   label: 'Cancelli',                   desc: 'Cancelli carrabili e pedonali in ferro battuto e acciaio, manuali o motorizzati.' },
-  { href: '/metallurgia/grate',                      label: 'Grate',                      desc: 'Grate di sicurezza per finestre e vani in ferro e acciaio inox.' },
-  { href: '/metallurgia/ringhiere',                  label: 'Ringhiere',                  desc: 'Ringhiere per scale e balconi in ferro, acciaio inox e alluminio su misura.' },
-  { href: '/metallurgia/balconi',                    label: 'Balconi',                    desc: 'Strutture per balconi in acciaio e ferro con parapetti personalizzati.' },
-  { href: '/metallurgia/saracinesche-manuali',       label: 'Saracinesche Manuali',       desc: 'Saracinesche avvolgibili e a libro manuali per garage e locali commerciali.' },
-  { href: '/metallurgia/saracinesche-motorizzate',   label: 'Saracinesche Motorizzate',   desc: 'Saracinesche avvolgibili e a libro motorizzate per garage e locali commerciali.' },
-  { href: '/metallurgia/strutture',                  label: 'Strutture Portanti',         desc: 'Strutture metalliche per tettoie, pensiline, soppalchi e capannoni.' },
-  { href: '/metallurgia/scale-a-rampe',              label: 'Scale a Rampe',              desc: 'Scale a rampe in ferro e acciaio su misura per interni ed esterni.' },
-  { href: '/metallurgia/scale-a-chiocciola',         label: 'Scale a Chiocciola',         desc: 'Scale elicoidali in ferro e acciaio compatte per spazi ridotti.' },
-  { href: '/metallurgia/scale-antincendio',          label: 'Scale Antincendio',          desc: 'Scale di emergenza esterne in acciaio zincato certificate.' },
-  { href: '/metallurgia/armadi-blindati',            label: 'Armadi Blindati',            desc: 'Armadi blindati per armi, documenti e valori con serrature di sicurezza.' },
-  { href: '/metallurgia/casseforti',                 label: 'Casseforti',                 desc: 'Casseforti da incasso e a pavimento per abitazioni e attività commerciali.' },
-  { href: '/metallurgia/tetti-coibentati',           label: 'Tetti Coibentati',           desc: 'Coperture metalliche coibentate per residenziale e industriale, sandwich e lamiera.' },
-  { href: '/metallurgia/grondaie',                   label: 'Grondaie',                   desc: 'Grondaie e pluviali in alluminio, rame e PVC su misura con posa inclusa.' },
+  { id: 2119, href: '/metallurgia/porte-corazzate',            label: 'Porte Corazzate',            desc: 'Porte corazzate su misura in acciaio per abitazioni, uffici e locali commerciali.' },
+  { id: 2120, href: '/metallurgia/porte-antincendio',          label: 'Porte Antincendio',          desc: 'Porte REI certificate per compartimentazione antincendio in acciaio.' },
+  { id: 2171, href: '/metallurgia/saracinesche-manuali',       label: 'Saracinesche Manuali',       desc: 'Saracinesche avvolgibili e a libro manuali per garage e locali commerciali.' },
+  { id: 218, href: '/metallurgia/saracinesche-motorizzate',   label: 'Saracinesche Motorizzate',   desc: 'Saracinesche avvolgibili e a libro motorizzate per garage e locali commerciali.' },
+  { id: 219, href: '/metallurgia/strutture',                  label: 'Strutture Portanti',         desc: 'Strutture metalliche per tettoie, pensiline, soppalchi e capannoni.' },
+  { id: 2203, href: '/metallurgia/scale-antincendio',          label: 'Scale Antincendio',          desc: 'Scale di emergenza esterne in acciaio zincato certificate.' },
+  { id: 221, href: '/metallurgia/armadi-blindati',            label: 'Armadi Blindati',            desc: 'Armadi blindati per armi, documenti e valori con serrature di sicurezza.' },
+  { id: 222, href: '/metallurgia/casseforti',                 label: 'Casseforti',                 desc: 'Casseforti da incasso e a pavimento per abitazioni e attività commerciali.' },
+  { id: 2221, href: '/metallurgia/tetti-coibentati',           label: 'Tetti Coibentati',           desc: 'Coperture metalliche coibentate per residenziale e industriale, sandwich e lamiera.' },
+  { id: 2222, href: '/metallurgia/grondaie',                   label: 'Grondaie',                   desc: 'Grondaie e pluviali in alluminio, rame e PVC su misura con posa inclusa.' },
 ]
 
-export default function Page() {
+export default async function Page() {
+  const { disabledPages } = await readSettings()
   return (
     <div className="fs-15" style={{ padding: '0 4px 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
@@ -53,7 +46,7 @@ export default function Page() {
         Progettiamo e realizziamo lavorazioni in ferro, acciaio e alluminio su misura a Palermo: dalla sicurezza anti-intrusione alle strutture portanti, dalle ringhiere decorative alle saracinesche motorizzate. Artigianato metallurgico dal 1972.
       </p>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
-        {subcategories.map(s => (
+        {subcategories.filter(s => !disabledPages.includes(s.id)).map(s => (
           <Link key={s.href} href={s.href} style={{ flex: '1 1 240px', border: '1px solid #c8960c', borderRadius: 10, padding: '16px 14px', textDecoration: 'none', color: '#1a1a1a', background: '#fafafa' }}>
             <div className="fs-17" style={{ fontWeight: 700, marginBottom: 6 }}>{s.label}</div>
             <div className="fs-14" style={{ color: '#555', lineHeight: 1.6 }}>{s.desc}</div>

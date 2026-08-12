@@ -14,16 +14,17 @@ import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import ShortcutStar from '@/components/shortcut-star'
 import { readSettings } from '@/lib/settings'
 import { getAntintrusioneNeighbors } from '@/lib/nav-config'
+import NavDropdownTriggerButton from '@/components/nav-dropdown-trigger-button'
 
 export const metadata: Metadata = {
   title: 'Grate di Sicurezza a Palermo — Finestre e Vani in Ferro',
   description: 'Grate di sicurezza a Palermo per finestre, vani e aperture: in ferro quadro, tondo e acciaio inox. Fisse, apribili a cardine e scorrevoli. Su misura.',
-  alternates: { canonical: 'https://www.digi-home-design.com/metallurgia/grate' },
+  alternates: { canonical: 'https://www.digi-home-design.com/antintrusione-e-sicurezza/grate' },
   robots: { index: true, follow: true },
   openGraph: {
     title: 'Grate di Sicurezza a Palermo — Finestre e Vani in Ferro',
     description: 'Grate di sicurezza a Palermo per finestre, vani e aperture: in ferro quadro, tondo e acciaio inox. Fisse, apribili a cardine e scorrevoli. Su misura.',
-    url: 'https://www.digi-home-design.com/metallurgia/grate',
+    url: 'https://www.digi-home-design.com/antintrusione-e-sicurezza/grate',
     type: 'website',
   },
 }
@@ -120,7 +121,7 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/metallurgia" style={{ color: '#888', textDecoration: 'underline' }}>Metallurgia</Link> / Grate<ShortcutStar />
+        <span style={{ color: '#888' }}>Antintrusione e Sicurezza</span> / Grate<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Grate di Sicurezza a Palermo</h1>
 
@@ -167,7 +168,7 @@ export default async function Page() {
         )}
 
         <StickyBottomBarContent>
-          <Link href="/metallurgia" className="btn-black fs-12">← Metallurgia</Link>
+          <NavDropdownTriggerButton dropdownId="antintrusione" label="← Antintrusione e Sicurezza" />
           {prev && <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link>}
           <CtaPreventivo />
           <CtaCantiere />

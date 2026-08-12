@@ -20,12 +20,12 @@ import ShortcutStar from '@/components/shortcut-star'
 export const metadata: Metadata = {
   title: 'Tapparelle in Alluminio a Palermo — Manuali su Misura',
   description: 'Tapparelle manuali in alluminio estruso a Palermo: a cinghia, manovella o moschettone, con avvolgitore a cassonetto incassato o a vista. Fornitura e posa con garanzia.',
-  alternates: { canonical: 'https://www.digi-home-design.com/serramenti/tapparelle-in-alluminio' },
+  alternates: { canonical: 'https://www.digi-home-design.com/riqualificazione-energetica/tapparelle-in-alluminio' },
   robots: { index: true, follow: true },
   openGraph: {
     title: 'Tapparelle in Alluminio a Palermo — Manuali su Misura',
     description: 'Tapparelle manuali in alluminio estruso a Palermo: a cinghia, manovella o moschettone, con avvolgitore a cassonetto incassato o a vista. Fornitura e posa con garanzia.',
-    url: 'https://www.digi-home-design.com/serramenti/tapparelle-in-alluminio',
+    url: 'https://www.digi-home-design.com/riqualificazione-energetica/tapparelle-in-alluminio',
     type: 'website',
   },
 }
@@ -155,7 +155,7 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Tapparelle in Alluminio<ShortcutStar />
+        <span style={{ color: '#888' }}>Riqualificazione Energetica</span> / Tapparelle in Alluminio<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Tapparelle in Alluminio a Palermo</h1>
 
@@ -219,7 +219,7 @@ export default async function Page() {
         )}
 
         <StickyBottomBarContent>
-          <Link href="/serramenti" className="btn-black fs-12">← Serramenti</Link>
+          <NavDropdownTriggerButton dropdownId="prodotti" label="← Riqualificazione Energetica" />
           {prev ? <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link> : <Link href="/" className="btn-gold fs-12">← Home</Link>}
           <CtaPreventivo />
           <CtaCantiere />

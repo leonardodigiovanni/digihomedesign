@@ -172,7 +172,7 @@ export default async function Page() {
           {prev && <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link>}
           <CtaPreventivo />
           <CtaCantiere />
-          {next ? <Link href={next.href} className="btn-blue fs-12">{next.label} →</Link> : <NavDropdownTriggerButton dropdownId="cat-edilizia" label="Edilizia →" />}
+          {next ? <Link href={next.href} className="btn-blue fs-12">{next.label} →</Link> : <NavDropdownTriggerButton dropdownId="cat-elettricita" label="Elettricità →" />}
         </StickyBottomBarContent>
       </div>
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>{(() => {

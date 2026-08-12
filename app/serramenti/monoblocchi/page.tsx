@@ -20,12 +20,12 @@ import ShortcutStar from '@/components/shortcut-star'
 export const metadata: Metadata = {
   title: 'Monoblocchi a Palermo — Rivestimento Vani Finestra in Alluminio e PVC',
   description: 'Monoblocchi a Palermo in alluminio e PVC per il rivestimento dei vani finestra: eliminano ponti termici, proteggono la muratura e danno un aspetto finito all\'infisso.',
-  alternates: { canonical: 'https://www.digi-home-design.com/serramenti/monoblocchi' },
+  alternates: { canonical: 'https://www.digi-home-design.com/riqualificazione-energetica/monoblocchi' },
   robots: { index: true, follow: true },
   openGraph: {
     title: 'Monoblocchi a Palermo — Rivestimento Vani Finestra in Alluminio e PVC',
     description: 'Monoblocchi a Palermo in alluminio e PVC per il rivestimento dei vani finestra: eliminano ponti termici, proteggono la muratura e danno un aspetto finito all\'infisso.',
-    url: 'https://www.digi-home-design.com/serramenti/monoblocchi',
+    url: 'https://www.digi-home-design.com/riqualificazione-energetica/monoblocchi',
     type: 'website',
   },
 }
@@ -155,7 +155,7 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Monoblocchi<ShortcutStar />
+        <span style={{ color: '#888' }}>Riqualificazione Energetica</span> / Monoblocchi<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Monoblocchi a Palermo</h1>
 
@@ -219,7 +219,7 @@ export default async function Page() {
         )}
 
         <StickyBottomBarContent>
-          <Link href="/serramenti" className="btn-black fs-12">← Serramenti</Link>
+          <NavDropdownTriggerButton dropdownId="prodotti" label="← Riqualificazione Energetica" />
           {prev ? <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link> : <Link href="/" className="btn-gold fs-12">← Home</Link>}
           <CtaPreventivo />
           <CtaCantiere />
@@ -229,7 +229,7 @@ export default async function Page() {
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>{(() => {
         const cerca = catalogo
           ? `${catalogo.categoria.nome}`
-          : 'serramenti/monoblocchi/non trovata'
+          : 'riqualificazione-energetica/monoblocchi/non trovata'
         const trova = catalogo && catalogo.voci.length > 0
           ? catalogo.voci.map(v => `(${v.nome}:${v.serie}:${v.pdf_label})/${v.sottocategoria ?? 'nessuno'}`).join('+')
           : 'nessuno'

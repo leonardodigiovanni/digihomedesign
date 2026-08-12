@@ -21,18 +21,10 @@ export const categoryGroups: CategoryGroup[] = [
     href: '/serramenti',
     pages: [
       { id: 201, label: 'Infissi in Alluminio Freddo', href: '/serramenti/infissi-in-alluminio-freddo' },
-      { id: 202, label: 'Infissi in PVC',          href: '/serramenti/infissi-in-pvc'          },
-      { id: 203,  label: 'Verande in Alluminio',    href: '/serramenti/verande-in-alluminio'    },
-      { id: 2031, label: 'Verande in PVC',         href: '/serramenti/verande-in-pvc'          },
-      { id: 204, label: 'Persiane in Alluminio',   href: '/serramenti/persiane-in-alluminio'   },
-      { id: 205,  label: 'Monoblocchi',                href: '/serramenti/monoblocchi'              },
       { id: 2052, label: 'Tapparelle Motorizzazione', href: '/serramenti/tapparelle-motorizzazione' },
       { id: 206,  label: 'Veneziane',              href: '/serramenti/veneziane'               },
       { id: 208, label: 'Vetrine',                 href: '/serramenti/vetrine'                 },
-      { id: 2082, label: 'Vetrate Panoramiche',    href: '/serramenti/vetrate-panoramiche'     },
-      { id: 2081, label: 'Pergole Bioclimatiche',  href: '/serramenti/pergole-bioclimatiche'   },
       { id: 209, label: 'Lucernai',                href: '/serramenti/lucernai'                },
-      { id: 210, label: 'Zanzariere',              href: '/serramenti/zanzariere'              },
       { id: 207, label: 'Box Doccia',              href: '/serramenti/box-doccia'              },
     ],
   },
@@ -42,19 +34,10 @@ export const categoryGroups: CategoryGroup[] = [
     href: '/metallurgia',
     pages: [
       { id: 2119, label: 'Porte Corazzate',           href: '/metallurgia/porte-corazzate'            },
-      { id: 2124, label: 'Porte Blindate Riv. Legno',      href: '/metallurgia/porte-blindate-legno'      },
-      { id: 2125, label: 'Porte Blindate Riv. Alluminio',  href: '/metallurgia/porte-blindate-alluminio'  },
-      { id: 2126, label: 'Porte Blindate Riv. PVC',        href: '/metallurgia/porte-blindate-pvc'        },
       { id: 2120, label: 'Porte Antincendio',        href: '/metallurgia/porte-antincendio'          },
-      { id: 214, label: 'Cancelli',                   href: '/metallurgia/cancelli'                   },
-      { id: 215, label: 'Grate',                      href: '/metallurgia/grate'                      },
-      { id: 216, label: 'Ringhiere',                  href: '/metallurgia/ringhiere'                  },
-      { id: 217,  label: 'Balconi',                   href: '/metallurgia/balconi'                    },
       { id: 2171, label: 'Saracinesche Manuali',     href: '/metallurgia/saracinesche-manuali'       },
       { id: 218,  label: 'Saracinesche Motorizzate', href: '/metallurgia/saracinesche-motorizzate'   },
       { id: 219, label: 'Strutture Portanti',          href: '/metallurgia/strutture'                  },
-      { id: 2201, label: 'Scale a Rampe',             href: '/metallurgia/scale-a-rampe'              },
-      { id: 2202, label: 'Scale a Chiocciola',        href: '/metallurgia/scale-a-chiocciola'         },
       { id: 2203, label: 'Scale Antincendio',         href: '/metallurgia/scale-antincendio'          },
       { id: 221, label: 'Armadi Blindati',            href: '/metallurgia/armadi-blindati'            },
       { id: 222, label: 'Casseforti',                 href: '/metallurgia/casseforti'                 },
@@ -72,9 +55,9 @@ export const categoryGroups: CategoryGroup[] = [
       { id: 244, label: 'Cucine',                  href: '/legno/cucine'                  },
       { id: 245, label: 'Mobili in Massello',      href: '/legno/mobili-in-massello'      },
       { id: 246, label: 'Mobili Tamburati',        href: '/legno/mobili-tamburati'        },
+      { id: 303, label: 'Mobili su Misura',        href: '/legno/mobili-su-misura'        },
       { id: 247, label: 'Parquet',                 href: '/legno/parquet'                 },
       { id: 248, label: 'Rivestimento Compensato', href: '/legno/rivestimento-compensato' },
-      { id: 249, label: 'Infissi in Legno',        href: '/legno/infissi-in-legno'        },
     ],
   },
   {
@@ -99,8 +82,6 @@ export const categoryGroups: CategoryGroup[] = [
       { id: 237, label: 'Pitturazioni',           href: '/edilizia/pitturazioni'           },
       { id: 238, label: 'Indoratura',             href: '/edilizia/indoratura'             },
       { id: 239, label: 'Pulizia Finale',         href: '/edilizia/pulizia-finale'         },
-      { id: 240, label: 'Piscine',                href: '/edilizia/piscine'                },
-      { id: 241, label: 'Solarium',               href: '/edilizia/solarium'               },
     ],
   },
   {
@@ -165,14 +146,21 @@ export const categoryGroups: CategoryGroup[] = [
 ]
 
 // Pagine spostate dal dropdown di categoria a un menu "flat" dedicato (es. Comfort
-// e Spazi Esterni): restano nell'array categoryGroups (serve al pannello admin
-// "Pagine visibili" per il toggle), ma non vengono più duplicate nel dropdown
-// della categoria di origine — l'URL sotto /serramenti/* non cambia.
-export const HIDDEN_FROM_CATEGORY: Record<string, number[]> = {
-  serramenti: [2082, 2081, 203, 2031, 210, 202, 204, 205],
-  metallurgia: [2124, 2125, 2126, 215, 214, 2201, 2202, 216, 217],
-  legno: [249],
-}
+// e Spazi Esterni): ora vivono con url e id propri sotto il proprio namespace
+// (vedi comfortSpaziEsterniPages ecc.) e sono state rimosse del tutto da
+// categoryGroups — questa mappa resta vuota finché non serve di nuovo il pattern
+// "stesso id, doppio punto di ingresso, url invariato".
+export const HIDDEN_FROM_CATEGORY: Record<string, number[]> = {}
+
+// Gruppi di categoryGroups nascosti dalla barra di navigazione principale (dropdown
+// desktop e sezione mobile), pur restando dentro categoryGroups per due motivi: le
+// sue sottopagine restano singolarmente attivabili/disattivabili dal pannello admin
+// "Pagine visibili", e la loro catena prev/next interna (getCategoryGroupNeighbors)
+// resta funzionante. La pagina hub (es. /edilizia) e le sue sottopagine restano
+// online e raggiungibili — cambia solo il punto di ingresso: non più un dropdown
+// di primo livello, ma un link dedicato altrove (es. dentro Ristrutturazioni Chiavi
+// in Mano), la cui visibilità si gestisce con l'id della voce in quel menu flat.
+export const HIDDEN_CATEGORY_GROUPS: string[] = ['edilizia']
 
 // Vicini (precedente/successivo) di una pagina in una categoryGroup, tenendo conto sia
 // di disabledPages sia di HIDDEN_FROM_CATEGORY (le pagine "spostate" non contano come
@@ -220,16 +208,16 @@ export function getStandaloneNeighbors(currentId: number, disabledPages: number[
 // Metalliche/Ristrutturazioni) sostituiti dal 2026-07-21: le pagine restano
 // online e raggiungibili via URL diretto, ma non più in nav/footer/admin.
 export const prodottiPages: NavPage[] = [
-  { id: 290, label: 'Infissi in Alluminio a Taglio Termico', href: '/serramenti/infissi-in-alluminio-taglio-termico'                     },
-  { id: 291, label: 'Infissi in PVC',           href: '/serramenti/infissi-in-pvc'                                                     },
-  { id: 292, label: 'Infissi in Legno',         href: '/legno/infissi-in-legno'                                                        },
-  { id: 293, label: 'Infissi in Legno-Alluminio', href: '/serramenti/infissi-in-legno-alluminio'                                       },
-  { id: 294, label: 'Persiane in Alluminio',    href: '/serramenti/persiane-in-alluminio'                                              },
-  { id: 295, label: 'Persiane in PVC',          href: '/serramenti/persiane-in-pvc'                                                    },
-  { id: 296, label: 'Monoblocchi',               href: '/serramenti/monoblocchi'                                                        },
-  { id: 297, label: 'Cassonetti in PVC',        href: '/serramenti/cassonetti-in-pvc'                                                  },
-  { id: 298, label: 'Tapparelle in Alluminio',  href: '/serramenti/tapparelle-in-alluminio'                                            },
-  { id: 299, label: 'Tapparelle in PVC',        href: '/serramenti/tapparelle-in-pvc'                                                  },
+  { id: 290, label: 'Infissi in Alluminio a Taglio Termico', href: '/riqualificazione-energetica/infissi-in-alluminio-taglio-termico'    },
+  { id: 291, label: 'Infissi in PVC',           href: '/riqualificazione-energetica/infissi-in-pvc'                                    },
+  { id: 292, label: 'Infissi in Legno',         href: '/riqualificazione-energetica/infissi-in-legno'                                  },
+  { id: 293, label: 'Infissi in Legno-Alluminio', href: '/riqualificazione-energetica/infissi-in-legno-alluminio'                      },
+  { id: 294, label: 'Persiane in Alluminio',    href: '/riqualificazione-energetica/persiane-in-alluminio'                             },
+  { id: 295, label: 'Persiane in PVC',          href: '/riqualificazione-energetica/persiane-in-pvc'                                   },
+  { id: 296, label: 'Monoblocchi',               href: '/riqualificazione-energetica/monoblocchi'                                       },
+  { id: 297, label: 'Cassonetti in PVC',        href: '/riqualificazione-energetica/cassonetti-in-pvc'                                 },
+  { id: 298, label: 'Tapparelle in Alluminio',  href: '/riqualificazione-energetica/tapparelle-in-alluminio'                           },
+  { id: 299, label: 'Tapparelle in PVC',        href: '/riqualificazione-energetica/tapparelle-in-pvc'                                 },
 ]
 
 // Vicini (precedente/successivo) di una pagina all'interno di una sequenza ordinata di
@@ -260,11 +248,13 @@ export const prodottiSubgroups: { label: string; pageIds: number[] }[] = [
 // che riusa le pagine reali già esistenti sotto Serramenti (stessi id/href: se una
 // pagina viene disabilitata dal pannello "Pagine visibili" sparisce da entrambe le nav).
 export const comfortSpaziEsterniPages: NavPage[] = [
-  { id: 2082, label: 'Vetrate Panoramiche',   href: '/serramenti/vetrate-panoramiche'   },
-  { id: 2081, label: 'Pergole Bioclimatiche', href: '/serramenti/pergole-bioclimatiche' },
-  { id: 203,  label: 'Verande in Alluminio',  href: '/serramenti/verande-in-alluminio'  },
-  { id: 2031, label: 'Verande in PVC',        href: '/serramenti/verande-in-pvc'        },
-  { id: 210,  label: 'Zanzariere',            href: '/serramenti/zanzariere'            },
+  { id: 2082, label: 'Vetrate Panoramiche',   href: '/comfort-e-spazi-esterni/vetrate-panoramiche'   },
+  { id: 2081, label: 'Pergole Bioclimatiche', href: '/comfort-e-spazi-esterni/pergole-bioclimatiche' },
+  { id: 203,  label: 'Verande in Alluminio',  href: '/comfort-e-spazi-esterni/verande-in-alluminio'  },
+  { id: 2031, label: 'Verande in PVC',        href: '/comfort-e-spazi-esterni/verande-in-pvc'        },
+  { id: 210,  label: 'Zanzariere',            href: '/comfort-e-spazi-esterni/zanzariere'            },
+  { id: 240,  label: 'Piscine',               href: '/comfort-e-spazi-esterni/piscine'               },
+  { id: 241,  label: 'Solarium',              href: '/comfort-e-spazi-esterni/solarium'              },
 ]
 
 export function getComfortNeighbors(currentId: number, disabledPages: number[]) {
@@ -274,11 +264,11 @@ export function getComfortNeighbors(currentId: number, disabledPages: number[]) 
 // Pagine "Antintrusione e Sicurezza": voce di menu nuova, flat, che riusa le pagine
 // reali già esistenti sotto Metallurgia (stessi id/href, stesso principio di comfortSpaziEsterniPages).
 export const antintrusioneSicurezzaPages: NavPage[] = [
-  { id: 2124, label: 'Porte Blindate Riv. Legno',      href: '/metallurgia/porte-blindate-legno'      },
-  { id: 2125, label: 'Porte Blindate Riv. Alluminio',  href: '/metallurgia/porte-blindate-alluminio'  },
-  { id: 2126, label: 'Porte Blindate Riv. PVC',        href: '/metallurgia/porte-blindate-pvc'        },
-  { id: 215,  label: 'Grate',          href: '/metallurgia/grate'          },
-  { id: 214,  label: 'Cancelli',       href: '/metallurgia/cancelli'       },
+  { id: 2124, label: 'Porte Blindate Riv. Legno',      href: '/antintrusione-e-sicurezza/porte-blindate-legno'      },
+  { id: 2125, label: 'Porte Blindate Riv. Alluminio',  href: '/antintrusione-e-sicurezza/porte-blindate-alluminio'  },
+  { id: 2126, label: 'Porte Blindate Riv. PVC',        href: '/antintrusione-e-sicurezza/porte-blindate-pvc'        },
+  { id: 215,  label: 'Grate',          href: '/antintrusione-e-sicurezza/grate'          },
+  { id: 214,  label: 'Cancelli',       href: '/antintrusione-e-sicurezza/cancelli'       },
 ]
 
 export function getAntintrusioneNeighbors(currentId: number, disabledPages: number[]) {
@@ -288,25 +278,28 @@ export function getAntintrusioneNeighbors(currentId: number, disabledPages: numb
 // Pagine "Carpenteria d'Arredo": voce di menu nuova, flat, che riusa le pagine
 // reali già esistenti sotto Metallurgia (stessi id/href, stesso principio delle voci sopra).
 export const carpenteriaArredoPages: NavPage[] = [
-  { id: 2201, label: 'Scale a Rampe',     href: '/metallurgia/scale-a-rampe'     },
-  { id: 2202, label: 'Scale a Chiocciola', href: '/metallurgia/scale-a-chiocciola' },
-  { id: 216,  label: 'Ringhiere',         href: '/metallurgia/ringhiere'         },
-  { id: 217,  label: 'Balconi',           href: '/metallurgia/balconi'           },
+  { id: 2201, label: 'Scale a Rampe',     href: '/carpenteria-arredo/scale-a-rampe'     },
+  { id: 2202, label: 'Scale a Chiocciola', href: '/carpenteria-arredo/scale-a-chiocciola' },
+  { id: 216,  label: 'Ringhiere',         href: '/carpenteria-arredo/ringhiere'         },
+  { id: 217,  label: 'Balconi',           href: '/carpenteria-arredo/balconi'           },
 ]
 
 export function getCarpenteriaNeighbors(currentId: number, disabledPages: number[]) {
   return getSectionNeighbors(carpenteriaArredoPages, currentId, disabledPages)
 }
 
-// Pagine "Ristrutturazioni Chiavi in Mano": voce di menu nuova, flat. Edilizia e Arredo
-// riusano gli hub categoria già esistenti; Pratiche/Impianti/Mobili sono pagine nuove
-// generiche/segnaposto (2026-07-21), contenuto e collegamenti da definire in seguito.
+// Pagine "Ristrutturazioni Chiavi in Mano": voce di menu nuova, flat. Edilizia riusa
+// l'hub categoria già esistente (link di scorciatoia, non una pagina "prestata": Edilizia
+// resta proprietaria della sua url); Pratiche/Impianti sono pagine nuove generiche/
+// segnaposto (2026-07-21), contenuto e collegamenti da definire in seguito.
+// "Arredi" è stato rimosso (2026-08-12): aveva già una propria voce di nav dedicata,
+// il link di scorciatoia qui era ridondante. "Mobili" è stato spostato sotto Legno
+// come pagina vera e propria ("Mobili su Misura", id 303 riusato) invece di restare
+// un segnaposto senza categoria — vedi categoryGroups.legno.
 export const ristrutturazioniChiaviInManoPages: NavPage[] = [
   { id: 300, label: 'Pratiche',  href: '/ristrutturazioni-chiavi-in-mano/pratiche' },
   { id: 301, label: 'Edilizia',  href: '/edilizia'                                 },
   { id: 302, label: 'Impianti',  href: '/ristrutturazioni-chiavi-in-mano/impianti' },
-  { id: 303, label: 'Mobili',    href: '/ristrutturazioni-chiavi-in-mano/mobili'   },
-  { id: 304, label: 'Arredi',    href: '/arredi'                                   },
 ]
 
 export function getRistrutturazioniNeighbors(currentId: number, disabledPages: number[]) {

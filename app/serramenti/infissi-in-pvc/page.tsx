@@ -20,12 +20,12 @@ import ShortcutStar from '@/components/shortcut-star'
 export const metadata: Metadata = {
   title: 'Infissi in PVC a Palermo — Multicamera Alta Efficienza',
   description: 'Infissi in PVC a Palermo: finestre e porte-finestre multicamera con trasmittanza fino a 0,8 W/m²K. Isolamento termico e acustico superiore. Preventivo gratuito.',
-  alternates: { canonical: 'https://www.digi-home-design.com/serramenti/infissi-in-pvc' },
+  alternates: { canonical: 'https://www.digi-home-design.com/riqualificazione-energetica/infissi-in-pvc' },
   robots: { index: true, follow: true },
   openGraph: {
     title: 'Infissi in PVC a Palermo — Multicamera Alta Efficienza',
     description: 'Infissi in PVC a Palermo: finestre e porte-finestre multicamera con trasmittanza fino a 0,8 W/m²K. Isolamento termico e acustico superiore. Preventivo gratuito.',
-    url: 'https://www.digi-home-design.com/serramenti/infissi-in-pvc',
+    url: 'https://www.digi-home-design.com/riqualificazione-energetica/infissi-in-pvc',
     type: 'website',
   },
 }
@@ -155,7 +155,7 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Infissi in PVC<ShortcutStar />
+        <span style={{ color: '#888' }}>Riqualificazione Energetica</span> / Infissi in PVC<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Infissi in PVC a Palermo</h1>
 
@@ -222,7 +222,7 @@ export default async function Page() {
         )}
 
         <StickyBottomBarContent>
-          <Link href="/serramenti" className="btn-black fs-12">← Serramenti</Link>
+          <NavDropdownTriggerButton dropdownId="prodotti" label="← Riqualificazione Energetica" />
           {prev ? <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link> : <Link href="/" className="btn-gold fs-12">← Home</Link>}
           <CtaPreventivo />
           <CtaCantiere />
@@ -232,7 +232,7 @@ export default async function Page() {
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>{(() => {
         const cerca = catalogo
           ? `${catalogo.categoria.nome}`
-          : 'serramenti/infissi-in-pvc/non trovata'
+          : 'riqualificazione-energetica/infissi-in-pvc/non trovata'
         const trova = catalogo && catalogo.voci.length > 0
           ? catalogo.voci.map(v => `(${v.nome}:${v.serie}:${v.pdf_label})/${v.sottocategoria ?? 'nessuno'}`).join('+')
           : 'nessuno'

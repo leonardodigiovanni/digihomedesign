@@ -14,16 +14,17 @@ import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import ShortcutStar from '@/components/shortcut-star'
 import { readSettings } from '@/lib/settings'
 import { getCarpenteriaNeighbors } from '@/lib/nav-config'
+import NavDropdownTriggerButton from '@/components/nav-dropdown-trigger-button'
 
 export const metadata: Metadata = {
   title: 'Ringhiere a Palermo — Scale e Balconi in Ferro e Acciaio Inox',
   description: 'Ringhiere su misura a Palermo per scale interne, balconi e terrazze: ferro battuto, acciaio inox, alluminio e vetro. Design classico e moderno.',
-  alternates: { canonical: 'https://www.digi-home-design.com/metallurgia/ringhiere' },
+  alternates: { canonical: 'https://www.digi-home-design.com/carpenteria-arredo/ringhiere' },
   robots: { index: true, follow: true },
   openGraph: {
     title: 'Ringhiere a Palermo — Scale e Balconi in Ferro e Acciaio Inox',
     description: 'Ringhiere su misura a Palermo per scale interne, balconi e terrazze: ferro battuto, acciaio inox, alluminio e vetro. Design classico e moderno.',
-    url: 'https://www.digi-home-design.com/metallurgia/ringhiere',
+    url: 'https://www.digi-home-design.com/carpenteria-arredo/ringhiere',
     type: 'website',
   },
 }
@@ -120,7 +121,7 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/metallurgia" style={{ color: '#888', textDecoration: 'underline' }}>Metallurgia</Link> / Ringhiere<ShortcutStar />
+        <span style={{ color: '#888' }}>Carpenteria d&apos;Arredo</span> / Ringhiere<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Ringhiere a Palermo</h1>
 
@@ -167,7 +168,7 @@ export default async function Page() {
         )}
 
         <StickyBottomBarContent>
-          <Link href="/metallurgia" className="btn-black fs-12">← Metallurgia</Link>
+          <NavDropdownTriggerButton dropdownId="carpenteria" label="← Carpenteria d'Arredo" />
           {prev && <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link>}
           <CtaPreventivo />
           <CtaCantiere />

@@ -20,12 +20,12 @@ import ShortcutStar from '@/components/shortcut-star'
 export const metadata: Metadata = {
   title: 'Infissi in Legno-Alluminio a Palermo — Su Misura',
   description: 'Infissi in legno-alluminio a Palermo: interno in legno naturale, esterno in alluminio resistente agli agenti atmosferici. Massimo comfort e zero manutenzione esterna.',
-  alternates: { canonical: 'https://www.digi-home-design.com/serramenti/infissi-in-legno-alluminio' },
+  alternates: { canonical: 'https://www.digi-home-design.com/riqualificazione-energetica/infissi-in-legno-alluminio' },
   robots: { index: true, follow: true },
   openGraph: {
     title: 'Infissi in Legno-Alluminio a Palermo — Su Misura',
     description: 'Infissi in legno-alluminio a Palermo: interno in legno naturale, esterno in alluminio resistente agli agenti atmosferici. Massimo comfort e zero manutenzione esterna.',
-    url: 'https://www.digi-home-design.com/serramenti/infissi-in-legno-alluminio',
+    url: 'https://www.digi-home-design.com/riqualificazione-energetica/infissi-in-legno-alluminio',
     type: 'website',
   },
 }
@@ -155,7 +155,7 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Infissi in Legno-Alluminio<ShortcutStar />
+        <span style={{ color: '#888' }}>Riqualificazione Energetica</span> / Infissi in Legno-Alluminio<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Infissi in Legno-Alluminio a Palermo</h1>
 
@@ -205,7 +205,7 @@ export default async function Page() {
         )}
 
         <StickyBottomBarContent>
-          <Link href="/serramenti" className="btn-black fs-12">← Serramenti</Link>
+          <NavDropdownTriggerButton dropdownId="prodotti" label="← Riqualificazione Energetica" />
           {prev ? <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link> : <Link href="/" className="btn-gold fs-12">← Home</Link>}
           <CtaPreventivo />
           <CtaCantiere />

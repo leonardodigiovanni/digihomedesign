@@ -219,46 +219,46 @@ export default async function Page() {
         */}
 
         {/* ── Serramenti ── */}
-        {ok('/serramenti/infissi-in-alluminio-taglio-termico') && (
-        <Link href="/serramenti/infissi-in-alluminio-taglio-termico" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+        {ok('/riqualificazione-energetica/infissi-in-alluminio-taglio-termico') && (
+        <Link href="/riqualificazione-energetica/infissi-in-alluminio-taglio-termico" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
           <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill priority src="/images/serramenti/infissi-in-alluminio/porta-finestra-2-ante.webp" alt="Infissi Alluminio Taglio Termico" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Infissi Alluminio Taglio Termico</span></div>
         </Link>
         )}
-        {ok('/serramenti/infissi-in-pvc') && (
-        <Link href="/serramenti/infissi-in-pvc" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+        {ok('/riqualificazione-energetica/infissi-in-pvc') && (
+        <Link href="/riqualificazione-energetica/infissi-in-pvc" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
           <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/infissi-in-pvc/PVC.webp" alt="Infissi in PVC" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Infissi PVC</span></div>
         </Link>
         )}
-        {ok('/serramenti/verande-in-alluminio') && (
-        <Link href="/serramenti/verande-in-alluminio" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+        {ok('/comfort-e-spazi-esterni/verande-in-alluminio') && (
+        <Link href="/comfort-e-spazi-esterni/verande-in-alluminio" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
           <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/verande-in-alluminio/veranda.webp" alt="Verande in Alluminio" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Verande Alluminio</span></div>
         </Link>
         )}
         {/*
-        {ok('/serramenti/verande-in-pvc') && (
-        <Link href="/serramenti/verande-in-pvc" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+        {ok('/comfort-e-spazi-esterni/verande-in-pvc') && (
+        <Link href="/comfort-e-spazi-esterni/verande-in-pvc" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
           <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/carousel/casa-ristrutturata-4.webp" alt="Verande in PVC" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Verande in PVC</span></div>
         </Link>
         )}
         */}
-        {ok('/serramenti/persiane-in-alluminio') && (
-        <Link href="/serramenti/persiane-in-alluminio" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+        {ok('/riqualificazione-energetica/persiane-in-alluminio') && (
+        <Link href="/riqualificazione-energetica/persiane-in-alluminio" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
           <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/persiane-in-alluminio/persiana.webp" alt="Persiane in Alluminio" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Persiane Alluminio</span></div>
         </Link>
         )}
-        {ok('/serramenti/monoblocchi') && (
-        <Link href="/serramenti/monoblocchi" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+        {ok('/riqualificazione-energetica/monoblocchi') && (
+        <Link href="/riqualificazione-energetica/monoblocchi" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
           <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/monoblocchi/monoblocco-persiana.webp" alt="Monoblocchi" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Sistemi Monoblocco</span></div>
         </Link>
         )}
-        {ok('/serramenti/tapparelle-in-alluminio') && (
-        <Link href="/serramenti/tapparelle-in-alluminio" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+        {ok('/riqualificazione-energetica/tapparelle-in-alluminio') && (
+        <Link href="/riqualificazione-energetica/tapparelle-in-alluminio" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
           <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/tapparelle-manuali/tapparelle.webp" alt="Tapparelle in Alluminio" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Tapparelle Alluminio & PVC</span></div>
         </Link>
@@ -287,8 +287,8 @@ export default async function Page() {
         </Link>
         )}
         */}
-        {ok('/serramenti/zanzariere') && (
-        <Link href="/serramenti/zanzariere" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+        {ok('/comfort-e-spazi-esterni/zanzariere') && (
+        <Link href="/comfort-e-spazi-esterni/zanzariere" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
           <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/zanzariere/zanzariera%20sc.webp" alt="Zanzariere" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Zanzariere</span></div>
         </Link>
@@ -299,8 +299,8 @@ export default async function Page() {
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Vetrate Panoramiche</span></div>
         </Link>
         )}
-        {ok('/serramenti/pergole-bioclimatiche') && (
-        <Link href="/serramenti/pergole-bioclimatiche" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+        {ok('/comfort-e-spazi-esterni/pergole-bioclimatiche') && (
+        <Link href="/comfort-e-spazi-esterni/pergole-bioclimatiche" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
           <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/serramenti/pergole-bioclimatiche/pergole.webp" alt="Pergole Bioclimatiche" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Pergole Bioclimatiche</span></div>
         </Link>
@@ -350,8 +350,8 @@ export default async function Page() {
         */}
 
         {/*
-        {ok('/metallurgia/cancelli') && (
-        <Link href="/metallurgia/cancelli" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+        {ok('/antintrusione-e-sicurezza/cancelli') && (
+        <Link href="/antintrusione-e-sicurezza/cancelli" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
           <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/carousel/casa-ristrutturata-2.webp" alt="Cancelli" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Cancelli</span></div>
         </Link>
@@ -359,8 +359,8 @@ export default async function Page() {
         */}
 
         {/*
-        {ok('/metallurgia/grate') && (
-        <Link href="/metallurgia/grate" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+        {ok('/antintrusione-e-sicurezza/grate') && (
+        <Link href="/antintrusione-e-sicurezza/grate" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
           <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/carousel/casa-ristrutturata-3.webp" alt="Grate" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Grate</span></div>
         </Link>
@@ -368,8 +368,8 @@ export default async function Page() {
         */}
 
         {/*
-        {ok('/metallurgia/ringhiere') && (
-        <Link href="/metallurgia/ringhiere" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+        {ok('/carpenteria-arredo/ringhiere') && (
+        <Link href="/carpenteria-arredo/ringhiere" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
           <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/carousel/casa-ristrutturata-4.webp" alt="Ringhiere" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Ringhiere</span></div>
         </Link>
@@ -377,8 +377,8 @@ export default async function Page() {
         */}
 
         {/*
-        {ok('/metallurgia/balconi') && (
-        <Link href="/metallurgia/balconi" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+        {ok('/carpenteria-arredo/balconi') && (
+        <Link href="/carpenteria-arredo/balconi" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
           <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/carousel/casa-ristrutturata-5.webp" alt="Balconi" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Balconi</span></div>
         </Link>
@@ -413,8 +413,8 @@ export default async function Page() {
         */}
 
         {/*
-        {ok('/metallurgia/scale-a-rampe') && (
-        <Link href="/metallurgia/scale-a-rampe" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+        {ok('/carpenteria-arredo/scale-a-rampe') && (
+        <Link href="/carpenteria-arredo/scale-a-rampe" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
           <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/carousel/casa-ristrutturata-1.webp" alt="Scale a Rampe" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Scale a Rampe</span></div>
         </Link>
@@ -423,8 +423,8 @@ export default async function Page() {
 
 
         {/*
-        {ok('/metallurgia/scale-a-chiocciola') && (
-        <Link href="/metallurgia/scale-a-chiocciola" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+        {ok('/carpenteria-arredo/scale-a-chiocciola') && (
+        <Link href="/carpenteria-arredo/scale-a-chiocciola" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
           <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/carousel/casa-ristrutturata-2.webp" alt="Scale a Chiocciola" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Scale a Chiocciola</span></div>
         </Link>
@@ -599,15 +599,15 @@ export default async function Page() {
         </Link>
         )}
         */} {/*
-        {ok('/edilizia/piscine') && (
-        <Link href="/edilizia/piscine" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+        {ok('/comfort-e-spazi-esterni/piscine') && (
+        <Link href="/comfort-e-spazi-esterni/piscine" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
           <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/carousel/casa-ristrutturata-1.webp" alt="Piscine" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Piscine</span></div>
         </Link>
         )}
         */} {/*
-        {ok('/edilizia/solarium') && (
-        <Link href="/edilizia/solarium" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+        {ok('/comfort-e-spazi-esterni/solarium') && (
+        <Link href="/comfort-e-spazi-esterni/solarium" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
           <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/carousel/casa-ristrutturata-2.webp" alt="Solarium" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Solarium</span></div>
         </Link>
@@ -665,8 +665,8 @@ export default async function Page() {
         </Link>
         )}
         */} {/*
-        {ok('/legno/infissi-in-legno') && (
-        <Link href="/legno/infissi-in-legno" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
+        {ok('/riqualificazione-energetica/infissi-in-legno') && (
+        <Link href="/riqualificazione-energetica/infissi-in-legno" className="page-card" style={{ flex: '1 1 260px', maxWidth: 300 }}>
           <div style={{ position: 'relative', height: 220, width: '100%' }}><Image fill src="/images/carousel/casa-ristrutturata-2.webp" alt="Infissi in Legno" sizes="(max-width:640px) calc(100vw - 40px),(max-width:1200px) calc(50vw - 30px),calc(33vw - 30px)" style={{ objectFit: 'cover' }} /></div>
           <div style={{ padding: '14px 16px' }}><span className="testo-articoli">Infissi in Legno</span></div>
         </Link>

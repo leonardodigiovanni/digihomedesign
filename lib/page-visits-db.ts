@@ -1,5 +1,5 @@
 import { getConnection } from '@/lib/db'
-import { categoryGroups, clientPages, prodottiPages, areaClientiPages, aiutoPages, matchesPage } from '@/lib/nav-config'
+import { categoryGroups, clientPages, standalonePages, prodottiPages, comfortSpaziEsterniPages, antintrusioneSicurezzaPages, carpenteriaArredoPages, ristrutturazioniChiaviInManoPages, areaClientiPages, aiutoPages, matchesPage } from '@/lib/nav-config'
 
 export type VisitBucket = 'sloggato' | 'cliente'
 
@@ -74,13 +74,20 @@ export async function getVisitStats(): Promise<Record<string, PageVisitStats>> {
 }
 
 // Href "canoniche" note al pannello Pagine visibili (hub categoria + sotto-pagine
-// + Brand + Prodotti + Area Personale + Aiuto), ordinate dalla più lunga alla più
-// corta così una sotto-pagina dinamica combacia sempre con la voce più specifica.
+// + Brand + Voci singole + Prodotti + i menu flat (Comfort/Antintrusione/Carpenteria/
+// Ristrutturazioni, aggiunti 2026-08-12 — mancavano, le visite a quelle pagine non
+// risultavano riconosciute) + Area Personale + Aiuto), ordinate dalla più lunga alla
+// più corta così una sotto-pagina dinamica combacia sempre con la voce più specifica.
 const KNOWN_PAGE_HREFS: string[] = [
   ...categoryGroups.map(g => g.href),
   ...categoryGroups.flatMap(g => g.pages.map(p => p.href)),
   ...clientPages.map(p => p.href),
+  ...standalonePages.map(p => p.href),
   ...prodottiPages.map(p => p.href),
+  ...comfortSpaziEsterniPages.map(p => p.href),
+  ...antintrusioneSicurezzaPages.map(p => p.href),
+  ...carpenteriaArredoPages.map(p => p.href),
+  ...ristrutturazioniChiaviInManoPages.map(p => p.href),
   ...areaClientiPages.map(p => p.href),
   ...aiutoPages.map(p => p.href),
 ].sort((a, b) => b.length - a.length)

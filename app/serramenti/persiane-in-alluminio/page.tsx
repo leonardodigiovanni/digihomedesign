@@ -18,14 +18,14 @@ import NavDropdownTriggerButton from '@/components/nav-dropdown-trigger-button'
 import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = {
-  title: 'Persiane in Alluminio a Palermo â€” Su Misura per Ogni Apertura',
+  title: 'Persiane in Alluminio a Palermo — Su Misura per Ogni Apertura',
   description: 'Persiane in alluminio a Palermo su misura: a battente, scorrevoli, a pannelli e a libro. Profili verniciati a polvere in ogni colore RAL, stecche fisse o orientabili.',
-  alternates: { canonical: 'https://www.digi-home-design.com/serramenti/persiane-in-alluminio' },
+  alternates: { canonical: 'https://www.digi-home-design.com/riqualificazione-energetica/persiane-in-alluminio' },
   robots: { index: true, follow: true },
   openGraph: {
-    title: 'Persiane in Alluminio a Palermo â€” Su Misura per Ogni Apertura',
+    title: 'Persiane in Alluminio a Palermo — Su Misura per Ogni Apertura',
     description: 'Persiane in alluminio a Palermo su misura: a battente, scorrevoli, a pannelli e a libro. Profili verniciati a polvere in ogni colore RAL, stecche fisse o orientabili.',
-    url: 'https://www.digi-home-design.com/serramenti/persiane-in-alluminio',
+    url: 'https://www.digi-home-design.com/riqualificazione-energetica/persiane-in-alluminio',
     type: 'website',
   },
 }
@@ -146,7 +146,7 @@ export default async function Page() {
         const parts = [p.numero || `#${p.id}`]
         if (p.cliente_nome) parts.push(p.cliente_nome)
         if (p.descrizione) parts.push(p.descrizione)
-        return { id: p.id, label: parts.join(' â€” ') }
+        return { id: p.id, label: parts.join(' — ') }
       })
     } catch {}
     finally { await db2.end() }
@@ -155,7 +155,7 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Persiane in Alluminio<ShortcutStar />
+        <span style={{ color: '#888' }}>Riqualificazione Energetica</span> / Persiane in Alluminio<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Persiane in Alluminio a Palermo</h1>
 
@@ -222,7 +222,7 @@ export default async function Page() {
         )}
 
         <StickyBottomBarContent>
-          <Link href="/serramenti" className="btn-black fs-12">← Serramenti</Link>
+          <NavDropdownTriggerButton dropdownId="prodotti" label="← Riqualificazione Energetica" />
           {prev ? <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link> : <Link href="/" className="btn-gold fs-12">← Home</Link>}
           <CtaPreventivo />
           <CtaCantiere />
@@ -232,7 +232,7 @@ export default async function Page() {
       <p className="IsDebug fs-11" style={{ marginTop: 8 }}>{(() => {
         const cerca = catalogo
           ? `${catalogo.categoria.nome}`
-          : 'serramenti/persiane-in-alluminio/non trovata'
+          : 'riqualificazione-energetica/persiane-in-alluminio/non trovata'
         const trova = catalogo && catalogo.voci.length > 0
           ? catalogo.voci.map(v => `(${v.nome}:${v.serie}:${v.pdf_label})/${v.sottocategoria ?? 'nessuno'}`).join('+')
           : 'nessuno'

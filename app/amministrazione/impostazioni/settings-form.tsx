@@ -3,7 +3,7 @@
 import { useActionState, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { saveSettings, saveHeaderBg, saveFooterBg, savePageBg, saveDisabledPages, saveAccessControls, saveRolePermissions, type SaveResult, type SaveBgResult, type SaveAccessResult } from './actions'
-import { clientPages, standalonePages, internalPages, categoryGroups, areaClientiPages, aiutoPages, prodottiPages, clientiDipendentiPages, fornitoriDipendentiPages } from '@/lib/nav-config'
+import { clientPages, standalonePages, internalPages, categoryGroups, areaClientiPages, aiutoPages, prodottiPages, prodottiSubgroups, comfortSpaziEsterniPages, antintrusioneSicurezzaPages, carpenteriaArredoPages, ristrutturazioniChiaviInManoPages, clientiDipendentiPages, fornitoriDipendentiPages } from '@/lib/nav-config'
 import FlashSuccess from '@/components/flash-success'
 import type { Rgba, BgMode } from '@/lib/settings'
 import { rgbGradient, rgbGradientInv, rgbBrushedBackground, rgbBrushedBackgroundInv, rgbLuminance } from '@/lib/bg-utils'
@@ -455,11 +455,18 @@ function formatPageStats(
   return `${v.sloggato}/${v.cliente} · ${s.attive}/${s.cancellate} · ${Math.round(v.minuti)}min`
 }
 
-// Tutti i gruppi di pagine pubbliche con i loro ID
-const PAGE_GROUPS: { label: string; hubHref?: string; pages: { id: number; label: string; href: string }[] }[] = [
+// Tutti i gruppi di pagine pubbliche con i loro ID. "subgroups" è opzionale: se presente,
+// il gruppo viene reso come più mini-liste con una sotto-intestazione ciascuna invece di
+// un'unica griglia piatta (usato per Riqualificazione Energetica, che nel menu pubblico è
+// già suddivisa in due sottogruppi — vedi prodottiSubgroups).
+const PAGE_GROUPS: { label: string; hubHref?: string; pages: { id: number; label: string; href: string }[]; subgroups?: { label: string; pageIds: number[] }[] }[] = [
   { label: 'Chi Siamo',    hubHref: '/chi-siamo', pages: clientPages },
   { label: 'Voci singole', pages: standalonePages },
-  { label: 'Riqualificazione Energetica', pages: prodottiPages },
+  { label: 'Riqualificazione Energetica', pages: prodottiPages, subgroups: prodottiSubgroups },
+  { label: 'Comfort e Spazi Esterni', pages: comfortSpaziEsterniPages },
+  { label: 'Antintrusione e Sicurezza', pages: antintrusioneSicurezzaPages },
+  { label: "Carpenteria d'Arredo", pages: carpenteriaArredoPages },
+  { label: 'Ristrutturazioni Chiavi in Mano', pages: ristrutturazioniChiaviInManoPages },
   ...categoryGroups.map(g => ({ label: g.label, hubHref: g.href, pages: g.pages })),
   { label: 'Area Personale', pages: areaClientiPages },
   { label: 'Aiuto',        pages: aiutoPages },
@@ -497,6 +504,10 @@ function PagesPanel({ disabledPages, visitStats, shortcutStats }: {
     letterSpacing: '0.07em', marginBottom: 6, paddingBottom: 4,
     borderBottom: '1px solid #e8e8e8', whiteSpace: 'nowrap',
   }
+  const subHeaderStyle: React.CSSProperties = {
+    fontSize: 10, fontWeight: 700, color: '#aaa', textTransform: 'uppercase',
+    letterSpacing: '0.05em', marginBottom: 4, whiteSpace: 'nowrap',
+  }
 
   return (
     <form action={formAction} style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -518,22 +529,44 @@ function PagesPanel({ disabledPages, visitStats, shortcutStats }: {
                     </span>
                   )}
                 </div>
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: twoCol ? 'repeat(2, auto)' : '1fr',
-                  gap: '4px 12px',
-                }}>
-                  {g.pages.map(p => (
-                    <CheckRow
-                      key={p.id}
-                      label={p.label}
-                      stats={formatPageStats(p.href, visitStats, shortcutStats)}
-                      checked={pages[p.id] ?? true}
-                      onChange={v => setPages(prev => ({ ...prev, [p.id]: v }))}
-                      name={`page_${p.id}`}
-                    />
-                  ))}
-                </div>
+                {g.subgroups ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    {g.subgroups.map(sg => (
+                      <div key={sg.label}>
+                        <div style={subHeaderStyle}>{sg.label}</div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '4px 12px' }}>
+                          {g.pages.filter(p => sg.pageIds.includes(p.id)).map(p => (
+                            <CheckRow
+                              key={p.id}
+                              label={p.label}
+                              stats={formatPageStats(p.href, visitStats, shortcutStats)}
+                              checked={pages[p.id] ?? true}
+                              onChange={v => setPages(prev => ({ ...prev, [p.id]: v }))}
+                              name={`page_${p.id}`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: twoCol ? 'repeat(2, auto)' : '1fr',
+                    gap: '4px 12px',
+                  }}>
+                    {g.pages.map(p => (
+                      <CheckRow
+                        key={p.id}
+                        label={p.label}
+                        stats={formatPageStats(p.href, visitStats, shortcutStats)}
+                        checked={pages[p.id] ?? true}
+                        onChange={v => setPages(prev => ({ ...prev, [p.id]: v }))}
+                        name={`page_${p.id}`}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
             )
           })}

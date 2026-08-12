@@ -6,6 +6,7 @@ import CtaCantiere from '@/components/cta-cantiere'
 import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import { readSettings } from '@/lib/settings'
 import { getCategoryGroupNeighbors } from '@/lib/nav-config'
+import NavDropdownTriggerButton from '@/components/nav-dropdown-trigger-button'
 import ShortcutStar from '@/components/shortcut-star'
 
 export const metadata: Metadata = {
@@ -63,7 +64,7 @@ export default async function Page() {
           {prev && <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link>}
           <CtaPreventivo />
           <CtaCantiere />
-          {next && <Link href={next.href} className="btn-blue fs-12">{next.label} →</Link>}
+          {next ? <Link href={next.href} className="btn-blue fs-12">{next.label} →</Link> : <NavDropdownTriggerButton dropdownId="cat-elettricita" label="Elettricità →" />}
           <Link href="/chi-siamo/contatti" className="btn-black fs-12">Chiedi info</Link>
         </StickyBottomBarContent>
       </div>

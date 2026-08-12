@@ -12,12 +12,12 @@ import NavDropdownTriggerButton from '@/components/nav-dropdown-trigger-button'
 export const metadata: Metadata = {
   title: 'Vetrate Panoramiche a Palermo — Pareti Vetrate Scorrevoli su Misura',
   description: 'Vetrate panoramiche a Palermo: pareti vetrate scorrevoli e pieghevoli in alluminio a taglio termico per aprire verande, terrazzi e soggiorni sul giardino, senza montanti a vista.',
-  alternates: { canonical: 'https://www.digi-home-design.com/serramenti/vetrate-panoramiche' },
+  alternates: { canonical: 'https://www.digi-home-design.com/comfort-e-spazi-esterni/vetrate-panoramiche' },
   robots: { index: true, follow: true },
   openGraph: {
     title: 'Vetrate Panoramiche a Palermo — Pareti Vetrate Scorrevoli su Misura',
     description: 'Vetrate panoramiche a Palermo: pareti vetrate scorrevoli e pieghevoli in alluminio a taglio termico per aprire verande, terrazzi e soggiorni sul giardino, senza montanti a vista.',
-    url: 'https://www.digi-home-design.com/serramenti/vetrate-panoramiche',
+    url: 'https://www.digi-home-design.com/comfort-e-spazi-esterni/vetrate-panoramiche',
     type: 'website',
   },
 }
@@ -28,7 +28,7 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Vetrate Panoramiche<ShortcutStar />
+        <span style={{ color: '#888' }}>Comfort e Spazi Esterni</span> / Vetrate Panoramiche<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Vetrate Panoramiche a Palermo</h1>
 
@@ -60,7 +60,7 @@ export default async function Page() {
         </div>
 
         <StickyBottomBarContent>
-          <Link href="/serramenti" className="btn-black fs-12">← Serramenti</Link>
+          <NavDropdownTriggerButton dropdownId="comfort" label="← Comfort e Spazi Esterni" />
           {prev ? <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link> : <NavDropdownTriggerButton dropdownId="prodotti" label="← Riqualificazione Energetica" />}
           <CtaPreventivo />
           <CtaCantiere />

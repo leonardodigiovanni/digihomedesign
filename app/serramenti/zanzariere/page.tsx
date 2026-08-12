@@ -20,12 +20,12 @@ import ShortcutStar from '@/components/shortcut-star'
 export const metadata: Metadata = {
   title: 'Zanzariere a Palermo â€” A Rullo, PlissÃ© e Telaio Fisso su Misura',
   description: 'Zanzariere su misura a Palermo: a rullo verticale, plissÃ©, a telaio fisso e scorrevoli. Per finestre, porte e aperture di qualsiasi dimensione. Posa inclusa.',
-  alternates: { canonical: 'https://www.digi-home-design.com/serramenti/zanzariere' },
+  alternates: { canonical: 'https://www.digi-home-design.com/comfort-e-spazi-esterni/zanzariere' },
   robots: { index: true, follow: true },
   openGraph: {
     title: 'Zanzariere a Palermo â€” A Rullo, PlissÃ© e Telaio Fisso su Misura',
     description: 'Zanzariere su misura a Palermo: a rullo verticale, plissÃ©, a telaio fisso e scorrevoli. Per finestre, porte e aperture di qualsiasi dimensione. Posa inclusa.',
-    url: 'https://www.digi-home-design.com/serramenti/zanzariere',
+    url: 'https://www.digi-home-design.com/comfort-e-spazi-esterni/zanzariere',
     type: 'website',
   },
 }
@@ -155,7 +155,7 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Zanzariere<ShortcutStar />
+        <span style={{ color: '#888' }}>Comfort e Spazi Esterni</span> / Zanzariere<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Zanzariere a Palermo</h1>
 
@@ -205,7 +205,7 @@ export default async function Page() {
         )}
 
         <StickyBottomBarContent>
-          <Link href="/serramenti" className="btn-black fs-12">← Serramenti</Link>
+          <NavDropdownTriggerButton dropdownId="comfort" label="← Comfort e Spazi Esterni" />
           {prev && <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link>}
           <CtaPreventivo />
           <CtaCantiere />

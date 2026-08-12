@@ -61,7 +61,7 @@ export default async function Page() {
 
         <StickyBottomBarContent>
           <Link href="/elettricita" className="btn-black fs-12">← Elettricità</Link>
-          {prev ? <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link> : <NavDropdownTriggerButton dropdownId="cat-edilizia" label="← Edilizia" />}
+          {prev ? <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link> : <NavDropdownTriggerButton dropdownId="cat-legno" label="← Legno" />}
           <CtaPreventivo />
           <CtaCantiere />
           {next && <Link href={next.href} className="btn-blue fs-12">{next.label} →</Link>}

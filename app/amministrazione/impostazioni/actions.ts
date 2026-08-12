@@ -4,7 +4,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { writeSettings, readSettings, type Rgba, type BgMode } from '@/lib/settings'
 import { ALL_ROLES } from '@/lib/permissions'
-import { internalPages, clientPages, categoryGroups, areaClientiPages, aiutoPages, prodottiPages, clientiDipendentiPages, fornitoriDipendentiPages } from '@/lib/nav-config'
+import { internalPages, clientPages, standalonePages, categoryGroups, areaClientiPages, aiutoPages, prodottiPages, comfortSpaziEsterniPages, antintrusioneSicurezzaPages, carpenteriaArredoPages, ristrutturazioniChiaviInManoPages, clientiDipendentiPages, fornitoriDipendentiPages } from '@/lib/nav-config'
 
 export type SaveResult =
   | { ok: true; inactivityMinutes: number; countdownSeconds: number }
@@ -95,9 +95,20 @@ export async function saveDisabledPages(
     redirect('/')
   }
 
+  // Deve restare in sincronia con PAGE_GROUPS in settings-form.tsx: ogni array lì
+  // rappresentato deve comparire anche qui, altrimenti le sue checkbox non vengono
+  // mai lette dal form e il toggle non si salva mai (bug osservato su "Edilizia"
+  // dentro Ristrutturazioni Chiavi in Mano, 2026-08-12 — mancavano anche
+  // standalonePages, comfortSpaziEsterniPages, antintrusioneSicurezzaPages,
+  // carpenteriaArredoPages, ristrutturazioniChiaviInManoPages).
   const allIds = [
     ...clientPages.map(p => p.id),
+    ...standalonePages.map(p => p.id),
     ...prodottiPages.map(p => p.id),
+    ...comfortSpaziEsterniPages.map(p => p.id),
+    ...antintrusioneSicurezzaPages.map(p => p.id),
+    ...carpenteriaArredoPages.map(p => p.id),
+    ...ristrutturazioniChiaviInManoPages.map(p => p.id),
     ...categoryGroups.flatMap(g => g.pages.map(p => p.id)),
     ...areaClientiPages.map(p => p.id),
     ...aiutoPages.map(p => p.id),

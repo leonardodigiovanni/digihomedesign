@@ -19,12 +19,12 @@ import NavDropdownTriggerButton from '@/components/nav-dropdown-trigger-button'
 export const metadata: Metadata = {
   title: 'Porte Blindate Rivestimento Legno a Palermo — Classe 3, 4, 5 e 6',
   description: 'Porte blindate a Palermo con rivestimento esterno in legno: fornitura e installazione classe 3-6 con serrature di sicurezza multipunto. Misure standard e su misura.',
-  alternates: { canonical: 'https://www.digi-home-design.com/metallurgia/porte-blindate-legno' },
+  alternates: { canonical: 'https://www.digi-home-design.com/antintrusione-e-sicurezza/porte-blindate-legno' },
   robots: { index: true, follow: true },
   openGraph: {
     title: 'Porte Blindate Rivestimento Legno a Palermo — Classe 3, 4, 5 e 6',
     description: 'Porte blindate a Palermo con rivestimento esterno in legno: fornitura e installazione classe 3-6 con serrature di sicurezza multipunto. Misure standard e su misura.',
-    url: 'https://www.digi-home-design.com/metallurgia/porte-blindate-legno',
+    url: 'https://www.digi-home-design.com/antintrusione-e-sicurezza/porte-blindate-legno',
     type: 'website',
   },
 }
@@ -121,7 +121,7 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/metallurgia" style={{ color: '#888', textDecoration: 'underline' }}>Metallurgia</Link> / Porte Blindate Riv. Legno<ShortcutStar />
+        <span style={{ color: '#888' }}>Antintrusione e Sicurezza</span> / Porte Blindate Riv. Legno<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Porte Blindate Rivestimento Legno a Palermo</h1>
 
@@ -168,7 +168,7 @@ export default async function Page() {
         )}
 
         <StickyBottomBarContent>
-          <Link href="/metallurgia" className="btn-black fs-12">← Metallurgia</Link>
+          <NavDropdownTriggerButton dropdownId="antintrusione" label="← Antintrusione e Sicurezza" />
           {prev ? <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link> : <NavDropdownTriggerButton dropdownId="comfort" label="← Spazi Esterni e Comfort" />}
           <CtaPreventivo />
           <CtaCantiere />

@@ -4,6 +4,7 @@ import CtaPreventivo from '@/components/cta-preventivo'
 import CtaCantiere from '@/components/cta-cantiere'
 import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import ShortcutStar from '@/components/shortcut-star'
+import { readSettings } from '@/lib/settings'
 
 export const metadata: Metadata = {
   title: 'Tessuti a Palermo — Divani e Tendaggi su Misura',
@@ -19,11 +20,13 @@ export const metadata: Metadata = {
 }
 
 const subcategories = [
-  { href: '/tessuti/divani',    label: 'Divani',    desc: 'Rivestimenti in tessuto su misura, rifacimento imbottitura e personalizzazione completa per ogni stile.' },
-  { href: '/tessuti/tendaggi',  label: 'Tendaggi',  desc: 'Tende da interno, a rullo, oscuranti e sistemi filtranti su misura per casa e ufficio.' },
+  { id: 267, href: '/tessuti/divani',    label: 'Divani',    desc: 'Rivestimenti in tessuto su misura, rifacimento imbottitura e personalizzazione completa per ogni stile.' },
+  { id: 268, href: '/tessuti/tendaggi',  label: 'Tendaggi',  desc: 'Tende da interno, a rullo, oscuranti e sistemi filtranti su misura per casa e ufficio.' },
+  { id: 273, href: '/tessuti/tappeti',   label: 'Tappeti',   desc: 'Tappeti classici, persiani e su misura per ogni ambiente, fornitura e posa in opera.' },
 ]
 
-export default function Page() {
+export default async function Page() {
+  const { disabledPages } = await readSettings()
   return (
     <div className="fs-15" style={{ padding: '0 4px 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
@@ -36,7 +39,7 @@ export default function Page() {
         Dalla tradizione artigiana nata nel 1972, il nostro reparto tessuti offre soluzioni su misura per arredare e personalizzare ogni ambiente. Scegli la categoria per scoprire i nostri servizi.
       </p>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
-        {subcategories.map(s => (
+        {subcategories.filter(s => !disabledPages.includes(s.id)).map(s => (
           <Link key={s.href} href={s.href} style={{ flex: '1 1 240px', border: '1px solid #c8960c', borderRadius: 10, padding: '16px 14px', textDecoration: 'none', color: '#1a1a1a', background: '#fafafa' }}>
             <div className="fs-17" style={{ fontWeight: 700, marginBottom: 6 }}>{s.label}</div>
             <div className="fs-14" style={{ color: '#555', lineHeight: 1.6 }}>{s.desc}</div>

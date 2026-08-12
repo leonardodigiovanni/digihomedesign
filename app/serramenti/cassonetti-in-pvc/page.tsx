@@ -20,12 +20,12 @@ import ShortcutStar from '@/components/shortcut-star'
 export const metadata: Metadata = {
   title: 'Cassonetti in PVC a Palermo — Coibentati su Misura',
   description: 'Cassonetti coibentati in PVC per tapparelle a Palermo: eliminano il ponte termico del cassonetto tradizionale in muratura. Fornitura e posa su misura.',
-  alternates: { canonical: 'https://www.digi-home-design.com/serramenti/cassonetti-in-pvc' },
+  alternates: { canonical: 'https://www.digi-home-design.com/riqualificazione-energetica/cassonetti-in-pvc' },
   robots: { index: true, follow: true },
   openGraph: {
     title: 'Cassonetti in PVC a Palermo — Coibentati su Misura',
     description: 'Cassonetti coibentati in PVC per tapparelle a Palermo: eliminano il ponte termico del cassonetto tradizionale in muratura. Fornitura e posa su misura.',
-    url: 'https://www.digi-home-design.com/serramenti/cassonetti-in-pvc',
+    url: 'https://www.digi-home-design.com/riqualificazione-energetica/cassonetti-in-pvc',
     type: 'website',
   },
 }
@@ -155,7 +155,7 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/serramenti" style={{ color: '#888', textDecoration: 'underline' }}>Serramenti</Link> / Cassonetti in PVC<ShortcutStar />
+        <span style={{ color: '#888' }}>Riqualificazione Energetica</span> / Cassonetti in PVC<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Cassonetti in PVC a Palermo</h1>
 
@@ -219,7 +219,7 @@ export default async function Page() {
         )}
 
         <StickyBottomBarContent>
-          <Link href="/serramenti" className="btn-black fs-12">← Serramenti</Link>
+          <NavDropdownTriggerButton dropdownId="prodotti" label="← Riqualificazione Energetica" />
           {prev ? <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link> : <Link href="/" className="btn-gold fs-12">← Home</Link>}
           <CtaPreventivo />
           <CtaCantiere />

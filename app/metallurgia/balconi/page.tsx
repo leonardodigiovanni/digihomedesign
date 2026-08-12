@@ -19,12 +19,12 @@ import NavDropdownTriggerButton from '@/components/nav-dropdown-trigger-button'
 export const metadata: Metadata = {
   title: 'Balconi in Ferro a Palermo — Strutture e Parapetti su Misura',
   description: 'Balconi in ferro e acciaio a Palermo: realizzazione di strutture portanti, solette e parapetti su misura per nuove costruzioni e ristrutturazioni.',
-  alternates: { canonical: 'https://www.digi-home-design.com/metallurgia/balconi' },
+  alternates: { canonical: 'https://www.digi-home-design.com/carpenteria-arredo/balconi' },
   robots: { index: true, follow: true },
   openGraph: {
     title: 'Balconi in Ferro a Palermo — Strutture e Parapetti su Misura',
     description: 'Balconi in ferro e acciaio a Palermo: realizzazione di strutture portanti, solette e parapetti su misura per nuove costruzioni e ristrutturazioni.',
-    url: 'https://www.digi-home-design.com/metallurgia/balconi',
+    url: 'https://www.digi-home-design.com/carpenteria-arredo/balconi',
     type: 'website',
   },
 }
@@ -121,7 +121,7 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/metallurgia" style={{ color: '#888', textDecoration: 'underline' }}>Metallurgia</Link> / Balconi<ShortcutStar />
+        <span style={{ color: '#888' }}>Carpenteria d&apos;Arredo</span> / Balconi<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Balconi in Ferro a Palermo</h1>
 
@@ -168,7 +168,7 @@ export default async function Page() {
         )}
 
         <StickyBottomBarContent>
-          <Link href="/metallurgia" className="btn-black fs-12">← Metallurgia</Link>
+          <NavDropdownTriggerButton dropdownId="carpenteria" label="← Carpenteria d'Arredo" />
           {prev && <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link>}
           <CtaPreventivo />
           <CtaCantiere />

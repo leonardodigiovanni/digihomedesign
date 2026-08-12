@@ -14,16 +14,17 @@ import StickyBottomBarContent from '@/components/sticky-bottom-bar-content'
 import ShortcutStar from '@/components/shortcut-star'
 import { readSettings } from '@/lib/settings'
 import { getCarpenteriaNeighbors } from '@/lib/nav-config'
+import NavDropdownTriggerButton from '@/components/nav-dropdown-trigger-button'
 
 export const metadata: Metadata = {
   title: 'Scale a Chiocciola a Palermo — Ferro e Acciaio su Misura',
   description: 'Scale a chiocciola in ferro e acciaio a Palermo su misura: scale elicoidali compatte per soppalchi, sottotetti e spazi ridotti. Gradini in legno o metallo.',
-  alternates: { canonical: 'https://www.digi-home-design.com/metallurgia/scale-a-chiocciola' },
+  alternates: { canonical: 'https://www.digi-home-design.com/carpenteria-arredo/scale-a-chiocciola' },
   robots: { index: true, follow: true },
   openGraph: {
     title: 'Scale a Chiocciola a Palermo — Ferro e Acciaio su Misura',
     description: 'Scale a chiocciola in ferro e acciaio a Palermo su misura: scale elicoidali compatte per soppalchi, sottotetti e spazi ridotti. Gradini in legno o metallo.',
-    url: 'https://www.digi-home-design.com/metallurgia/scale-a-chiocciola',
+    url: 'https://www.digi-home-design.com/carpenteria-arredo/scale-a-chiocciola',
     type: 'website',
   },
 }
@@ -120,7 +121,7 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/metallurgia" style={{ color: '#888', textDecoration: 'underline' }}>Metallurgia</Link> / Scale a Chiocciola<ShortcutStar />
+        <span style={{ color: '#888' }}>Carpenteria d&apos;Arredo</span> / Scale a Chiocciola<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Scale a Chiocciola a Palermo</h1>
 
@@ -167,7 +168,7 @@ export default async function Page() {
         )}
 
         <StickyBottomBarContent>
-          <Link href="/metallurgia" className="btn-black fs-12">← Metallurgia</Link>
+          <NavDropdownTriggerButton dropdownId="carpenteria" label="← Carpenteria d'Arredo" />
           {prev && <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link>}
           <CtaPreventivo />
           <CtaCantiere />

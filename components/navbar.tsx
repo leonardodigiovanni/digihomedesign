@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { clientPages, standalonePages, visibleAdminPages, visibleInternalPages, visibleFornitoriPages, visibleClientiPages, aiutoPages, categoryGroups, areaClientiPages, prodottiPages, prodottiSubgroups, comfortSpaziEsterniPages, antintrusioneSicurezzaPages, carpenteriaArredoPages, ristrutturazioniChiaviInManoPages, HIDDEN_FROM_CATEGORY, type NavPage, type CategoryGroup } from '@/lib/nav-config'
+import { clientPages, standalonePages, visibleAdminPages, visibleInternalPages, visibleFornitoriPages, visibleClientiPages, aiutoPages, categoryGroups, areaClientiPages, prodottiPages, prodottiSubgroups, comfortSpaziEsterniPages, antintrusioneSicurezzaPages, carpenteriaArredoPages, ristrutturazioniChiaviInManoPages, HIDDEN_FROM_CATEGORY, HIDDEN_CATEGORY_GROUPS, type NavPage, type CategoryGroup } from '@/lib/nav-config'
 import HeaderAuth from '@/components/header-auth'
 import SiteSearchButton from '@/components/site-search-button'
 import ShortcutStar from '@/components/shortcut-star'
@@ -405,7 +405,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             </React.Fragment>
           ))}
 
-          {categoryGroups.map(g => {
+          {categoryGroups.filter(g => !HIDDEN_CATEGORY_GROUPS.includes(g.id)).map(g => {
             const hidden = HIDDEN_FROM_CATEGORY[g.id] ?? []
             const visiblePages = g.pages.filter(p => !disabledPages.includes(p.id) && !hidden.includes(p.id))
             if (visiblePages.length === 0) return null
@@ -796,7 +796,7 @@ export default function Navbar({ role, disabledPages = [], rolePermissions = {},
             </Link>
           ))}
 
-          {categoryGroups.map(g => {
+          {categoryGroups.filter(g => !HIDDEN_CATEGORY_GROUPS.includes(g.id)).map(g => {
             const hidden = HIDDEN_FROM_CATEGORY[g.id] ?? []
             const visiblePages = g.pages.filter(p => !disabledPages.includes(p.id) && !hidden.includes(p.id))
             if (visiblePages.length === 0) return null

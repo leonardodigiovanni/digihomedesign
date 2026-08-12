@@ -19,12 +19,12 @@ import NavDropdownTriggerButton from '@/components/nav-dropdown-trigger-button'
 export const metadata: Metadata = {
   title: 'Cancelli a Palermo — Ferro Battuto e Acciaio Manuali o Motorizzati',
   description: 'Cancelli a Palermo su misura: carrabili e pedonali in ferro, acciaio e alluminio, manuali o con automazione. Scorrevoli, a battente e a libro.',
-  alternates: { canonical: 'https://www.digi-home-design.com/metallurgia/cancelli' },
+  alternates: { canonical: 'https://www.digi-home-design.com/antintrusione-e-sicurezza/cancelli' },
   robots: { index: true, follow: true },
   openGraph: {
     title: 'Cancelli a Palermo — Ferro Battuto e Acciaio Manuali o Motorizzati',
     description: 'Cancelli a Palermo su misura: carrabili e pedonali in ferro, acciaio e alluminio, manuali o con automazione. Scorrevoli, a battente e a libro.',
-    url: 'https://www.digi-home-design.com/metallurgia/cancelli',
+    url: 'https://www.digi-home-design.com/antintrusione-e-sicurezza/cancelli',
     type: 'website',
   },
 }
@@ -121,7 +121,7 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/metallurgia" style={{ color: '#888', textDecoration: 'underline' }}>Metallurgia</Link> / Cancelli<ShortcutStar />
+        <span style={{ color: '#888' }}>Antintrusione e Sicurezza</span> / Cancelli<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Cancelli a Palermo</h1>
 
@@ -168,7 +168,7 @@ export default async function Page() {
         )}
 
         <StickyBottomBarContent>
-          <Link href="/metallurgia" className="btn-black fs-12">← Metallurgia</Link>
+          <NavDropdownTriggerButton dropdownId="antintrusione" label="← Antintrusione e Sicurezza" />
           {prev && <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link>}
           <CtaPreventivo />
           <CtaCantiere />

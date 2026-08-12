@@ -19,12 +19,12 @@ import ShortcutStar from '@/components/shortcut-star'
 export const metadata: Metadata = {
   title: 'Infissi in Legno a Palermo — Finestre e Porte-Finestre su Misura',
   description: 'Infissi in legno a Palermo su misura: finestre, porte-finestre e scorrevoli in legno naturale o legno-alluminio. Alta efficienza termica e design senza tempo.',
-  alternates: { canonical: 'https://www.digi-home-design.com/legno/infissi-in-legno' },
+  alternates: { canonical: 'https://www.digi-home-design.com/riqualificazione-energetica/infissi-in-legno' },
   robots: { index: true, follow: true },
   openGraph: {
     title: 'Infissi in Legno a Palermo — Finestre e Porte-Finestre su Misura',
     description: 'Infissi in legno a Palermo su misura: finestre, porte-finestre e scorrevoli in legno naturale o legno-alluminio. Alta efficienza termica e design senza tempo.',
-    url: 'https://www.digi-home-design.com/legno/infissi-in-legno',
+    url: 'https://www.digi-home-design.com/riqualificazione-energetica/infissi-in-legno',
     type: 'website',
   },
 }
@@ -121,7 +121,7 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/legno" style={{ color: '#888', textDecoration: 'underline' }}>Legno</Link> / Infissi in Legno<ShortcutStar />
+        <span style={{ color: '#888' }}>Riqualificazione Energetica</span> / Infissi in Legno<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Infissi in Legno a Palermo</h1>
 
@@ -168,7 +168,7 @@ export default async function Page() {
         )}
 
         <StickyBottomBarContent>
-          <Link href="/legno" className="btn-black fs-12">← Legno</Link>
+          <NavDropdownTriggerButton dropdownId="prodotti" label="← Riqualificazione Energetica" />
           {prev ? <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link> : <Link href="/" className="btn-gold fs-12">← Home</Link>}
           <CtaPreventivo />
           <CtaCantiere />

@@ -19,12 +19,12 @@ import NavDropdownTriggerButton from '@/components/nav-dropdown-trigger-button'
 export const metadata: Metadata = {
   title: 'Scale a Rampe a Palermo — Ferro e Acciaio su Misura',
   description: 'Scale a rampe in ferro e acciaio a Palermo su misura: gradini in legno o lamiera mandorlata, strutture portanti saldate, parapetti e corrimano inclusi.',
-  alternates: { canonical: 'https://www.digi-home-design.com/metallurgia/scale-a-rampe' },
+  alternates: { canonical: 'https://www.digi-home-design.com/carpenteria-arredo/scale-a-rampe' },
   robots: { index: true, follow: true },
   openGraph: {
     title: 'Scale a Rampe a Palermo — Ferro e Acciaio su Misura',
     description: 'Scale a rampe in ferro e acciaio a Palermo su misura: gradini in legno o lamiera mandorlata, strutture portanti saldate, parapetti e corrimano inclusi.',
-    url: 'https://www.digi-home-design.com/metallurgia/scale-a-rampe',
+    url: 'https://www.digi-home-design.com/carpenteria-arredo/scale-a-rampe',
     type: 'website',
   },
 }
@@ -121,7 +121,7 @@ export default async function Page() {
   return (
     <div className="fs-15" style={{ padding: '0 0 64px', color: '#444', lineHeight: 1.8 }}>
       <p className="fs-12" style={{ color: '#000', marginBottom: 8, textShadow: 'none' }}>
-        <Link href="/metallurgia" style={{ color: '#888', textDecoration: 'underline' }}>Metallurgia</Link> / Scale a Rampe<ShortcutStar />
+        <span style={{ color: '#888' }}>Carpenteria d&apos;Arredo</span> / Scale a Rampe<ShortcutStar />
       </p>
       <h1 className="effetto-3d fs-28" style={{ fontWeight: 700, marginBottom: 8 }}>Scale a Rampe a Palermo</h1>
 
@@ -168,7 +168,7 @@ export default async function Page() {
         )}
 
         <StickyBottomBarContent>
-          <Link href="/metallurgia" className="btn-black fs-12">← Metallurgia</Link>
+          <NavDropdownTriggerButton dropdownId="carpenteria" label="← Carpenteria d'Arredo" />
           {prev ? <Link href={prev.href} className="btn-blue fs-12">← {prev.label}</Link> : <NavDropdownTriggerButton dropdownId="antintrusione" label="← Antintrusione e Sicurezza" />}
           <CtaPreventivo />
           <CtaCantiere />
