@@ -121,13 +121,16 @@ export default function Header({
       {shimmerClass && <div className={shimmerClass} />}
 
       <div className="header-top-row" style={{ position: 'relative', zIndex: 50, display: 'flex', justifyContent: 'flex-end', alignItems: 'center', minHeight: 80 }}>
-        <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, margin: 'auto 0', transform: 'translateX(-50%)', display: 'flex', alignItems: 'center', gap: 14, width: 'fit-content', height: 'fit-content', zIndex: 10 }}>
+        <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, margin: 'auto 0', transform: 'translateX(-50%)', display: 'flex', alignItems: 'center', gap: 1, width: 'fit-content', height: 'fit-content', zIndex: 10 }}>
           <Link href="/" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, textDecoration: 'none', color: 'inherit', outline: 'none', cursor: 'pointer' }}>
             <Image src="/images/header/DIGIHOMEDESIGN.webp" alt="Home Design" width={80} height={80} style={{ objectFit: 'contain', display: 'block' }} />
           </Link>
 
-          <div className="header-comparti-wrap" style={{ transform: 'translateY(-6px)', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', width: 'fit-content', zIndex: 10 }}>
-          <div className="header-comparti-row" style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'flex-start', gap: 4, marginBottom: 12 }}>
+          <div className="header-comparti-wrap" style={{ transform: 'translateY(-4px)', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', width: 'fit-content', zIndex: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 170, background: '#fff', border: '1px solid #000', boxShadow: '0 0 0 1px #fff', borderRadius: 10, padding: '1px 3px 3px', marginBottom: 1 }}>
+            <span style={{ whiteSpace: 'nowrap', lineHeight: 1, color: '#000', fontWeight: 700, fontSize: 15, letterSpacing: '0.3px', fontFamily: 'var(--font-ornamental)' }}><span className="header-digi-word">DIGI </span>Home Design</span>
+          </div>
+          <div className="header-comparti-row" style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'flex-start', gap: 4 }}>
             <div className="header-comparti-col" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 0, marginRight: -8 }}>
               <span style={{ whiteSpace: 'nowrap', fontSize: 10, fontWeight: 700, letterSpacing: '0.2px', fontFamily: 'var(--font-ornamental)', color: '#e2e2e2' }}>SERRAMENTI</span>
               <Image unoptimized className="header-comparti-icon" src="/images/icons/icona-serramenti.png" alt="Serramenti" width={316} height={339} style={{ height: 22, width: 'auto', objectFit: 'contain', display: 'block' }} />
@@ -140,9 +143,6 @@ export default function Header({
               <span style={{ whiteSpace: 'nowrap', fontSize: 10, fontWeight: 700, letterSpacing: '0.2px', fontFamily: 'var(--font-ornamental)', color: '#f5d060' }}>SICUREZZA</span>
               <Image unoptimized className="header-comparti-icon" src="/images/icons/icona-sicurezza-gold.png" alt="Sicurezza" width={307} height={357} style={{ height: 22, width: 'auto', objectFit: 'contain', display: 'block' }} />
             </div>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 170, background: '#fff', border: '1px solid #000', boxShadow: '0 0 0 1px #fff', borderRadius: 10, padding: '1px 3px 3px' }}>
-            <span style={{ whiteSpace: 'nowrap', lineHeight: 1, color: '#000', fontWeight: 700, fontSize: 15, letterSpacing: '0.3px', fontFamily: 'var(--font-ornamental)' }}><span className="header-digi-word">DIGI </span>Home Design</span>
           </div>
           </div>
         </div>
