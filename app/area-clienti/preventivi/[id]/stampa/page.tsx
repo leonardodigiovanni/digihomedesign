@@ -531,13 +531,14 @@ function riepilogoTableHeaderHtml(): string {
   <div style="flex:0 0 18%;padding:4px 8px;border-right:1px solid #ddd;box-sizing:border-box;">Categoria</div>
   <div style="flex:0 0 13%;padding:4px 8px;border-right:1px solid #ddd;box-sizing:border-box;">Marca</div>
   <div style="flex:0 0 12%;padding:4px 8px;border-right:1px solid #ddd;box-sizing:border-box;">Serie/Modello</div>
-  <div style="flex:0 0 27%;padding:4px 8px;border-right:1px solid #ddd;box-sizing:border-box;">Descrizione articolo</div>
-  <div style="flex:0 0 16%;padding:4px 8px;border-right:1px solid #ddd;text-align:center;box-sizing:border-box;">L×H</div>
-  <div style="flex:0 0 8%;padding:4px 8px;text-align:center;box-sizing:border-box;">Qtà</div>
+  <div style="flex:0 0 19%;padding:4px 8px;border-right:1px solid #ddd;box-sizing:border-box;">Descrizione articolo</div>
+  <div style="flex:0 0 12%;padding:4px 8px;border-right:1px solid #ddd;text-align:center;box-sizing:border-box;">L×H</div>
+  <div style="flex:0 0 8%;padding:4px 8px;border-right:1px solid #ddd;text-align:center;box-sizing:border-box;">Qtà</div>
+  <div style="flex:0 0 12%;padding:4px 8px;text-align:right;box-sizing:border-box;">Totale €</div>
 </div>`
 }
 
-function riepilogoTableRowHtml(p: Record<string, unknown>, idx: number): string {
+function riepilogoTableRowHtml(p: Record<string, unknown>, idx: number, totale: number): string {
   const tipo    = s(p.listino_categoria) || s(p.tipo_prodotto)
   const marca   = s(p.marca)
   const serie   = s(p.serie)
@@ -551,9 +552,16 @@ function riepilogoTableRowHtml(p: Record<string, unknown>, idx: number): string 
   <div style="flex:0 0 18%;padding:3px 8px;border-right:1px solid #ddd;box-sizing:border-box;">${tipo}</div>
   <div style="flex:0 0 13%;padding:3px 8px;border-right:1px solid #ddd;box-sizing:border-box;">${marca}</div>
   <div style="flex:0 0 12%;padding:3px 8px;border-right:1px solid #ddd;box-sizing:border-box;">${serie}</div>
-  <div style="flex:0 0 27%;padding:3px 8px;border-right:1px solid #ddd;box-sizing:border-box;">${modello}</div>
-  <div style="flex:0 0 16%;padding:3px 8px;border-right:1px solid #ddd;text-align:center;white-space:nowrap;box-sizing:border-box;">${dims}</div>
-  <div style="flex:0 0 8%;padding:3px 8px;text-align:center;box-sizing:border-box;">${qtà}</div>
+  <div style="flex:0 0 19%;padding:3px 8px;border-right:1px solid #ddd;box-sizing:border-box;">${modello}</div>
+  <div style="flex:0 0 12%;padding:3px 8px;border-right:1px solid #ddd;text-align:center;white-space:nowrap;box-sizing:border-box;">${dims}</div>
+  <div style="flex:0 0 8%;padding:3px 8px;border-right:1px solid #ddd;text-align:center;box-sizing:border-box;">${qtà}</div>
+  <div style="flex:0 0 12%;padding:3px 8px;text-align:right;white-space:nowrap;box-sizing:border-box;">${totale > 0 ? `€ ${fmt(totale)}` : '—'}</div>
+</div>`
+}
+
+function riepilogoSubtotaleGruppoHtml(totale: number): string {
+  return `<div style="display:flex;background:#f0f0f0;border:1px solid #ddd;border-top:none;font-size:10px;font-weight:bold;box-sizing:border-box;">
+  <div style="flex:1;padding:4px 8px;text-align:right;box-sizing:border-box;">Totale gruppo: € ${fmt(totale)}</div>
 </div>`
 }
 
@@ -1083,7 +1091,20 @@ async function buildStampaData(opts: {
   blocks.push({ html: riepilogoIntroHtml() })
   blocks.push({ html: riepilogoChiusuraHtml() })
   blocks.push({ html: riepilogoTableHeaderHtml(), forceNewPage: true })
-  roots.forEach((p, i) => blocks.push({ html: riepilogoTableRowHtml(p, i) }))
+  {
+    let groupSum = 0
+    roots.forEach((p, i) => {
+      const children = childrenMap.get(n(p.id)) ?? []
+      const rowTotale = n(p.prezzo_totale) + children.reduce((s, c) => s + n(c.prezzo_totale), 0)
+      groupSum += rowTotale
+      blocks.push({ html: riepilogoTableRowHtml(p, i, rowTotale) })
+      const isLastOfGroup = i === roots.length - 1 || _catKey(roots[i + 1]) !== _catKey(p)
+      if (isLastOfGroup) {
+        blocks.push({ html: riepilogoSubtotaleGruppoHtml(groupSum) })
+        groupSum = 0
+      }
+    })
+  }
   blocks.push({ html: riepilogoNotaHtml() })
   blocks.push({ html: totaleBoxHtml(artRows, totale, scontoClientePct, hasArticoliDaDefinire) })
   if (noteRaw) {

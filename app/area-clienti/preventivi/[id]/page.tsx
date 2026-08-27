@@ -92,6 +92,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       accessori: String(a.accessori ?? ''),
       altezza_cm: Number(a.altezza_cm),
       larghezza_cm: Number(a.larghezza_cm),
+      unita_valore: a.unita_valore != null ? Number(a.unita_valore) : null,
       n_ante: Number(a.n_ante),
       quantita: Number(a.quantita),
       prezzo_totale: Number(a.prezzo_totale),

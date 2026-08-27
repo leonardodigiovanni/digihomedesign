@@ -87,6 +87,8 @@ async function ensureTables() {
   await db.execute(`ALTER TABLE preventivo_articoli ADD COLUMN sconto_articolo_pct DECIMAL(5,2) NOT NULL DEFAULT 0`).catch(() => {})
   await db.execute(`ALTER TABLE preventivo_articoli ADD COLUMN parent_id INT NULL DEFAULT NULL`).catch(() => {})
   await db.execute(`ALTER TABLE preventivo_articoli ADD COLUMN ordine INT NOT NULL DEFAULT 0`).catch(() => {})
+  await db.execute(`ALTER TABLE preventivo_articoli MODIFY COLUMN quantita DECIMAL(10,2) NOT NULL DEFAULT 1`).catch(() => {})
+  await db.execute(`ALTER TABLE preventivo_articoli ADD COLUMN unita_valore DECIMAL(10,3) NULL DEFAULT NULL`).catch(() => {})
   await db.execute(`ALTER TABLE listini ADD COLUMN sconto_articolo DECIMAL(5,2) NOT NULL DEFAULT 0`).catch(() => {})
   await db.execute(`ALTER TABLE clienti ADD COLUMN sconto_pct DECIMAL(5,2) NOT NULL DEFAULT 0`).catch(() => {})
   await db.execute(`ALTER TABLE preventivi MODIFY COLUMN stato ENUM('bozza','richiesto','in preparazione','da inviare','inviato','accettato','rifiutato','scaduto','annullato') NOT NULL DEFAULT 'bozza'`).catch(() => {})
@@ -274,9 +276,15 @@ export async function aggiungiArticolo(_: MutResult | null, fd: FormData): Promi
   let altezza_cm    = parseFloat(fd.get('altezza_cm')   as string) || 0
   let larghezza_cm  = parseFloat(fd.get('larghezza_cm') as string) || 0
   let n_ante        = parseInt(fd.get('n_ante')   as string) || 0
-  let quantita      = parseInt(fd.get('quantita') as string) || 1
+  let quantita      = parseFloat(fd.get('quantita') as string) || 1
   const note        = ((fd.get('note') as string) ?? '').trim()
   const parent_id   = parseInt(fd.get('parent_id') as string) || null
+  // Quando il valore (area/lunghezza) non è calcolabile dalle dimensioni richieste sul listino,
+  // "unita_valore" contiene direttamente il numero di unità di misura per pezzo (es. m² reali),
+  // separato dalla quantità (numero di pezzi). Prezzo = prezzo_base × unita_valore × quantita.
+  // Bypassa il calcolo larghezza×altezza. Vedi ArticoloForm.
+  const formulaDiretta = fd.get('formula_diretta') === '1'
+  const unita_valore   = parseFloat(fd.get('unita_valore') as string) || 0
 
   if (!preventivo_id || !tipo_prodotto)
     return { ok: false, error: 'Tipo prodotto obbligatorio.' }
@@ -359,7 +367,9 @@ export async function aggiungiArticolo(_: MutResult | null, fd: FormData): Promi
     const l  = larghezza_cm / 100
     const scontoFactor = 1 - scontoArticoloPct / 100
     let prezzoLordo = 0
-    if (unita === 'm²') {
+    if (formulaDiretta) {
+      prezzoLordo = prezzo_base * unita_valore * quantita
+    } else if (unita === 'm²') {
       const area = minimoMq > 0 ? Math.max(h * l, minimoMq) : h * l
       prezzoLordo = prezzo_base * area * quantita
     } else if (unita === 'ml') prezzoLordo = prezzo_base * l * quantita
@@ -371,10 +381,10 @@ export async function aggiungiArticolo(_: MutResult | null, fd: FormData): Promi
   await db.execute(
     `INSERT INTO preventivo_articoli
      (preventivo_id, tipo_prodotto, marca, modello, listino_id, prezzo_base, unita,
-      colore, tipo_vetro, accessori, altezza_cm, larghezza_cm, n_ante, quantita, prezzo_totale, prezzo_pre_sconto, prezzo_scontato, note, sconto_articolo_pct, parent_id)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+      colore, tipo_vetro, accessori, altezza_cm, larghezza_cm, unita_valore, n_ante, quantita, prezzo_totale, prezzo_pre_sconto, prezzo_scontato, note, sconto_articolo_pct, parent_id)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
     [preventivo_id, tipo_prodotto, marca, modello, listino_id, prezzo_base, unita,
-     colore, tipo_vetro, accessori, altezza_cm, larghezza_cm, n_ante, quantita, prezzo, prezzoPre, prezzo, note, scontoArticoloPct, parent_id]
+     colore, tipo_vetro, accessori, altezza_cm, larghezza_cm, formulaDiretta ? unita_valore : null, n_ante, quantita, prezzo, prezzoPre, prezzo, note, scontoArticoloPct, parent_id]
   )
 
   await ricalcolaTotaleConSconti(db, preventivo_id)
@@ -466,6 +476,11 @@ export async function modificaArticolo(_: MutResult | null, fd: FormData): Promi
   const note            = ((fd.get('note') as string) ?? '').trim()
   const ordine          = parseInt(fd.get('ordine') as string) || 0
   const formulaDiretta  = fd.get('formula_diretta') === '1'
+  // Per gli articoli root con unità non derivabile da larghezza×altezza: unita_valore è il numero
+  // di unità di misura per pezzo (es. m² reali), separato dalla quantità (numero di pezzi).
+  // Le caratteristiche-figlie (isChildUnit) non inviano questo campo: resta 0 e la formula
+  // sotto ricade sul comportamento storico (prezzo_base × quantita).
+  const unita_valore    = parseFloat(fd.get('unita_valore') as string) || 0
   const nuovoListinoId  = parseInt(fd.get('nuovo_listino_id') as string) || null
 
   if (!id || !preventivo_id) return { ok: false, error: 'Dati mancanti.' }
@@ -551,7 +566,9 @@ export async function modificaArticolo(_: MutResult | null, fd: FormData): Promi
     const factor = 1 - sconto_art / 100
     let prezzoLordo = 0
     if (formulaDiretta) {
-      prezzoLordo = prezzo_base_calc * quantita
+      // unita_valore > 0 → articolo root (m²/ml diretto): prezzo_base × unità per pezzo × quantità pezzi.
+      // unita_valore assente (0, caratteristiche-figlie) → comportamento storico: prezzo_base × quantita.
+      prezzoLordo = prezzo_base_calc * quantita * (unita_valore > 0 ? unita_valore : 1)
     } else if (unita === 'm²') {
       const area = minimoMq > 0 ? Math.max(h * l, minimoMq) : h * l
       prezzoLordo = prezzo_base_calc * area * quantita
@@ -562,10 +579,10 @@ export async function modificaArticolo(_: MutResult | null, fd: FormData): Promi
 
     await db.execute(
       `UPDATE preventivo_articoli
-       SET altezza_cm=?, larghezza_cm=?, n_ante=?, quantita=?,
+       SET altezza_cm=?, larghezza_cm=?, unita_valore=?, n_ante=?, quantita=?,
            prezzo_base=?, sconto_articolo_pct=?, prezzo_totale=?, prezzo_pre_sconto=?, prezzo_scontato=?, note=?, ordine=?
        WHERE id=? AND preventivo_id=?`,
-      [altezza_cm, larghezza_cm, n_ante, quantita, prezzo_base_calc, sconto_art, prezzo, prezzoPre, prezzo, note || null, ordine, id, preventivo_id]
+      [altezza_cm, larghezza_cm, formulaDiretta ? (unita_valore || null) : null, n_ante, quantita, prezzo_base_calc, sconto_art, prezzo, prezzoPre, prezzo, note || null, ordine, id, preventivo_id]
     )
 
     // Aggiorna figli: ereditano le nuove dimensioni e ricalcolano il loro contributo

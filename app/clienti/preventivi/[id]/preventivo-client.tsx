@@ -30,6 +30,9 @@ export type ListinoItem = {
   richiede_tipo_colore_acc?: number
   richiede_tipo_vetro?: number
   richiede_tipo_montaggio?: number
+  richiede_larghezza?: number
+  richiede_altezza?: number
+  richiede_quantita?: number
   minimo?: number | null
   filtro_1?: number
   filtro_2?: number
@@ -65,6 +68,7 @@ export type Articolo = {
   accessori: string
   altezza_cm: number
   larghezza_cm: number
+  unita_valore: number | null
   n_ante: number
   quantita: number
   prezzo_totale: number
@@ -1021,6 +1025,21 @@ function ArticoloForm({
               const isMq = u === 'm²' || u === 'mq' || u === 'm2'
               const isMl = u === 'ml' || u === 'm' || u === 'mt'
               const isKg = u === 'kg'
+
+              // I campi mostrati seguono esclusivamente i flag richiede_larghezza/altezza/quantita
+              // configurati sul listino (stesso schema di components/aggiungi-articolo-form.tsx),
+              // non più un'euristica sull'unità di misura.
+              const rLarghezza = listinoSel.richiede_larghezza === 1
+              const rAltezza   = listinoSel.richiede_altezza   === 1
+              const rQuantita  = listinoSel.richiede_quantita  === 1
+
+              // Se l'unità è "di misura" (m²/ml) ma le dimensioni necessarie a calcolare il valore
+              // non sono entrambe richieste, il valore (area/lunghezza) non è calcolabile da nessuna
+              // grandezza inserita: si chiede direttamente "quante unità" fatturare, a prescindere
+              // da richiede_quantita — altrimenti il prezzo resterebbe sempre a zero.
+              const dimensioniComplete = isMq ? (rLarghezza && rAltezza) : isMl ? rLarghezza : true
+              const formulaDiretta = (isMq || isMl) && !dimensioniComplete
+
               return (
                 <div key={listinoId} style={{ display: 'contents' }}>
                   {haVetro && (
@@ -1032,48 +1051,41 @@ function ArticoloForm({
                     </div>
                   )}
 
+                  {!parentArt && formulaDiretta && (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12 }}>
+                      <div>
+                        <span style={label}>Quantità *</span>
+                        <input type="number" name="quantita" min={1} defaultValue={prefill?.quantita ?? 1} style={inp} required />
+                      </div>
+                      <div>
+                        <span style={label}>Unità ({listinoSel.unita}) *</span>
+                        <input type="number" name="unita_valore" min={0.01} step="0.01" defaultValue={prefill?.unita_valore || ''} style={inp} required />
+                      </div>
+                      <input type="hidden" name="formula_diretta" value="1" />
+                    </div>
+                  )}
+
                   {/* Figlio: dimensioni e quantità ereditati dal padre, non chiederli */}
-                  {!parentArt && isMq && (
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
-                      <div>
-                        <span style={label}>Larghezza (cm) *</span>
-                        <input type="number" name="larghezza_cm" min={0} step="0.1" defaultValue={prefill?.larghezza_cm || ''} style={inp} required />
-                      </div>
-                      <div>
-                        <span style={label}>Altezza (cm) *</span>
-                        <input type="number" name="altezza_cm" min={0} step="0.1" defaultValue={prefill?.altezza_cm || ''} style={inp} required />
-                      </div>
-                      <div>
-                        <span style={label}>Quantità *</span>
-                        <input type="number" name="quantita" min={1} defaultValue={prefill?.quantita ?? 1} style={inp} required />
-                      </div>
-                    </div>
-                  )}
-
-                  {!parentArt && isMl && (
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                      <div>
-                        <span style={label}>Lunghezza (cm) *</span>
-                        <input type="number" name="larghezza_cm" min={0} step="0.1" defaultValue={prefill?.larghezza_cm || ''} style={inp} placeholder="es. 300" required />
-                      </div>
-                      <div>
-                        <span style={label}>Quantità *</span>
-                        <input type="number" name="quantita" min={1} defaultValue={prefill?.quantita ?? 1} style={inp} required />
-                      </div>
-                    </div>
-                  )}
-
-                  {!parentArt && isKg && (
-                    <div>
-                      <span style={label}>Quantità (kg) *</span>
-                      <input type="number" name="quantita" min={0.1} step="0.1" defaultValue={prefill?.quantita ?? 1} style={inp} placeholder="es. 5" required />
-                    </div>
-                  )}
-
-                  {!parentArt && !isMq && !isMl && !isKg && (
-                    <div>
-                      <span style={label}>Quantità *</span>
-                      <input type="number" name="quantita" min={1} defaultValue={prefill?.quantita ?? 1} style={inp} required />
+                  {!parentArt && !formulaDiretta && (rLarghezza || rAltezza || rQuantita) && (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12 }}>
+                      {rLarghezza && (
+                        <div>
+                          <span style={label}>{isMl ? 'Lunghezza (cm) *' : 'Larghezza (cm) *'}</span>
+                          <input type="number" name="larghezza_cm" min={0} step="0.1" defaultValue={prefill?.larghezza_cm || ''} style={inp} required />
+                        </div>
+                      )}
+                      {rAltezza && (
+                        <div>
+                          <span style={label}>Altezza (cm) *</span>
+                          <input type="number" name="altezza_cm" min={0} step="0.1" defaultValue={prefill?.altezza_cm || ''} style={inp} required />
+                        </div>
+                      )}
+                      {rQuantita && (
+                        <div>
+                          <span style={label}>{isKg ? 'Quantità (kg) *' : 'Quantità *'}</span>
+                          <input type="number" name="quantita" min={isKg ? 0.1 : 1} step={isKg ? '0.1' : undefined} defaultValue={prefill?.quantita ?? 1} style={inp} required />
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -1230,6 +1242,16 @@ function ModificaArticoloModal({ articolo, parentArt, children = [], listini, on
   const isRootMq = !isChild && (uLower === 'm²' || uLower === 'mq' || uLower === 'm2')
   const isRootMl = !isChild && (uLower === 'ml' || uLower === 'm' || uLower === 'mt')
   const isRootKg = !isChild && uLower === 'kg'
+  // Campi mostrati per l'articolo root: seguono esclusivamente i flag richiede_larghezza/altezza/quantita
+  // del listino (stesso schema di ArticoloForm e di components/aggiungi-articolo-form.tsx).
+  const rootRLarghezza = (childListino?.richiede_larghezza ?? 0) === 1
+  const rootRAltezza   = (childListino?.richiede_altezza   ?? 0) === 1
+  const rootRQuantita  = (childListino?.richiede_quantita  ?? 0) === 1
+  // Se l'unità è "di misura" (m²/ml) ma le dimensioni necessarie non sono entrambe richieste,
+  // il valore non è calcolabile: si chiede direttamente "quante unità" fatturare (formula diretta),
+  // a prescindere da richiede_quantita — stessa regola di ArticoloForm.
+  const rootDimensioniComplete = isRootMq ? (rootRLarghezza && rootRAltezza) : isRootMl ? rootRLarghezza : true
+  const rootFormulaDiretta = !isChild && (isRootMq || isRootMl) && !rootDimensioniComplete
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -1431,43 +1453,52 @@ function ModificaArticoloModal({ articolo, parentArt, children = [], listini, on
               </>
             ) : (
               <>
-                {isRootMq ? (
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
-                    <div>
-                      <span style={label}>Altezza (cm)</span>
-                      <input type="number" name="altezza_cm" min={0} step="0.1" defaultValue={articolo.altezza_cm} style={inp} />
-                    </div>
-                    <div>
-                      <span style={label}>Larghezza (cm)</span>
-                      <input type="number" name="larghezza_cm" min={0} step="0.1" defaultValue={articolo.larghezza_cm} style={inp} />
-                    </div>
+                {rootFormulaDiretta ? (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12 }}>
                     <div>
                       <span style={label}>Quantità</span>
-                      <input type="number" name="quantita" min={1} defaultValue={articolo.quantita} style={inp} />
-                    </div>
-                  </div>
-                ) : isRootMl ? (
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                    <div>
-                      <span style={label}>Lunghezza (cm)</span>
-                      <input type="number" name="larghezza_cm" min={0} step="0.1" defaultValue={articolo.larghezza_cm} style={inp} />
+                      <input type="number" name="quantita" min={1} defaultValue={articolo.quantita > 0 ? articolo.quantita : 1} style={inp} />
                     </div>
                     <div>
-                      <span style={label}>Quantità</span>
-                      <input type="number" name="quantita" min={1} defaultValue={articolo.quantita} style={inp} />
+                      <span style={label}>Unità ({articolo.unita})</span>
+                      <input type="number" name="unita_valore" min={0.01} step="0.01" defaultValue={articolo.unita_valore && articolo.unita_valore > 0 ? articolo.unita_valore : ''} style={inp} />
                     </div>
+                    <input type="hidden" name="formula_diretta" value="1" />
                   </div>
                 ) : (
-                  <div>
-                    <span style={label}>{isRootKg ? 'Quantità (kg)' : 'Quantità'}</span>
-                    <input type="number" name="quantita" min={isRootKg ? 0.1 : 1} step={isRootKg ? '0.1' : '1'} defaultValue={articolo.quantita} style={inp} />
-                  </div>
-                )}
-                {!isRootMq && (
-                  <input type="hidden" name="altezza_cm" value={articolo.altezza_cm} />
-                )}
-                {!isRootMq && !isRootMl && (
-                  <input type="hidden" name="larghezza_cm" value={articolo.larghezza_cm} />
+                  <>
+                    {(rootRLarghezza || rootRAltezza || rootRQuantita) && (
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12 }}>
+                        {rootRLarghezza && (
+                          <div>
+                            <span style={label}>{isRootMl ? 'Lunghezza (cm)' : 'Larghezza (cm)'}</span>
+                            <input type="number" name="larghezza_cm" min={0} step="0.1" defaultValue={articolo.larghezza_cm} style={inp} />
+                          </div>
+                        )}
+                        {rootRAltezza && (
+                          <div>
+                            <span style={label}>Altezza (cm)</span>
+                            <input type="number" name="altezza_cm" min={0} step="0.1" defaultValue={articolo.altezza_cm} style={inp} />
+                          </div>
+                        )}
+                        {rootRQuantita && (
+                          <div>
+                            <span style={label}>{isRootKg ? 'Quantità (kg)' : 'Quantità'}</span>
+                            <input type="number" name="quantita" min={isRootKg ? 0.1 : 1} step={isRootKg ? '0.1' : '1'} defaultValue={articolo.quantita} style={inp} />
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    {!rootRAltezza && (
+                      <input type="hidden" name="altezza_cm" value={articolo.altezza_cm} />
+                    )}
+                    {!rootRLarghezza && (
+                      <input type="hidden" name="larghezza_cm" value={articolo.larghezza_cm} />
+                    )}
+                    {!rootRQuantita && (
+                      <input type="hidden" name="quantita" value={articolo.quantita} />
+                    )}
+                  </>
                 )}
                 {isStaff ? (
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
@@ -2027,6 +2058,7 @@ export default function PreventivoClient({
             {catGroups.map(cg => {
               const groupComplete = cg.groups.every(grp => !artHasLacune(grp[0], grp.slice(1)))
               const groupBg = groupComplete ? VERDE : ROSA
+              const totaleGruppo = cg.groups.reduce((s, grp) => s + grp.reduce((s2, a) => s2 + a.prezzo_totale, 0), 0)
               return (
               <div key={cg.key} style={{ background: groupBg, border: '1px solid #222', borderRadius: 8, overflow: 'hidden', width: '100%', boxSizing: 'border-box' }}>
                 <div style={{ padding: '6px 14px', background: VERDE, borderBottom: '1px solid #222', fontSize: 12, fontWeight: 700, color: '#1a1a1a' }}>
@@ -2164,6 +2196,7 @@ export default function PreventivoClient({
                                 const parts: string[] = []
                                 if (root.larghezza_cm > 0) parts.push(`L:${root.larghezza_cm}`)
                                 if (root.altezza_cm > 0)   parts.push(`H:${root.altezza_cm}`)
+                                if (root.unita_valore)     parts.push(`${root.unita_valore} ${root.unita}`)
                                 if (root.n_ante > 1) parts.push(`${root.n_ante} ante`)
                                 if (root.colore) parts.push(root.colore)
                                 return <div style={{ fontSize: 12, color: '#1a1a1a', marginTop: 1, textAlign: 'left' }}>{parts.join(' · ')}</div>
@@ -2315,6 +2348,9 @@ export default function PreventivoClient({
                     })}
                   </tbody>
                 </table>
+                <div style={{ padding: '6px 14px', background: VERDE, borderTop: '1px solid #222', fontSize: 12, fontWeight: 700, color: '#1a1a1a', textAlign: 'right' }}>
+                  Totale gruppo: € {fmt(totaleGruppo)}
+                </div>
               </div>
             )})}
           </div>
